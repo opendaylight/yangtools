@@ -20,6 +20,8 @@
         <!-- GSON-based JSON codec. Can be split out -->
         <bundle>mvn:com.google.code.gson/gson/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-data-codec-gson/{{VERSION}}</bundle>
+
+        <bundle>mvn:org.opendaylight.yangtools/yang-data-codec-xml/{{VERSION}}</bundle>
     </feature>
 
     <feature name='odl-yangtools-common' version='${project.version}' description='OpenDaylight :: Yangtools :: Common'>

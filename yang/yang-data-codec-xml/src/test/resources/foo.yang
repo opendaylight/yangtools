@@ -1,0 +1,54 @@
+module foo {
+    namespace "foo-namespace";
+    prefix "f";
+
+    container parent-container {
+
+        container leaf-container {
+
+            leaf int32-leaf {
+                type int32;
+            }
+
+            leaf decimal64-leaf {
+                type decimal64 {
+                    fraction-digits 2;
+                }
+            }
+
+            leaf string-leaf {
+                type string;
+            }
+
+            leaf leafref-leaf {
+                type leafref {
+                    path "../string-leaf";
+                }
+            }
+
+            leaf empty-leaf {
+                type empty;
+            }
+
+            leaf boolean-leaf {
+                type boolean;
+            }
+
+            leaf enum-leaf {
+                type enumeration {
+                    enum zero;
+                    enum one;
+                    enum five {
+                        value 5;
+                    }
+                }
+            }
+        }
+
+        container anyxml-container {
+            anyxml my-anyxml;
+        }
+    }
+
+
+}

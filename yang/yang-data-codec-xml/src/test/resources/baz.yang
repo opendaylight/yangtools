@@ -1,0 +1,82 @@
+module baz {
+    namespace "baz-namespace";
+    prefix bz;
+
+    container outer-container {
+        container my-container-1 {
+            list my-keyed-list {
+                key "my-key-leaf";
+
+                leaf my-key-leaf {
+                    type string;
+                }
+
+                leaf my-leaf-in-list-1 {
+                    type string;
+                }
+
+                leaf my-leaf-in-list-2 {
+                    type string;
+                }
+            }
+
+            leaf my-leaf-1 {
+                type string;
+            }
+
+            leaf-list my-leaf-list {
+                type string;
+            }
+        }
+
+        container my-container-2 {
+            container inner-container {
+                leaf my-leaf-2 {
+                    type string;
+                }
+            }
+
+            leaf my-leaf-3 {
+                type string;
+            }
+
+            choice my-choice {
+                case my-case-1 {
+                    leaf my-leaf-in-case-1 {
+                        type string;
+                    }
+                }
+
+                case my-case-2 {
+                    leaf my-leaf-in-case-2 {
+                        type string;
+                    }
+                }
+            }
+        }
+    }
+
+    augment "/outer-container" {
+        container my-container-3 {
+
+        }
+    }
+
+    augment "/outer-container/my-container-3" {
+        list my-doubly-keyed-list {
+            key "my-first-key-leaf my-second-key-leaf";
+
+            leaf "my-first-key-leaf" {
+                type string;
+            }
+
+            leaf my-second-key-leaf {
+                type string;
+            }
+
+            leaf my-leaf-in-list-3 {
+                type string;
+            }
+        }
+    }
+}
