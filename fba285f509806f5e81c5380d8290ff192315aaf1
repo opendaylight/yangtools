@@ -91,6 +91,29 @@
       "revId": "fba285f509806f5e81c5380d8290ff192315aaf1",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_74361e05",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XMLStreamNormalizedNodeStreamWriter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-04-02T17:20:16Z",
+      "side": 1,
+      "message": "class becoming non-final, make methods not meant to be overridden by subclasses final",
+      "range": {
+        "startLine": 199,
+        "startChar": 4,
+        "endLine": 199,
+        "endChar": 15
+      },
+      "revId": "fba285f509806f5e81c5380d8290ff192315aaf1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
