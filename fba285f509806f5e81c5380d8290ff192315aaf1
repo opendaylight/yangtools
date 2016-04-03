@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "3a4c51b2_770aa0d3",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XMLStreamNormalizedNodeStreamWriter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2016-04-03T22:28:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a4c51b2_5481628e",
+      "range": {
+        "startLine": 39,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 3
+      },
+      "revId": "fba285f509806f5e81c5380d8290ff192315aaf1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a4c51b2_f4734ee5",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XMLStreamNormalizedNodeStreamWriter.java",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2016-04-02T17:16:50Z",
       "side": 1,
       "message": "should be package-private",
+      "range": {
+        "startLine": 50,
+        "startChar": 5,
+        "endLine": 50,
+        "endChar": 13
+      },
+      "revId": "fba285f509806f5e81c5380d8290ff192315aaf1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_d70f34e0",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XMLStreamNormalizedNodeStreamWriter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2016-04-03T22:28:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a4c51b2_f4734ee5",
       "range": {
         "startLine": 50,
         "startChar": 5,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "3a4c51b2_b71428f6",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XMLStreamNormalizedNodeStreamWriter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2016-04-03T22:28:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a4c51b2_347e56af",
+      "range": {
+        "startLine": 111,
+        "startChar": 4,
+        "endLine": 111,
+        "endChar": 13
+      },
+      "revId": "fba285f509806f5e81c5380d8290ff192315aaf1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a4c51b2_944aca81",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XMLStreamNormalizedNodeStreamWriter.java",
         "patchSetId": 2
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "3a4c51b2_17f99cc8",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XMLStreamNormalizedNodeStreamWriter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 178,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2016-04-03T22:28:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a4c51b2_944aca81",
+      "range": {
+        "startLine": 178,
+        "startChar": 7,
+        "endLine": 178,
+        "endChar": 32
+      },
+      "revId": "fba285f509806f5e81c5380d8290ff192315aaf1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a4c51b2_74361e05",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XMLStreamNormalizedNodeStreamWriter.java",
         "patchSetId": 2
@@ -105,6 +201,30 @@
       "writtenOn": "2016-04-02T17:20:16Z",
       "side": 1,
       "message": "class becoming non-final, make methods not meant to be overridden by subclasses final",
+      "range": {
+        "startLine": 199,
+        "startChar": 4,
+        "endLine": 199,
+        "endChar": 15
+      },
+      "revId": "fba285f509806f5e81c5380d8290ff192315aaf1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_f7f510cc",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XMLStreamNormalizedNodeStreamWriter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2016-04-03T22:28:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a4c51b2_74361e05",
       "range": {
         "startLine": 199,
         "startChar": 4,
