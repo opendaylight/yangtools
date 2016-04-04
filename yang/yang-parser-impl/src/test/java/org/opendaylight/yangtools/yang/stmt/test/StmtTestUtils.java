@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YinStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,14 @@ public class StmtTestUtils {
         public boolean accept(File file) {
             String name = file.getName().toLowerCase();
             return name.endsWith(".yang") && file.isFile();
+        }
+    };
+
+    final public static FileFilter YIN_FILE_FILTER = new FileFilter() {
+        @Override
+        public boolean accept(File file) {
+            String name = file.getName().toLowerCase();
+            return name.endsWith(".xml") && file.isFile();
         }
     };
 
@@ -155,5 +164,39 @@ public class StmtTestUtils {
         File testSourcesDir = new File(resourceDir.toURI());
 
         return parseYangSources(enabledSemanticVersions, testSourcesDir.listFiles(YANG_FILE_FILTER));
+    }
+
+    public static SchemaContext parseYinSources(String yinSourcesDirectoryPath, boolean enabledSemanticVersions)
+            throws SourceException, ReactorException, FileNotFoundException, URISyntaxException {
+
+        URL resourceDir = StmtTestUtils.class.getResource(yinSourcesDirectoryPath);
+        File testSourcesDir = new File(resourceDir.toURI());
+
+        return parseYinSources(enabledSemanticVersions, testSourcesDir.listFiles(YIN_FILE_FILTER));
+    }
+
+    public static SchemaContext parseYinSources(boolean enabledSemanticVersions, File... files)
+            throws SourceException, ReactorException, FileNotFoundException {
+
+        StatementStreamSource[] sources = new StatementStreamSource[files.length];
+
+        for (int i = 0; i < files.length; i++) {
+
+            sources[i] = new YinStatementSourceImpl(files[i].getPath(), true);
+            // FIXME
+            //sources[i] = new YinStatementSourceImpl(new NamedFileInputStream(files[i], files[i].getPath()));
+        }
+
+        return parseYinSources(enabledSemanticVersions, sources);
+    }
+
+    public static SchemaContext parseYinSources(boolean enabledSemanticVersions, StatementStreamSource... sources)
+            throws SourceException, ReactorException {
+
+        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
+                .newBuild(enabledSemanticVersions);
+        reactor.addSources(sources);
+
+        return reactor.buildEffective();
     }
 }
