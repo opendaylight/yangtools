@@ -53,12 +53,14 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
                     childOp.get().verifyStructure(castedChild, verifyChildren);
                 } else {
                     throw new SchemaValidationFailedException(String.format(
-                            "Child %s is not valid child according to schema.", castedChild.getIdentifier()));
+                            "Node %s is not a valid child of %s according to the schema.",
+                            castedChild.getIdentifier(), container.getIdentifier()));
                 }
             }
         }
     }
 
+    @Override
     protected void recursivelyVerifyStructure(NormalizedNode<?, ?> value) {
         final NormalizedNodeContainer container = (NormalizedNodeContainer) value;
         for (final Object child : container.getValue()) {
@@ -69,7 +71,8 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
                 childOp.get().recursivelyVerifyStructure(castedChild);
             } else {
                 throw new SchemaValidationFailedException(
-                        String.format("Child %s is not valid child according to schema.", castedChild.getIdentifier()));
+                        String.format("Node %s is not a valid child of %s according to the schema.",
+                                castedChild.getIdentifier(), container.getIdentifier()));
             }
         }
     }
