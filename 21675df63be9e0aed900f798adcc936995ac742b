@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a4c51b2_d7b0d4df",
+        "filename": "yang/yang-data-codec-xml/src/test/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlToNormalizedNodesTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-04-04T06:56:00Z",
+      "side": 1,
+      "message": "move this method to the end of class",
+      "range": {
+        "startLine": 139,
+        "startChar": 4,
+        "endLine": 139,
+        "endChar": 60
+      },
+      "revId": "21675df63be9e0aed900f798adcc936995ac742b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
