@@ -1,0 +1,51 @@
+= YANG Tools support for YANG 1.1
+Tony Tkacik <ttkacik@cisco.com>
+:toc:
+:rfc6020: https://tools.ietf.org/html/rfc6020
+:rfc6020bis: https://tools.ietf.org/html/draft-ietf-netmod-rfc6020bis
+
+== Introduction
+
+=== Significant changes
+
+.Summary of Changes from draft 
+-  Changed the YANG version from "1" to "1.1".
+-  Made the `yang-version` statement mandatory.
+-  Made noncharacters illegal in the built-in type `string`.
+-  Defined the legal characters in YANG modules.
+-  Changed the rules for the interpretation of escaped characters in
+  double quoted strings.  This is an backwards incompatible change
+  from YANG version 1.  A module that uses a character sequence that
+  is now illegal must change the string to match the new rules.
+-  An unquoted string cannot contain any single or double quote
+  characters.  This is an backwards incompatible change from YANG
+  version 1.
+-  Extended the `if-feature` syntax to be a boolean expression over
+  feature names.
+-  Allow `if-feature` in `bit`, `enum`, and `identity`.
+-  Allow `if-feature` in `refine`.
+-  Made `when` and `if-feature` illegal on list keys.
+-  Allow `choice` as a shorthand case statement.
+-  Added a new substatement `modifier` to pattern.
+-  Allow `must` in `input`, `output`, and `notification`.
+-  Allow `require-instance` in leafref.
+-  Allow `augment` to add conditionally mandatory nodes.
+-  Added a set of new XPath functions.
+-  Clarified the XPath context's tree.
+-  Defined the string value of an identityref in XPath expressions.
+-  Clarified what unprefixed names mean in leafrefs in typedefs.
+-  Allow identities to be derived from multiple base identities.
+-  Allow enumerations and bits to be subtyped.
+-  Allow leaf-lists to have default values.
+-  Allow non-unique values in non-configuration leaf-lists.
+-  Use [RFC7405] syntax for case-sensitive strings in the grammar.
+-  Changed the module advertisement mechanism.
+-  Changed the scoping rules for definitions in submodules.  A
+   submodule can now reference all definitions in all submodules that
+   belong to the same module, without using the `include` statement.
+-  Added a new statement `action` that is used to define operations
+   tied to data nodes.
+-  Allow notifications to be tied to data nodes.
+-  Added a new data definition statement `anydata`.
+-  Allow types `empty` and `leafref` in unions.
+-  Allow type `empty` in a `key`.
