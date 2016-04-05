@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import java.util.Collections;
 import java.util.List;
+
+import com.google.common.base.CharMatcher;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -30,6 +32,9 @@ import org.slf4j.LoggerFactory;
 public class EnumEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, EnumStatement> implements EnumPair {
 
     private static final Logger LOG = LoggerFactory.getLogger(EnumEffectiveStatementImpl.class);
+
+    private static final CharMatcher EQUALS_SIGN_MATCHER = CharMatcher.is('=');
+    private static final String EQUALS_SIGN_REPLACEMENT = "Equals";
 
     private final SchemaPath path;
     private String description;
@@ -68,6 +73,10 @@ public class EnumEffectiveStatementImpl extends DeclaredEffectiveStatementBase<S
                 value = ((ValueEffectiveStatementImpl) effectiveStatement).argument();
             }
         }
+    }
+
+    private String removeEqualsFromQName(final String qname) {
+        return EQUALS_SIGN_MATCHER.replaceFrom(qname, EQUALS_SIGN_REPLACEMENT);
     }
 
     @Override
