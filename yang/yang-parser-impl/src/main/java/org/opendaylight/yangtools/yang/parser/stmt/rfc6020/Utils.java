@@ -76,6 +76,7 @@ public final class Utils {
     private static final CharMatcher RIGHT_PARENTHESIS_MATCHER = CharMatcher.is(')');
     private static final CharMatcher AMPERSAND_MATCHER = CharMatcher.is('&');
     private static final CharMatcher QUESTION_MARK_MATCHER = CharMatcher.is('?');
+    private static final CharMatcher EQUALS_SIGN_MATCHER = CharMatcher.is('=');
     private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings().trimResults();
     private static final Splitter SPACE_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
     private static final Pattern PATH_ABS = Pattern.compile("/[^/].*");
@@ -593,6 +594,7 @@ public final class Utils {
         string = RIGHT_PARENTHESIS_MATCHER.replaceFrom(string, "RightParenthesis");
         string = AMPERSAND_MATCHER.replaceFrom(string, "Ampersand");
         string = QUESTION_MARK_MATCHER.replaceFrom(string, "QuestionMark");
+        string = EQUALS_SIGN_MATCHER.replaceFrom(string, "Equals");
 
         return string;
     }
