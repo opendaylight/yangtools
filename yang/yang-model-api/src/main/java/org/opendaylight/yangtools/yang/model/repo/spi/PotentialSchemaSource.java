@@ -7,14 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.spi;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
-
-import org.opendaylight.yangtools.objcache.ObjectCache;
-import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-
 /**
  * A potential schema source. Instances of this class track the various
  * representations of a schema source and the cost attached to obtaining
@@ -43,6 +35,12 @@ public final class PotentialSchemaSource<T extends SchemaSourceRepresentation> {
          */
         LOCAL_IO(4),
         /**
+         * The source is available by performing local IO, although this
+         * represents a sideloaded schema. This value is used to differentiate
+         * remote schema from device and local fallback.
+         */
+        LOCAL_IO_FALLBACK(6),
+        /**
          * The source is available by performing remote IO, such as fetching
          * from an HTTP server or similar.
          */
@@ -60,7 +58,7 @@ public final class PotentialSchemaSource<T extends SchemaSourceRepresentation> {
          * @return Const constant.
          */
         public int getValue() {
-            return value;
+            return this.value;
         }
     }
 
@@ -90,24 +88,24 @@ public final class PotentialSchemaSource<T extends SchemaSourceRepresentation> {
     }
 
     public SourceIdentifier getSourceIdentifier() {
-        return sourceIdentifier;
+        return this.sourceIdentifier;
     }
 
     public Class<? extends T> getRepresentation() {
-        return representation;
+        return this.representation;
     }
 
     public int getCost() {
-        return cost;
+        return this.cost;
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + cost;
-        result = prime * result + representation.hashCode();
-        result = prime * result + sourceIdentifier.hashCode();
+        result = (prime * result) + this.cost;
+        result = (prime * result) + this.representation.hashCode();
+        result = (prime * result) + this.sourceIdentifier.hashCode();
         return result;
     }
 
@@ -120,13 +118,13 @@ public final class PotentialSchemaSource<T extends SchemaSourceRepresentation> {
             return false;
         }
         final PotentialSchemaSource<?> other = (PotentialSchemaSource<?>) obj;
-        if (cost != other.cost) {
+        if (this.cost != other.cost) {
             return false;
         }
-        if (!representation.equals(other.representation)) {
+        if (!this.representation.equals(other.representation)) {
             return false;
         }
-        if (!sourceIdentifier.equals(other.sourceIdentifier)) {
+        if (!this.sourceIdentifier.equals(other.sourceIdentifier)) {
             return false;
         }
         return true;
