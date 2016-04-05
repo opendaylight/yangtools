@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a4c51b2_78aa8c1a",
+        "filename": "docs/analysis/yang-1-1.adoc",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 3635
+      },
+      "writtenOn": "2016-04-05T13:32:09Z",
+      "side": 1,
+      "message": "Remove this space please.",
+      "range": {
+        "startLine": 11,
+        "startChar": 30,
+        "endLine": 11,
+        "endChar": 31
+      },
+      "revId": "aa194c3a6b91dcbac0eda6fa69f2313c71c6fbdd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
