@@ -43,6 +43,12 @@ public final class PotentialSchemaSource<T extends SchemaSourceRepresentation> {
          */
         LOCAL_IO(4),
         /**
+         * The source is available by performing local IO, although this
+         * represents a sideloaded schema. This value is used to differentiate
+         * remote schema from device and local fallback.
+         */
+        LOCAL_IO_FALLBACK(6),
+        /**
          * The source is available by performing remote IO, such as fetching
          * from an HTTP server or similar.
          */
