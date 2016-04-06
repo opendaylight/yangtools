@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMapping;
 
 @Beta
 @NotThreadSafe
@@ -145,6 +146,8 @@ class SingleModuleYinStatementWriter implements StatementTextWriter {
     private static boolean isArgumentYinElement(final StatementDefinition currentStatement) {
         if (currentStatement instanceof Rfc6020Mapping) {
             return ((Rfc6020Mapping) currentStatement).isArgumentYinElement();
+        } else if (currentStatement instanceof SupportedExtensionsMapping) {
+            return ((SupportedExtensionsMapping) currentStatement).isArgumentYinElement();
         } else if (currentStatement instanceof ExtensionStatement) {
             return ((ExtensionStatement) currentStatement).isArgumentYinElement();
         }
