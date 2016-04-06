@@ -10,7 +10,9 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -21,12 +23,16 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
@@ -378,5 +384,24 @@ public class MoreRevisionsTest {
             }
         }
         return false;
+    }
+
+    @Test
+    public void nodeTest() throws Exception {
+        SchemaContext context = StmtTestUtils.parseYangSources("/semantic-statement-parser/multiple-revisions/node-test");
+        assertNotNull(context);
+
+        QName root = QName.create("foo", "2016-04-06", "foo-root");
+        QName container20160404 = QName.create("foo", "2016-04-06", "con20160404");
+        SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, root, container20160404));
+        assertTrue(findDataSchemaNode instanceof ContainerSchemaNode);
+
+        QName container20160405 = QName.create("foo", "2016-04-06", "con20160405");
+        findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, root, container20160405));
+        assertTrue(findDataSchemaNode instanceof ContainerSchemaNode);
+
+        QName container20160406 = QName.create("foo", "2016-04-06", "con20160406");
+        findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, root, container20160406));
+        assertNull(findDataSchemaNode);
     }
 }
