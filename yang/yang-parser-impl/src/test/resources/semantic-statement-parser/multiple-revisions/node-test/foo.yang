@@ -1,0 +1,15 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+    yang-version 1;
+
+    import bar { prefix bar; revision-date 2016-04-05; }
+
+    revision 2016-04-06 {
+        description "test";
+    }
+
+    container foo-root {
+        uses bar:grp;
+    }
+}
