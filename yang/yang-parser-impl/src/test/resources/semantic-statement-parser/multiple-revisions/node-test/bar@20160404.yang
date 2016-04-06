@@ -1,0 +1,14 @@
+module bar {
+    namespace "bar";
+    prefix bar;
+    yang-version 1;
+
+    revision 2016-04-04 {
+        description "test";
+    }
+
+    grouping grp {
+        container con20160404 {
+        }
+    }
+}
