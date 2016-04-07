@@ -124,4 +124,9 @@ abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
     protected final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> getData() {
         return data;
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + "{data = " + this.data + "}";
+    }
 }

@@ -182,4 +182,10 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
             return getMod().getIdentifier();
         }
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + "{mod = " + this.mod + ", oldMeta = " + this.oldMeta + ", newMeta = " +
+                this.newMeta + "}";
+    }
 }
