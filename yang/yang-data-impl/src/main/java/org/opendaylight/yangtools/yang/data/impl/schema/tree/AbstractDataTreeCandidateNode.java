@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2015, 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Collections2;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -21,18 +21,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNode;
 
 abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
-    private static final Function<NormalizedNode<?, ?>, DataTreeCandidateNode> TO_DELETED_NODE = new Function<NormalizedNode<?, ?>, DataTreeCandidateNode>() {
-        @Override
-        public DataTreeCandidateNode apply(final NormalizedNode<?, ?> input) {
-            return AbstractRecursiveCandidateNode.deleteNode(input);
-        }
-    };
-    private static final Function<NormalizedNode<?, ?>, DataTreeCandidateNode> TO_WRITTEN_NODE = new Function<NormalizedNode<?, ?>, DataTreeCandidateNode>() {
-        @Override
-        public DataTreeCandidateNode apply(final NormalizedNode<?, ?> input) {
-            return AbstractRecursiveCandidateNode.writeNode(input);
-        }
-    };
+    private static final Function<NormalizedNode<?, ?>, DataTreeCandidateNode> TO_DELETED_NODE =
+            AbstractRecursiveCandidateNode::deleteNode;
+    private static final Function<NormalizedNode<?, ?>, DataTreeCandidateNode> TO_WRITTEN_NODE =
+            AbstractRecursiveCandidateNode::writeNode;
 
     private static Optional<NormalizedNode<?, ?>> getChild(final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> container, final PathArgument identifier) {
         if (container != null) {
@@ -69,10 +61,10 @@ abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
         Preconditions.checkArgument(newData != null || oldData != null,
                 "No old or new data, modification type should be NONE and deltaChildren() mustn't be called.");
         if (newData == null) {
-            return Collections2.transform(oldData.getValue(), TO_DELETED_NODE);
+            return oldData.getValue().stream().map(TO_DELETED_NODE).collect(Collectors.toList());
         }
         if (oldData == null) {
-            return Collections2.transform(newData.getValue(), TO_WRITTEN_NODE);
+            return newData.getValue().stream().map(TO_WRITTEN_NODE).collect(Collectors.toList());
         }
 
         /*
@@ -116,7 +108,7 @@ abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
     }
 
     protected final Optional<NormalizedNode<?, ?>> dataOptional() {
-        return Optional.<NormalizedNode<?, ?>>of(data);
+        return Optional.of(data);
     }
 
     @Override

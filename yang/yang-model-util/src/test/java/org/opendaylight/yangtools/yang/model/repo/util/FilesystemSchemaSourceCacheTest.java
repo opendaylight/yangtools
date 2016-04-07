@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014, 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -20,10 +20,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.google.common.base.Charsets;
-import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
-import com.google.common.collect.Collections2;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.CheckedFuture;
 import java.io.ByteArrayInputStream;
@@ -34,6 +32,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -96,12 +95,8 @@ public class FilesystemSchemaSourceCacheTest {
     }
 
     private static Collection<String> filesToFilenamesWithoutRevision(final List<File> storedFiles) {
-        return Collections2.transform(storedFiles, new Function<File, String>() {
-            @Override
-            public String apply(final File input) {
-                return Files.getNameWithoutExtension(input.getName());
-            }
-        });
+        return storedFiles.stream().map(input -> Files.getNameWithoutExtension(input.getName())).collect(
+                Collectors.toList());
     }
 
     @Test

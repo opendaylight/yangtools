@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2015, 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -11,10 +11,7 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.augmenta
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import java.io.IOException;
@@ -30,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -97,7 +95,7 @@ public class NormalizedNodeXmlTranslationTest {
         });
     }
 
-    public static final String NAMESPACE = "urn:opendaylight:params:xml:ns:yang:controller:test";
+    private static final String NAMESPACE = "urn:opendaylight:params:xml:ns:yang:controller:test";
     private static Date revision;
     static {
         try {
@@ -266,21 +264,16 @@ public class NormalizedNodeXmlTranslationTest {
     private final ContainerSchemaNode containerNode;
     private final String xmlPath;
 
-    SchemaContext parseTestSchema(final String... yangPath) throws ReactorException {
+    private SchemaContext parseTestSchema(final String... yangPath) throws ReactorException {
         return RetestUtils.parseYangStreams(getTestYangs(yangPath));
     }
 
-    List<InputStream> getTestYangs(final String... yangPaths) {
-
-        return Lists.newArrayList(Collections2.transform(Lists.newArrayList(yangPaths),
-                new Function<String, InputStream>() {
-                    @Override
-                    public InputStream apply(final String input) {
-                        final InputStream resourceAsStream = NormalizedDataBuilderTest.class.getResourceAsStream(input);
-                        Preconditions.checkNotNull(resourceAsStream, "File %s was null", resourceAsStream);
-                        return resourceAsStream;
-                    }
-                }));
+    private List<InputStream> getTestYangs(final String... yangPaths) {
+        return Arrays.stream(yangPaths).map(input -> {
+            final InputStream resourceAsStream = NormalizedDataBuilderTest.class.getResourceAsStream(input);
+            Preconditions.checkNotNull(resourceAsStream, "File %s was null", resourceAsStream);
+            return resourceAsStream;
+        }).collect(Collectors.toList());
     }
 
     @Test

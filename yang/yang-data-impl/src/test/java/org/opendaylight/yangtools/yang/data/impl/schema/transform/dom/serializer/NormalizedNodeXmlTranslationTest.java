@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2013, 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -11,12 +11,7 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.augmenta
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
 import java.io.IOException;
@@ -29,9 +24,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -103,7 +101,7 @@ public class NormalizedNodeXmlTranslationTest {
         });
     }
 
-    public static final String NAMESPACE = "urn:opendaylight:params:xml:ns:yang:controller:test";
+    private static final String NAMESPACE = "urn:opendaylight:params:xml:ns:yang:controller:test";
     private static Date revision;
     static {
         try {
@@ -120,8 +118,8 @@ public class NormalizedNodeXmlTranslationTest {
         final QName containerQName = QName.create(augmentChoice1QName, "case11-choice-case-container");
         final QName leafQName = QName.create(augmentChoice1QName, "case11-choice-case-leaf");
 
-        final AugmentationIdentifier aug1Id = new AugmentationIdentifier(Sets.newHashSet(augmentChoice1QName));
-        final AugmentationIdentifier aug2Id = new AugmentationIdentifier(Sets.newHashSet(augmentChoice2QName));
+        final AugmentationIdentifier aug1Id = new AugmentationIdentifier(Collections.singleton(augmentChoice1QName));
+        final AugmentationIdentifier aug2Id = new AugmentationIdentifier(Collections.singleton(augmentChoice2QName));
         final NodeIdentifier augmentChoice1Id = new NodeIdentifier(augmentChoice1QName);
         final NodeIdentifier augmentChoice2Id = new NodeIdentifier(augmentChoice2QName);
         final NodeIdentifier containerId = new NodeIdentifier(containerQName);
@@ -148,7 +146,7 @@ public class NormalizedNodeXmlTranslationTest {
         final CollectionNodeBuilder<MapEntryNode, MapNode> listBuilder = Builders.mapBuilder().withNodeIdentifier(
                 getNodeIdentifier("list"));
 
-        final Map<QName, Object> predicates = Maps.newHashMap();
+        final Map<QName, Object> predicates = new HashMap<>();
         predicates.put(getNodeIdentifier("uint32InList").getNodeType(), 3L);
 
         final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> list1Builder = Builders
@@ -234,7 +232,7 @@ public class NormalizedNodeXmlTranslationTest {
     }
 
     public static AugmentationIdentifier getAugmentIdentifier(final String... childNames) {
-        final Set<QName> qn = Sets.newHashSet();
+        final Set<QName> qn = new HashSet<>();
 
         for (final String childName : childNames) {
             qn.add(getNodeIdentifier(childName).getNodeType());
@@ -255,23 +253,18 @@ public class NormalizedNodeXmlTranslationTest {
     private final String xmlPath;
 
 
-    SchemaContext parseTestSchema(final String... yangPath) throws IOException, YangSyntaxErrorException {
+    private SchemaContext parseTestSchema(final String... yangPath) throws IOException, YangSyntaxErrorException {
         final YangParserImpl yangParserImpl = new YangParserImpl();
         return yangParserImpl.parseSources(getTestYangs(yangPath));
     }
 
-    List<ByteSource> getTestYangs(final String... yangPaths) {
-
-        return Lists.newArrayList(Collections2.transform(Lists.newArrayList(yangPaths),
-                new Function<String, ByteSource>() {
-            @Override
-            public ByteSource apply(final String input) {
-                final ByteSource source = Resources.asByteSource(
+    private List<ByteSource> getTestYangs(final String... yangPaths) {
+        return Arrays.stream(yangPaths).map(input -> {
+            final ByteSource source = Resources.asByteSource(
                     NormalizedDataBuilderTest.class.getResource(input));
-                Preconditions.checkNotNull(source, "File %s was null", source);
-                return source;
-            }
-        }));
+            Preconditions.checkNotNull(source, "File %s was null", source);
+            return source;
+        }).collect(Collectors.toList());
     }
 
     @Test
@@ -310,7 +303,7 @@ public class NormalizedNodeXmlTranslationTest {
     }
 
 
-    static final XMLOutputFactory XML_FACTORY;
+    private static final XMLOutputFactory XML_FACTORY;
     static {
         XML_FACTORY = XMLOutputFactory.newFactory();
         XML_FACTORY.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, false);

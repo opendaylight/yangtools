@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2015, 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
@@ -17,6 +16,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -28,21 +29,11 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> implements EffectiveStatement<A, D> {
 
-    private static final Predicate<StmtContext<?, ?,?>> IS_SUPPORTED_TO_BUILD_EFFECTIVE =
-            new Predicate<StmtContext<?,?,?>>() {
-        @Override
-        public boolean apply(final StmtContext<?, ?, ?> input) {
-            return input.isSupportedToBuildEffective();
-        }
-    };
+    private static final Predicate<StmtContext<?, ?, ?>> IS_SUPPORTED_TO_BUILD_EFFECTIVE =
+            StmtContext::isSupportedToBuildEffective;
 
-    private static final Predicate<StmtContext<?, ?,?>> IS_UNKNOWN_STATEMENT_CONTEXT =
-            new Predicate<StmtContext<?,?,?>>() {
-        @Override
-        public boolean apply(final StmtContext<?, ?, ?> input) {
-            return StmtContextUtils.isUnknownStatement(input);
-        }
-    };
+    private static final Predicate<StmtContext<?, ?, ?>> IS_UNKNOWN_STATEMENT_CONTEXT =
+            StmtContextUtils::isUnknownStatement;
 
     private final List<? extends EffectiveStatement<?, ?>> substatements;
     private final List<StatementContextBase<?, ?, ?>> unknownSubstatementsToBuild;
@@ -80,24 +71,23 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
         }
         substatementsInit.addAll(effectiveSubstatements);
 
-        Collection<StatementContextBase<?, ?, ?>> substatementsToBuild = Collections2.filter(substatementsInit,
-                IS_SUPPORTED_TO_BUILD_EFFECTIVE);
+        Collection<StatementContextBase<?, ?, ?>> substatementsToBuild =
+                substatementsInit.stream().filter(IS_SUPPORTED_TO_BUILD_EFFECTIVE).collect(Collectors.toList());
         if (!buildUnknownSubstatements) {
-            this.unknownSubstatementsToBuild = ImmutableList.copyOf(Collections2.filter(substatementsToBuild,
-                    IS_UNKNOWN_STATEMENT_CONTEXT));
-            substatementsToBuild = Collections2.filter(substatementsToBuild,
-                    Predicates.not(IS_UNKNOWN_STATEMENT_CONTEXT));
+            this.unknownSubstatementsToBuild = ImmutableList.copyOf(
+                    substatementsToBuild.stream().filter(IS_UNKNOWN_STATEMENT_CONTEXT).collect(Collectors.toList()));
+            substatementsToBuild = substatementsToBuild.stream().filter(IS_UNKNOWN_STATEMENT_CONTEXT.negate()).collect(
+                    Collectors.toList());
         } else {
             this.unknownSubstatementsToBuild = ImmutableList.of();
         }
 
-        this.substatements = ImmutableList.copyOf(Collections2.transform(substatementsToBuild,
-                StmtContextUtils.buildEffective()));
+        this.substatements = ImmutableList.copyOf(
+                substatementsToBuild.stream().map(StmtContextUtils.buildEffective()).collect(Collectors.toList()));
     }
 
     Collection<EffectiveStatement<?, ?>> getOmittedUnknownSubstatements() {
-        return Collections2.transform(unknownSubstatementsToBuild,
-                StmtContextUtils.buildEffective());
+        return unknownSubstatementsToBuild.stream().map(StmtContextUtils.buildEffective()).collect(Collectors.toList());
     }
 
     @Override

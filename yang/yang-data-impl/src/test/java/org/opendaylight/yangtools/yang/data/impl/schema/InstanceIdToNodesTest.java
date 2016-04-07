@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2015, 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -8,8 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import static org.junit.Assert.assertEquals;
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.google.common.io.ByteSource;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,17 +49,12 @@ public class InstanceIdToNodesTest {
     private final NodeIdentifier leafList = new NodeIdentifier(QName.create(NS, REVISION, "ordered-leaf-list"));
     private final NodeWithValue<?> leafListWithValue = new NodeWithValue<>(leafList.getNodeType(), "abcd");
 
-    static SchemaContext createTestContext() throws IOException, YangSyntaxErrorException {
+    private static SchemaContext createTestContext() throws IOException, YangSyntaxErrorException {
         final YangParserImpl parser = new YangParserImpl();
-        return parser.parseSources(Collections2.transform(Collections.singletonList("/filter-test.yang"), new Function<String, ByteSource>() {
+        return parser.parseSources(Collections.singleton(new ByteSource() {
             @Override
-            public ByteSource apply(final String input) {
-                return new ByteSource() {
-                    @Override
-                    public InputStream openStream() throws IOException {
-                        return InstanceIdToNodesTest.class.getResourceAsStream(input);
-                    }
-                };
+            public InputStream openStream() throws IOException {
+                return InstanceIdToNodesTest.class.getResourceAsStream("/filter-test.yang");
             }
         }));
     }

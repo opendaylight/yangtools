@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2013, 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -7,21 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nonnull;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -40,12 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public final class SchemaUtils {
 
-    private static final Function<DataSchemaNode, QName> QNAME_FUNCTION = new Function<DataSchemaNode, QName>() {
-        @Override
-        public QName apply(@Nonnull final DataSchemaNode input) {
-            return input.getQName();
-        }
-    };
+    private static final java.util.function.Function<DataSchemaNode, QName> QNAME_FUNCTION = SchemaNode::getQName;
 
     private SchemaUtils() {
         throw new UnsupportedOperationException();
@@ -89,7 +82,7 @@ public final class SchemaUtils {
      * @param schema schema for parent node - search root
      * @param qname qname(with or without a revision) of a child node to be found in the parent schema
      * @return found schema node
-     * @throws java.lang.IllegalStateException if the child was not found in parent schema node
+     * @throws IllegalStateException if the child was not found in parent schema node
      */
     public static DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname) {
         // Try to find child schema node directly, but use a fallback that compares QNames without revisions and auto-expands choices
@@ -142,13 +135,11 @@ public final class SchemaUtils {
     private static Optional<AugmentationSchema> findAugment(final AugmentationTarget schema, final Set<QName> qNames) {
         for (AugmentationSchema augment : schema.getAvailableAugmentations()) {
 
-            HashSet<QName> qNamesFromAugment = Sets.newHashSet(Collections2.transform(augment.getChildNodes(), new Function<DataSchemaNode, QName>() {
-                @Override
-                public QName apply(@Nonnull final DataSchemaNode input) {
-                    Preconditions.checkNotNull(input);
-                    return input.getQName();
-                }
-            }));
+            Set<QName> qNamesFromAugment = augment.getChildNodes().stream().map(
+                    input -> {
+                        Preconditions.checkNotNull(input);
+                        return input.getQName();
+                    }).collect(Collectors.toSet());
 
             if(qNamesFromAugment.equals(qNames)) {
                 return Optional.of(augment);
@@ -182,7 +173,7 @@ public final class SchemaUtils {
     }
 
     private static Map<QName, ChoiceSchemaNode> mapChildElementsFromChoices(final DataNodeContainer schema, final Iterable<DataSchemaNode> childNodes) {
-        Map<QName, ChoiceSchemaNode> mappedChoices = Maps.newLinkedHashMap();
+        Map<QName, ChoiceSchemaNode> mappedChoices = new LinkedHashMap<>();
 
         for (final DataSchemaNode childSchema : childNodes) {
             if (childSchema instanceof ChoiceSchemaNode) {
@@ -225,10 +216,10 @@ public final class SchemaUtils {
      */
     public static Map<QName, AugmentationSchema> mapChildElementsFromAugments(final AugmentationTarget schema) {
 
-        Map<QName, AugmentationSchema> childNodesToAugmentation = Maps.newLinkedHashMap();
+        Map<QName, AugmentationSchema> childNodesToAugmentation = new LinkedHashMap<>();
 
         // Find QNames of augmented child nodes
-        Map<QName, AugmentationSchema> augments = Maps.newHashMap();
+        Map<QName, AugmentationSchema> augments = new HashMap<>();
         for (final AugmentationSchema augmentationSchema : schema.getAvailableAugmentations()) {
             for (DataSchemaNode dataSchemaNode : augmentationSchema.getChildNodes()) {
                 augments.put(dataSchemaNode.getQName(), augmentationSchema);
@@ -289,7 +280,7 @@ public final class SchemaUtils {
      * @return set of QNames
      */
     public static Set<QName> getChildNodesRecursive(final DataNodeContainer nodeContainer) {
-        Set<QName> allChildNodes = Sets.newHashSet();
+        Set<QName> allChildNodes = new HashSet<>();
 
         for (DataSchemaNode childSchema : nodeContainer.getChildNodes()) {
             if(childSchema instanceof ChoiceSchemaNode) {
@@ -322,7 +313,7 @@ public final class SchemaUtils {
             return Collections.emptySet();
         }
 
-        Set<DataSchemaNode> realChildNodes = Sets.newHashSet();
+        Set<DataSchemaNode> realChildNodes = new HashSet<>();
 
         if(targetSchema instanceof DataNodeContainer) {
             realChildNodes = getRealSchemasForAugment((DataNodeContainer)targetSchema, augmentSchema);
@@ -341,7 +332,7 @@ public final class SchemaUtils {
 
     public static Set<DataSchemaNode> getRealSchemasForAugment(final DataNodeContainer targetSchema,
             final AugmentationSchema augmentSchema) {
-        Set<DataSchemaNode> realChildNodes = Sets.newHashSet();
+        Set<DataSchemaNode> realChildNodes = new HashSet<>();
         for (DataSchemaNode dataSchemaNode : augmentSchema.getChildNodes()) {
             DataSchemaNode realChild = targetSchema.getDataChildByName(dataSchemaNode.getQName());
             realChildNodes.add(realChild);
@@ -365,7 +356,7 @@ public final class SchemaUtils {
     public static boolean belongsToCaseAugment(final ChoiceCaseNode caseNode, final AugmentationIdentifier childToProcess) {
         for (AugmentationSchema augmentationSchema : caseNode.getAvailableAugmentations()) {
 
-            Set<QName> currentAugmentChildNodes = Sets.newHashSet();
+            Set<QName> currentAugmentChildNodes = new HashSet<>();
             for (DataSchemaNode dataSchemaNode : augmentationSchema.getChildNodes()) {
                 currentAugmentChildNodes.add(dataSchemaNode.getQName());
             }
@@ -399,7 +390,8 @@ public final class SchemaUtils {
     }
 
     public static AugmentationIdentifier getNodeIdentifierForAugmentation(final AugmentationSchema schema) {
-        final Collection<QName> qnames = Collections2.transform(schema.getChildNodes(), QNAME_FUNCTION);
+        final Collection<QName> qnames =
+                schema.getChildNodes().stream().map(QNAME_FUNCTION).collect(Collectors.toSet());
         return new AugmentationIdentifier(ImmutableSet.copyOf(qnames));
     }
 
@@ -447,15 +439,15 @@ public final class SchemaUtils {
     }
 
     private static Optional<SchemaNode> tryFindGroupings(final SchemaContext ctx, final QName qname) {
-        return Optional.<SchemaNode> fromNullable(Iterables.find(ctx.getGroupings(), new SchemaNodePredicate(qname), null));
+        return Optional.fromNullable(Iterables.find(ctx.getGroupings(), new SchemaNodePredicate(qname), null));
     }
 
     private static Optional<SchemaNode> tryFindRpc(final SchemaContext ctx, final QName qname) {
-        return Optional.<SchemaNode>fromNullable(Iterables.find(ctx.getOperations(), new SchemaNodePredicate(qname), null));
+        return Optional.fromNullable(Iterables.find(ctx.getOperations(), new SchemaNodePredicate(qname), null));
     }
 
     private static Optional<SchemaNode> tryFindNotification(final SchemaContext ctx, final QName qname) {
-        return Optional.<SchemaNode>fromNullable(Iterables.find(ctx.getNotifications(), new SchemaNodePredicate(qname), null));
+        return Optional.fromNullable(Iterables.find(ctx.getNotifications(), new SchemaNodePredicate(qname), null));
     }
 
     private static final class SchemaNodePredicate implements Predicate<SchemaNode> {

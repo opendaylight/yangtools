@@ -8,14 +8,15 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -29,12 +30,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 @Beta
 public final class NormalizedNodes {
     private static final int STRINGTREE_INDENT = 4;
-    private static final Predicate<DuplicateEntry> DUPLICATES_ONLY = new Predicate<DuplicateEntry>() {
-        @Override
-        public boolean apply(final DuplicateEntry input) {
-            return !input.getDuplicates().isEmpty();
-        }
-    };
+    private static final Predicate<DuplicateEntry> DUPLICATES_ONLY = input -> !input.getDuplicates().isEmpty();
 
     private NormalizedNodes() {
         throw new UnsupportedOperationException("Utility class should not be instantiated");
@@ -144,6 +140,6 @@ public final class NormalizedNodes {
      * @return A Map of NormalizedNode/DuplicateEntry relationships.
      */
     public static Map<NormalizedNode<?, ?>, DuplicateEntry> findDuplicates(@Nonnull final NormalizedNode<?, ?> node) {
-        return Maps.filterValues(DuplicateFinder.findDuplicates(node), DUPLICATES_ONLY);
+        return Maps.filterValues(DuplicateFinder.findDuplicates(node), DUPLICATES_ONLY::test);
     }
 }

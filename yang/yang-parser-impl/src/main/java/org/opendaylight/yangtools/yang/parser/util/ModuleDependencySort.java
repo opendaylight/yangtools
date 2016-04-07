@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2013, 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -9,19 +9,18 @@ package org.opendaylight.yangtools.yang.parser.util;
 
 import static java.util.Arrays.asList;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -42,15 +41,12 @@ public final class ModuleDependencySort {
 
     private static final Date DEFAULT_REVISION = SimpleDateFormatUtil.DEFAULT_DATE_REV;
     private static final Logger LOGGER = LoggerFactory.getLogger(ModuleDependencySort.class);
-    private static final Function<Node, Module> TOPOLOGY_FUNCTION = new Function<TopologicalSort.Node, Module>() {
-        @Override
-        public Module apply(final TopologicalSort.Node input) {
-            if (input == null) {
-                return null;
-            }
-            ModuleOrModuleBuilder moduleOrModuleBuilder = ((ModuleNodeImpl) input).getReference();
-            return moduleOrModuleBuilder.getModule();
+    private static final Function<Node, Module> TOPOLOGY_FUNCTION = input -> {
+        if (input == null) {
+            return null;
         }
+        ModuleOrModuleBuilder moduleOrModuleBuilder = ((ModuleNodeImpl) input).getReference();
+        return moduleOrModuleBuilder.getModule();
     };
 
     /**
@@ -63,16 +59,13 @@ public final class ModuleDependencySort {
     /**
      * Extracts {@link ModuleBuilder} from a {@link ModuleNodeImpl}.
      */
-    private static final Function<TopologicalSort.Node, ModuleBuilder> NODE_TO_MODULEBUILDER = new Function<TopologicalSort.Node, ModuleBuilder>() {
-        @Override
-        public ModuleBuilder apply(final TopologicalSort.Node input) {
-            // Cast to ModuleBuilder from Node and return
-            if (input == null) {
-                return null;
-            }
-            ModuleOrModuleBuilder moduleOrModuleBuilder = ((ModuleNodeImpl) input).getReference();
-            return moduleOrModuleBuilder.getModuleBuilder();
+    private static final Function<TopologicalSort.Node, ModuleBuilder> NODE_TO_MODULEBUILDER = input -> {
+        // Cast to ModuleBuilder from Node and return
+        if (input == null) {
+            return null;
         }
+        ModuleOrModuleBuilder moduleOrModuleBuilder = ((ModuleNodeImpl) input).getReference();
+        return moduleOrModuleBuilder.getModuleBuilder();
     };
 
     /**
@@ -94,8 +87,8 @@ public final class ModuleDependencySort {
     @Deprecated
     public static List<ModuleBuilder> sort(final Collection<ModuleBuilder> builders) {
         List<TopologicalSort.Node> sorted = sortInternal(ModuleOrModuleBuilder.fromAll(
-                Collections.<Module>emptySet(),builders));
-        return Lists.transform(sorted, NODE_TO_MODULEBUILDER);
+                Collections.emptySet(),builders));
+        return sorted.stream().map(NODE_TO_MODULEBUILDER).collect(Collectors.toList());
     }
 
     public static List<ModuleBuilder> sortWithContext(final SchemaContext context, final ModuleBuilder... builders) {
@@ -103,21 +96,17 @@ public final class ModuleDependencySort {
 
         List<TopologicalSort.Node> sorted = sortInternal(all);
         // Cast to ModuleBuilder from Node if possible and return
-        return Lists.transform(sorted, new Function<TopologicalSort.Node, ModuleBuilder>() {
-
-            @Override
-            public ModuleBuilder apply(final TopologicalSort.Node input) {
-                if (input == null) {
-                    return null;
-                }
-                ModuleOrModuleBuilder moduleOrModuleBuilder = ((ModuleNodeImpl) input).getReference();
-                if (moduleOrModuleBuilder.isModuleBuilder()) {
-                    return moduleOrModuleBuilder.getModuleBuilder();
-                } else {
-                    return null;
-                }
+        return sorted.stream().map(input -> {
+            if (input == null) {
+                return null;
             }
-        });
+            ModuleOrModuleBuilder moduleOrModuleBuilder = ((ModuleNodeImpl) input).getReference();
+            if (moduleOrModuleBuilder.isModuleBuilder()) {
+                return moduleOrModuleBuilder.getModuleBuilder();
+            } else {
+                return null;
+            }
+        }).collect(Collectors.toList());
     }
 
     /**
@@ -129,19 +118,17 @@ public final class ModuleDependencySort {
      */
     public static List<Module> sort(final Module... modules) {
         List<TopologicalSort.Node> sorted = sortInternal(ModuleOrModuleBuilder.fromAll(asList(modules),
-                Collections.<ModuleBuilder>emptyList()));
+                Collections.emptyList()));
         // Cast to Module from Node and return
-        return Lists.transform(sorted, TOPOLOGY_FUNCTION);
+        return sorted.stream().map(TOPOLOGY_FUNCTION).collect(Collectors.toList());
     }
 
     private static List<TopologicalSort.Node> sortInternal(final Iterable<ModuleOrModuleBuilder> modules) {
         Map<String, Map<Date, ModuleNodeImpl>> moduleGraph = createModuleGraph(modules);
 
-        Set<TopologicalSort.Node> nodes = Sets.newHashSet();
+        Set<TopologicalSort.Node> nodes = new HashSet<>();
         for (Map<Date, ModuleNodeImpl> map : moduleGraph.values()) {
-            for (ModuleNodeImpl node : map.values()) {
-                nodes.add(node);
-            }
+            nodes.addAll(map.values());
         }
 
         return TopologicalSort.sort(nodes);
@@ -149,7 +136,7 @@ public final class ModuleDependencySort {
 
     @VisibleForTesting
     static Map<String, Map<Date, ModuleNodeImpl>> createModuleGraph(final Iterable<ModuleOrModuleBuilder> builders) {
-        Map<String, Map<Date, ModuleNodeImpl>> moduleGraph = Maps.newHashMap();
+        Map<String, Map<Date, ModuleNodeImpl>> moduleGraph = new HashMap<>();
 
         processModules(moduleGraph, builders);
         processDependencies(moduleGraph, builders);
@@ -166,7 +153,7 @@ public final class ModuleDependencySort {
 
         // Create edges in graph
         for (ModuleOrModuleBuilder mmb : mmbs) {
-            Map<String, Date> imported = Maps.newHashMap();
+            Map<String, Date> imported = new HashMap<>();
 
             String fromName;
             Date fromRevision;
@@ -300,7 +287,7 @@ public final class ModuleDependencySort {
             }
 
             if (moduleGraph.get(name) == null) {
-                moduleGraph.put(name, Maps.<Date, ModuleNodeImpl> newHashMap());
+                moduleGraph.put(name, new HashMap<>());
             }
 
             if (moduleGraph.get(name).get(rev) != null) {

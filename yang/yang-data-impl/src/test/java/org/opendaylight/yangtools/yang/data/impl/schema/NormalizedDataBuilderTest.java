@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2013, 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -7,17 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -53,22 +53,20 @@ public class NormalizedDataBuilderTest {
     private ContainerSchemaNode containerNode;
     private SchemaContext schema;
 
-    SchemaContext parseTestSchema(final String... yangPath) throws IOException, YangSyntaxErrorException {
+    private SchemaContext parseTestSchema(final String... yangPath) throws IOException, YangSyntaxErrorException {
         YangParserImpl yangParserImpl = new YangParserImpl();
         return yangParserImpl.parseSources(getTestYangs(yangPath));
     }
 
-    List<ByteSource> getTestYangs(final String... yangPaths) {
-
-        return Lists.newArrayList(Collections2.transform(Lists.newArrayList(yangPaths),
-                new Function<String, ByteSource>() {
+    private List<ByteSource> getTestYangs(final String... yangPaths) {
+        return Arrays.stream(yangPaths).map(new Function<String, ByteSource>() {
             @Override
-            public ByteSource apply(final String input) {
+            public ByteSource apply(String input) {
                 ByteSource resourceAsStream = Resources.asByteSource(getClass().getResource(input));
                 Preconditions.checkNotNull(resourceAsStream, "File %s was null", resourceAsStream);
                 return resourceAsStream;
             }
-        }));
+        }).collect(Collectors.toList());
     }
 
     @Before
@@ -118,7 +116,7 @@ public class NormalizedDataBuilderTest {
         AugmentationNode augmentation = Builders
                 .augmentationBuilder()
                 .withNodeIdentifier(
-                        new AugmentationIdentifier(Sets.newHashSet(getQName("augmentUint32"))))
+                        new AugmentationIdentifier(Collections.singleton(getQName("augmentUint32"))))
                         .withChild(
                                 Builders.<Integer> leafBuilder().withNodeIdentifier(getNodeIdentifier("augmentUint32"))
                                 .withValue(11).build()).build();
@@ -222,7 +220,7 @@ public class NormalizedDataBuilderTest {
     }
 
     private static DataSchemaNode findChildNode(final Iterable<DataSchemaNode> children, final String name) {
-        List<DataNodeContainer> containers = Lists.newArrayList();
+        List<DataNodeContainer> containers = new ArrayList<>();
 
         for (DataSchemaNode dataSchemaNode : children) {
             if (dataSchemaNode.getQName().getLocalName().equals(name)) {

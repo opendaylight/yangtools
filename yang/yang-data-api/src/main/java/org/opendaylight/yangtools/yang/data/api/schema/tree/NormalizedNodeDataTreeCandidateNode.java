@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2015, 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Collections2;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -27,12 +27,8 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
      * Convenience function for functional transformation of {@link NormalizedNode} into
      * a {@link DataTreeCandidateNode}.
      */
-    private static final Function<NormalizedNode<?, ?>, DataTreeCandidateNode> FACTORY_FUNCTION = new Function<NormalizedNode<?, ?>, DataTreeCandidateNode>() {
-        @Override
-        public DataTreeCandidateNode apply(final NormalizedNode<?, ?> input) {
-            return input == null ? null : new NormalizedNodeDataTreeCandidateNode(input);
-        }
-    };
+    private static final Function<NormalizedNode<?, ?>, DataTreeCandidateNode> FACTORY_FUNCTION =
+            input -> input == null ? null : new NormalizedNodeDataTreeCandidateNode(input);
     private final NormalizedNode<?, ?> data;
 
     /**
@@ -52,7 +48,8 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
     @Override
     public Collection<DataTreeCandidateNode> getChildNodes() {
         if (data instanceof NormalizedNodeContainer) {
-            return Collections2.transform(((NormalizedNodeContainer<?, ?, ?>) data).getValue(), FACTORY_FUNCTION);
+            return ((NormalizedNodeContainer<?, ?, ?>) data).getValue().stream().map(FACTORY_FUNCTION).collect(
+                    Collectors.toList());
         } else {
             return Collections.emptyList();
         }
@@ -76,7 +73,7 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
 
     @Override
     public Optional<NormalizedNode<?, ?>> getDataAfter() {
-        return Optional.<NormalizedNode<?, ?>>of(data);
+        return Optional.of(data);
     }
 
     @Override

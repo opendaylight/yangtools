@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+/*
+ * Copyright (c) 2015, 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 import java.net.URI;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -47,12 +47,7 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener{
     private final SchemaNode node; //FIXME use for identifier path completion
     private ParsingState currentParsingState;
 
-    Function<QNameWithPredicateBuilder, QNameWithPredicate> build = new Function<QNameWithPredicateBuilder, QNameWithPredicate>() {
-        @Override
-        public QNameWithPredicate apply(final QNameWithPredicateBuilder builder) {
-           return builder.build();
-        }
-     };
+    private Function<QNameWithPredicateBuilder, QNameWithPredicate> build = QNameWithPredicateBuilder::build;
 
     private enum ParsingState {
         LEAF_REF_PATH, PATH_PREDICATE, PREDICATE_PATH_EQUALITY_EXPR, PATH_KEY_EXPR
@@ -61,7 +56,7 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener{
     public LeafRefPathParserListenerImpl(final SchemaContext schemaContext, final Module currentModule, final SchemaNode currentNode) {
        this.schemaContext = schemaContext;
        this.module = currentModule;
-       this.leafRefPathQnameList = new LinkedList<QNameWithPredicateBuilder>();
+       this.leafRefPathQnameList = new LinkedList<>();
        this.node=currentNode;
        this.currentParsingState = ParsingState.LEAF_REF_PATH;
     }
@@ -84,7 +79,7 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener{
     @Override
     public void enterRel_path_keyexpr(final Rel_path_keyexprContext ctx) {
         currentParsingState=ParsingState.PATH_KEY_EXPR;
-        predicatePathKeyQnameList = new LinkedList<QNameWithPredicateBuilder>();
+        predicatePathKeyQnameList = new LinkedList<>();
         final List<TerminalNode> dots = ctx.DOTS();
         for (final TerminalNode parent : dots) {
             predicatePathKeyQnameList.add(QNameWithPredicateBuilder.UP_PARENT_BUILDER);
@@ -95,7 +90,8 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener{
     @Override
     public void exitRel_path_keyexpr(final Rel_path_keyexprContext ctx) {
 
-        final LeafRefPath pathKeyExpression = LeafRefPath.create(Lists.transform(predicatePathKeyQnameList, build), false);
+        final LeafRefPath pathKeyExpression =
+                LeafRefPath.create(predicatePathKeyQnameList.stream().map(build).collect(Collectors.toList()), false);
         currentPredicate.setPathKeyExpression(pathKeyExpression);
 
         currentParsingState=ParsingState.PREDICATE_PATH_EQUALITY_EXPR;
@@ -136,7 +132,8 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener{
 
     @Override
     public void exitPath_arg(final Path_argContext ctx) {
-        leafRefPath = LeafRefPath.create(Lists.transform(leafRefPathQnameList,build), !relativePath);
+        leafRefPath = LeafRefPath.create(leafRefPathQnameList.stream().map(build).collect(Collectors.toList()),
+                !relativePath);
     }
 
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2013, 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -20,6 +19,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -470,7 +471,7 @@ public final class SchemaContextUtil {
         Preconditions.checkArgument(parentModule != null, "Parent Module reference cannot be NULL");
         Preconditions.checkArgument(xpath != null, "XPath string reference cannot be NULL");
 
-        final List<QName> path = new LinkedList<QName>();
+        final List<QName> path = new LinkedList<>();
         for (final String pathComponent : SLASH_SPLITTER.split(xpath)) {
             if (!pathComponent.isEmpty()) {
                 path.add(stringPathPartToQName(context, parentModule, pathComponent));
@@ -599,20 +600,12 @@ public final class SchemaContextUtil {
 
         if (Iterables.size(schemaNodePath) - colCount >= 0) {
             return Iterables.concat(Iterables.limit(schemaNodePath, Iterables.size(schemaNodePath) - colCount),
-                    Iterables.transform(Iterables.skip(xpaths, colCount), new Function<String, QName>() {
-                        @Override
-                        public QName apply(final String input) {
-                            return stringPathPartToQName(context, module, input);
-                        }
-                    }));
+                    StreamSupport.stream(Iterables.skip(xpaths, colCount).spliterator(), false).map(
+                            input -> stringPathPartToQName(context, module, input)).collect(Collectors.toList()));
         }
         return Iterables.concat(schemaNodePath,
-                Iterables.transform(Iterables.skip(xpaths, colCount), new Function<String, QName>() {
-                    @Override
-                    public QName apply(final String input) {
-                        return stringPathPartToQName(context, module, input);
-                    }
-                }));
+                StreamSupport.stream(Iterables.skip(xpaths, colCount).spliterator(), false).map(
+                        input -> stringPathPartToQName(context, module, input)).collect(Collectors.toList()));
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014, 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -21,10 +21,8 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import com.google.common.base.Charsets;
-import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.CheckedFuture;
@@ -34,9 +32,12 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
@@ -49,7 +50,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceListener;
-import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.util.FilesystemSchemaSourceCache;
 import org.opendaylight.yangtools.yang.parser.util.ASTSchemaSource;
 import org.opendaylight.yangtools.yang.parser.util.TextToASTTransformer;
@@ -199,7 +199,7 @@ public class SharedSchemaRepositoryTest {
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
 
         class CountingSchemaListener implements SchemaSourceListener {
-            List<PotentialSchemaSource<?>> registeredSources = Lists.newArrayList();
+            private List<PotentialSchemaSource<?>> registeredSources = new ArrayList<>();
 
             @Override
             public void schemaSourceEncountered(final SchemaSourceRepresentation source) {
@@ -240,14 +240,10 @@ public class SharedSchemaRepositoryTest {
 
         assertEquals(4, listener.registeredSources.size());
 
-        final Function<PotentialSchemaSource<?>, SourceIdentifier> potSourceToSID = new Function<PotentialSchemaSource<?>, SourceIdentifier>() {
-            @Override
-            public SourceIdentifier apply(final PotentialSchemaSource<?> input) {
-                return input.getSourceIdentifier();
-            }
-        };
-        assertThat(Collections2.transform(listener.registeredSources, potSourceToSID),
-                both(hasItem(new SourceIdentifier("test", Optional.<String>absent())))
+        final Function<PotentialSchemaSource<?>, SourceIdentifier> potSourceToSID =
+                PotentialSchemaSource::getSourceIdentifier;
+        assertThat(listener.registeredSources.stream().map(potSourceToSID).collect(Collectors.toList()),
+                both(hasItem(new SourceIdentifier("test", Optional.absent())))
                         .and(hasItem(new SourceIdentifier("test", Optional.of("2012-12-12"))))
                         .and(hasItem(new SourceIdentifier("test", Optional.of("2013-12-12"))))
                         .and(hasItem(new SourceIdentifier("module", Optional.of("2010-12-12"))))
@@ -265,10 +261,8 @@ public class SharedSchemaRepositoryTest {
 
         final SourceIdentifier runningId = new SourceIdentifier("running", Optional.of("2012-12-12"));
 
-        sharedSchemaRepository.registerSchemaSource(new SchemaSourceProvider<YangTextSchemaSource>() {
-            @Override
-            public CheckedFuture<YangTextSchemaSource, SchemaSourceException> getSource(final SourceIdentifier sourceIdentifier) {
-                return Futures.<YangTextSchemaSource, SchemaSourceException>immediateCheckedFuture(new YangTextSchemaSource(runningId) {
+        sharedSchemaRepository.registerSchemaSource(
+                sourceIdentifier -> Futures.<YangTextSchemaSource, SchemaSourceException>immediateCheckedFuture(new YangTextSchemaSource(runningId) {
                     @Override
                     protected MoreObjects.ToStringHelper addToStringAttributes(final MoreObjects.ToStringHelper toStringHelper) {
                         return toStringHelper;
@@ -278,9 +272,7 @@ public class SharedSchemaRepositoryTest {
                     public InputStream openStream() throws IOException {
                         return new ByteArrayInputStream("running".getBytes(Charsets.UTF_8));
                     }
-                });
-            }
-        }, PotentialSchemaSource.create(runningId, YangTextSchemaSource.class, PotentialSchemaSource.Costs.REMOTE_IO.getValue()));
+                }), PotentialSchemaSource.create(runningId, YangTextSchemaSource.class, PotentialSchemaSource.Costs.REMOTE_IO.getValue()));
 
         final TextToASTTransformer transformer = TextToASTTransformer.create(sharedSchemaRepository, sharedSchemaRepository);
         sharedSchemaRepository.registerSchemaSourceListener(transformer);
@@ -318,7 +310,8 @@ public class SharedSchemaRepositoryTest {
         assertEquals(moduleSize, schemaContext.getModules().size());
     }
 
-    static SettableSchemaProvider<ASTSchemaSource> getRemoteYangSourceProviderFromResource(final String resourceName) throws Exception {
+    private static SettableSchemaProvider<ASTSchemaSource> getRemoteYangSourceProviderFromResource(
+            final String resourceName) throws Exception {
         final ResourceYangSource yangSource = new ResourceYangSource(resourceName);
         final CheckedFuture<ASTSchemaSource, SchemaSourceException> aSTSchemaSource = TextToASTTransformer.TRANSFORMATION.apply(yangSource);
         return SettableSchemaProvider.createRemote(aSTSchemaSource.get(), ASTSchemaSource.class);

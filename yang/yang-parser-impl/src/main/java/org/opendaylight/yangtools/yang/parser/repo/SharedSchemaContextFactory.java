@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014, 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -9,10 +9,8 @@ package org.opendaylight.yangtools.yang.parser.repo;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
@@ -28,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import javax.annotation.Nullable;
+import java.util.stream.Collectors;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.util.concurrent.ExceptionMapper;
@@ -39,8 +37,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
@@ -52,46 +48,37 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
     private static final ExceptionMapper<SchemaResolutionException> MAPPER = ReflectiveExceptionMapper.create("resolve sources", SchemaResolutionException.class);
     private static final Logger LOG = LoggerFactory.getLogger(SharedSchemaContextFactory.class);
 
-    private final Function<SourceIdentifier, ListenableFuture<ASTSchemaSource>> requestSources = new Function<SourceIdentifier, ListenableFuture<ASTSchemaSource>>() {
-        @Override
-        public ListenableFuture<ASTSchemaSource> apply(final SourceIdentifier input) {
-            return repository.getSchemaSource(input, ASTSchemaSource.class);
-        }
-    };
     private final Cache<Collection<SourceIdentifier>, SchemaContext> cache = CacheBuilder.newBuilder().weakValues().build();
 
-    private final AsyncFunction<List<ASTSchemaSource>, SchemaContext> assembleSources = new AsyncFunction<List<ASTSchemaSource>, SchemaContext>() {
-        @Override
-        public ListenableFuture<SchemaContext> apply(final List<ASTSchemaSource> sources) throws SchemaResolutionException, SourceException, ReactorException {
-            final Map<SourceIdentifier, ASTSchemaSource> srcs =
-                    Maps.uniqueIndex(sources, ASTSchemaSource.GET_IDENTIFIER);
-            final Map<SourceIdentifier, YangModelDependencyInfo> deps =
-                    Maps.transformValues(srcs, ASTSchemaSource.GET_DEPINFO);
+    private final AsyncFunction<List<ASTSchemaSource>, SchemaContext> assembleSources = sources -> {
+        final Map<SourceIdentifier, ASTSchemaSource> srcs =
+                Maps.uniqueIndex(sources, ASTSchemaSource.GET_IDENTIFIER);
+        final Map<SourceIdentifier, YangModelDependencyInfo> deps =
+                Maps.transformValues(srcs, ASTSchemaSource.GET_DEPINFO);
 
-            LOG.debug("Resolving dependency reactor {}", deps);
+        LOG.debug("Resolving dependency reactor {}", deps);
 
-            final DependencyResolver res = DependencyResolver.create(deps);
-            if (!res.getUnresolvedSources().isEmpty()) {
-                LOG.debug("Omitting models {} due to unsatisfied imports {}", res.getUnresolvedSources(), res.getUnsatisfiedImports());
-                throw new SchemaResolutionException("Failed to resolve required models",
-                        res.getResolvedSources(), res.getUnsatisfiedImports());
-            }
-
-            final Map<SourceIdentifier, ParserRuleContext> asts = Maps.transformValues(srcs, ASTSchemaSource.GET_AST);
-            final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-
-            for (final Entry<SourceIdentifier, ParserRuleContext> e : asts.entrySet()) {
-                final ParserRuleContext parserRuleCtx = e.getValue();
-                Preconditions.checkArgument(parserRuleCtx instanceof StatementContext,
-                    "Unsupported context class %s for source %s", parserRuleCtx.getClass(), e.getKey());
-
-                reactor.addSource(new YangStatementSourceImpl(e.getKey(), (StatementContext) parserRuleCtx));
-            }
-
-            SchemaContext schemaContext = reactor.buildEffective();
-
-            return Futures.immediateCheckedFuture(schemaContext);
+        final DependencyResolver res = DependencyResolver.create(deps);
+        if (!res.getUnresolvedSources().isEmpty()) {
+            LOG.debug("Omitting models {} due to unsatisfied imports {}", res.getUnresolvedSources(), res.getUnsatisfiedImports());
+            throw new SchemaResolutionException("Failed to resolve required models",
+                    res.getResolvedSources(), res.getUnsatisfiedImports());
         }
+
+        final Map<SourceIdentifier, ParserRuleContext> asts = Maps.transformValues(srcs, ASTSchemaSource.GET_AST);
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+
+        for (final Entry<SourceIdentifier, ParserRuleContext> e : asts.entrySet()) {
+            final ParserRuleContext parserRuleCtx = e.getValue();
+            Preconditions.checkArgument(parserRuleCtx instanceof StatementContext,
+                "Unsupported context class %s for source %s", parserRuleCtx.getClass(), e.getKey());
+
+            reactor.addSource(new YangStatementSourceImpl(e.getKey(), (StatementContext) parserRuleCtx));
+        }
+
+        SchemaContext schemaContext = reactor.buildEffective();
+
+        return Futures.immediateCheckedFuture(schemaContext);
     };
 
     private final SharedSchemaRepository repository;
@@ -116,7 +103,8 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         }
 
         // Request all sources be loaded
-        ListenableFuture<List<ASTSchemaSource>> sf = Futures.allAsList(Collections2.transform(uniqueSourceIdentifiers, requestSources));
+        ListenableFuture<List<ASTSchemaSource>> sf = Futures.allAsList(uniqueSourceIdentifiers.stream().map(input ->
+                repository.getSchemaSource(input, ASTSchemaSource.class)).collect(Collectors.toSet()));
 
         // Detect mismatch between requested Source IDs and IDs that are extracted from parsed source
         // Also remove duplicates if present
@@ -153,12 +141,8 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         }
 
         LOG.warn("Duplicate sources requested for schema context, removed duplicate sources: {}",
-            Collections2.filter(uniqueSourceIdentifiers, new Predicate<SourceIdentifier>() {
-                @Override
-                public boolean apply(@Nullable final SourceIdentifier input) {
-                    return Iterables.frequency(requiredSources, input) > 1;
-                }
-            }));
+                uniqueSourceIdentifiers.stream().filter(
+                        input -> (Iterables.frequency(requiredSources, input) > 1)).collect(Collectors.toList()));
         return ImmutableList.copyOf(uniqueSourceIdentifiers);
     }
 

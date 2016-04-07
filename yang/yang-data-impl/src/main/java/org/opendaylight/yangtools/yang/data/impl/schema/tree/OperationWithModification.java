@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014, 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -7,21 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import java.util.function.Function;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 
 final class OperationWithModification {
-    private static final Function<TreeNode, NormalizedNode<?, ?>> READ_DATA = new Function<TreeNode, NormalizedNode<?, ?>>() {
-        @Override
-        public NormalizedNode<?, ?> apply(final TreeNode input) {
-            return input.getData();
-        }
-    };
+    private static final Function<TreeNode, NormalizedNode<?, ?>> READ_DATA = TreeNode::getData;
 
     private final ModifiedNode modification;
     private final ModificationApplyOperation applyOperation;
@@ -74,7 +69,7 @@ final class OperationWithModification {
                 snapshot = applyOperation.getChild(child).get().apply(childNode, childNode.getOriginal(), version);
             }
 
-            return snapshot.transform(READ_DATA);
+            return snapshot.transform(READ_DATA::apply);
         }
 
         Optional<TreeNode> snapshot = modification.getSnapshot();
@@ -83,7 +78,7 @@ final class OperationWithModification {
         }
 
         if (snapshot.isPresent()) {
-            return snapshot.get().getChild(child).transform(READ_DATA);
+            return snapshot.get().getChild(child).transform(READ_DATA::apply);
         }
 
         return Optional.absent();

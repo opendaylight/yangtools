@@ -36,7 +36,7 @@ public final class StoreTreeNodes {
      * @return Optional with node if the node is present in tree, {@link Optional#absent()} otherwise.
      */
     public static <T extends StoreTreeNode<T>> Optional<T> findNode(final T tree, final YangInstanceIdentifier path) {
-        Optional<T> current = Optional.<T> of(tree);
+        Optional<T> current = Optional.of(tree);
         Iterator<PathArgument> pathIter = path.getPathArguments().iterator();
         while (current.isPresent() && pathIter.hasNext()) {
             current = current.get().getChild(pathIter.next());
@@ -71,13 +71,13 @@ public final class StoreTreeNodes {
      */
     public static <T extends StoreTreeNode<T>> Entry<YangInstanceIdentifier, T> findClosest(final T tree,
             final YangInstanceIdentifier path) {
-        return findClosestsOrFirstMatch(tree, path, Predicates.<T>alwaysFalse());
+        return findClosestsOrFirstMatch(tree, path, Predicates.alwaysFalse());
     }
 
     public static <T extends StoreTreeNode<T>> Entry<YangInstanceIdentifier, T> findClosestsOrFirstMatch(final T tree,
             final YangInstanceIdentifier path, final Predicate<T> predicate) {
-        Optional<T> parent = Optional.<T>of(tree);
-        Optional<T> current = Optional.<T> of(tree);
+        Optional<T> parent = Optional.of(tree);
+        Optional<T> current = Optional.of(tree);
 
         int nesting = 0;
         Iterator<PathArgument> pathIter = path.getPathArguments().iterator();
@@ -88,7 +88,7 @@ public final class StoreTreeNodes {
         }
         if (current.isPresent()) {
             final YangInstanceIdentifier currentPath = path.getAncestor(nesting);
-            return new SimpleImmutableEntry<YangInstanceIdentifier, T>(currentPath, current.get());
+            return new SimpleImmutableEntry<>(currentPath, current.get());
         }
 
         /*
@@ -98,7 +98,7 @@ public final class StoreTreeNodes {
          * present. At any rate we verify state just to be on the safe side.
          */
         Verify.verify(nesting > 0);
-        return new SimpleImmutableEntry<YangInstanceIdentifier, T>(path.getAncestor(nesting - 1), parent.get());
+        return new SimpleImmutableEntry<>(path.getAncestor(nesting - 1), parent.get());
     }
 
     public static <T extends StoreTreeNode<T>> Optional<T> getChild(final Optional<T> parent, final PathArgument child) {

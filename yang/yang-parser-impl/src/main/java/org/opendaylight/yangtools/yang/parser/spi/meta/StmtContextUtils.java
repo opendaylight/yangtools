@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2015, 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import java.util.Collection;
+import java.util.function.Function;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -24,21 +24,11 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 public final class StmtContextUtils {
     public static final Splitter LIST_KEY_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
 
-    private static final Function<StmtContext<?, ?,?>, DeclaredStatement<?>> BUILD_DECLARED =
-            new Function<StmtContext<?,?,?>, DeclaredStatement<?>>() {
-        @Override
-        public DeclaredStatement<?> apply(final StmtContext<?, ?, ?> input) {
-            return input.buildDeclared();
-        }
-    };
+    private static final Function<StmtContext<?, ?, ?>, DeclaredStatement<?>> BUILD_DECLARED =
+            StmtContext::buildDeclared;
 
-    private static final Function<StmtContext<?, ?,?>, EffectiveStatement<?,?>> BUILD_EFFECTIVE =
-            new Function<StmtContext<?,?,?>, EffectiveStatement<?,?>>() {
-        @Override
-        public EffectiveStatement<?, ?> apply(final StmtContext<?, ?, ?> input) {
-            return input.buildEffective();
-        }
-    };
+    private static final Function<StmtContext<?, ?, ?>, EffectiveStatement<?, ?>> BUILD_EFFECTIVE =
+            StmtContext::buildEffective;
 
     private StmtContextUtils() {
         throw new UnsupportedOperationException("Utility class");

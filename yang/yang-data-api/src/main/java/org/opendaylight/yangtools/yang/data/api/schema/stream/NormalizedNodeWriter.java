@@ -12,13 +12,12 @@ import static org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedN
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.xml.stream.XMLStreamReader;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -281,20 +280,17 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
             }
 
             // Write all the rest
-            return writeChildren(Iterables.filter(node.getValue(), new Predicate<NormalizedNode<?, ?>>() {
-                @Override
-                public boolean apply(final NormalizedNode<?, ?> input) {
-                    if (input instanceof AugmentationNode) {
-                        return true;
-                    }
-                    if (!qnames.contains(input.getNodeType())) {
-                        return true;
-                    }
-
-                    LOG.debug("Skipping key child {}", input);
-                    return false;
+            return writeChildren(node.getValue().stream().filter(input -> {
+                if (input instanceof AugmentationNode) {
+                    return true;
                 }
-            }));
+                if (!qnames.contains(input.getNodeType())) {
+                    return true;
+                }
+
+                LOG.debug("Skipping key child {}", input);
+                return false;
+            }).collect(Collectors.toList()));
         }
     }
 }

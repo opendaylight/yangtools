@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2015, 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -10,11 +10,11 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.EFFECTIVE_MODEL;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.FULL_DECLARATION;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.function.Function;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -174,7 +174,7 @@ class ModifierImpl implements ModelActionBuilder {
 
     @Override
     public <D extends DeclaredStatement<?>> Prerequisite<D> requiresDeclared(final StmtContext<?, ? extends D, ?> context) {
-        return requiresCtxImpl(context, FULL_DECLARATION).transform(StmtContextUtils.<D>buildDeclared());
+        return requiresCtxImpl(context, FULL_DECLARATION).transform(StmtContextUtils.buildDeclared());
     }
 
     @Override
@@ -192,7 +192,7 @@ class ModifierImpl implements ModelActionBuilder {
 
     @Override
     public <E extends EffectiveStatement<?, ?>> Prerequisite<E> requiresEffective(final StmtContext<?, ?, ? extends E> stmt) {
-        return requiresCtxImpl(stmt, EFFECTIVE_MODEL).transform(StmtContextUtils.<E>buildEffective());
+        return requiresCtxImpl(stmt, EFFECTIVE_MODEL).transform(StmtContextUtils.buildEffective());
     }
 
     @Override
@@ -205,7 +205,7 @@ class ModifierImpl implements ModelActionBuilder {
     public <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>> Prerequisite<E> requiresEffective(
             final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
         final AbstractPrerequisite<StmtContext<?,?,E>> rawContext = requiresCtxImpl(context, namespace, key, EFFECTIVE_MODEL);
-        return rawContext.transform(StmtContextUtils.<E>buildEffective());
+        return rawContext.transform(StmtContextUtils.buildEffective());
     }
 
 
@@ -213,7 +213,7 @@ class ModifierImpl implements ModelActionBuilder {
     public <N extends IdentifierNamespace<?, ?>> Prerequisite<Mutable<?, ?, ?>> mutatesNs(final Mutable<?, ?, ?> context,
             final Class<N> namespace) {
         try {
-            return addMutation(new NamespaceMutation<N>(contextImpl(context),namespace));
+            return addMutation(new NamespaceMutation<>(contextImpl(context), namespace));
         } catch (SourceException e) {
             throw shouldNotHappenProbablyBug(e);
         }

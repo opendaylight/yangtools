@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2015, 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -8,12 +8,11 @@
 package org.opendaylight.yangtools.yang.data.jaxen;
 
 import com.google.common.base.Converter;
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import javax.xml.xpath.XPathExpressionException;
 import org.jaxen.BaseXPath;
 import org.jaxen.ContextSupport;
@@ -35,13 +34,8 @@ import org.slf4j.LoggerFactory;
 
 final class JaxenXPath implements XPathExpression {
     private static final Logger LOG = LoggerFactory.getLogger(JaxenXPath.class);
-    protected static final Function<NormalizedNodeContext, NormalizedNode<?, ?>> EXTRACT_NODE =
-            new Function<NormalizedNodeContext, NormalizedNode<?, ?>>() {
-        @Override
-        public NormalizedNode<?, ?> apply(final NormalizedNodeContext input) {
-            return input.getNode();
-        }
-    };
+    private static final Function<NormalizedNodeContext, NormalizedNode<?, ?>> EXTRACT_NODE =
+            NormalizedNodeContext::getNode;
     private final Converter<String, QNameModule> converter;
     private final SchemaPath schemaPath;
     private final BaseXPath xpath;
@@ -88,34 +82,15 @@ final class JaxenXPath implements XPathExpression {
         }
 
         if (result instanceof String) {
-            return Optional.of(new XPathStringResult() {
-                @Override
-                public String getValue() {
-                    return (String)result;
-                }
-            });
+            return Optional.of((XPathStringResult) () -> (String) result);
         } else if (result instanceof Number) {
-            return Optional.of(new XPathNumberResult() {
-                @Override
-                public Number getValue() {
-                    return (Number) result;
-                }
-            });
+            return Optional.of((XPathNumberResult) () -> (Number) result);
         } else if (result instanceof Boolean) {
-            return Optional.of(new XPathBooleanResult() {
-                @Override
-                public Boolean getValue() {
-                    return (Boolean) result;
-                }
-            });
+            return Optional.of((XPathBooleanResult) () -> (Boolean) result);
         } else if (result != null){
-            return Optional.of(new XPathNodesetResult() {
-                @SuppressWarnings("unchecked")
-                @Override
-                public Collection<NormalizedNode<?, ?>> getValue() {
-                    // XXX: Will this really work, or do we need to perform deep transformation?
-                    return Lists.transform((List<NormalizedNodeContext>) result, EXTRACT_NODE);
-                }
+            return Optional.of((XPathNodesetResult) () -> {
+                // XXX: Will this really work, or do we need to perform deep transformation?
+                return ((List<NormalizedNodeContext>) result).stream().map(EXTRACT_NODE).collect(Collectors.toSet());
             });
         } else {
             return Optional.absent();

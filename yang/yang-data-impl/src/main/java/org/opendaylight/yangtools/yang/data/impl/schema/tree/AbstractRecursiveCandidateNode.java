@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2015, 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import com.google.common.collect.Collections2;
 import java.util.Collection;
+import java.util.stream.Collectors;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -70,12 +69,7 @@ abstract class AbstractRecursiveCandidateNode extends AbstractDataTreeCandidateN
 
     @Override
     public final Collection<DataTreeCandidateNode> getChildNodes() {
-        return Collections2.transform(getData().getValue(), new Function<NormalizedNode<?,?>, DataTreeCandidateNode>() {
-            @Override
-            public DataTreeCandidateNode apply(final NormalizedNode<?, ?> input) {
-                return createChild(input);
-            }
-        });
+        return getData().getValue().stream().map(this::createChild).collect(Collectors.toSet());
     }
 
     @SuppressWarnings("unchecked")

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014, 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -29,26 +29,17 @@ import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
  */
 @Beta
 public final class ASTSchemaSource implements SchemaSourceRepresentation {
-    public static final Function<ASTSchemaSource, SourceIdentifier> GET_IDENTIFIER = new Function<ASTSchemaSource, SourceIdentifier>() {
-        @Override
-        public SourceIdentifier apply(@Nonnull final ASTSchemaSource input) {
-            Preconditions.checkNotNull(input);
-            return input.getIdentifier();
-        }
+    public static final Function<ASTSchemaSource, SourceIdentifier> GET_IDENTIFIER = input -> {
+        Preconditions.checkNotNull(input);
+        return input.getIdentifier();
     };
-    public static final Function<ASTSchemaSource, YangModelDependencyInfo> GET_DEPINFO = new Function<ASTSchemaSource, YangModelDependencyInfo>() {
-        @Override
-        public YangModelDependencyInfo apply(@Nonnull final ASTSchemaSource input) {
-            Preconditions.checkNotNull(input);
-            return input.getDependencyInformation();
-        }
+    public static final Function<ASTSchemaSource, YangModelDependencyInfo> GET_DEPINFO = input -> {
+        Preconditions.checkNotNull(input);
+        return input.getDependencyInformation();
     };
-    public static final Function<ASTSchemaSource, ParserRuleContext> GET_AST = new Function<ASTSchemaSource, ParserRuleContext>() {
-        @Override
-        public ParserRuleContext apply(@Nonnull final ASTSchemaSource input) {
-            Preconditions.checkNotNull(input);
-            return input.getAST();
-        }
+    public static final Function<ASTSchemaSource, ParserRuleContext> GET_AST = input -> {
+        Preconditions.checkNotNull(input);
+        return input.getAST();
     };
 
     private final YangModelDependencyInfo depInfo;
