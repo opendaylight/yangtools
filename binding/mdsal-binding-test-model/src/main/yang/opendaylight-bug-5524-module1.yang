@@ -1,0 +1,53 @@
+module opendaylight-bug-5524-module1 {
+    namespace "urn:test:opendaylight-bug-5524-module1";
+    prefix module1;
+
+    revision 2016-01-01 {
+    }
+
+    notification notification-module1 {
+        uses grouping-module1;
+    }
+
+    grouping grouping-module1 {
+        list list-module1-1 {
+            list list-module1-2 {
+                container container-module1 {
+                }
+            }
+        }
+    }
+
+    grouping uses-grouping-augmet-testgrouping-inner {
+        container container-augmet-1 {
+        }
+    }
+
+    grouping uses-grouping-augmet-testgrouping-outer {
+        uses uses-grouping-augmet-testgrouping-inner {
+            augment "container-augmet-1" {
+                container container-2 {
+                }
+            }
+        }
+    }
+
+    grouping uses-grouping-testgrouping-inner {
+        container container-1 {
+            container container-2 {
+            }
+        }
+    }
+
+    grouping uses-grouping-testgrouping-outer {
+        uses uses-grouping-testgrouping-inner;
+    }
+
+    container container-augment {
+        uses uses-grouping-augmet-testgrouping-outer;
+    }
+
+    container container-manual {
+        uses uses-grouping-testgrouping-outer;
+    }
+}

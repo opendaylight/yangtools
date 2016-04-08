@@ -1,0 +1,21 @@
+module opendaylight-bug-5524-module2 {
+    namespace "urn:test:opendaylight-bug-5524-module2";
+    prefix module2;
+
+    revision 2016-01-01 {
+    }
+
+    import opendaylight-bug-5524-module1 {
+        prefix mod1;
+        revision-date 2016-01-01;
+    }
+
+    grouping grouping-module2 {
+        container container-module2 {
+        }
+    }
+
+    augment "/mod1:notification-module1/mod1:list-module1-1/mod1:list-module1-2/mod1:container-module1" {
+        uses grouping-module2;
+    }
+}
