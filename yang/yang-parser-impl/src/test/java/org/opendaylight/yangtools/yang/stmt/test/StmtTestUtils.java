@@ -181,10 +181,7 @@ public class StmtTestUtils {
         StatementStreamSource[] sources = new StatementStreamSource[files.length];
 
         for (int i = 0; i < files.length; i++) {
-
-            sources[i] = new YinStatementSourceImpl(files[i].getPath(), true);
-            // FIXME
-            //sources[i] = new YinStatementSourceImpl(new NamedFileInputStream(files[i], files[i].getPath()));
+            sources[i] = new YinStatementSourceImpl(new NamedFileInputStream(files[i], files[i].getPath()));
         }
 
         return parseYinSources(enabledSemanticVersions, sources);
