@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:sv="urn:opendaylight:yang:extension:semantic-version"
+        name="semantic-version">
+    <yang-version value="1"></yang-version>
+    <namespace uri="urn:opendaylight:yang:extension:semantic-version"></namespace>
+    <prefix value="sv"></prefix>
+    <organization>
+        <text></text>
+    </organization>
+    <contact>
+        <text></text>
+    </contact>
+    <revision date="2016-02-02"></revision>
+    <sv:semantic-version semantic-version="0.0.1"></sv:semantic-version>
+    <extension name="extension">
+        <argument name="name">
+            <yin-element value="false"></yin-element>
+        </argument>
+        <status value="current"></status>
+        <description>
+            <text>Extension with default argument name</text>
+        </description>
+    </extension>
+    <extension name="semantic-version">
+        <argument name="semantic-version">
+            <yin-element value="false"></yin-element>
+        </argument>
+        <status value="current"></status>
+        <description>
+            <text>The OpenConfig version number for the module. This is
+                expressed as a semantic version number of the form:
+                x.y.z
+                where:
+                * x corresponds to the major version,
+                * y corresponds to a minor version,
+                * z corresponds to a patch version.
+                This version corresponds to the model file within which it is
+                defined, and does not cover the whole set of OpenConfig models.
+                Where several modules are used to build up a single block of
+                functionality, the same module version is specified across each
+                file that makes up the module.
+
+                A major version number of 0 indicates that this model is still
+                in development (whether within OpenConfig or with industry
+                partners), and is potentially subject to change.
+
+                Following a release of major version 1, all modules will
+                increment major revision number where backwards incompatible
+                changes to the model are made.
+
+                The minor version is changed when features are added to the
+                model that do not impact current clients use of the model.
+
+                The patch-level version is incremented when non-feature changes
+                (such as bugfixes or clarifications to human-readable
+                descriptions that do not impact model functionality) are made
+                that maintain backwards compatibility.
+
+                The version number is stored in the module meta-data.
+            </text>
+        </description>
+    </extension>
+</module>
