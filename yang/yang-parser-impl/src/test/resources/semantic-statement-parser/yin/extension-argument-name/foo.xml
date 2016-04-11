@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:foo="foo" xmlns:bar="bar"
+        xmlns:sv="urn:opendaylight:yang:extension:semantic-version" name="foo">
+    <yang-version value="1"></yang-version>
+    <namespace uri="foo"></namespace>
+    <prefix value="foo"></prefix>
+    <import module="semantic-version">
+        <prefix value="sv"></prefix>
+        <revision-date date="2016-02-02"></revision-date>
+        <sv:semantic-version semantic-version="0.0.1"></sv:semantic-version>
+    </import>
+    <organization>
+        <text></text>
+    </organization>
+    <contact>
+        <text></text>
+    </contact>
+    <revision date="2016-02-01"></revision>
+    <sv:extension name="1.0.0-value"></sv:extension>
+    <sv:semantic-version semantic-version="0.1.1"></sv:semantic-version>
+    <container name="root">
+        <presence value="false"></presence>
+        <config value="true"></config>
+        <status value="current"></status>
+    </container>
+</module>
