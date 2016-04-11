@@ -9,6 +9,9 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import com.google.common.base.Preconditions;
+import com.google.common.io.ByteStreams;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -45,7 +48,8 @@ public class YinStatementSourceImpl implements StatementStreamSource {
 
     public YinStatementSourceImpl(final InputStream inputStream) {
         yinStatementModelParser = new YinStatementParserImpl(inputStream.toString());
-        this.inputStream = inputStream;
+        this.inputStream = new BufferedInputStream(inputStream);
+        this.inputStream.mark(Integer.MAX_VALUE);
     }
 
     public YinStatementSourceImpl(final String fileName, final boolean isAbsolute) {
@@ -81,10 +85,13 @@ public class YinStatementSourceImpl implements StatementStreamSource {
     private void initializeReader() {
         try {
             if (fileName != null) {
-                this.inputStream = loadFile(fileName, isAbsolute);
+                inputStream = loadFile(fileName, isAbsolute);
+                streamReader = xmlInputFactory.createXMLStreamReader(inputStream);
+            } else {
+                inputStream.reset();
+                streamReader = xmlInputFactory.createXMLStreamReader(new ByteArrayInputStream(ByteStreams.toByteArray
+                        (inputStream)));
             }
-            streamReader = xmlInputFactory.createXMLStreamReader(inputStream);
-
         } catch (XMLStreamException e) {
             LOG.warn("Error while creating XMLStreamReader from input stream", e);
         } catch (URISyntaxException e) {
