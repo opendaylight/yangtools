@@ -220,7 +220,11 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
 
         this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
-        this.imports = ImmutableSet.copyOf(resolveModuleImports(importsInit, ctx));
+        if (ctx.isEnabledSemanticVersioning()) {
+            this.imports = ImmutableSet.copyOf(importsInit);
+        } else {
+            this.imports = ImmutableSet.copyOf(resolveModuleImports(importsInit, ctx));
+        }
         this.notifications = ImmutableSet.copyOf(notificationsInit);
         this.rpcs = ImmutableSet.copyOf(rpcsInit);
         this.deviations = ImmutableSet.copyOf(deviationsInit);

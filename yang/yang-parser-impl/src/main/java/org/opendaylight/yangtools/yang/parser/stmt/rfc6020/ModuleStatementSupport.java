@@ -13,7 +13,7 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import com.google.common.base.Optional;
 import java.net.URI;
 import java.util.Date;
-import java.util.SortedMap;
+import java.util.NavigableMap;
 import java.util.TreeMap;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -160,7 +160,7 @@ public class ModuleStatementSupport extends
     private void addToSemVerModuleNamespace(
             final Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt) {
         final String moduleName = stmt.getStatementArgument();
-        SortedMap<SemVer, StmtContext<?, ?, ?>> modulesMap = stmt.getFromNamespace(
+        NavigableMap<SemVer, StmtContext<?, ?, ?>> modulesMap = stmt.getFromNamespace(
                 SemanticVersionModuleNamespace.class, moduleName);
         if (modulesMap == null) {
             modulesMap = new TreeMap<SemVer, StmtContext<?, ?, ?>>();

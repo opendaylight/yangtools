@@ -85,18 +85,6 @@ public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIden
     String getYangVersion();
 
     /**
-     * Returns the semantic version of yang module.
-     *
-     * Default value is 0.0.0
-     *
-     * @return SemVer semantic version of yang module which is specified as
-     *         argument of
-     *         (urn:opendaylight:yang:extension:semantic-version?revision
-     *         =2016-02-02)semantic-version statement
-     */
-    SemVer getSemanticVersion();
-
-    /**
      * Returns the module description.
      *
      * @return string with the module description which is specified as argument

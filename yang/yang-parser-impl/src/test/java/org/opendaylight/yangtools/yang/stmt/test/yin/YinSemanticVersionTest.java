@@ -17,7 +17,6 @@ import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Set;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -45,7 +44,6 @@ public class YinSemanticVersionTest {
         assertEquals(SemVer.valueOf("0.1.2"), bar.getSemanticVersion());
     }
 
-    @Ignore
     @Test
     public void basicImportTest1() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
         SchemaContext context = StmtTestUtils.parseYinSources("/semantic-version/yin-input/basic-import", true);

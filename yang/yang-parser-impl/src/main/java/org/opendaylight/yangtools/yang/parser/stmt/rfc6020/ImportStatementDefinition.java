@@ -18,7 +18,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.SortedMap;
+import java.util.NavigableMap;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -45,6 +45,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToSemVerModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ImportEffectiveStatementImpl;
@@ -226,12 +227,16 @@ public class ImportStatementDefinition extends
             importAction.apply(new InferenceAction() {
                 @Override
                 public void apply() {
-                    StmtContext<?, ?, ?> importedModule = findRecentCompatibleModule(
+                    Entry<SemVer, StmtContext<?, ?, ?>> importedModuleEntry= findRecentCompatibleModuleEntry(
                             impIdentifier.getName(), stmt);
 
+                    StmtContext<?, ?, ?> importedModule = null;
                     ModuleIdentifier importedModuleIdentifier = null;
-                    if (importedModule != null) {
+                    ModuleIdentifier semVerModuleIdentifier = null;
+                    if (importedModuleEntry != null) {
+                        importedModule = importedModuleEntry.getValue();
                         importedModuleIdentifier = importedModule.getFromNamespace(ModuleCtxToModuleIdentifier.class, importedModule);
+                        semVerModuleIdentifier = createSemVerModuleIdentifier(importedModuleIdentifier, importedModuleEntry.getKey());
                     } else {
                         throw new InferenceException(stmt.getStatementSourceReference(),
                                 "Unable to find module compatible with requested import [%s(%s)].", impIdentifier
@@ -241,6 +246,7 @@ public class ImportStatementDefinition extends
                     linkageTarget.get().addToNs(ImportedModuleContext.class, importedModuleIdentifier, importedModule);
                     String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
                     stmt.addToNs(ImpPrefixToModuleIdentifier.class, impPrefix, importedModuleIdentifier);
+                    stmt.addToNs(ImpPrefixToSemVerModuleIdentifier.class, impPrefix, semVerModuleIdentifier);
 
                     final URI modNs = firstAttributeOf(importedModule.declaredSubstatements(), NamespaceStatement.class);
                     stmt.addToNs(URIStringToImpPrefix.class, modNs.toString(), impPrefix);
@@ -265,19 +271,19 @@ public class ImportStatementDefinition extends
             return requestedImportVersion;
         }
 
-        private static StmtContext<?, ?, ?> findRecentCompatibleModule(final String moduleName,
+        private static Entry<SemVer, StmtContext<?, ?, ?>> findRecentCompatibleModuleEntry(final String moduleName,
                 final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> impStmt) {
-            SortedMap<SemVer, StmtContext<?, ?, ?>> allRelevantModulesMap = impStmt.getFromNamespace(
+            NavigableMap<SemVer, StmtContext<?, ?, ?>> allRelevantModulesMap = impStmt.getFromNamespace(
                     SemanticVersionModuleNamespace.class, moduleName);
             if (allRelevantModulesMap == null) {
                 return null;
             }
 
             final SemVer requestedImportVersion = getRequestedImportVersion(impStmt);
-            allRelevantModulesMap = allRelevantModulesMap.subMap(requestedImportVersion,
-                    SemVer.create(requestedImportVersion.getMajor() + 1));
+            allRelevantModulesMap = allRelevantModulesMap.subMap(requestedImportVersion, true,
+                    SemVer.create(requestedImportVersion.getMajor() + 1), false);
             if (!allRelevantModulesMap.isEmpty()) {
-                return allRelevantModulesMap.get(allRelevantModulesMap.lastKey());
+                return allRelevantModulesMap.lastEntry();
             }
 
             return null;
@@ -286,6 +292,12 @@ public class ImportStatementDefinition extends
         private static ModuleIdentifier getImportedModuleIdentifier(final Mutable<String, ImportStatement, ?> impStmt) {
             return new ModuleIdentifierImpl(impStmt.getStatementArgument(), Optional.<URI> absent(),
                     Optional.<Date> of(SimpleDateFormatUtil.DEFAULT_DATE_IMP));
+        }
+
+        private static ModuleIdentifier createSemVerModuleIdentifier(final ModuleIdentifier importedModuleIdentifier,
+                final SemVer semVer) {
+            return new ModuleIdentifierImpl(importedModuleIdentifier.getName(), Optional.fromNullable(importedModuleIdentifier
+                    .getNamespace()), Optional.of(importedModuleIdentifier.getRevision()), semVer);
         }
     }
 }

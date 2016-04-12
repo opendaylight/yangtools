@@ -12,8 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 /**
  *
- * Source-specific mapping of prefixes to namespaces
- *
+ * Source-specific mapping of prefixes to module identifier with specified semantic version
  */
-public interface ImpPrefixToModuleIdentifier extends IdentifierNamespace<String, ModuleIdentifier> {
+public interface ImpPrefixToSemVerModuleIdentifier extends IdentifierNamespace<String, ModuleIdentifier> {
 }
