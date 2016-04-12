@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -12,8 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 /**
  *
- * Source-specific mapping of prefixes to module identifiers
- *
+ * Source-specific mapping of prefixes to module identifier with specified semantic version
  */
-public interface ImpPrefixToModuleIdentifier extends IdentifierNamespace<String, ModuleIdentifier> {
+public interface ImpPrefixToSemVerModuleIdentifier extends IdentifierNamespace<String, ModuleIdentifier> {
 }

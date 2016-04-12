@@ -16,12 +16,9 @@ import static org.junit.Assert.fail;
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Set;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -45,7 +42,6 @@ public class YinSemanticVersionTest {
         assertEquals(SemVer.valueOf("0.1.2"), bar.getSemanticVersion());
     }
 
-    @Ignore
     @Test
     public void basicImportTest1() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
         SchemaContext context = StmtTestUtils.parseYinSources("/semantic-version/yin-input/basic-import", true);
@@ -57,7 +53,7 @@ public class YinSemanticVersionTest {
 
         assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion());
         assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion());
-        Module bar = findImportedModule(context, foo, "bar");
+        Module bar = StmtTestUtils.findImportedModule(context, foo, "bar");
         assertEquals(SemVer.valueOf("0.1.2"), bar.getSemanticVersion());
     }
 
@@ -71,20 +67,5 @@ public class YinSemanticVersionTest {
             assertTrue(e.getMessage()
                     .startsWith("Unable to find module compatible with requested import [bar(0.1.2)]."));
         }
-    }
-
-    private static Module findImportedModule(SchemaContext context, Module rootModule, String importedModuleName) {
-        ModuleImport requestedModuleImport = null;
-        Set<ModuleImport> rootImports = rootModule.getImports();
-        for (ModuleImport moduleImport : rootImports) {
-            if (moduleImport.getModuleName().equals(importedModuleName)) {
-                requestedModuleImport = moduleImport;
-                break;
-            }
-        }
-
-        Module importedModule = context.findModuleByName(requestedModuleImport.getModuleName(),
-                requestedModuleImport.getRevision());
-        return importedModule;
     }
 }

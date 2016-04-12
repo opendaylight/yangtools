@@ -15,11 +15,9 @@ import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
@@ -42,10 +40,10 @@ public class SemanticVersionComplexTest {
         assertEquals(SemVer.valueOf("1.3.95"), semVer.getSemanticVersion());
         assertEquals(SemVer.valueOf("1.50.2"), foo.getSemanticVersion());
 
-        Module bar = findImportedModule(context, foo, "bar");
+        Module bar = StmtTestUtils.findImportedModule(context, foo, "bar");
         assertEquals(SemVer.valueOf("1.2.6"), bar.getSemanticVersion());
 
-        Module foobar = findImportedModule(context, bar, "foobar");
+        Module foobar = StmtTestUtils.findImportedModule(context, bar, "foobar");
         assertEquals(SemVer.valueOf("2.26.465"), foobar.getSemanticVersion());
 
         // check imported components
@@ -77,10 +75,10 @@ public class SemanticVersionComplexTest {
         assertEquals(SemVer.valueOf("2.5.50"), semVer.getSemanticVersion());
         assertEquals(SemVer.valueOf("2.32.2"), foo.getSemanticVersion());
 
-        Module bar = findImportedModule(context, foo, "bar");
+        Module bar = StmtTestUtils.findImportedModule(context, foo, "bar");
         assertEquals(SemVer.valueOf("4.9.8"), bar.getSemanticVersion());
 
-        Module foobar = findImportedModule(context, bar, "foobar");
+        Module foobar = StmtTestUtils.findImportedModule(context, bar, "foobar");
         assertEquals(SemVer.valueOf("7.13.99"), foobar.getSemanticVersion());
 
         // check used augmentations
@@ -103,20 +101,5 @@ public class SemanticVersionComplexTest {
 
         assertNull("This component should not be present", SchemaContextUtil.findDataSchemaNode(context, bar, new
                 RevisionAwareXPathImpl("/foobar:root/foobar:included-not-correct-mark", true)));
-    }
-
-    private static Module findImportedModule(SchemaContext context, Module rootModule, String importedModuleName) {
-        ModuleImport requestedModuleImport = null;
-        Set<ModuleImport> rootImports = rootModule.getImports();
-        for (ModuleImport moduleImport : rootImports) {
-            if (moduleImport.getModuleName().equals(importedModuleName)) {
-                requestedModuleImport = moduleImport;
-                break;
-            }
-        }
-
-        Module importedModule = context.findModuleByName(requestedModuleImport.getModuleName(),
-                requestedModuleImport.getRevision());
-        return importedModule;
     }
 }

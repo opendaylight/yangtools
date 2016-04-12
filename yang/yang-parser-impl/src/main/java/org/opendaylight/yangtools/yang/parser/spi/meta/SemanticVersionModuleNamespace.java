@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import java.util.SortedMap;
+import java.util.NavigableMap;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
@@ -15,5 +15,5 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
  * Namespace class for storing Maps of all modules with the same name. This namespace is
  * used only in case the semantic versioning is enabled, otherwise it is empty.
  */
-public interface SemanticVersionModuleNamespace extends IdentifierNamespace<String, SortedMap<SemVer, StmtContext<?, ?, ?>>> {
+public interface SemanticVersionModuleNamespace extends IdentifierNamespace<String, NavigableMap<SemVer, StmtContext<?, ?, ?>>> {
 }

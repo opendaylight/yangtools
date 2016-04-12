@@ -20,6 +20,7 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -198,5 +199,20 @@ public class StmtTestUtils {
         reactor.addSources(sources);
 
         return reactor.buildEffective();
+    }
+
+    public static Module findImportedModule(SchemaContext context, Module rootModule, String importedModuleName) {
+        ModuleImport requestedModuleImport = null;
+        Set<ModuleImport> rootImports = rootModule.getImports();
+        for (ModuleImport moduleImport : rootImports) {
+            if (moduleImport.getModuleName().equals(importedModuleName)) {
+                requestedModuleImport = moduleImport;
+                break;
+            }
+        }
+
+        Module importedModule = context.findModuleByName(requestedModuleImport.getModuleName(),
+                requestedModuleImport.getRevision());
+        return importedModule;
     }
 }

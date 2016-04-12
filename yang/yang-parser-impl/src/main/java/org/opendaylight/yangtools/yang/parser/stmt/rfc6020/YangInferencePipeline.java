@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModule
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToSemVerModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
@@ -100,6 +101,7 @@ public final class YangInferencePipeline {
             .addSupport(new SemanticVersionStatementImpl.SemanticVersionSupport())
             .addSupport(global(SemanticVersionNamespace.class))
             .addSupport(global(SemanticVersionModuleNamespace.class))
+            .addSupport(sourceLocal(ImpPrefixToSemVerModuleIdentifier.class))
             .build();
 
     private static final StatementSupportBundle STMT_DEF_BUNDLE = StatementSupportBundle
