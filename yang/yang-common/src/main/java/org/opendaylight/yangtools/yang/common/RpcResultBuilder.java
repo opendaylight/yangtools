@@ -143,7 +143,7 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
      * Returns a builder for a successful result.
      */
     public static <T> RpcResultBuilder<T> success() {
-        return new RpcResultBuilder<T>( true, null );
+        return new RpcResultBuilder<>(true, null);
     }
 
     /**
@@ -152,7 +152,7 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
      * @param result the result value
      */
     public static <T> RpcResultBuilder<T> success( final T result ) {
-        return new RpcResultBuilder<T>( true, result );
+        return new RpcResultBuilder<>(true, result);
     }
 
     /**
@@ -168,7 +168,7 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
      * Returns a builder for a failed result.
      */
     public static <T> RpcResultBuilder<T> failed() {
-        return new RpcResultBuilder<T>( false, null );
+        return new RpcResultBuilder<>(false, null);
     }
 
     /**
@@ -177,7 +177,7 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
      * @param success true if successful, false otherwise.
      */
     public static <T> RpcResultBuilder<T> status( final boolean success ) {
-        return new RpcResultBuilder<T>( success, null );
+        return new RpcResultBuilder<>(success, null);
     }
 
     /**
@@ -186,7 +186,7 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
      * @param other the other RpcResult.
      */
     public static <T> RpcResultBuilder<T> from( final RpcResult<T> other ) {
-        return new RpcResultBuilder<T>( other.isSuccessful(), other.getResult() )
+        return new RpcResultBuilder<>(other.isSuccessful(), other.getResult())
                                                       .withRpcErrors( other.getErrors() );
     }
 
@@ -290,7 +290,7 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
     private void addError( final RpcError error ) {
 
         if (errors == null) {
-            errors = new ImmutableList.Builder<RpcError>();
+            errors = new ImmutableList.Builder<>();
         }
 
         errors.add( error );
@@ -409,8 +409,8 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
     @Override
     public RpcResult<T> build() {
 
-        return new RpcResultImpl<T>( successful, result,
-                errors != null ? errors.build() : Collections.<RpcError>emptyList() );
+        return new RpcResultImpl<>(successful, result,
+                errors != null ? errors.build() : Collections.<RpcError>emptyList());
     }
 
     /**

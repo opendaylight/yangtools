@@ -470,7 +470,7 @@ public final class SchemaContextUtil {
         Preconditions.checkArgument(parentModule != null, "Parent Module reference cannot be NULL");
         Preconditions.checkArgument(xpath != null, "XPath string reference cannot be NULL");
 
-        final List<QName> path = new LinkedList<QName>();
+        final List<QName> path = new LinkedList<>();
         for (final String pathComponent : SLASH_SPLITTER.split(xpath)) {
             if (!pathComponent.isEmpty()) {
                 path.add(stringPathPartToQName(context, parentModule, pathComponent));

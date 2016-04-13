@@ -930,7 +930,7 @@ public class YangParserTest {
         File yangSubmodul = new File(getClass().getResource("/yang-grammar-test/submodule-header-extension.yang")
                 .toURI());
 
-        List<File> yangs = new ArrayList<File>();
+        List<File> yangs = new ArrayList<>();
         yangs.add(yangModul);
         yangs.add(yangSubmodul);
 
@@ -948,7 +948,7 @@ public class YangParserTest {
         File yangModule2 = new File(getClass().getResource("/yang-grammar-test/stmtsep-in-statements2.yang").toURI());
         File yangSubModule = new File(getClass().getResource("/yang-grammar-test/stmtsep-in-statements-sub.yang").toURI());
 
-        List<File> yangs = new ArrayList<File>();
+        List<File> yangs = new ArrayList<>();
         yangs.add(yangModule1);
         yangs.add(yangModule2);
         yangs.add(yangSubModule);

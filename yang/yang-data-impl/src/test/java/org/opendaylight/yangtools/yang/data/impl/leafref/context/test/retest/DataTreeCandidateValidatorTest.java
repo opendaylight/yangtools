@@ -259,7 +259,7 @@ public class DataTreeCandidateValidatorTest {
 
     private static void writeIntoMapEntry() {
 
-        final Map<QName, Object> keys = new HashMap<QName, Object>();
+        final Map<QName, Object> keys = new HashMap<>();
         keys.put(name, "New Project");
         final NodeIdentifierWithPredicates mapEntryPath = new NodeIdentifierWithPredicates(
                 project, keys);
@@ -306,7 +306,7 @@ public class DataTreeCandidateValidatorTest {
 
     private static void writeMapEntry() {
 
-        final Map<QName, Object> keys = new HashMap<QName, Object>();
+        final Map<QName, Object> keys = new HashMap<>();
         keys.put(name, "New Project");
         final NodeIdentifierWithPredicates mapEntryPath = new NodeIdentifierWithPredicates(
                 project, keys);

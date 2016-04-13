@@ -42,7 +42,7 @@ public final class ImmutableOrderedLeafSetNodeSchemaAwareBuilder<T> extends Immu
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
 
-        return new ImmutableOrderedLeafSetNodeSchemaAwareBuilder<T>(schema, (ImmutableOrderedLeafSetNode<T>) node);
+        return new ImmutableOrderedLeafSetNodeSchemaAwareBuilder<>(schema, (ImmutableOrderedLeafSetNode<T>) node);
     }
 
     @Override

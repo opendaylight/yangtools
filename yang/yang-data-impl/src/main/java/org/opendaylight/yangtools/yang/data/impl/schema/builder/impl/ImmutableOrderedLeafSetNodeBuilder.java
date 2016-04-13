@@ -52,7 +52,7 @@ public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T,
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
 
-        return new ImmutableOrderedLeafSetNodeBuilder<T>((ImmutableOrderedLeafSetNode<T>) node);
+        return new ImmutableOrderedLeafSetNodeBuilder<>((ImmutableOrderedLeafSetNode<T>) node);
     }
 
     private void checkDirty() {

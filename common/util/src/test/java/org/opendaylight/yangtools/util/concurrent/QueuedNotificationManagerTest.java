@@ -148,7 +148,7 @@ public class QueuedNotificationManagerTest {
 
         queueExecutor = Executors.newFixedThreadPool( 2 );
         NotificationManager<TestListener<Integer>, Integer> manager =
-                new QueuedNotificationManager<>( queueExecutor, new TestNotifier<Integer>(),
+                new QueuedNotificationManager<>( queueExecutor, new TestNotifier<>(),
                 10, "TestMgr" );
 
         int initialCount = 6;
@@ -188,7 +188,7 @@ public class QueuedNotificationManagerTest {
         queueExecutor = Executors.newFixedThreadPool( nListeners );
         final ExecutorService stagingExecutor = Executors.newFixedThreadPool( nListeners );
         final NotificationManager<TestListener<Integer>, Integer> manager =
-                new QueuedNotificationManager<>( queueExecutor, new TestNotifier<Integer>(),
+                new QueuedNotificationManager<>( queueExecutor, new TestNotifier<>(),
                 5000, "TestMgr" );
 
         final int nNotifications = 100000;
@@ -206,9 +206,9 @@ public class QueuedNotificationManagerTest {
         List<TestListener<Integer>> listeners = Lists.newArrayList();
         for( int i = 1; i <= nListeners; i++ ) {
             final TestListener<Integer> listener =
-                    i == 2 ? new TestListener2<Integer>( nNotifications, i ) :
-                    i == 3 ? new TestListener3<Integer>( nNotifications, i ) :
-                                      new TestListener<Integer>( nNotifications, i );
+                    i == 2 ? new TestListener2<>(nNotifications, i) :
+                    i == 3 ? new TestListener3<>(nNotifications, i) :
+                            new TestListener<>(nNotifications, i);
             listeners.add( listener );
 
             new Thread( new Runnable() {
@@ -247,7 +247,7 @@ public class QueuedNotificationManagerTest {
 
         queueExecutor = Executors.newFixedThreadPool( 1 );
         NotificationManager<TestListener<Integer>, Integer> manager =
-                new QueuedNotificationManager<>( queueExecutor, new TestNotifier<Integer>(),
+                new QueuedNotificationManager<>( queueExecutor, new TestNotifier<>(),
                 10, "TestMgr" );
 
 
@@ -265,7 +265,7 @@ public class QueuedNotificationManagerTest {
 
         final CountDownLatch errorCaughtLatch = new CountDownLatch( 1 );
         queueExecutor = new ThreadPoolExecutor( 1, 1, 0, TimeUnit.SECONDS,
-                                                new LinkedBlockingQueue<Runnable>() ) {
+                new LinkedBlockingQueue<>() ) {
              @Override
              public void execute( final Runnable command ) {
                  super.execute( new Runnable() {
@@ -282,7 +282,7 @@ public class QueuedNotificationManagerTest {
         };
 
         NotificationManager<TestListener<Integer>, Integer> manager =
-                new QueuedNotificationManager<>( queueExecutor, new TestNotifier<Integer>(),
+                new QueuedNotificationManager<>( queueExecutor, new TestNotifier<>(),
                 10, "TestMgr" );
 
         TestListener<Integer> listener = new TestListener<>( 2, 1 );

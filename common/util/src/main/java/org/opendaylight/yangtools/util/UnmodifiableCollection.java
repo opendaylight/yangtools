@@ -37,7 +37,7 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
     private static final Collection<Class<?>> SINGLETON_CLASSES;
 
     static {
-        UNMODIFIABLE_COLLECTION_CLASS = Collections.unmodifiableCollection(new ArrayList<Object>()).getClass();
+        UNMODIFIABLE_COLLECTION_CLASS = Collections.unmodifiableCollection(new ArrayList<>()).getClass();
 
         final Builder<Class<?>> b = ImmutableSet.builder();
         b.add(Collections.singleton(null).getClass());

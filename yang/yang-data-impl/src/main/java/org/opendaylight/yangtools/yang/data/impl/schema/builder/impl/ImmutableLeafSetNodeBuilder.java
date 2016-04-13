@@ -62,7 +62,7 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
 
-        return new ImmutableLeafSetNodeBuilder<T>((ImmutableLeafSetNode<T>) node);
+        return new ImmutableLeafSetNodeBuilder<>((ImmutableLeafSetNode<T>) node);
     }
 
     @Override

@@ -49,9 +49,9 @@ final class SchemaContextImpl extends AbstractSchemaContext {
          * Invest some quality time in building up lookup tables for both.
          */
         final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(
-                new TreeMap<URI, Collection<Module>>(), MODULE_SET_SUPPLIER);
+                new TreeMap<>(), MODULE_SET_SUPPLIER);
         final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(
-                new TreeMap<String, Collection<Module>>(), MODULE_SET_SUPPLIER);
+                new TreeMap<>(), MODULE_SET_SUPPLIER);
 
         for (Module m : modules) {
             nameMap.put(m.getName(), m);

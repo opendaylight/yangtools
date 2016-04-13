@@ -167,7 +167,7 @@ public final class LeafRefContextUtils {
     public static List<LeafRefContext> findAllLeafRefChilds(
             final LeafRefContext parent) {
 
-        final LinkedList<LeafRefContext> leafRefChilds = new LinkedList<LeafRefContext>();
+        final LinkedList<LeafRefContext> leafRefChilds = new LinkedList<>();
 
         if (parent == null) {
             return leafRefChilds;
@@ -212,7 +212,7 @@ public final class LeafRefContextUtils {
     public static List<LeafRefContext> findAllChildsReferencedByLeafRef(
             final LeafRefContext parent) {
 
-        final LinkedList<LeafRefContext> childsReferencedByLeafRef = new LinkedList<LeafRefContext>();
+        final LinkedList<LeafRefContext> childsReferencedByLeafRef = new LinkedList<>();
 
         if (parent == null) {
             return childsReferencedByLeafRef;
@@ -250,7 +250,7 @@ public final class LeafRefContextUtils {
                 pathFromRoot, root);
 
         if (leafRefReferencedByContext == null) {
-            return new HashMap<QName, LeafRefContext>();
+            return new HashMap<>();
         }
 
         return leafRefReferencedByContext.getAllReferencedByLeafRefCtxs();

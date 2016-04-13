@@ -39,13 +39,13 @@ public class ListenerRegistry<T extends EventListener> implements Iterable<Liste
         if (listener == null) {
             throw new IllegalArgumentException("Listener should not be null.");
         }
-        final ListenerRegistrationImpl<T> ret = new ListenerRegistrationImpl<T>(listener);
+        final ListenerRegistrationImpl<T> ret = new ListenerRegistrationImpl<>(listener);
         listeners.put(ret,ret);
         return ret;
     }
 
     public <L extends T> ListenerRegistration<L> registerWithType(final L listener) {
-        final ListenerRegistrationImpl<L> ret = new ListenerRegistrationImpl<L>(listener);
+        final ListenerRegistrationImpl<L> ret = new ListenerRegistrationImpl<>(listener);
         listeners.put(ret,ret);
         return ret;
     }

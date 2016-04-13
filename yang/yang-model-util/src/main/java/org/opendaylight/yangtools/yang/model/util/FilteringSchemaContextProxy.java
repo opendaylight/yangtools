@@ -64,8 +64,8 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
 
         final Builder<Module> filteredModulesBuilder = new Builder<>();
 
-        final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(new TreeMap<URI, Collection<Module>>(), MODULE_SET_SUPPLIER);
-        final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(new TreeMap<String, Collection<Module>>(), MODULE_SET_SUPPLIER);
+        final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(new TreeMap<>(), MODULE_SET_SUPPLIER);
+        final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(new TreeMap<>(), MODULE_SET_SUPPLIER);
 
         ImmutableMap.Builder<ModuleIdentifier, String> identifiersToSourcesBuilder = ImmutableMap.builder();
 

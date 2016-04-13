@@ -35,7 +35,7 @@ public class TestUtils {
         URI path = StreamToNormalizedNodeTest.class.getResource(resourceDirectory).toURI();
         final File testDir = new File(path);
         final String[] fileList = testDir.list();
-        final List<File> testFiles = new ArrayList<File>();
+        final List<File> testFiles = new ArrayList<>();
         if (fileList == null) {
             throw new FileNotFoundException(resourceDirectory);
         }

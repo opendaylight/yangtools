@@ -88,7 +88,7 @@ public final class StoreTreeNodes {
         }
         if (current.isPresent()) {
             final YangInstanceIdentifier currentPath = path.getAncestor(nesting);
-            return new SimpleImmutableEntry<YangInstanceIdentifier, T>(currentPath, current.get());
+            return new SimpleImmutableEntry<>(currentPath, current.get());
         }
 
         /*
@@ -98,7 +98,7 @@ public final class StoreTreeNodes {
          * present. At any rate we verify state just to be on the safe side.
          */
         Verify.verify(nesting > 0);
-        return new SimpleImmutableEntry<YangInstanceIdentifier, T>(path.getAncestor(nesting - 1), parent.get());
+        return new SimpleImmutableEntry<>(path.getAncestor(nesting - 1), parent.get());
     }
 
     public static <T extends StoreTreeNode<T>> Optional<T> getChild(final Optional<T> parent, final PathArgument child) {

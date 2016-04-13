@@ -30,7 +30,7 @@ public final class IdentityEffectiveStatementImpl extends AbstractEffectiveSchem
         super(ctx);
 
         // initDerivedIdentities
-        Set<IdentitySchemaNode> derivedIdentitiesInit = new HashSet<IdentitySchemaNode>();
+        Set<IdentitySchemaNode> derivedIdentitiesInit = new HashSet<>();
         List<StmtContext<?, ?, ?>> derivedIdentitiesCtxList = ctx.getFromNamespace(
                 DerivedIdentitiesNamespace.class, ctx.getStatementArgument());
         if (derivedIdentitiesCtxList == null) {

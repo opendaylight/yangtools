@@ -28,7 +28,7 @@ public class ReadWriteTrieMapTest {
         trieMap.put("0", "zero");
         trieMap.put("1", "one");
 
-        final ReadWriteTrieMap<String, String> readWriteTrieMap = new ReadWriteTrieMap<String, String>(trieMap, 5);
+        final ReadWriteTrieMap<String, String> readWriteTrieMap = new ReadWriteTrieMap<>(trieMap, 5);
 
         assertNotNull("Object readOnlyTrieMap shouldn't be 'null'.", readWriteTrieMap);
 
@@ -54,7 +54,7 @@ public class ReadWriteTrieMapTest {
         assertTrue("Entry set of readWriteTrieMap and trieMap should by equals.", convertSetEntryToMap(readWriteTrieMap.entrySet()).equals(trieMap));
 
         trieMap.put("2", "two");
-        final ReadWriteTrieMap<String, String> readWriteTrieMap2 = new ReadWriteTrieMap<String, String>(trieMap, 4);
+        final ReadWriteTrieMap<String, String> readWriteTrieMap2 = new ReadWriteTrieMap<>(trieMap, 4);
 
         assertFalse("Objects readWriteTrieMap and readOnlyTrieMap2 should be different.", readWriteTrieMap.equals(readWriteTrieMap2));
         assertFalse("Hash codes of object readWriteTrieMap and readOnelyTrieMap2 should be different.", readWriteTrieMap.hashCode() == readWriteTrieMap2.hashCode());

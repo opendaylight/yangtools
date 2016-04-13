@@ -31,7 +31,7 @@ class LeafRefContextTreeBuilder {
 
     public LeafRefContextTreeBuilder(final SchemaContext schemaContext) {
         this.schemaContext = schemaContext;
-        this.leafRefs = new LinkedList<LeafRefContext>();
+        this.leafRefs = new LinkedList<>();
     }
 
     public LeafRefContext buildLeafRefContextTree() throws IOException,
@@ -214,7 +214,7 @@ class LeafRefContextTreeBuilder {
         final LeafRefPath nodeXPath = LeafRefUtils.schemaPathToLeafRefPath(
                 node.getPath(), module);
 
-        final List<LeafRefContext> foundLeafRefs = new LinkedList<LeafRefContext>();
+        final List<LeafRefContext> foundLeafRefs = new LinkedList<>();
 
         for (final LeafRefContext leafref : leafRefs) {
             final LeafRefPath leafRefTargetPath = leafref

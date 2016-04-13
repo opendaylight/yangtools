@@ -44,15 +44,15 @@ import java.util.Set;
 public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implements Cloneable, ModifiableMapPhase<K, V> {
     static final class Ordered<K, V> extends MutableOffsetMap<K, V> {
         Ordered() {
-            super(new LinkedHashMap<K, V>());
+            super(new LinkedHashMap<>());
         }
 
         Ordered(final Map<K, V> source) {
-            super(OffsetMapCache.orderedOffsets(source.keySet()), source, new LinkedHashMap<K, V>());
+            super(OffsetMapCache.orderedOffsets(source.keySet()), source, new LinkedHashMap<>());
         }
 
         Ordered(final Map<K, Integer> offsets, final V[] objects) {
-            super(offsets, objects, new LinkedHashMap<K, V>());
+            super(offsets, objects, new LinkedHashMap<>());
         }
 
         @Override
@@ -78,15 +78,15 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
     static final class Unordered<K, V> extends MutableOffsetMap<K, V> {
         Unordered() {
-            super(new HashMap<K, V>());
+            super(new HashMap<>());
         }
 
         Unordered(final Map<K, V> source) {
-            super(OffsetMapCache.unorderedOffsets(source.keySet()), source, new HashMap<K, V>());
+            super(OffsetMapCache.unorderedOffsets(source.keySet()), source, new HashMap<>());
         }
 
         Unordered(final Map<K, Integer> offsets, final V[] objects) {
-            super(offsets, objects, new HashMap<K, V>());
+            super(offsets, objects, new HashMap<>());
         }
 
         @Override

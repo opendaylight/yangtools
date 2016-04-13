@@ -102,7 +102,7 @@ class ModifierImpl implements ModelActionBuilder {
     private <K, C extends StmtContext<?,?,?>, N extends StatementNamespace<K, ?, ?>> AbstractPrerequisite<C> requiresCtxImpl(final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key,final ModelProcessingPhase phase)  {
         checkNotRegistered();
         try {
-            AddedToNamespace<C> addedToNs = new AddedToNamespace<C>(phase);
+            AddedToNamespace<C> addedToNs = new AddedToNamespace<>(phase);
             addReq(addedToNs);
             contextImpl(context).onNamespaceItemAddedAction((Class) namespace,key,addedToNs);
             return addedToNs;
@@ -114,7 +114,7 @@ class ModifierImpl implements ModelActionBuilder {
     private <C extends StmtContext<?, ?, ?>> AbstractPrerequisite<C> requiresCtxImpl(final C context, final ModelProcessingPhase phase) {
         Preconditions.checkState(action == null, "Action was already registered.");
         try {
-            PhaseFinished<C> phaseFin = new PhaseFinished<C>();
+            PhaseFinished<C> phaseFin = new PhaseFinished<>();
             addReq(phaseFin);
             contextImpl(context).addPhaseCompletedListener(phase,phaseFin);
             return phaseFin;
@@ -127,7 +127,7 @@ class ModifierImpl implements ModelActionBuilder {
     private <K, C extends StmtContext.Mutable<?, ?, ?> , N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>> AbstractPrerequisite<C> mutatesCtxImpl(
                 final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key, final ModelProcessingPhase phase) {
             try {
-                PhaseModificationInNamespace<C> mod = new PhaseModificationInNamespace<C>(phase);
+                PhaseModificationInNamespace<C> mod = new PhaseModificationInNamespace<>(phase);
                 addReq(mod);
                 addMutation(mod);
                 contextImpl(context).onNamespaceItemAddedAction((Class) namespace,key,mod);
@@ -155,7 +155,7 @@ class ModifierImpl implements ModelActionBuilder {
     @Override
     public <C extends Mutable<?, ?, ?>, CT extends C> Prerequisite<C> mutatesCtx(final CT context, final ModelProcessingPhase phase) {
         try {
-            return addMutation(new PhaseMutation<C>(contextImpl(context),phase));
+            return addMutation(new PhaseMutation<>(contextImpl(context), phase));
         } catch (InferenceException e) {
             throw shouldNotHappenProbablyBug(e);
         }
@@ -213,7 +213,7 @@ class ModifierImpl implements ModelActionBuilder {
     public <N extends IdentifierNamespace<?, ?>> Prerequisite<Mutable<?, ?, ?>> mutatesNs(final Mutable<?, ?, ?> context,
             final Class<N> namespace) {
         try {
-            return addMutation(new NamespaceMutation<N>(contextImpl(context),namespace));
+            return addMutation(new NamespaceMutation<>(contextImpl(context), namespace));
         } catch (SourceException e) {
             throw shouldNotHappenProbablyBug(e);
         }
