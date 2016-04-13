@@ -45,10 +45,10 @@ public final class DomFromNormalizedNodeSerializerFactory implements FromNormali
     private final MapEntryNodeDomSerializer mapEntryNodeSerializer;
     private final UnkeyedListEntryNodeDomSerializer unkeyedListEntryNodeSerializer;
 
-	private DomFromNormalizedNodeSerializerFactory(final Document doc, final XmlCodecProvider codecProvider) {
-		final NodeSerializerDispatcher.BaseNodeSerializerDispatcher<Element> dispatcher = new NodeSerializerDispatcher.BaseNodeSerializerDispatcher<Element>(this) {
+    private DomFromNormalizedNodeSerializerFactory(final Document doc, final XmlCodecProvider codecProvider) {
+        final NodeSerializerDispatcher.BaseNodeSerializerDispatcher<Element> dispatcher = new NodeSerializerDispatcher.BaseNodeSerializerDispatcher<Element>(this) {
 
-		};
+        };
 
         containerSerializer = new ContainerNodeDomSerializer(doc, dispatcher);
         choiceSerializer = new ChoiceNodeDomSerializer(dispatcher);
@@ -63,56 +63,56 @@ public final class DomFromNormalizedNodeSerializerFactory implements FromNormali
 
         unkeyedListEntryNodeSerializer = new UnkeyedListEntryNodeDomSerializer(doc, dispatcher);
         unkeyedListNodeSerializer = new UnkeyedListNodeDomSerializer(unkeyedListEntryNodeSerializer);
-	}
+    }
 
-	public static DomFromNormalizedNodeSerializerFactory getInstance(final Document doc, final XmlCodecProvider codecProvider) {
-		return new DomFromNormalizedNodeSerializerFactory(doc, codecProvider);
-	}
+    public static DomFromNormalizedNodeSerializerFactory getInstance(final Document doc, final XmlCodecProvider codecProvider) {
+        return new DomFromNormalizedNodeSerializerFactory(doc, codecProvider);
+    }
 
-	@Override
-	public FromNormalizedNodeSerializer<Element, AugmentationNode, AugmentationSchema> getAugmentationNodeSerializer() {
-		return augmentSerializer;
-	}
+    @Override
+    public FromNormalizedNodeSerializer<Element, AugmentationNode, AugmentationSchema> getAugmentationNodeSerializer() {
+        return augmentSerializer;
+    }
 
-	@Override
-	public FromNormalizedNodeSerializer<Element, ChoiceNode, ChoiceSchemaNode> getChoiceNodeSerializer() {
-		return choiceSerializer;
-	}
+    @Override
+    public FromNormalizedNodeSerializer<Element, ChoiceNode, ChoiceSchemaNode> getChoiceNodeSerializer() {
+        return choiceSerializer;
+    }
 
-	@Override
-	public FromNormalizedNodeSerializer<Element, ContainerNode, ContainerSchemaNode> getContainerNodeSerializer() {
-		return containerSerializer;
-	}
+    @Override
+    public FromNormalizedNodeSerializer<Element, ContainerNode, ContainerSchemaNode> getContainerNodeSerializer() {
+        return containerSerializer;
+    }
 
-	@Override
-	public FromNormalizedNodeSerializer<Element, LeafNode<?>, LeafSchemaNode> getLeafNodeSerializer() {
-		return leafNodeSerializer;
-	}
+    @Override
+    public FromNormalizedNodeSerializer<Element, LeafNode<?>, LeafSchemaNode> getLeafNodeSerializer() {
+        return leafNodeSerializer;
+    }
 
-	@Override
-	public FromNormalizedNodeSerializer<Element, LeafSetEntryNode<?>, LeafListSchemaNode> getLeafSetEntryNodeSerializer() {
-		return leafSetEntryNodeSerializer;
-	}
+    @Override
+    public FromNormalizedNodeSerializer<Element, LeafSetEntryNode<?>, LeafListSchemaNode> getLeafSetEntryNodeSerializer() {
+        return leafSetEntryNodeSerializer;
+    }
 
-	@Override
-	public FromNormalizedNodeSerializer<Element, LeafSetNode<?>, LeafListSchemaNode> getLeafSetNodeSerializer() {
-		return leafSetSerializer;
-	}
+    @Override
+    public FromNormalizedNodeSerializer<Element, LeafSetNode<?>, LeafListSchemaNode> getLeafSetNodeSerializer() {
+        return leafSetSerializer;
+    }
 
-	@Override
-	public FromNormalizedNodeSerializer<Element, MapEntryNode, ListSchemaNode> getMapEntryNodeSerializer() {
-		return mapEntryNodeSerializer;
-	}
+    @Override
+    public FromNormalizedNodeSerializer<Element, MapEntryNode, ListSchemaNode> getMapEntryNodeSerializer() {
+        return mapEntryNodeSerializer;
+    }
 
-	@Override
-	public FromNormalizedNodeSerializer<Element, MapNode, ListSchemaNode> getMapNodeSerializer() {
-		return mapNodeSerializer;
-	}
+    @Override
+    public FromNormalizedNodeSerializer<Element, MapNode, ListSchemaNode> getMapNodeSerializer() {
+        return mapNodeSerializer;
+    }
 
-	@Override
-	public FromNormalizedNodeSerializer<Element, UnkeyedListNode, ListSchemaNode> getUnkeyedListNodeSerializer() {
-	    return unkeyedListNodeSerializer;
-	}
+    @Override
+    public FromNormalizedNodeSerializer<Element, UnkeyedListNode, ListSchemaNode> getUnkeyedListNodeSerializer() {
+        return unkeyedListNodeSerializer;
+    }
 
         @Override
         public FromNormalizedNodeSerializer<Element, AnyXmlNode, AnyXmlSchemaNode> getAnyXmlNodeSerializer() {
