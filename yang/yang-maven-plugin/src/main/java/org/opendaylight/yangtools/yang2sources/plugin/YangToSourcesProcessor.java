@@ -117,7 +117,7 @@ class YangToSourcesProcessor {
             }
 
             if (allFiles.isEmpty()) {
-            	LOG.info("{} No input files found", LOG_PREFIX);
+                LOG.info("{} No input files found", LOG_PREFIX);
                 return null;
             }
 

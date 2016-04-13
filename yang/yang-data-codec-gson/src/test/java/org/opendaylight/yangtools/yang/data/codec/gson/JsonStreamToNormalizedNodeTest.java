@@ -171,7 +171,7 @@ public class JsonStreamToNormalizedNodeTest {
         try {
             //second parameter isn't necessary because error will be raised before it is used.
             verifyTransformationToNormalizedNode(inputJson, null);
-			fail("Expected exception not raised");
+            fail("Expected exception not raised");
         } catch (final IllegalStateException e) {
             final String errorMessage = e.getMessage();
             assertTrue(errorMessage.contains("Choose suitable module name for element lf11-namesake:"));

@@ -52,13 +52,13 @@ public class YangModelDependencyInfoTest {
 
     @Test
     public void testEquals() {
-    	InputStream stream1 = getClass().getResourceAsStream("/ietf/ietf-inet-types@2010-09-24.yang");
+        InputStream stream1 = getClass().getResourceAsStream("/ietf/ietf-inet-types@2010-09-24.yang");
         YangModelDependencyInfo info1 = YangModelDependencyInfo.fromInputStream(stream1);
         InputStream stream2 = getClass().getResourceAsStream("/no-revision/module-without-revision.yang");
         YangModelDependencyInfo info2 = YangModelDependencyInfo.fromInputStream(stream2);
 
-    	assertTrue(info1.equals(info1));
-    	assertFalse(info1.equals(null));
+        assertTrue(info1.equals(info1));
+        assertFalse(info1.equals(null));
         assertFalse(info1.equals(stream1));
         assertFalse(info1.equals(info2));
     }
