@@ -24,7 +24,7 @@ final class UnorderedMapModificationStrategy extends AbstractNodeContainerModifi
 
     UnorderedMapModificationStrategy(final ListSchemaNode schema, final TreeType treeType) {
         super(MapNode.class, treeType);
-        entryStrategy = Optional.<ModificationApplyOperation>of(new ListEntryModificationStrategy(schema, treeType));
+        entryStrategy = Optional.of(new ListEntryModificationStrategy(schema, treeType));
     }
 
     @SuppressWarnings("rawtypes")

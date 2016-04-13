@@ -247,7 +247,7 @@ public class SharedSchemaRepositoryTest {
             }
         };
         assertThat(Collections2.transform(listener.registeredSources, potSourceToSID),
-                both(hasItem(new SourceIdentifier("test", Optional.<String>absent())))
+                both(hasItem(new SourceIdentifier("test", Optional.absent())))
                         .and(hasItem(new SourceIdentifier("test", Optional.of("2012-12-12"))))
                         .and(hasItem(new SourceIdentifier("test", Optional.of("2013-12-12"))))
                         .and(hasItem(new SourceIdentifier("module", Optional.of("2010-12-12"))))
@@ -268,7 +268,7 @@ public class SharedSchemaRepositoryTest {
         sharedSchemaRepository.registerSchemaSource(new SchemaSourceProvider<YangTextSchemaSource>() {
             @Override
             public CheckedFuture<YangTextSchemaSource, SchemaSourceException> getSource(final SourceIdentifier sourceIdentifier) {
-                return Futures.<YangTextSchemaSource, SchemaSourceException>immediateCheckedFuture(new YangTextSchemaSource(runningId) {
+                return Futures.immediateCheckedFuture(new YangTextSchemaSource(runningId) {
                     @Override
                     protected MoreObjects.ToStringHelper addToStringAttributes(final MoreObjects.ToStringHelper toStringHelper) {
                         return toStringHelper;

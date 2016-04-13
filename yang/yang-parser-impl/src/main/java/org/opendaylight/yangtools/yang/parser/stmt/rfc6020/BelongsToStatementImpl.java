@@ -99,7 +99,7 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
         private static ModuleIdentifier getModuleIdentifier(
                 final StmtContext.Mutable<String, BelongsToStatement, EffectiveStatement<String, BelongsToStatement>> belongsToCtx) {
             String moduleName = belongsToCtx.getStatementArgument();
-            return new ModuleIdentifierImpl(moduleName, Optional.<URI> absent(),
+            return new ModuleIdentifierImpl(moduleName, Optional.absent(),
                 Optional.of(SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE));
         }
 

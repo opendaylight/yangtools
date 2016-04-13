@@ -531,7 +531,7 @@ public final class ParserListenerUtils {
      */
     public static Set<String> createListKey(final Key_stmtContext ctx) {
         final String keyDefinition = stringFromNode(ctx);
-        return Sets.<String>newLinkedHashSet(KEYDEF_SPLITTER.split(keyDefinition));
+        return Sets.newLinkedHashSet(KEYDEF_SPLITTER.split(keyDefinition));
     }
 
     /**
@@ -1466,7 +1466,7 @@ public final class ParserListenerUtils {
             baseType = uintType;
         } else if ("enumeration".equals(typeName)) {
             List<EnumTypeDefinition.EnumPair> enumConstants = getEnumConstants(typeBody, actualPath, moduleName);
-            return EnumerationType.create(baseTypePath, enumConstants, Optional.<EnumPair> absent());
+            return EnumerationType.create(baseTypePath, enumConstants, Optional.absent());
         } else if ("string".equals(typeName)) {
             StringTypeDefinition stringType = StringType.getInstance();
             constraints.addLengths(stringType.getLengthConstraints());

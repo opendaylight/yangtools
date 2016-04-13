@@ -71,7 +71,7 @@ public class WebSocketServer implements Runnable {
 
     public WebSocketServer(final int inPort) {
         this.inPort = inPort;
-        port = SettableFuture.<Integer>create();
+        port = SettableFuture.create();
     }
 
     @Override

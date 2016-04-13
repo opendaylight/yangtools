@@ -24,7 +24,7 @@ final class OrderedMapModificationStrategy extends AbstractNodeContainerModifica
 
     OrderedMapModificationStrategy(final ListSchemaNode schema, final TreeType treeType) {
         super(OrderedMapNode.class, treeType);
-        entryStrategy = Optional.<ModificationApplyOperation> of(new ListEntryModificationStrategy(schema, treeType));
+        entryStrategy = Optional.of(new ListEntryModificationStrategy(schema, treeType));
     }
 
     @Override

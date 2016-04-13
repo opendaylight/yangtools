@@ -104,7 +104,7 @@ public class ModuleStatementSupport extends
 
         QNameModule qNameModule = QNameModule.create(moduleNs.get(), revisionDate.orNull()).intern();
         ModuleIdentifier moduleIdentifier = new ModuleIdentifierImpl(stmt.getStatementArgument(),
-                Optional.<URI> absent(), revisionDate);
+                Optional.absent(), revisionDate);
 
         stmt.addContext(ModuleNamespace.class, moduleIdentifier, stmt);
         stmt.addContext(ModuleNamespaceForBelongsTo.class, moduleIdentifier.getName(), stmt);

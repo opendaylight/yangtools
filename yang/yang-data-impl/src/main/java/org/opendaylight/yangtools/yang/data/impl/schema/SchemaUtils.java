@@ -447,15 +447,15 @@ public final class SchemaUtils {
     }
 
     private static Optional<SchemaNode> tryFindGroupings(final SchemaContext ctx, final QName qname) {
-        return Optional.<SchemaNode> fromNullable(Iterables.find(ctx.getGroupings(), new SchemaNodePredicate(qname), null));
+        return Optional.fromNullable(Iterables.find(ctx.getGroupings(), new SchemaNodePredicate(qname), null));
     }
 
     private static Optional<SchemaNode> tryFindRpc(final SchemaContext ctx, final QName qname) {
-        return Optional.<SchemaNode>fromNullable(Iterables.find(ctx.getOperations(), new SchemaNodePredicate(qname), null));
+        return Optional.fromNullable(Iterables.find(ctx.getOperations(), new SchemaNodePredicate(qname), null));
     }
 
     private static Optional<SchemaNode> tryFindNotification(final SchemaContext ctx, final QName qname) {
-        return Optional.<SchemaNode>fromNullable(Iterables.find(ctx.getNotifications(), new SchemaNodePredicate(qname), null));
+        return Optional.fromNullable(Iterables.find(ctx.getNotifications(), new SchemaNodePredicate(qname), null));
     }
 
     private static final class SchemaNodePredicate implements Predicate<SchemaNode> {

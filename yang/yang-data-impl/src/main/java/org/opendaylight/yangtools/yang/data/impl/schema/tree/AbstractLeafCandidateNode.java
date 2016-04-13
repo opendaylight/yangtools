@@ -24,7 +24,7 @@ abstract class AbstractLeafCandidateNode implements DataTreeCandidateNode {
     }
 
     protected final Optional<NormalizedNode<?, ?>> dataOptional() {
-        return Optional.<NormalizedNode<?, ?>>of(data);
+        return Optional.of(data);
     }
 
     @Override

@@ -119,7 +119,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     }
 
     private Optional<TreeNode> metadataFromSnapshot(@Nonnull final PathArgument child) {
-        return original.isPresent() ? original.get().getChild(child) : Optional.<TreeNode>absent();
+        return original.isPresent() ? original.get().getChild(child) : Optional.absent();
     }
 
     private Optional<TreeNode> metadataFromData(@Nonnull final PathArgument child, final Version modVersion) {

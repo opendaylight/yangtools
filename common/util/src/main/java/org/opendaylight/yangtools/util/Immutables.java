@@ -21,7 +21,7 @@ public final class Immutables {
         throw new UnsupportedOperationException("Helper class");
     }
 
-    public static final Set<Class<?>> KNOWN_IMMUTABLES = ImmutableSet.<Class<?>>of(
+    public static final Set<Class<?>> KNOWN_IMMUTABLES = ImmutableSet.of(
             Integer.class, Short.class, BigDecimal.class, BigInteger.class, Byte.class, Character.class, Double.class,
             Float.class, String.class, Boolean.class, Void.class);
 

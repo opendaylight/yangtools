@@ -14,7 +14,7 @@ import java.util.List;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 
 final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implements Cloneable {
-    static final FixedYangInstanceIdentifier EMPTY_INSTANCE = new FixedYangInstanceIdentifier(ImmutableList.<PathArgument>of(), new HashCodeBuilder<>().build());
+    static final FixedYangInstanceIdentifier EMPTY_INSTANCE = new FixedYangInstanceIdentifier(ImmutableList.of(), new HashCodeBuilder<>().build());
     private static final long serialVersionUID = 1L;
     private final ImmutableList<PathArgument> path;
     private transient volatile YangInstanceIdentifier parent;

@@ -134,7 +134,7 @@ public final class BaseTypes {
      */
     @Deprecated
     public static Optional<TypeDefinition<?>> defaultBaseTypeFor(final String typeName) {
-        return Optional.<TypeDefinition<?>> fromNullable(defaultBaseTypeForImpl(typeName));
+        return Optional.fromNullable(defaultBaseTypeForImpl(typeName));
     }
 
     @Deprecated

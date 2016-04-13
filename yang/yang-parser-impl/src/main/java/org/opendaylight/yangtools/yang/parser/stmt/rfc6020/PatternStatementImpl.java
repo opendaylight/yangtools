@@ -60,7 +60,7 @@ public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConst
                 return null;
             }
 
-            return new PatternConstraintEffectiveImpl(pattern, Optional.<String>absent(), Optional.<String>absent());
+            return new PatternConstraintEffectiveImpl(pattern, Optional.absent(), Optional.absent());
         }
 
         @Override

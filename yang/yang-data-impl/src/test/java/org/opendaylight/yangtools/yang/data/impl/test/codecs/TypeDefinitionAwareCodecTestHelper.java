@@ -58,7 +58,7 @@ public class TypeDefinitionAwareCodecTestHelper {
         }
 
         return EnumerationType.create( mock( SchemaPath.class ), enumList,
-                                       Optional.<EnumTypeDefinition.EnumPair>absent() );
+                                       Optional.absent() );
     }
 
     public static UnionTypeDefinition toUnionTypeDefinition( TypeDefinition<?>... types ) {

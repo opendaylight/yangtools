@@ -89,7 +89,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
     public <T extends SchemaSourceRepresentation> CheckedFuture<T, SchemaSourceException> getSchemaSource(final SourceIdentifier id, final Class<T> representation) {
         final ListMultimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> srcs = sources.get(id);
         if (srcs == null) {
-            return Futures.<T, SchemaSourceException>immediateFailedCheckedFuture(new MissingSchemaSourceException("No providers registered for source" + id, id));
+            return Futures.immediateFailedCheckedFuture(new MissingSchemaSourceException("No providers registered for source" + id, id));
         }
 
         // TODO, remove and make sources keep sorted multimap (e.g. ArrayListMultimap with SortedLists)
@@ -98,7 +98,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
 
         final Iterator<AbstractSchemaSourceRegistration<?>> regs = sortedSchemaSourceRegistrations.iterator();
         if (!regs.hasNext()) {
-            return Futures.<T, SchemaSourceException>immediateFailedCheckedFuture(
+            return Futures.immediateFailedCheckedFuture(
                     new MissingSchemaSourceException("No providers for source " + id + " representation " + representation + " available", id));
         }
 
@@ -130,7 +130,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
 
         m.put(source.getRepresentation(), reg);
 
-        final Collection<PotentialSchemaSource<?>> reps = Collections.<PotentialSchemaSource<?>>singleton(source);
+        final Collection<PotentialSchemaSource<?>> reps = Collections.singleton(source);
         for (SchemaListenerRegistration l : listeners) {
             l.getInstance().schemaSourceRegistered(reps);
         }

@@ -18,7 +18,7 @@ final class EmptyStringCodec extends TypeDefinitionAwareCodec<Void, EmptyTypeDef
     static final EmptyStringCodec INSTANCE = new EmptyStringCodec();
 
     private EmptyStringCodec() {
-        super(Optional.<EmptyTypeDefinition>absent(), Void.class);
+        super(Optional.absent(), Void.class);
     }
 
     @Override

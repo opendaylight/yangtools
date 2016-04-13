@@ -66,7 +66,7 @@ public final class NormalizedNodes {
     }
 
     public static Optional<NormalizedNode<?, ?>> findNode(final NormalizedNode<?, ?> parent, final Iterable<PathArgument> relativePath) {
-        return findNode(Optional.<NormalizedNode<?, ?>>fromNullable(parent), relativePath);
+        return findNode(Optional.fromNullable(parent), relativePath);
     }
 
     public static Optional<NormalizedNode<?, ?>> findNode(final NormalizedNode<?, ?> parent, final PathArgument... relativePath) {
@@ -77,7 +77,7 @@ public final class NormalizedNodes {
         checkNotNull(tree, "Tree must not be null");
         checkNotNull(path, "Path must not be null");
 
-        return findNode(Optional.<NormalizedNode<?, ?>>of(tree), path.getPathArguments());
+        return findNode(Optional.of(tree), path.getPathArguments());
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })

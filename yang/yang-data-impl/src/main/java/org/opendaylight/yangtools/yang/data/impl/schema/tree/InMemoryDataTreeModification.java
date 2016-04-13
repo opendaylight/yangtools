@@ -131,7 +131,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         LOG.trace("Resolving modification apply strategy for {}", path);
 
         upgradeIfPossible();
-        return StoreTreeNodes.<ModificationApplyOperation>findNodeChecked(strategyTree, path);
+        return StoreTreeNodes.findNodeChecked(strategyTree, path);
     }
 
     private OperationWithModification resolveModificationFor(final YangInstanceIdentifier path) {

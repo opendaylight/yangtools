@@ -54,7 +54,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
 
     // Init storage adapters
     private static final Map<Class<? extends SchemaSourceRepresentation>, StorageAdapter<? extends SchemaSourceRepresentation>> STORAGE_ADAPTERS =
-            Collections.<Class<? extends SchemaSourceRepresentation>, StorageAdapter<? extends SchemaSourceRepresentation>> singletonMap(
+            Collections.singletonMap(
                     YangTextSchemaSource.class, new YangTextSchemaStorageAdapter());
 
     private static final Pattern CACHED_FILE_PATTERN =
@@ -123,7 +123,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
         }
 
         LOG.debug("Source {} not found in cache as {}", sourceIdentifier, file);
-        return Futures.<T, SchemaSourceException>immediateFailedCheckedFuture(new MissingSchemaSourceException("Source not found", sourceIdentifier));
+        return Futures.immediateFailedCheckedFuture(new MissingSchemaSourceException("Source not found", sourceIdentifier));
     }
 
     @Override

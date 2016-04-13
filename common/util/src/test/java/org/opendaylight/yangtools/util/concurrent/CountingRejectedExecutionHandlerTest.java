@@ -46,7 +46,7 @@ public class CountingRejectedExecutionHandlerTest {
         CountDownLatch blockLatch = new CountDownLatch( 1 );
 
         executor = new ThreadPoolExecutor( 1, 1, 0, TimeUnit.SECONDS,
-                ExecutorServiceUtil.offerFailingBlockingQueue( new LinkedBlockingQueue<Runnable>() ) );
+                ExecutorServiceUtil.offerFailingBlockingQueue(new LinkedBlockingQueue<>() ) );
 
         CountingRejectedExecutionHandler countingHandler =
                 CountingRejectedExecutionHandler.newCallerRunsPolicy();
@@ -73,7 +73,7 @@ public class CountingRejectedExecutionHandlerTest {
         CountDownLatch blockLatch = new CountDownLatch( 1 );
 
         executor = new ThreadPoolExecutor( 1, 1, 0, TimeUnit.SECONDS,
-                ExecutorServiceUtil.offerFailingBlockingQueue( new LinkedBlockingQueue<Runnable>() ) );
+                ExecutorServiceUtil.offerFailingBlockingQueue(new LinkedBlockingQueue<>() ) );
 
         CountingRejectedExecutionHandler countingHandler =
                 CountingRejectedExecutionHandler.newAbortPolicy();

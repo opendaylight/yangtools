@@ -28,7 +28,7 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
     private final Optional<ModificationApplyOperation> entryStrategy;
 
     UnkeyedListModificationStrategy(final ListSchemaNode schema, final TreeType treeType) {
-        entryStrategy = Optional.<ModificationApplyOperation> of(new UnkeyedListItemModificationStrategy(schema, treeType));
+        entryStrategy = Optional.of(new UnkeyedListItemModificationStrategy(schema, treeType));
     }
 
     @Override

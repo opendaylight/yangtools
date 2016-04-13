@@ -139,7 +139,7 @@ public class YangModelValidationTest {
 
     @Test
     public void testIdentifierMatching() {
-        List<String> ids = new ArrayList<String>();
+        List<String> ids = new ArrayList<>();
         // valid
         ids.add("_ok98-.87.-.8...88-asdAD");
         ids.add("AA.bcd");

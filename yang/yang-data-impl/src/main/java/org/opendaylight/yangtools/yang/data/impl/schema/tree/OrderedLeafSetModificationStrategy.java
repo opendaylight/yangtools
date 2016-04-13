@@ -25,7 +25,7 @@ final class OrderedLeafSetModificationStrategy extends AbstractNodeContainerModi
     @SuppressWarnings({ "unchecked", "rawtypes" })
     OrderedLeafSetModificationStrategy(final LeafListSchemaNode schema, final TreeType treeType) {
         super((Class) LeafSetNode.class, treeType);
-        entryStrategy = Optional.<ModificationApplyOperation> of(new LeafSetEntryModificationStrategy(schema));
+        entryStrategy = Optional.of(new LeafSetEntryModificationStrategy(schema));
     }
 
     @Override

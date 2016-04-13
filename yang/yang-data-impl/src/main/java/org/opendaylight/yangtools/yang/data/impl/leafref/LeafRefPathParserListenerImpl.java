@@ -61,7 +61,7 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener{
     public LeafRefPathParserListenerImpl(final SchemaContext schemaContext, final Module currentModule, final SchemaNode currentNode) {
        this.schemaContext = schemaContext;
        this.module = currentModule;
-       this.leafRefPathQnameList = new LinkedList<QNameWithPredicateBuilder>();
+       this.leafRefPathQnameList = new LinkedList<>();
        this.node=currentNode;
        this.currentParsingState = ParsingState.LEAF_REF_PATH;
     }
@@ -84,7 +84,7 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener{
     @Override
     public void enterRel_path_keyexpr(final Rel_path_keyexprContext ctx) {
         currentParsingState=ParsingState.PATH_KEY_EXPR;
-        predicatePathKeyQnameList = new LinkedList<QNameWithPredicateBuilder>();
+        predicatePathKeyQnameList = new LinkedList<>();
         final List<TerminalNode> dots = ctx.DOTS();
         for (final TerminalNode parent : dots) {
             predicatePathKeyQnameList.add(QNameWithPredicateBuilder.UP_PARENT_BUILDER);

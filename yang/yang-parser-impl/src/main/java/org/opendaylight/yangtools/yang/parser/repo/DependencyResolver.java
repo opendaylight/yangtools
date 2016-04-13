@@ -142,7 +142,7 @@ final class DependencyResolver {
 
             return new DependencyResolver(resolved, pending, imports);
         } else {
-            return new DependencyResolver(resolved, Collections.<SourceIdentifier>emptyList(), ImmutableMultimap.<SourceIdentifier, ModuleImport>of());
+            return new DependencyResolver(resolved, Collections.emptyList(), ImmutableMultimap.of());
         }
     }
 

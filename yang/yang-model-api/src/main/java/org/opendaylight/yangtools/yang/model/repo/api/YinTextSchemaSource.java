@@ -32,7 +32,7 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
     public static SourceIdentifier identifierFromFilename(final String name) {
         checkArgument(name.endsWith(".yin"), "Filename %s does not have a .yin extension", name);
         // FIXME: add revision-awareness
-        return SourceIdentifier.create(name.substring(0, name.length() - 4), Optional.<String>absent());
+        return SourceIdentifier.create(name.substring(0, name.length() - 4), Optional.absent());
     }
 
     /**

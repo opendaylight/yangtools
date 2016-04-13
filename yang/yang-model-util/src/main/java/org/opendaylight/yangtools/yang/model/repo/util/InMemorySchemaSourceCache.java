@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 
 @Beta
 public class InMemorySchemaSourceCache<T extends SchemaSourceRepresentation> extends AbstractSchemaSourceCache<T> implements AutoCloseable {
-    private final List<FinalizablePhantomReference<T>> regs = Collections.synchronizedList(new ArrayList<FinalizablePhantomReference<T>>());
+    private final List<FinalizablePhantomReference<T>> regs = Collections.synchronizedList(new ArrayList<>());
     private final FinalizableReferenceQueue queue = new FinalizableReferenceQueue();
     private final Cache<SourceIdentifier, T> cache;
 
@@ -54,7 +54,7 @@ public class InMemorySchemaSourceCache<T extends SchemaSourceRepresentation> ext
             return Futures.immediateCheckedFuture(present);
         }
 
-        return Futures.<T, SchemaSourceException>immediateFailedCheckedFuture(new MissingSchemaSourceException("Source not found", sourceIdentifier));
+        return Futures.immediateFailedCheckedFuture(new MissingSchemaSourceException("Source not found", sourceIdentifier));
     }
 
     @Override

@@ -192,7 +192,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         case DELETE:
             // Deletion of a non-existing node is a no-op, report it as such
             modification.resolveModificationType(currentMeta.isPresent() ? ModificationType.DELETE : ModificationType.UNMODIFIED);
-            return modification.setSnapshot(Optional.<TreeNode> absent());
+            return modification.setSnapshot(Optional.absent());
         case TOUCH:
             Preconditions.checkArgument(currentMeta.isPresent(), "Metadata not available for modification %s",
                     modification);

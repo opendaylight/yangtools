@@ -178,7 +178,7 @@ public class YangInstanceIdentifierTest {
 
         YangInstanceIdentifier newID = YangInstanceIdentifier.builder()
                 .node( NODENAME1 )
-                .nodeWithKey( NODENAME2, Collections.<QName,Object>singletonMap( KEY1, "foo" ) )
+                .nodeWithKey( NODENAME2, Collections.singletonMap( KEY1, "foo" ) )
                 .nodeWithKey( NODENAME3, KEY2, "bar" ).build();
 
         assertNotNull( "InstanceIdentifier is null", newID );

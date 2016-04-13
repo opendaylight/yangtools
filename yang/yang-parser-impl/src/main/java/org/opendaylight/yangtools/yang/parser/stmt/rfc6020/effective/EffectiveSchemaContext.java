@@ -57,9 +57,9 @@ public final class EffectiveSchemaContext extends AbstractEffectiveSchemaContext
         this.modules = ImmutableSet.copyOf(sortedModuleList);
 
         final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(
-                new TreeMap<URI, Collection<Module>>(), MODULE_SET_SUPPLIER);
+                new TreeMap<>(), MODULE_SET_SUPPLIER);
         final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(
-                new TreeMap<String, Collection<Module>>(), MODULE_SET_SUPPLIER);
+                new TreeMap<>(), MODULE_SET_SUPPLIER);
         Set<ModuleIdentifier> modIdBuilder = new HashSet<>();
         for (Module m : modulesInit) {
             nameMap.put(m.getName(), m);
@@ -89,9 +89,9 @@ public final class EffectiveSchemaContext extends AbstractEffectiveSchemaContext
          * Invest some quality time in building up lookup tables for both.
          */
         final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(
-                new TreeMap<URI, Collection<Module>>(), MODULE_SET_SUPPLIER);
+                new TreeMap<>(), MODULE_SET_SUPPLIER);
         final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(
-                new TreeMap<String, Collection<Module>>(), MODULE_SET_SUPPLIER);
+                new TreeMap<>(), MODULE_SET_SUPPLIER);
 
         Set<ModuleIdentifier> modIdBuilder = new HashSet<>();
         for (Module m : modules) {

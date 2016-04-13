@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 public final class StatementSupportBundle implements Immutable,NamespaceBehaviour.Registry {
 
-    private static final StatementSupportBundle EMPTY = new StatementSupportBundle(null, ImmutableMap.<QName, StatementSupport<?, ?, ?>>of(), ImmutableMap.<Class<?>, NamespaceBehaviour<?, ?, ?>>of());
+    private static final StatementSupportBundle EMPTY = new StatementSupportBundle(null, ImmutableMap.of(), ImmutableMap.of());
 
     private final StatementSupportBundle parent;
     private final ImmutableMap<QName, StatementSupport<?,?,?>> definitions;

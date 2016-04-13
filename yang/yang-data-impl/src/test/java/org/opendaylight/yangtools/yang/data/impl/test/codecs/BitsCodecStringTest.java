@@ -41,7 +41,7 @@ public class BitsCodecStringTest {
         assertTrue(serialized.contains("bar"));
 
         assertEquals("serialize", "",
-                codec.serialize(ImmutableSet.<String> of()));
+                codec.serialize(ImmutableSet.of()));
         assertEquals("serialize", "", codec.serialize(null));
     }
 

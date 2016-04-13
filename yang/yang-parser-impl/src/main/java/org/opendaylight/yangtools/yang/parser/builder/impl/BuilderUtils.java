@@ -625,7 +625,7 @@ public final class BuilderUtils {
         Set<NotificationBuilder> notifications = module.getAddedNotifications();
         for (NotificationBuilder notification : notifications) {
             if (notification.getQName().equals(child)) {
-                return Optional.<SchemaNodeBuilder> of(notification);
+                return Optional.of(notification);
             }
         }
 
@@ -635,7 +635,7 @@ public final class BuilderUtils {
         Set<RpcDefinitionBuilder> rpcs = module.getAddedRpcs();
         for (RpcDefinitionBuilder rpc : rpcs) {
             if (rpc.getQName().equals(child)) {
-                return Optional.<SchemaNodeBuilder> of(rpc);
+                return Optional.of(rpc);
             }
         }
         LOG.trace("Child {} not found in data namespace of module {}", child, module);
@@ -645,7 +645,7 @@ public final class BuilderUtils {
     private static Optional<SchemaNodeBuilder> getDataChildByQName(final DataNodeContainerBuilder builder, final QName child) {
         for (DataSchemaNodeBuilder childNode : builder.getChildNodeBuilders()) {
             if (childNode.getQName().equals(child)) {
-                return Optional.<SchemaNodeBuilder> of(childNode);
+                return Optional.of(childNode);
             }
         }
         LOG.trace(CHILD_NOT_FOUND_IN_NODE_STR, child, builder);

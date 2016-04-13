@@ -21,6 +21,6 @@ final class ReplaceLeafCandidateNode extends AbstractWriteCandidate {
 
     @Override
     public Optional<NormalizedNode<?, ?>> getDataBefore() {
-        return Optional.<NormalizedNode<?, ?>>of(oldData);
+        return Optional.of(oldData);
     }
 }

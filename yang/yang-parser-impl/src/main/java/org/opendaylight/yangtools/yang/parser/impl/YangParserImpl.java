@@ -181,7 +181,7 @@ public final class YangParserImpl implements YangContextParser {
     public SchemaContext parseFiles(final Collection<File> yangFiles, final SchemaContext context) throws IOException,
     YangSyntaxErrorException {
         if (yangFiles == null) {
-            return resolveSchemaContext(Collections.<Module> emptySet());
+            return resolveSchemaContext(Collections.emptySet());
         }
 
         Collection<ByteSource> sources = BuilderUtils.filesToByteSources(yangFiles);
@@ -219,7 +219,7 @@ public final class YangParserImpl implements YangContextParser {
     public SchemaContext parseSources(final Collection<ByteSource> sources, final SchemaContext context)
             throws IOException, YangSyntaxErrorException {
         if (sources == null) {
-            return resolveSchemaContext(Collections.<Module> emptySet());
+            return resolveSchemaContext(Collections.emptySet());
         }
 
         final List<ModuleBuilder> sorted = resolveModuleBuilders(sources, context);
@@ -961,7 +961,7 @@ public final class YangParserImpl implements YangContextParser {
             // Conflicting elements in other namespaces are still not present
             // since resolveUsesAugment occurs before augmenting from external
             // modules.
-            potentialTargetNode = Optional.<SchemaNodeBuilder> fromNullable(findTargetNode(augment.getTargetPath()
+            potentialTargetNode = Optional.fromNullable(findTargetNode(augment.getTargetPath()
                     .getPathFromRoot(), parentNode));
         }
 

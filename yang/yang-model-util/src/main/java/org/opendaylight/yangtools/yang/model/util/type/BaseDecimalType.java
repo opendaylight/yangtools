@@ -45,7 +45,7 @@ final class BaseDecimalType extends AbstractRangedBaseType<DecimalTypeDefinition
 
     private static List<RangeConstraint> createRangeConstraint(final String min, final String max) {
         return ImmutableList.of(BaseConstraints.newRangeConstraint(new BigDecimal(min), new BigDecimal(max),
-            Optional.<String>absent(), Optional.of("https://tools.ietf.org/html/rfc6020#section-9.3.4")));
+            Optional.absent(), Optional.of("https://tools.ietf.org/html/rfc6020#section-9.3.4")));
     }
 
     static List<RangeConstraint> constraintsForDigits(final int fractionDigits) {

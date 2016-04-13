@@ -33,7 +33,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
     public static SourceIdentifier identifierFromFilename(final String name) {
         checkArgument(name.endsWith(".yang"), "Filename %s does not have a .yang extension", name);
         // FIXME: add revision-awareness
-        return SourceIdentifier.create(name.substring(0, name.length() - 5), Optional.<String>absent());
+        return SourceIdentifier.create(name.substring(0, name.length() - 5), Optional.absent());
     }
 
     /**

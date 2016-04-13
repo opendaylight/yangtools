@@ -390,7 +390,7 @@ public class BuilderUtilsTest {
 
     @Test
     public void testFindIdentity() {
-        assertNull(BuilderUtils.findIdentity(Collections.<IdentitySchemaNodeBuilder>emptySet(), "test-identity"));
+        assertNull(BuilderUtils.findIdentity(Collections.emptySet(), "test-identity"));
     }
 
     @Test

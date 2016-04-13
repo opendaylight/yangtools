@@ -284,7 +284,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         public UnorderedMapMixinNormalization(final ListSchemaNode list) {
             super(NodeIdentifier.create(list.getQName()));
             this.innerNode = new ListItemNormalization(new NodeIdentifierWithPredicates(list.getQName(),
-                    Collections.<QName, Object>emptyMap()), list);
+                    Collections.emptyMap()), list);
         }
 
         @Override

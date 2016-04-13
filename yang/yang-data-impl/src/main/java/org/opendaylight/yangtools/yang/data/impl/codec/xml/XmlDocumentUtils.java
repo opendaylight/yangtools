@@ -94,7 +94,7 @@ public final class XmlDocumentUtils {
         if (dataSchemaNode != null && qname != null) {
             for (DataSchemaNode dsn : dataSchemaNode) {
                 if (qname.isEqualWithoutRevision(dsn.getQName())) {
-                    return Optional.<DataSchemaNode> of(dsn);
+                    return Optional.of(dsn);
                 } else if (dsn instanceof ChoiceSchemaNode) {
                     for (ChoiceCaseNode choiceCase : ((ChoiceSchemaNode) dsn).getCases()) {
                         Optional<DataSchemaNode> foundDsn = findFirstSchema(qname, choiceCase.getChildNodes());

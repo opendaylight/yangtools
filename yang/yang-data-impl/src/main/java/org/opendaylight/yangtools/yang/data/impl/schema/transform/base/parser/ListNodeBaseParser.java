@@ -40,7 +40,7 @@ public abstract class ListNodeBaseParser<E, N extends NormalizedNode<?, ?>, O ex
     public O parse(Iterable<E> childNodes, S schema) {
         CollectionNodeBuilder<N, O> listBuilder = provideBuilder(schema);
 
-        buildingStrategy.prepareAttributes(Collections.<QName, String>emptyMap(), listBuilder);
+        buildingStrategy.prepareAttributes(Collections.emptyMap(), listBuilder);
 
         for (E childNode : childNodes) {
             N listChild = getListEntryNodeParser().parse(Collections.singletonList(childNode), schema);

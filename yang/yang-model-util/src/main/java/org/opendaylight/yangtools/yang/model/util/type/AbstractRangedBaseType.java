@@ -22,8 +22,8 @@ abstract class AbstractRangedBaseType<T extends TypeDefinition<T>> extends Abstr
 
     AbstractRangedBaseType(final QName qname, final Number minValue, final Number maxValue) {
         super(qname);
-        this.rangeConstraints = ImmutableList.<RangeConstraint>of(BaseConstraints.newRangeConstraint(
-                minValue, maxValue, Optional.<String>absent(), Optional.<String>absent()));
+        this.rangeConstraints = ImmutableList.of(BaseConstraints.newRangeConstraint(
+                minValue, maxValue, Optional.absent(), Optional.absent()));
     }
 
     AbstractRangedBaseType(final SchemaPath path, final List<UnknownSchemaNode> unknownSchemaNodes,

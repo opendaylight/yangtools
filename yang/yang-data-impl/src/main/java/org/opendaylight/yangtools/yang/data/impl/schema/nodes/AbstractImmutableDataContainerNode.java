@@ -30,7 +30,7 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
 
     @Override
     public final Optional<DataContainerChild<? extends PathArgument, ?>> getChild(final PathArgument child) {
-        return Optional.<DataContainerChild<? extends PathArgument, ?>> fromNullable(children.get(child));
+        return Optional.fromNullable(children.get(child));
     }
 
     @Override

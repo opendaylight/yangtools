@@ -74,7 +74,7 @@ public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements Da
         configuration = base.isConfiguration();
         augmentations.addAll(base.getAvailableAugmentations());
 
-        Set<DataSchemaNodeBuilder> wrapped = BuilderUtils.wrapChildNodes(moduleName, line, new HashSet<DataSchemaNode>(
+        Set<DataSchemaNodeBuilder> wrapped = BuilderUtils.wrapChildNodes(moduleName, line, new HashSet<>(
                 base.getCases()), path, qname);
         for (DataSchemaNodeBuilder wrap : wrapped) {
             if (wrap instanceof ChoiceCaseBuilder) {

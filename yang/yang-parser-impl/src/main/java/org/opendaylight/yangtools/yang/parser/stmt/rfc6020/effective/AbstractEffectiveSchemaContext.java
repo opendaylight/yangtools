@@ -124,7 +124,7 @@ abstract class AbstractEffectiveSchemaContext implements SchemaContext {
     @Override
     public Set<Module> findModuleByNamespace(final URI namespace) {
         final Set<Module> ret = getNamespaceToModules().get(namespace);
-        return ret == null ? Collections.<Module> emptySet() : ret;
+        return ret == null ? Collections.emptySet() : ret;
     }
 
     @Override

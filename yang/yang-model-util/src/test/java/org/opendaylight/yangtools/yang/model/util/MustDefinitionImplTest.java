@@ -48,7 +48,7 @@ public class MustDefinitionImplTest {
         assertFalse("mdiA shouldn't equal to mdiB", mdiA.equals(mdiB));
 
         // //description
-        mdiA = MustDefinitionImpl.create("mustStr", Optional.<String>absent(), reference, errorAppTag, errorMessage);
+        mdiA = MustDefinitionImpl.create("mustStr", Optional.absent(), reference, errorAppTag, errorMessage);
         mdiB = MustDefinitionImpl.create("mustStr", description, reference, errorAppTag, errorMessage);
         assertFalse("mdiA shouldn't equal to mdiB", mdiA.equals(mdiB));
 
@@ -57,7 +57,7 @@ public class MustDefinitionImplTest {
         assertFalse("mdiA shouldn't equal to mdiB", mdiA.equals(mdiB));
 
         // //reference
-        mdiA = MustDefinitionImpl.create("mustStr", description, Optional.<String>absent(), errorAppTag, errorMessage);
+        mdiA = MustDefinitionImpl.create("mustStr", description, Optional.absent(), errorAppTag, errorMessage);
         mdiB = MustDefinitionImpl.create("mustStr", description, reference, errorAppTag, errorMessage);
         assertFalse("mdiA shouldn't equal to mdiB", mdiA.equals(mdiB));
 

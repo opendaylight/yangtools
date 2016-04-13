@@ -103,7 +103,7 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
                 revisionDate = SimpleDateFormatUtil.DEFAULT_DATE_IMP;
             }
 
-            return new ModuleIdentifierImpl(subModuleName, Optional.<URI> absent(), Optional.<Date> of(revisionDate));
+            return new ModuleIdentifierImpl(subModuleName, Optional.absent(), Optional.of(revisionDate));
         }
 
         @Override

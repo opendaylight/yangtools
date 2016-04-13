@@ -51,7 +51,7 @@ public final class MappingCheckedFuture<V, X extends Exception> extends Abstract
      */
     public static <V, X extends Exception> MappingCheckedFuture<V, X> create(
             final ListenableFuture<V> delegate, final Function<Exception, X> mapper ) {
-        return new MappingCheckedFuture<V, X>( delegate, mapper );
+        return new MappingCheckedFuture<>(delegate, mapper);
     }
 
     @Override

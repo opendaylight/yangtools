@@ -58,7 +58,7 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
         if (element == null) {
             return (SingletonSet<E>) NULL_SINGLETON;
         }
-        return new RegularSingletonSet<E>(element);
+        return new RegularSingletonSet<>(element);
     }
 
     public abstract E getElement();

@@ -54,7 +54,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     private final Collection<SourceIdentifier> requiredSources = new ConcurrentLinkedDeque<>();
     private final Multimap<SourceIdentifier, YangTextSchemaSource> texts = ArrayListMultimap.create();
     private final AtomicReference<Optional<SchemaContext>> currentSchemaContext =
-            new AtomicReference<>(Optional.<SchemaContext>absent());
+            new AtomicReference<>(Optional.absent());
     private final InMemorySchemaSourceCache<ASTSchemaSource> cache;
     private final SchemaListenerRegistration transReg;
     private final SchemaSourceRegistry registry;
@@ -159,7 +159,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     public YangTextSchemaSourceRegistration registerSource(@Nonnull final URL url) throws SchemaSourceException, IOException, YangSyntaxErrorException {
         checkArgument(url != null, "Supplied URL must not be null");
 
-        final SourceIdentifier guessedId = new SourceIdentifier(url.getFile(), Optional.<String>absent());
+        final SourceIdentifier guessedId = new SourceIdentifier(url.getFile(), Optional.absent());
         return registerSource(new YangTextSchemaSource(guessedId) {
             @Override
             public InputStream openStream() throws IOException {
@@ -230,7 +230,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
 
         LOG.debug("Lookup {} result {}", sourceIdentifier, ret);
         if (ret.isEmpty()) {
-            return Futures.<YangTextSchemaSource, SchemaSourceException>immediateFailedCheckedFuture(
+            return Futures.immediateFailedCheckedFuture(
                     new MissingSchemaSourceException("URL for " + sourceIdentifier + " not registered", sourceIdentifier));
         }
 

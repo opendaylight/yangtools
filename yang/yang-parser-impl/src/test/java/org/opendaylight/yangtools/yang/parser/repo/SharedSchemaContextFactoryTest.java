@@ -44,14 +44,14 @@ public class SharedSchemaContextFactoryTest {
         repository.registerSchemaSource(new SchemaSourceProvider<YangTextSchemaSource>() {
             @Override
             public CheckedFuture<YangTextSchemaSource, SchemaSourceException> getSource(final SourceIdentifier sourceIdentifier) {
-                return Futures.<YangTextSchemaSource, SchemaSourceException>immediateCheckedFuture(source1);
+                return Futures.immediateCheckedFuture(source1);
             }
         }, PotentialSchemaSource.create(s1, YangTextSchemaSource.class, 1));
 
         repository.registerSchemaSource(new SchemaSourceProvider<YangTextSchemaSource>() {
             @Override
             public CheckedFuture<YangTextSchemaSource, SchemaSourceException> getSource(final SourceIdentifier sourceIdentifier) {
-                return Futures.<YangTextSchemaSource, SchemaSourceException>immediateCheckedFuture(source2);
+                return Futures.immediateCheckedFuture(source2);
             }
         }, PotentialSchemaSource.create(s2, YangTextSchemaSource.class, 1));
     }

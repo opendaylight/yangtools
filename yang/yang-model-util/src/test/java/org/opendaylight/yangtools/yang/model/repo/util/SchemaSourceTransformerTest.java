@@ -49,8 +49,9 @@ public class SchemaSourceTransformerTest {
 
     @Test
     public void schemaSourceTransformerTest() {
-        this.schema = new SchemaSourceTransformer<YangSchemaSourceRepresentation, YinXmlSchemaSource>(
-                this.provider, SchemaSourceTransformerTest.SRC_CLASS, this.consumer, SchemaSourceTransformerTest.DST_CLASS, this.function);
+        this.schema = new SchemaSourceTransformer<>(
+                this.provider, SchemaSourceTransformerTest.SRC_CLASS, this.consumer,
+                SchemaSourceTransformerTest.DST_CLASS, this.function);
         Assert.assertNotNull(this.schema);
     }
 
@@ -60,7 +61,7 @@ public class SchemaSourceTransformerTest {
         final Registrator reg = new Registrator(p, SchemaSourceTransformerTest.SRC_CLASS, PotentialSchemaSource.Costs.IMMEDIATE);
         final SourceIdentifier sourceIdentifier = new SourceIdentifier("source");
         reg.register(sourceIdentifier);
-        this.schema = new SchemaSourceTransformer<YangSchemaSourceRepresentation, YinXmlSchemaSource>(p,
+        this.schema = new SchemaSourceTransformer<>(p,
                 SchemaSourceTransformerTest.SRC_CLASS, this.consumer, SchemaSourceTransformerTest.DST_CLASS,
                 this.function);
         final SchemaSourceProvider<YinXmlSchemaSource> provider = this.schema;
@@ -83,7 +84,7 @@ public class SchemaSourceTransformerTest {
         reg.register(sourceIdentifier);
 
         final Consumer c = new Consumer();
-        this.schema = new SchemaSourceTransformer<YangSchemaSourceRepresentation, YinXmlSchemaSource>(p,
+        this.schema = new SchemaSourceTransformer<>(p,
                 SchemaSourceTransformerTest.SRC_CLASS, c, SchemaSourceTransformerTest.DST_CLASS, this.function);
 
         final SchemaSourceListener listener = this.schema;

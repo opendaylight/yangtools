@@ -19,5 +19,5 @@ final class JavaLengthConstraints {
     }
 
     static final List<LengthConstraint> INTEGER_SIZE_CONSTRAINTS = ImmutableList.of(
-        BaseConstraints.newLengthConstraint(0, Integer.MAX_VALUE, Optional.<String>absent(), Optional.<String>absent()));
+        BaseConstraints.newLengthConstraint(0, Integer.MAX_VALUE, Optional.absent(), Optional.absent()));
 }

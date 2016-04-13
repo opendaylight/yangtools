@@ -37,7 +37,7 @@ public class RpcResultBuilderTest {
         assertNotNull( "getErrors returned null", result.getErrors() );
         assertEquals( "getErrors size", 0, result.getErrors().size() );
 
-        result = RpcResultBuilder.<String>success( "bar" ).build();
+        result = RpcResultBuilder.success( "bar" ).build();
         verifyRpcResult( result, true, "bar" );
     }
 
@@ -86,7 +86,7 @@ public class RpcResultBuilderTest {
                 .withWarning( ErrorType.RPC, "in-use", "message", "my-app-tag", "my-info", cause )
                 .build();
 
-        RpcResult<String> copy = RpcResultBuilder.<String>from( result )
+        RpcResult<String> copy = RpcResultBuilder.from( result )
                 .withError( ErrorType.PROTOCOL, "error message" )
                 .build();
         verifyRpcResult( copy, true, "foo" );

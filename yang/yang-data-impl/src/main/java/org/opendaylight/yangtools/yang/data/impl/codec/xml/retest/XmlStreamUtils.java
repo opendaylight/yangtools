@@ -145,7 +145,7 @@ public class XmlStreamUtils {
 
     public void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final SchemaNode schemaNode,
             final Object value) throws XMLStreamException {
-        writeValue(writer, schemaNode, value, Optional.<QNameModule> absent());
+        writeValue(writer, schemaNode, value, Optional.absent());
     }
 
     public void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final SchemaNode schemaNode,
@@ -181,7 +181,7 @@ public class XmlStreamUtils {
             if (parent.isPresent()) {
                 write(writer, (IdentityrefTypeDefinition) baseType, value, parent);
             } else {
-                write(writer, (IdentityrefTypeDefinition) baseType, value, Optional.<QNameModule> absent());
+                write(writer, (IdentityrefTypeDefinition) baseType, value, Optional.absent());
             }
         } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
             write(writer, (InstanceIdentifierTypeDefinition) baseType, value);
@@ -211,7 +211,7 @@ public class XmlStreamUtils {
 
     public void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final TypeDefinition<?> type,
             final Object value) throws XMLStreamException {
-        writeValue(writer, type, value, Optional.<QNameModule> absent());
+        writeValue(writer, type, value, Optional.absent());
     }
 
     @VisibleForTesting

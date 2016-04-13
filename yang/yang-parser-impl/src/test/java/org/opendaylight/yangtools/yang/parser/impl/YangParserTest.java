@@ -822,7 +822,7 @@ public class YangParserTest {
         File dependenciesDir = new File(getClass().getResource("/sorting-test").toURI());
         YangContextParser parser = new YangParserImpl();
         modules = parser.parseFile(yangFile, dependenciesDir).getModules();
-        SchemaContext ctx = new SchemaContextImpl(modules, Collections.<ModuleIdentifier, String> emptyMap());
+        SchemaContext ctx = new SchemaContextImpl(modules, Collections.emptyMap());
         checkOrder(modules);
         assertSetEquals(modules, ctx.getModules());
 
@@ -839,12 +839,12 @@ public class YangParserTest {
         }
         Set<Module> newModules = parser.parseFiles(testFiles).getModules();
         assertSetEquals(newModules, modules);
-        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String> emptyMap());
+        ctx = new SchemaContextImpl(newModules, Collections.emptyMap());
         assertSetEquals(newModules, ctx.getModules());
         // ##########
         newModules = parser.parseFiles(testFiles, null).getModules();
         assertSetEquals(newModules, modules);
-        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String> emptyMap());
+        ctx = new SchemaContextImpl(newModules, Collections.emptyMap());
         assertSetEquals(newModules, ctx.getModules());
         // ##########
         List<InputStream> streams = new ArrayList<>();
@@ -853,7 +853,7 @@ public class YangParserTest {
         }
         newModules = parser.parseSources(BuilderUtils.filesToByteSources(testFiles)).getModules();
         assertSetEquals(newModules, modules);
-        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String> emptyMap());
+        ctx = new SchemaContextImpl(newModules, Collections.emptyMap());
         assertSetEquals(newModules, ctx.getModules());
         // ##########
         streams.clear();
@@ -862,7 +862,7 @@ public class YangParserTest {
         }
         newModules = parser.parseSources(BuilderUtils.filesToByteSources(testFiles), null).getModules();
         assertSetEquals(newModules, modules);
-        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String> emptyMap());
+        ctx = new SchemaContextImpl(newModules, Collections.emptyMap());
         assertSetEquals(newModules, ctx.getModules());
     }
 
@@ -930,7 +930,7 @@ public class YangParserTest {
         File yangSubmodul = new File(getClass().getResource("/yang-grammar-test/submodule-header-extension.yang")
                 .toURI());
 
-        List<File> yangs = new ArrayList<File>();
+        List<File> yangs = new ArrayList<>();
         yangs.add(yangModul);
         yangs.add(yangSubmodul);
 
@@ -948,7 +948,7 @@ public class YangParserTest {
         File yangModule2 = new File(getClass().getResource("/yang-grammar-test/stmtsep-in-statements2.yang").toURI());
         File yangSubModule = new File(getClass().getResource("/yang-grammar-test/stmtsep-in-statements-sub.yang").toURI());
 
-        List<File> yangs = new ArrayList<File>();
+        List<File> yangs = new ArrayList<>();
         yangs.add(yangModule1);
         yangs.add(yangModule2);
         yangs.add(yangSubModule);

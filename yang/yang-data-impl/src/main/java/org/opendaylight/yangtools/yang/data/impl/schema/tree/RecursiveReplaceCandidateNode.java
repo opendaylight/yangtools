@@ -40,7 +40,7 @@ final class RecursiveReplaceCandidateNode extends AbstractDataTreeCandidateNode 
 
     @Override
     public Optional<NormalizedNode<?, ?>> getDataBefore() {
-        return Optional.<NormalizedNode<?, ?>>of(oldData);
+        return Optional.of(oldData);
     }
 
     @Override

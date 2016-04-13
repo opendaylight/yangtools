@@ -98,7 +98,7 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
                 Utils.getLatestRevision(stmt.declaredSubstatements())).or(DEFAULT_REVISION);
 
             ModuleIdentifier submoduleIdentifier = new ModuleIdentifierImpl(stmt.getStatementArgument(),
-                Optional.<URI> absent(), revisionDate);
+                Optional.absent(), revisionDate);
 
             stmt.addContext(SubmoduleNamespace.class, submoduleIdentifier, stmt);
 

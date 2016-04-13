@@ -94,7 +94,7 @@ public final class ModuleDependencySort {
     @Deprecated
     public static List<ModuleBuilder> sort(final Collection<ModuleBuilder> builders) {
         List<TopologicalSort.Node> sorted = sortInternal(ModuleOrModuleBuilder.fromAll(
-                Collections.<Module>emptySet(),builders));
+                Collections.emptySet(),builders));
         return Lists.transform(sorted, NODE_TO_MODULEBUILDER);
     }
 
@@ -129,7 +129,7 @@ public final class ModuleDependencySort {
      */
     public static List<Module> sort(final Module... modules) {
         List<TopologicalSort.Node> sorted = sortInternal(ModuleOrModuleBuilder.fromAll(asList(modules),
-                Collections.<ModuleBuilder>emptyList()));
+                Collections.emptyList()));
         // Cast to Module from Node and return
         return Lists.transform(sorted, TOPOLOGY_FUNCTION);
     }
@@ -300,7 +300,7 @@ public final class ModuleDependencySort {
             }
 
             if (moduleGraph.get(name) == null) {
-                moduleGraph.put(name, Maps.<Date, ModuleNodeImpl> newHashMap());
+                moduleGraph.put(name, Maps.newHashMap());
             }
 
             if (moduleGraph.get(name).get(rev) != null) {

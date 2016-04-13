@@ -72,7 +72,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     private ModuleImpl instance;
     private final String name;
     private final String sourcePath;
-    private static final SchemaPath SCHEMA_PATH = SchemaPath.create(Collections.<QName> emptyList(), true);
+    private static final SchemaPath SCHEMA_PATH = SchemaPath.create(Collections.emptyList(), true);
     private String prefix;
     private QNameModule qnameModule = EMPTY_QNAME_MODULE;
 

@@ -44,7 +44,7 @@ public class SimpleModuleTest {
     @Before
     public void init() {
         schemaRegistry = new SharedSchemaRepository("test");
-        fileSourceProvider = new FilesystemSchemaSourceCache<YangTextSchemaSource>(schemaRegistry,
+        fileSourceProvider = new FilesystemSchemaSourceCache<>(schemaRegistry,
                 YangTextSchemaSource.class, TEST_MODELS_FOLDER);
         final TextToASTTransformer astTransformer = TextToASTTransformer.create(schemaRegistry, schemaRegistry);
         schemaRegistry.registerSchemaSourceListener(astTransformer);

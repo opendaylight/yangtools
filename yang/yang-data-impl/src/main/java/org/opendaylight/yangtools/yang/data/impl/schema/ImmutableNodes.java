@@ -102,7 +102,7 @@ public final class ImmutableNodes {
      * @return serialized normalized node for provided instance Id
      */
     public static NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id) {
-        return fromInstanceId(ctx, id, Optional.<NormalizedNode<?, ?>>absent(), Optional.<Map.Entry<QName, ModifyAction>>absent());
+        return fromInstanceId(ctx, id, Optional.absent(), Optional.absent());
     }
 
     /**
@@ -114,7 +114,7 @@ public final class ImmutableNodes {
      * @return serialized normalized node for provided instance Id with overridden last child.
      */
     public static NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id, final NormalizedNode<?, ?> deepestElement) {
-        return fromInstanceId(ctx, id, Optional.<NormalizedNode<?, ?>>of(deepestElement), Optional.<Map.Entry<QName, ModifyAction>>absent());
+        return fromInstanceId(ctx, id, Optional.of(deepestElement), Optional.absent());
     }
 
     /**

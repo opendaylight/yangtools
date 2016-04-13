@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailed
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 
 abstract class AbstractDataTreeTip implements DataTreeTip {
-    private static final YangInstanceIdentifier PUBLIC_ROOT_PATH = YangInstanceIdentifier.create(Collections.<PathArgument>emptyList());
+    private static final YangInstanceIdentifier PUBLIC_ROOT_PATH = YangInstanceIdentifier.create(Collections.emptyList());
 
     /**
      * Return the current root node of this tip.

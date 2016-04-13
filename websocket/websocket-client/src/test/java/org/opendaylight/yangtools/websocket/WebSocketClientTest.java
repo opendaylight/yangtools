@@ -36,7 +36,7 @@ public class WebSocketClientTest {
     /**
      * Tracks if the message from the server has been received
      */
-    private SettableFuture<Boolean> messageReceived = SettableFuture.<Boolean>create();
+    private SettableFuture<Boolean> messageReceived = SettableFuture.create();
 
     /**
      * Tracks the port on which the server is listening

@@ -35,7 +35,7 @@ public class SchemaResolutionException extends SchemaSourceException {
     }
 
     public SchemaResolutionException(@Nonnull final String message, final Throwable cause) {
-        this(message, cause, Collections.<SourceIdentifier>emptySet(), ImmutableMultimap.<SourceIdentifier, ModuleImport>of());
+        this(message, cause, Collections.emptySet(), ImmutableMultimap.of());
     }
 
     public SchemaResolutionException(@Nonnull final String message, final Collection<SourceIdentifier> resolvedSources,

@@ -33,7 +33,7 @@ final class ReadWriteTrieMap<K, V> implements Map<K, V> {
     private int size;
 
     ReadWriteTrieMap() {
-        this.delegate = new TrieMap<K, V>();
+        this.delegate = new TrieMap<>();
         this.size = 0;
     }
 

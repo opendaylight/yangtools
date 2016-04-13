@@ -52,7 +52,7 @@ public class ModuleDependencySortTest {
         List<ModuleBuilder> l = ModuleDependencySort.sort(builders);
 
         assertDependencyGraph(ModuleDependencySort.createModuleGraph(ModuleOrModuleBuilder.fromAll(
-                Collections.<Module>emptySet(), Arrays.asList(builders))));
+                Collections.emptySet(), Arrays.asList(builders))));
 
         Matcher<String> cOrD = anyOf(equalTo(c.getName()), equalTo(d.getName()));
 

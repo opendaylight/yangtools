@@ -149,7 +149,7 @@ public final class ClassLoaderUtils {
     }
 
     public static <S,G,P> Class<P> findFirstGenericArgument(final Class<S> scannedClass, final Class<G> genericType) {
-        return withClassLoader(scannedClass.getClassLoader(), ClassLoaderUtils.<S,G,P>findFirstGenericArgumentTask(scannedClass, genericType));
+        return withClassLoader(scannedClass.getClassLoader(), ClassLoaderUtils.findFirstGenericArgumentTask(scannedClass, genericType));
     }
 
     private static <S,G,P> Supplier<Class<P>> findFirstGenericArgumentTask(final Class<S> scannedClass, final Class<G> genericType) {

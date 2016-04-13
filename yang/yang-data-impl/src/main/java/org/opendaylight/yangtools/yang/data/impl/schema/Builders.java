@@ -111,7 +111,7 @@ public final class Builders {
     }
 
     public static <T> ListNodeBuilder<T,LeafSetEntryNode<T>> orderedLeafSetBuilder(final LeafListSchemaNode schema) {
-        return ImmutableOrderedLeafSetNodeSchemaAwareBuilder.<T>create(schema);
+        return ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(schema);
     }
 
     public static <T> ListNodeBuilder<T,LeafSetEntryNode<T>> leafSetBuilder(final LeafSetNode<T> node) {
@@ -119,11 +119,11 @@ public final class Builders {
     }
 
     public static <T> ListNodeBuilder<T,LeafSetEntryNode<T>> leafSetBuilder(final LeafListSchemaNode schema) {
-        return ImmutableLeafSetNodeSchemaAwareBuilder.<T>create(schema);
+        return ImmutableLeafSetNodeSchemaAwareBuilder.create(schema);
     }
 
     public static <T> ListNodeBuilder<T,LeafSetEntryNode<T>> leafSetBuilder(final LeafListSchemaNode schema, final LeafSetNode<T> node) {
-        return ImmutableLeafSetNodeSchemaAwareBuilder.<T>create(schema, node);
+        return ImmutableLeafSetNodeSchemaAwareBuilder.create(schema, node);
     }
 
     public static DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> containerBuilder() {

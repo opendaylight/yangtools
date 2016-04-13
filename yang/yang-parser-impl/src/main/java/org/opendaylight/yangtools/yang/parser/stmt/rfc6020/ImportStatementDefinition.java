@@ -144,8 +144,8 @@ public class ImportStatementDefinition
             revision = SimpleDateFormatUtil.DEFAULT_DATE_IMP;
         }
 
-        return new ModuleIdentifierImpl(stmt.getStatementArgument(), Optional.<URI> absent(),
-                Optional.<Date> of(revision));
+        return new ModuleIdentifierImpl(stmt.getStatementArgument(), Optional.absent(),
+                Optional.of(revision));
     }
 
 }

@@ -62,7 +62,7 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
 
-        return new ImmutableLeafSetNodeBuilder<T>((ImmutableLeafSetNode<T>) node);
+        return new ImmutableLeafSetNodeBuilder<>((ImmutableLeafSetNode<T>) node);
     }
 
     @Override
@@ -108,7 +108,7 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
 
     @Override
     public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(final T value) {
-        return withChildValue(value, Collections.<QName,String>emptyMap());
+        return withChildValue(value, Collections.emptyMap());
     }
 
     protected final static class ImmutableLeafSetNode<T> extends

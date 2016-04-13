@@ -76,7 +76,7 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
 
     @Override
     public Optional<NormalizedNode<?, ?>> getDataAfter() {
-        return Optional.<NormalizedNode<?, ?>>of(data);
+        return Optional.of(data);
     }
 
     @Override

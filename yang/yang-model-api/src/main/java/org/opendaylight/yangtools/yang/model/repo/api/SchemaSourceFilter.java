@@ -25,7 +25,7 @@ public interface SchemaSourceFilter {
      */
     SchemaSourceFilter ALWAYS_ACCEPT = new SchemaSourceFilter() {
         private final Iterable<Class<? extends SchemaSourceRepresentation>> representations =
-                Collections.<Class<? extends SchemaSourceRepresentation>>singletonList(SchemaSourceRepresentation.class);
+                Collections.singletonList(SchemaSourceRepresentation.class);
         private final ListenableFuture<Boolean> applyFuture = Futures.immediateFuture(Boolean.TRUE);
 
         @Override

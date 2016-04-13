@@ -106,7 +106,7 @@ public class BuilderTest {
     public void immutableOrderedMapBuilderTest() {
         final LinkedList<MapEntryNode> mapEntryNodeColl = new LinkedList();
         mapEntryNodeColl.add(LIST_MAIN_CHILD_3);
-        final Map<QName, Object> keys = new HashMap<QName, Object>();
+        final Map<QName, Object> keys = new HashMap<>();
         keys.put(LIST_MAIN_CHILD_QNAME_1, 1);
         final YangInstanceIdentifier.NodeIdentifierWithPredicates mapEntryPath = new YangInstanceIdentifier
                 .NodeIdentifierWithPredicates(LIST_MAIN, keys);

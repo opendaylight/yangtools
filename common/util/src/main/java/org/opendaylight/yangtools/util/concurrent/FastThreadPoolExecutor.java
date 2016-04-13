@@ -68,7 +68,7 @@ public class FastThreadPoolExecutor extends ThreadPoolExecutor {
         // reached, subsequent tasks will be queued. If the queue is full, tasks will be rejected.
 
         super( maximumPoolSize, maximumPoolSize, keepAliveTime, unit,
-               new TrackingLinkedBlockingQueue<Runnable>( maximumQueueSize ) );
+                new TrackingLinkedBlockingQueue<>(maximumQueueSize) );
 
         this.threadPrefix = threadPrefix;
         this.maximumQueueSize = maximumQueueSize;
