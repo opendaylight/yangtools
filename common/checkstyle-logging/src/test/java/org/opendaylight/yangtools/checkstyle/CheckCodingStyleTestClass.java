@@ -18,9 +18,8 @@ import com.google.common.collect.Lists;
 
 public class CheckCodingStyleTestClass {
 
-	public CheckCodingStyleTestClass() {
-		Comparator<String> string = CASE_INSENSITIVE_ORDER; 
-		
-	   Map<String, String> map = Maps.newHashMap();
-	}
+    public CheckCodingStyleTestClass() {
+        Comparator<String> string = CASE_INSENSITIVE_ORDER;
+        Map<String, String> map = Maps.newHashMap();
+    }
 }

@@ -20,19 +20,19 @@ import org.mockito.MockitoAnnotations;
 
 public class ArgumentsExtractorVerifierTest {
 
-	@Mock
-	List<String> mockedList;
+    @Mock
+    List<String> mockedList;
 
-	@Test
-	public void test() {
-		MockitoAnnotations.initMocks(this);
-		doReturn(true).when(this.mockedList).add(any(String.class));
-		final String argument = "something";
-		this.mockedList.add(argument);
-		// retrieve argument
-		final ArgumentsExtractorVerifier argumentsExtractorVerifier = new ArgumentsExtractorVerifier();
-		verify(this.mockedList, argumentsExtractorVerifier).add(any(String.class));
-		assertArrayEquals(new Object[] { argument }, argumentsExtractorVerifier.getArguments());
-	}
+    @Test
+    public void test() {
+        MockitoAnnotations.initMocks(this);
+        doReturn(true).when(this.mockedList).add(any(String.class));
+        final String argument = "something";
+        this.mockedList.add(argument);
+        // retrieve argument
+        final ArgumentsExtractorVerifier argumentsExtractorVerifier = new ArgumentsExtractorVerifier();
+        verify(this.mockedList, argumentsExtractorVerifier).add(any(String.class));
+        assertArrayEquals(new Object[] { argument }, argumentsExtractorVerifier.getArguments());
+    }
 
 }
