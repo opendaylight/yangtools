@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.util;
 
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -290,7 +292,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
             if (matcher.matches()) {
                 final String moduleName = matcher.group("moduleName");
                 final String revision = matcher.group("revision");
-                return Optional.of(new SourceIdentifier(moduleName, Optional.fromNullable(revision)));
+                return Optional.of(RevisionSourceIdentifier.create(moduleName, Optional.fromNullable(revision)));
             }
             return Optional.absent();
         }
