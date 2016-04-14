@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.util;
 
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.CheckedFuture;
 import java.util.Arrays;
@@ -59,7 +61,7 @@ public class SchemaSourceTransformerTest {
     public void schemaSourceTransformerGetSourceTest() throws Exception {
         final Provider p = new Provider();
         final Registrator reg = new Registrator(p, SchemaSourceTransformerTest.SRC_CLASS, PotentialSchemaSource.Costs.IMMEDIATE);
-        final SourceIdentifier sourceIdentifier = new SourceIdentifier("source");
+        final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("source");
         reg.register(sourceIdentifier);
         this.schema = new SchemaSourceTransformer<>(p,
                 SchemaSourceTransformerTest.SRC_CLASS, this.consumer, SchemaSourceTransformerTest.DST_CLASS,
@@ -73,7 +75,7 @@ public class SchemaSourceTransformerTest {
 
     @Test
     public void schemaSourceRegAndUnregSchemaSourceTest() throws Exception {
-        final SourceIdentifier sourceIdentifier = new SourceIdentifier("source");
+        final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("source");
         final Foo<YangSchemaSourceRepresentation> foo = new Foo<>(sourceIdentifier,
                 SchemaSourceTransformerTest.SRC_CLASS,
                 PotentialSchemaSource.Costs.COMPUTATION);

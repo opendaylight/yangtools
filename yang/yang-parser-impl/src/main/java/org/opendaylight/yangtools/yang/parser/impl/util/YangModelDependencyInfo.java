@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.impl.util;
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.getArgumentString;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import java.io.InputStream;
 import java.util.Date;
@@ -35,6 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMapping;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 
@@ -60,6 +62,7 @@ public abstract class YangModelDependencyInfo {
     private final String name;
     private final String formattedRevision;
     private final Date revision;
+    private final SemVer semVer;
     private final ImmutableSet<ModuleImport> submoduleIncludes;
     private final ImmutableSet<ModuleImport> moduleImports;
     private final ImmutableSet<ModuleImport> dependencies;
@@ -67,6 +70,13 @@ public abstract class YangModelDependencyInfo {
     YangModelDependencyInfo(final String name, final String formattedRevision,
             final ImmutableSet<ModuleImport> imports,
             final ImmutableSet<ModuleImport> includes) {
+        this(name, formattedRevision, imports, includes, Module.DEFAULT_SEMANTIC_VERSION);
+    }
+
+    YangModelDependencyInfo(final String name, final String formattedRevision,
+            final ImmutableSet<ModuleImport> imports,
+            final ImmutableSet<ModuleImport> includes,
+            final SemVer semVer) {
         this.name = name;
         this.formattedRevision = formattedRevision;
         this.revision = formattedRevision == null ? null : QName
@@ -75,6 +85,7 @@ public abstract class YangModelDependencyInfo {
         this.submoduleIncludes = includes;
         this.dependencies = ImmutableSet.<ModuleImport> builder()
                 .addAll(moduleImports).addAll(submoduleIncludes).build();
+        this.semVer = semVer;
     }
 
     /**
@@ -116,12 +127,22 @@ public abstract class YangModelDependencyInfo {
         return revision;
     }
 
+    /**
+     * Returns semantic version of module
+     *
+     * @return semantic version
+     */
+    public SemVer getSemanticVersion() {
+        return semVer;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + Objects.hashCode(formattedRevision);
         result = prime * result + Objects.hashCode(name);
+        result = prime * result + Objects.hashCode(semVer);
         return result;
     }
 
@@ -151,6 +172,10 @@ public abstract class YangModelDependencyInfo {
         } else if (!name.equals(other.name)) {
             return false;
         }
+        if(!Objects.equals(semVer, other.semVer)) {
+            return false;
+        }
+
         return true;
     }
 
@@ -242,10 +267,11 @@ public abstract class YangModelDependencyInfo {
             final YangStatementParser.StatementContext module) {
         String name = Utils.stringFromStringContext(module.argument());
         String latestRevision = getLatestRevision(module);
+        SemVer semVer = getSemanticVersion(module);
         ImmutableSet<ModuleImport> imports = parseImports(module);
         ImmutableSet<ModuleImport> includes = parseIncludes(module);
 
-        return new ModuleDependencyInfo(name, latestRevision, imports, includes);
+        return new ModuleDependencyInfo(name, latestRevision, imports, includes, semVer);
     }
 
     private static ImmutableSet<ModuleImport> parseImports(
@@ -263,11 +289,30 @@ public abstract class YangModelDependencyInfo {
                         .stringFromStringContext(subStatementContext.argument());
                 Date revisionDate = (revisionDateStr == null) ? null : QName
                         .parseRevision(revisionDateStr);
+                SemVer importSemVer = getSemanticVersion(subStatementContext);
                 result.add(new ModuleImportImpl(importedModuleName,
-                        revisionDate));
+                        revisionDate, importSemVer));
             }
         }
         return ImmutableSet.copyOf(result);
+    }
+
+    private static SemVer getSemanticVersion(StatementContext statement) {
+        List<StatementContext> subStatements = statement.statement();
+        String semVerString = null;
+        for (StatementContext subStatement : subStatements) {
+            String subStatementName = Utils.trimPrefix(subStatement.keyword().getText());
+            if (subStatementName.equals(SupportedExtensionsMapping.SEMANTIC_VERSION.getStatementName().getLocalName())) {
+                semVerString = Utils.stringFromStringContext(subStatement.argument());
+                break;
+            }
+        }
+
+        if (Strings.isNullOrEmpty(semVerString)) {
+            return Module.DEFAULT_SEMANTIC_VERSION;
+        }
+
+        return SemVer.valueOf(semVerString);
     }
 
     private static ImmutableSet<ModuleImport> parseIncludes(
@@ -425,7 +470,7 @@ public abstract class YangModelDependencyInfo {
      * Dependency information for YANG module.
      *
      */
-    public static final class ModuleDependencyInfo extends
+    public static class ModuleDependencyInfo extends
             YangModelDependencyInfo {
 
         private ModuleDependencyInfo(final String name,
@@ -435,9 +480,17 @@ public abstract class YangModelDependencyInfo {
             super(name, latestRevision, imports, includes);
         }
 
+        private ModuleDependencyInfo(final String name,
+                final String latestRevision,
+                final ImmutableSet<ModuleImport> imports,
+                final ImmutableSet<ModuleImport> includes,
+                final SemVer semVer) {
+            super(name, latestRevision, imports, includes, semVer);
+        }
+
         @Override
         public String toString() {
-            return "Module [name=" + getName() + ", revision=" + getRevision()
+            return "Module [name=" + getName() + ", revision=" + getRevision() + ", semanticVersion=" + getSemanticVersion()
                     + ", dependencies=" + getDependencies() + "]";
         }
     }
@@ -564,7 +617,7 @@ public abstract class YangModelDependencyInfo {
         @Override
         public String toString() {
             return "ModuleImportImpl [name=" + name + ", revision="
-                    + QName.formattedRevision(revision) + "]";
+                    + QName.formattedRevision(revision) + ", semanticVersion=" + getSemanticVersion() + "]";
         }
     }
 }
