@@ -16,39 +16,78 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
- * An asynchronous factory for building {@link SchemaContext} instances
- * based on a specification of what {@link SourceIdentifier}s are required
- * and dynamic recursive resolution.
+ * An asynchronous factory for building {@link SchemaContext} instances based on
+ * a specification of what {@link SourceIdentifier}s are required and dynamic
+ * recursive resolution.
  */
 @Beta
 public interface SchemaContextFactory {
     /**
-     * Create a new schema context containing specified sources, pulling in
-     * any dependencies they may have.
+     * Create a new schema context containing specified sources, pulling in any
+     * dependencies they may have.
      *
-     * @param requiredSources a collection of sources which are required to
-     *                        be present
-     * @return A checked future, which will produce a schema context, or
-     *         fail with an explanation why the creation of the schema context
+     * @param requiredSources
+     *            a collection of sources which are required to be present
+     * @return A checked future, which will produce a schema context, or fail
+     *         with an explanation why the creation of the schema context
      *         failed.
      */
     default CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
             @Nonnull Collection<SourceIdentifier> requiredSources) {
-        return createSchemaContext(requiredSources, t -> true);
+        return createSchemaContext(requiredSources, StatementParserMode.DEFAULT_MODE, t -> true);
     }
 
     /**
-     * Create a new schema context containing specified sources, pulling in
-     * any dependencies they may have.
+     * Create a new schema context containing specified sources, pulling in any
+     * dependencies they may have.
      *
-     * @param requiredSources a collection of sources which are required to
-     *                        be present
-     * @param isFeatureSupported a predicate based on which all if-feature statements in the parsed yang
-     *                          models are resolved
-     * @return A checked future, which will produce a schema context, or
-     *         fail with an explanation why the creation of the schema context
+     * @param requiredSources
+     *            a collection of sources which are required to be present
+     * @param statementParserMode
+     *            mode of statement parser
+     * @return A checked future, which will produce a schema context, or fail
+     *         with an explanation why the creation of the schema context
+     *         failed.
+     */
+    default CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
+            Collection<SourceIdentifier> requiredSources, StatementParserMode statementParserMode) {
+        return createSchemaContext(requiredSources, statementParserMode, t -> true);
+    }
+
+    /**
+     * Create a new schema context containing specified sources, pulling in any
+     * dependencies they may have.
+     *
+     * @param requiredSources
+     *            a collection of sources which are required to be present
+     * @param isFeatureSupported
+     *            a predicate based on which all if-feature statements in the
+     *            parsed yang models are resolved
+     * @return A checked future, which will produce a schema context, or fail
+     *         with an explanation why the creation of the schema context
+     *         failed.
+     */
+    default CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
+            @Nonnull Collection<SourceIdentifier> requiredSources, Predicate<QName> isFeatureSupported) {
+        return createSchemaContext(requiredSources, StatementParserMode.DEFAULT_MODE, isFeatureSupported);
+    }
+
+    /**
+     * Create a new schema context containing specified sources, pulling in any
+     * dependencies they may have.
+     *
+     * @param requiredSources
+     *            a collection of sources which are required to be present
+     * @param statementParserMode
+     *            mode of statement parser
+     * @param isFeatureSupported
+     *            a predicate based on which all if-feature statements in the
+     *            parsed yang models are resolved
+     * @return A checked future, which will produce a schema context, or fail
+     *         with an explanation why the creation of the schema context
      *         failed.
      */
     CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
-            @Nonnull Collection<SourceIdentifier> requiredSources, Predicate<QName> isFeatureSupported);
+            Collection<SourceIdentifier> requiredSources, StatementParserMode statementParserMode,
+            Predicate<QName> isFeatureSupported);
 }
