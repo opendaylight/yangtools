@@ -59,7 +59,7 @@ public class SchemaSourceTransformerTest {
     public void schemaSourceTransformerGetSourceTest() throws Exception {
         final Provider p = new Provider();
         final Registrator reg = new Registrator(p, SchemaSourceTransformerTest.SRC_CLASS, PotentialSchemaSource.Costs.IMMEDIATE);
-        final SourceIdentifier sourceIdentifier = new SourceIdentifier("source");
+        final SourceIdentifier sourceIdentifier = SourceIdentifier.createRevisionSourceIdentifier("source");
         reg.register(sourceIdentifier);
         this.schema = new SchemaSourceTransformer<>(p,
                 SchemaSourceTransformerTest.SRC_CLASS, this.consumer, SchemaSourceTransformerTest.DST_CLASS,
@@ -73,7 +73,7 @@ public class SchemaSourceTransformerTest {
 
     @Test
     public void schemaSourceRegAndUnregSchemaSourceTest() throws Exception {
-        final SourceIdentifier sourceIdentifier = new SourceIdentifier("source");
+        final SourceIdentifier sourceIdentifier = SourceIdentifier.createRevisionSourceIdentifier("source");
         final Foo<YangSchemaSourceRepresentation> foo = new Foo<>(sourceIdentifier,
                 SchemaSourceTransformerTest.SRC_CLASS,
                 PotentialSchemaSource.Costs.COMPUTATION);

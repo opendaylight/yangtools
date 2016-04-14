@@ -35,8 +35,8 @@ public class SharedSchemaContextFactoryTest {
 
         final ResourceYangSource source1 = new ResourceYangSource("/ietf/ietf-inet-types@2010-09-24.yang");
         final ResourceYangSource source2 = new ResourceYangSource("/ietf/iana-timezones@2012-07-09.yang");
-        s1 = new SourceIdentifier("ietf-inet-types", "2010-09-24");
-        s2 = new SourceIdentifier("iana-timezones", "2012-07-09");
+        s1 = SourceIdentifier.createRevisionSourceIdentifier("ietf-inet-types", "2010-09-24");
+        s2 = SourceIdentifier.createRevisionSourceIdentifier("iana-timezones", "2012-07-09");
 
         final TextToASTTransformer transformer = TextToASTTransformer.create(repository, repository);
         repository.registerSchemaSourceListener(transformer);
@@ -75,7 +75,7 @@ public class SharedSchemaContextFactoryTest {
         provider.register(repository);
 
         // Register the same provider under source id without revision
-        final SourceIdentifier sIdWithoutRevision = new SourceIdentifier(provider.getId().getName());
+        final SourceIdentifier sIdWithoutRevision = SourceIdentifier.createRevisionSourceIdentifier(provider.getId().getName());
         repository.registerSchemaSource(provider, PotentialSchemaSource.create(
                 sIdWithoutRevision, ASTSchemaSource.class, PotentialSchemaSource.Costs.IMMEDIATE.getValue()));
 
