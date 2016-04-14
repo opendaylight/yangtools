@@ -39,7 +39,7 @@ import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
  * http://tools.ietf.org/html/rfc6022#section-3.1 ).
  */
 @Beta
-public final class SourceIdentifier implements Identifier, Immutable {
+public class SourceIdentifier implements Identifier, Immutable {
     /**
      * Default revision for sources without specified revision.
      * Marks the source as oldest.
