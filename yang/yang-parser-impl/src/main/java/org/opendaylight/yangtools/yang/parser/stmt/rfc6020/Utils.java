@@ -19,7 +19,6 @@ import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -370,6 +369,14 @@ public final class Utils {
             return QName.create(identifier.getModule(), localName);
         }
 
+        return identifier;
+    }
+
+    public static String trimPrefix(final String identifier) {
+        String[] namesParts = identifier.split(":");
+        if (namesParts.length == 2) {
+            return namesParts[1];
+        }
         return identifier;
     }
 
