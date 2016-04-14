@@ -9,14 +9,13 @@ package org.opendaylight.yangtools.yang.parser.repo;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
@@ -25,6 +24,7 @@ import java.util.Set;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
 import org.slf4j.Logger;
@@ -40,45 +40,13 @@ import org.slf4j.LoggerFactory;
  *        That information will allow us to track "damage" to dependency resolution
  *        as new models are added to a schema context.
  */
-final class DependencyResolver {
+abstract class DependencyResolver {
     private static final Logger LOG = LoggerFactory.getLogger(DependencyResolver.class);
     private final Collection<SourceIdentifier> resolvedSources;
     private final Collection<SourceIdentifier> unresolvedSources;
     private final Multimap<SourceIdentifier, ModuleImport> unsatisfiedImports;
 
-    public DependencyResolver(final Collection<SourceIdentifier> resolvedSources,
-            final Collection<SourceIdentifier> unresolvedSources, final Multimap<SourceIdentifier, ModuleImport> unsatisfiedImports) {
-        this.resolvedSources = Preconditions.checkNotNull(resolvedSources);
-        this.unresolvedSources = Preconditions.checkNotNull(unresolvedSources);
-        this.unsatisfiedImports = Preconditions.checkNotNull(unsatisfiedImports);
-    }
-
-    private static SourceIdentifier findWildcard(final Iterable<SourceIdentifier> haystack, final String needle) {
-        for (final SourceIdentifier r : haystack) {
-            if (r.getName().equals(needle)) {
-                return r;
-            }
-        }
-
-        return null;
-    }
-
-    private static boolean isKnown(final Collection<SourceIdentifier> haystack, final ModuleImport mi) {
-        final String rev = mi.getRevision() != null ? QName.formattedRevision(mi.getRevision()) : null;
-        final SourceIdentifier msi = SourceIdentifier.create(mi.getModuleName(), Optional.fromNullable(rev));
-
-        // Quick lookup
-        if (haystack.contains(msi)) {
-            return true;
-        }
-
-        // Slow revision-less walk
-        return rev == null && findWildcard(haystack, mi.getModuleName()) != null;
-    }
-
-
-
-    public static DependencyResolver create(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo) {
+    protected DependencyResolver(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo) {
         final Collection<SourceIdentifier> resolved = new ArrayList<>(depInfo.size());
         final Collection<SourceIdentifier> pending = new ArrayList<>(depInfo.keySet());
         final Map<SourceIdentifier, BelongsToDependency> submodules = Maps.newHashMap();
@@ -130,8 +98,8 @@ final class DependencyResolver {
             }
         }
 
+        final Multimap<SourceIdentifier, ModuleImport> imports = ArrayListMultimap.create();
         if (!pending.isEmpty()) {
-            final Multimap<SourceIdentifier, ModuleImport> imports = ArrayListMultimap.create();
             for (final SourceIdentifier id : pending) {
                 final YangModelDependencyInfo dep = depInfo.get(id);
                 for (final ModuleImport mi : dep.getDependencies()) {
@@ -140,12 +108,14 @@ final class DependencyResolver {
                     }
                 }
             }
-
-            return new DependencyResolver(resolved, pending, imports);
-        } else {
-            return new DependencyResolver(resolved, Collections.emptyList(), ImmutableMultimap.of());
         }
+
+        this.resolvedSources = ImmutableList.copyOf(resolved);
+        this.unresolvedSources = ImmutableList.copyOf(pending);
+        this.unsatisfiedImports = ImmutableMultimap.copyOf(imports);
     }
+
+    abstract protected boolean isKnown(final Collection<SourceIdentifier> haystack, final ModuleImport mi);
 
     /**
      * Collection of sources which have been resolved.
@@ -220,5 +190,79 @@ final class DependencyResolver {
                     .add("parent", parent)
                     .toString();
         }
+    }
+}
+
+final class RevisionDependencyResolver extends DependencyResolver {
+
+    protected RevisionDependencyResolver(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo) {
+        super(depInfo);
+    }
+
+    protected SourceIdentifier findWildcard(final Iterable<SourceIdentifier> haystack, final String needle) {
+        for (final SourceIdentifier r : haystack) {
+            if (r.getName().equals(needle)) {
+                return r;
+            }
+        }
+
+        return null;
+    }
+
+    protected boolean isKnown(final Collection<SourceIdentifier> haystack, final ModuleImport mi) {
+        final String rev = mi.getRevision() != null ? QName.formattedRevision(mi.getRevision()) : null;
+        final SourceIdentifier msi = SourceIdentifier.create(mi.getModuleName(), Optional.fromNullable(rev));
+
+        // Quick lookup
+        if (haystack.contains(msi)) {
+            return true;
+        }
+
+        // Slow revision-less walk
+        return rev == null && findWildcard(haystack, mi.getModuleName()) != null;
+    }
+
+    public static RevisionDependencyResolver create(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo) {
+        return new RevisionDependencyResolver(depInfo);
+    }
+}
+
+final class SemVerDependencyResolver extends DependencyResolver {
+
+    protected SemVerDependencyResolver(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo) {
+        super(depInfo);
+    }
+
+    protected SourceIdentifier findCompatibleVersion(final Iterable<SourceIdentifier> haystack, final ModuleImport mi) {
+        String requestedModuleName = mi.getModuleName();
+        for (SourceIdentifier r : haystack) {
+            if (r.getName().equals(requestedModuleName)
+                    && isCompatible(((SemVerSourceIdentifier) r).getSemanticVersion(), mi.getSemanticVersion())) {
+                return r;
+            }
+        }
+
+        return null;
+    }
+
+    private boolean isCompatible(SemVer moduleSemVer, SemVer importSemVer) {
+        return moduleSemVer.getMajor() == importSemVer.getMajor() && moduleSemVer.compareTo(importSemVer) >= 0;
+    }
+
+    protected boolean isKnown(final Collection<SourceIdentifier> haystack, final ModuleImport mi) {
+        final String rev = mi.getRevision() != null ? QName.formattedRevision(mi.getRevision()) : null;
+        final SemVerSourceIdentifier msi = SemVerSourceIdentifier.create(mi.getModuleName(), Optional.fromNullable(rev), mi.getSemanticVersion());
+
+        // Quick lookup
+        if (haystack.contains(msi)) {
+            return true;
+        }
+
+        // Slow revision-less walk
+        return findCompatibleVersion(haystack, mi) != null;
+    }
+
+    public static SemVerDependencyResolver create(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo) {
+        return new SemVerDependencyResolver(depInfo);
     }
 }
