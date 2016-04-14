@@ -1,0 +1,15 @@
+module bad {
+    namespace "urn:opendaylight:bad";
+    prefix "bad";
+
+    revision 2016-04-11 {
+        description "Initial revision";
+    }
+    typedef thing {
+        type uint32;
+    }
+    typedef thing2 {
+        type bad:thing; // Error on this line
+        //type thing;
+    }
+}
