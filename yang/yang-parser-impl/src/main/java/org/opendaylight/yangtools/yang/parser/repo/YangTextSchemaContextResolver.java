@@ -8,6 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.repo;
 
 import static com.google.common.base.Preconditions.checkArgument;
+
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -34,6 +37,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
@@ -159,7 +163,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     public YangTextSchemaSourceRegistration registerSource(@Nonnull final URL url) throws SchemaSourceException, IOException, YangSyntaxErrorException {
         checkArgument(url != null, "Supplied URL must not be null");
 
-        final SourceIdentifier guessedId = new SourceIdentifier(url.getFile(), Optional.absent());
+        final SourceIdentifier guessedId = RevisionSourceIdentifier.create(url.getFile(), Optional.absent());
         return registerSource(new YangTextSchemaSource(guessedId) {
             @Override
             public InputStream openStream() throws IOException {
@@ -179,6 +183,18 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
      *         new schema context was successfully built.
      */
     public Optional<SchemaContext> getSchemaContext() {
+        return getSchemaContext(StatementParserMode.DEFAULT_MODE);
+    }
+
+    /**
+     * Try to parse all currently available yang files and build new schema context
+     * in dependence on specified parsing mode.
+     *
+     * @param statementParserMode mode of statement parser
+     * @return new schema context iif there is at least 1 yang file registered and
+     *         new schema context was successfully built.
+     */
+    public Optional<SchemaContext> getSchemaContext(StatementParserMode statementParserMode) {
         final SchemaContextFactory factory = repository.createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
         Optional<SchemaContext> sc;
         Object v;
@@ -201,7 +217,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             } while (v != version);
 
             while (true) {
-                final CheckedFuture<SchemaContext, SchemaResolutionException> f = factory.createSchemaContext(sources);
+                final CheckedFuture<SchemaContext, SchemaResolutionException> f = factory.createSchemaContext(sources, statementParserMode);
                 try {
                     sc = Optional.of(f.checkedGet());
                     break;
