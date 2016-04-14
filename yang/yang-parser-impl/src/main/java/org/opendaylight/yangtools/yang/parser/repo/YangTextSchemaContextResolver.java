@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.repo;
 
 import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -179,6 +180,19 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
      *         new schema context was successfully built.
      */
     public Optional<SchemaContext> getSchemaContext() {
+        return getSchemaContext(false);
+    }
+
+    /**
+     * Try to parse all currently available yang files and build new schema context
+     * in dependence on specified parsing mode.
+     *
+     * @param semVerMode if it is set to true, module imports are processed on the basis
+     *                   of semantic versions
+     * @return new schema context iif there is at least 1 yang file registered and
+     *         new schema context was successfully built.
+     */
+    public Optional<SchemaContext> getSchemaContext(boolean semVerMode) {
         final SchemaContextFactory factory = repository.createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
         Optional<SchemaContext> sc;
         Object v;
@@ -201,7 +215,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             } while (v != version);
 
             while (true) {
-                final CheckedFuture<SchemaContext, SchemaResolutionException> f = factory.createSchemaContext(sources);
+                final CheckedFuture<SchemaContext, SchemaResolutionException> f = factory.createSchemaContext(sources, semVerMode);
                 try {
                     sc = Optional.of(f.checkedGet());
                     break;

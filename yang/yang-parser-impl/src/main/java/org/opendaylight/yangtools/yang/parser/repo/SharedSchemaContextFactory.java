@@ -59,6 +59,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         }
     };
     private final Cache<Collection<SourceIdentifier>, SchemaContext> cache = CacheBuilder.newBuilder().weakValues().build();
+    private final Cache<Collection<SourceIdentifier>, SchemaContext> semVerCache = CacheBuilder.newBuilder().weakValues().build();
 
     private final AsyncFunction<List<ASTSchemaSource>, SchemaContext> assembleSources = new AsyncFunction<List<ASTSchemaSource>, SchemaContext>() {
         @Override
@@ -70,7 +71,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
 
             LOG.debug("Resolving dependency reactor {}", deps);
 
-            final DependencyResolver res = DependencyResolver.create(deps);
+            final DependencyResolver res = RevisionDependencyResolver.create(deps);
             if (!res.getUnresolvedSources().isEmpty()) {
                 LOG.debug("Omitting models {} due to unsatisfied imports {}", res.getUnresolvedSources(), res.getUnsatisfiedImports());
                 throw new SchemaResolutionException("Failed to resolve required models",
@@ -79,6 +80,40 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
 
             final Map<SourceIdentifier, ParserRuleContext> asts = Maps.transformValues(srcs, ASTSchemaSource.GET_AST);
             final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+
+            for (final Entry<SourceIdentifier, ParserRuleContext> e : asts.entrySet()) {
+                final ParserRuleContext parserRuleCtx = e.getValue();
+                Preconditions.checkArgument(parserRuleCtx instanceof StatementContext,
+                    "Unsupported context class %s for source %s", parserRuleCtx.getClass(), e.getKey());
+
+                reactor.addSource(new YangStatementSourceImpl(e.getKey(), (StatementContext) parserRuleCtx));
+            }
+
+            SchemaContext schemaContext = reactor.buildEffective();
+
+            return Futures.immediateCheckedFuture(schemaContext);
+        }
+    };
+
+    private final AsyncFunction<List<ASTSchemaSource>, SchemaContext> assembleSemVerSources = new AsyncFunction<List<ASTSchemaSource>, SchemaContext>() {
+        @Override
+        public ListenableFuture<SchemaContext> apply(final List<ASTSchemaSource> sources) throws SchemaResolutionException, SourceException, ReactorException {
+            final Map<SourceIdentifier, ASTSchemaSource> srcs =
+                    Maps.uniqueIndex(sources, ASTSchemaSource.GET_SEMVER_IDENTIFIER);
+            final Map<SourceIdentifier, YangModelDependencyInfo> deps =
+                    Maps.transformValues(srcs, ASTSchemaSource.GET_DEPINFO);
+
+            LOG.debug("Resolving dependency reactor {}", deps);
+
+            final DependencyResolver res = SemVerDependencyResolver.create(deps);
+            if (!res.getUnresolvedSources().isEmpty()) {
+                LOG.debug("Omitting models {} due to unsatisfied imports {}", res.getUnresolvedSources(), res.getUnsatisfiedImports());
+                throw new SchemaResolutionException("Failed to resolve required models",
+                        res.getResolvedSources(), res.getUnsatisfiedImports());
+            }
+
+            final Map<SourceIdentifier, ParserRuleContext> asts = Maps.transformValues(srcs, ASTSchemaSource.GET_AST);
+            final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(true);
 
             for (final Entry<SourceIdentifier, ParserRuleContext> e : asts.entrySet()) {
                 final ParserRuleContext parserRuleCtx = e.getValue();
@@ -106,6 +141,17 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
 
     @Override
     public CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(final Collection<SourceIdentifier> requiredSources) {
+        return createSchemaContext(requiredSources, false);
+    }
+
+    @Override
+    public CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
+            final Collection<SourceIdentifier> requiredSources, final boolean semVerMode) {
+        return semVerMode ? createSchemaContext(requiredSources, semVerCache, assembleSemVerSources)
+                : createSchemaContext(requiredSources, cache, assembleSources);
+    }
+
+    private CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(final Collection<SourceIdentifier> requiredSources, final Cache<Collection<SourceIdentifier>, SchemaContext> cache, AsyncFunction<List<ASTSchemaSource>, SchemaContext> assembleSources) {
         // Make sources unique
         final List<SourceIdentifier> uniqueSourceIdentifiers = deDuplicateSources(requiredSources);
 
