@@ -78,6 +78,7 @@ public final class Utils {
     private static final CharMatcher QUESTION_MARK_MATCHER = CharMatcher.is('?');
     private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings().trimResults();
     private static final Splitter SPACE_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
+    private static final Splitter COLON_SPLITTER = Splitter.on(":").omitEmptyStrings().trimResults();
     private static final Pattern PATH_ABS = Pattern.compile("/[^/].*");
     private static final Pattern BETWEEN_CURLY_BRACES_PATTERN = Pattern.compile("\\{(.+?)\\}");
     private static final Set<String> JAVA_UNICODE_BLOCKS = ImmutableSet.<String>builder()
@@ -369,6 +370,14 @@ public final class Utils {
             return QName.create(identifier.getModule(), localName);
         }
 
+        return identifier;
+    }
+
+    public static String trimPrefix(final String identifier) {
+        List<String> namesParts = COLON_SPLITTER.splitToList(identifier);
+        if (namesParts.size() == 2) {
+            return namesParts.get(1);
+        }
         return identifier;
     }
 
