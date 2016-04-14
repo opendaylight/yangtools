@@ -2,6 +2,8 @@ package org.opendaylight.yangtools.yang.parser.repo;
 
 import static org.junit.Assert.assertNotNull;
 
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
@@ -35,8 +37,8 @@ public class SharedSchemaContextFactoryTest {
 
         final ResourceYangSource source1 = new ResourceYangSource("/ietf/ietf-inet-types@2010-09-24.yang");
         final ResourceYangSource source2 = new ResourceYangSource("/ietf/iana-timezones@2012-07-09.yang");
-        s1 = new SourceIdentifier("ietf-inet-types", "2010-09-24");
-        s2 = new SourceIdentifier("iana-timezones", "2012-07-09");
+        s1 = RevisionSourceIdentifier.create("ietf-inet-types", "2010-09-24");
+        s2 = RevisionSourceIdentifier.create("iana-timezones", "2012-07-09");
 
         final TextToASTTransformer transformer = TextToASTTransformer.create(repository, repository);
         repository.registerSchemaSourceListener(transformer);
@@ -75,7 +77,7 @@ public class SharedSchemaContextFactoryTest {
         provider.register(repository);
 
         // Register the same provider under source id without revision
-        final SourceIdentifier sIdWithoutRevision = new SourceIdentifier(provider.getId().getName());
+        final SourceIdentifier sIdWithoutRevision = RevisionSourceIdentifier.create(provider.getId().getName());
         repository.registerSchemaSource(provider, PotentialSchemaSource.create(
                 sIdWithoutRevision, ASTSchemaSource.class, PotentialSchemaSource.Costs.IMMEDIATE.getValue()));
 
