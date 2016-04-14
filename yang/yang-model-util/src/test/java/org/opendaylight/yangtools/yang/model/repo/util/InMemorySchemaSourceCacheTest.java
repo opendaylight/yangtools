@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.repo.util;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
+
 import com.google.common.base.Charsets;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
@@ -24,6 +25,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -76,7 +78,7 @@ public class InMemorySchemaSourceCacheTest {
         final String content = "content";
         final YangTextSchemaSource source = new TestingYangSource("test", "2012-12-12", content);
         inMemorySchemaSourceCache.offer(source);
-        final SourceIdentifier sourceIdentifier = new SourceIdentifier("test", "2012-12-12");
+        final SourceIdentifier sourceIdentifier = SourceIdentifier.createRevisionSourceIdentifier("test", "2012-12-12");
         final CheckedFuture<? extends YangSchemaSourceRepresentation, SchemaSourceException> checkedSource = inMemorySchemaSourceCache
                 .getSource(sourceIdentifier);
         Assert.assertNotNull(checkedSource);
@@ -90,7 +92,7 @@ public class InMemorySchemaSourceCacheTest {
     public void inMemorySchemaSourceCacheNullGetSourcestest() throws Exception {
         final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache = InMemorySchemaSourceCache
                 .createSoftCache(this.registry, InMemorySchemaSourceCacheTest.representation);
-        final SourceIdentifier sourceIdentifier = new SourceIdentifier("test", "2012-12-12");
+        final SourceIdentifier sourceIdentifier = SourceIdentifier.createRevisionSourceIdentifier("test", "2012-12-12");
         final CheckedFuture<? extends YangSchemaSourceRepresentation, SchemaSourceException> checkedSource = inMemorySchemaSourceCache
                 .getSource(sourceIdentifier);
         Assert.assertNotNull(checkedSource);
@@ -112,7 +114,7 @@ public class InMemorySchemaSourceCacheTest {
         inMemorySchemaSourceCache.offer(source);
         inMemorySchemaSourceCache2.offer(source);
 
-        final SourceIdentifier sourceIdentifier = new SourceIdentifier("test", "2012-12-12");
+        final SourceIdentifier sourceIdentifier = SourceIdentifier.createRevisionSourceIdentifier("test", "2012-12-12");
         final CheckedFuture<? extends YangSchemaSourceRepresentation, SchemaSourceException> checkedSource = inMemorySchemaSourceCache
                 .getSource(sourceIdentifier);
         final CheckedFuture<? extends SchemaSourceRepresentation, SchemaSourceException> checkedSource2 = inMemorySchemaSourceCache2
@@ -130,7 +132,7 @@ public class InMemorySchemaSourceCacheTest {
         private final String content;
 
         protected TestingYangSource(final String name, final String revision, final String content) {
-            super(new SourceIdentifier(name, Optional.fromNullable(revision)));
+            super(RevisionSourceIdentifier.createRevisionSourceIdentifier(name, Optional.fromNullable(revision)));
             this.content = content;
         }
 

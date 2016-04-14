@@ -372,6 +372,14 @@ public final class Utils {
         return identifier;
     }
 
+    public static String trimPrefix(final String identifier) {
+        List<String> namesParts = Splitter.on(":").splitToList(identifier);
+        if (namesParts.size() == 2) {
+            return namesParts.get(1);
+        }
+        return identifier;
+    }
+
     /**
      *
      * Based on identifier read from source and collections of relevant prefixes and statement definitions mappings

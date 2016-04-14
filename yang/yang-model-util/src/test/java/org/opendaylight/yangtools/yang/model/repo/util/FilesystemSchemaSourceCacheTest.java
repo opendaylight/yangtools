@@ -144,7 +144,7 @@ public class FilesystemSchemaSourceCacheTest {
 
     @Test
     public void sourceIdToFileEmptyRevWithEmptyDir() {
-        final SourceIdentifier sourceIdentifier = new SourceIdentifier("test", "");
+        final SourceIdentifier sourceIdentifier = SourceIdentifier.createRevisionSourceIdentifier("test", "");
         final File sourceIdToFile = FilesystemSchemaSourceCache.sourceIdToFile(sourceIdentifier, this.storageDir);
         final FilesystemSchemaSourceCache<YangTextSchemaSource> cache = new FilesystemSchemaSourceCache<>(this.registry,
                 YangTextSchemaSource.class, sourceIdToFile);
@@ -161,7 +161,7 @@ public class FilesystemSchemaSourceCacheTest {
         final YangTextSchemaSource source = new TestingYangSource("test", "2013-12-12", content);
         cache.offer(source);
 
-        final SourceIdentifier sourceIdentifier = new SourceIdentifier("test", "");
+        final SourceIdentifier sourceIdentifier = SourceIdentifier.createRevisionSourceIdentifier("test", "");
         final File sourceIdToFile = FilesystemSchemaSourceCache.sourceIdToFile(sourceIdentifier,
                 this.storageDir);
         Assert.assertNotNull(sourceIdToFile);
@@ -179,7 +179,7 @@ public class FilesystemSchemaSourceCacheTest {
         cache.offer(source);
         cache.offer(source2);
 
-        final SourceIdentifier sourceIdentifier = new SourceIdentifier("test", "");
+        final SourceIdentifier sourceIdentifier = SourceIdentifier.createRevisionSourceIdentifier("test", "");
         final File sourceIdToFile = FilesystemSchemaSourceCache.sourceIdToFile(sourceIdentifier, this.storageDir);
         Assert.assertNotNull(sourceIdToFile);
         final List<File> storedFiles = Arrays.asList(this.storageDir.listFiles());
@@ -194,7 +194,7 @@ public class FilesystemSchemaSourceCacheTest {
         final String content = "content1";
         final YangTextSchemaSource source = new TestingYangSource("test", "2013-12-12", content);
         cache.offer(source);
-        final SourceIdentifier sourceIdentifier = new SourceIdentifier("test", "2013-12-12");
+        final SourceIdentifier sourceIdentifier = SourceIdentifier.createRevisionSourceIdentifier("test", "2013-12-12");
         final CheckedFuture<? extends YangTextSchemaSource, SchemaSourceException> checked = cache
                 .getSource(sourceIdentifier);
         Assert.assertNotNull(checked);
@@ -211,7 +211,7 @@ public class FilesystemSchemaSourceCacheTest {
         final String content = "content1";
         final YangTextSchemaSource source = new TestingYangSource("test", "2013-12-12", content);
         cache.offer(source);
-        final SourceIdentifier sourceIdentifier = new SourceIdentifier("test1", "2012-12-12");
+        final SourceIdentifier sourceIdentifier = SourceIdentifier.createRevisionSourceIdentifier("test1", "2012-12-12");
         final CheckedFuture<? extends YangTextSchemaSource, SchemaSourceException> checked = cache
                 .getSource(sourceIdentifier);
         Assert.assertNotNull(checked);
@@ -227,7 +227,7 @@ public class FilesystemSchemaSourceCacheTest {
         private final String content;
 
         protected TestingYangSource(final String name, final String revision, final String content) {
-            super(new SourceIdentifier(name, Optional.fromNullable(revision)));
+            super(SourceIdentifier.createRevisionSourceIdentifier(name, Optional.fromNullable(revision)));
             this.content = content;
         }
 

@@ -290,7 +290,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
             if (matcher.matches()) {
                 final String moduleName = matcher.group("moduleName");
                 final String revision = matcher.group("revision");
-                return Optional.of(new SourceIdentifier(moduleName, Optional.fromNullable(revision)));
+                return Optional.of(SourceIdentifier.createRevisionSourceIdentifier(moduleName, Optional.fromNullable(revision)));
             }
             return Optional.absent();
         }

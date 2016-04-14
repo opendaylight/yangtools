@@ -20,6 +20,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
@@ -247,10 +248,10 @@ public class SharedSchemaRepositoryTest {
             }
         };
         assertThat(Collections2.transform(listener.registeredSources, potSourceToSID),
-                both(hasItem(new SourceIdentifier("test", Optional.absent())))
-                        .and(hasItem(new SourceIdentifier("test", Optional.of("2012-12-12"))))
-                        .and(hasItem(new SourceIdentifier("test", Optional.of("2013-12-12"))))
-                        .and(hasItem(new SourceIdentifier("module", Optional.of("2010-12-12"))))
+                both(hasItem(SourceIdentifier.createRevisionSourceIdentifier("test", Optional.absent())))
+                        .and(hasItem(SourceIdentifier.createRevisionSourceIdentifier("test", Optional.of("2012-12-12"))))
+                        .and(hasItem(SourceIdentifier.createRevisionSourceIdentifier("test", Optional.of("2013-12-12"))))
+                        .and(hasItem(SourceIdentifier.createRevisionSourceIdentifier("module", Optional.of("2010-12-12"))))
         );
     }
 
@@ -263,7 +264,7 @@ public class SharedSchemaRepositoryTest {
         final FilesystemSchemaSourceCache<YangTextSchemaSource> cache = new FilesystemSchemaSourceCache<>(sharedSchemaRepository, YangTextSchemaSource.class, storageDir);
         sharedSchemaRepository.registerSchemaSourceListener(cache);
 
-        final SourceIdentifier runningId = new SourceIdentifier("running", Optional.of("2012-12-12"));
+        final SourceIdentifier runningId = SourceIdentifier.createRevisionSourceIdentifier("running", Optional.of("2012-12-12"));
 
         sharedSchemaRepository.registerSchemaSource(new SchemaSourceProvider<YangTextSchemaSource>() {
             @Override
