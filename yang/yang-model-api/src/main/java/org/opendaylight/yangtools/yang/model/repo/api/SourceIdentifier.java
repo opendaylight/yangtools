@@ -14,9 +14,10 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.objcache.ObjectCache;
 import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.model.api.Module;
 
 /**
  * YANG Schema source identifier
@@ -60,6 +61,7 @@ public final class SourceIdentifier implements Identifier, Immutable {
     private static final ObjectCache CACHE = ObjectCacheFactory.getObjectCache(SourceIdentifier.class);
     private static final long serialVersionUID = 1L;
     private final String revision;
+    private final SemVer semVer;
     private final String name;
 
     /**
@@ -70,7 +72,7 @@ public final class SourceIdentifier implements Identifier, Immutable {
      * @param name Name of schema
      */
     public SourceIdentifier(final String name) {
-        this(name, NOT_PRESENT_FORMATTED_REVISION);
+        this(name, NOT_PRESENT_FORMATTED_REVISION, Module.DEFAULT_SEMANTIC_VERSION);
     }
 
     /**
@@ -80,8 +82,20 @@ public final class SourceIdentifier implements Identifier, Immutable {
      * @param formattedRevision Revision of source in format YYYY-mm-dd
      */
     public SourceIdentifier(final String name, final String formattedRevision) {
+        this(name, formattedRevision, Module.DEFAULT_SEMANTIC_VERSION);
+    }
+
+    /**
+     * Creates new YANG Schema source identifier.
+     *
+     * @param name Name of schema
+     * @param formattedRevision Revision of source in format YYYY-mm-dd
+     * @param semVer semantic version of source
+     */
+    public SourceIdentifier(final String name, final String formattedRevision, final SemVer semVer) {
         this.name = Preconditions.checkNotNull(name);
         this.revision = Preconditions.checkNotNull(formattedRevision);
+        this.semVer = semVer;
     }
 
     /**
@@ -122,12 +136,22 @@ public final class SourceIdentifier implements Identifier, Immutable {
         return revision;
     }
 
+    /**
+     * Returns semantic version of source or {@link Module#DEFAULT_SEMANTIC_VERSION} if semantic version was not supplied.
+     *
+     * @return revision of source or {@link Module#DEFAULT_SEMANTIC_VERSION} if revision was not supplied.
+     */
+    public SemVer getSemanticVersion() {
+        return semVer;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + Objects.hashCode(name);
         result = prime * result + Objects.hashCode(revision);
+        result = prime * result + Objects.hashCode(semVer);
         return result;
     }
 
@@ -143,11 +167,15 @@ public final class SourceIdentifier implements Identifier, Immutable {
             return false;
         }
         SourceIdentifier other = (SourceIdentifier) obj;
-        return Objects.equals(name, other.name) && Objects.equals(revision, other.revision);
+        return Objects.equals(name, other.name) && Objects.equals(revision, other.revision) && Objects.equals(semVer, other.semVer);
     }
 
     public static SourceIdentifier create(final String moduleName, final Optional<String> revision) {
         return new SourceIdentifier(moduleName, revision);
+    }
+
+    public static SourceIdentifier create(final String moduleName, final Optional<String> revision, final SemVer semVer) {
+        return new SourceIdentifier(moduleName, revision.or(NOT_PRESENT_FORMATTED_REVISION), semVer);
     }
 
     /**

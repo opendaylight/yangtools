@@ -82,7 +82,7 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
         final String name = depInfo.getName();
         return depInfo.getFormattedRevision() == null
                 ? new SourceIdentifier(name)
-                : new SourceIdentifier(name, depInfo.getFormattedRevision());
+                : new SourceIdentifier(name, depInfo.getFormattedRevision(), depInfo.getSemanticVersion());
     }
 
     /**
