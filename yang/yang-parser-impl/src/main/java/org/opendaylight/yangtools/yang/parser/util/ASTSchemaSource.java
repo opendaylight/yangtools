@@ -14,6 +14,7 @@ import javax.annotation.Nonnull;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
 
@@ -36,6 +37,13 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
             return input.getIdentifier();
         }
     };
+    public static final Function<ASTSchemaSource, SourceIdentifier> GET_SEMVER_IDENTIFIER = new Function<ASTSchemaSource, SourceIdentifier>() {
+        @Override
+        public SemVerSourceIdentifier apply(@Nonnull final ASTSchemaSource input) {
+            Preconditions.checkNotNull(input);
+            return input.getSemVerIdentifier();
+        }
+    };
     public static final Function<ASTSchemaSource, YangModelDependencyInfo> GET_DEPINFO = new Function<ASTSchemaSource, YangModelDependencyInfo>() {
         @Override
         public YangModelDependencyInfo apply(@Nonnull final ASTSchemaSource input) {
@@ -54,12 +62,14 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
     private final YangModelDependencyInfo depInfo;
     private final ParserRuleContext tree;
     private final SourceIdentifier id;
+    private final SemVerSourceIdentifier semVerId;
     private final String text;
 
-    private ASTSchemaSource(@Nonnull final SourceIdentifier id, @Nonnull final ParserRuleContext tree, @Nonnull final YangModelDependencyInfo depInfo, final String text) {
+    private ASTSchemaSource(@Nonnull final SourceIdentifier id, @Nonnull final SemVerSourceIdentifier semVerId, @Nonnull final ParserRuleContext tree, @Nonnull final YangModelDependencyInfo depInfo, final String text) {
         this.depInfo = Preconditions.checkNotNull(depInfo);
         this.tree = Preconditions.checkNotNull(tree);
         this.id = Preconditions.checkNotNull(id);
+        this.semVerId = Preconditions.checkNotNull(semVerId);
         this.text = text;
     }
 
@@ -75,7 +85,8 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
     public static ASTSchemaSource create(@Nonnull final String name, @Nonnull final ParserRuleContext tree) throws YangSyntaxErrorException {
         final YangModelDependencyInfo depInfo = YangModelDependencyInfo.fromAST(name, tree);
         final SourceIdentifier id = getSourceId(depInfo);
-        return new ASTSchemaSource(id, tree, depInfo, null);
+        final SemVerSourceIdentifier semVerId = getSemVerSourceId(depInfo);
+        return new ASTSchemaSource(id, semVerId, tree, depInfo, null);
     }
 
     private static SourceIdentifier getSourceId(final YangModelDependencyInfo depInfo) {
@@ -83,6 +94,12 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
         return depInfo.getFormattedRevision() == null
                 ? new SourceIdentifier(name)
                 : new SourceIdentifier(name, depInfo.getFormattedRevision());
+    }
+
+    private static SemVerSourceIdentifier getSemVerSourceId(final YangModelDependencyInfo depInfo) {
+        return depInfo.getFormattedRevision() == null
+               ? new SemVerSourceIdentifier(depInfo.getName(), depInfo.getSemanticVersion())
+               : new SemVerSourceIdentifier(depInfo.getName(), depInfo.getFormattedRevision(), depInfo.getSemanticVersion());
     }
 
     /**
@@ -101,13 +118,18 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
     public static ASTSchemaSource create(@Nonnull final String name, @Nonnull final ParserRuleContext tree, final String text) throws YangSyntaxErrorException {
         final YangModelDependencyInfo depInfo = YangModelDependencyInfo.fromAST(name, tree);
         final SourceIdentifier id = getSourceId(depInfo);
-        return new ASTSchemaSource(id, tree, depInfo, text);
+        final SemVerSourceIdentifier semVerId = getSemVerSourceId(depInfo);
+        return new ASTSchemaSource(id, semVerId, tree, depInfo, text);
     }
 
 
     @Override
     public SourceIdentifier getIdentifier() {
         return id;
+    }
+
+    public SemVerSourceIdentifier getSemVerIdentifier() {
+        return semVerId;
     }
 
     @Override
