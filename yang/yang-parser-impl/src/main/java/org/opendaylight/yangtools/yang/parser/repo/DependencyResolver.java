@@ -76,9 +76,11 @@ final class DependencyResolver {
         return rev == null && findWildcard(haystack, mi.getModuleName()) != null;
     }
 
-
-
     public static DependencyResolver create(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo) {
+        return create(depInfo, false);
+    }
+
+    public static DependencyResolver create(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo, boolean semVerMode) {
         final Collection<SourceIdentifier> resolved = new ArrayList<>(depInfo.size());
         final Collection<SourceIdentifier> pending = new ArrayList<>(depInfo.keySet());
         final Map<SourceIdentifier, BelongsToDependency> submodules = Maps.newHashMap();
@@ -103,7 +105,7 @@ final class DependencyResolver {
                 }
 
                 for (final ModuleImport mi : dependencies) {
-                    if (!isKnown(resolved, mi)) {
+                    if (!isKnown(resolved, mi, semVerMode)) {
                         LOG.debug("Source {} is missing import {}", id, mi);
                         okay = false;
                         break;
