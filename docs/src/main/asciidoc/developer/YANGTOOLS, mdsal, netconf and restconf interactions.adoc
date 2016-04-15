@@ -1,0 +1,115 @@
+= Offset 0 project structure
+
+= YANG
+- data modeling language for the NETCONF network configuration protocol
+- configuration data, state data of network elements
+- notifications, remote procedure calls
+- version 1 https://tools.ietf.org/html/rfc6020
+- version 1.1 https://tools.ietf.org/html/draft-ietf-netmod-rfc6020bis-10
+- ANTLR
+
+= YIN
+- YANG in XML
+- XML stream reader
+
+= 1 Yangtools
+ - Yangtools can work only with data
+ - Yang data in Java are represented by NormalizedNode objects
+
+== 1.1 Yangtools modules:
+
+=== 1.1.1 Model api: Java representation of yang model
+
+=== 1.1.2 Data api
+Defines how data described by model are stored. Contains resolved data stored in in-memory data tree (core implementation of data store). Contains definition of Normalized Node and Data Tree via APIs.
+
+=== 1.1.3 Parser: Takes as input yang or its XML form Yin. Output is SchemaContext (old parser) or EffectiveSchemaContext (new parser).
+Old parser: uses builders.
+New parser: Is based on sequence of statements, where every statement contains keyword and zero or one argument. Declared model is true to yang module and is represented by ModuleStatementImpl.
+Effective model contains resolved data (result of semantic processing of uses, augment etc).  ModuleEffectiveImpl
+Phases of building effective model (parsing):
+
+- INIT
+- SOURCE_PRE_LINKAGE (not yet)
+- SOURCE_LINKAGE – module, submodule, include, import, belongs-to, reference, revision, revision date, namespace (aditional info)
+- STATEMENT_DEFINITION – extensions, container, length, range, grouping, etc
+- FULL_DECLARATION – uses, case, refine, augment, choice, must, if-feature, when, leaf-list …
+- EFFECTIVE_MODEL
+
+=== 1.1.4 Yin export
+The reverse process which generates yin model from existing SchemaContext.
+
+=== 1.1.5 Yang Maven Plugin
+Integrates YANG parser into Maven build lifecycle and provides code-generation framework for components, which want to generate code or other artefacts based on YANG model.
+
+=== 1.1.6 Codecs
+XML, Json, Binding independent, Binding Aware – serialization of NN into XML, JSON, deserialization of XML, JSON into NormalizedNodes.
+
+=== 1.1.7 ANTLR
+(ANother Tool for Language Recognition .g4) is a powerful parser generator for reading, processing, executing, or translating structured text or binary files.
+
+= 2 Md-sal: Model-Driven Service Abstraction Layer
+- Adds logic to data from Yangtools.
+- Runtime and compile code generation
+- Currently using binding spec v1. https://wiki.opendaylight.org/view/YANG_Tools:YANG_to_Java_Mapping
+Next Binding spec v2.
+https://gist.github.com/tonydamage/82b15f0cd1f39b729d4e
+- Mdsal service:
+- Data broker provides access to operations on datastore (CRUD create, read, update, delete)
+- RPC provides remote procedure calls
+- Notifications
+
+Defines how components (netconf, restconf) exchange yang data and what they can do with them.
+
+ESC:  effective schema context from yangtools
+GTO: Generated Transfer Object is designed to represent Java Class. The Generated Transfer Object contains declarations of member fields stored in List of Properties. The Generated Transfer Object can be extended by exactly ONE Generated Transfer Object as Java doesn't allow multiple inheritance.
+Java interface: generated java interfaces and builders which are assembled via Xtend templates.
+Xtend is a general-purpose high-level programming language for the Java Virtual Machine. Syntactically and semantically Xtend has its roots in the Java programming language but focuses on a more concise syntax and some additional functionality such as type inference, extension methods, and operator overloading. Being primarily an object-oriented language, it also integrates features known from functional programming, e.g. lambda expressions. Xtend is statically typed and uses Java's type system without modifications. It is compiled to Java code and thereby seamlessly integrates with all existing Java libraries.
+
+= 3 Restconf (Web App, HTTP, XML + JSON)
+- Restconf is used with Netconf devices
+- Http request/response
+- CRUD operations
+- Jersey
+- https://tools.ietf.org/html/draft-ietf-netconf-restconf-09
+
+(INPUT) REST URI request
+- XMLNormalizedBodyReader
+- JsonNormalizedBodyReader
+
+- Restconf Service
+- BrokerFacade
+- md-sal/sal-rest-connector
+
+(OUTPUT – YIN, YANG)
+- NormalizedNodeXMLBodyWriter
+- NormalizedNodeJSONBodyWriter
+
+= 4 Netconf (NMS App, SSH, XML)
+The Network Configuration Protocol (NETCONF) is a network management protocol. The NETCONF protocol specification is an Internet Standards Track document. NETCONF provides mechanisms to install, manipulate, and delete the configuration of network devices. Its operations are realized on top of a simple remote procedure call (RPC) layer. The NETCONF protocol uses an Extensible Markup Language (XML) based data encoding for the configuration data as well as the protocol messages.
+Uses XML message via ssh.
+Mdsal netconf conector: server for comunication between app and mdsal.
+Sal conector: netconf client for mdsal -> device comunication
+Monitoring: Informations about current server status and provides schema retrieval rpc.
+Notification: Asynchronous acquisition of informations from device after subscription.
+Netconf Topology: Provides way of identifying connected netconf device by sal netconf connector.
+
+[glossary]
+== Glossary
+[glossary]
+Schema Context::
+compiled Yang files
+QNAME::
+full name of node (path to node in XPATH)
+CRUD::
+create, read, update, delete
+PATCH::
+multiple updates https://tools.ietf.org/html/draft-ietf-netconf-yang-patch-07
+Mount Point::
+SouthBound Netconf (has its own md-sal + schema context)
+odlparent::
+project with default dependencies for all projects
+AAA::
+Authentication, Authorization and Accounting
+controller::
+originally all projects were in controller, will be removed in the future
