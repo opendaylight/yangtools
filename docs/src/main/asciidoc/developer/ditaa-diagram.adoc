@@ -1,0 +1,45 @@
+.UML http://plantuml.sourceforge.net/ditaa.html
+[uml,file="ditaa-diagram.png"]
+--
+@startditaa
+                            +-------------+
+                            |             |
+                            |   NETCONF   |
+                            |    cRED     |
+                            +------+------+
+                                   |
+                            +------+------+
+                            |             |
+                            |     AAA     |
+                            |    cRED     |
+                            +------+------+
+                                   |
+                                   |
+       |                           |
+       |                           |
++------+------+                    |
+|             |                    |
+| controller  +<-------------------+
+|    cRED     |
++------+------+
+       |
++------+------+
+|             |
+|    mdsal    |
+|    cRED     |
++------+------+
+       |
++------+------+
+|             |
+|  yangtools  |
+|    cRED     |
++------+------+
+       |
++------+------+
+|             |
+|  odlparent  |
+|    cRED     |
++------+------+
+
+@endditaa
+--
