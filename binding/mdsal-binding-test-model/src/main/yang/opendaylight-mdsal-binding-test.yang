@@ -121,4 +121,16 @@ module opendaylight-mdsal-binding-test {
             uses two-level-list;
         }
     }
+
+    augment "/list-test:top" {
+        leaf augmented-string {
+            type string;
+        }
+    }
+
+    augment "/list-test:top" {
+        leaf augmented-int {
+            type int32;
+        }
+    }
 }

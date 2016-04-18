@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.test;
 
+import static java.util.Collections.singleton;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.opendaylight.mdsal.binding.test.model.util.ListsBindingUtils.top;
@@ -20,8 +22,10 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.ma
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +47,10 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.ChoiceContainer;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.ChoiceContainerBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top1;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top1Builder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top2;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top2Builder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.TopBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.choice.identifier.ExtendedBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.choice.identifier.extended.ExtendedIdBuilder;
@@ -56,6 +64,7 @@ import org.opendaylight.yang.gen.v1.urn.test.foo4798.rev160101.Root;
 import org.opendaylight.yangtools.binding.data.codec.gen.impl.StreamWriterGenerator;
 import org.opendaylight.yangtools.binding.data.codec.impl.BindingNormalizedNodeCodecRegistry;
 import org.opendaylight.yangtools.sal.binding.generator.util.JavassistUtils;
+import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -64,6 +73,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
@@ -121,19 +132,112 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingRunti
     public void containerToNormalized() {
         final Map.Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry =
                 registry.toNormalizedNode(InstanceIdentifier.create(Top.class), top());
-        final ContainerNode topNormalized = ImmutableContainerNodeBuilder.create()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TOP_QNAME))
-                .withChild(mapNodeBuilder(TOP_LEVEL_LIST_QNAME).build()).build();
+        final ContainerNode topNormalized = getEmptyTop();
         assertEquals(topNormalized, entry.getValue());
     }
 
     @Test
     public void containerFromNormalized() {
-        final ContainerNode topNormalized = ImmutableContainerNodeBuilder.create()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TOP_QNAME))
-                .withChild(mapNodeBuilder(TOP_LEVEL_LIST_QNAME).build()).build();
+        final ContainerNode topNormalized = getEmptyTop();
         final Map.Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(BI_TOP_PATH, topNormalized);
         assertEquals(top(), entry.getValue());
+    }
+
+    private ContainerNode getEmptyTop() {
+        return ImmutableContainerNodeBuilder.create()
+                    .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TOP_QNAME))
+                    .withChild(mapNodeBuilder(TOP_LEVEL_LIST_QNAME).build()).build();
+    }
+
+    private static final QName AGUMENT_STRING_Q = QName.create(TOP_QNAME, "augmented-string");
+    private static final String AUGMENT_STRING_VALUE = "testingEquals";
+    private static final QName AUGMENT_INT_Q = QName.create(TOP_QNAME, "augmented-int");
+    private static final int AUGMENT_INT_VALUE = 44;
+
+    @Test
+    public void equalsWithAugment() {
+        final ContainerNode topNormalizedWithAugments = getNormalizedTopWithAugments(
+            augmentationBuilder()
+                .withNodeIdentifier(new YangInstanceIdentifier.AugmentationIdentifier(singleton(AGUMENT_STRING_Q)))
+                .withChild(ImmutableNodes.leafNode(AGUMENT_STRING_Q, AUGMENT_STRING_VALUE))
+                .build());
+        final ContainerNode topNormalized = getEmptyTop();
+
+        final Map.Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(BI_TOP_PATH, topNormalized);
+        final Map.Entry<InstanceIdentifier<?>, DataObject> entryWithAugments = registry.fromNormalizedNode(BI_TOP_PATH, topNormalizedWithAugments);
+
+        // Equals on other with no augmentation should be false
+        assertNotEquals(top(), entryWithAugments.getValue());
+        // Equals on other(reversed) with no augmentation should be false
+        assertNotEquals(entryWithAugments.getValue(), top());
+        // Equals on other(lazy) with no augmentation should be false
+        assertNotEquals(entry.getValue(), entryWithAugments.getValue());
+        // Equals on other(lazy, reversed) with no augmentation should be false
+        assertNotEquals(entryWithAugments.getValue(), entry.getValue());
+
+        final Top topWithAugments = topWithAugments(Collections.<Class<? extends Augmentation<Top>>, Augmentation<Top>>
+            singletonMap(Top1.class, new Top1Builder().setAugmentedString(AUGMENT_STRING_VALUE).build()));
+        // Equals other with same augment should be true
+        assertEquals(topWithAugments, entryWithAugments.getValue());
+        // Equals other with same augment should be true
+        assertEquals(entryWithAugments.getValue(), topWithAugments);
+        // Equals on self should be true
+        assertEquals(entryWithAugments.getValue(), entryWithAugments.getValue());
+
+        final Top topWithAugmentsDiffValue = topWithAugments(Collections.<Class<? extends Augmentation<Top>>, Augmentation<Top>>
+            singletonMap(Top1.class, new Top1Builder().setAugmentedString("differentValue").build()));
+        assertNotEquals(topWithAugmentsDiffValue, entryWithAugments.getValue());
+        assertNotEquals(entryWithAugments.getValue(), topWithAugmentsDiffValue);
+    }
+
+    @Test
+    public void equalsWithMultipleAugments() {
+        final ContainerNode topNormalizedWithAugments = getNormalizedTopWithAugments(
+            augmentationBuilder()
+                .withNodeIdentifier(
+                    new YangInstanceIdentifier.AugmentationIdentifier(singleton(AGUMENT_STRING_Q)))
+                .withChild(ImmutableNodes.leafNode(AGUMENT_STRING_Q, AUGMENT_STRING_VALUE))
+                .build(),
+            augmentationBuilder()
+                .withNodeIdentifier(new YangInstanceIdentifier.AugmentationIdentifier(singleton(AUGMENT_INT_Q)))
+                .withChild(ImmutableNodes.leafNode(AUGMENT_INT_Q, AUGMENT_INT_VALUE))
+                .build());
+
+        final Map.Entry<InstanceIdentifier<?>, DataObject> entryWithAugments = registry.fromNormalizedNode(BI_TOP_PATH, topNormalizedWithAugments);
+        Map<Class<? extends Augmentation<Top>>, Augmentation<Top>> augments = Maps.newHashMap();
+        augments.put(Top1.class, new Top1Builder().setAugmentedString(AUGMENT_STRING_VALUE).build());
+        augments.put(Top2.class, new Top2Builder().setAugmentedInt(AUGMENT_INT_VALUE).build());
+        Top topWithAugments = topWithAugments(augments);
+
+        assertEquals(topWithAugments, entryWithAugments.getValue());
+        assertEquals(entryWithAugments.getValue(), topWithAugments);
+
+        augments = Maps.newHashMap();
+        augments.put(Top1.class, new Top1Builder().setAugmentedString(AUGMENT_STRING_VALUE).build());
+        augments.put(Top2.class, new Top2Builder().setAugmentedInt(999).build());
+        topWithAugments = topWithAugments(augments);
+
+        assertNotEquals(topWithAugments, entryWithAugments.getValue());
+        assertNotEquals(entryWithAugments.getValue(), topWithAugments);
+    }
+
+    private ContainerNode getNormalizedTopWithAugments(final AugmentationNode... augChild) {
+        final DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode>
+            builder = ImmutableContainerNodeBuilder.create();
+
+        for (AugmentationNode augmentationNode : augChild) {
+            builder.withChild(augmentationNode);
+        }
+        return builder.withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TOP_QNAME))
+                    .withChild(mapNodeBuilder(TOP_LEVEL_LIST_QNAME).build()).build();
+    }
+
+    private static Top topWithAugments(final Map<Class<? extends Augmentation<Top>>, ? extends Augmentation<Top>> augments) {
+        final TopBuilder topBuilder = new TopBuilder();
+        for (Map.Entry<Class<? extends Augmentation<Top>>, ? extends Augmentation<Top>> augment : augments.entrySet()) {
+            topBuilder.addAugmentation(augment.getKey(), augment.getValue());
+        }
+        return topBuilder.setTopLevelList(Collections.<TopLevelList>emptyList()).build();
     }
 
     @Test
