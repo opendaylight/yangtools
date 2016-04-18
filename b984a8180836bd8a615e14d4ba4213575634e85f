@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_3d601b35",
+        "filename": "docs/src/main/asciidoc/developer/introduction.adoc",
+        "patchSetId": 2
+      },
+      "lineNbr": 314,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-04-18T10:56:14Z",
+      "side": 1,
+      "message": "please check \u0026 remove all trailing white spaces from this adoc.",
+      "range": {
+        "startLine": 314,
+        "startChar": 43,
+        "endLine": 314,
+        "endChar": 44
+      },
+      "revId": "b984a8180836bd8a615e14d4ba4213575634e85f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
