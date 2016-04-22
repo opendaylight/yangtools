@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -15,7 +15,6 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import java.net.URI;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -147,6 +146,6 @@ public final class EffectiveSchemaContext extends AbstractEffectiveSchemaContext
 
     @Override
     public String toString() {
-        return String.format("SchemaContextImpl{modules=%s}", modules);
+        return String.format("EffectiveSchemaContext{modules=%s}", modules);
     }
 }
