@@ -33,6 +33,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.util.concurrent.ExceptionMapper;
 import org.opendaylight.yangtools.util.concurrent.ReflectiveExceptionMapper;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
@@ -59,41 +60,6 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         }
     };
     private final Cache<Collection<SourceIdentifier>, SchemaContext> cache = CacheBuilder.newBuilder().weakValues().build();
-
-    private final AsyncFunction<List<ASTSchemaSource>, SchemaContext> assembleSources = new AsyncFunction<List<ASTSchemaSource>, SchemaContext>() {
-        @Override
-        public ListenableFuture<SchemaContext> apply(final List<ASTSchemaSource> sources) throws SchemaResolutionException, SourceException, ReactorException {
-            final Map<SourceIdentifier, ASTSchemaSource> srcs =
-                    Maps.uniqueIndex(sources, ASTSchemaSource.GET_IDENTIFIER);
-            final Map<SourceIdentifier, YangModelDependencyInfo> deps =
-                    Maps.transformValues(srcs, ASTSchemaSource.GET_DEPINFO);
-
-            LOG.debug("Resolving dependency reactor {}", deps);
-
-            final DependencyResolver res = DependencyResolver.create(deps);
-            if (!res.getUnresolvedSources().isEmpty()) {
-                LOG.debug("Omitting models {} due to unsatisfied imports {}", res.getUnresolvedSources(), res.getUnsatisfiedImports());
-                throw new SchemaResolutionException("Failed to resolve required models",
-                        res.getResolvedSources(), res.getUnsatisfiedImports());
-            }
-
-            final Map<SourceIdentifier, ParserRuleContext> asts = Maps.transformValues(srcs, ASTSchemaSource.GET_AST);
-            final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-
-            for (final Entry<SourceIdentifier, ParserRuleContext> e : asts.entrySet()) {
-                final ParserRuleContext parserRuleCtx = e.getValue();
-                Preconditions.checkArgument(parserRuleCtx instanceof StatementContext,
-                    "Unsupported context class %s for source %s", parserRuleCtx.getClass(), e.getKey());
-
-                reactor.addSource(new YangStatementSourceImpl(e.getKey(), (StatementContext) parserRuleCtx));
-            }
-
-            SchemaContext schemaContext = reactor.buildEffective();
-
-            return Futures.immediateCheckedFuture(schemaContext);
-        }
-    };
-
     private final SharedSchemaRepository repository;
     // FIXME: ignored right now
     private final SchemaSourceFilter filter;
@@ -105,7 +71,8 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
     }
 
     @Override
-    public CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(final Collection<SourceIdentifier> requiredSources) {
+    public CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
+            final Collection<SourceIdentifier> requiredSources, java.util.function.Predicate<QName> isFeatureSupported) {
         // Make sources unique
         final List<SourceIdentifier> uniqueSourceIdentifiers = deDuplicateSources(requiredSources);
 
@@ -124,6 +91,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         sf = Futures.transform(sf, new SourceIdMismatchDetector(uniqueSourceIdentifiers));
 
         // Assemble sources into a schema context
+        final AssembleSources assembleSources = new AssembleSources(isFeatureSupported);
         final ListenableFuture<SchemaContext> cf = Futures.transform(sf, assembleSources);
 
         // Populate cache when successful
@@ -192,6 +160,49 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
 
             }
             return ImmutableList.copyOf(filtered.values());
+        }
+    }
+
+    private final class AssembleSources implements AsyncFunction<List<ASTSchemaSource>, SchemaContext> {
+
+        private final java.util.function.Predicate<QName> isFeatureSupported;
+
+        private AssembleSources(final java.util.function.Predicate<QName> isFeatureSupported) {
+            this.isFeatureSupported = isFeatureSupported;
+        }
+
+        @Override
+        public ListenableFuture<SchemaContext> apply(List<ASTSchemaSource> sources) throws SchemaResolutionException,
+                SourceException, ReactorException {
+            final Map<SourceIdentifier, ASTSchemaSource> srcs =
+                    Maps.uniqueIndex(sources, ASTSchemaSource.GET_IDENTIFIER);
+            final Map<SourceIdentifier, YangModelDependencyInfo> deps =
+                    Maps.transformValues(srcs, ASTSchemaSource.GET_DEPINFO);
+
+            LOG.debug("Resolving dependency reactor {}", deps);
+
+            final DependencyResolver res = DependencyResolver.create(deps);
+            if (!res.getUnresolvedSources().isEmpty()) {
+                LOG.debug("Omitting models {} due to unsatisfied imports {}", res.getUnresolvedSources(), res.getUnsatisfiedImports());
+                throw new SchemaResolutionException("Failed to resolve required models",
+                        res.getResolvedSources(), res.getUnsatisfiedImports());
+            }
+
+            final Map<SourceIdentifier, ParserRuleContext> asts = Maps.transformValues(srcs, ASTSchemaSource.GET_AST);
+            final CrossSourceStatementReactor.BuildAction reactor =
+                    YangInferencePipeline.RFC6020_REACTOR.newBuild(isFeatureSupported);
+
+            for (final Entry<SourceIdentifier, ParserRuleContext> e : asts.entrySet()) {
+                final ParserRuleContext parserRuleCtx = e.getValue();
+                Preconditions.checkArgument(parserRuleCtx instanceof StatementContext,
+                        "Unsupported context class %s for source %s", parserRuleCtx.getClass(), e.getKey());
+
+                reactor.addSource(new YangStatementSourceImpl(e.getKey(), (StatementContext) parserRuleCtx));
+            }
+
+            SchemaContext schemaContext = reactor.buildEffective();
+
+            return Futures.immediateCheckedFuture(schemaContext);
         }
     }
 }
