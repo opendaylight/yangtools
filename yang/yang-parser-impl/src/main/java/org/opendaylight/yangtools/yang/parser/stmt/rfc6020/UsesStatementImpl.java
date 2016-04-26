@@ -92,12 +92,15 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                     StatementContextBase<?, ?, ?> targetNodeStmtCtx = (StatementContextBase<?, ?, ?>) targetNodePre.get();
                     StatementContextBase<?, ?, ?> sourceGrpStmtCtx = (StatementContextBase<?, ?, ?>) sourceGroupingPre.get();
 
-                    try {
-                        GroupingUtils.copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
-                        GroupingUtils.resolveUsesNode(usesNode, targetNodeStmtCtx);
-                    } catch (SourceException e) {
-                        LOG.warn(e.getMessage(), e);
-                        throw e;
+                    if (StmtContextUtils.areAllFeaturesSupported(usesNode)
+                            || StmtContextUtils.areFeaturesSupported(usesNode)) {
+                        try {
+                            GroupingUtils.copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
+                            GroupingUtils.resolveUsesNode(usesNode, targetNodeStmtCtx);
+                        } catch (SourceException e) {
+                            LOG.warn(e.getMessage(), e);
+                            throw e;
+                        }
                     }
                 }
 

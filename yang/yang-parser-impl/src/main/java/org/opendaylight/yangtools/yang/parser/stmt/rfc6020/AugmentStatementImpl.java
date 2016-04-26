@@ -112,17 +112,20 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                         return;
                     }
 
+                    if (StmtContextUtils.areAllFeaturesSupported(augmentNode)
+                            || StmtContextUtils.areFeaturesSupported(augmentNode)) {
                     // FIXME: this is a workaround for models which augment a node which is added via an extension
                     //        which we do not handle. This needs to be reworked in terms of unknown schema nodes.
-                    final StatementContextBase<?, ?, ?> augmentSourceCtx = (StatementContextBase<?, ?, ?>) augmentNode;
-                    try {
-                        AugmentUtils.copyFromSourceToTarget(augmentSourceCtx, augmentTargetCtx);
-                        augmentTargetCtx.addEffectiveSubstatement(augmentSourceCtx);
-                        updateAugmentOrder(augmentSourceCtx);
-                    } catch (SourceException e) {
-                        LOG.debug("Failed to add augmentation {} defined at {}",
-                            augmentTargetCtx.getStatementSourceReference(),
-                                augmentSourceCtx.getStatementSourceReference(), e);
+                        final StatementContextBase<?, ?, ?> augmentSourceCtx = (StatementContextBase<?, ?, ?>) augmentNode;
+                        try {
+                            AugmentUtils.copyFromSourceToTarget(augmentSourceCtx, augmentTargetCtx);
+                            augmentTargetCtx.addEffectiveSubstatement(augmentSourceCtx);
+                            updateAugmentOrder(augmentSourceCtx);
+                        } catch (SourceException e) {
+                            LOG.debug("Failed to add augmentation {} defined at {}",
+                                augmentTargetCtx.getStatementSourceReference(),
+                                    augmentSourceCtx.getStatementSourceReference(), e);
+                        }
                     }
                 }
 
