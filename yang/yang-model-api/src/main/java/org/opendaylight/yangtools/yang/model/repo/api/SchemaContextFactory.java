@@ -10,7 +10,9 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.CheckedFuture;
 import java.util.Collection;
+import java.util.Set;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
@@ -31,4 +33,19 @@ public interface SchemaContextFactory {
      *         failed.
      */
     CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(@Nonnull Collection<SourceIdentifier> requiredSources);
+
+    /**
+     * Create a new schema context containing specified sources, pulling in
+     * any dependencies they may have.
+     *
+     * @param requiredSources a collection of sources which are required to
+     *                        be present
+     * @param supportedFeatures a set of yang features based on which all if-feature statements in the parsed yang
+     *                          models are resolved
+     * @return A checked future, which will produce a schema context, or
+     *         fail with an explanation why the creation of the schema context
+     *         failed.
+     */
+    CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
+            @Nonnull Collection<SourceIdentifier> requiredSources, Set<QName> supportedFeatures);
 }
