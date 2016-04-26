@@ -1,0 +1,23 @@
+module foo {
+    namespace "urn:yang.foo";
+    prefix "foo";
+
+    revision "2016-01-02" {
+    }
+
+    grouping A {
+        leaf B {
+            type enumeration {
+                enum X {}
+                enum Y {}
+            }
+        }
+    }
+
+    container C {
+        list D {
+            key "B";
+            uses A;
+        }
+    }
+}
