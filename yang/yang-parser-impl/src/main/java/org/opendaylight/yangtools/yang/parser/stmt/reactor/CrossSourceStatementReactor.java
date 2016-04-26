@@ -17,9 +17,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -32,6 +34,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSc
 import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 
 public class CrossSourceStatementReactor {
+
+    public static final Set<QName> allFeaturesSupported = new HashSet<>();
 
     private final Map<ModelProcessingPhase,StatementSupportBundle> supportedTerminology;
     private final Map<ValidationBundleType,Collection<?>> supportedValidation;
@@ -51,7 +55,11 @@ public class CrossSourceStatementReactor {
     }
 
     public final BuildAction newBuild() {
-        return new BuildAction();
+        return newBuild(allFeaturesSupported);
+    }
+
+    public final BuildAction newBuild(final Set<QName> supportedFeatures) {
+        return new BuildAction(supportedFeatures);
     }
 
     public static class Builder implements org.opendaylight.yangtools.concepts.Builder<CrossSourceStatementReactor>{
@@ -80,7 +88,11 @@ public class CrossSourceStatementReactor {
         private final BuildGlobalContext context;
 
         public BuildAction() {
-            this.context = new BuildGlobalContext(supportedTerminology, supportedValidation);
+            this(allFeaturesSupported);
+        }
+
+        public BuildAction(Set<QName> supportedFeatures) {
+            this.context = new BuildGlobalContext(supportedTerminology, supportedValidation, supportedFeatures);
         }
 
         public void addSource(final StatementStreamSource source) {
