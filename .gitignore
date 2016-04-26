@@ -16,3 +16,4 @@ xtend-gen
 target
 .DS_Store
 META-INF
+.checkstyle
