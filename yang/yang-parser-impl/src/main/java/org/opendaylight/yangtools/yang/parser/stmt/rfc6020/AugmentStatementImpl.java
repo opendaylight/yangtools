@@ -92,59 +92,64 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                 final StmtContext.Mutable<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> augmentNode) {
             SUBSTATEMENT_VALIDATOR.validate(augmentNode);
 
-            if (StmtContextUtils.isInExtensionBody(augmentNode)) {
-                return;
+            if (StmtContextUtils.areAllFeaturesSupported(augmentNode)
+                    || StmtContextUtils.areFeaturesSupported(augmentNode)) {
+
+                if (StmtContextUtils.isInExtensionBody(augmentNode)) {
+                    return;
+                }
+
+                final ModelActionBuilder augmentAction = augmentNode.newInferenceAction(
+                    ModelProcessingPhase.EFFECTIVE_MODEL);
+                final ModelActionBuilder.Prerequisite<StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>>> sourceCtxPrereq =
+                        augmentAction.requiresCtx(augmentNode, ModelProcessingPhase.EFFECTIVE_MODEL);
+                final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target =
+                        augmentAction.mutatesEffectiveCtx(getSearchRoot(augmentNode), SchemaNodeIdentifierBuildNamespace.class, augmentNode.getStatementArgument());
+                augmentAction.apply(new ModelActionBuilder.InferenceAction() {
+
+                    @Override
+                    public void apply() {
+                        final StatementContextBase<?, ?, ?> augmentTargetCtx = (StatementContextBase<?, ?, ?>) target.get();
+                        if (!AugmentUtils.isSupportedAugmentTarget(augmentTargetCtx)
+                                || StmtContextUtils.isInExtensionBody(augmentTargetCtx)) {
+                            augmentNode.setIsSupportedToBuildEffective(false);
+                            return;
+                        }
+
+                        // FIXME: this is a workaround for models which augment a node which is added via an extension
+                        //        which we do not handle. This needs to be reworked in terms of unknown schema nodes.
+                        final StatementContextBase<?, ?, ?> augmentSourceCtx = (StatementContextBase<?, ?, ?>) augmentNode;
+                        try {
+                            AugmentUtils.copyFromSourceToTarget(augmentSourceCtx, augmentTargetCtx);
+                            augmentTargetCtx.addEffectiveSubstatement(augmentSourceCtx);
+                            updateAugmentOrder(augmentSourceCtx);
+                        } catch (SourceException e) {
+                            LOG.debug("Failed to add augmentation {} defined at {}",
+                                augmentTargetCtx.getStatementSourceReference(),
+                                    augmentSourceCtx.getStatementSourceReference(), e);
+                        }
+                    }
+
+                    private void updateAugmentOrder(final StatementContextBase<?, ?, ?> augmentSourceCtx) {
+                        Integer currentOrder = augmentSourceCtx.getFromNamespace(StmtOrderingNamespace.class,
+                            Rfc6020Mapping.AUGMENT);
+                        if (currentOrder == null) {
+                            currentOrder = 1;
+                        } else {
+                            currentOrder++;
+                        }
+
+                        augmentSourceCtx.setOrder(currentOrder);
+                        augmentSourceCtx.addToNs(StmtOrderingNamespace.class, Rfc6020Mapping.AUGMENT, currentOrder);
+                    }
+
+                    @Override
+                    public void prerequisiteFailed(final Collection<? extends ModelActionBuilder.Prerequisite<?>> failed) {
+                        throw new InferenceException(augmentNode.getStatementSourceReference(),
+                            "Augment target '%s' not found", augmentNode.getStatementArgument());
+                    }
+                });
             }
-
-            final ModelActionBuilder augmentAction = augmentNode.newInferenceAction(
-                ModelProcessingPhase.EFFECTIVE_MODEL);
-            final ModelActionBuilder.Prerequisite<StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>>> sourceCtxPrereq =
-                    augmentAction.requiresCtx(augmentNode, ModelProcessingPhase.EFFECTIVE_MODEL);
-            final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target =
-                    augmentAction.mutatesEffectiveCtx(getSearchRoot(augmentNode), SchemaNodeIdentifierBuildNamespace.class, augmentNode.getStatementArgument());
-            augmentAction.apply(new ModelActionBuilder.InferenceAction() {
-
-                @Override
-                public void apply() {
-                    final StatementContextBase<?, ?, ?> augmentTargetCtx = (StatementContextBase<?, ?, ?>) target.get();
-                    if (!AugmentUtils.isSupportedAugmentTarget(augmentTargetCtx) || StmtContextUtils.isInExtensionBody(augmentTargetCtx)) {
-                        augmentNode.setIsSupportedToBuildEffective(false);
-                        return;
-                    }
-
-                    // FIXME: this is a workaround for models which augment a node which is added via an extension
-                    //        which we do not handle. This needs to be reworked in terms of unknown schema nodes.
-                    final StatementContextBase<?, ?, ?> augmentSourceCtx = (StatementContextBase<?, ?, ?>) augmentNode;
-                    try {
-                        AugmentUtils.copyFromSourceToTarget(augmentSourceCtx, augmentTargetCtx);
-                        augmentTargetCtx.addEffectiveSubstatement(augmentSourceCtx);
-                        updateAugmentOrder(augmentSourceCtx);
-                    } catch (SourceException e) {
-                        LOG.debug("Failed to add augmentation {} defined at {}",
-                            augmentTargetCtx.getStatementSourceReference(),
-                                augmentSourceCtx.getStatementSourceReference(), e);
-                    }
-                }
-
-                private void updateAugmentOrder(final StatementContextBase<?, ?, ?> augmentSourceCtx) {
-                    Integer currentOrder = augmentSourceCtx.getFromNamespace(StmtOrderingNamespace.class,
-                        Rfc6020Mapping.AUGMENT);
-                    if (currentOrder == null) {
-                        currentOrder = 1;
-                    } else {
-                        currentOrder++;
-                    }
-
-                    augmentSourceCtx.setOrder(currentOrder);
-                    augmentSourceCtx.addToNs(StmtOrderingNamespace.class, Rfc6020Mapping.AUGMENT, currentOrder);
-                }
-
-                @Override
-                public void prerequisiteFailed(final Collection<? extends ModelActionBuilder.Prerequisite<?>> failed) {
-                    throw new InferenceException(augmentNode.getStatementSourceReference(),
-                        "Augment target '%s' not found", augmentNode.getStatementArgument());
-                }
-            });
         }
 
         private static Mutable<?, ?, ?> getSearchRoot(final Mutable<?, ?, ?> augmentContext) {

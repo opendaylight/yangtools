@@ -73,41 +73,46 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                 final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode) {
             SUBSTATEMENT_VALIDATOR.validate(usesNode);
 
-            if (StmtContextUtils.isInExtensionBody(usesNode)) {
-                return;
-            }
+            if (StmtContextUtils.areAllFeaturesSupported(usesNode) || StmtContextUtils.areFeaturesSupported(usesNode)) {
 
-            ModelActionBuilder usesAction = usesNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
-            final QName groupingName = usesNode.getStatementArgument();
+                if (StmtContextUtils.isInExtensionBody(usesNode)) {
+                    return;
+                }
 
-            final Prerequisite<StmtContext<?, ?, ?>> sourceGroupingPre = usesAction.requiresCtx(usesNode,
-                    GroupingNamespace.class, groupingName, ModelProcessingPhase.EFFECTIVE_MODEL);
-            final Prerequisite<? extends StmtContext.Mutable<?, ?, ?>> targetNodePre = usesAction.mutatesEffectiveCtx(
-                    usesNode.getParentContext());
+                ModelActionBuilder usesAction = usesNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
+                final QName groupingName = usesNode.getStatementArgument();
 
-            usesAction.apply(new InferenceAction() {
+                final Prerequisite<StmtContext<?, ?, ?>> sourceGroupingPre = usesAction.requiresCtx(usesNode,
+                        GroupingNamespace.class, groupingName, ModelProcessingPhase.EFFECTIVE_MODEL);
+                final Prerequisite<? extends StmtContext.Mutable<?, ?, ?>> targetNodePre = usesAction.mutatesEffectiveCtx(
 
-                @Override
-                public void apply() {
-                    StatementContextBase<?, ?, ?> targetNodeStmtCtx = (StatementContextBase<?, ?, ?>) targetNodePre.get();
-                    StatementContextBase<?, ?, ?> sourceGrpStmtCtx = (StatementContextBase<?, ?, ?>) sourceGroupingPre.get();
+                        usesNode.getParentContext());
 
-                    try {
-                        GroupingUtils.copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
-                        GroupingUtils.resolveUsesNode(usesNode, targetNodeStmtCtx);
-                    } catch (SourceException e) {
-                        LOG.warn(e.getMessage(), e);
-                        throw e;
+                usesAction.apply(new InferenceAction() {
+
+                    @Override
+                    public void apply() {
+                        StatementContextBase<?, ?, ?> targetNodeStmtCtx = (StatementContextBase<?, ?, ?>) targetNodePre.get();
+                        StatementContextBase<?, ?, ?> sourceGrpStmtCtx = (StatementContextBase<?, ?, ?>) sourceGroupingPre.get();
+
+                        try {
+                            GroupingUtils.copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
+                            GroupingUtils.resolveUsesNode(usesNode, targetNodeStmtCtx);
+                        } catch (SourceException e) {
+                            LOG.warn(e.getMessage(), e);
+                            throw e;
+                        }
                     }
-                }
 
-                @Override
-                public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                    InferenceException.throwIf(failed.contains(sourceGroupingPre),
-                        usesNode.getStatementSourceReference(), "Grouping '%s' was not resolved.", groupingName);
-                    throw new InferenceException("Unknown error occurred.", usesNode.getStatementSourceReference());
-                }
-            });
+                    @Override
+                    public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
+                        InferenceException.throwIf(failed.contains(sourceGroupingPre),
+                                usesNode.getStatementSourceReference(), "Grouping '%s' was not resolved.",
+                                groupingName);
+                        throw new InferenceException("Unknown error occurred.", usesNode.getStatementSourceReference());
+                    }
+                });
+            }
         }
 
         @Override
