@@ -20,13 +20,17 @@
   <dependencies>
     <!-- This pulls in the appropriate version of checkstyle -->
     <dependency>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-checkstyle-plugin</artifactId>
-      <version>${checkstyle.version}</version>
+      <groupId>com.puppycrawl.tools</groupId>
+      <artifactId>checkstyle</artifactId>
     </dependency>
     <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
