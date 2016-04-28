@@ -20,9 +20,8 @@
   <dependencies>
     <!-- This pulls in the appropriate version of checkstyle -->
     <dependency>
-      <groupId>org.apache.maven.plugins</groupId>
-      <artifactId>maven-checkstyle-plugin</artifactId>
-      <version>${checkstyle.version}</version>
+      <groupId>com.puppycrawl.tools</groupId>
+      <artifactId>checkstyle</artifactId>
     </dependency>
     <dependency>
         <groupId>org.slf4j</groupId>
