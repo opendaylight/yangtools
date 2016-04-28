@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_fcf845e7",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/CrossSourceStatementReactor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-04-28T12:44:08Z",
+      "side": 1,
+      "message": "please change according to java naming conventions..",
+      "range": {
+        "startLine": 38,
+        "startChar": 35,
+        "endLine": 38,
+        "endChar": 55
+      },
+      "revId": "1c168af78128ac07249eb87fe9fd5fc430d3fef8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_9ce78940",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/AugmentStatementImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-04-28T12:44:08Z",
+      "side": 1,
+      "message": "please move this check earlier to the beginning of onFullDefinitionDeclared. A lot of unnecessary things has been done to this point.",
+      "range": {
+        "startLine": 115,
+        "startChar": 0,
+        "endLine": 116,
+        "endChar": 82
+      },
+      "revId": "1c168af78128ac07249eb87fe9fd5fc430d3fef8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_7ce4353b",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/UsesStatementImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-04-28T12:44:08Z",
+      "side": 1,
+      "message": "please move this check earlier to the beginning of onFullDefinitionDeclared. A lot of unnecessary things has been done to this point.",
+      "range": {
+        "startLine": 95,
+        "startChar": 20,
+        "endLine": 96,
+        "endChar": 79
+      },
+      "revId": "1c168af78128ac07249eb87fe9fd5fc430d3fef8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
