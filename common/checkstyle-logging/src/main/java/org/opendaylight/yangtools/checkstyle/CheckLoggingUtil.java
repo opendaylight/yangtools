@@ -16,14 +16,15 @@ import com.google.common.collect.Lists;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.FullIdent;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
-import com.puppycrawl.tools.checkstyle.checks.CheckUtils;
+import com.puppycrawl.tools.checkstyle.utils.CheckUtils;
 
 public final class CheckLoggingUtil {
 
     public static final String LOGGER_TYPE_NAME = Logger.class.getSimpleName();
     public static final String LOGGER_TYPE_FULL_NAME = Logger.class.getName();
     public static final String LOGGER_VAR_NAME = "LOG";
-    private static final List<String> LOG_METHODS = Lists.newArrayList("LOG.debug", "LOG.info", "LOG.error", "LOG.warn", "LOG.trace");
+    private static final List<String> LOG_METHODS =
+            Lists.newArrayList("LOG.debug", "LOG.info", "LOG.error", "LOG.warn", "LOG.trace");
 
     private CheckLoggingUtil() {
         throw new UnsupportedOperationException("Utility class should not be instantiated!");
@@ -49,7 +50,7 @@ public final class CheckLoggingUtil {
     }
 
     public static String getMethodName(final DetailAST aAST) {
-        if(aAST.getFirstChild().getLastChild() != null) {
+        if (aAST.getFirstChild().getLastChild() != null) {
             return aAST.getFirstChild().getFirstChild().getText() + "." + aAST.getFirstChild().getLastChild().getText();
         }
         return aAST.getFirstChild().getText();
@@ -61,7 +62,7 @@ public final class CheckLoggingUtil {
 
     public static String getClassName(final DetailAST aAST) {
         DetailAST parent = aAST.getParent();
-        while(parent.getType() != TokenTypes.CLASS_DEF && parent.getType() != TokenTypes.ENUM_DEF) {
+        while (parent.getType() != TokenTypes.CLASS_DEF && parent.getType() != TokenTypes.ENUM_DEF) {
             parent = parent.getParent();
         }
         return parent.findFirstToken(TokenTypes.IDENT).getText();
