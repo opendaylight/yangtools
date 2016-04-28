@@ -54,21 +54,33 @@ public class CheckstyleTest {
 
     @Test
     public void testLoggerChecks() throws Exception {
-        verify(CheckLoggingTestClass.class, true, "15: Logger must be declared as private static final.", "15: Logger name should be LOG.",
-                "15: LoggerFactory.getLogger Class argument is incorrect.",
-                "17: Logger might be declared only once.", "16: Logger must be slf4j.", "22: Line contains printStacktrace",
-                "23: Line contains console output", "24: Line contains console output", "26: Log message placeholders count is incorrect.",
-                "32: Log message placeholders count is incorrect", "41: Log message contains string concatenation.");
+        verify(CheckLoggingTestClass.class, true,
+                "15: Logger must be declared as private static final",
+                "15: Logger name should be LOG",
+                "15: LoggerFactory.getLogger Class argument is incorrect",
+                "17: Logger might be declared only once",
+                "16: Logger must be slf4j",
+                "22: Line contains printStacktrace",
+                "23: Line contains console output",
+                "24: Line contains console output",
+                "26: Log message placeholders count is incorrect",
+                "32: Log message placeholders count is incorrect",
+                "41: Log message contains string concatenation");
     }
 
     @Test
-    public void testCodingChecks() {
-        verify(CheckCodingStyleTestClass.class, false, "9: Line has Windows line delimiter.", "14: Wrong order for", "24:1: Line contains a tab character.",
-                "22: Line has trailing spaces.", "22: 'ctor def' child have incorrect indentation level 16, expected level should be 8.", "17:8: Unused import",
+    public void testCodingChecks() throws Exception {
+        verify(CheckCodingStyleTestClass.class, false,
+                "9: Line has Windows line delimiter.",
+                "14: Wrong order for",
+                "24:1: Line contains a tab character.",
+                "22: Line has trailing spaces.",
+                "22: 'ctor def' child have incorrect indentation level 16, expected level should be 8.",
+                "17:8: Unused import",
                 "23: Line has trailing spaces.");
     }
 
-    private void verify(final Class<?> testClass, final boolean checkCount, final String... expectedMessages) {
+    private void verify(final Class<?> testClass, final boolean checkCount, final String... expectedMessages) throws CheckstyleException {
         final String filePath = System.getProperty("user.dir") + File.separator + "src" + File.separator + "test" + File.separator + "java" + File.separator + testClass.getName().replaceAll("\\.", "/") + ".java";
         final File testFile = new File(filePath);
         checker.process(Lists.newArrayList(testFile));
@@ -79,7 +91,7 @@ public class CheckstyleTest {
             assertEquals(expectedMessages.length, count);
         }
         for(final String message : expectedMessages) {
-            assertTrue("Expected message not found: " + message, output.contains(message));
+            assertTrue("Expected message not found: " + message + "; output: " + output, output.contains(message));
         }
     }
 }
