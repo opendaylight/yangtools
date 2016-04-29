@@ -87,13 +87,18 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
 
     @Override
     public <T extends SchemaSourceRepresentation> CheckedFuture<T, SchemaSourceException> getSchemaSource(final SourceIdentifier id, final Class<T> representation) {
-        final ListMultimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> srcs = sources.get(id);
-        if (srcs == null) {
-            return Futures.<T, SchemaSourceException>immediateFailedCheckedFuture(new MissingSchemaSourceException("No providers registered for source" + id, id));
+        final ArrayList<AbstractSchemaSourceRegistration<?>> sortedSchemaSourceRegistrations;
+
+        synchronized (this) {
+            final ListMultimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> srcs = sources.get(id);
+            if (srcs == null) {
+                return Futures.<T, SchemaSourceException>immediateFailedCheckedFuture(new MissingSchemaSourceException("No providers registered for source" + id, id));
+            }
+
+            sortedSchemaSourceRegistrations = Lists.newArrayList(srcs.get(representation));
         }
 
         // TODO, remove and make sources keep sorted multimap (e.g. ArrayListMultimap with SortedLists)
-        final ArrayList<AbstractSchemaSourceRegistration<?>> sortedSchemaSourceRegistrations = Lists.newArrayList(srcs.get(representation));
         Collections.sort(sortedSchemaSourceRegistrations, SchemaProviderCostComparator.INSTANCE);
 
         final Iterator<AbstractSchemaSourceRegistration<?>> regs = sortedSchemaSourceRegistrations.iterator();
