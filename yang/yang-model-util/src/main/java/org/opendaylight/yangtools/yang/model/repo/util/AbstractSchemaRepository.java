@@ -85,6 +85,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
         }), FETCH_MAPPER);
     }
 
+    @GuardedBy("this")
     @Override
     public <T extends SchemaSourceRepresentation> CheckedFuture<T, SchemaSourceException> getSchemaSource(final SourceIdentifier id, final Class<T> representation) {
         final ListMultimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> srcs = sources.get(id);
