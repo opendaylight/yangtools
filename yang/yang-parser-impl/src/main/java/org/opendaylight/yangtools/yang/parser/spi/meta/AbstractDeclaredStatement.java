@@ -5,8 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
+
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
@@ -15,6 +17,7 @@ import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 /**
  * Utility abstract base class for implementing declared statements.
@@ -40,8 +43,9 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
          * Perform an explicit copy, because Collections2.transform() is lazily transformed and retains pointer to
          * original collection, which may contains references to mutable context.
          */
-        substatements = ImmutableList.copyOf(Collections2.transform(context.declaredSubstatements(),
-            StmtContextUtils.buildDeclared()));
+        Collection<StatementContextBase<?, ?, ?>> declaredSubstatements = context.declaredSubstatements();
+        Function<StmtContext<?, ? extends DeclaredStatement<?>, ?>, DeclaredStatement<?>> buildDeclared = StmtContextUtils.buildDeclared();
+        substatements = ImmutableList.copyOf(Collections2.transform(declaredSubstatements, buildDeclared));
     }
 
     protected final <S extends DeclaredStatement<?>> S firstDeclared(final Class<S> type) {

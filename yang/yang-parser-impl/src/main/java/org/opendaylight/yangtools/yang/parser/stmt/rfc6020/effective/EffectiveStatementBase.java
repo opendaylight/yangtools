@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -91,13 +92,13 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
             this.unknownSubstatementsToBuild = ImmutableList.of();
         }
 
-        this.substatements = ImmutableList.copyOf(Collections2.transform(substatementsToBuild,
-                StmtContextUtils.buildEffective()));
+        Function<StmtContext<?, ?, ? extends EffectiveStatement<?, ?>>, EffectiveStatement<?, ?>> buildEffective = StmtContextUtils.buildEffective();
+        this.substatements = ImmutableList.copyOf(Collections2.transform(substatementsToBuild, buildEffective));
     }
 
     Collection<EffectiveStatement<?, ?>> getOmittedUnknownSubstatements() {
-        return Collections2.transform(unknownSubstatementsToBuild,
-                StmtContextUtils.buildEffective());
+        Function<StmtContext<?, ?, ? extends EffectiveStatement<?, ?>>, EffectiveStatement<?, ?>> buildEffective = StmtContextUtils.buildEffective();
+        return Collections2.transform(unknownSubstatementsToBuild, buildEffective);
     }
 
     @Override
