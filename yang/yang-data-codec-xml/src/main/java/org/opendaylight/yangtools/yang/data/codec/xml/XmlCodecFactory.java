@@ -15,6 +15,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -52,10 +53,10 @@ public final class XmlCodecFactory {
         }
     };
 
-    private final LoadingCache<DataSchemaNode, XmlCodec<Object>> codecs =
-            CacheBuilder.newBuilder().softValues().build(new CacheLoader<DataSchemaNode, XmlCodec<Object>>() {
+    private final LoadingCache<DataSchemaNode, XmlCodec<?>> codecs =
+            CacheBuilder.newBuilder().softValues().build(new CacheLoader<DataSchemaNode, XmlCodec<?>>() {
                 @Override
-                public XmlCodec<Object> load(final DataSchemaNode key) throws Exception {
+                public XmlCodec<?> load(final DataSchemaNode key) throws Exception {
                     final TypeDefinition<?> type;
                     if (key instanceof LeafSchemaNode) {
                         type = ((LeafSchemaNode) key).getType();
@@ -69,7 +70,7 @@ public final class XmlCodecFactory {
             });
 
     private final SchemaContext schemaContext;
-    private final XmlCodec<?> iidCodec;
+    private final XmlCodec<YangInstanceIdentifier> iidCodec;
 
     private XmlCodecFactory(final SchemaContext context) {
         this.schemaContext = Preconditions.checkNotNull(context);
@@ -86,20 +87,19 @@ public final class XmlCodecFactory {
         return new XmlCodecFactory(context);
     }
 
-    @SuppressWarnings("unchecked")
-    private XmlCodec<Object> createCodec(final DataSchemaNode key, final TypeDefinition<?> type) {
+    private XmlCodec<?> createCodec(final DataSchemaNode key, final TypeDefinition<?> type) {
         final TypeDefinition<?> normalizedType = DerivedTypes.derivedTypeBuilder(type, type.getPath()).build();
         if (normalizedType instanceof LeafrefTypeDefinition) {
             return createReferencedTypeCodec(key, (LeafrefTypeDefinition) normalizedType);
         } else if (normalizedType instanceof IdentityrefTypeDefinition) {
             final XmlCodec<?> xmlStringIdentityrefCodec =
                     new XmlStringIdentityrefCodec(schemaContext, key.getQName().getModule());
-            return (XmlCodec<Object>) xmlStringIdentityrefCodec;
+            return xmlStringIdentityrefCodec;
         }
         return createFromSimpleType(normalizedType);
     }
 
-    private XmlCodec<Object> createReferencedTypeCodec(final DataSchemaNode schema, final LeafrefTypeDefinition type) {
+    private XmlCodec<?> createReferencedTypeCodec(final DataSchemaNode schema, final LeafrefTypeDefinition type) {
         // FIXME: Verify if this does indeed support leafref of leafref
         final TypeDefinition<?> referencedType =
                 SchemaContextUtil.getBaseTypeForLeafRef(type, getSchemaContext(), schema);
@@ -107,10 +107,9 @@ public final class XmlCodecFactory {
         return createCodec(schema, referencedType);
     }
 
-    @SuppressWarnings("unchecked")
-    private XmlCodec<Object> createFromSimpleType(final TypeDefinition<?> type) {
+    private XmlCodec<?> createFromSimpleType(final TypeDefinition<?> type) {
         if (type instanceof InstanceIdentifierTypeDefinition) {
-            return (XmlCodec<Object>) iidCodec;
+            return iidCodec;
         }
         if (type instanceof EmptyTypeDefinition) {
             return XmlEmptyCodec.INSTANCE;
@@ -118,18 +117,17 @@ public final class XmlCodecFactory {
 
         final TypeDefinitionAwareCodec<Object, ?> codec = TypeDefinitionAwareCodec.from(type);
         if (codec == null) {
-            LOG.debug("Codec for type \"{}\" is not implemented yet.", type.getQName()
-                    .getLocalName());
+            LOG.debug("Codec for type \"{}\" is not implemented yet.", type.getQName().getLocalName());
             return NULL_CODEC;
         }
-        return (XmlCodec<Object>) AbstractXmlCodec.create(codec);
+        return AbstractXmlCodec.create(codec);
     }
 
     SchemaContext getSchemaContext() {
         return schemaContext;
     }
 
-    XmlCodec<Object> codecFor(final DataSchemaNode schema) {
+    XmlCodec<?> codecFor(final DataSchemaNode schema) {
         return codecs.getUnchecked(schema);
     }
 }
