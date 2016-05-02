@@ -8,9 +8,17 @@
 
 package org.opendaylight.yangtools.binding.data.codec.test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Map.Entry;
 import javassist.ClassPool;
 import org.junit.Assert;
 import org.junit.Test;
+import org.opendaylight.yang.gen.v1.bug5446.rev151105.IpAddressBinary;
+import org.opendaylight.yang.gen.v1.bug5446.rev151105.IpAddressBinaryBuilder;
+import org.opendaylight.yang.gen.v1.bug5446.rev151105.Root;
+import org.opendaylight.yang.gen.v1.bug5446.rev151105.RootBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.union.rev150121.TopLevel;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.union.rev150121.TopLevelBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.union.rev150121.Wrapper;
@@ -18,6 +26,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtool
 import org.opendaylight.yangtools.binding.data.codec.gen.impl.StreamWriterGenerator;
 import org.opendaylight.yangtools.binding.data.codec.impl.BindingNormalizedNodeCodecRegistry;
 import org.opendaylight.yangtools.sal.binding.generator.util.JavassistUtils;
+import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -54,5 +63,21 @@ public class UnionTypeTest extends AbstractBindingRuntimeTest {
                 .withChild(ImmutableNodes.leafNode(WRAP_LEAF_QNAME, testString))
                 .build();
         Assert.assertEquals(topLevelEntry, containerNode);
+    }
+
+    @Test
+    public void bug5446Test() {
+        IpAddressBinary ipAddress = IpAddressBinaryBuilder.getDefaultInstance("fwAAAQ==");
+        Root root = new RootBuilder().setIpAddress(ipAddress).build();
+        NormalizedNode<?, ?> rootNode = registry.toNormalizedNode(InstanceIdentifier.builder(Root.class).build(), root)
+                .getValue();
+
+        Entry<InstanceIdentifier<?>, DataObject> rootEntry = registry.fromNormalizedNode(
+                YangInstanceIdentifier.of(rootNode.getNodeType()), rootNode);
+
+        DataObject rootObj = rootEntry.getValue();
+        assertTrue(rootObj instanceof Root);
+        IpAddressBinary desIpAddress = ((Root) rootObj).getIpAddress();
+        assertEquals(ipAddress, desIpAddress);
     }
 }

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.io.BaseEncoding;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -66,7 +67,11 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
     @Override
     public Object deserialize(final Object input) {
         try {
-            return charConstructor.newInstance((input.toString().toCharArray()));
+            if (input instanceof byte[]) {
+                return charConstructor.newInstance(BaseEncoding.base64().encode((byte[]) input).toCharArray());
+            } else {
+                return charConstructor.newInstance((input.toString().toCharArray()));
+            }
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
             throw new IllegalStateException("Could not construct instance",e);
         }
