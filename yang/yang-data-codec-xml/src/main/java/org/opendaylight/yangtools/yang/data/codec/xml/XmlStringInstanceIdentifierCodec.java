@@ -53,7 +53,7 @@ final class XmlStringInstanceIdentifierCodec  extends AbstractModuleStringInstan
     protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final String value) {
         Preconditions.checkNotNull(schemaNode, "schemaNode cannot be null");
         Preconditions.checkArgument(schemaNode instanceof LeafSchemaNode, "schemaNode must be of type LeafSchemaNode");
-        final XmlCodec<Object> objectXmlCodec = codecFactory.codecFor(schemaNode);
+        final XmlCodec<?> objectXmlCodec = codecFactory.codecFor(schemaNode);
         return objectXmlCodec.deserialize(value);
     }
 
