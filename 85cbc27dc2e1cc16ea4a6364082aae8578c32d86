@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_f3586bfc",
+        "filename": "common/features/.gitignore",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-03T09:35:18Z",
+      "side": 1,
+      "message": "this should be covered from root .gitignore, is it really needed?",
+      "revId": "85cbc27dc2e1cc16ea4a6364082aae8578c32d86",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_d35d67eb",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/stmt/test/Bug5712.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-03T09:35:18Z",
+      "side": 1,
+      "message": "Bug5712Test",
+      "range": {
+        "startLine": 32,
+        "startChar": 13,
+        "endLine": 32,
+        "endChar": 20
+      },
+      "revId": "85cbc27dc2e1cc16ea4a6364082aae8578c32d86",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
