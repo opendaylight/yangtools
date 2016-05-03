@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_6c52b8de",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/repo/util/AbstractSchemaRepository.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 3675
+      },
+      "writtenOn": "2016-05-03T15:43:53Z",
+      "side": 1,
+      "message": "should we specify the type of the Future for the immediateFailedCheckedFuture as following:\n\nFutures.\u003cT, SchemaSourceException\u003eimmediateFailedCheckedFuture(...)\n\nWithout this the build was failing, locally, with the following error:\n\nincompatible types: no instance(s) of type variable(s) V exist so that com.google.common.util.concurrent.CheckedFuture\u003cV,org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException\u003e conforms to com.google.common.util.concurrent.CheckedFuture\u003cT,org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException\u003e",
+      "range": {
+        "startLine": 95,
+        "startChar": 23,
+        "endLine": 95,
+        "endChar": 59
+      },
+      "revId": "ae76243f7fb42df7c9ca076c4c099acbc38a2535",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
