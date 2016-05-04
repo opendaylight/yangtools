@@ -22,6 +22,30 @@
       "revId": "ae76243f7fb42df7c9ca076c4c099acbc38a2535",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_a2a697bf",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/repo/util/AbstractSchemaRepository.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-04T11:08:18Z",
+      "side": 1,
+      "message": "that definitely is weird -- what compiler does not like it? Note that the code works just fine in local testing here and in jenkins.",
+      "parentUuid": "fa57193c_6c52b8de",
+      "range": {
+        "startLine": 95,
+        "startChar": 23,
+        "endLine": 95,
+        "endChar": 59
+      },
+      "revId": "ae76243f7fb42df7c9ca076c4c099acbc38a2535",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
