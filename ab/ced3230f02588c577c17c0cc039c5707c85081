@@ -1,0 +1,9 @@
+Verified+1: jenkins-releng <jenkins-releng@opendaylight.org>
+Code-Review+1: Tony Tkacik <ttkacik@cisco.com>
+Code-Review+1: Ryan Goulding <ryandgoulding@gmail.com>
+Code-Review+2: Robert Varga <nite@hq.sk>
+Submitted-by: Robert Varga <nite@hq.sk>
+Submitted-at: Wed, 04 May 2016 12:19:29 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/36978
+Project: yangtools
+Branch: refs/heads/master
