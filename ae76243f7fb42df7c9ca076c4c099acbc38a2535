@@ -46,6 +46,30 @@
       "revId": "ae76243f7fb42df7c9ca076c4c099acbc38a2535",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_843e00b7",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/repo/util/AbstractSchemaRepository.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 3675
+      },
+      "writtenOn": "2016-05-04T13:10:41Z",
+      "side": 1,
+      "message": "Apache Maven 3.3.3 (7994120775791599e205a5524ec3e0dfe41d4a06; 2015-04-22T07:57:37-04:00)\nJava version: 1.8.0_60, vendor: Oracle Corporation",
+      "parentUuid": "fa57193c_a2a697bf",
+      "range": {
+        "startLine": 95,
+        "startChar": 23,
+        "endLine": 95,
+        "endChar": 59
+      },
+      "revId": "ae76243f7fb42df7c9ca076c4c099acbc38a2535",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
