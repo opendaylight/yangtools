@@ -1,0 +1,35 @@
+module foo {
+    yang-version 1;
+    namespace "foo";
+    prefix foo;
+
+    container root {
+        choice my-choice {
+            case one {
+                leaf one {
+                    type empty;
+                }
+            }
+            case two {
+                leaf two {
+                    type empty;
+                }
+            }
+            case three {
+                leaf two {
+                    type empty;
+                }
+            }
+            case four {
+                leaf four {
+                    type empty;
+                }
+            }
+            case four {
+                leaf five {
+                    type empty;
+                }
+            }
+        }
+    }
+}
