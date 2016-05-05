@@ -62,7 +62,7 @@ public abstract class DeclaredEffectiveStatementBase<A, D extends DeclaredStatem
     }
 
     @Override
-    public final A argument() {
+    public A argument() {
         return argument;
     }
 
