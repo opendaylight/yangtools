@@ -24,7 +24,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.mockito.Mockito;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.impl.RetestUtils;
+import org.opendaylight.yangtools.yang.data.impl.TestUtils;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
@@ -56,7 +56,7 @@ public class DomSerializerTestUtils {
 
     public static SchemaContext getSchemaContext() throws ReactorException, IOException, YangSyntaxErrorException {
         final StatementStreamSource source = new YangStatementSourceImpl("/dom-serializer-test/serializer-test.yang", false);
-        final SchemaContext schemaContext = RetestUtils.parseYangSources(source);
+        final SchemaContext schemaContext = TestUtils.parseYangSources(source);
 
         assertNotNull("Schema context must not be null.", schemaContext);
         return schemaContext;

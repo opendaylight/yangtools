@@ -47,6 +47,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathResult;
 import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathSchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class JaxenTest {
     private ConverterNamespaceContext convertNctx;
@@ -67,7 +68,7 @@ public class JaxenTest {
 
     @Before
     public void setup() throws URISyntaxException, IOException, ParseException, XPathExpressionException,
-            UnsupportedAxisException {
+            UnsupportedAxisException, ReactorException {
         final SchemaContext schemaContext = createSchemaContext();
         assertNotNull(schemaContext);
 
@@ -214,8 +215,8 @@ public class JaxenTest {
         return SchemaPath.create(true, rootQName, listAQName, leafAQName);
     }
 
-    private SchemaContext createSchemaContext() throws IOException, URISyntaxException {
-        return TestUtils.loadSchemaContext(getClass().getResource("/test/documentTest").toURI());
+    private SchemaContext createSchemaContext() throws IOException, URISyntaxException, ReactorException {
+        return TestUtils.loadModules("/test/documentTest");
     }
 
     private static NormalizedNode<?, ?> createNormalizedNodes() {
