@@ -38,14 +38,19 @@ final class LengthConstraintImpl implements LengthConstraint, Immutable {
 
     LengthConstraintImpl(final Number min, final Number max, final Optional<String> description,
             final Optional<String> reference) {
-        super();
+        this(min, max, description, reference, "length-out-of-specified-bounds", "The argument is out of bounds <"
+                + min + ", " + max + ">");
+    }
+
+    LengthConstraintImpl(final Number min, final Number max, final Optional<String> description,
+            final Optional<String> reference, final String errorAppTag, final String errorMessage) {
         this.min = Preconditions.checkNotNull(min, "min must not be null.");
         this.max = Preconditions.checkNotNull(max, "max must not be null");
         this.description = description.orNull();
         this.reference = reference.orNull();
-
-        this.errorAppTag = "length-out-of-specified-bounds";
-        this.errorMessage = "The argument is out of bounds <" + min + ", " + max + ">";
+        this.errorAppTag = errorAppTag != null ? errorAppTag : "length-out-of-specified-bounds";
+        this.errorMessage = errorMessage != null ? errorMessage : "The argument is out of bounds <" + min + ", " + max
+                + ">";
     }
 
     @Override
