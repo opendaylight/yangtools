@@ -1,0 +1,32 @@
+module foo {
+    yang-version 1;
+    namespace "foo";
+    prefix foo;
+
+    revision 2016-05-05 {
+        description "Bug 5200 test.";
+    }
+
+    container root {
+        leaf my-leaf {
+            type string {
+                length "1..255" {
+                    error-app-tag "lenght constraint error-app-tag";
+                    error-message "lenght constraint error-app-message";
+                }
+                pattern "[a-z]+" {
+                    error-app-tag "pattern constraint error-app-tag";
+                    error-message "pattern constraint error-app-message";
+                }
+            }
+        }
+        leaf my-leaf-2 {
+            type int32 {
+                range "1..100" {
+                    error-app-tag "range constraint error-app-tag";
+                    error-message "range constraint error-app-message";
+                }
+            }
+        }
+    }
+}

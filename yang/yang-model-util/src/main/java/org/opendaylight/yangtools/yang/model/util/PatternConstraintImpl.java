@@ -34,17 +34,19 @@ final class PatternConstraintImpl implements PatternConstraint, Immutable {
     private final String errorAppTag;
     private final String errorMessage;
 
-    public PatternConstraintImpl(final String regex, final Optional<String> description,
-            final Optional<String> reference) {
-        super();
+    PatternConstraintImpl(final String regex, final Optional<String> description, final Optional<String> reference) {
+        this(regex, description, reference, "invalid-regular-expression", String.format(
+                "String %s is not valid regular expression.", regex));
+    }
+
+    PatternConstraintImpl(final String regex, final Optional<String> description, final Optional<String> reference,
+            final String errorAppTag, final String errorMessage) {
         this.regex = Preconditions.checkNotNull(regex, "regex must not be null.");
         this.description = description.orNull();
         this.reference = reference.orNull();
-
-        // FIXME: Lookup better suitable error tag.
-        errorAppTag = "invalid-regular-expression";
-        // TODO: add erro message
-        errorMessage = "";
+        this.errorAppTag = errorAppTag != null ? errorAppTag : "invalid-regular-expression";
+        this.errorMessage = errorMessage != null ? errorMessage : String.format(
+                "String %s is not valid regular expression.", regex);
     }
 
     @Override
