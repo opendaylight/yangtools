@@ -63,7 +63,7 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> e
                         ((UnresolvedNumber)min).resolveLength(baseLengthConstraints) : min;
 
                 builder.add(BaseConstraints.newLengthConstraint(rMin, rMax, Optional.fromNullable(c.getDescription()),
-                    Optional.fromNullable(c.getReference())));
+                    Optional.fromNullable(c.getReference()), c.getErrorAppTag(), c.getErrorMessage()));
             } else {
                 builder.add(c);
             }
@@ -101,7 +101,7 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> e
                         c, clazz.getSimpleName()), e);
                 }
                 builder.add(BaseConstraints.newLengthConstraint(min, max, Optional.fromNullable(c.getDescription()),
-                    Optional.fromNullable(c.getReference())));
+                    Optional.fromNullable(c.getReference()), c.getErrorAppTag(), c.getErrorMessage()));
             } else {
                 builder.add(c);
             }
