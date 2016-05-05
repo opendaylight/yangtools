@@ -157,13 +157,13 @@ public final class TypeUtils {
     }
 
     public static List<LengthConstraint> parseLengthListFromString(final StmtContext<?, ?, ?> ctx,
-            final String rangeArgument) {
+            final String lengthArgument) {
         Optional<String> description = Optional.absent();
         Optional<String> reference = Optional.absent();
 
-        List<LengthConstraint> rangeConstraints = new ArrayList<>();
+        List<LengthConstraint> lengthConstraints = new ArrayList<>();
 
-        for (final String singleRange : PIPE_SPLITTER.split(rangeArgument)) {
+        for (final String singleRange : PIPE_SPLITTER.split(lengthArgument)) {
             final Iterator<String> boundaries = TWO_DOTS_SPLITTER.splitToList(singleRange).iterator();
             final Number min = parseIntegerConstraintValue(ctx, boundaries.next());
 
@@ -183,15 +183,15 @@ public final class TypeUtils {
             }
 
             // some of intervals overlapping
-            if (rangeConstraints.size() > 1 && compareNumbers(min, Iterables.getLast(rangeConstraints).getMax()) != 1) {
+            if (lengthConstraints.size() > 1 && compareNumbers(min, Iterables.getLast(lengthConstraints).getMax()) != 1) {
                 throw new InferenceException(ctx.getStatementSourceReference(),
-                    "Some of the length ranges in %s are not disjoint", rangeArgument);
+                    "Some of the length ranges in %s are not disjoint", lengthArgument);
             }
 
-            rangeConstraints.add(new LengthConstraintEffectiveImpl(min, max, description, reference));
+            lengthConstraints.add(new LengthConstraintEffectiveImpl(min, max, description, reference));
         }
 
-        return rangeConstraints;
+        return lengthConstraints;
     }
 
     public static boolean isYangTypeBodyStmtString(final String typeName) {
