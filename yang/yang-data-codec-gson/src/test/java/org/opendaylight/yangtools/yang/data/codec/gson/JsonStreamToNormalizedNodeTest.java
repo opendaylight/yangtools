@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeS
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 /**
  *
@@ -46,7 +47,7 @@ public class JsonStreamToNormalizedNodeTest {
     private static SchemaContext schemaContext;
 
     @BeforeClass
-    public static void initialization() throws IOException, URISyntaxException {
+    public static void initialization() throws IOException, URISyntaxException, ReactorException {
         schemaContext = loadModules("/complexjson/yang");
     }
 

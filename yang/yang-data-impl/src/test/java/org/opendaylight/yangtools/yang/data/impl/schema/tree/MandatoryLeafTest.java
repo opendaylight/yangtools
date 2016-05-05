@@ -30,7 +30,7 @@ public class MandatoryLeafTest {
 
     @Before
     public void prepare() throws ReactorException {
-        schemaContext = RetestModel.createTestContext("/mandatory-leaf-test.yang");
+        schemaContext = TestModel.createTestContext("/mandatory-leaf-test.yang");
         assertNotNull("Schema context must not be null.", schemaContext);
     }
 

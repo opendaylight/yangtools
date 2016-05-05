@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -17,10 +17,10 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.AbstractMap;
-import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -34,6 +34,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.data.impl.TestUtils;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -44,7 +45,7 @@ import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefi
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.w3c.dom.Document;
 
 public class XmlStreamUtilsTest {
@@ -55,21 +56,19 @@ public class XmlStreamUtilsTest {
     private static Module leafRefModule;
 
     @BeforeClass
-    public static void initialize() throws URISyntaxException {
-        final YangParserImpl yangParser = new YangParserImpl();
-        final File file = new File(XmlStreamUtils.class.getResource("/leafref-test.yang").toURI());
-        schemaContext = yangParser.parseFiles(Collections.singletonList(file));
+    public static void initialize() throws URISyntaxException, FileNotFoundException, ReactorException {
+        final File file = new File(org.opendaylight.yangtools.yang.data.impl.codec.xml.retest.XmlStreamUtils.class.getResource("/leafref-test.yang").toURI());
+        schemaContext = TestUtils.parseYangSources(file);
         assertNotNull(schemaContext);
-        assertEquals(1,schemaContext.getModules().size());
+        assertEquals(1, schemaContext.getModules().size());
         leafRefModule = schemaContext.getModules().iterator().next();
         assertNotNull(leafRefModule);
     }
 
-
     @Test
     public void testWriteAttribute() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final XMLStreamWriter writer =  XML_OUTPUT_FACTORY.createXMLStreamWriter(out);
+        final XMLStreamWriter writer = XML_OUTPUT_FACTORY.createXMLStreamWriter(out);
         writer.writeStartElement("element");
 
         QName name = getAttrQName("namespace", "2012-12-12", "attr", Optional.of("prefix"));
@@ -92,7 +91,8 @@ public class XmlStreamUtilsTest {
         assertEquals(2, mappedPrefixes.size());
         final String randomPrefixValue = mappedPrefixes.get("namespace2");
 
-        final String expectedXmlAsString = "<element xmlns:a=\"namespace\" a:attr=\"value\" xmlns:" + randomPrefixValue + "=\"namespace2\" " + randomPrefixValue + ":attr=\"value\"></element>";
+        final String expectedXmlAsString = "<element xmlns:a=\"namespace\" a:attr=\"value\" xmlns:" + randomPrefixValue
+                + "=\"namespace2\" " + randomPrefixValue + ":attr=\"value\"></element>";
 
         XMLUnit.setIgnoreAttributeOrder(true);
         final Document control = XMLUnit.buildControlDocument(expectedXmlAsString);
@@ -106,7 +106,7 @@ public class XmlStreamUtilsTest {
     @Test
     public void testWriteIdentityRef() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final XMLStreamWriter writer =  XML_OUTPUT_FACTORY.createXMLStreamWriter(out);
+        final XMLStreamWriter writer = XML_OUTPUT_FACTORY.createXMLStreamWriter(out);
 
         writer.writeStartElement("element");
         final QNameModule parent = QNameModule.create(URI.create("parent:uri"), new Date());
@@ -149,7 +149,8 @@ public class XmlStreamUtilsTest {
     /**
      * Tests relative path with double point inside path (e. g. "../../lf:interface/../lf:cont2/lf:stringleaf")
      */
-    @Ignore //ignored because this isn't implemented
+    @Ignore
+    // ignored because this isn't implemented
     @Test
     public void testLeafRefWithDoublePointInPath() {
         getTargetNodeForLeafRef("lf-with-double-point-inside", StringTypeDefinition.class);
@@ -169,7 +170,8 @@ public class XmlStreamUtilsTest {
         assertNotNull(schemaNode);
         final LeafrefTypeDefinition leafrefTypedef = findLeafrefType(schemaNode);
         assertNotNull(leafrefTypedef);
-        final TypeDefinition<?> targetBaseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypedef, schemaContext, schemaNode);
+        final TypeDefinition<?> targetBaseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypedef, schemaContext,
+                schemaNode);
         assertTrue("Wrong class found.", clas.isInstance(targetBaseType));
         return targetBaseType;
     }
@@ -182,7 +184,8 @@ public class XmlStreamUtilsTest {
         return mappedPrefixes;
     }
 
-    private static QName getAttrQName(final String namespace, final String revision, final String localName, final Optional<String> prefix) {
+    private static QName getAttrQName(final String namespace, final String revision, final String localName,
+            final Optional<String> prefix) {
         if (prefix.isPresent()) {
             final QName moduleQName = QName.create(namespace, revision, "module");
             final QNameModule module = QNameModule.create(moduleQName.getNamespace(), moduleQName.getRevision());
@@ -195,14 +198,15 @@ public class XmlStreamUtilsTest {
     private LeafSchemaNode findSchemaNodeWithLeafrefType(final DataNodeContainer module, final String nodeName) {
         for (final DataSchemaNode childNode : module.getChildNodes()) {
             if (childNode instanceof DataNodeContainer) {
-                LeafSchemaNode leafrefFromRecursion = findSchemaNodeWithLeafrefType((DataNodeContainer)childNode, nodeName);
+                LeafSchemaNode leafrefFromRecursion = findSchemaNodeWithLeafrefType((DataNodeContainer) childNode,
+                        nodeName);
                 if (leafrefFromRecursion != null) {
                     return leafrefFromRecursion;
                 }
             } else if (childNode.getQName().getLocalName().equals(nodeName) && childNode instanceof LeafSchemaNode) {
-                final TypeDefinition<?> leafSchemaNodeType = ((LeafSchemaNode)childNode).getType();
+                final TypeDefinition<?> leafSchemaNodeType = ((LeafSchemaNode) childNode).getType();
                 if (leafSchemaNodeType instanceof LeafrefTypeDefinition) {
-                    return (LeafSchemaNode)childNode;
+                    return (LeafSchemaNode) childNode;
                 }
             }
         }
@@ -212,7 +216,7 @@ public class XmlStreamUtilsTest {
     private static LeafrefTypeDefinition findLeafrefType(final LeafSchemaNode schemaNode) {
         final TypeDefinition<?> type = schemaNode.getType();
         if (type instanceof LeafrefTypeDefinition) {
-            return (LeafrefTypeDefinition)type;
+            return (LeafrefTypeDefinition) type;
         }
         return null;
     }

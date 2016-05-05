@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -9,6 +9,9 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadModules;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
+
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+
 import com.google.gson.stream.JsonReader;
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +30,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWrit
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +40,7 @@ public class StreamToNormalizedNodeTest {
     private static String streamAsString;
 
     @BeforeClass
-    public static void initialization() throws IOException, URISyntaxException {
+    public static void initialization() throws IOException, URISyntaxException, ReactorException {
         schemaContext = loadModules("/complexjson/yang");
         streamAsString = loadTextFile(new File(StreamToNormalizedNodeTest.class.getResource(
                 "/complexjson/complex-json.json").toURI()));
@@ -101,9 +104,11 @@ public class StreamToNormalizedNodeTest {
         final StringWriter writer = new StringWriter();
 
         // StreamWriter which outputs JSON strings
+        // StreamWriter which outputs JSON strings
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.
                 createExclusiveWriter(JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, null,
                     JsonWriterFactory.createJsonWriter(writer, 2));
+
         // NormalizedNode -> StreamWriter
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
 

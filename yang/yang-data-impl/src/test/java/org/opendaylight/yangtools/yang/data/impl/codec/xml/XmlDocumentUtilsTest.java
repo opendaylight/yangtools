@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.impl.RetestUtils;
+import org.opendaylight.yangtools.yang.data.impl.TestUtils;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
@@ -80,7 +80,7 @@ public class XmlDocumentUtilsTest {
         final File rpcTestYang1 = new File(getClass().getResource("xml-doc-test.yang").toURI());
         final File rpcTestYang2 = new File(getClass().getResource("xml-doc-test2.yang").toURI());
 
-        this.schema = RetestUtils.parseYangSources(rpcTestYang1, rpcTestYang2);
+        this.schema = TestUtils.parseYangSources(rpcTestYang1, rpcTestYang2);
     }
 
     public static Document readXmlToDocument(final String xmlContent) throws SAXException, IOException {

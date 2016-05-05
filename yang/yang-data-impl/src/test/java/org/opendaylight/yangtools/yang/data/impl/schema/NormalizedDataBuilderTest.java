@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -7,15 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.common.io.ByteSource;
-import com.google.common.io.Resources;
-import java.io.IOException;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 import org.junit.Before;
@@ -32,6 +30,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.impl.TestUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeSchemaAwareBuilder;
@@ -45,40 +44,23 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class NormalizedDataBuilderTest {
 
     private ContainerSchemaNode containerNode;
     private SchemaContext schema;
 
-    SchemaContext parseTestSchema(final String... yangPath) throws IOException, YangSyntaxErrorException {
-        YangParserImpl yangParserImpl = new YangParserImpl();
-        return yangParserImpl.parseSources(getTestYangs(yangPath));
-    }
-
-    List<ByteSource> getTestYangs(final String... yangPaths) {
-
-        return Lists.newArrayList(Collections2.transform(Lists.newArrayList(yangPaths),
-                new Function<String, ByteSource>() {
-            @Override
-            public ByteSource apply(final String input) {
-                ByteSource resourceAsStream = Resources.asByteSource(getClass().getResource(input));
-                Preconditions.checkNotNull(resourceAsStream, "File %s was null", resourceAsStream);
-                return resourceAsStream;
-            }
-        }));
-    }
-
     @Before
-    public void setUp() throws Exception {
-        schema = parseTestSchema("test.yang");
+    public void setUp() throws URISyntaxException, FileNotFoundException, ReactorException {
+        final File resourceFile = new File(getClass().getResource(
+                "test.yang").toURI());
+        schema = TestUtils.parseYangSources(resourceFile);
         containerNode = (ContainerSchemaNode) getSchemaNode(schema, "test", "container");
     }
 
     @Test
-    public void testSchemaUnaware() throws Exception {
+    public void testSchemaUnaware() {
         // Container
         DataContainerNodeBuilder<NodeIdentifier, ContainerNode> builder = Builders
                 .containerBuilder().withNodeIdentifier(getNodeIdentifier("container"));
@@ -95,8 +77,8 @@ public class NormalizedDataBuilderTest {
                 .withChildValue(1)
                 .withChild(
                         Builders.<Integer> leafSetEntryBuilder()
-                        .withNodeIdentifier(getNodeWithValueIdentifier("leaf", 3)).withValue(3).build())
-                        .build();
+                                .withNodeIdentifier(getNodeWithValueIdentifier("leaf", 3)).withValue(3).build())
+                .build();
         builder.withChild(leafList);
 
         // list
@@ -104,12 +86,12 @@ public class NormalizedDataBuilderTest {
                 .mapEntryBuilder()
                 .withChild(
                         Builders.<Integer> leafBuilder().withNodeIdentifier(getNodeIdentifier("uint32InList"))
-                        .withValue(1).build())
-                        .withChild(Builders.containerBuilder().withNodeIdentifier(getNodeIdentifier("containerInList")).build())
-                        .withNodeIdentifier(
-                                new NodeIdentifierWithPredicates(getNodeIdentifier("list").getNodeType(),
-                                        Collections.singletonMap(getNodeIdentifier("uint32InList").getNodeType(), (Object) 1)))
-                                        .build();
+                                .withValue(1).build())
+                .withChild(Builders.containerBuilder().withNodeIdentifier(getNodeIdentifier("containerInList")).build())
+                .withNodeIdentifier(
+                        new NodeIdentifierWithPredicates(
+                                getNodeIdentifier("list").getNodeType(), Collections.singletonMap(
+                                getNodeIdentifier("uint32InList").getNodeType(), (Object) 1))).build();
 
         MapNode list = Builders.mapBuilder().withChild(listChild1).withNodeIdentifier(getNodeIdentifier("list"))
                 .build();
@@ -119,8 +101,8 @@ public class NormalizedDataBuilderTest {
                 .augmentationBuilder()
                 .withNodeIdentifier(
                         new AugmentationIdentifier(Sets.newHashSet(getQName("augmentUint32"))))
-                        .withChild(
-                                Builders.<Integer> leafBuilder().withNodeIdentifier(getNodeIdentifier("augmentUint32"))
+                .withChild(
+                        Builders.<Integer>leafBuilder().withNodeIdentifier(getNodeIdentifier("augmentUint32"))
                                 .withValue(11).build()).build();
 
         builder.withChild(augmentation);
@@ -132,7 +114,7 @@ public class NormalizedDataBuilderTest {
     }
 
     @Test
-    public void testSchemaAware() throws Exception {
+    public void testSchemaAware() {
         DataContainerNodeBuilder<NodeIdentifier, ContainerNode> builder = Builders
                 .containerBuilder(containerNode);
 
@@ -162,7 +144,7 @@ public class NormalizedDataBuilderTest {
                 augmentUint32SchemaNode.getQName());
 
         AugmentationNode augmentation = Builders.augmentationBuilder(augmentationSchema)
-                .withChild(Builders.<Integer>leafBuilder(augmentUint32SchemaNode).withValue(11).build()).build();
+                .withChild(Builders.<Integer> leafBuilder(augmentUint32SchemaNode).withValue(11).build()).build();
 
         builder.withChild(augmentation);
 
@@ -173,8 +155,7 @@ public class NormalizedDataBuilderTest {
         LeafSchemaNode augumentString2SchemaNode = (LeafSchemaNode) getSchemaNode(schema, "test", "augmentString2");
 
         ChoiceSchemaNode choice1SchemaNode = (ChoiceSchemaNode) getSchemaNode(schema, "test", "choice");
-        ChoiceNode choice = ImmutableChoiceNodeSchemaAwareBuilder
-                .create(choice1SchemaNode)
+        ChoiceNode choice = ImmutableChoiceNodeSchemaAwareBuilder.create(choice1SchemaNode)
                 .withChild(Builders.<String> leafBuilder(augumentString1SchemaNode).withValue("case1").build())
                 // This should fail, since child node belongs to different case
                 // .withChild(Builders.<String>leafBuilder(augumentString2SchemaNode).withValue("case2")
@@ -188,7 +169,8 @@ public class NormalizedDataBuilderTest {
         // .build());
     }
 
-    private static AugmentationSchema getAugmentationSchemaForChild(final ContainerSchemaNode containerNode, final QName qName) {
+    private static AugmentationSchema getAugmentationSchemaForChild(final ContainerSchemaNode containerNode,
+            final QName qName) {
         for (AugmentationSchema augmentationSchema : containerNode.getAvailableAugmentations()) {
             if (augmentationSchema.getDataChildByName(qName) != null) {
                 return augmentationSchema;
@@ -210,7 +192,8 @@ public class NormalizedDataBuilderTest {
         return new NodeIdentifier(getQName(localName));
     }
 
-    public static DataSchemaNode getSchemaNode(final SchemaContext context, final String moduleName, final String childNodeName) {
+    public static DataSchemaNode getSchemaNode(final SchemaContext context, final String moduleName,
+            final String childNodeName) {
         for (Module module : context.getModules()) {
             if (module.getName().equals(moduleName)) {
                 DataSchemaNode found = findChildNode(module.getChildNodes(), childNodeName);

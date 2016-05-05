@@ -1,39 +1,43 @@
+/*
+ * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import com.google.common.base.Charsets;
-import com.google.common.collect.Lists;
-import com.google.common.io.ByteSource;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.impl.TestUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-
 public class Bug2964Test {
 
-    public static final String XML_CONTENT = "<cont2 xmlns=\"urn:opendaylight:yangtools:leafref:test\">\n" +
-            "<point-to-identityrefleaf>test-identity</point-to-identityrefleaf>\n" +
-            "</cont2>";
+    public static final String XML_CONTENT = "<cont2 xmlns=\"urn:opendaylight:yangtools:leafref:test\">\n"
+            + "<point-to-identityrefleaf>test-identity</point-to-identityrefleaf>\n" + "</cont2>";
 
     private static final DocumentBuilderFactory BUILDERFACTORY;
 
@@ -55,13 +59,8 @@ public class Bug2964Test {
 
     @Before
     public void setUp() throws Exception {
-        final ByteSource byteSource = new ByteSource() {
-            @Override
-            public InputStream openStream() throws IOException {
-                return Bug2964Test.this.getClass().getResourceAsStream("/leafref-test.yang");
-            }
-        };
-        schema = new YangParserImpl().parseSources(Lists.newArrayList(byteSource));
+        File leafRefTestYang = new File(getClass().getResource("/leafref-test.yang").toURI());
+        schema = TestUtils.parseYangSources(leafRefTestYang);
     }
 
     public static Document readXmlToDocument(final String xmlContent) throws SAXException, IOException {
@@ -75,8 +74,7 @@ public class Bug2964Test {
         final Document document = readXmlToDocument(XML_CONTENT);
         final Element identityLeafRefElement = (Element) document.getDocumentElement().getFirstChild().getNextSibling();
 
-        final Module leafrefModule = schema.findModuleByNamespaceAndRevision(
-                namespaceUri, null);
+        final Module leafrefModule = schema.findModuleByNamespaceAndRevision(namespaceUri, null);
         final ContainerSchemaNode cont2 = (ContainerSchemaNode) leafrefModule.getDataChildByName(CONT_2);
         final DataSchemaNode identityLeafRefSchema = cont2.getDataChildByName(IDENTITY_LEAFREF);
         final Object parsedValue = DomUtils.parseXmlValue(identityLeafRefElement, DomUtils.defaultValueCodecProvider(),

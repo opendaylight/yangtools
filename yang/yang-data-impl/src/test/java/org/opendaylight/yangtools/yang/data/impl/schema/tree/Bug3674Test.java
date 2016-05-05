@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 /**
  * BUG-3674: issuing a delete on a non-existent entry must be preserved in
@@ -27,7 +28,7 @@ public class Bug3674Test {
     private DataTree tree;
 
     @Before
-    public void setUp() {
+    public void setUp() throws ReactorException {
         tree = InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL);
         tree.setSchemaContext(TestModel.createTestContext());
 

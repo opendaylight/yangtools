@@ -31,7 +31,7 @@ public class CaseExclusionTest {
 
     @Before
     public void prepare() throws ReactorException {
-        schemaContext = RetestModel.createTestContext("/case-exclusion-test.yang");
+        schemaContext = TestModel.createTestContext("/case-exclusion-test.yang");
         assertNotNull("Schema context must not be null.", schemaContext);
     }
 

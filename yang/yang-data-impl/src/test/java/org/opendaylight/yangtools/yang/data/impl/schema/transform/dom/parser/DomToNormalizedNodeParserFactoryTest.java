@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
-import org.opendaylight.yangtools.yang.data.impl.RetestUtils;
+import org.opendaylight.yangtools.yang.data.impl.TestUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -31,7 +31,7 @@ public class DomToNormalizedNodeParserFactoryTest {
     public void testFactoryInstantiation() throws ReactorException {
         YangStatementSourceImpl foo = new YangStatementSourceImpl("/foo.yang", false);
 
-        SchemaContext schemaContext = RetestUtils.parseYangSources(foo);
+        SchemaContext schemaContext = TestUtils.parseYangSources(foo);
 
         DomToNormalizedNodeParserFactory factory = DomToNormalizedNodeParserFactory.getInstance(
                 DomUtils.defaultValueCodecProvider(), schemaContext,
