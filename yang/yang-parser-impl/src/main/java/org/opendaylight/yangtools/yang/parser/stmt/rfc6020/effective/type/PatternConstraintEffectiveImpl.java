@@ -17,21 +17,24 @@ public class PatternConstraintEffectiveImpl implements PatternConstraint {
     private final String regEx;
     private final String description;
     private final String reference;
-
     private final String errorAppTag;
     private final String errorMessage;
 
     public PatternConstraintEffectiveImpl(final String regex, final Optional<String> description,
             final Optional<String> reference) {
+        this(regex, description.orNull(), reference.orNull(), "invalid-regular-expression", String.format(
+                "String %s is not valid regular expression.", regex));
+    }
 
+    public PatternConstraintEffectiveImpl(final String regex, final String description, final String reference,
+            final String errorAppTag, final String errorMessage) {
         super();
-
         this.regEx = Preconditions.checkNotNull(regex, "regex must not be null.");
-        this.description = description.orNull();
-        this.reference = reference.orNull();
-
-        errorAppTag = "invalid-regular-expression";
-        errorMessage = String.format("String %s is not valid regular expression.", regex);
+        this.description = description;
+        this.reference = reference;
+        this.errorAppTag = errorAppTag != null ? errorAppTag : "invalid-regular-expression";
+        this.errorMessage = errorMessage != null ? errorMessage : String.format(
+                "String %s is not valid regular expression.", regex);
     }
 
     @Override
@@ -103,17 +106,8 @@ public class PatternConstraintEffectiveImpl implements PatternConstraint {
 
     @Override
     public String toString() {
-        return PatternConstraintEffectiveImpl.class.getSimpleName() +
-                " [regex=" +
-                regEx +
-                ", description=" +
-                description +
-                ", reference=" +
-                reference +
-                ", errorAppTag=" +
-                errorAppTag +
-                ", errorMessage=" +
-                errorMessage +
-                "]";
+        return PatternConstraintEffectiveImpl.class.getSimpleName() + " [regex=" + regEx + ", description="
+                + description + ", reference=" + reference + ", errorAppTag=" + errorAppTag + ", errorMessage="
+                + errorMessage + "]";
     }
 }
