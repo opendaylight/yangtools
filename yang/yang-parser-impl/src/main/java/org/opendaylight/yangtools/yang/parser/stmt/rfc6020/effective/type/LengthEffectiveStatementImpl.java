@@ -11,10 +11,10 @@ import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 
-public class LengthEffectiveStatementImpl extends DeclaredEffectiveStatementBase<List<LengthConstraint>, LengthStatement> {
+public class LengthEffectiveStatementImpl extends
+        AbstractConstraintEffectiveStatement<List<LengthConstraint>, LengthStatement> {
     public LengthEffectiveStatementImpl(final StmtContext<List<LengthConstraint>, LengthStatement, ?> ctx) {
-        super(ctx);
+        super(ctx, new LengthConstraintFactory());
     }
 }
