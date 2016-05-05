@@ -26,16 +26,20 @@ public class RangeConstraintEffectiveImpl implements RangeConstraint {
 
     public RangeConstraintEffectiveImpl(final Number min, final Number max, final Optional<String> description,
             final Optional<String> reference) {
+        this(min, max, description.orNull(), reference.orNull(), "range-out-of-specified-bounds",
+                "The argument is out of bounds <" + min + ", " + max + ">");
+    }
 
+    public RangeConstraintEffectiveImpl(final Number min, final Number max, final String description,
+            final String reference, final String errorAppTag, final String errorMessage) {
         super();
-
         this.min = Preconditions.checkNotNull(min, "min must not be null.");
         this.max = Preconditions.checkNotNull(max, "max must not be null.");
-        this.description = description.orNull();
-        this.reference = reference.orNull();
-
-        this.errorAppTag = "range-out-of-specified-bounds";
-        this.errorMessage = "The argument is out of bounds <" + min + ", " + max + ">";
+        this.description = description;
+        this.reference = reference;
+        this.errorAppTag = errorAppTag != null ? errorAppTag : "range-out-of-specified-bounds";
+        this.errorMessage = errorMessage != null ? errorMessage : "The argument is out of bounds <" + min + ", " + max
+                + ">";
     }
 
     @Override
@@ -110,19 +114,8 @@ public class RangeConstraintEffectiveImpl implements RangeConstraint {
 
     @Override
     public String toString() {
-        return RangeConstraintEffectiveImpl.class.getSimpleName() +
-                " [min=" +
-                min +
-                ", max=" +
-                max +
-                ", description=" +
-                description +
-                ", reference=" +
-                reference +
-                ", errorAppTag=" +
-                errorAppTag +
-                ", errorMessage=" +
-                errorMessage +
-                "]";
+        return RangeConstraintEffectiveImpl.class.getSimpleName() + " [min=" + min + ", max=" + max + ", description="
+                + description + ", reference=" + reference + ", errorAppTag=" + errorAppTag + ", errorMessage="
+                + errorMessage + "]";
     }
 }
