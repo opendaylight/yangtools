@@ -35,7 +35,7 @@ public class PatternConstraintImplTest {
         assertNotNull("Object of PatternConstraintImpl shouldn't be null.", patternConstraint);
         assertEquals("Description should be 'test description'.", "test description", patternConstraint.getDescription());
         assertEquals("Error app tag shouldn't be null.", "invalid-regular-expression", patternConstraint.getErrorAppTag());
-        assertTrue("Error message should be empty.", patternConstraint.getErrorMessage().isEmpty());
+        assertNotNull(patternConstraint.getErrorMessage());
         assertEquals("Reference should be equals 'RFC 6020'.", "RFC 6020", patternConstraint.getReference());
         assertEquals("Regular expression should be equls '\\D'.", "\\D", patternConstraint.getRegularExpression());
         assertNotEquals("Hash codes shouldn't be equals.", patternConstraint.hashCode(), patternConstraint2.hashCode());
