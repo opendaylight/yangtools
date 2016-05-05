@@ -11,7 +11,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.Objects;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
 /**
@@ -38,14 +37,18 @@ final class RangeConstraintImpl implements RangeConstraint, Immutable {
 
     RangeConstraintImpl(final Number min, final Number max, final Optional<String> description,
             final Optional<String> reference) {
-        super();
+        this(min, max, description, reference, "range-out-of-specified-bounds", "The argument is out of bounds <" + min
+                + ", " + max + ">");
+    }
+
+    RangeConstraintImpl(final Number min, final Number max, final Optional<String> description,
+            final Optional<String> reference, final String errorAppTag, final String errorMessage) {
         this.min = Preconditions.checkNotNull(min, "min must not be null.");
         this.max = Preconditions.checkNotNull(max, "max must not be null.");
         this.description = description.orNull();
         this.reference = reference.orNull();
-
-        this.errorAppTag = "range-out-of-specified-bounds";
-        this.errorMessage = "The argument is out of bounds <" + min + ", " + max + ">";
+        this.errorAppTag = errorAppTag;
+        this.errorMessage = errorMessage;
     }
 
     @Override
