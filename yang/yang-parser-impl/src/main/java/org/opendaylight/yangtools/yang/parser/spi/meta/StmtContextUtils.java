@@ -71,6 +71,12 @@ public final class StmtContextUtils {
         return producesDeclared(ctx, declaredType) ? (AT) ctx.getStatementArgument() : null;
     }
 
+    public static <AT, DT extends DeclaredStatement<AT>> AT firstSubstatementAttributeOf(
+            final StmtContext<?, ?, ?> ctx, final Class<DT> declaredType) {
+        AT firstAttribute = firstAttributeOf(ctx.effectiveSubstatements(), declaredType);
+        return firstAttribute != null ? firstAttribute : firstAttributeOf(ctx.declaredSubstatements(), declaredType);
+    }
+
     @SuppressWarnings("unchecked")
     public static <AT,DT extends DeclaredStatement<AT>> StmtContext<AT, ?, ?> findFirstDeclaredSubstatement(
             final StmtContext<?, ?, ?> stmtContext, final Class<DT> declaredType) {
