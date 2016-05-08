@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_21d0bb4f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/ChoiceEffectiveStatementImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-08T07:29:35Z",
+      "side": 1,
+      "message": "looks like this could be static",
+      "range": {
+        "startLine": 86,
+        "startChar": 12,
+        "endLine": 86,
+        "endChar": 17
+      },
+      "revId": "0e10615caeb51d6f01ebb5bf3124d208b4c6549b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_81c42793",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/ChoiceEffectiveStatementImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 91,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-08T07:29:35Z",
+      "side": 1,
+      "message": "how about SourceException.throwIf()?",
+      "range": {
+        "startLine": 90,
+        "startChar": 16,
+        "endLine": 91,
+        "endChar": 46
+      },
+      "revId": "0e10615caeb51d6f01ebb5bf3124d208b4c6549b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
