@@ -38,7 +38,8 @@
     <dependencies>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-data-api</artifactId>
+            <artifactId>odl-yangtools-yang-parser</artifactId>
+            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -50,16 +51,7 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-data-util</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-data-codec-xml</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-parser-impl</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
