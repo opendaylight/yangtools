@@ -14,8 +14,22 @@ import java.io.Serializable;
  * identify concepts -- such as names, addresses, classes, etc. We do not
  * require too much, just that the identifiers are serializable (and this
  * transferable).
+ *
+ * Implementations are expected to implement hashCode() and equals() methods
+ * in a way, which ensures that objects before and after serialization are
+ * considered equal.
+ *
+ * Implementations are advised to use the Externalizable Proxy pattern to
+ * allow future evolution of their serialization format.
  */
 public interface Identifier extends Serializable, Immutable {
+    @Override
+    boolean equals(Object o);
 
+    @Override
+    int hashCode();
+
+    @Override
+    String toString();
 }
 
