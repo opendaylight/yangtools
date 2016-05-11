@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<ChoiceStatement> implements
         ChoiceSchemaNode, DerivableSchemaNode {
@@ -62,7 +61,6 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
             }
             if (effectiveStatement instanceof ChoiceCaseNode) {
                 ChoiceCaseNode choiceCaseNode = (ChoiceCaseNode) effectiveStatement;
-                checkNameCollisions(choiceCaseNode, casesInit, ctx);
                 casesInit.add(choiceCaseNode);
             }
             if (effectiveStatement instanceof AnyXmlSchemaNode || effectiveStatement instanceof ContainerSchemaNode
@@ -81,22 +79,6 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
 
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
         this.cases = ImmutableSet.copyOf(casesInit);
-    }
-
-    private static void checkNameCollisions(final ChoiceCaseNode newCaseNode,
-            final SortedSet<ChoiceCaseNode> casesInit,
-            final StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
-        for (DataSchemaNode newCaseChild : newCaseNode.getChildNodes()) {
-            for (ChoiceCaseNode caseNode : casesInit) {
-                SourceException
-                        .throwIf(
-                                caseNode.getDataChildByName(newCaseChild.getQName()) != null,
-                                ctx.getStatementSourceReference(),
-                                "Error in module '%s': case nodes '%s' and '%s' in choice '%s' have child nodes with the same QName '%s'.",
-                                ctx.getRoot().getStatementArgument(), caseNode.getQName(), newCaseNode.getQName(),
-                                ctx.getStatementArgument(), newCaseChild.getQName());
-            }
-        }
     }
 
     private static void resetAugmenting(final DataSchemaNode dataSchemaNode) {
@@ -188,6 +170,8 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
 
     @Override
     public String toString() {
-        return ChoiceEffectiveStatementImpl.class.getSimpleName() + "[" + "qname=" + getQName() + "]";
+        return ChoiceEffectiveStatementImpl.class.getSimpleName() + "[" +
+                "qname=" + getQName() +
+                "]";
     }
 }
