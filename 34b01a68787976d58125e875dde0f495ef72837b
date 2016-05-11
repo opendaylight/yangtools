@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fa57193c_e835ffdb",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Uint32.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-11T09:33:47Z",
+      "side": 1,
+      "message": "Yes, they do not provide caching and do not have 8/16bit equivalents.",
+      "parentUuid": "9a3d3df0_30c6bb68",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 72
+      },
+      "revId": "34b01a68787976d58125e875dde0f495ef72837b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_10c3b757",
         "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Uint64.java",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2016-03-01T15:59:29Z",
       "side": 1,
       "message": "Did you consider using UnsignedLong from Guava instead?",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 72
+      },
+      "revId": "34b01a68787976d58125e875dde0f495ef72837b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_884e036e",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/Uint64.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-11T09:33:47Z",
+      "side": 1,
+      "message": "Yes, no value caching and it would lead to inconsistend apis.",
+      "parentUuid": "9a3d3df0_10c3b757",
       "range": {
         "startLine": 19,
         "startChar": 0,
