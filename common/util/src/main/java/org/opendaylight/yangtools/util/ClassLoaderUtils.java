@@ -30,7 +30,6 @@ public final class ClassLoaderUtils {
     }
 
     /**
-     *
      * Runs {@link Supplier} with provided {@link ClassLoader}.
      *
      * Invokes supplies function and makes sure that original {@link ClassLoader}
@@ -39,23 +38,22 @@ public final class ClassLoaderUtils {
      * @param cls {@link ClassLoader} to be used.
      * @param function Function to be executed.
      * @return Result of supplier invocation.
-     *
      */
     public static <V> V withClassLoader(final ClassLoader cls, final Supplier<V> function) {
         checkNotNull(cls, "Classloader should not be null");
         checkNotNull(function, "Function should not be null");
 
-        final ClassLoader oldCls = Thread.currentThread().getContextClassLoader();
+        final Thread currentThread = Thread.currentThread();
+        final ClassLoader oldCls = currentThread.getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader(cls);
+            currentThread.setContextClassLoader(cls);
             return function.get();
         } finally {
-            Thread.currentThread().setContextClassLoader(oldCls);
+            currentThread.setContextClassLoader(oldCls);
         }
     }
 
     /**
-     *
      * Runs {@link Callable} with provided {@link ClassLoader}.
      *
      * Invokes supplies function and makes sure that original {@link ClassLoader}
@@ -64,18 +62,18 @@ public final class ClassLoaderUtils {
      * @param cls {@link ClassLoader} to be used.
      * @param function Function to be executed.
      * @return Result of callable invocation.
-     *
      */
     public static <V> V withClassLoader(final ClassLoader cls, final Callable<V> function) throws Exception {
         checkNotNull(cls, "Classloader should not be null");
         checkNotNull(function, "Function should not be null");
 
-        final ClassLoader oldCls = Thread.currentThread().getContextClassLoader();
+        final Thread currentThread = Thread.currentThread();
+        final ClassLoader oldCls = currentThread.getContextClassLoader();
         try {
-            Thread.currentThread().setContextClassLoader(cls);
+            currentThread.setContextClassLoader(cls);
             return function.call();
         } finally {
-            Thread.currentThread().setContextClassLoader(oldCls);
+            currentThread.setContextClassLoader(oldCls);
         }
     }
 
