@@ -9,6 +9,8 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import com.google.common.base.Optional;
+import com.google.common.io.BaseEncoding;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.data.api.codec.UnionCodec;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
@@ -29,7 +31,11 @@ final class UnionStringCodec extends TypeDefinitionAwareCodec<Object, UnionTypeD
 
     @Override
     public String serialize(final Object data) {
-        return data == null ? "" : data.toString();
+        if (data instanceof byte[]) {
+            return BaseEncoding.base64().encode((byte[]) data);
+        } else {
+            return Objects.toString(data, "");
+        }
     }
 
     @Override
