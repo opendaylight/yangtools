@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_b3bb6fe4",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/type/LengthConstraintEffectiveImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-13T08:31:00Z",
+      "side": 1,
+      "message": "should these be check for non-null?",
+      "range": {
+        "startLine": 39,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 41
+      },
+      "revId": "a7e99c66495aa579ad590ea3ab6da959ea3cf821",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_53edb3ee",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/type/PatternConstraintEffectiveImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-13T08:31:00Z",
+      "side": 1,
+      "message": "these should be checked for non-null, right?",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 41
+      },
+      "revId": "a7e99c66495aa579ad590ea3ab6da959ea3cf821",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_f3b5e7ee",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/type/RangeConstraintEffectiveImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-13T08:31:00Z",
+      "side": 1,
+      "message": "check for null?",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 41
+      },
+      "revId": "a7e99c66495aa579ad590ea3ab6da959ea3cf821",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
