@@ -24,6 +24,7 @@ public class TestModel {
     public static final QName OUTER_LIST_QNAME = QName.create(TEST_QNAME, "outer-list");
     public static final QName INNER_LIST_QNAME = QName.create(TEST_QNAME, "inner-list");
     public static final QName OUTER_CHOICE_QNAME = QName.create(TEST_QNAME, "outer-choice");
+    public static final QName INNER_CONTAINER_QNAME = QName.create(TEST_QNAME, "inner-container");
     public static final QName ID_QNAME = QName.create(TEST_QNAME, "id");
     public static final QName NAME_QNAME = QName.create(TEST_QNAME, "name");
     public static final QName VALUE_QNAME = QName.create(TEST_QNAME, "value");
@@ -32,6 +33,9 @@ public class TestModel {
     public static final YangInstanceIdentifier TEST_PATH = YangInstanceIdentifier.of(TEST_QNAME);
     public static final YangInstanceIdentifier OUTER_LIST_PATH = YangInstanceIdentifier.builder(TEST_PATH)
             .node(OUTER_LIST_QNAME).build();
+    public static final YangInstanceIdentifier INNER_CONTAINER_PATH = YangInstanceIdentifier.builder(TEST_PATH).node(INNER_CONTAINER_QNAME).build();
+    public static final YangInstanceIdentifier VALUE_PATH = YangInstanceIdentifier.of(VALUE_QNAME);
+    public static final YangInstanceIdentifier INNER_VALUE_PATH = YangInstanceIdentifier.builder(INNER_CONTAINER_PATH).node(VALUE_QNAME).build();
     public static final QName TWO_QNAME = QName.create(TEST_QNAME, "two");
     public static final QName THREE_QNAME = QName.create(TEST_QNAME, "three");
 
