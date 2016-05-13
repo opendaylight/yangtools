@@ -14,7 +14,6 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.invoke.MethodType;
 import org.opendaylight.yangtools.concepts.Codec;
-import org.opendaylight.yangtools.yang.binding.BindingMapping;
 
 final class ValueContext {
     private static final Lookup LOOKUP = MethodHandles.publicLookup();
@@ -25,7 +24,7 @@ final class ValueContext {
     private final String getterName;
 
     ValueContext(final Class<?> identifier, final LeafNodeCodecContext <?>leaf) {
-        getterName = BindingCodecContext.GETTER_PREFIX + BindingMapping.getClassName(leaf.getDomPathArgument().getNodeType());
+        getterName = leaf.getGetter().getName();
         try {
             getter = LOOKUP.unreflect(identifier.getMethod(getterName)).asType(OBJECT_METHOD);
         } catch (IllegalAccessException | NoSuchMethodException | SecurityException e) {

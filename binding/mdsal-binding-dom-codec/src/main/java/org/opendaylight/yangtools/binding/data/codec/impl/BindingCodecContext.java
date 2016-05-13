@@ -63,7 +63,6 @@ import org.slf4j.LoggerFactory;
 
 final class BindingCodecContext implements CodecContextFactory, BindingCodecTree, Immutable {
     private static final Logger LOG = LoggerFactory.getLogger(BindingCodecContext.class);
-    static final String GETTER_PREFIX = "get";
 
     private final Codec<YangInstanceIdentifier, InstanceIdentifier<?>> instanceIdentifierCodec;
     private final Codec<QName, Class<?>> identityCodec;
@@ -237,7 +236,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         return getLeafNodesUsingReflection(parentClass, getterToLeafSchema);
     }
 
-    private String getGetterName(final QName qName, TypeDefinition<?> typeDef) {
+    private static String getGetterName(final QName qName, TypeDefinition<?> typeDef) {
         final String suffix = BindingMapping.getGetterSuffix(qName);
         while (typeDef.getBaseType() != null) {
             typeDef = typeDef.getBaseType();
@@ -245,7 +244,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         if (typeDef instanceof BooleanTypeDefinition || typeDef instanceof EmptyTypeDefinition) {
             return "is" + suffix;
         }
-        return GETTER_PREFIX + suffix;
+        return "get" + suffix;
     }
 
     private ImmutableMap<String, LeafNodeCodecContext<?>> getLeafNodesUsingReflection(final Class<?> parentClass,

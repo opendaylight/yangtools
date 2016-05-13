@@ -46,8 +46,8 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
     private final DataSchemaNode schema;
     private final Object defaultObject;
 
-    public LeafNodeCodecContext(final DataSchemaNode schema, final Codec<Object, Object> codec, final Method getter,
-                                final SchemaContext schemaContext) {
+    LeafNodeCodecContext(final DataSchemaNode schema, final Codec<Object, Object> codec, final Method getter,
+                final SchemaContext schemaContext) {
         this.yangIdentifier = new YangInstanceIdentifier.NodeIdentifier(schema.getQName());
         this.valueCodec = Preconditions.checkNotNull(codec);
         this.getter = getter;
@@ -117,7 +117,7 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
 
     private static Object domValueFromString(final Codec<Object, Object> codec, final TypeDefinition<?> type,
     Object defaultValue) {
-        TypeDefinitionAwareCodec typeDefAwareCodec = TypeDefinitionAwareCodec.from(type);
+        TypeDefinitionAwareCodec<?, ?> typeDefAwareCodec = TypeDefinitionAwareCodec.from(type);
         if (typeDefAwareCodec != null) {
             Object castedDefaultValue = typeDefAwareCodec.deserialize((String) defaultValue);
             return codec.deserialize(castedDefaultValue);
@@ -222,7 +222,7 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
     }
 
     @Override
-    public Object getSchema() {
+    public DataSchemaNode getSchema() {
         return schema;
     }
 
