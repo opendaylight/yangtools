@@ -46,8 +46,8 @@ module odl-datastore-test {
                         type string;
                     }
                }
-           }
-           list inner-list {
+            }
+            list inner-list {
                 config false;
                 key name;
                 leaf name {
@@ -59,16 +59,21 @@ module odl-datastore-test {
             }
 
             list inner-list2 {
-                 key name;
-                 leaf name {
-                     type string;
-                 }
-                 leaf value {
-                     type string;
-                     config false;
-                 }
-             }
-         }
-        
+                key name;
+                leaf name {
+                    type string;
+                }
+                leaf value {
+                    type string;
+                    config false;
+                }
+            }
+        }
+
+        container inner-container {
+            leaf value {
+                type string;
+            }
+        }
     }
 }
