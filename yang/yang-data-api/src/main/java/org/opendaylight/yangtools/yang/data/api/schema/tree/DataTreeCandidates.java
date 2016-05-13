@@ -39,6 +39,10 @@ public final class DataTreeCandidates {
         DataTreeCandidateNodes.applyToCursor(cursor, candidate.getRootNode());
     }
 
+    public static void applyToCursor(final DataTreeModificationCursor cursor, final YangInstanceIdentifier rootPath, final DataTreeCandidate candidate) {
+
+    }
+
     public static void applyToModification(final DataTreeModification modification, final DataTreeCandidate candidate) {
         if (modification instanceof CursorAwareDataTreeModification) {
             applyToCursorAwareModification((CursorAwareDataTreeModification) modification, candidate);
@@ -82,7 +86,9 @@ public final class DataTreeCandidates {
             }
         } else {
             try (DataTreeModificationCursor cursor = modification.createCursor(candidatePath.getParent())) {
-                DataTreeCandidateNodes.applyToCursor(cursor, candidate.getRootNode());
+//                DataTreeCandidateNodes.applyToCursor(cursor, candidate.getRootNode());
+                DataTreeCandidateNodes.applyRootedNodeToCursor(cursor, candidatePath, candidate.getRootNode());
+
             }
         }
     }
