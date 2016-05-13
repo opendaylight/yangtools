@@ -5,12 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
+
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -30,18 +32,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * This class represents implementation of StatementStreamSource
- * in order to emit YANG statements using supplied StatementWriter
- *
+ * in order to emit YANG statements using supplied StatementWriter.
  */
 public final class YangStatementSourceImpl implements StatementStreamSource {
+
+    private static final Logger LOG = LoggerFactory.getLogger(YangStatementSourceImpl.class);
 
     private YangStatementParserListenerImpl yangStatementModelParser;
     private YangStatementParser.StatementContext statementContext;
     private ParseTreeWalker walker;
     private String sourceName;
-    private static final Logger LOG = LoggerFactory.getLogger(YangStatementSourceImpl.class);
 
     public YangStatementSourceImpl(final String fileName, final boolean isAbsolute) {
         try {
@@ -63,11 +64,13 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
         }
     }
 
-    public YangStatementSourceImpl(final SourceIdentifier identifier, final YangStatementParser.StatementContext statementContext) {
+    public YangStatementSourceImpl(final SourceIdentifier identifier,
+            final YangStatementParser.StatementContext statementContext) {
         try {
             this.statementContext = statementContext;
             this.sourceName = identifier.getName();
             walker = new ParseTreeWalker();
+
             yangStatementModelParser = new YangStatementParserListenerImpl(sourceName);
         } catch (Exception e) {
             logError(e);
@@ -81,28 +84,31 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
     }
 
     @Override
-    public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule preLinkagePrefixes) {
+    public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+            final PrefixToModule preLinkagePrefixes) {
         yangStatementModelParser.setAttributes(writer, stmtDef, preLinkagePrefixes);
         walker.walk(yangStatementModelParser, statementContext);
     }
 
     @Override
-    public void writeLinkageAndStatementDefinitions(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) {
+    public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
+            final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) {
         yangStatementModelParser.setAttributes(writer, stmtDef, prefixes);
         walker.walk(yangStatementModelParser, statementContext);
     }
 
     @Override
-    public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) {
+    public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+            final PrefixToModule prefixes) {
         yangStatementModelParser.setAttributes(writer, stmtDef, prefixes);
         walker.walk(yangStatementModelParser, statementContext);
     }
 
-    private NamedFileInputStream loadFile(final String fileName, final boolean isAbsolute) throws URISyntaxException,
-            IOException {
+    private NamedFileInputStream loadFile(final String fileName, boolean isAbsolute)
+            throws URISyntaxException, IOException {
         //TODO: we need absolute path first!
-        return isAbsolute ? new NamedFileInputStream(new File(fileName), fileName) : new NamedFileInputStream(new File
-                (getClass().getResource(fileName).toURI()), fileName);
+        return isAbsolute ? new NamedFileInputStream(new File(fileName), fileName)
+                : new NamedFileInputStream(new File(getClass().getResource(fileName).toURI()), fileName);
     }
 
     private YangStatementParser.StatementContext parseYangSource(final InputStream stream) throws IOException,

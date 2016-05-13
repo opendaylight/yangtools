@@ -29,17 +29,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * This class represents implementation of StatementStreamSource
- * in order to emit YIN statements using supplied StatementWriter
- *
+ * in order to emit YIN statements using supplied StatementWriter.
  */
 public class YinStatementSourceImpl implements StatementStreamSource {
 
     private static final Logger LOG = LoggerFactory.getLogger(YinStatementSourceImpl.class);
     private static XMLInputFactory xmlInputFactory = XMLInputFactory.newFactory();
 
-    private YinStatementParserImpl yinStatementModelParser;
+    private final YinStatementParserImpl yinStatementModelParser;
     private XMLStreamReader streamReader;
     private InputStream inputStream;
     private String fileName;
@@ -95,8 +93,8 @@ public class YinStatementSourceImpl implements StatementStreamSource {
                 streamReader = xmlInputFactory.createXMLStreamReader(inputStream);
             } else {
                 inputStream.reset();
-                streamReader = xmlInputFactory.createXMLStreamReader(new ByteArrayInputStream(ByteStreams.toByteArray
-                        (inputStream)));
+                ByteArrayInputStream bais = new ByteArrayInputStream(ByteStreams.toByteArray(inputStream));
+                streamReader = xmlInputFactory.createXMLStreamReader(bais);
             }
         } catch (XMLStreamException e) {
             LOG.warn("Error while creating XMLStreamReader from input stream", e);
