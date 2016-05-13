@@ -5,6 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
+
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import com.google.common.base.Throwables;
@@ -36,13 +37,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
  * This class represents implementation of StatementStreamSource
- * in order to emit YANG statements using supplied StatementWriter
- *
+ * in order to emit YANG statements using supplied StatementWriter.
  */
 public final class YangStatementSourceImpl implements StatementStreamSource {
+
     private static final Logger LOG = LoggerFactory.getLogger(YangStatementSourceImpl.class);
+
     private static final ParseTreeListener MAKE_IMMUTABLE_LISTENER = new ParseTreeListener() {
         @Override
         public void enterEveryRule(final ParserRuleContext ctx) {
@@ -87,7 +88,8 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
         }
     }
 
-    public YangStatementSourceImpl(final SourceIdentifier identifier, final YangStatementParser.StatementContext statementContext) {
+    public YangStatementSourceImpl(final SourceIdentifier identifier,
+            final YangStatementParser.StatementContext statementContext) {
         this.statementContext = statementContext;
         this.sourceName = identifier.getName();
         yangStatementModelParser = new YangStatementParserListenerImpl(sourceName);
@@ -100,28 +102,31 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
     }
 
     @Override
-    public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule preLinkagePrefixes) {
+    public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+            final PrefixToModule preLinkagePrefixes) {
         yangStatementModelParser.setAttributes(writer, stmtDef, preLinkagePrefixes);
         ParseTreeWalker.DEFAULT.walk(yangStatementModelParser, statementContext);
     }
 
     @Override
-    public void writeLinkageAndStatementDefinitions(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) {
+    public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
+            final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) {
         yangStatementModelParser.setAttributes(writer, stmtDef, prefixes);
         ParseTreeWalker.DEFAULT.walk(yangStatementModelParser, statementContext);
     }
 
     @Override
-    public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) {
+    public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+            final PrefixToModule prefixes) {
         yangStatementModelParser.setAttributes(writer, stmtDef, prefixes);
         ParseTreeWalker.DEFAULT.walk(yangStatementModelParser, statementContext);
     }
 
-    private NamedFileInputStream loadFile(final String fileName, final boolean isAbsolute) throws URISyntaxException,
-            IOException {
+    private NamedFileInputStream loadFile(final String fileName, final boolean isAbsolute)
+            throws URISyntaxException, IOException {
         //TODO: we need absolute path first!
-        return isAbsolute ? new NamedFileInputStream(new File(fileName), fileName) : new NamedFileInputStream(new File
-                (getClass().getResource(fileName).toURI()), fileName);
+        return isAbsolute ? new NamedFileInputStream(new File(fileName), fileName)
+                : new NamedFileInputStream(new File(getClass().getResource(fileName).toURI()), fileName);
     }
 
     private YangStatementParser.StatementContext parseYangSource(final InputStream stream) throws IOException,
