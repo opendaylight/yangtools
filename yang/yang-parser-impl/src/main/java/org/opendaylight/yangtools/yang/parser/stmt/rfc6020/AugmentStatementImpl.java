@@ -90,6 +90,10 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
         @Override
         public void onFullDefinitionDeclared(
                 final StmtContext.Mutable<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> augmentNode) {
+            if (!StmtContextUtils.areFeaturesSupported(augmentNode)) {
+                return;
+            }
+
             SUBSTATEMENT_VALIDATOR.validate(augmentNode);
 
             if (StmtContextUtils.isInExtensionBody(augmentNode)) {
@@ -107,7 +111,8 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                 @Override
                 public void apply() {
                     final StatementContextBase<?, ?, ?> augmentTargetCtx = (StatementContextBase<?, ?, ?>) target.get();
-                    if (!AugmentUtils.isSupportedAugmentTarget(augmentTargetCtx) || StmtContextUtils.isInExtensionBody(augmentTargetCtx)) {
+                    if (!AugmentUtils.isSupportedAugmentTarget(augmentTargetCtx)
+                            || StmtContextUtils.isInExtensionBody(augmentTargetCtx)) {
                         augmentNode.setIsSupportedToBuildEffective(false);
                         return;
                     }

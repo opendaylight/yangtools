@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -51,7 +53,11 @@ public class CrossSourceStatementReactor {
     }
 
     public final BuildAction newBuild() {
-        return new BuildAction();
+        return newBuild(t -> true);
+    }
+
+    public final BuildAction newBuild(final Predicate<QName> isFeatureSupported) {
+        return new BuildAction(isFeatureSupported);
     }
 
     public static class Builder implements org.opendaylight.yangtools.concepts.Builder<CrossSourceStatementReactor>{
@@ -80,7 +86,11 @@ public class CrossSourceStatementReactor {
         private final BuildGlobalContext context;
 
         public BuildAction() {
-            this.context = new BuildGlobalContext(supportedTerminology, supportedValidation);
+            this(t -> true);
+        }
+
+        public BuildAction(Predicate<QName> isFeatureSupported) {
+            this.context = new BuildGlobalContext(supportedTerminology, supportedValidation, isFeatureSupported);
         }
 
         public void addSource(final StatementStreamSource source) {
