@@ -71,6 +71,10 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
         @Override
         public void onFullDefinitionDeclared(
                 final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode) {
+            if (!StmtContextUtils.areFeaturesSupported(usesNode)) {
+                return;
+            }
+
             SUBSTATEMENT_VALIDATOR.validate(usesNode);
 
             if (StmtContextUtils.isInExtensionBody(usesNode)) {
@@ -104,7 +108,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                 @Override
                 public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
                     InferenceException.throwIf(failed.contains(sourceGroupingPre),
-                        usesNode.getStatementSourceReference(), "Grouping '%s' was not resolved.", groupingName);
+                            usesNode.getStatementSourceReference(), "Grouping '%s' was not resolved.", groupingName);
                     throw new InferenceException("Unknown error occurred.", usesNode.getStatementSourceReference());
                 }
             });

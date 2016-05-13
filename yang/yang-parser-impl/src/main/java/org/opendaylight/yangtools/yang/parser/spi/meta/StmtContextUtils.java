@@ -12,13 +12,21 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Set;
+import java.util.function.Predicate;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 
 public final class StmtContextUtils {
@@ -222,5 +230,29 @@ public final class StmtContextUtils {
 
         // This makes sure we reuse the collection when a grouping is instantiated in the same module
         return replaced ? builder.build() : keyStmtCtx.getStatementArgument();
+    }
+
+    public static boolean areFeaturesSupported(final StmtContext<?, ?, ?> stmtContext) {
+        Predicate<QName> isFeatureSupported = stmtContext.getFromNamespace(SupportedFeaturesNamespace.class,
+                SupportedFeatures.SUPPORTED_FEATURES);
+        Collection<StatementContextBase<?, ?, ?>> substatements = new ArrayList<>();
+        substatements.addAll(stmtContext.declaredSubstatements());
+        substatements.addAll(stmtContext.effectiveSubstatements());
+
+        boolean isSupported = false;
+        boolean containsIfFeature = false;
+        for (StatementContextBase<?, ?, ?> stmt: substatements) {
+            if (stmt.getPublicDefinition().equals(Rfc6020Mapping.IF_FEATURE)) {
+                containsIfFeature = true;
+                if (isFeatureSupported.test((QName) stmt.getStatementArgument())) {
+                    isSupported = true;
+                } else {
+                    isSupported = false;
+                    break;
+                }
+            }
+        }
+
+        return !containsIfFeature || isSupported;
     }
 }

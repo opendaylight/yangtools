@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -39,6 +40,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceSpecificContext.PhaseCompletionProgress;
@@ -66,18 +69,25 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     private ModelProcessingPhase currentPhase = ModelProcessingPhase.INIT;
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
 
-    public BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports) {
+    public BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports,
+                              final Predicate<QName> isFeatureSupported) {
         super();
         this.supports = Preconditions.checkNotNull(supports, "BuildGlobalContext#supports cannot be null");
+
+        addToNs(SupportedFeaturesNamespace.class, SupportedFeatures.SUPPORTED_FEATURES, isFeatureSupported);
     }
 
-    public BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports, final Map<ValidationBundleType,Collection<?>> supportedValidation) {
+    public BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports,
+                              final Map<ValidationBundleType,Collection<?>> supportedValidation,
+                              final Predicate<QName> isFeatureSupported) {
         super();
         this.supports = Preconditions.checkNotNull(supports, "BuildGlobalContext#supports cannot be null");
 
         for (Entry<ValidationBundleType, Collection<?>> validationBundle : supportedValidation.entrySet()) {
             addToNs(ValidationBundlesNamespace.class, validationBundle.getKey(), validationBundle.getValue());
         }
+
+        addToNs(SupportedFeaturesNamespace.class, SupportedFeatures.SUPPORTED_FEATURES, isFeatureSupported);
     }
 
     public StatementSupportBundle getSupportsForPhase(final ModelProcessingPhase currentPhase) {
