@@ -70,17 +70,17 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
 
         @Override
         void setFields(final List<K> keys, final V[] values) throws IOException {
-            final Map<K, Integer> offsets = OffsetMapCache.unorderedOffsets(keys);
+            final Map<K, Integer> newOffsets = OffsetMapCache.unorderedOffsets(keys);
 
-            setField(this, OFFSETS_FIELD, offsets);
-            setField(this, ARRAY_FIELD, OffsetMapCache.adjustedArray(offsets, keys, values));
+            setField(this, OFFSETS_FIELD, newOffsets);
+            setField(this, ARRAY_FIELD, OffsetMapCache.adjustedArray(newOffsets, keys, values));
         }
     }
 
     private static final long serialVersionUID = 1L;
 
-    private transient final Map<K, Integer> offsets;
-    private transient final V[] objects;
+    private final transient Map<K, Integer> offsets;
+    private final transient V[] objects;
     private transient int hashCode;
 
     /**
