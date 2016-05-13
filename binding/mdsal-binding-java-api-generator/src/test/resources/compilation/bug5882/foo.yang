@@ -1,0 +1,201 @@
+module foo {
+    namespace "urn:yang.foo";
+    prefix "foo";
+
+    revision "2016-01-02" {
+    }
+
+    typedef typedef1 {
+        type typedef-deprecated;
+        description "current";
+    }
+
+    typedef typedef2 {
+        status deprecated;
+        type typedef1;
+        description "deprecated";
+    }
+
+    typedef typedef3 {
+        type typedef2;
+        description "current";
+    }
+
+    typedef typedef-deprecated {
+        status deprecated;
+        type string;
+        description "deprecated";
+    }
+
+    typedef typedef-current {
+        status current;
+        type uint8 {
+            range "0 .. 100";
+        }
+        description "current";
+    }
+
+    container container-main {
+        leaf container-main-leaf-depr {
+            status deprecated;
+            type string;
+        }
+
+        leaf container-main-leaf-current {
+            type typedef-current;
+        }
+
+        list container-main-list-depr {
+            status deprecated;
+            key "test";
+            leaf test {
+                type int8;
+            }
+        }
+
+        list container-main-list-current {
+            key "test";
+            leaf test {
+                type int8;
+            }
+        }
+
+        choice container-main-choice-depr {
+            status deprecated;
+            case depCase {
+            status deprecated;
+                leaf one {
+                    type string;
+                }
+            }
+            case depLeaf {
+                leaf one {
+                status deprecated;
+                    type string;
+                }
+            }
+            case cur {
+                leaf two {
+                    type string;
+                }
+            }
+        }
+
+        choice container-main-choice-cur {
+            case depCase {
+            status deprecated;
+                leaf one {
+                    type string;
+                }
+            }
+            case depLeaf {
+                leaf one {
+                status deprecated;
+                    type string;
+                }
+            }
+            case cur {
+                leaf two {
+                    type string;
+                }
+            }
+        }
+    }
+
+    leaf container-main-leaf-depr {
+        status deprecated;
+        type string;
+    }
+
+    leaf container-main-leaf-current {
+        type typedef-current;
+    }
+
+    list container-main-list-depr {
+        status deprecated;
+        key "test";
+        leaf test {
+            type int8;
+        }
+    }
+
+    list container-main-list-current {
+        key "test";
+        leaf test {
+            type int8;
+        }
+    }
+
+    choice container-main-choice-depr {
+        status deprecated;
+        case depCase {
+        status deprecated;
+            leaf one {
+                type string;
+            }
+        }
+        case depLeaf {
+            leaf one {
+            status deprecated;
+                type string;
+            }
+        }
+        case cur {
+            leaf two {
+                type string;
+            }
+        }
+    }
+
+    choice container-main-choice-cur {
+        case depCase {
+        status deprecated;
+            leaf one {
+                type string;
+            }
+        }
+        case depLeaf {
+            leaf one {
+            status deprecated;
+                type string;
+            }
+        }
+        case cur {
+            leaf two {
+                type string;
+            }
+        }
+    }
+
+    leaf leaf-deprecated {
+        status deprecated;
+        type typedef-deprecated;
+    }
+
+    leaf leaf-current {
+        type typedef-current;
+    }
+
+    grouping grouping-deprecated {
+        status deprecated;
+        leaf leaf-deprecated {
+            status deprecated;
+            type typedef-deprecated;
+        }
+
+        leaf leaf-current {
+            type typedef-current;
+        }
+    }
+
+    grouping grouping-current {
+        leaf leaf-deprecated {
+            status deprecated;
+            type typedef-deprecated;
+        }
+
+        leaf leaf-current {
+            type typedef-current;
+        }
+    }
+}

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.sal.java.api.generator.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.base.Predicate;
@@ -572,16 +573,56 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testBug5788() throws Exception {
-        final File sourcesOutputDir = new File(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + "bug5788");
+    public void testBug5882() throws Exception {
+        final File sourcesOutputDir = new File(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + "bug5882");
         assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + "bug5788");
+        final File compiledOutputDir = new File(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + "bug5882");
         assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
-
-        generateTestSources("/compilation/bug5788", sourcesOutputDir);
+        generateTestSources("/compilation/bug5882", sourcesOutputDir);
 
         // Test if sources are compilable
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
+
+        final File parent = new File(sourcesOutputDir, CompilationTestUtils.NS_BUG5882);
+        assertTrue(new File(parent, "FooData.java").exists());
+        assertTrue(new File(parent, "TypedefCurrent.java").exists());
+        assertTrue(new File(parent, "TypedefDeprecated.java").exists());
+
+        final String pkg = CompilationTestUtils.BASE_PKG + ".urn.yang.foo.rev160102";
+        final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        final Class cls = loader.loadClass(pkg + ".FooData");
+        final Class clsContainer = loader.loadClass(pkg + ".ContainerMain");
+        final Class clsTypedefDepr = loader.loadClass(pkg + ".TypedefDeprecated");
+        final Class clsTypedefCur = loader.loadClass(pkg + ".TypedefCurrent");
+        final Class clsGroupingDepr = loader.loadClass(pkg + ".GroupingDeprecated");
+        final Class clsGroupingCur = loader.loadClass(pkg + ".GroupingCurrent");
+        final Class clsTypeDef1 = loader.loadClass(pkg + ".Typedef1");
+        final Class clsTypeDef2 = loader.loadClass(pkg + ".Typedef2");
+        final Class clsTypeDef3 = loader.loadClass(pkg + ".Typedef3");
+        assertTrue(clsTypedefDepr.getAnnotations()[0].toString().contains("Deprecated"));
+        assertTrue(clsTypedefCur.getAnnotations().length == 0);
+        assertTrue(clsGroupingDepr.getAnnotations()[0].toString().contains("Deprecated"));
+        assertTrue(clsGroupingCur.getAnnotations().length == 0);
+        assertTrue(clsTypeDef1.getAnnotations().length == 0);
+        assertTrue(clsTypeDef3.getAnnotations().length == 0);
+        assertTrue(clsTypeDef2.getAnnotations()[0].toString().contains("Deprecated"));
+
+        /*methods inside container*/
+        assertTrue(clsContainer.getMethod("getContainerMainLeafDepr").isAnnotationPresent(Deprecated.class));
+        assertTrue(clsContainer.getMethod("getContainerMainListDepr").isAnnotationPresent(Deprecated.class));
+        assertTrue(clsContainer.getMethod("getContainerMainChoiceDepr").isAnnotationPresent(Deprecated.class));
+        assertFalse(clsContainer.getMethod("getContainerMainLeafCurrent").isAnnotationPresent(Deprecated.class));
+        assertFalse(clsContainer.getMethod("getContainerMainListCurrent").isAnnotationPresent(Deprecated.class));
+        assertFalse(clsContainer.getMethod("getContainerMainChoiceCur").isAnnotationPresent(Deprecated.class));
+
+        /*methods inside module*/
+        assertTrue(cls.getMethod("getContainerMainLeafDepr").isAnnotationPresent(Deprecated.class));
+        assertTrue(cls.getMethod("getContainerMainListDepr").isAnnotationPresent(Deprecated.class));
+        assertTrue(cls.getMethod("getContainerMainChoiceDepr").isAnnotationPresent(Deprecated.class));
+        assertFalse(cls.getMethod("getContainerMainLeafCurrent").isAnnotationPresent(Deprecated.class));
+        assertFalse(cls.getMethod("getContainerMainListCurrent").isAnnotationPresent(Deprecated.class));
+        assertFalse(cls.getMethod("getContainerMainChoiceCur").isAnnotationPresent(Deprecated.class));
+        assertTrue(cls.getMethod("getLeafDeprecated").isAnnotationPresent(Deprecated.class));
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }

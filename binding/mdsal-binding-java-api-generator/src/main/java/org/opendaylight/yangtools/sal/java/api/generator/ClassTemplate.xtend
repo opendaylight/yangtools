@@ -113,6 +113,7 @@ class ClassTemplate extends BaseTemplate {
      */
     def protected generateBody(boolean isInnerClass) '''
         «wrapToDocumentation(formatDataForJavaDoc(type))»
+        «annotationDeclaration»
         «generateClassDeclaration(isInnerClass)» {
             «suidDeclaration»
             «innerClassesDeclarations»
@@ -414,6 +415,14 @@ class ClassTemplate extends BaseTemplate {
     def protected suidDeclaration() '''
         «IF genTO.SUID != null»
             private static final long serialVersionUID = «genTO.SUID.value»L;
+        «ENDIF»
+    '''
+
+    def protected annotationDeclaration() '''
+        «IF genTO.getAnnotations != null»
+            «FOR e : genTO.getAnnotations»
+                @«e.getName»
+            «ENDFOR»
         «ENDIF»
     '''
 
