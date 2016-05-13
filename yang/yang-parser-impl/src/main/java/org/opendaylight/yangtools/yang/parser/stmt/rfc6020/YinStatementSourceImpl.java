@@ -26,9 +26,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 
 /**
- *
  * This class represents implementation of StatementStreamSource
- * in order to emit YIN statements using supplied StatementWriter
+ * in order to emit YIN statements using supplied StatementWriter.
  *
  * @deprecated Scheduled for removal. Use {@link YinStatementStreamSource} instead.
  */
@@ -106,6 +105,5 @@ public final class YinStatementSourceImpl extends ForwardingObject implements St
             final PrefixToModule prefixes) {
         delegate().writeFull(writer, stmtDef, prefixes);
     }
-
 
 }
