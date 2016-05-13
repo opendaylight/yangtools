@@ -1,0 +1,125 @@
+module foo {
+    namespace "foo-namespace";
+    prefix "foo-prefix";
+
+    import bar {
+        prefix br;
+    }
+
+    container test-container-a {
+        if-feature foo-feature;
+
+        leaf test-leaf-a {
+            type string;
+        }
+    }
+
+    container test-container-b {
+        if-feature test-feature-1;
+
+        leaf test-leaf-b {
+            type string;
+        }
+    }
+
+    container test-container-c {
+        if-feature test-feature-1;
+        if-feature test-feature-2;
+        if-feature test-feature-3;
+
+        leaf test-leaf-c {
+            type string;
+        }
+    }
+
+    container test-container-d {
+        if-feature test-feature-1;
+        if-feature test-feature-2;
+        if-feature foo-feature;
+        if-feature test-feature-3;
+
+        leaf test-leaf-d {
+            type string;
+        }
+    }
+
+    container test-container-e {
+        container test-subcontainer-e {
+            leaf test-leaf-e {
+                if-feature foo-feature;
+                type string;
+            }
+        }
+    }
+
+    container test-container-f {
+        container test-subcontainer-f {
+            if-feature foo-feature;
+            container test-subsubcontainer-f {
+                leaf test-leaf-f {
+                    type string;
+                }
+            }
+        }
+    }
+
+    container test-container-g {
+        leaf test-leaf-g {
+            type string;
+        }
+    }
+
+    container test-container-h {
+        uses test-grouping {
+            if-feature "foo-feature";
+        }
+    }
+
+    container test-container-i {
+        uses test-grouping;
+    }
+
+    container test-container-j {
+        if-feature br:imp-feature;
+
+        leaf test-leaf-j {
+            type string;
+        }
+    }
+
+    container test-container-k {
+        uses test-grouping {
+            augment "test-grouping-subcontainer" {
+                leaf augmenting-test-grouping-leaf {
+                    if-feature test-feature-1;
+                    type string;
+                }
+
+                leaf augmenting-test-grouping-leaf-2 {
+                    if-feature foo-feature;
+                    type string;
+                }
+            }
+        }
+    }
+
+    augment "/test-container-g" {
+        if-feature foo-feature;
+        leaf augmenting-test-leaf-g {
+            type string;
+        }
+    }
+
+    augment "/test-container-g" {
+        anyxml augmenting-test-anyxml-g;
+    }
+
+    grouping test-grouping {
+        container test-grouping-subcontainer {
+            leaf test-grouping-leaf {
+                if-feature foo-feature;
+                type string;
+            }
+        }
+    }
+}

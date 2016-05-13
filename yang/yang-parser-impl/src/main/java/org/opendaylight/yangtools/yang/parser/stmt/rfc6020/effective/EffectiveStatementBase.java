@@ -45,6 +45,15 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
         }
     };
 
+    private static final Predicate<StmtContext<?, ?, ?>> ARE_FEATURES_SUPPORTED =
+            new Predicate<StmtContext<?, ?, ?>>() {
+
+                @Override
+                public boolean apply(StmtContext<?, ?, ?> input) {
+                    return StmtContextUtils.areFeaturesSupported(input);
+                }
+            };
+
     private final List<? extends EffectiveStatement<?, ?>> substatements;
     private final List<StatementContextBase<?, ?, ?>> unknownSubstatementsToBuild;
 
@@ -91,6 +100,8 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
         } else {
             this.unknownSubstatementsToBuild = ImmutableList.of();
         }
+
+        substatementsToBuild = Collections2.filter(substatementsToBuild, ARE_FEATURES_SUPPORTED);
 
         Function<StmtContext<?, ?, ? extends EffectiveStatement<?, ?>>, EffectiveStatement<?, ?>> buildEffective = StmtContextUtils.buildEffective();
         this.substatements = ImmutableList.copyOf(Collections2.transform(substatementsToBuild, buildEffective));

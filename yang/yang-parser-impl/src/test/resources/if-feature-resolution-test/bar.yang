@@ -1,0 +1,10 @@
+module bar {
+    namespace "bar-namespace";
+    prefix "bar-prefix";
+
+    container bar-cont {
+        leaf bar-cont-leaf {
+            type string;
+        }
+    }
+}

@@ -1,0 +1,26 @@
+module foobar {
+    namespace "foobar-namespace";
+    prefix "foobar-prefix";
+
+    container test-container-a {
+        if-feature test-feature-1;
+
+        leaf test-leaf-a {
+            type string;
+        }
+    }
+
+    container test-container-b {
+        if-feature foobar-feature;
+
+        leaf test-leaf-b {
+            type string;
+        }
+    }
+
+    container test-container-c {
+        leaf test-leaf-c {
+            type string;
+        }
+    }
+}

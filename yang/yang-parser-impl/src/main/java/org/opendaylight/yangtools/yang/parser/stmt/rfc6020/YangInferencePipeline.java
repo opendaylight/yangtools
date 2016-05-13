@@ -38,6 +38,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.StmtOrderingNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
@@ -46,6 +47,7 @@ public final class YangInferencePipeline {
 
     public static final StatementSupportBundle INIT_BUNDLE = StatementSupportBundle
             .builder().addSupport(global(ValidationBundlesNamespace.class))
+            .addSupport(global(SupportedFeaturesNamespace.class))
             .build();
 
     public static final StatementSupportBundle LINKAGE_BUNDLE = StatementSupportBundle
