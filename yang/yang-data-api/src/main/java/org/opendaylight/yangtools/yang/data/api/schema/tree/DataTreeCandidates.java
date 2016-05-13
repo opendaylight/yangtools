@@ -82,7 +82,7 @@ public final class DataTreeCandidates {
             }
         } else {
             try (DataTreeModificationCursor cursor = modification.createCursor(candidatePath.getParent())) {
-                DataTreeCandidateNodes.applyToCursor(cursor, candidate.getRootNode());
+                DataTreeCandidateNodes.applyRootedNodeToCursor(cursor, candidatePath, candidate.getRootNode());
             }
         }
     }
