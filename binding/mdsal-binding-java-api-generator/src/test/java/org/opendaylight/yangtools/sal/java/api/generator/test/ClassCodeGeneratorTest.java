@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -30,8 +30,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPr
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.sal.java.api.generator.TOGenerator;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class ClassCodeGeneratorTest {
 
@@ -45,9 +45,9 @@ public class ClassCodeGeneratorTest {
     }
 
     @Test
-    public void compositeKeyClassTest() throws IOException {
-        final YangContextParser parser = new YangParserImpl();
-        final SchemaContext context = parser.parseFiles(testModels);
+    public void compositeKeyClassTest() throws IOException, SourceException, ReactorException {
+
+        final SchemaContext context = RetestUtils.parseYangSources(testModels);
 
         assertNotNull(context);
         final BindingGenerator bindingGen = new BindingGeneratorImpl(true);

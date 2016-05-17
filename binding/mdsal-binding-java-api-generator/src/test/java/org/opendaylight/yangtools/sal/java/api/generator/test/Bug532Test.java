@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -42,25 +42,27 @@ public class Bug532Test extends BaseCompilationTest {
         final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "bug532");
         assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
 
-        generateTestSources("/compilation/list-gen", sourcesOutputDir);
+        generateTestSources("/compilation/list-gen-retest", sourcesOutputDir);
 
         // Test if sources are compilable
         testCompilation(sourcesOutputDir, compiledOutputDir);
 
         ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
-        Class<?> linksKeyClass = Class.forName(BASE_PKG + ".urn.opendaylight.test.rev131008.LinksKey", true, loader);
-        Class<?> linksClass = Class.forName(BASE_PKG + ".urn.opendaylight.test.rev131008.Links", true, loader);
-        Class<?> linksBuilderClass = Class.forName(BASE_PKG + ".urn.opendaylight.test.rev131008.LinksBuilder", true,
+        Class<?> linksKeyClass = Class.forName(BASE_PKG + ".urn.opendaylight.retest.rev131008.LinksKey", true, loader);
+        Class<?> linksClass = Class.forName(BASE_PKG + ".urn.opendaylight.retest.rev131008.Links", true, loader);
+        Class<?> linksBuilderClass = Class.forName(BASE_PKG + ".urn.opendaylight.retest.rev131008.LinksBuilder", true,
                 loader);
-        Class<?> levelClass = Class.forName(BASE_PKG + ".urn.opendaylight.test.rev131008.links.Level", true, loader);
-        Class<?> nodeClass = Class.forName(BASE_PKG + ".urn.opendaylight.test.rev131008.links.Node", true, loader);
-        Class<?> nodeListClass = Class.forName(BASE_PKG + ".urn.opendaylight.test.rev131008.links.NodeList", true,
+        Class<?> levelClass = Class.forName(BASE_PKG + ".urn.opendaylight.retest.rev131008.links.Level", true, loader);
+        Class<?> nodeClass = Class.forName(BASE_PKG + ".urn.opendaylight.retest.rev131008.links.Node", true, loader);
+        Class<?> nodeListClass = Class.forName(BASE_PKG + ".urn.opendaylight.retest.rev131008.links.NodeList", true,
                 loader);
 
         // init default values
         Byte expectedId = Byte.valueOf("5");
         String expectedName = "test-link";
         Integer expectedSize = Integer.valueOf(10);
+
+
         Object expectedLevel = Mockito.mock(levelClass);
         Integer expectedLinksId = Integer.valueOf(11);
         Object expectedNode = Mockito.mock(nodeClass);
@@ -108,7 +110,7 @@ public class Bug532Test extends BaseCompilationTest {
 
     private void generateTestSources(final String resourceDirPath, final File sourcesOutputDir) throws Exception {
         final List<File> sourceFiles = getSourceFiles(resourceDirPath);
-        final SchemaContext context = parser.parseFiles(sourceFiles);
+        final SchemaContext context = RetestUtils.parseYangSources(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);
         final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
         generator.generateToFile(sourcesOutputDir);

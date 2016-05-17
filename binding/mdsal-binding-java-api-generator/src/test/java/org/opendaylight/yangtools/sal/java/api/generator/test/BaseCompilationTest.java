@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -8,33 +8,27 @@
 package org.opendaylight.yangtools.sal.java.api.generator.test;
 
 import static org.junit.Assert.assertTrue;
-import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.COMPILER_OUTPUT_DIR;
-import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.GENERATOR_OUTPUT_DIR;
-import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.TEST_DIR;
-import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.deleteTestDir;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.generator.impl.BindingGeneratorImpl;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public abstract class BaseCompilationTest {
 
-    protected YangParserImpl parser;
     protected BindingGenerator bindingGenerator;
 
     @BeforeClass
     public static void createTestDirs() {
-        if (TEST_DIR.exists()) {
-            deleteTestDir(TEST_DIR);
+        if (CompilationTestUtils.TEST_DIR.exists()) {
+            CompilationTestUtils.deleteTestDir(CompilationTestUtils.TEST_DIR);
         }
-        assertTrue(GENERATOR_OUTPUT_DIR.mkdirs());
-        assertTrue(COMPILER_OUTPUT_DIR.mkdirs());
+        assertTrue(CompilationTestUtils.GENERATOR_OUTPUT_DIR.mkdirs());
+        assertTrue(CompilationTestUtils.COMPILER_OUTPUT_DIR.mkdirs());
     }
 
     @Before
     public void init() {
-        parser = new YangParserImpl();
         bindingGenerator = new BindingGeneratorImpl(true);
     }
 

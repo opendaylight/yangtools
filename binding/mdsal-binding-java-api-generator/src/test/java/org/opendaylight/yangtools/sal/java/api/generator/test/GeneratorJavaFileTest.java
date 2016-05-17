@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -8,12 +8,14 @@
 package org.opendaylight.yangtools.sal.java.api.generator.test;
 
 import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.binding.generator.util.BindingTypes;
 import org.opendaylight.yangtools.binding.generator.util.Types;
@@ -52,7 +54,7 @@ public class GeneratorJavaFileTest {
         assertTrue(filesList.contains("Type4Builder.java"));
     }
 
-    private static GeneratedType createGeneratedType(final String pkgName, final String name) {
+    private static GeneratedType createGeneratedType(String pkgName, String name) {
         GeneratedTypeBuilder builder = new GeneratedTypeBuilderImpl(pkgName, name);
         builder.addImplementsType(BindingTypes.DATA_OBJECT);
         return builder.toInstance();

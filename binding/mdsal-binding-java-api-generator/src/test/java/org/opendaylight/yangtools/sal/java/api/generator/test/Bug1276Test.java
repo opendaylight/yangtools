@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -8,14 +8,7 @@
 package org.opendaylight.yangtools.sal.java.api.generator.test;
 
 import static org.junit.Assert.assertTrue;
-import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.BASE_PKG;
-import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.COMPILER_OUTPUT_PATH;
-import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.FS;
-import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.GENERATOR_OUTPUT_PATH;
-import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsConstructor;
-import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.cleanUp;
-import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.getSourceFiles;
-import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.testCompilation;
+
 import com.google.common.collect.ImmutableSet;
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -55,24 +48,24 @@ public class Bug1276Test extends BaseCompilationTest {
 
     @Test
     public void test() throws Exception {
-        final File sourcesOutputDir = new File(GENERATOR_OUTPUT_PATH + FS + "bug1276");
+        final File sourcesOutputDir = new File(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + "bug1276");
         assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "bug1276");
+        final File compiledOutputDir = new File(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + "bug1276");
         assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
 
         generateTestSources("/compilation/bug1276", sourcesOutputDir);
 
         // Test if sources are compilable
-        testCompilation(sourcesOutputDir, compiledOutputDir);
+        CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
         ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
-        Class<?> ipAddressClass = Class.forName(BASE_PKG + ".test.yang.union.rev140715.IpAddress", true, loader);
-        Class<?> ipv4AddressClass = Class.forName(BASE_PKG + ".test.yang.union.rev140715.Ipv4Address", true, loader);
-        Class<?> hostClass = Class.forName(BASE_PKG + ".test.yang.union.rev140715.Host", true, loader);
+        Class<?> ipAddressClass = Class.forName(CompilationTestUtils.BASE_PKG + ".test.yang.union.rev140715.IpAddress", true, loader);
+        Class<?> ipv4AddressClass = Class.forName(CompilationTestUtils.BASE_PKG + ".test.yang.union.rev140715.Ipv4Address", true, loader);
+        Class<?> hostClass = Class.forName(CompilationTestUtils.BASE_PKG + ".test.yang.union.rev140715.Host", true, loader);
 
-        Constructor<?> ipAddressConstructor = assertContainsConstructor(ipAddressClass, ipv4AddressClass);
-        Constructor<?> ipv4addressConstructor = assertContainsConstructor(ipv4AddressClass, String.class);
-        Constructor<?> hostConstructor = assertContainsConstructor(hostClass, ipAddressClass);
+        Constructor<?> ipAddressConstructor = CompilationTestUtils.assertContainsConstructor(ipAddressClass, ipv4AddressClass);
+        Constructor<?> ipv4addressConstructor = CompilationTestUtils.assertContainsConstructor(ipv4AddressClass, String.class);
+        Constructor<?> hostConstructor = CompilationTestUtils.assertContainsConstructor(hostClass, ipAddressClass);
 
         // test IpAddress with Ipv4Address argument
         Object ipv4address = ipv4addressConstructor.newInstance("192.168.0.1");
@@ -90,12 +83,12 @@ public class Bug1276Test extends BaseCompilationTest {
         assertTrue(actual instanceof char[]);
         assertTrue(Arrays.equals(expected, (char[]) actual));
 
-        cleanUp(sourcesOutputDir, compiledOutputDir);
+        CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
     private void generateTestSources(final String resourceDirPath, final File sourcesOutputDir) throws Exception {
-        final List<File> sourceFiles = getSourceFiles(resourceDirPath);
-        final SchemaContext context = parser.parseFiles(sourceFiles);
+        final List<File> sourceFiles = CompilationTestUtils.getSourceFiles(resourceDirPath);
+        final SchemaContext context = RetestUtils.parseYangSources(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);
         final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
         generator.generateToFile(sourcesOutputDir);
