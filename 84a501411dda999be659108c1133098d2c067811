@@ -1,0 +1,257 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_012bd394",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/SchemaContextFactory.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-18T13:04:52Z",
+      "side": 1,
+      "message": "This method is the same as below, except it defaults to semVerMode \u003d\u003d ?. Add a default implementation here and eliminate our local implementations.",
+      "range": {
+        "startLine": 33,
+        "startChar": 60,
+        "endLine": 33,
+        "endChar": 79
+      },
+      "revId": "84a501411dda999be659108c1133098d2c067811",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_8116c353",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/SchemaContextFactory.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-18T13:04:52Z",
+      "side": 1,
+      "message": "Rather than a boolean, please define an enum of resolution modes, which will make it easier to extend in the future.",
+      "range": {
+        "startLine": 48,
+        "startChar": 58,
+        "endLine": 48,
+        "endChar": 76
+      },
+      "revId": "84a501411dda999be659108c1133098d2c067811",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_fc180877",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/SemVerSourceIdentifier.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-18T13:04:52Z",
+      "side": 1,
+      "message": "use an Interner",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 108
+      },
+      "revId": "84a501411dda999be659108c1133098d2c067811",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_5c2774b6",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/SemVerSourceIdentifier.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-18T13:04:52Z",
+      "side": 1,
+      "message": "Missing @Override, please configure your editor.",
+      "range": {
+        "startLine": 73,
+        "startChar": 34,
+        "endLine": 73,
+        "endChar": 49
+      },
+      "revId": "84a501411dda999be659108c1133098d2c067811",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_5c4e5470",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/SemVerSourceIdentifier.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-18T13:04:52Z",
+      "side": 1,
+      "message": "no upcall to super() ? this looks very fishy",
+      "range": {
+        "startLine": 90,
+        "startChar": 7,
+        "endLine": 90,
+        "endChar": 62
+      },
+      "revId": "84a501411dda999be659108c1133098d2c067811",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_9c58ec33",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/SemVerSourceIdentifier.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-18T13:04:52Z",
+      "side": 1,
+      "message": "no call to super() ?!",
+      "range": {
+        "startLine": 96,
+        "startChar": 19,
+        "endLine": 96,
+        "endChar": 25
+      },
+      "revId": "84a501411dda999be659108c1133098d2c067811",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_dc41c43a",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/SourceIdentifier.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-18T13:04:52Z",
+      "side": 1,
+      "message": "looks like this should become abstract with two implementations and static factory methods -- which means we want to deprecate the public constructor and have a package-private one.",
+      "range": {
+        "startLine": 42,
+        "startChar": 7,
+        "endLine": 42,
+        "endChar": 13
+      },
+      "revId": "84a501411dda999be659108c1133098d2c067811",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_7c7238ae",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/util/YangModelDependencyInfo.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-18T13:04:52Z",
+      "side": 1,
+      "message": "missing break? or what is the intent here?",
+      "range": {
+        "startLine": 306,
+        "startChar": 15,
+        "endLine": 306,
+        "endChar": 28
+      },
+      "revId": "84a501411dda999be659108c1133098d2c067811",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_1c633cdd",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/DependencyResolver.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-18T13:04:52Z",
+      "side": 1,
+      "message": "separate file, please",
+      "range": {
+        "startLine": 196,
+        "startChar": 12,
+        "endLine": 196,
+        "endChar": 38
+      },
+      "revId": "84a501411dda999be659108c1133098d2c067811",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_3c9f20b6",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/YangTextSchemaContextResolver.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-18T13:04:52Z",
+      "side": 1,
+      "message": "same thing as with SchemaContextFactory",
+      "range": {
+        "startLine": 195,
+        "startChar": 52,
+        "endLine": 195,
+        "endChar": 70
+      },
+      "revId": "84a501411dda999be659108c1133098d2c067811",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_fcb48836",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 376,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-18T13:04:52Z",
+      "side": 1,
+      "message": "Use a Splitter instead.",
+      "range": {
+        "startLine": 376,
+        "startChar": 30,
+        "endLine": 376,
+        "endChar": 52
+      },
+      "revId": "84a501411dda999be659108c1133098d2c067811",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
