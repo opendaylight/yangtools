@@ -8,6 +8,8 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
+
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -30,7 +32,7 @@ public class RefineStatementImpl extends AbstractDeclaredStatement<SchemaNodeIde
             .add(Rfc6020Mapping.CONFIG, 0, 1)
             .add(Rfc6020Mapping.MANDATORY, 0, 1)
             .add(Rfc6020Mapping.PRESENCE, 0, 1)
-            .add(Rfc6020Mapping.MUST, 0, 1)
+            .add(Rfc6020Mapping.MUST, 0, MAX)
             .add(Rfc6020Mapping.MIN_ELEMENTS, 0, 1)
             .add(Rfc6020Mapping.MAX_ELEMENTS, 0, 1)
             .build(SubstatementValidator.SpecialCase.NOTNULL);

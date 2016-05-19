@@ -1,0 +1,32 @@
+module foo {
+    yang-version 1;
+
+    namespace "org.namespace.test.foo";
+    prefix "foo";
+
+    description "foo";
+
+    revision "2016-01-01" {
+        description "Initial version.";
+    }
+
+    grouping test-grouping {
+        leaf test-leaf {
+            type string;
+        }
+    }
+
+    container test-container {
+        uses test-grouping {
+            refine test-leaf {
+                description "refined description";
+                must "test-leaf != 'not test message 1'" {
+                    error-message "not test message 1";
+                }
+                must "test-leaf != 'not test message 2'" {
+                    error-message "not test message 2";
+                }
+            }
+        }
+    }
+}
