@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_34b9e9e9",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/SharedSchemaContextFactory.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-20T22:10:38Z",
+      "side": 1,
+      "message": "import",
+      "range": {
+        "startLine": 75,
+        "startChar": 65,
+        "endLine": 75,
+        "endChar": 92
+      },
+      "revId": "84c195f47b0a092efafd46418e21c57be98027a8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_d4a06da1",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/SharedSchemaContextFactory.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-20T22:10:38Z",
+      "side": 1,
+      "message": "can this be static?",
+      "range": {
+        "startLine": 166,
+        "startChar": 15,
+        "endLine": 166,
+        "endChar": 20
+      },
+      "revId": "84c195f47b0a092efafd46418e21c57be98027a8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_d4c98d79",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/SharedSchemaContextFactory.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-20T22:10:38Z",
+      "side": 1,
+      "message": "import",
+      "range": {
+        "startLine": 168,
+        "startChar": 22,
+        "endLine": 168,
+        "endChar": 50
+      },
+      "revId": "84c195f47b0a092efafd46418e21c57be98027a8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_b4c4d95f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/SharedSchemaContextFactory.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-20T22:10:38Z",
+      "side": 1,
+      "message": "Preconditions.checkNotNull()",
+      "range": {
+        "startLine": 171,
+        "startChar": 35,
+        "endLine": 171,
+        "endChar": 38
+      },
+      "revId": "84c195f47b0a092efafd46418e21c57be98027a8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_b49b3971",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-20T22:10:38Z",
+      "side": 1,
+      "message": "return !containsIfFeature || isSupported;",
+      "range": {
+        "startLine": 256,
+        "startChar": 12,
+        "endLine": 260,
+        "endChar": 9
+      },
+      "revId": "84c195f47b0a092efafd46418e21c57be98027a8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa57193c_148ae51a",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/UsesStatementImpl.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-20T22:10:38Z",
+      "side": 1,
+      "message": "does this exceed 120 columns?",
+      "range": {
+        "startLine": 111,
+        "startChar": 101,
+        "endLine": 112,
+        "endChar": 42
+      },
+      "revId": "84c195f47b0a092efafd46418e21c57be98027a8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
