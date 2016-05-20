@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -85,7 +85,7 @@ import java.util.Stack;
  *       but entire string matching.
  *
  * </dl>
- * 
+ *
  * <hr width="50%">
  * <h3>Syntax</h3>
  * <table border="1" bgcolor="#ddeeff">
@@ -199,7 +199,7 @@ import java.util.Stack;
  *       <dt class="REGEX"><kbd>[</kbd><var>R<sub>1</sub>R<sub>2</sub>...</var><kbd>-[</kbd><var>R<sub>n</sub>R<sub>n+1</sub>...</var><kbd>]]</kbd> (with an <a href="#X_OPTION">"X" option</a>)</dt>
  *       <dd>Character class subtraction for the XML Schema.
  *           You can use this syntax when you specify an <a href="#X_OPTION">"X" option</a>.
- *           
+ *
  *       <dt class="REGEX"><kbd>\d</kbd>
  *       <dd class="REGEX">Equivalent to <kbd>[0-9]</kbd>.
  *       <dd>When <a href="#U_OPTION">a "u" option</a> is set, it is equivalent to
@@ -318,7 +318,7 @@ import java.util.Stack;
  * after <code><a href="#matches(java.lang.String, org.apache.xerces.utils.regex.Match)">matches(String,Match)</a></code>.
  * The 0th group means whole of this regular expression.
  * The <VAR>N</VAR>th gorup is the inside of the <VAR>N</VAR>th left parenthesis.
- * 
+ *
  *   <p>For instance, a regular expression is
  *   "<FONT color=blue><KBD> *([^&lt;:]*) +&lt;([^&gt;]*)&gt; *</KBD></FONT>"
  *   and target text is
@@ -477,14 +477,14 @@ import java.util.Stack;
  * </ul>
  *
  * <hr width="50%">
- * 
+ *
  * @xerces.internal
  *
  * @author TAMURA Kent &lt;kent@trl.ibm.co.jp&gt;
  * @version $Id: RegularExpression.java 961928 2010-07-08 20:43:46Z knoaman $
  */
 public class RegularExpression implements java.io.Serializable {
-    
+
     private static final long serialVersionUID = 6242499334195006401L;
 
     static final boolean DEBUG = false;
@@ -493,8 +493,9 @@ public class RegularExpression implements java.io.Serializable {
      * Compiles a token tree into an operation flow.
      */
     private synchronized void compile(Token tok) {
-        if (this.operations != null)
+        if (this.operations != null) {
             return;
+        }
         this.numberOfClosures = 0;
         this.operations = this.compile(tok, null, false);
     }
@@ -559,8 +560,9 @@ public class RegularExpression implements java.io.Serializable {
                 }
                 break;
             }
-            if (min > 0 && max > 0)
+            if (min > 0 && max > 0) {
                 max -= min;
+            }
             if (max > 0) {
                 // X{2,6} -> XX(X(X(XX?)?)?)?
                 ret = next;
@@ -701,10 +703,12 @@ public class RegularExpression implements java.io.Serializable {
     public boolean matches(char[] target, int start, int end, Match match) {
 
         synchronized (this) {
-            if (this.operations == null)
+            if (this.operations == null) {
                 this.prepare();
-            if (this.context == null)
+            }
+            if (this.context == null) {
                 this.context = new Context();
+            }
         }
         Context con = null;
         synchronized (this.context) {
@@ -790,8 +794,9 @@ public class RegularExpression implements java.io.Serializable {
                     } else {
                         if (previousIsEOL) {
                             if (0 <= (matchEnd = this. match(con, this.operations,
-                                                             matchStart, 1, this.options)))
+                                                             matchStart, 1, this.options))) {
                                 break;
+                            }
                         }
                         previousIsEOL = false;
                     }
@@ -825,8 +830,9 @@ public class RegularExpression implements java.io.Serializable {
          */
         else {
             for (matchStart = con.start;  matchStart <= limit;  matchStart ++) {
-                if (0 <= (matchEnd = this. match(con, this.operations, matchStart, 1, this.options)))
+                if (0 <= (matchEnd = this. match(con, this.operations, matchStart, 1, this.options))) {
                     break;
+                }
             }
         }
 
@@ -886,10 +892,12 @@ public class RegularExpression implements java.io.Serializable {
     public boolean matches(String  target, int start, int end, Match match) {
 
         synchronized (this) {
-            if (this.operations == null)
+            if (this.operations == null) {
                 this.prepare();
-            if (this.context == null)
+            }
+            if (this.context == null) {
                 this.context = new Context();
+            }
         }
         Context con = null;
         synchronized (this.context) {
@@ -981,8 +989,9 @@ public class RegularExpression implements java.io.Serializable {
                     } else {
                         if (previousIsEOL) {
                             if (0 <= (matchEnd = this.match(con, this.operations,
-                                                            matchStart, 1, this.options)))
+                                                            matchStart, 1, this.options))) {
                                 break;
+                            }
                         }
                         previousIsEOL = false;
                     }
@@ -1007,7 +1016,7 @@ public class RegularExpression implements java.io.Serializable {
                 if (0 <= (matchEnd = this.match(con, this.operations,
                                                 matchStart, 1, this.options))) {
                         break;
-                }                
+                }
             }
         }
 
@@ -1016,8 +1025,9 @@ public class RegularExpression implements java.io.Serializable {
          */
         else {
             for (matchStart = con.start;  matchStart <= limit;  matchStart ++) {
-                if (0 <= (matchEnd = this.match(con, this.operations, matchStart, 1, this.options)))
+                if (0 <= (matchEnd = this.match(con, this.operations, matchStart, 1, this.options))) {
                     break;
+                }
             }
         }
 
@@ -1039,7 +1049,7 @@ public class RegularExpression implements java.io.Serializable {
      */
     private int match(Context con, Op op, int offset, int dx, int opts) {
         final ExpressionTarget target = con.target;
-        final Stack opStack = new Stack();
+        final Stack<Op> opStack = new Stack<>();
         final Stack<Integer> dataStack = new Stack<>();
         final boolean isSetIgnoreCase = isSet(opts, IGNORE_CASE);
         int retValue = -1;
@@ -1051,7 +1061,7 @@ public class RegularExpression implements java.io.Serializable {
                     retValue = isSet(opts, XMLSCHEMA_MODE) && offset != con.limit ? -1 : offset;
                 }
                 else {
-                   retValue = -1; 
+                   retValue = -1;
                 }
                 returned = true;
             }
@@ -1192,7 +1202,7 @@ public class RegularExpression implements java.io.Serializable {
                             returned = true;
                             break;
                         }
-                        
+
                         con.closureContexts[id].addOffset(offset);
                     }
                     // fall through
@@ -1318,7 +1328,7 @@ public class RegularExpression implements java.io.Serializable {
                     return retValue;
                 }
 
-                op = (Op) opStack.pop();
+                op = opStack.pop();
                 offset = dataStack.pop();
 
                 switch (op.type) {
@@ -1372,7 +1382,7 @@ public class RegularExpression implements java.io.Serializable {
                         }
                     }
                     break;
-                    
+
                 case Op.LOOKAHEAD:
                 case Op.LOOKBEHIND:
                     {
@@ -1432,7 +1442,7 @@ public class RegularExpression implements java.io.Serializable {
         }
     }
 
-    private boolean matchChar(int ch, int other, boolean ignoreCase) {
+    private static boolean matchChar(int ch, int other, boolean ignoreCase) {
         return (ignoreCase) ? matchIgnoreCase(ch, other) : ch == other;
     }
 
@@ -1442,102 +1452,128 @@ public class RegularExpression implements java.io.Serializable {
         case '^':
             if (isSet(opts, MULTIPLE_LINES)) {
                 if (!(offset == con.start
-                      || offset > con.start && offset < con.limit && isEOLChar(target.charAt(offset-1))))
+                      || offset > con.start && offset < con.limit && isEOLChar(target.charAt(offset-1)))) {
                     return false;
+                }
             } else {
-                if (offset != con.start)
+                if (offset != con.start) {
                     return false;
+                }
             }
             break;
 
         case '@':                         // Internal use only.
             // The @ always matches line beginnings.
             if (!(offset == con.start
-                  || offset > con.start && isEOLChar(target.charAt(offset-1))))
+                  || offset > con.start && isEOLChar(target.charAt(offset-1)))) {
                 return false;
+            }
             break;
 
         case '$':
             if (isSet(opts, MULTIPLE_LINES)) {
                 if (!(offset == con.limit
-                      || offset < con.limit && isEOLChar(target.charAt(offset))))
+                      || offset < con.limit && isEOLChar(target.charAt(offset)))) {
                     return false;
+                }
             } else {
                 if (!(offset == con.limit
                       || offset+1 == con.limit && isEOLChar(target.charAt(offset))
                       || offset+2 == con.limit &&  target.charAt(offset) == CARRIAGE_RETURN
-                      &&  target.charAt(offset+1) == LINE_FEED))
+                      &&  target.charAt(offset+1) == LINE_FEED)) {
                     return false;
+                }
             }
             break;
 
         case 'A':
-            if (offset != con.start)  return false;
+            if (offset != con.start) {
+                return false;
+            }
             break;
 
         case 'Z':
             if (!(offset == con.limit
                   || offset+1 == con.limit && isEOLChar(target.charAt(offset))
                   || offset+2 == con.limit &&  target.charAt(offset) == CARRIAGE_RETURN
-                  &&  target.charAt(offset+1) == LINE_FEED))
+                  &&  target.charAt(offset+1) == LINE_FEED)) {
                 return false;
+            }
             break;
 
         case 'z':
-            if (offset != con.limit)  return false;
+            if (offset != con.limit) {
+                return false;
+            }
             break;
 
         case 'b':
-            if (con.length == 0) 
+            if (con.length == 0) {
                 return false;
+            }
             {
                 int after = getWordType(target, con.start, con.limit, offset, opts);
-                if (after == WT_IGNORE)  return false;
+                if (after == WT_IGNORE) {
+                    return false;
+                }
                 int before = getPreviousWordType(target, con.start, con.limit, offset, opts);
-                if (after == before)  return false;
+                if (after == before) {
+                    return false;
+                }
             }
             break;
 
         case 'B':
-            if (con.length == 0)
+            if (con.length == 0) {
                 go = true;
-            else {
+            } else {
                 int after = getWordType(target, con.start, con.limit, offset, opts);
                 go = after == WT_IGNORE
                      || after == getPreviousWordType(target, con.start, con.limit, offset, opts);
             }
-            if (!go)  return false;
+            if (!go) {
+                return false;
+            }
             break;
 
         case '<':
-            if (con.length == 0 || offset == con.limit)  return false;
-            if (getWordType(target, con.start, con.limit, offset, opts) != WT_LETTER
-                || getPreviousWordType(target, con.start, con.limit, offset, opts) != WT_OTHER)
+            if (con.length == 0 || offset == con.limit) {
                 return false;
+            }
+            if (getWordType(target, con.start, con.limit, offset, opts) != WT_LETTER
+                || getPreviousWordType(target, con.start, con.limit, offset, opts) != WT_OTHER) {
+                return false;
+            }
             break;
 
         case '>':
-            if (con.length == 0 || offset == con.start)  return false;
-            if (getWordType(target, con.start, con.limit, offset, opts) != WT_OTHER
-                || getPreviousWordType(target, con.start, con.limit, offset, opts) != WT_LETTER)
+            if (con.length == 0 || offset == con.start) {
                 return false;
+            }
+            if (getWordType(target, con.start, con.limit, offset, opts) != WT_OTHER
+                || getPreviousWordType(target, con.start, con.limit, offset, opts) != WT_LETTER) {
+                return false;
+            }
             break;
         } // switch anchor type
-        
+
         return true;
     }
 
     private static final int getPreviousWordType(ExpressionTarget target, int begin, int end,
                                                  int offset, int opts) {
         int ret = getWordType(target, begin, end, --offset, opts);
-        while (ret == WT_IGNORE)
+        while (ret == WT_IGNORE) {
             ret = getWordType(target, begin, end, --offset, opts);
+        }
         return ret;
     }
 
     private static final int getWordType(ExpressionTarget target, int begin, int end,
                                          int offset, int opts) {
-        if (offset < begin || offset >= end)  return WT_OTHER;
+        if (offset < begin || offset >= end) {
+            return WT_OTHER;
+        }
         return getWordType0(target.charAt(offset) , opts);
     }
 
@@ -1565,10 +1601,12 @@ public class RegularExpression implements java.io.Serializable {
 
 
         synchronized (this) {
-            if (this.operations == null)
+            if (this.operations == null) {
                 this.prepare();
-            if (this.context == null)
+            }
+            if (this.context == null) {
                 this.context = new Context();
+            }
         }
         Context con = null;
         synchronized (this.context) {
@@ -1654,8 +1692,9 @@ public class RegularExpression implements java.io.Serializable {
                     } else {
                         if (previousIsEOL) {
                             if (0 <= (matchEnd = this.match(con, this.operations,
-                                                            matchStart, 1, this.options)))
+                                                            matchStart, 1, this.options))) {
                                 break;
+                            }
                         }
                         previousIsEOL = false;
                     }
@@ -1689,8 +1728,9 @@ public class RegularExpression implements java.io.Serializable {
          */
         else {
             for (matchStart = con.start;  matchStart <= limit;  matchStart ++) {
-                if (0 <= (matchEnd = this. match(con, this.operations, matchStart, 1, this.options)))
+                if (0 <= (matchEnd = this. match(con, this.operations, matchStart, 1, this.options))) {
                     break;
+                }
             }
         }
 
@@ -1748,23 +1788,25 @@ public class RegularExpression implements java.io.Serializable {
         abstract boolean regionMatches(boolean ignoreCase, int offset, int limit, String part, int partlen);
         abstract boolean regionMatches(boolean ignoreCase, int offset, int limit, int offset2, int partlen);
     }
-    
+
     static final class StringTarget extends ExpressionTarget {
-        
+
         private String target;
-        
+
         StringTarget(String target) {
             this.target = target;
         }
-        
+
         final void resetTarget(String target) {
             this.target = target;
         }
-        
+
+        @Override
         final char charAt(int index) {
             return target.charAt(index);
         }
-        
+
+        @Override
         final boolean regionMatches(boolean ignoreCase, int offset, int limit,
                               String part, int partlen) {
             if (limit-offset < partlen) {
@@ -1773,6 +1815,7 @@ public class RegularExpression implements java.io.Serializable {
             return (ignoreCase) ? target.regionMatches(true, offset, part, 0, partlen) : target.regionMatches(offset, part, 0, partlen);
         }
 
+        @Override
         final boolean regionMatches(boolean ignoreCase, int offset, int limit,
                                     int offset2, int partlen) {
             if (limit-offset < partlen) {
@@ -1782,23 +1825,25 @@ public class RegularExpression implements java.io.Serializable {
                                 : target.regionMatches(offset, target, offset2, partlen);
         }
     }
-    
+
     static final class CharArrayTarget extends ExpressionTarget {
-        
+
         char[] target;
-        
+
         CharArrayTarget(char[] target) {
-            this.target = target; 
+            this.target = target;
         }
 
         final void resetTarget(char[] target) {
             this.target = target;
         }
 
+        @Override
         char charAt(int index) {
             return target[index];
         }
-        
+
+        @Override
         final boolean regionMatches(boolean ignoreCase, int offset, int limit,
                 String part, int partlen) {
             if (offset < 0 || limit-offset < partlen)  {
@@ -1838,6 +1883,7 @@ public class RegularExpression implements java.io.Serializable {
             return true;
         }
 
+        @Override
         final boolean regionMatches(boolean ignoreCase, int offset, int limit, int offset2, int partlen) {
             if (offset < 0 || limit-offset < partlen) {
                 return false;
@@ -1849,8 +1895,9 @@ public class RegularExpression implements java.io.Serializable {
         private final boolean regionMatches(int offset, int limit, int offset2, int partlen) {
             int i = offset2;
             while (partlen-- > 0) {
-                if ( target [  offset++ ]  !=  target [  i++ ] )
+                if ( target [  offset++ ]  !=  target [  i++ ] ) {
                     return false;
+                }
             }
             return true;
         }
@@ -1878,19 +1925,21 @@ public class RegularExpression implements java.io.Serializable {
 
     static final class CharacterIteratorTarget extends ExpressionTarget {
         CharacterIterator target;
-        
+
         CharacterIteratorTarget(CharacterIterator target) {
-            this.target = target; 
+            this.target = target;
         }
 
         final void resetTarget(CharacterIterator target) {
             this.target = target;
         }
 
+        @Override
         final char charAt(int index) {
             return target.setIndex(index);
         }
 
+        @Override
         final boolean regionMatches(boolean ignoreCase, int offset, int limit,
                 String part, int partlen) {
             if (offset < 0 || limit-offset < partlen)  {
@@ -1899,7 +1948,7 @@ public class RegularExpression implements java.io.Serializable {
             return (ignoreCase) ? regionMatchesIgnoreCase(offset, limit, part, partlen)
                                 : regionMatches(offset, limit, part, partlen);
         }
-        
+
         private final boolean regionMatches(int offset, int limit, String part, int partlen) {
             int i = 0;
             while (partlen-- > 0) {
@@ -1909,7 +1958,7 @@ public class RegularExpression implements java.io.Serializable {
             }
             return true;
         }
-        
+
         private final boolean regionMatchesIgnoreCase(int offset, int limit, String part, int partlen) {
             int i = 0;
             while (partlen-- > 0) {
@@ -1930,6 +1979,7 @@ public class RegularExpression implements java.io.Serializable {
             return true;
         }
 
+        @Override
         final boolean regionMatches(boolean ignoreCase, int offset, int limit, int offset2, int partlen) {
             if (offset < 0 || limit-offset < partlen) {
                 return false;
@@ -1970,10 +2020,10 @@ public class RegularExpression implements java.io.Serializable {
     }
 
     static final class ClosureContext {
-        
+
         int[] offsets = new int[4];
         int currentIndex = 0;
-        
+
         boolean contains(int offset) {
             for (int i=0; i<currentIndex;++i) {
                 if (offsets[i] == offset) {
@@ -1982,7 +2032,7 @@ public class RegularExpression implements java.io.Serializable {
             }
             return false;
         }
-        
+
         void reset() {
             currentIndex = 0;
         }
@@ -1994,17 +2044,17 @@ public class RegularExpression implements java.io.Serializable {
             }
             offsets[currentIndex++] = offset;
         }
-        
+
         private int[] expandOffsets() {
             final int len = offsets.length;
             final int newLen = len << 1;
             int[] newOffsets = new int[newLen];
-            
+
             System.arraycopy(offsets, 0, newOffsets, 0, currentIndex);
             return newOffsets;
         }
     }
-    
+
     static final class Context {
         int start;
         int limit;
@@ -2012,8 +2062,8 @@ public class RegularExpression implements java.io.Serializable {
         Match match;
         boolean inuse = false;
         ClosureContext[] closureContexts;
-        
-        private StringTarget stringTarget; 
+
+        private StringTarget stringTarget;
         private CharArrayTarget charArrayTarget;
         private CharacterIteratorTarget characterIteratorTarget;
 
@@ -2086,7 +2136,9 @@ public class RegularExpression implements java.io.Serializable {
      * Prepares for matching.  This method is called just before starting matching.
      */
     void prepare() {
-        if (Op.COUNT)  Op.nofinstances = 0;
+        if (Op.COUNT) {
+            Op.nofinstances = 0;
+        }
         this.compile(this.tokentree);
         /*
         if  (this.operations.type == Op.CLOSURE && this.operations.getChild().type == Op.DOT) { // .*
@@ -2095,7 +2147,9 @@ public class RegularExpression implements java.io.Serializable {
             this.operations = anchor;
         }
         */
-        if (Op.COUNT)  System.err.println("DEBUG: The number of operations: "+Op.nofinstances);
+        if (Op.COUNT) {
+            System.err.println("DEBUG: The number of operations: "+Op.nofinstances);
+        }
 
         this.minlength = this.tokentree.getMinLength();
 
@@ -2107,20 +2161,22 @@ public class RegularExpression implements java.io.Serializable {
             if (fresult == Token.FC_TERMINAL) {
                 firstChar.compactRanges();
                 this.firstChar = firstChar;
-                if (DEBUG)
+                if (DEBUG) {
                     System.err.println("DEBUG: Use the first character optimization: "+firstChar);
+                }
             }
         }
 
         if (this.operations != null
             && (this.operations.type == Op.STRING || this.operations.type == Op.CHAR)
             && this.operations.next == null) {
-            if (DEBUG)
+            if (DEBUG) {
                 System.err.print(" *** Only fixed string! *** ");
+            }
             this.fixedStringOnly = true;
-            if (this.operations.type == Op.STRING)
+            if (this.operations.type == Op.STRING) {
                 this.fixedString = this.operations.getString();
-            else if (this.operations.getData() >= 0x10000) { // Op.CHAR
+            } else if (this.operations.getData() >= 0x10000) { // Op.CHAR
                 this.fixedString = REUtil.decomposeToSurrogates(this.operations.getData());
             } else {
                 char[] ac = new char[1];
@@ -2136,8 +2192,9 @@ public class RegularExpression implements java.io.Serializable {
             this.tokentree.findFixedString(container, this.options);
             this.fixedString = container.token == null ? null : container.token.getString();
             this.fixedStringOptions = container.options;
-            if (this.fixedString != null && this.fixedString.length() < 2)
+            if (this.fixedString != null && this.fixedString.length() < 2) {
                 this.fixedString = null;
+            }
             // This pattern has a fixed string of which length is more than one.
             if (this.fixedString != null) {
                 this.fixedStringTable = new BMPattern(this.fixedString, 256,
@@ -2249,7 +2306,7 @@ public class RegularExpression implements java.io.Serializable {
     public RegularExpression(String regex, String options) throws ParseException {
         this.setPattern(regex, options);
     }
-    
+
     /**
      * Creates a new RegularExpression instance with options.
      *
@@ -2275,7 +2332,7 @@ public class RegularExpression implements java.io.Serializable {
     public void setPattern(String newPattern) throws ParseException {
         this.setPattern(newPattern, Locale.getDefault());
     }
-    
+
     public void setPattern(String newPattern, Locale locale) throws ParseException {
         this.setPattern(newPattern, this.options, locale);
     }
@@ -2298,7 +2355,7 @@ public class RegularExpression implements java.io.Serializable {
     public void setPattern(String newPattern, String options) throws ParseException {
         this.setPattern(newPattern, options, Locale.getDefault());
     }
-    
+
     public void setPattern(String newPattern, String options, Locale locale) throws ParseException {
         this.setPattern(newPattern, REUtil.parseOptions(options), locale);
     }
@@ -2313,6 +2370,7 @@ public class RegularExpression implements java.io.Serializable {
     /**
      * Represents this instence in String.
      */
+    @Override
     public String toString() {
         return this.tokentree.toString(this.options);
     }
@@ -2332,10 +2390,14 @@ public class RegularExpression implements java.io.Serializable {
     /**
      *  Return true if patterns are the same and the options are equivalent.
      */
+    @Override
     public boolean equals(Object obj) {
-        if (obj == null)  return false;
-        if (!(obj instanceof RegularExpression))
+        if (obj == null) {
             return false;
+        }
+        if (!(obj instanceof RegularExpression)) {
+            return false;
+        }
         RegularExpression r = (RegularExpression)obj;
         return this.regex.equals(r.regex) && this.options == r.options;
     }
@@ -2347,6 +2409,7 @@ public class RegularExpression implements java.io.Serializable {
     /**
      *
      */
+    @Override
     public int hashCode() {
         return (this.regex+"/"+this.getOptions()).hashCode();
     }
@@ -2420,22 +2483,42 @@ public class RegularExpression implements java.io.Serializable {
     }
 
     private static final boolean isWordChar(int ch) { // Legacy word characters
-        if (ch == '_')  return true;
-        if (ch < '0')  return false;
-        if (ch > 'z')  return false;
-        if (ch <= '9')  return true;
-        if (ch < 'A')  return false;
-        if (ch <= 'Z')  return true;
-        if (ch < 'a')  return false;
+        if (ch == '_') {
+            return true;
+        }
+        if (ch < '0') {
+            return false;
+        }
+        if (ch > 'z') {
+            return false;
+        }
+        if (ch <= '9') {
+            return true;
+        }
+        if (ch < 'A') {
+            return false;
+        }
+        if (ch <= 'Z') {
+            return true;
+        }
+        if (ch < 'a') {
+            return false;
+        }
         return true;
     }
 
     private static final boolean matchIgnoreCase(int chardata, int ch) {
-        if (chardata == ch)  return true;
-        if (chardata > 0xffff || ch > 0xffff)  return false;
+        if (chardata == ch) {
+            return true;
+        }
+        if (chardata > 0xffff || ch > 0xffff) {
+            return false;
+        }
         char uch1 = Character.toUpperCase((char)chardata);
         char uch2 = Character.toUpperCase((char)ch);
-        if (uch1 == uch2)  return true;
+        if (uch1 == uch2) {
+            return true;
+        }
         return Character.toLowerCase(uch1) == Character.toLowerCase(uch2);
     }
 }

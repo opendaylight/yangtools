@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,7 @@ import java.text.CharacterIterator;
 
 /**
  * @xerces.internal
- * 
+ *
  * @version $Id: REUtil.java 828015 2009-10-21 13:56:13Z knoaman $
  */
 public final class REUtil {
@@ -50,8 +50,9 @@ public final class REUtil {
 
     static final String substring(CharacterIterator iterator, int begin, int end) {
         char[] src = new char[end-begin];
-        for (int i = 0;  i < src.length;  i ++)
+        for (int i = 0;  i < src.length;  i ++) {
             src[i] = iterator.setIndex(i+begin);
+        }
         return new String(src);
     }
 
@@ -96,12 +97,15 @@ public final class REUtil {
     }
 
     static final int parseOptions(String opts) throws ParseException {
-        if (opts == null)  return 0;
+        if (opts == null) {
+            return 0;
+        }
         int options = 0;
         for (int i = 0;  i < opts.length();  i ++) {
             int v = getOptionValue(opts.charAt(i));
-            if (v == 0)
+            if (v == 0) {
                 throw new ParseException("Unknown Option: "+opts.substring(i), -1);
+            }
             options |= v;
         }
         return options;
@@ -109,26 +113,36 @@ public final class REUtil {
 
     static final String createOptionString(int options) {
         StringBuffer sb = new StringBuffer(9);
-        if ((options & RegularExpression.PROHIBIT_FIXED_STRING_OPTIMIZATION) != 0)
-            sb.append((char)'F');
-        if ((options & RegularExpression.PROHIBIT_HEAD_CHARACTER_OPTIMIZATION) != 0)
-            sb.append((char)'H');
-        if ((options & RegularExpression.XMLSCHEMA_MODE) != 0)
-            sb.append((char)'X');
-        if ((options & RegularExpression.IGNORE_CASE) != 0)
-            sb.append((char)'i');
-        if ((options & RegularExpression.MULTIPLE_LINES) != 0)
-            sb.append((char)'m');
-        if ((options & RegularExpression.SINGLE_LINE) != 0)
-            sb.append((char)'s');
-        if ((options & RegularExpression.USE_UNICODE_CATEGORY) != 0)
-            sb.append((char)'u');
-        if ((options & RegularExpression.UNICODE_WORD_BOUNDARY) != 0)
-            sb.append((char)'w');
-        if ((options & RegularExpression.EXTENDED_COMMENT) != 0)
-            sb.append((char)'x');
-        if ((options & RegularExpression.SPECIAL_COMMA) != 0)
-            sb.append((char)',');
+        if ((options & RegularExpression.PROHIBIT_FIXED_STRING_OPTIMIZATION) != 0) {
+            sb.append('F');
+        }
+        if ((options & RegularExpression.PROHIBIT_HEAD_CHARACTER_OPTIMIZATION) != 0) {
+            sb.append('H');
+        }
+        if ((options & RegularExpression.XMLSCHEMA_MODE) != 0) {
+            sb.append('X');
+        }
+        if ((options & RegularExpression.IGNORE_CASE) != 0) {
+            sb.append('i');
+        }
+        if ((options & RegularExpression.MULTIPLE_LINES) != 0) {
+            sb.append('m');
+        }
+        if ((options & RegularExpression.SINGLE_LINE) != 0) {
+            sb.append('s');
+        }
+        if ((options & RegularExpression.USE_UNICODE_CATEGORY) != 0) {
+            sb.append('u');
+        }
+        if ((options & RegularExpression.UNICODE_WORD_BOUNDARY) != 0) {
+            sb.append('w');
+        }
+        if ((options & RegularExpression.EXTENDED_COMMENT) != 0) {
+            sb.append('x');
+        }
+        if ((options & RegularExpression.SPECIAL_COMMA) != 0) {
+            sb.append(',');
+        }
         return sb.toString().intern();
     }
 
@@ -153,8 +167,9 @@ public final class REUtil {
             if (ch == '#') {                    // Skips chracters between '#' and a line end.
                 while (offset < len) {
                     ch = regex.charAt(offset++);
-                    if (ch == '\r' || ch == '\n')
+                    if (ch == '\r' || ch == '\n') {
                         break;
+                    }
                 }
                 continue;
             }
@@ -167,7 +182,7 @@ public final class REUtil {
                     buffer.append((char)next);
                     offset ++;
                 } else {                        // Other escaped character.
-                    buffer.append((char)'\\');
+                    buffer.append('\\');
                     buffer.append((char)next);
                     offset ++;
                 }
@@ -184,7 +199,7 @@ public final class REUtil {
                     else if (next == '^' && offset + 1 < len) {
                         next = regex.charAt(offset + 1);
                         if (next == '[' || next ==']') {
-                            buffer.append((char)'^');
+                            buffer.append('^');
                             buffer.append((char)next);
                             offset += 2;
                         }
@@ -216,28 +231,29 @@ public final class REUtil {
                 System.out.println( "Error:Usage: java REUtil -i|-m|-s|-u|-w|-X regularExpression String" );
                 System.exit( 0 );
             }
-            for (int i = 0;  i < argv.length;  i ++) {
-                if (argv[i].length() == 0 || argv[i].charAt(0) != '-') {
-                    if (pattern == null)
-                        pattern = argv[i];
-                    else if (target == null)
-                        target = argv[i];
-                    else
-                        System.err.println("Unnecessary: "+argv[i]);
-                } else if (argv[i].equals("-i")) {
+            for (String element : argv) {
+                if (element.length() == 0 || element.charAt(0) != '-') {
+                    if (pattern == null) {
+                        pattern = element;
+                    } else if (target == null) {
+                        target = element;
+                    } else {
+                        System.err.println("Unnecessary: "+element);
+                    }
+                } else if (element.equals("-i")) {
                     options += "i";
-                } else if (argv[i].equals("-m")) {
+                } else if (element.equals("-m")) {
                     options += "m";
-                } else if (argv[i].equals("-s")) {
+                } else if (element.equals("-s")) {
                     options += "s";
-                } else if (argv[i].equals("-u")) {
+                } else if (element.equals("-u")) {
                     options += "u";
-                } else if (argv[i].equals("-w")) {
+                } else if (element.equals("-w")) {
                     options += "w";
-                } else if (argv[i].equals("-X")) {
+                } else if (element.equals("-X")) {
                     options += "X";
                 } else {
-                    System.err.println("Unknown option: "+argv[i]);
+                    System.err.println("Unknown option: "+element);
                 }
             }
             RegularExpression reg = new RegularExpression(pattern, options);
@@ -245,11 +261,14 @@ public final class REUtil {
             Match match = new Match();
             reg.matches(target, match);
             for (int i = 0;  i < match.getNumberOfGroups();  i ++) {
-                if (i == 0 )  System.out.print("Matched range for the whole pattern: ");
-                else System.out.print("["+i+"]: ");
-                if (match.getBeginning(i) < 0)
+                if (i == 0 ) {
+                    System.out.print("Matched range for the whole pattern: ");
+                } else {
+                    System.out.print("["+i+"]: ");
+                }
+                if (match.getBeginning(i) < 0) {
                     System.out.println("-1");
-                else {
+                } else {
                     System.out.print(match.getBeginning(i)+", "+match.getEnd(i)+", ");
                     System.out.println("\""+match.getCapturedText(i)+"\"");
                 }
@@ -264,7 +283,9 @@ public final class REUtil {
                 int loc = pe.getLocation();
                 if (loc >= 0) {
                     System.err.print(indent);
-                    for (int i = 0;  i < loc;  i ++)  System.err.print("-");
+                    for (int i = 0;  i < loc;  i ++) {
+                        System.err.print("-");
+                    }
                     System.err.println("^");
                 }
             }
@@ -341,12 +362,15 @@ public final class REUtil {
             if (".*+?{[()|\\^$".indexOf(ch) >= 0) {
                 if (buffer == null) {
                     buffer = new StringBuffer(i+(len-i)*2);
-                    if (i > 0)  buffer.append(literal.substring(0, i));
+                    if (i > 0) {
+                        buffer.append(literal.substring(0, i));
+                    }
                 }
-                buffer.append((char)'\\');
+                buffer.append('\\');
                 buffer.append((char)ch);
-            } else if (buffer != null)
+            } else if (buffer != null) {
                 buffer.append((char)ch);
+            }
         }
         return buffer != null ? buffer.toString() : literal;
     }
