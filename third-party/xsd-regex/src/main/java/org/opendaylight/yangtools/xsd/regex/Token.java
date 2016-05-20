@@ -59,57 +59,57 @@ class Token implements java.io.Serializable {
 
     final int type;
 
-    static Token token_dot;
-    static Token token_0to9;
-    static Token token_wordchars;
-    static Token token_not_0to9;
-    static Token token_not_wordchars;
-    static Token token_spaces;
-    static Token token_not_spaces;
-    static Token token_empty;
-    static Token token_linebeginning;
-    static Token token_linebeginning2;
-    static Token token_lineend;
-    static Token token_stringbeginning;
-    static Token token_stringend;
-    static Token token_stringend2;
-    static Token token_wordedge;
-    static Token token_not_wordedge;
-    static Token token_wordbeginning;
-    static Token token_wordend;
+    static final Token token_dot;
+    static final Token token_0to9;
+    static final Token token_wordchars;
+    static final Token token_not_0to9;
+    static final Token token_not_wordchars;
+    static final Token token_spaces;
+    static final Token token_not_spaces;
+    static final Token token_empty;
+    static final Token token_linebeginning;
+    static final Token token_linebeginning2;
+    static final Token token_lineend;
+    static final Token token_stringbeginning;
+    static final Token token_stringend;
+    static final Token token_stringend2;
+    static final Token token_wordedge;
+    static final Token token_not_wordedge;
+    static final Token token_wordbeginning;
+    static final Token token_wordend;
     static {
-        Token.token_empty = new Token(Token.EMPTY);
+        token_empty = new Token(Token.EMPTY);
 
-        Token.token_linebeginning = Token.createAnchor('^');
-        Token.token_linebeginning2 = Token.createAnchor('@');
-        Token.token_lineend = Token.createAnchor('$');
-        Token.token_stringbeginning = Token.createAnchor('A');
-        Token.token_stringend = Token.createAnchor('z');
-        Token.token_stringend2 = Token.createAnchor('Z');
-        Token.token_wordedge = Token.createAnchor('b');
-        Token.token_not_wordedge = Token.createAnchor('B');
-        Token.token_wordbeginning = Token.createAnchor('<');
-        Token.token_wordend = Token.createAnchor('>');
+        token_linebeginning = Token.createAnchor('^');
+        token_linebeginning2 = Token.createAnchor('@');
+        token_lineend = Token.createAnchor('$');
+        token_stringbeginning = Token.createAnchor('A');
+        token_stringend = Token.createAnchor('z');
+        token_stringend2 = Token.createAnchor('Z');
+        token_wordedge = Token.createAnchor('b');
+        token_not_wordedge = Token.createAnchor('B');
+        token_wordbeginning = Token.createAnchor('<');
+        token_wordend = Token.createAnchor('>');
 
-        Token.token_dot = new Token(Token.DOT);
+        token_dot = new Token(Token.DOT);
 
-        Token.token_0to9 = Token.createRange();
-        Token.token_0to9.addRange('0', '9');
-        Token.token_wordchars = Token.createRange();
-        Token.token_wordchars.addRange('0', '9');
-        Token.token_wordchars.addRange('A', 'Z');
-        Token.token_wordchars.addRange('_', '_');
-        Token.token_wordchars.addRange('a', 'z');
-        Token.token_spaces = Token.createRange();
-        Token.token_spaces.addRange('\t', '\t');
-        Token.token_spaces.addRange('\n', '\n');
-        Token.token_spaces.addRange('\f', '\f');
-        Token.token_spaces.addRange('\r', '\r');
-        Token.token_spaces.addRange(' ', ' ');
+        token_0to9 = Token.createRange();
+        token_0to9.addRange('0', '9');
+        token_wordchars = Token.createRange();
+        token_wordchars.addRange('0', '9');
+        token_wordchars.addRange('A', 'Z');
+        token_wordchars.addRange('_', '_');
+        token_wordchars.addRange('a', 'z');
+        token_spaces = Token.createRange();
+        token_spaces.addRange('\t', '\t');
+        token_spaces.addRange('\n', '\n');
+        token_spaces.addRange('\f', '\f');
+        token_spaces.addRange('\r', '\r');
+        token_spaces.addRange(' ', ' ');
 
-        Token.token_not_0to9 = Token.complementRanges(Token.token_0to9);
-        Token.token_not_wordchars = Token.complementRanges(Token.token_wordchars);
-        Token.token_not_spaces = Token.complementRanges(Token.token_spaces);
+        token_not_0to9 = Token.complementRanges(Token.token_0to9);
+        token_not_wordchars = Token.complementRanges(Token.token_wordchars);
+        token_not_spaces = Token.complementRanges(Token.token_spaces);
     }
 
     static Token.ParenToken createLook(int type, Token child) {
