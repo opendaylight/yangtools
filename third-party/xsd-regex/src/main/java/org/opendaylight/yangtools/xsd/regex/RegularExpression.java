@@ -2304,7 +2304,7 @@ public class RegularExpression implements java.io.Serializable {
      * @exception org.apache.xerces.utils.regex.ParseException <VAR>regex</VAR> is not conforming to the syntax.
      */
     public RegularExpression(String regex, String options) throws ParseException {
-        this.setPattern(regex, options);
+        this(regex, options, Locale.getDefault());
     }
 
     /**
@@ -2315,30 +2315,11 @@ public class RegularExpression implements java.io.Serializable {
      * @exception org.apache.xerces.utils.regex.ParseException <VAR>regex</VAR> is not conforming to the syntax.
      */
     public RegularExpression(String regex, String options, Locale locale) throws ParseException {
-        this.setPattern(regex, options, locale);
+        this(regex, REUtil.parseOptions(options), locale);
     }
 
-    RegularExpression(String regex, Token tok, int parens, boolean hasBackReferences, int options) {
+    public RegularExpression(String regex, int options, Locale locale) throws ParseException {
         this.regex = regex;
-        this.tokentree = tok;
-        this.nofparen = parens;
-        this.options = options;
-        this.hasBackReferences = hasBackReferences;
-    }
-
-    /**
-     *
-     */
-    public void setPattern(String newPattern) throws ParseException {
-        this.setPattern(newPattern, Locale.getDefault());
-    }
-
-    public void setPattern(String newPattern, Locale locale) throws ParseException {
-        this.setPattern(newPattern, this.options, locale);
-    }
-
-    private void setPattern(String newPattern, int options, Locale locale) throws ParseException {
-        this.regex = newPattern;
         this.options = options;
         RegexParser rp = RegularExpression.isSet(this.options, RegularExpression.XMLSCHEMA_MODE)
                          ? new ParserForXMLSchema(locale) : new RegexParser(locale);
@@ -2348,16 +2329,6 @@ public class RegularExpression implements java.io.Serializable {
 
         this.operations = null;
         this.context = null;
-    }
-    /**
-     *
-     */
-    public void setPattern(String newPattern, String options) throws ParseException {
-        this.setPattern(newPattern, options, Locale.getDefault());
-    }
-
-    public void setPattern(String newPattern, String options, Locale locale) throws ParseException {
-        this.setPattern(newPattern, REUtil.parseOptions(options), locale);
     }
 
     /**
