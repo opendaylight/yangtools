@@ -633,7 +633,7 @@ final class RangeToken extends Token implements java.io.Serializable {
         return ret;
     }
 
-    private static String escapeCharInCharClass(int ch) {
+    static String escapeCharInCharClass(int ch) {
         String ret;
         switch (ch) {
           case '[':  case ']':  case '-':  case '^':

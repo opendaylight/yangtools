@@ -17,9 +17,15 @@
 
 package org.opendaylight.yangtools.xsd.regex;
 
+import com.google.common.base.Verify;
 import java.text.CharacterIterator;
 import java.util.Locale;
 import java.util.Stack;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import org.opendaylight.yangtools.xsd.regex.Token.ClosureToken;
+import org.opendaylight.yangtools.xsd.regex.Token.ConcatToken;
+import org.opendaylight.yangtools.xsd.regex.Token.UnionToken;
 
 /**
  * A regular expression matching engine using Non-deterministic Finite Automaton (NFA).
@@ -2392,6 +2398,166 @@ public class RegularExpression implements java.io.Serializable {
      */
     public int getNumberOfGroups() {
         return this.nofparen;
+    }
+
+    /**
+     * Convert this regular expression into an equivalent {@link Pattern}, if possible.
+     *
+     * @return A Pattern instance
+     * @throws PatternSyntaxException if this expression cannot be represented as a Pattern.
+     */
+    public Pattern toPattern() throws PatternSyntaxException {
+        final String str;
+        if (isSet(options, XMLSCHEMA_MODE)) {
+            str = appendToken(new StringBuilder().append('^'), tokentree).append('$').toString();
+        } else {
+            str = regex;
+        }
+
+        return Pattern.compile(str);
+    }
+
+    private static StringBuilder appendChar(final StringBuilder sb, char c) {
+        if (c == '^'  || c == '$') {
+            sb.append('\\');
+        }
+        return sb.append(c);
+    }
+
+    private static StringBuilder appendConcat(final StringBuilder sb, ConcatToken tok) {
+        if (tok.child2.type == Token.CLOSURE && tok.child2.getChild(0) == tok.child) {
+            return appendToken(sb, tok.child).append('+');
+        } else if (tok.child2.type == Token.NONGREEDYCLOSURE && tok.child2.getChild(0) == tok.child) {
+            return appendToken(sb, tok.child).append("+?");
+        } else {
+            return appendToken(appendToken(sb, tok.child), tok.child2);
+        }
+    }
+
+    private static StringBuilder appendUnionConcat(final StringBuilder sb, final UnionToken tok) {
+        if (tok.children.size() == 2) {
+            Token ch = tok.getChild(0);
+            Token ch2 = tok.getChild(1);
+            if (ch2.type == Token.CLOSURE && ch2.getChild(0) == ch) {
+                return appendToken(sb, ch).append('+');
+            } else if (ch2.type == Token.NONGREEDYCLOSURE && ch2.getChild(0) == ch) {
+                return appendToken(sb, ch).append("+?");
+            } else {
+                return appendToken(appendToken(sb, ch), ch2);
+            }
+        } else {
+            for (int i = 0;  i < tok.children.size();  i ++) {
+                appendToken(sb, tok.children.elementAt(i));
+            }
+            return sb;
+        }
+    }
+
+    private static StringBuilder appendClosure(final StringBuilder sb, ClosureToken tok) {
+        if (tok.getMin() < 0 && tok.getMax() < 0) {
+            return sb.append('*');
+        }
+        if (tok.getMin() == tok.getMax()) {
+            return sb.append('{').append(tok.getMin()).append('}');
+        }
+
+        sb.append('{');
+        if (tok.getMin() >= 0) {
+            sb.append(tok.getMin());
+        }
+        sb.append(',');
+        if (tok.getMax() >= 0) {
+            sb.append(tok.getMax());
+        }
+        return sb.append('}');
+    }
+
+    private static StringBuilder appendRange(final StringBuilder sb, RangeToken tok) {
+        if (tok == Token.token_0to9) {
+            return sb.append("\\d");
+        } else if (tok == Token.token_wordchars) {
+            return sb.append("\\w");
+        } else if (tok == Token.token_spaces) {
+            return sb.append("\\s");
+        } else {
+            sb.append('[');
+            for (int i = 0;  i < tok.ranges.length;  i += 2) {
+//                if (isSet(options, RegularExpression.SPECIAL_COMMA) && i > 0) {
+//                    sb.append(',');
+//                }
+                if (tok.ranges[i] == tok.ranges[i+1]) {
+                    appendString(sb, RangeToken.escapeCharInCharClass(tok.ranges[i]));
+                } else {
+                    appendString(sb, RangeToken.escapeCharInCharClass(tok.ranges[i]));
+                    sb.append('-');
+                    appendString(sb, RangeToken.escapeCharInCharClass(tok.ranges[i+1]));
+                }
+            }
+            return sb.append(']');
+        }
+    }
+
+    private static StringBuilder appendString(final StringBuilder sb, final String str) {
+        sb.ensureCapacity(sb.length() + str.length());
+        for (char c : str.toCharArray()) {
+            appendChar(sb, c);
+        }
+        return sb;
+    }
+
+
+    private static StringBuilder appendToken(final StringBuilder sb, final Token tok) {
+        switch (tok.type) {
+            case Token.CHAR:
+                return appendChar(sb, (char)tok.getChar());
+            case Token.CLOSURE:
+                return appendClosure(appendToken(sb, tok.getChild(0)), (ClosureToken) tok);
+            case Token.CONCAT:
+                if (tok instanceof ConcatToken) {
+                    return appendConcat(sb, (ConcatToken) tok);
+                } else {
+                    Verify.verify(tok instanceof UnionToken);
+                    return appendUnionConcat(sb, (UnionToken) tok);
+                }
+
+            case Token.DOT:
+                return sb.append('.');
+            case Token.EMPTY:
+                return sb;
+            case Token.RANGE:
+                return appendRange(sb, (RangeToken) tok);
+            case Token.STRING:
+                return appendString(sb, tok.getString());
+            case Token.UNION:
+                if (tok.size() != 2 || tok.getChild(1).type != Token.EMPTY) {
+                    sb.append('(');
+                    for (int i = 0;  i < tok.size();  i ++) {
+                        if (i != 0) {
+                            sb.append('|');
+                        }
+
+                        appendToken(sb, tok.getChild(i));
+                    }
+                    return sb.append(')');
+                } else {
+                    return appendToken(sb, tok.getChild(0)).append('?');
+                }
+            case Token.ANCHOR:
+            case Token.NRANGE:
+            case Token.NONGREEDYCLOSURE:
+            case Token.BACKREFERENCE:
+            case Token.PAREN:
+            case Token.LOOKAHEAD:
+            case Token.NEGATIVELOOKAHEAD:
+            case Token.LOOKBEHIND:
+            case Token.NEGATIVELOOKBEHIND:
+            case Token.INDEPENDENT:
+            case Token.MODIFIERGROUP:
+            case Token.CONDITION:
+                throw new UnsupportedOperationException("Token " + tok.type + " not implemented yet");
+            default:
+                throw new IllegalStateException("Unknown token type: " + tok.type);
+        }
     }
 
     // ================================================================
