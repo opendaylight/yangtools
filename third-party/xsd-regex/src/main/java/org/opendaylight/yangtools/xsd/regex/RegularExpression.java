@@ -20,6 +20,8 @@ package org.opendaylight.yangtools.xsd.regex;
 import java.text.CharacterIterator;
 import java.util.Locale;
 import java.util.Stack;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * A regular expression matching engine using Non-deterministic Finite Automaton (NFA).
@@ -2392,6 +2394,16 @@ public class RegularExpression implements java.io.Serializable {
      */
     public int getNumberOfGroups() {
         return this.nofparen;
+    }
+
+    /**
+     * Convert this regular expression into an equivalent {@link Pattern}, if possible.
+     *
+     * @return A Pattern instance
+     * @throws PatternSyntaxException if this expression cannot be represented as a Pattern.
+     */
+    public Pattern toPattern() throws PatternSyntaxException {
+        throw new UnsupportedOperationException("Not implemented yet");
     }
 
     // ================================================================
