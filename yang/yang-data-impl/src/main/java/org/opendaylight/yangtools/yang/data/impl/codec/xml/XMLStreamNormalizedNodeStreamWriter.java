@@ -45,7 +45,8 @@ import org.w3c.dom.Element;
  */
 public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements NormalizedNodeStreamAttributeWriter {
 
-    private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
+    private static final TransformerFactory TRANSFORMER_FACTORY =
+            TransformerFactory.newInstance("com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl", null);
 
     private final XMLStreamWriter writer;
     private final RandomPrefix randomPrefix;
