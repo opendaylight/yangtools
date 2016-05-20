@@ -9,6 +9,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Optional;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
@@ -24,6 +25,14 @@ final class PresenceContainerModificationStrategy extends ContainerModificationS
     PresenceContainerModificationStrategy(final ContainerSchemaNode schemaNode, final TreeType treeType) {
         super(schemaNode, treeType);
         enforcer = MandatoryLeafEnforcer.forContainer(schemaNode, treeType);
+    }
+
+    @Override
+    void verifyStructure(final NormalizedNode<?, ?> writtenValue, final boolean verifyChildren) {
+        if(verifyChildrenStructure() && verifyChildren) {
+            enforcer.enforceOnTreeNode(writtenValue);
+        }
+        super.verifyStructure(writtenValue, verifyChildren);
     }
 
     @Override
