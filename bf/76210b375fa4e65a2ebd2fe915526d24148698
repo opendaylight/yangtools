@@ -1,0 +1,14 @@
+Verified+1: jenkins-releng <jenkins-releng@opendaylight.org>
+Code-Review+1: Ryan Goulding <ryandgoulding@gmail.com>
+Code-Review+1: Martin Ciglan <mciglan@cisco.com>
+Code-Review+1: Peter Kajsa <pkajsa@cisco.com>
+Code-Review+1: Filip Gregor <fgregor@cisco.com>
+Code-Review+1: Jakub Toth <jatoth@cisco.com>
+Code-Review+1: Ivan Hrasko <ivan.hrasko@pantheon.tech>
+Code-Review+1: Igor Foltin <ifoltin@cisco.com>
+Code-Review+2: Robert Varga <nite@hq.sk>
+Submitted-by: Robert Varga <nite@hq.sk>
+Submitted-at: Fri, 20 May 2016 09:31:10 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/39103
+Project: yangtools
+Branch: refs/heads/master
