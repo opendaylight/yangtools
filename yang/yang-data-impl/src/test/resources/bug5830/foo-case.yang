@@ -1,0 +1,33 @@
+module foo-case {
+    yang-version 1;
+    namespace "foo";
+    prefix foo;
+
+    revision 2016-05-17 {
+        description "test";
+    }
+
+    container task-container {
+        choice task {
+            case one {
+                leaf mandatory-data {
+                    type string;
+                    mandatory true;
+                }
+                leaf other-data {
+                    type string;
+                }
+            }
+            case two {
+                leaf mandatory-data-2 {
+                    type string;
+                    mandatory true;
+                }
+                leaf other-data-2 {
+                    type string;
+                }
+            }
+        }
+    }
+}
+
