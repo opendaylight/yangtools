@@ -20,6 +20,8 @@ package org.opendaylight.yangtools.xsd.regex;
 import java.text.CharacterIterator;
 import java.util.Locale;
 import java.util.Stack;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * A regular expression matching engine using Non-deterministic Finite Automaton (NFA).
@@ -2392,6 +2394,46 @@ public class RegularExpression implements java.io.Serializable {
      */
     public int getNumberOfGroups() {
         return this.nofparen;
+    }
+
+    /**
+     * Convert this regular expression into an equivalent {@link Pattern}, if possible.
+     *
+     * @return A Pattern instance
+     * @throws PatternSyntaxException if this expression cannot be represented as a Pattern.
+     */
+    public Pattern toPattern() throws PatternSyntaxException {
+        final StringBuilder sb = new StringBuilder().append('^');
+        appendToken(sb, tokentree);
+        return Pattern.compile(sb.append('$').toString());
+    }
+
+    private static void appendToken(final StringBuilder sb, final Token tok) {
+        switch (tok.type) {
+            case Token.DOT:
+            case Token.CHAR:
+            case Token.ANCHOR:
+            case Token.RANGE:
+            case Token.NRANGE:
+            case Token.CONCAT:
+            case Token.UNION:
+            case Token.CLOSURE:
+            case Token.NONGREEDYCLOSURE:
+            case Token.EMPTY:
+            case Token.STRING:
+            case Token.BACKREFERENCE:
+            case Token.PAREN:
+            case Token.LOOKAHEAD:
+            case Token.NEGATIVELOOKAHEAD:
+            case Token.LOOKBEHIND:
+            case Token.NEGATIVELOOKBEHIND:
+            case Token.INDEPENDENT:
+            case Token.MODIFIERGROUP:
+            case Token.CONDITION:
+                throw new UnsupportedOperationException("Token " + tok.type + " not implemented yet");
+            default:
+                throw new IllegalStateException("Unknown token type: " + tok.type);
+        }
     }
 
     // ================================================================
