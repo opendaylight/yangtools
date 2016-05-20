@@ -1050,7 +1050,7 @@ public class RegularExpression implements java.io.Serializable {
     private int match(Context con, Op op, int offset, int dx, int opts) {
         final ExpressionTarget target = con.target;
         final Stack<Op> opStack = new Stack<>();
-        final Stack<Integer> dataStack = new Stack<>();
+        final IntStack dataStack = new IntStack();
         final boolean isSetIgnoreCase = isSet(opts, IGNORE_CASE);
         int retValue = -1;
         boolean returned = false;
