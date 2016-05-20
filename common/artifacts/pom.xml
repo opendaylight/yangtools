@@ -131,6 +131,11 @@
                 <artifactId>util</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>xsd-regex</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>

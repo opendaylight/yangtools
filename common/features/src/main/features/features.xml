@@ -16,6 +16,7 @@
         <bundle>mvn:org.opendaylight.yangtools/yang-data-api/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-data-impl/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-data-util/{{VERSION}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/xsd-regex/{{VERSION}}</bundle>
 
         <!-- GSON-based JSON codec. Can be split out -->
         <bundle>mvn:com.google.code.gson/gson/{{VERSION}}</bundle>
