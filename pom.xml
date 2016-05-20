@@ -36,6 +36,7 @@
         <module>yang</module>
         <module>websocket</module>
         <module>yang-validation-tool</module>
+        <module>third-party</module>
     </modules>
 
     <profiles>
@@ -75,8 +76,8 @@
                   </goals>
                   <phase>package</phase>
                   <configuration>
-                    <!-- ignore javadoc warnings caused by JDK8 -->
-                    <additionalparam>${javadoc.args}</additionalparam>
+                    <!-- Xerces-J has non-compliant javadocs -->
+                    <additionalparam>-Xdoclint:none</additionalparam>
                   </configuration>
               </execution>
               </executions>
