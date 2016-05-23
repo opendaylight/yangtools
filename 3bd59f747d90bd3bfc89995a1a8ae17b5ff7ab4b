@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_cff2936e",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/SourceIdentifier.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-05-23T15:25:29Z",
+      "side": 1,
+      "message": "Note: this change can have impact on other projects.",
+      "range": {
+        "startLine": 32,
+        "startChar": 7,
+        "endLine": 32,
+        "endChar": 15
+      },
+      "revId": "3bd59f747d90bd3bfc89995a1a8ae17b5ff7ab4b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
