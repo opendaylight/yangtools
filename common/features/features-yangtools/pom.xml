@@ -6,7 +6,7 @@
 
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
-        <artifactId>odlparent</artifactId>
+        <artifactId>karaf-features-parent</artifactId>
         <version>1.7.0-SNAPSHOT</version>
         <relativePath/>
     </parent>
@@ -39,19 +39,6 @@
             <type>xml</type>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.karaf.tooling</groupId>
-                <artifactId>karaf-maven-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <aggregateFeatures>true</aggregateFeatures>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
     <!--
         Maven Site Configuration
