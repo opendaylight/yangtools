@@ -21,6 +21,13 @@
     <dependencies>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>odl-yangtools-yang-parser</artifactId>
+            <version>${project.version}</version>
+            <classifier>features</classifier>
+            <type>xml</type>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-data-util</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -41,6 +48,7 @@
             <plugin>
                 <groupId>org.apache.karaf.tooling</groupId>
                 <artifactId>karaf-maven-plugin</artifactId>
+                <version>3.0.7-SNAPSHOT</version>
                 <extensions>true</extensions>
             </plugin>
         </plugins>

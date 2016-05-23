@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<features xmlns="http://karaf.apache.org/xmlns/features/v1.2.1" name="odl-yangtools-yang-parser">
-    <repository>mvn:org.opendaylight.yangtools/odl-yangtools-yang-parser/${project.version}/xml/features</repository>
-    <feature name="odl-yangtools-yang-data" version="${project.version}"
-             description="OpenDaylight :: Yangtools :: Data Binding">
-        <feature version="${project.version}">odl-yangtools-yang-parser</feature>
-    </feature>
-</features>
