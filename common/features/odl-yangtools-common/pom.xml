@@ -6,7 +6,7 @@
 
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
-        <artifactId>odlparent</artifactId>
+        <artifactId>karaf-feature-parent</artifactId>
         <version>1.7.0-SNAPSHOT</version>
         <relativePath/>
     </parent>
@@ -23,11 +23,23 @@
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>util</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>object-cache-guava</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
@@ -38,18 +50,14 @@
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-common</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.karaf.tooling</groupId>
-                <artifactId>karaf-maven-plugin</artifactId>
-                <extensions>true</extensions>
-            </plugin>
-        </plugins>
-    </build>
 
     <!--
         Maven Site Configuration
