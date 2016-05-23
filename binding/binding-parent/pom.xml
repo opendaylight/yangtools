@@ -126,6 +126,7 @@
                                     </goals>
                                     <configuration>
                                         <sources>
+                                            <source>src/main/yang</source>
                                             <source>${salGeneratorPath}</source>
                                         </sources>
                                     </configuration>
