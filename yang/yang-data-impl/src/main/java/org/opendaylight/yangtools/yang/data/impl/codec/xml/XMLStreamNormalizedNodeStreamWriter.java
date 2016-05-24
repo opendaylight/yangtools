@@ -34,6 +34,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 /**
@@ -44,9 +46,23 @@ import org.w3c.dom.Element;
  * where doesn't have a SchemaContext available and isn't meant for production use.
  */
 public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements NormalizedNodeStreamAttributeWriter {
+    private static final Logger LOG = LoggerFactory.getLogger(XMLStreamNormalizedNodeStreamWriter.class);
+    private static final String COM_SUN_TRANSFORMER = "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";
 
-    private static final TransformerFactory TRANSFORMER_FACTORY =
-            TransformerFactory.newInstance("com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl", null);
+    private static final TransformerFactory TRANSFORMER_FACTORY;
+    static {
+        TransformerFactory f = TransformerFactory.newInstance();
+        if (!f.getFeature(StAXResult.FEATURE)) {
+            LOG.warn("Platform-default TransformerFactory {} does not support StAXResult, attempting fallback to {}",
+                     f, COM_SUN_TRANSFORMER);
+            f = TransformerFactory.newInstance(COM_SUN_TRANSFORMER, null);
+            if (!f.getFeature(StAXResult.FEATURE)) {
+                throw new TransformerFactoryConfigurationError("No TransformerFactory supporting StAXResult found.");
+            }
+        }
+
+        TRANSFORMER_FACTORY = f;
+    }
 
     private final XMLStreamWriter writer;
     private final RandomPrefix randomPrefix;
