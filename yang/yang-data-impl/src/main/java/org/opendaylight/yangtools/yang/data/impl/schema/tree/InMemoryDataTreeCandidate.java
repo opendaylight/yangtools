@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import com.google.common.base.MoreObjects;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -48,5 +49,10 @@ final class InMemoryDataTreeCandidate extends AbstractDataTreeCandidate {
     @Override
     public DataTreeCandidateNode getRootNode() {
         return root;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).add("rootPath", getRootPath()).add("rootNode", getRootNode()).toString();
     }
 }
