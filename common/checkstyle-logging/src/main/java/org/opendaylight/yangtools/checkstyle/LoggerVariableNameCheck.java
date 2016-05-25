@@ -10,11 +10,11 @@ package org.opendaylight.yangtools.checkstyle;
 
 import static org.opendaylight.yangtools.checkstyle.CheckLoggingUtil.LOGGER_VAR_NAME;
 
-import com.puppycrawl.tools.checkstyle.api.Check;
+import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 
-public class LoggerVariableNameCheck extends Check {
+public class LoggerVariableNameCheck extends AbstractCheck {
 
     private static final String LOG_MESSAGE = "Logger name should be LOG.";
 
