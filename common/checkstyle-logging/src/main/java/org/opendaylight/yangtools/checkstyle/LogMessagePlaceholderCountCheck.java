@@ -8,11 +8,11 @@
 
 package org.opendaylight.yangtools.checkstyle;
 
-import com.puppycrawl.tools.checkstyle.api.Check;
+import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 
-public class LogMessagePlaceholderCountCheck extends Check {
+public class LogMessagePlaceholderCountCheck extends AbstractCheck {
 
     private static final String LOG_MESSAGE = "Log message placeholders count is incorrect.";
     private static final String PLACEHOLDER = "{}";

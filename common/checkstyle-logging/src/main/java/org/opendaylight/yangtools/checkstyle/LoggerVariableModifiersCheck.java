@@ -8,11 +8,11 @@
 
 package org.opendaylight.yangtools.checkstyle;
 
-import com.puppycrawl.tools.checkstyle.api.Check;
+import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 
-public class LoggerVariableModifiersCheck extends Check {
+public class LoggerVariableModifiersCheck extends AbstractCheck {
 
     private static final String LOG_MESSAGE = "Logger must be declared as private static final.";
 

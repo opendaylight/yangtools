@@ -8,11 +8,11 @@
 
 package org.opendaylight.yangtools.checkstyle;
 
-import com.puppycrawl.tools.checkstyle.api.Check;
+import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 
-public class LoggerFactoryClassParameterCheck extends Check {
+public class LoggerFactoryClassParameterCheck extends AbstractCheck {
 
     private static final String LOG_MESSAGE = "LoggerFactory.getLogger Class argument is incorrect.";
     private static final String METHOD_NAME = "LoggerFactory.getLogger";
