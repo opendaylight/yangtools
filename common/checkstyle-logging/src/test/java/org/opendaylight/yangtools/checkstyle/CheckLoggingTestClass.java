@@ -25,6 +25,9 @@ public class CheckLoggingTestClass {
             System.err.print(e.getMessage());
             logger.debug("foo {}", "bar", e);
             LOG.info("foo {} {}", e.getMessage(), e);
+            // Multi line
+            LOG.info("foo {} "
+                    + "bar {}");
         }
     }
 

@@ -33,4 +33,8 @@
         <module name="org.opendaylight.yangtools.checkstyle.LoggerDeclarationsCountCheck"/>
     </module>
 
+    <module name="TreeWalker">
+        <module name="org.opendaylight.yangtools.checkstyle.LogMessageExtractorCheck"/>
+    </module>
+
 </module>
