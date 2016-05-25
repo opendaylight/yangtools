@@ -27,10 +27,10 @@ final class XmlStringInstanceIdentifierCodec  extends AbstractModuleStringInstan
     private final XmlCodecFactory codecFactory;
     private final SchemaContext context;
 
-    XmlStringInstanceIdentifierCodec(final SchemaContext context, final XmlCodecFactory jsonCodecFactory) {
+    XmlStringInstanceIdentifierCodec(final SchemaContext context, final XmlCodecFactory xmlCodecFactory) {
         this.context = Preconditions.checkNotNull(context);
         this.dataContextTree = DataSchemaContextTree.from(context);
-        this.codecFactory = Preconditions.checkNotNull(jsonCodecFactory);
+        this.codecFactory = Preconditions.checkNotNull(xmlCodecFactory);
     }
 
     @Override

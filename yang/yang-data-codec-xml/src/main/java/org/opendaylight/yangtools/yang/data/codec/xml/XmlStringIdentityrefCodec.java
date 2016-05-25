@@ -51,7 +51,7 @@ final class XmlStringIdentityrefCodec extends AbstractModuleStringIdentityrefCod
      * @param value QName
      */
     @Override
-    public void serializeToWriter(XMLStreamWriter writer, QName value) throws XMLStreamException {
+    public void serializeToWriter(final XMLStreamWriter writer, final QName value) throws XMLStreamException {
         writer.writeCharacters(serialize(value));
     }
 }
