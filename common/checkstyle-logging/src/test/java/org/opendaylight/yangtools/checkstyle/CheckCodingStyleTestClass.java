@@ -17,7 +17,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Lists;
 
 public class CheckCodingStyleTestClass {
-        // NOTE:  This test class contains intentional checkstyle issues
+        // NOTE:  This test class contains intentional checkstyle issues, for CheckstyleTest
 	public CheckCodingStyleTestClass() {
 		Comparator<String> string = CASE_INSENSITIVE_ORDER; 
 		
