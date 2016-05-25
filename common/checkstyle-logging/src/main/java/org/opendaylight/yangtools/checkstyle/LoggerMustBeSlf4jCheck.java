@@ -26,22 +26,22 @@ public class LoggerMustBeSlf4jCheck extends Check {
     }
 
     @Override
-    public void visitToken(DetailAST aAST) {
-        if (aAST.getType() == TokenTypes.VARIABLE_DEF) {
-            if (CheckLoggingUtil.isAFieldVariable(aAST)) {
-                final String typeName = CheckLoggingUtil.getTypeName(aAST);
+    public void visitToken(DetailAST ast) {
+        if (ast.getType() == TokenTypes.VARIABLE_DEF) {
+            if (CheckLoggingUtil.isAFieldVariable(ast)) {
+                final String typeName = CheckLoggingUtil.getTypeName(ast);
                 if (typeName.contains("." + LOGGER_TYPE_NAME) && !typeName.equals(LOGGER_TYPE_FULL_NAME)) {
-                    log(aAST.getLineNo(), LOG_MESSAGE);
+                    log(ast.getLineNo(), LOG_MESSAGE);
                 }
             }
-        } else if (aAST.getType() == TokenTypes.IMPORT) {
-            final DetailAST typeToken = aAST.getFirstChild().findFirstToken(TokenTypes.IDENT);
+        } else if (ast.getType() == TokenTypes.IMPORT) {
+            final DetailAST typeToken = ast.getFirstChild().findFirstToken(TokenTypes.IDENT);
             if (typeToken != null) {
                 final String importType = typeToken.getText();
                 if (CheckLoggingUtil.LOGGER_TYPE_NAME.equals(importType)) {
-                    final String importIdent = aAST.getFirstChild().getFirstChild().getLastChild().getText();
+                    final String importIdent = ast.getFirstChild().getFirstChild().getLastChild().getText();
                     if (!importIdent.equals(SLF4J)) {
-                        log(aAST.getLineNo(), LOG_MESSAGE);
+                        log(ast.getLineNo(), LOG_MESSAGE);
                     }
                 }
             }

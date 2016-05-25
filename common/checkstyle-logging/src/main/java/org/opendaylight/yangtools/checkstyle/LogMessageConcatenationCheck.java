@@ -22,16 +22,16 @@ public class LogMessageConcatenationCheck extends Check {
     }
 
     @Override
-    public void visitToken(DetailAST aAST) {
-        final String methodName = CheckLoggingUtil.getMethodName(aAST);
-        if(CheckLoggingUtil.isLogMethod(methodName)) {
-            DetailAST plus = aAST.findFirstToken(TokenTypes.ELIST).getFirstChild().findFirstToken(TokenTypes.PLUS);
+    public void visitToken(DetailAST ast) {
+        final String methodName = CheckLoggingUtil.getMethodName(ast);
+        if (CheckLoggingUtil.isLogMethod(methodName)) {
+            DetailAST plus = ast.findFirstToken(TokenTypes.ELIST).getFirstChild().findFirstToken(TokenTypes.PLUS);
             if (plus != null) {
                 while (plus.getChildCount(TokenTypes.PLUS) != 0) {
                     plus = plus.findFirstToken(TokenTypes.PLUS);
                 }
                 if (plus.getChildCount(TokenTypes.STRING_LITERAL) != 2) {
-                    log(aAST.getLineNo(), LOG_MESSAGE);
+                    log(ast.getLineNo(), LOG_MESSAGE);
                 }
             }
         }

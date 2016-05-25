@@ -23,18 +23,18 @@ public class LoggerFactoryClassParameterCheck extends Check {
     }
 
     @Override
-    public void visitToken(DetailAST aAST) {
-        final String methodName = CheckLoggingUtil.getMethodName(aAST);
-        if(methodName.equals(METHOD_NAME)) {
-            final String className = CheckLoggingUtil.getClassName(aAST);
+    public void visitToken(DetailAST ast) {
+        final String methodName = CheckLoggingUtil.getMethodName(ast);
+        if (methodName.equals(METHOD_NAME)) {
+            final String className = CheckLoggingUtil.getClassName(ast);
             try {
-                final String token = aAST.findFirstToken(TokenTypes.ELIST).getFirstChild().getFirstChild()
+                final String token = ast.findFirstToken(TokenTypes.ELIST).getFirstChild().getFirstChild()
                     .getFirstChild().getText();
                 if (!token.equals(className)) {
-                    log(aAST.getLineNo(), LOG_MESSAGE);
+                    log(ast.getLineNo(), LOG_MESSAGE);
                 }
             } catch (NullPointerException e) {
-                log(aAST.getLineNo(), String.format("Invalid parameter in \"getLogger\" method call in class: %s",
+                log(ast.getLineNo(), String.format("Invalid parameter in \"getLogger\" method call in class: %s",
                     className));
             }
         }

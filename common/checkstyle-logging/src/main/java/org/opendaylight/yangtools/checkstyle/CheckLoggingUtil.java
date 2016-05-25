@@ -30,38 +30,38 @@ public final class CheckLoggingUtil {
         throw new UnsupportedOperationException("Utility class should not be instantiated!");
     }
 
-    public static String getTypeName(final DetailAST aAST) {
-        final FullIdent ident = CheckUtils.createFullType(aAST.findFirstToken(TokenTypes.TYPE));
+    public static String getTypeName(final DetailAST ast) {
+        final FullIdent ident = CheckUtils.createFullType(ast.findFirstToken(TokenTypes.TYPE));
         return ident.getText();
     }
 
-    public static boolean isLoggerType(final DetailAST aAST) {
-        final String typeName = getTypeName(aAST);
+    public static boolean isLoggerType(final DetailAST ast) {
+        final String typeName = getTypeName(ast);
         return typeName.equals(LOGGER_TYPE_FULL_NAME) || typeName.equals(LOGGER_TYPE_NAME);
     }
 
-    public static String getVariableName(final DetailAST aAST) {
-        DetailAST identifier = aAST.findFirstToken(TokenTypes.IDENT);
+    public static String getVariableName(final DetailAST ast) {
+        DetailAST identifier = ast.findFirstToken(TokenTypes.IDENT);
         return identifier.getText();
     }
 
-    public static boolean isAFieldVariable(final DetailAST aAST) {
-        return aAST.getParent().getType() == TokenTypes.OBJBLOCK;
+    public static boolean isAFieldVariable(final DetailAST ast) {
+        return ast.getParent().getType() == TokenTypes.OBJBLOCK;
     }
 
-    public static String getMethodName(final DetailAST aAST) {
-        if (aAST.getFirstChild().getLastChild() != null) {
-            return aAST.getFirstChild().getFirstChild().getText() + "." + aAST.getFirstChild().getLastChild().getText();
+    public static String getMethodName(final DetailAST ast) {
+        if (ast.getFirstChild().getLastChild() != null) {
+            return ast.getFirstChild().getFirstChild().getText() + "." + ast.getFirstChild().getLastChild().getText();
         }
-        return aAST.getFirstChild().getText();
+        return ast.getFirstChild().getText();
     }
 
     public static boolean isLogMethod(final String methodName) {
         return LOG_METHODS.contains(methodName);
     }
 
-    public static String getClassName(final DetailAST aAST) {
-        DetailAST parent = aAST.getParent();
+    public static String getClassName(final DetailAST ast) {
+        DetailAST parent = ast.getParent();
         while (parent.getType() != TokenTypes.CLASS_DEF && parent.getType() != TokenTypes.ENUM_DEF) {
             parent = parent.getParent();
         }

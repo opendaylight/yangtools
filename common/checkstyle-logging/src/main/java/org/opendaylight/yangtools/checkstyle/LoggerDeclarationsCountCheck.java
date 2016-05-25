@@ -25,19 +25,19 @@ public class LoggerDeclarationsCountCheck extends Check {
     }
 
     @Override
-    public void visitToken(DetailAST aAST) {
-        if (CheckLoggingUtil.isLoggerType(aAST) && isAFieldVariable(aAST)) {
-            final String className = CheckLoggingUtil.getClassName(aAST);
-            if(this.prevClassName.equals(className)) {
-                log(aAST.getLineNo(), LOG_MESSAGE);
+    public void visitToken(DetailAST ast) {
+        if (CheckLoggingUtil.isLoggerType(ast) && isAFieldVariable(ast)) {
+            final String className = CheckLoggingUtil.getClassName(ast);
+            if (this.prevClassName.equals(className)) {
+                log(ast.getLineNo(), LOG_MESSAGE);
             }
             this.prevClassName = className;
         }
     }
 
     @Override
-    public void finishTree(DetailAST aRootAST) {
-        super.finishTree(aRootAST);
+    public void finishTree(DetailAST rootAST) {
+        super.finishTree(rootAST);
         this.prevClassName = "";
     }
 
