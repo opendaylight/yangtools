@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.checkstyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// NOTE:  This test class contains intentional checkstyle issues, for CheckstyleTest
 public class CheckLoggingTestClass {
     final Logger logger = LoggerFactory.getLogger(CheckstyleTest.class);
     private static final java.util.logging.Logger LOG2 = java.util.logging.Logger.getGlobal();
