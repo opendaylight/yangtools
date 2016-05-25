@@ -60,24 +60,9 @@ public class CheckstyleTest {
                 "15: LoggerFactory.getLogger Class argument is incorrect",
                 "17: Logger might be declared only once",
                 "16: Logger must be slf4j",
-                "22: Line contains printStacktrace",
-                "23: Line contains console output",
-                "24: Line contains console output",
                 "26: Log message placeholders count is incorrect",
                 "32: Log message placeholders count is incorrect",
                 "41: Log message contains string concatenation");
-    }
-
-    @Test
-    public void testCodingChecks() throws Exception {
-        verify(CheckCodingStyleTestClass.class, false,
-                "9: Line has Windows line delimiter.",
-                "14: Wrong order for",
-                "24:1: Line contains a tab character.",
-                "22: Line has trailing spaces.",
-                "22: 'ctor def' child have incorrect indentation level 16, expected level should be 8.",
-                "17:8: Unused import",
-                "23: Line has trailing spaces.");
     }
 
     private void verify(final Class<?> testClass, final boolean checkCount, final String... expectedMessages) throws CheckstyleException {
