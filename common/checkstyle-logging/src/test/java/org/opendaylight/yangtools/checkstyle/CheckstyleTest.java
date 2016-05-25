@@ -11,7 +11,9 @@ package org.opendaylight.yangtools.checkstyle;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
+import com.google.common.io.Files;
 import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.ConfigurationLoader;
 import com.puppycrawl.tools.checkstyle.DefaultLogger;
@@ -21,6 +23,8 @@ import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import com.puppycrawl.tools.checkstyle.api.Configuration;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,6 +70,16 @@ public class CheckstyleTest {
                 "27: Log message placeholders count is incorrect",
                 "33: Log message placeholders count is incorrect",
                 "42: Log message contains string concatenation");
+    }
+
+    @Test
+    public void testLogMessageExtractorCheck() throws Exception {
+        File logMessageReport = LogMessageExtractorCheck.DEFAULT_REPORT_FILE;
+        logMessageReport.delete();
+        verify(CheckLoggingTestClass.class, false);
+        List<String> reportLines = Files.readLines(logMessageReport, Charsets.UTF_8);
+        assertEquals(10, reportLines.size());
+        assertEquals("src/test/java/org/opendaylight/yangtools/checkstyle/CheckLoggingTestClass.java:26:\"foo {} {}\"", reportLines.get(0));
     }
 
     @Test
