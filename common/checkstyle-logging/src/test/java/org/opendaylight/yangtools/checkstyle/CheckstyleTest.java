@@ -55,17 +55,17 @@ public class CheckstyleTest {
     @Test
     public void testLoggerChecks() throws Exception {
         verify(CheckLoggingTestClass.class, true,
-                "15: Logger must be declared as private static final",
-                "15: Logger name should be LOG",
-                "15: LoggerFactory.getLogger Class argument is incorrect",
-                "17: Logger might be declared only once",
-                "16: Logger must be slf4j",
-                "22: Line contains printStacktrace",
-                "23: Line contains console output",
+                "16: Logger must be declared as private static final",
+                "16: Logger name should be LOG",
+                "16: LoggerFactory.getLogger Class argument is incorrect",
+                "18: Logger might be declared only once",
+                "17: Logger must be slf4j",
+                "23: Line contains printStacktrace",
                 "24: Line contains console output",
-                "26: Log message placeholders count is incorrect",
-                "32: Log message placeholders count is incorrect",
-                "41: Log message contains string concatenation");
+                "25: Line contains console output",
+                "27: Log message placeholders count is incorrect",
+                "33: Log message placeholders count is incorrect",
+                "42: Log message contains string concatenation");
     }
 
     @Test
