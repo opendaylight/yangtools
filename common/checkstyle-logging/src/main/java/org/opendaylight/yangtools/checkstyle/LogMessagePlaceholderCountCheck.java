@@ -8,36 +8,25 @@
 
 package org.opendaylight.yangtools.checkstyle;
 
-import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 
-public class LogMessagePlaceholderCountCheck extends AbstractCheck {
+public class LogMessagePlaceholderCountCheck extends AbstractLogMessageCheck {
 
     private static final String LOG_MESSAGE = "Log message placeholders count is incorrect.";
     private static final String PLACEHOLDER = "{}";
     private static final String EXCEPTION_TYPE = "Exception";
 
     @Override
-    public int[] getDefaultTokens() {
-        return new int[]{TokenTypes.METHOD_CALL};
-    }
-
-    @Override
-    public void visitToken(DetailAST ast) {
-        final String methodName = CheckLoggingUtil.getMethodName(ast);
-        if (CheckLoggingUtil.isLogMethod(methodName)) {
-            final String logMessage = ast.findFirstToken(TokenTypes.ELIST).getFirstChild().getFirstChild().getText();
-            int placeholdersCount = placeholdersCount(logMessage);
-            int argumentsCount = ast.findFirstToken(TokenTypes.ELIST).getChildCount(TokenTypes.EXPR) - 1;
-            final String lastArg = ast.findFirstToken(TokenTypes.ELIST).getLastChild().getFirstChild().getText();
-            if (hasCatchBlockParentWithArgument(lastArg, ast) || hasMethodDefinitionWithExceptionArgument(lastArg,
-                    ast)) {
-                argumentsCount--;
-            }
-            if (placeholdersCount > argumentsCount) {
-                log(ast.getLineNo(), LOG_MESSAGE);
-            }
+    protected void visitLogMessage(DetailAST ast, String logMessage) {
+        int placeholdersCount = placeholdersCount(logMessage);
+        int argumentsCount = ast.findFirstToken(TokenTypes.ELIST).getChildCount(TokenTypes.EXPR) - 1;
+        final String lastArg = ast.findFirstToken(TokenTypes.ELIST).getLastChild().getFirstChild().getText();
+        if (hasCatchBlockParentWithArgument(lastArg, ast) || hasMethodDefinitionWithExceptionArgument(lastArg, ast)) {
+            argumentsCount--;
+        }
+        if (placeholdersCount > argumentsCount) {
+            log(ast.getLineNo(), LOG_MESSAGE);
         }
     }
 
