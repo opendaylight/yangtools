@@ -8,15 +8,13 @@
 
 package org.opendaylight.yangtools.checkstyle;
 
-import java.util.List;
-
-import org.slf4j.Logger;
-
 import com.google.common.collect.Lists;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.FullIdent;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 import com.puppycrawl.tools.checkstyle.utils.CheckUtils;
+import java.util.List;
+import org.slf4j.Logger;
 
 public final class CheckLoggingUtil {
 
@@ -49,6 +47,13 @@ public final class CheckLoggingUtil {
         return ast.getParent().getType() == TokenTypes.OBJBLOCK;
     }
 
+    /**
+     * Returns the name the method (and the enclosing class) at a given point specified by the
+     * passed-in abstract syntax tree (AST).
+     *
+     * @param ast an abstract syntax tree (AST) pointing to method call
+     * @return the name of the method being called
+     */
     public static String getMethodName(final DetailAST ast) {
         if (ast.getFirstChild().getLastChild() != null) {
             return ast.getFirstChild().getFirstChild().getText() + "." + ast.getFirstChild().getLastChild().getText();
@@ -60,6 +65,13 @@ public final class CheckLoggingUtil {
         return LOG_METHODS.contains(methodName);
     }
 
+    /**
+     * Returns the name of the closest enclosing class of the point by the passed-in abstract syntax
+     * tree (AST).
+     *
+     * @param ast an abstract syntax tree (AST)
+     * @return the name of the closest enclosign class
+     */
     public static String getClassName(final DetailAST ast) {
         DetailAST parent = ast.getParent();
         while (parent.getType() != TokenTypes.CLASS_DEF && parent.getType() != TokenTypes.ENUM_DEF) {
