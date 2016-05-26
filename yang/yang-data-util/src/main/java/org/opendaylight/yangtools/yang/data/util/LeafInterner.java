@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.util;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import javax.annotation.Nonnull;
@@ -35,38 +36,24 @@ import org.slf4j.LoggerFactory;
  * utility, such objects will end up reusing the same object, preventing this overhead.
  */
 @Beta
-public abstract class LeafInterner {
-    private static final class Noop extends LeafInterner {
-        @Override
-        public <T extends LeafNode<?>> T intern(final T sample) {
-            return sample;
-        }
+public final class LeafInterner {
+    private static final Logger LOG = LoggerFactory.getLogger(LeafInterner.class);
+    private static final Interner<Object> INTERNER = Interners.newWeakInterner();
+
+    private LeafInterner() {
+        throw new UnsupportedOperationException();
     }
 
-    private static final class Weak extends LeafInterner {
-        private static final Logger LOG = LoggerFactory.getLogger(Weak.class);
-        private static final Interner<Object> INTERNER = Interners.newWeakInterner();
-
-        @Override
-        public <T extends LeafNode<?>> T intern(final T sample) {
-            if (!((AttributesContainer) sample).getAttributes().isEmpty()) {
-                // Non-empty attributes, do not intern
-                return sample;
-            }
-
-            // All checks completed, intern the sample
+    private static <T extends LeafNode<?>> T intern(final T sample) {
+        if (((AttributesContainer) sample).getAttributes().isEmpty()) {
             @SuppressWarnings("unchecked")
             final T ret = (T) INTERNER.intern(sample);
             LOG.trace("Interned object {} to {}", sample, ret);
             return ret;
+        } else {
+            // Non-empty attributes, do not intern
+            return sample;
         }
-    }
-
-    private static final LeafInterner NOOP = new Noop();
-    private static final LeafInterner WEAK = new Weak();
-
-    LeafInterner() {
-
     }
 
     /**
@@ -76,17 +63,15 @@ public abstract class LeafInterner {
      * @param schema The leaf node's schema
      * @return An interner instance
      */
-    @Nonnull public static LeafInterner forSchema(@Nullable final LeafSchemaNode schema) {
+    @Nonnull public static <T extends LeafNode<?>> Interner<T> forSchema(@Nullable final LeafSchemaNode schema) {
         if (schema != null) {
             final TypeDefinition<?> type = schema.getType();
             if (type instanceof BooleanTypeDefinition || type instanceof EnumTypeDefinition ||
                     type instanceof IdentityrefTypeDefinition) {
-                return WEAK;
+                return LeafInterner::intern;
             }
         }
 
-        return NOOP;
+        return Preconditions::checkNotNull;
     }
-
-    public abstract <T extends LeafNode<?>> T intern(final T sample);
 }
