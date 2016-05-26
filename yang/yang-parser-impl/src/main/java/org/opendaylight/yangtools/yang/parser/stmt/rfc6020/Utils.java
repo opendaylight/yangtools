@@ -341,6 +341,19 @@ public final class Utils {
         return keyNodes;
     }
 
+    static Collection<SchemaNodeIdentifier.Relative> parseUniqueConstraintArgument(final StmtContext<?, ?, ?> ctx,
+            final String argumentValue) {
+        final Set<SchemaNodeIdentifier.Relative> uniqueConstraintNodes = new HashSet<>();
+        for (String uniqueArgToken : SPACE_SPLITTER.splitToList(argumentValue)) {
+            final SchemaNodeIdentifier nodeIdentifier = Utils.nodeIdentifierFromPath(ctx, uniqueArgToken);
+            SourceException.throwIf(nodeIdentifier.isAbsolute(), ctx.getStatementSourceReference(),
+                    "Unique statement argument '%s' contains schema node identifier '%s' "
+                            + "which is not in the descendant node identifier form.", argumentValue, uniqueArgToken);
+            uniqueConstraintNodes.add((SchemaNodeIdentifier.Relative) nodeIdentifier);
+        }
+        return ImmutableSet.copyOf(uniqueConstraintNodes);
+    }
+
     private static String trimSingleLastSlashFromXPath(final String path) {
         return path.endsWith("/") ? path.substring(0, path.length() - 1) : path;
     }

@@ -1,0 +1,20 @@
+module foo-invalid {
+    namespace "foo";
+    prefix foo;
+    yang-version 1;
+
+    revision 2016-05-26 {
+        description "test";
+    }
+
+    list simple-unique {
+        key "k";
+        leaf k {
+            type string;
+        }
+        unique "/simple-unique/l1";
+        leaf l1 {
+            type string;
+        }
+    }
+}
