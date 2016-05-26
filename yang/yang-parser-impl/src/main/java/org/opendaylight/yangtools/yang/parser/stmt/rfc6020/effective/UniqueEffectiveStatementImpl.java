@@ -9,13 +9,24 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import java.util.Collection;
+import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class UniqueEffectiveStatementImpl extends
-        DeclaredEffectiveStatementBase<Collection<SchemaNodeIdentifier.Relative>, UniqueStatement> {
-    public UniqueEffectiveStatementImpl(final StmtContext<Collection<SchemaNodeIdentifier.Relative>, UniqueStatement, ?> ctx) {
+        DeclaredEffectiveStatementBase<Collection<SchemaNodeIdentifier.Relative>, UniqueStatement> implements
+        UniqueConstraint {
+    public UniqueEffectiveStatementImpl(
+            final StmtContext<Collection<SchemaNodeIdentifier.Relative>, UniqueStatement, ?> ctx) {
         super(ctx);
+    }
+
+    @Nonnull
+    @Override
+    public Collection<Relative> getTag() {
+        return argument();
     }
 }
