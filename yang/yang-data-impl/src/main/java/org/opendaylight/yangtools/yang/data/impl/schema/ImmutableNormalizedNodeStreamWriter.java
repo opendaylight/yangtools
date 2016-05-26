@@ -149,7 +149,7 @@ public class ImmutableNormalizedNodeStreamWriter implements SchemaAwareNormalize
         checkDataNodeContainer();
 
         final LeafNode<Object> sample = ImmutableNodes.leafNode(name, value);
-        final LeafNode<Object> node;
+        final LeafNode<?> node;
         if (nextSchema instanceof LeafSchemaNode) {
             node = LeafInterner.forSchema((LeafSchemaNode)nextSchema).intern(sample);
         } else {
