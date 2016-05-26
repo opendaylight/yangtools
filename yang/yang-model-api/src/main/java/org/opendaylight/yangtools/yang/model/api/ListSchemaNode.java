@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import java.util.Collection;
 import java.util.List;
-
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -30,9 +31,14 @@ public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, D
      * YANG 'ordered-by' statement. It defines whether the order of entries
      * within a list are determined by the user or the system. If not present,
      * default is false.
-     * 
+     *
      * @return true if ordered-by argument is "user", false otherwise
      */
     boolean isUserOrdered();
 
+    /**
+     * @return Collection of unique constraints of the list
+     */
+    @Nonnull
+    Collection<UniqueConstraint> getUniqueConstraints();
 }
