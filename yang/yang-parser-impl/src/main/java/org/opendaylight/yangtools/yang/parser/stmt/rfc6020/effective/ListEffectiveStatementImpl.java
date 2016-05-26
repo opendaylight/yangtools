@@ -15,10 +15,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
@@ -32,6 +34,7 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
     private final List<QName> keyDefinition;
     private static final String ORDER_BY_USER_KEYWORD = "user";
     private final ListSchemaNode original;
+    private final List<UniqueConstraint> uniqueConstraints;
 
     public ListEffectiveStatementImpl(
             final StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
@@ -74,6 +77,8 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
         }
 
         this.keyDefinition = ImmutableList.copyOf(keyDefinitionInit);
+        this.uniqueConstraints = ImmutableList.copyOf(allSubstatementsOfType(
+                UniqueConstraint.class));
     }
 
     @Override
@@ -84,6 +89,12 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
     @Override
     public List<QName> getKeyDefinition() {
         return keyDefinition;
+    }
+
+    @Override
+    @Nonnull
+    public Collection<UniqueConstraint> getUniqueConstraints() {
+        return uniqueConstraints;
     }
 
     @Override

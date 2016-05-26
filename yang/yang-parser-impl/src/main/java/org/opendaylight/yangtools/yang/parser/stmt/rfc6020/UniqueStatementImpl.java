@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UniqueEffectiveStatementImpl;
 
 public class UniqueStatementImpl extends AbstractDeclaredStatement<Collection<SchemaNodeIdentifier.Relative>> implements UniqueStatement {
@@ -41,7 +42,11 @@ public class UniqueStatementImpl extends AbstractDeclaredStatement<Collection<Sc
 
         @Override
         public Collection<SchemaNodeIdentifier.Relative> parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
-            return Utils.transformKeysStringToKeyNodes(ctx, value);
+            final Collection<Relative> uniqueConstraints = Utils.parseUniqueConstraintArgument(ctx, value);
+            SourceException.throwIf(uniqueConstraints.isEmpty(), ctx.getStatementSourceReference(),
+                    "Invalid argument value '%s' of unique statement. The value must contains at least "
+                            + "one descendant schema node identifier.", value);
+            return uniqueConstraints;
         }
 
         @Override

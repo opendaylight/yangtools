@@ -1,0 +1,56 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+    yang-version 1;
+
+    revision 2016-05-26 {
+        description "test";
+    }
+
+    list without-unique {
+        key "k";
+        leaf k {
+            type string;
+        }
+    }
+
+    list simple-unique {
+        key "k";
+        leaf k {
+            type string;
+        }
+        unique "l1 c/l3";
+        leaf l1 {
+            type string;
+        }
+        leaf l2 {
+            type string;
+        }
+        container c {
+            leaf l3 {
+                type string;
+            }
+        }
+    }
+
+    list multiple-unique {
+        key "k";
+        leaf k {
+            type string;
+        }
+        unique "l1 c/l3";
+        unique "c/l3 l2";
+        unique "l1 l2";
+        leaf l1 {
+            type string;
+        }
+        leaf l2 {
+            type string;
+        }
+        container c {
+            leaf l3 {
+                type string;
+            }
+        }
+    }
+}
