@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_bf65bb1f",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MandatoryLeafEnforcer.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-27T20:41:33Z",
+      "side": 0,
+      "message": "The original idea was that the recursive search would stop at the presence container, e.g. when we have:\n\ncontainer foo {\n    presence whatever;\n\n    leaf foo {\n        mandatory true;\n    }\n\n    container bar {\n        presence whatever;\n\n        leaf bar {\n             mandatory true;\n        }\n    }\n}\n\nthe enforcer for container foo would only contain leaf foo and the enforcer for bar would only contain bar. Enforcement would then occur only for their respective visibility parts.\n\nThis code change seems to change that logic and instead collects the entire subtree (e.g. enforcer for \u0027foo\u0027 contains also leaf bar).\n\nAm I reading this right, or am I missing something?",
+      "range": {
+        "startLine": 78,
+        "startChar": 20,
+        "endLine": 80,
+        "endChar": 21
+      },
+      "revId": "8419fc9281352530b9f4573d5bfb99deb0df2db9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
