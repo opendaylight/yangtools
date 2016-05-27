@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa57193c_3f608b00",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MandatoryLeafEnforcer.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-27T20:57:11Z",
+      "side": 1,
+      "message": "This seems to confirm the other comment. Note we walk the data tree here without ever consulting SchemaAwareApply operation -- which is bound to have then enforcement information.\n\nDoes the bug being addressed occur only on subtree writes (e.g. when we do not have a ModifiedNode for the Enforcer which should trigger)?\n\nI suspect that instead of the Multimap, we really should have a collection of relative SchemaPaths for next anchor points (lists, presence containers and cases) which need to triggered on the data subtree.\n\nWe should then walk the data based and the SchemaAwareApplyOperation and run that Operation\u0027s enforcer, hence achieving recursion.\n\nWould that work?",
+      "range": {
+        "startLine": 77,
+        "startChar": 0,
+        "endLine": 88,
+        "endChar": 9
+      },
+      "revId": "d2d2693b9f747ac8b3b4f4113e58b09dfc5c89aa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
