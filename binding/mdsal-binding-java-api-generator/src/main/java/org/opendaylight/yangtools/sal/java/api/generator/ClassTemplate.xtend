@@ -479,10 +479,14 @@ class ClassTemplate extends BaseTemplate {
     def protected generateFields() '''
         «IF !properties.empty»
             «FOR f : properties»
-                private«IF f.readOnly» final«ENDIF» «f.returnType.importedName» «f.fieldName»;
+                private«IF isReadOnly(f)» final«ENDIF» «f.returnType.importedName» «f.fieldName»;
             «ENDFOR»
         «ENDIF»
     '''
+
+    protected def isReadOnly(GeneratedProperty field) {
+        return field.readOnly
+    }
 
     /**
      * Template method which generates the method <code>hashCode()</code>.
