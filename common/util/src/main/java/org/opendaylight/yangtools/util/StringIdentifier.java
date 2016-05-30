@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.concepts.Identifier;
  * Utility {@link Identifier} backed by a {@link String}.
  */
 @Beta
-public final class StringIdentifier implements Identifier, Comparable<StringIdentifier> {
+public abstract class StringIdentifier<T> implements Identifier, Comparable<StringIdentifier> {
     private static final long serialVersionUID = 1L;
     private final String string;
 
@@ -27,6 +27,8 @@ public final class StringIdentifier implements Identifier, Comparable<StringIden
     public String getString() {
         return string;
     }
+
+    public abstract T getType();
 
     @Override
     public int hashCode() {
