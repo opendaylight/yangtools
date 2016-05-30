@@ -36,7 +36,7 @@ public class EncodingInJavaDocTest extends BaseCompilationTest {
         assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
 
         final List<File> sourceFiles = getSourceFiles("/compilation/encoding-javadoc");
-        final SchemaContext context = RetestUtils.parseYangSources(sourceFiles);
+        final SchemaContext context = TestUtils.parseYangSources(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);
         final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
         generator.generateToFile(sourcesOutputDir);
