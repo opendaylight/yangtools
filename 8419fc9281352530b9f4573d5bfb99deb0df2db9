@@ -22,6 +22,30 @@
       "revId": "8419fc9281352530b9f4573d5bfb99deb0df2db9",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_3c05bdc2",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MandatoryLeafEnforcer.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-05-30T07:07:59Z",
+      "side": 0,
+      "message": "This solution works for the example above correctly. Multimap contains only respective visible mandatory child leafs for each presence container (i.e. for the example above multimap contains: \"container foo\" -\u003e \"leaf foo\", \"container bar\" -\u003e \"leaf bar\") and therefor existence of container foo enforces only existance of mandatory leaf foo and existence of container bar enforces only existance of mandatory leaf bar.",
+      "parentUuid": "fa57193c_bf65bb1f",
+      "range": {
+        "startLine": 78,
+        "startChar": 20,
+        "endLine": 80,
+        "endChar": 21
+      },
+      "revId": "8419fc9281352530b9f4573d5bfb99deb0df2db9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
