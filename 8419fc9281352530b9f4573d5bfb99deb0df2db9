@@ -46,6 +46,30 @@
       "revId": "8419fc9281352530b9f4573d5bfb99deb0df2db9",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_dc02c10a",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MandatoryLeafEnforcer.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-05-30T10:17:30Z",
+      "side": 0,
+      "message": "enforcePresenceContainerMandatoryNodes() looks up the immediate presence containers (outer loop) and then proceeds to look up nodes underneath each of those containers (inner loop). That contradicts your statement -- if we stored only identities of mandatory nodes, we would not need a multimap, a simple collection would suffice.",
+      "parentUuid": "da5c1566_3c05bdc2",
+      "range": {
+        "startLine": 78,
+        "startChar": 20,
+        "endLine": 80,
+        "endChar": 21
+      },
+      "revId": "8419fc9281352530b9f4573d5bfb99deb0df2db9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
