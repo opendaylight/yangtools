@@ -239,7 +239,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
 
     public static String toString(final Element xml) {
         try {
-            final Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            final Transformer transformer = TRANSFORMER_FACTORY.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
             final StreamResult result = new StreamResult(new StringWriter());
