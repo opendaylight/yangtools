@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import com.google.common.base.Preconditions;
 import java.net.URI;
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -26,16 +27,20 @@ final class XmlStringInstanceIdentifierCodec  extends AbstractModuleStringInstan
     private final DataSchemaContextTree dataContextTree;
     private final XmlCodecFactory codecFactory;
     private final SchemaContext context;
+    private final NamespaceContext namespaceContext;
 
-    XmlStringInstanceIdentifierCodec(final SchemaContext context, final XmlCodecFactory jsonCodecFactory) {
+    XmlStringInstanceIdentifierCodec(final SchemaContext context, final XmlCodecFactory xmlCodecFactory,
+                                     final NamespaceContext namespaceContext) {
         this.context = Preconditions.checkNotNull(context);
         this.dataContextTree = DataSchemaContextTree.from(context);
-        this.codecFactory = Preconditions.checkNotNull(jsonCodecFactory);
+        this.codecFactory = Preconditions.checkNotNull(xmlCodecFactory);
+        this.namespaceContext = Preconditions.checkNotNull(namespaceContext);
     }
 
     @Override
     protected Module moduleForPrefix(final String prefix) {
-        return context.findModuleByName(prefix, null);
+        final String prefixedNS = namespaceContext.getNamespaceURI(prefix);
+        return context.findModuleByNamespaceAndRevision(URI.create(prefixedNS), null);
     }
 
     @Override
@@ -53,7 +58,7 @@ final class XmlStringInstanceIdentifierCodec  extends AbstractModuleStringInstan
     protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final String value) {
         Preconditions.checkNotNull(schemaNode, "schemaNode cannot be null");
         Preconditions.checkArgument(schemaNode instanceof LeafSchemaNode, "schemaNode must be of type LeafSchemaNode");
-        final XmlCodec<?> objectXmlCodec = codecFactory.codecFor(schemaNode);
+        final XmlCodec<?> objectXmlCodec = codecFactory.codecFor(schemaNode, namespaceContext);
         return objectXmlCodec.deserialize(value);
     }
 

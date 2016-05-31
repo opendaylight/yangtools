@@ -8,11 +8,16 @@
 
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.Map.Entry;
+import javax.annotation.concurrent.ThreadSafe;
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -27,10 +32,11 @@ import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.model.util.type.DerivedTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Beta
+@ThreadSafe
 public final class XmlCodecFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmlCodecFactory.class);
@@ -53,28 +59,29 @@ public final class XmlCodecFactory {
         }
     };
 
-    private final LoadingCache<DataSchemaNode, XmlCodec<?>> codecs =
-            CacheBuilder.newBuilder().softValues().build(new CacheLoader<DataSchemaNode, XmlCodec<?>>() {
+    private final LoadingCache<Entry<DataSchemaNode, NamespaceContext>, XmlCodec<?>> codecs =
+            CacheBuilder.newBuilder().softValues().build(
+                    new CacheLoader<Entry<DataSchemaNode, NamespaceContext>, XmlCodec<?>>() {
                 @Override
-                public XmlCodec<?> load(final DataSchemaNode key) throws Exception {
+                public XmlCodec<?> load(final Entry<DataSchemaNode, NamespaceContext> schemaNodeAndNamespaceCtxPair)
+                        throws Exception {
+                    final DataSchemaNode schemaNode = schemaNodeAndNamespaceCtxPair.getKey();
                     final TypeDefinition<?> type;
-                    if (key instanceof LeafSchemaNode) {
-                        type = ((LeafSchemaNode) key).getType();
-                    } else if (key instanceof LeafListSchemaNode) {
-                        type = ((LeafListSchemaNode) key).getType();
+                    if (schemaNode instanceof LeafSchemaNode) {
+                        type = ((LeafSchemaNode) schemaNode).getType();
+                    } else if (schemaNode instanceof LeafListSchemaNode) {
+                        type = ((LeafListSchemaNode) schemaNode).getType();
                     } else {
-                        throw new IllegalArgumentException("Not supported node type " + key.getClass().getName());
+                        throw new IllegalArgumentException("Not supported node type " + schemaNode.getClass().getName());
                     }
-                    return createCodec(key,type);
+                    return createCodec(schemaNode,type, schemaNodeAndNamespaceCtxPair.getValue());
                 }
             });
 
     private final SchemaContext schemaContext;
-    private final XmlCodec<YangInstanceIdentifier> iidCodec;
 
     private XmlCodecFactory(final SchemaContext context) {
         this.schemaContext = Preconditions.checkNotNull(context);
-        iidCodec = new XmlStringInstanceIdentifierCodec(context, this);
     }
 
     /**
@@ -87,28 +94,31 @@ public final class XmlCodecFactory {
         return new XmlCodecFactory(context);
     }
 
-    private XmlCodec<?> createCodec(final DataSchemaNode key, final TypeDefinition<?> type) {
-        final TypeDefinition<?> normalizedType = DerivedTypes.derivedTypeBuilder(type, type.getPath()).build();
-        if (normalizedType instanceof LeafrefTypeDefinition) {
-            return createReferencedTypeCodec(key, (LeafrefTypeDefinition) normalizedType);
-        } else if (normalizedType instanceof IdentityrefTypeDefinition) {
+    private XmlCodec<?> createCodec(final DataSchemaNode key, final TypeDefinition<?> type,
+                                    final NamespaceContext namespaceContext) {
+        if (type instanceof LeafrefTypeDefinition) {
+            return createReferencedTypeCodec(key, (LeafrefTypeDefinition) type, namespaceContext);
+        } else if (type instanceof IdentityrefTypeDefinition) {
             final XmlCodec<?> xmlStringIdentityrefCodec =
-                    new XmlStringIdentityrefCodec(schemaContext, key.getQName().getModule());
+                    new XmlStringIdentityrefCodec(schemaContext, key.getQName().getModule(), namespaceContext);
             return xmlStringIdentityrefCodec;
         }
-        return createFromSimpleType(normalizedType);
+        return createFromSimpleType(type, namespaceContext);
     }
 
-    private XmlCodec<?> createReferencedTypeCodec(final DataSchemaNode schema, final LeafrefTypeDefinition type) {
+    private XmlCodec<?> createReferencedTypeCodec(final DataSchemaNode schema, final LeafrefTypeDefinition type,
+                                                  final NamespaceContext namespaceContext) {
         // FIXME: Verify if this does indeed support leafref of leafref
         final TypeDefinition<?> referencedType =
                 SchemaContextUtil.getBaseTypeForLeafRef(type, getSchemaContext(), schema);
         Verify.verifyNotNull(referencedType, "Unable to find base type for leafref node '%s'.", schema.getPath());
-        return createCodec(schema, referencedType);
+        return createCodec(schema, referencedType, namespaceContext);
     }
 
-    private XmlCodec<?> createFromSimpleType(final TypeDefinition<?> type) {
+    private XmlCodec<?> createFromSimpleType(final TypeDefinition<?> type, final NamespaceContext namespaceContext) {
         if (type instanceof InstanceIdentifierTypeDefinition) {
+            final XmlCodec<YangInstanceIdentifier> iidCodec = new XmlStringInstanceIdentifierCodec(schemaContext, this,
+                    namespaceContext);
             return iidCodec;
         }
         if (type instanceof EmptyTypeDefinition) {
@@ -127,7 +137,7 @@ public final class XmlCodecFactory {
         return schemaContext;
     }
 
-    XmlCodec<?> codecFor(final DataSchemaNode schema) {
-        return codecs.getUnchecked(schema);
+    XmlCodec<?> codecFor(final DataSchemaNode schema, final NamespaceContext namespaceContext) {
+        return codecs.getUnchecked(new SimpleImmutableEntry<>(schema, namespaceContext));
     }
 }
