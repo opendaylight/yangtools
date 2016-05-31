@@ -1,0 +1,4 @@
+<rpc-reply message-id="101"
+           xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+  <trpc:zip-code xmlns:trpc="org:opendaylight:rpc-reply:test:ns:yang">123014</trpc:zip-code>
+</rpc-reply>
