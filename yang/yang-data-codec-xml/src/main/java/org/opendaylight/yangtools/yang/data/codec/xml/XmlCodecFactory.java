@@ -13,6 +13,7 @@ import com.google.common.base.Verify;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -27,7 +28,6 @@ import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.model.util.type.DerivedTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,11 +70,13 @@ public final class XmlCodecFactory {
             });
 
     private final SchemaContext schemaContext;
+    private final NamespaceContext namespaceContext;
     private final XmlCodec<YangInstanceIdentifier> iidCodec;
 
-    private XmlCodecFactory(final SchemaContext context) {
+    private XmlCodecFactory(final SchemaContext context, final NamespaceContext namespaceContext) {
         this.schemaContext = Preconditions.checkNotNull(context);
-        iidCodec = new XmlStringInstanceIdentifierCodec(context, this);
+        this.namespaceContext = Preconditions.checkNotNull(namespaceContext);
+        iidCodec = new XmlStringInstanceIdentifierCodec(context, this, namespaceContext);
     }
 
     /**
@@ -83,20 +85,19 @@ public final class XmlCodecFactory {
      * @param context SchemaContext to which the factory should be bound
      * @return A codec factory instance.
      */
-    public static XmlCodecFactory create(final SchemaContext context) {
-        return new XmlCodecFactory(context);
+    public static XmlCodecFactory create(final SchemaContext context, final NamespaceContext namespaceContext) {
+        return new XmlCodecFactory(context, namespaceContext);
     }
 
     private XmlCodec<?> createCodec(final DataSchemaNode key, final TypeDefinition<?> type) {
-        final TypeDefinition<?> normalizedType = DerivedTypes.derivedTypeBuilder(type, type.getPath()).build();
-        if (normalizedType instanceof LeafrefTypeDefinition) {
-            return createReferencedTypeCodec(key, (LeafrefTypeDefinition) normalizedType);
-        } else if (normalizedType instanceof IdentityrefTypeDefinition) {
+        if (type instanceof LeafrefTypeDefinition) {
+            return createReferencedTypeCodec(key, (LeafrefTypeDefinition) type);
+        } else if (type instanceof IdentityrefTypeDefinition) {
             final XmlCodec<?> xmlStringIdentityrefCodec =
-                    new XmlStringIdentityrefCodec(schemaContext, key.getQName().getModule());
+                    new XmlStringIdentityrefCodec(schemaContext, key.getQName().getModule(), namespaceContext);
             return xmlStringIdentityrefCodec;
         }
-        return createFromSimpleType(normalizedType);
+        return createFromSimpleType(type);
     }
 
     private XmlCodec<?> createReferencedTypeCodec(final DataSchemaNode schema, final LeafrefTypeDefinition type) {

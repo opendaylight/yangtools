@@ -20,6 +20,6 @@ public class AnyXmlNodeDataWithSchema extends SimpleNodeDataWithSchema {
     @Override
     public void write(final SchemaAwareNormalizedNodeStreamWriter writer) throws IOException {
         writer.nextDataSchemaNode(getSchema());
-        writer.leafNode(provideNodeIdentifier(), getValue());
+        writer.anyxmlNode(provideNodeIdentifier(), getValue());
     }
 }

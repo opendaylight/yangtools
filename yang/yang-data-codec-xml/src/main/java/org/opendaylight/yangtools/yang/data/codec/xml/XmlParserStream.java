@@ -18,9 +18,10 @@ import java.net.URISyntaxException;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
-import javax.xml.parsers.DocumentBuilder;
+import javax.annotation.concurrent.NotThreadSafe;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -46,6 +47,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -54,19 +56,24 @@ import org.xml.sax.SAXException;
  * instances of the same element except for leaf-list and list entries. It also expects that the YANG-modeled data in
  * the XML source are wrapped in a root element.
  */
+@NotThreadSafe
 public final class XmlParserStream implements Closeable, Flushable {
+    private static final DocumentBuilderFactory FACTORY = DocumentBuilderFactory.newInstance();
 
-    private String rootElement = null;
+    static {
+        FACTORY.setNamespaceAware(true);
+    }
+
     private final SchemaAwareNormalizedNodeStreamWriter writer;
-    private final XmlCodecFactory codecs;
     private final SchemaContext schema;
     private final DataSchemaNode parentNode;
+
+    private String rootElement = null;
 
     private XmlParserStream(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
                              final DataSchemaNode parentNode) {
         this.schema = Preconditions.checkNotNull(schemaContext);
         this.writer = DataSchemaNodeAwareAdaptor.forWriter(writer);
-        this.codecs = XmlCodecFactory.create(schemaContext);
         this.parentNode = parentNode;
     }
 
@@ -108,143 +115,146 @@ public final class XmlParserStream implements Closeable, Flushable {
             final CompositeNodeDataWithSchema compositeNodeDataWithSchema = new CompositeNodeDataWithSchema(parentNode);
             reader.nextTag();
             rootElement = reader.getLocalName();
-            read(reader, compositeNodeDataWithSchema);
+            final XmlCodecFactory codecs = XmlCodecFactory.create(schema, reader.getNamespaceContext());
+            read(reader, compositeNodeDataWithSchema, codecs);
             compositeNodeDataWithSchema.write(writer);
         }
 
         return this;
     }
 
-    private String readAnyXmlValue(XMLStreamReader in) throws XMLStreamException {
-        String result = "";
-        String anyXmlElementName = in.getLocalName();
+    private static String readAnyXmlValue(final XMLStreamReader in) throws XMLStreamException {
+        final StringBuilder sb = new StringBuilder();
+        final String anyXmlElementName = in.getLocalName();
+        final String anyXmlElementNamespace = in.getNamespaceURI();
+        sb.append("<").append(anyXmlElementName).append(" xmlns=\"").append(anyXmlElementNamespace).append("\">");
 
         while (in.hasNext()) {
-            int eventType = in.next();
+            final int eventType = in.next();
 
             if (eventType == XMLStreamConstants.START_ELEMENT) {
-                result += "<" + in.getLocalName() + ">";
+                sb.append("<").append(in.getLocalName()).append(">");
             } else if (eventType == XMLStreamConstants.END_ELEMENT) {
+                sb.append("</").append(in.getLocalName()).append(">");
+
                 if (in.getLocalName().equals(anyXmlElementName)) {
                     break;
                 }
 
-                result += "</" + in.getLocalName() + ">";
             } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                result += in.getText();
+                sb.append(in.getText());
             }
         }
 
-        return result;
+        return sb.toString();
     }
 
-    private void read(final XMLStreamReader in, AbstractNodeDataWithSchema parent) throws XMLStreamException,
-            URISyntaxException, ParserConfigurationException, SAXException, IOException {
-        if (in.hasNext()) {
-            if (parent instanceof LeafNodeDataWithSchema || parent instanceof LeafListEntryNodeDataWithSchema) {
-                setValue(parent, in.getElementText().trim());
-                in.nextTag();
-                return;
-            } else if (parent instanceof LeafListNodeDataWithSchema || parent instanceof ListNodeDataWithSchema) {
-                String parentSchemaName = parent.getSchema().getQName().getLocalName();
-                String xmlElementName = in.getLocalName();
-                while (xmlElementName.equals(parentSchemaName)) {
-                    AbstractNodeDataWithSchema newChild = newEntryNode(parent);
-                    read(in, newChild);
-                    xmlElementName = in.getLocalName();
-                }
+    private void read(final XMLStreamReader in, final AbstractNodeDataWithSchema parent, final XmlCodecFactory codecs)
+            throws XMLStreamException, URISyntaxException, ParserConfigurationException, SAXException, IOException {
+        if (!in.hasNext()) {
+            return;
+        }
 
-                return;
-            } else if (parent instanceof AnyXmlNodeDataWithSchema) {
-                setValue(parent, readAnyXmlValue(in));
-                in.nextTag();
-                return;
+        if (parent instanceof LeafNodeDataWithSchema || parent instanceof LeafListEntryNodeDataWithSchema) {
+            setValue(parent, in.getElementText().trim(), codecs);
+            in.nextTag();
+            return;
+        }
+
+        if (parent instanceof LeafListNodeDataWithSchema || parent instanceof ListNodeDataWithSchema) {
+            final String parentSchemaName = parent.getSchema().getQName().getLocalName();
+            String xmlElementName = in.getLocalName();
+            while (xmlElementName.equals(parentSchemaName)) {
+                read(in, newEntryNode(parent), codecs);
+                xmlElementName = in.getLocalName();
             }
 
-            switch (in.nextTag()) {
-                case XMLStreamConstants.START_ELEMENT:
-                    final Set<String> namesakes = new HashSet<>();
-                    while (in.hasNext()) {
-                        String xmlElementName = in.getLocalName();
-                        String xmlElementNamespace = in.getNamespaceURI();
+            return;
+        }
 
-                        if (xmlElementName.equals(rootElement)) {
-                            break;
-                        }
+        if (parent instanceof AnyXmlNodeDataWithSchema) {
+            setValue(parent, readAnyXmlValue(in), codecs);
+            in.nextTag();
+            return;
+        }
 
-                        DataSchemaNode parentSchema = parent.getSchema();
-                        if (parentSchema instanceof YangModeledAnyXmlSchemaNode) {
-                            parentSchema = ((YangModeledAnyXmlSchemaNode) parentSchema).getSchemaOfAnyXmlData();
-                        }
-
-                        String parentSchemaName = parentSchema.getQName().getLocalName();
-                        if (parentSchemaName.equals(xmlElementName)
-                                && in.getEventType() == XMLStreamConstants.END_ELEMENT) {
-                            in.nextTag();
-                            break;
-                        }
-
-                        if (namesakes.contains(xmlElementName)) {
-                            int lineNumber = in.getLocation().getLineNumber();
-                            int columnNumber = in.getLocation().getColumnNumber();
-                            throw new IllegalStateException("Duplicate element \"" + xmlElementName + "\" in XML " +
-                                    "input at: line " + lineNumber + " column " + columnNumber);
-                        }
-                        namesakes.add(xmlElementName);
-
-                        Deque<DataSchemaNode> childDataSchemaNodes = ParserStreamUtils.findSchemaNodeByNameAndNamespace(
-                                parentSchema, xmlElementName, new URI(xmlElementNamespace));
-
-                        if (childDataSchemaNodes.isEmpty()) {
-                            throw new IllegalStateException("Schema for node with name " + xmlElementName +
-                                    " and namespace " + xmlElementNamespace + " doesn't exist.");
-                        }
-
-                        AbstractNodeDataWithSchema newChild =
-                                ((CompositeNodeDataWithSchema) parent).addChild(childDataSchemaNodes);
-
-                        read(in, newChild);
+        switch (in.nextTag()) {
+            case XMLStreamConstants.START_ELEMENT:
+                final Set<String> namesakes = new HashSet<>();
+                while (in.hasNext()) {
+                    final String xmlElementName = in.getLocalName();
+                    if (xmlElementName.equals(rootElement)) {
+                        break;
                     }
-                    break;
-                case XMLStreamConstants.END_ELEMENT:
-                    in.nextTag();
-                    break;
-            }
+
+                    DataSchemaNode parentSchema = parent.getSchema();
+
+                    final String parentSchemaName = parentSchema.getQName().getLocalName();
+                    if (parentSchemaName.equals(xmlElementName) && in.getEventType() == XMLStreamConstants.END_ELEMENT) {
+                        in.nextTag();
+                        break;
+                    }
+
+                    if (parentSchema instanceof YangModeledAnyXmlSchemaNode) {
+                        parentSchema = ((YangModeledAnyXmlSchemaNode) parentSchema).getSchemaOfAnyXmlData();
+                    }
+
+                    if (!namesakes.add(xmlElementName)) {
+                        final Location loc = in.getLocation();
+                        throw new IllegalStateException(String.format(
+                                "Duplicate element \"%s\" in XML input at: line %s column %s", xmlElementName,
+                                loc.getLineNumber(), loc.getColumnNumber()));
+                    }
+
+                    final String xmlElementNamespace = in.getNamespaceURI();
+                    final Deque<DataSchemaNode> childDataSchemaNodes =
+                            ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, xmlElementName,
+                                    new URI(xmlElementNamespace));
+
+                    Preconditions.checkState(!childDataSchemaNodes.isEmpty(),
+                            "Schema for node with name %s and namespace %s doesn't exist.",
+                            xmlElementName, xmlElementNamespace);
+
+                    read(in, ((CompositeNodeDataWithSchema) parent).addChild(childDataSchemaNodes), codecs);
+                }
+                break;
+            case XMLStreamConstants.END_ELEMENT:
+                in.nextTag();
+                break;
         }
     }
 
-    private void setValue(final AbstractNodeDataWithSchema parent, final String value) throws
-            ParserConfigurationException, SAXException, IOException {
+    private void setValue(final AbstractNodeDataWithSchema parent, final String value, final XmlCodecFactory codecs)
+            throws ParserConfigurationException, SAXException, IOException {
         Preconditions.checkArgument(parent instanceof SimpleNodeDataWithSchema, "Node %s is not a simple type",
                 parent.getSchema().getQName());
         final SimpleNodeDataWithSchema parentSimpleNode = (SimpleNodeDataWithSchema) parent;
         Preconditions.checkArgument(parentSimpleNode.getValue() == null, "Node '%s' has already set its value to '%s'",
                 parentSimpleNode.getSchema().getQName(), parentSimpleNode.getValue());
 
-        final Object translatedValue = translateValueByType(value, parentSimpleNode.getSchema());
-        parentSimpleNode.setValue(translatedValue);
+        parentSimpleNode.setValue(translateValueByType(value, parentSimpleNode.getSchema(), codecs));
     }
 
-    private Object translateValueByType(final String value, final DataSchemaNode node) throws IOException,
-            SAXException, ParserConfigurationException {
+    private Object translateValueByType(final String value, final DataSchemaNode node, final XmlCodecFactory codecs)
+            throws IOException, SAXException, ParserConfigurationException {
         if (node instanceof AnyXmlSchemaNode) {
             /*
              *  FIXME: Figure out some YANG extension dispatch, which will
              *  reuse JSON parsing or XML parsing - anyxml is not well-defined in
              * JSON.
              */
-            DocumentBuilder db = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-            Document doc = db.parse( new InputSource(new StringReader(value)));
+            final Document doc = FACTORY.newDocumentBuilder().parse(new InputSource(new StringReader(value)));
             doc.normalize();
-            DOMSource anyXmlValueSource = new DOMSource(doc);
+            final Element element = doc.getDocumentElement();
 
-            return anyXmlValueSource;
+            return new DOMSource(element);
+        } else {
+            return codecs.codecFor(node).deserialize(value);
         }
-        return codecs.codecFor(node).deserialize(value);
     }
 
-    private AbstractNodeDataWithSchema newEntryNode(final AbstractNodeDataWithSchema parent) {
-        AbstractNodeDataWithSchema newChild;
+    private static AbstractNodeDataWithSchema newEntryNode(final AbstractNodeDataWithSchema parent) {
+        final AbstractNodeDataWithSchema newChild;
         if (parent instanceof ListNodeDataWithSchema) {
             newChild = new ListEntryNodeDataWithSchema(parent.getSchema());
         } else {
