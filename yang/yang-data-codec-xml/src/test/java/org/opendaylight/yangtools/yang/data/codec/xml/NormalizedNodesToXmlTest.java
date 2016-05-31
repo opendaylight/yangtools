@@ -1,0 +1,295 @@
+/*
+ * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+
+package org.opendaylight.yangtools.yang.data.codec.xml;
+
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Sets;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Map;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.DifferenceListener;
+import org.custommonkey.xmlunit.IgnoreTextAndAttributeValuesDifferenceListener;
+import org.custommonkey.xmlunit.XMLTestCase;
+import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.Before;
+import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
+import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
+import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
+
+public class NormalizedNodesToXmlTest {
+
+    private QNameModule bazModule;
+
+    private QName outerContainer;
+
+    private QName myContainer1;
+    private QName myKeyedList;
+    private QName myKeyLeaf;
+    private QName myLeafInList1;
+    private QName myLeafInList2;
+    private QName myLeaf1;
+    private QName myLeafList;
+
+    private QName myContainer2;
+    private QName innerContainer;
+    private QName myLeaf2;
+    private QName myLeaf3;
+    private QName myChoice;
+    private QName myLeafInCase2;
+
+    private QName myContainer3;
+    private QName myDoublyKeyedList;
+    private QName myFirstKeyLeaf;
+    private QName mySecondKeyLeaf;
+    private QName myLeafInList3;
+
+    @Before
+    public void setup() throws URISyntaxException, ParseException {
+        bazModule = QNameModule.create(new URI("baz-namespace"), SimpleDateFormatUtil.getRevisionFormat()
+                .parse("1970-01-01"));
+
+        outerContainer = QName.create(bazModule, "outer-container");
+
+        myContainer1 = QName.create(bazModule, "my-container-1");
+        myKeyedList = QName.create(bazModule, "my-keyed-list");
+        myKeyLeaf = QName.create(bazModule, "my-key-leaf");
+        myLeafInList1 = QName.create(bazModule, "my-leaf-in-list-1");
+        myLeafInList2 = QName.create(bazModule, "my-leaf-in-list-2");
+        myLeaf1 = QName.create(bazModule, "my-leaf-1");
+        myLeafList = QName.create(bazModule, "my-leaf-list");
+
+        myContainer2 = QName.create(bazModule, "my-container-2");
+        innerContainer = QName.create(bazModule, "inner-container");
+        myLeaf2 = QName.create(bazModule, "my-leaf-2");
+        myLeaf3 = QName.create(bazModule, "my-leaf-3");
+        myChoice = QName.create(bazModule, "my-choice");
+        myLeafInCase2 = QName.create(bazModule, "my-leaf-in-case-2");
+
+        myContainer3 = QName.create(bazModule, "my-container-3");
+        myDoublyKeyedList = QName.create(bazModule, "my-doubly-keyed-list");
+        myFirstKeyLeaf = QName.create(bazModule, "my-first-key-leaf");
+        mySecondKeyLeaf = QName.create(bazModule, "my-second-key-leaf");
+        myLeafInList3 = QName.create(bazModule, "my-leaf-in-list-3");
+    }
+
+    @Test
+    public void testNormalizedNodeToXmlSerialization() throws ReactorException, XMLStreamException, IOException,
+            SAXException {
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        reactor.addSource(new YangStatementSourceImpl("/baz.yang", false));
+
+        final SchemaContext schemaContext = reactor.buildEffective();
+
+        final Document doc = loadDocument("/baz.xml");
+
+        final Document document = getDocument();
+        final DOMResult domResult = new DOMResult(document);
+
+        final XMLOutputFactory factory = XMLOutputFactory.newInstance();
+        factory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
+
+        final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(domResult);
+
+        final NormalizedNodeStreamWriter xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create
+                (xmlStreamWriter, schemaContext);
+
+        final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter
+                (xmlNormalizedNodeStreamWriter);
+
+        normalizedNodeWriter.write(buildOuterContainerNode());
+
+        XMLUnit.setIgnoreWhitespace(true);
+        XMLUnit.setNormalize(true);
+
+        final String expectedXml = toString(doc.getDocumentElement().getElementsByTagName("outer-container").item(0));
+        final String serializedXml = toString(domResult.getNode());
+        final Diff diff = new Diff(expectedXml, serializedXml);
+
+        final DifferenceListener differenceListener = new IgnoreTextAndAttributeValuesDifferenceListener();
+        diff.overrideDifferenceListener(differenceListener);
+
+        new XMLTestCase() {}.assertXMLEqual(diff, true);
+    }
+
+    private NormalizedNode<?, ?> buildOuterContainerNode() {
+        // my-container-1
+        MapNode myKeyedListNode = Builders.mapBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(myKeyedList))
+                .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
+                        new YangInstanceIdentifier.NodeIdentifierWithPredicates(myKeyedList, myKeyLeaf, "listkeyvalue1"))
+                        .withChild(Builders.leafBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(myLeafInList1))
+                                .withValue("listleafvalue1").build())
+                        .withChild(Builders.leafBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(myLeafInList2))
+                                .withValue("listleafvalue2").build()).build())
+                .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
+                        new YangInstanceIdentifier.NodeIdentifierWithPredicates(myKeyedList, myKeyLeaf, "listkeyvalue2"))
+                        .withChild(Builders.leafBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(myLeafInList1))
+                                .withValue("listleafvalue12").build())
+                        .withChild(Builders.leafBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(myLeafInList2))
+                                .withValue("listleafvalue22").build()).build()).build();
+
+        LeafNode<?> myLeaf1Node = Builders.leafBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(myLeaf1))
+                .withValue("value1").build();
+
+        LeafSetNode<?> myLeafListNode = Builders.leafSetBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(myLeafList))
+                .withChild(Builders.leafSetEntryBuilder().withNodeIdentifier(
+                        new YangInstanceIdentifier.NodeWithValue<>(myLeafList, "lflvalue1")).withValue("lflvalue1").build())
+                .withChild(Builders.leafSetEntryBuilder().withNodeIdentifier(
+                        new YangInstanceIdentifier.NodeWithValue<>(myLeafList, "lflvalue2")).withValue("lflvalue2").build()).build();
+
+        ContainerNode myContainer1Node = Builders.containerBuilder().withNodeIdentifier(
+                new YangInstanceIdentifier.NodeIdentifier(myContainer1))
+                .withChild(myKeyedListNode)
+                .withChild(myLeaf1Node)
+                .withChild(myLeafListNode).build();
+
+        // my-container-2
+        ContainerNode innerContainerNode = Builders.containerBuilder().withNodeIdentifier(
+                new YangInstanceIdentifier.NodeIdentifier(innerContainer))
+                .withChild(Builders.leafBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(myLeaf2))
+                        .withValue("value2").build()).build();
+
+        LeafNode<?> myLeaf3Node = Builders.leafBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(myLeaf3))
+                .withValue("value3").build();
+
+        ChoiceNode myChoiceNode = Builders.choiceBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(myChoice))
+                .withChild(Builders.leafBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(myLeafInCase2))
+                        .withValue("case2value").build()).build();
+
+        ContainerNode myContainer2Node = Builders.containerBuilder().withNodeIdentifier(
+                new YangInstanceIdentifier.NodeIdentifier(myContainer2))
+                .withChild(innerContainerNode)
+                .withChild(myLeaf3Node)
+                .withChild(myChoiceNode).build();
+
+        // my-container-3
+        Map<QName, Object> keys = new HashMap<>();
+        keys.put(myFirstKeyLeaf, "listkeyvalue1");
+        keys.put(mySecondKeyLeaf, "listkeyvalue2");
+
+        MapNode myDoublyKeyedListNode = Builders.mapBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(myDoublyKeyedList))
+                .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
+                        new YangInstanceIdentifier.NodeIdentifierWithPredicates(myDoublyKeyedList, keys))
+                        .withChild(Builders.leafBuilder().withNodeIdentifier(
+                                new YangInstanceIdentifier.NodeIdentifier(myLeafInList3)).withValue("listleafvalue1").build()).build())
+                .build();
+
+        AugmentationNode myDoublyKeyedListAugNode = Builders.augmentationBuilder().withNodeIdentifier(
+                new YangInstanceIdentifier.AugmentationIdentifier(Sets.newHashSet(myDoublyKeyedList)))
+                .withChild(myDoublyKeyedListNode).build();
+
+        ContainerNode myContainer3Node = Builders.containerBuilder().withNodeIdentifier(
+                new YangInstanceIdentifier.NodeIdentifier(myContainer3))
+                .withChild(myDoublyKeyedListAugNode).build();
+
+        AugmentationNode myContainer3AugNode = Builders.augmentationBuilder().withNodeIdentifier(
+                new YangInstanceIdentifier.AugmentationIdentifier(Sets.newHashSet(myContainer3)))
+                .withChild(myContainer3Node).build();
+
+        ContainerNode outerContainerNode = Builders.containerBuilder().withNodeIdentifier(
+                new YangInstanceIdentifier.NodeIdentifier(outerContainer))
+                .withChild(myContainer1Node)
+                .withChild(myContainer2Node)
+                .withChild(myContainer3AugNode).build();
+
+        return outerContainerNode;
+    }
+
+    private static Document loadDocument(final String xmlPath) throws IOException, SAXException {
+        final InputStream resourceAsStream = NormalizedNodesToXmlTest.class.getResourceAsStream(xmlPath);
+        final Document currentConfigElement = readXmlToDocument(resourceAsStream);
+        Preconditions.checkNotNull(currentConfigElement);
+        return currentConfigElement;
+    }
+
+    private static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {
+        final DocumentBuilder dBuilder;
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            factory.setNamespaceAware(true);
+            factory.setCoalescing(true);
+            factory.setIgnoringElementContentWhitespace(true);
+            factory.setIgnoringComments(true);
+            dBuilder = factory.newDocumentBuilder();
+        } catch (final ParserConfigurationException e) {
+            throw new RuntimeException("Failed to parse XML document", e);
+        }
+        final Document doc = dBuilder.parse(xmlContent);
+
+        doc.getDocumentElement().normalize();
+        return doc;
+    }
+
+    private static String toString(final Node xml) {
+        try {
+            final Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+
+            final StreamResult result = new StreamResult(new StringWriter());
+            final DOMSource source = new DOMSource(xml);
+            transformer.transform(source, result);
+
+            return result.getWriter().toString();
+        } catch (IllegalArgumentException | TransformerFactoryConfigurationError | TransformerException e) {
+            throw new RuntimeException("Unable to serialize xml element " + xml, e);
+        }
+    }
+
+    private static Document getDocument() {
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        Document doc = null;
+        try {
+            DocumentBuilder bob = dbf.newDocumentBuilder();
+            doc = bob.newDocument();
+        } catch (ParserConfigurationException e) {
+            throw new RuntimeException(e);
+        }
+        return doc;
+    }
+}

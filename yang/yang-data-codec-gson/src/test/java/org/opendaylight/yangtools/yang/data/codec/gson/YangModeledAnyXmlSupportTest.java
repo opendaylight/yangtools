@@ -8,9 +8,11 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadModules;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
-import com.google.common.base.Preconditions;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
@@ -22,11 +24,10 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URISyntaxException;
-import java.util.Collections;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -35,43 +36,40 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
+import org.opendaylight.yangtools.yang.data.codec.xml.XmlParserStream;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser.DomToNormalizedNodeParserFactory;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 public class YangModeledAnyXmlSupportTest {
 
-    private static final XMLOutputFactory XML_FACTORY;
-    private static final DocumentBuilderFactory BUILDERFACTORY;
-
-    static {
-        XML_FACTORY = XMLOutputFactory.newFactory();
-        XML_FACTORY.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, false);
-
-        BUILDERFACTORY = DocumentBuilderFactory.newInstance();
-        BUILDERFACTORY.setNamespaceAware(true);
-        BUILDERFACTORY.setCoalescing(true);
-        BUILDERFACTORY.setIgnoringElementContentWhitespace(true);
-        BUILDERFACTORY.setIgnoringComments(true);
-    }
-
     private static SchemaContext schemaContext;
-    private static Document xmlDoc;
     private static ContainerNode data;
 
     @BeforeClass
-    public static void init() throws IOException, URISyntaxException, ReactorException, SAXException {
+    public static void init() throws IOException, URISyntaxException, ReactorException, SAXException,
+            XMLStreamException, ParserConfigurationException {
         schemaContext = loadModules("/yang-modeled-anyxml/yang");
-        xmlDoc = loadDocument("/yang-modeled-anyxml/xml/baz.xml");
-        data = DomToNormalizedNodeParserFactory
-                .getInstance(DomUtils.defaultValueCodecProvider(), schemaContext).getContainerNodeParser()
-                .parse(Collections.singletonList(xmlDoc.getDocumentElement()), schemaContext);
+
+        final InputStream resourceAsStream = YangModeledAnyXmlSupportTest.class.getResourceAsStream(
+                "/yang-modeled-anyxml/xml/baz.xml");
+
+        final XMLInputFactory factory = XMLInputFactory.newInstance();
+        final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
+
+        final NormalizedNodeResult result = new NormalizedNodeResult();
+
+        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        xmlParser.parse(reader);
+
+        assertNotNull(result.getResult());
+        assertTrue(result.getResult() instanceof ContainerNode);
+        data = (ContainerNode) result.getResult();
     }
 
     @Test
@@ -83,12 +81,12 @@ public class YangModeledAnyXmlSupportTest {
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
 
-        assertEquals(data.getValue().iterator().next(), transformedInput);
+        assertEquals(data, transformedInput);
     }
 
     @Test
     public void normalizedNodesToJsonTest() throws IOException, URISyntaxException, SAXException {
-        final DataContainerChild<? extends PathArgument, ?> baz = data.getValue().iterator().next();
+        final DataContainerChild<? extends PathArgument, ?> baz = data;
 
         final Writer writer = new StringWriter();
         final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, baz);
@@ -113,26 +111,4 @@ public class YangModeledAnyXmlSupportTest {
         nodeWriter.close();
         return writer.toString();
     }
-
-    private static Document loadDocument(final String xmlPath) throws IOException, SAXException {
-        final InputStream resourceAsStream = YangModeledAnyXmlSupportTest.class.getResourceAsStream(xmlPath);
-
-        final Document currentConfigElement = readXmlToDocument(resourceAsStream);
-        Preconditions.checkNotNull(currentConfigElement);
-        return currentConfigElement;
-    }
-
-    private static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {
-        final DocumentBuilder dBuilder;
-        try {
-            dBuilder = BUILDERFACTORY.newDocumentBuilder();
-        } catch (final ParserConfigurationException e) {
-            throw new RuntimeException("Failed to parse XML document", e);
-        }
-        final Document doc = dBuilder.parse(xmlContent);
-
-        doc.getDocumentElement().normalize();
-        return doc;
-    }
-
 }
