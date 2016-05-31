@@ -19,6 +19,7 @@ interface XmlCodec<T> extends Codec<String, T> {
      *
      * @param writer XMLStreamWriter
      * @param value value which will be serialized to the writer
+     * @throws XMLStreamException from {@link XMLStreamWriter}
      */
     void serializeToWriter(XMLStreamWriter writer, T value) throws XMLStreamException;
 }

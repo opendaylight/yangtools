@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import com.google.common.base.Preconditions;
 import java.net.URI;
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -22,10 +23,13 @@ final class XmlStringIdentityrefCodec extends AbstractModuleStringIdentityrefCod
 
     private final SchemaContext context;
     private final QNameModule parentModuleQname;
+    private final NamespaceContext namespaceContext;
 
-    XmlStringIdentityrefCodec(final SchemaContext context, final QNameModule parentModule) {
+    XmlStringIdentityrefCodec(final SchemaContext context, final QNameModule parentModule,
+                              final NamespaceContext namespaceContext) {
         this.context = Preconditions.checkNotNull(context);
         this.parentModuleQname = Preconditions.checkNotNull(parentModule);
+        this.namespaceContext = Preconditions.checkNotNull(namespaceContext);
     }
 
     @Override
@@ -34,7 +38,8 @@ final class XmlStringIdentityrefCodec extends AbstractModuleStringIdentityrefCod
             return context.findModuleByNamespaceAndRevision(parentModuleQname.getNamespace(),
                     parentModuleQname.getRevision());
         } else {
-            return context.findModuleByName(prefix, null);
+            final String prefixedNS = namespaceContext.getNamespaceURI(prefix);
+            return context.findModuleByNamespaceAndRevision(URI.create(prefixedNS), null);
         }
     }
 
@@ -51,7 +56,7 @@ final class XmlStringIdentityrefCodec extends AbstractModuleStringIdentityrefCod
      * @param value QName
      */
     @Override
-    public void serializeToWriter(XMLStreamWriter writer, QName value) throws XMLStreamException {
+    public void serializeToWriter(final XMLStreamWriter writer, final QName value) throws XMLStreamException {
         writer.writeCharacters(serialize(value));
     }
 }
