@@ -13,8 +13,11 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 /**
  * Marker interface for {@link NormalizedNodeStreamWriter}s which can take advantage of {@link DataSchemaNode}
  * information when writing the nodes.
+ *
+ * @deprecated This interface has been integrated into {@link NormalizedNodeStreamWriter}
  */
+@Deprecated
 @Beta
-public interface SchemaAwareNormalizedNodeStreamWriter extends NormalizedNodeStreamWriter, DataSchemaNodeAware {
+public interface SchemaAwareNormalizedNodeStreamWriter extends NormalizedNodeStreamWriter {
 
 }
