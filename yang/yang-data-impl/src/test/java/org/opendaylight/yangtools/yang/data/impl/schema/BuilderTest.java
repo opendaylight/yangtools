@@ -11,7 +11,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
@@ -23,6 +22,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
@@ -80,8 +80,7 @@ public class BuilderTest {
     private static final MapEntryNode LIST_MAIN_CHILD_2 = ImmutableNodes.mapEntry(LIST_MAIN, LIST_MAIN_CHILD_QNAME_1, 2);
     private static final MapEntryNode LIST_MAIN_CHILD_3 = ImmutableNodes.mapEntry(LIST_MAIN, LIST_MAIN_CHILD_QNAME_1, 3);
     private static final Integer SIZE = 3;
-    private static final YangInstanceIdentifier.NodeWithValue BAR_PATH = new YangInstanceIdentifier
-            .NodeWithValue(LEAF_LIST_MAIN, "bar");
+    private static final NodeWithValue BAR_PATH = new NodeWithValue<>(LEAF_LIST_MAIN, "bar");
     private static final LeafSetEntryNode LEAF_SET_ENTRY_NODE = ImmutableLeafSetEntryNodeBuilder.create()
             .withNodeIdentifier(BAR_PATH)
             .withValue("bar")
@@ -102,7 +101,7 @@ public class BuilderTest {
 
     @Test
     public void immutableOrderedMapBuilderTest() {
-        final LinkedList<MapEntryNode> mapEntryNodeColl = new LinkedList();
+        final LinkedList<MapEntryNode> mapEntryNodeColl = new LinkedList<>();
         mapEntryNodeColl.add(LIST_MAIN_CHILD_3);
         final Map<QName, Object> keys = new HashMap<>();
         keys.put(LIST_MAIN_CHILD_QNAME_1, 1);
@@ -140,38 +139,38 @@ public class BuilderTest {
 
     @Test
     public void immutableOrderedLeafSetNodeBuilderTest() {
-        final NormalizedNode orderedLeafSet = ImmutableOrderedLeafSetNodeBuilder.create()
+        final NormalizedNode<?, ?> orderedLeafSet = ImmutableOrderedLeafSetNodeBuilder.create()
                 .withNodeIdentifier(NODE_IDENTIFIER_LEAF_LIST)
                 .withChild(LEAF_SET_ENTRY_NODE)
                 .withChildValue("baz")
                 .removeChild(BAR_PATH)
                 .build();
-        final LinkedList<LeafSetNode> mapEntryNodeColl = new LinkedList();
-        mapEntryNodeColl.add((LeafSetNode)orderedLeafSet);
-        final UnmodifiableCollection leafSetCollection = (UnmodifiableCollection)orderedLeafSet.getValue();
-        final NormalizedNode orderedMapNodeSchemaAware = ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(leafList)
+        final LinkedList<LeafSetNode<?>> mapEntryNodeColl = new LinkedList<>();
+        mapEntryNodeColl.add((LeafSetNode<?>)orderedLeafSet);
+        final UnmodifiableCollection<?> leafSetCollection = (UnmodifiableCollection<?>)orderedLeafSet.getValue();
+        final NormalizedNode<?, ?> orderedMapNodeSchemaAware = ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(leafList)
                 .withChildValue("baz")
                 .build();
-        final UnmodifiableCollection SchemaAwareleafSetCollection = (UnmodifiableCollection)orderedMapNodeSchemaAware
+        final UnmodifiableCollection<?> SchemaAwareleafSetCollection = (UnmodifiableCollection<?>)orderedMapNodeSchemaAware
                 .getValue();
-        final NormalizedNode orderedLeafSetShemaAware = ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(leafList,
-                (LeafSetNode)orderedLeafSet)
+        final NormalizedNode<?, ?> orderedLeafSetShemaAware = ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(leafList,
+                (LeafSetNode<?>)orderedLeafSet)
                 .build();
 
         assertNotNull(Builders.orderedLeafSetBuilder(leafList));
         assertNotNull(Builders.anyXmlBuilder());
         assertNotNull(orderedLeafSetShemaAware.hashCode());
         assertNotNull(orderedLeafSetShemaAware);
-        assertEquals(1, ((OrderedLeafSetNode)orderedLeafSet).getSize());
-        assertEquals("baz", ((OrderedLeafSetNode)orderedLeafSet).getChild(0).getValue());
-        assertNotNull(((OrderedLeafSetNode)orderedLeafSet).getChild(BAR_PATH));
+        assertEquals(1, ((OrderedLeafSetNode<?>)orderedLeafSet).getSize());
+        assertEquals("baz", ((OrderedLeafSetNode<?>)orderedLeafSet).getChild(0).getValue());
+        assertNotNull(((OrderedLeafSetNode<?>)orderedLeafSet).getChild(BAR_PATH));
         assertEquals(1, leafSetCollection.size());
         assertEquals(1, SchemaAwareleafSetCollection.size());
     }
 
     @Test
     public void immutableMapNodeBuilderTest() {
-        final LinkedList<MapEntryNode> mapEntryNodeColl = new LinkedList();
+        final LinkedList<MapEntryNode> mapEntryNodeColl = new LinkedList<>();
         mapEntryNodeColl.add(LIST_MAIN_CHILD_3);
         final CollectionNodeBuilder<MapEntryNode, MapNode> collectionNodeBuilder = ImmutableMapNodeBuilder.create(1);
         assertNotNull(collectionNodeBuilder);
@@ -256,7 +255,7 @@ public class BuilderTest {
 
     @Test(expected=NullPointerException.class)
     public void immutableLeafSetNodeBuilderExceptionTest() {
-        final LeafSetNode leafSetNode = ImmutableLeafSetNodeBuilder.create(1).withNodeIdentifier(NODE_IDENTIFIER_LEAF_LIST)
+        final LeafSetNode<?> leafSetNode = ImmutableLeafSetNodeBuilder.create(1).withNodeIdentifier(NODE_IDENTIFIER_LEAF_LIST)
                 .build();
         assertNotNull(leafSetNode);
         ImmutableLeafSetNodeSchemaAwareBuilder.create(mock(LeafListSchemaNode.class), leafSetNode).build();
@@ -314,7 +313,7 @@ public class BuilderTest {
         ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(leafList).withNodeIdentifier(NODE_IDENTIFIER_LEAF_LIST).build();
     }
 
-    private static LeafSetNode getImmutableLeafSetNode() {
+    private static LeafSetNode<?> getImmutableLeafSetNode() {
         final ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafSetBuilder = Builders.leafSetBuilder();
         leafSetBuilder.withNodeIdentifier(NODE_IDENTIFIER_LEAF_LIST);
         leafSetBuilder.addChild(LEAF_SET_ENTRY_NODE);
