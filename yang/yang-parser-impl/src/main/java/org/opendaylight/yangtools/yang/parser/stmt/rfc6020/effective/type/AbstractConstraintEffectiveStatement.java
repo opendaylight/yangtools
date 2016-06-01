@@ -30,7 +30,7 @@ abstract class AbstractConstraintEffectiveStatement<A, D extends DeclaredStateme
     private final String errorMessage;
     private final A constraints;
 
-    public AbstractConstraintEffectiveStatement(final StmtContext<A, D, ?> ctx, ConstraintFactory<A> constraintFactory) {
+    public AbstractConstraintEffectiveStatement(final StmtContext<A, D, ?> ctx, final ConstraintFactory<A> constraintFactory) {
         super(ctx);
         String descriptionInit = null;
         String referenceInit = null;
@@ -92,7 +92,7 @@ abstract class ConstraintFactory<A> {
 
 abstract class ListConstraintFactory<A> extends ConstraintFactory<List<A>> {
     @Override
-    protected List<A> createConstraints(AbstractConstraintEffectiveStatement<List<A>, ?> stmt, List<A> argument) {
+    protected List<A> createConstraints(final AbstractConstraintEffectiveStatement<List<A>, ?> stmt, final List<A> argument) {
         if (!stmt.isCustomizedStatement()) {
             return ImmutableList.copyOf(argument);
         }
@@ -109,8 +109,8 @@ abstract class ListConstraintFactory<A> extends ConstraintFactory<List<A>> {
 
 final class LengthConstraintFactory extends ListConstraintFactory<LengthConstraint> {
     @Override
-    protected LengthConstraint createCustomizedConstraint(LengthConstraint lengthConstraint,
-            AbstractConstraintEffectiveStatement<List<LengthConstraint>, ?> stmt) {
+    protected LengthConstraint createCustomizedConstraint(final LengthConstraint lengthConstraint,
+            final AbstractConstraintEffectiveStatement<List<LengthConstraint>, ?> stmt) {
         return new LengthConstraintEffectiveImpl(lengthConstraint.getMin(), lengthConstraint.getMax(),
                 stmt.getDescription(), stmt.getReference(), stmt.getErrorAppTag(), stmt.getErrorMessage());
     }
@@ -118,8 +118,8 @@ final class LengthConstraintFactory extends ListConstraintFactory<LengthConstrai
 
 final class RangeConstraintFactory extends ListConstraintFactory<RangeConstraint> {
     @Override
-    protected RangeConstraint createCustomizedConstraint(RangeConstraint rangeConstraint,
-            AbstractConstraintEffectiveStatement<List<RangeConstraint>, ?> stmt) {
+    protected RangeConstraint createCustomizedConstraint(final RangeConstraint rangeConstraint,
+            final AbstractConstraintEffectiveStatement<List<RangeConstraint>, ?> stmt) {
         return new RangeConstraintEffectiveImpl(rangeConstraint.getMin(), rangeConstraint.getMax(),
                 stmt.getDescription(), stmt.getReference(), stmt.getErrorAppTag(), stmt.getErrorMessage());
     }
@@ -127,7 +127,7 @@ final class RangeConstraintFactory extends ListConstraintFactory<RangeConstraint
 
 final class PatternConstraintFactory extends ConstraintFactory<PatternConstraint> {
     @Override
-    protected PatternConstraint createConstraints(AbstractConstraintEffectiveStatement<PatternConstraint, ?> stmt, PatternConstraint argument) {
+    protected PatternConstraint createConstraints(final AbstractConstraintEffectiveStatement<PatternConstraint, ?> stmt, final PatternConstraint argument) {
         if (!stmt.isCustomizedStatement()) {
             return argument;
         } else {
@@ -135,8 +135,8 @@ final class PatternConstraintFactory extends ConstraintFactory<PatternConstraint
         }
     }
 
-    private PatternConstraint createCustomizedConstraint(PatternConstraint patternConstraint,
-            AbstractConstraintEffectiveStatement<?, ?> stmt) {
+    private static PatternConstraint createCustomizedConstraint(final PatternConstraint patternConstraint,
+            final AbstractConstraintEffectiveStatement<?, ?> stmt) {
         return new PatternConstraintEffectiveImpl(patternConstraint.getRegularExpression(), stmt.getDescription(),
                 stmt.getReference(), stmt.getErrorAppTag(), stmt.getErrorMessage());
     }
