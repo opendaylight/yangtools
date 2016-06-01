@@ -24,9 +24,7 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.DataSchemaNodeAwareAdaptor;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema;
@@ -56,7 +54,7 @@ import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 @Beta
 public final class JsonParserStream implements Closeable, Flushable {
     private final Deque<URI> namespaces = new ArrayDeque<>();
-    private final SchemaAwareNormalizedNodeStreamWriter writer;
+    private final NormalizedNodeStreamWriter writer;
     private final JSONCodecFactory codecs;
     private final SchemaContext schema;
     private final DataSchemaNode parentNode;
@@ -64,7 +62,7 @@ public final class JsonParserStream implements Closeable, Flushable {
     private JsonParserStream(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
             final DataSchemaNode parentNode) {
         this.schema = Preconditions.checkNotNull(schemaContext);
-        this.writer = DataSchemaNodeAwareAdaptor.forWriter(writer);
+        this.writer = Preconditions.checkNotNull(writer);
         this.codecs = JSONCodecFactory.create(schemaContext);
         this.parentNode = parentNode;
     }
