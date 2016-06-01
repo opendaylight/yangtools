@@ -10,12 +10,10 @@ package org.opendaylight.yangtools.yang.validation.tool;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Arrays;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class Main {
-
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
     private Main() {
@@ -24,13 +22,12 @@ public final class Main {
 
     public static void main(final String[] args) throws URISyntaxException {
         final Params params = ParamsUtil.parseArgs(args, Params.getParser());
-        final YangParserImpl yangParser = new YangParserImpl();
 
         if (params.isValid()) {
             final File[] yangModels = params.getYangSourceDir().listFiles();
 
             try {
-                yangParser.parseFiles(Arrays.asList(yangModels));
+                TestUtils.parseYangSources(Arrays.asList(yangModels));
             } catch (Exception e) {
                 LOG.error("Yang files could not be parsed.", e);
             }
