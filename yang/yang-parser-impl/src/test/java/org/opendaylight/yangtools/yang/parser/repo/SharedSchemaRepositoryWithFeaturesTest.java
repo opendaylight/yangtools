@@ -12,7 +12,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.CheckedFuture;
 import java.util.HashSet;
@@ -157,14 +156,14 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         assertNotNull(testLeafC);
     }
 
-    private SettableSchemaProvider<ASTSchemaSource> getImmediateYangSourceProviderFromResource(
+    private static SettableSchemaProvider<ASTSchemaSource> getImmediateYangSourceProviderFromResource(
             final String resourceName) throws Exception {
         final ResourceYangSource yangSource = new ResourceYangSource(resourceName);
         final CheckedFuture<ASTSchemaSource, SchemaSourceException> aSTSchemaSource = TextToASTTransformer.TRANSFORMATION.apply(yangSource);
         return SettableSchemaProvider.createImmediate(aSTSchemaSource.get(), ASTSchemaSource.class);
     }
 
-    private void assertSchemaContext(final SchemaContext schemaContext, final int moduleSize) {
+    private static void assertSchemaContext(final SchemaContext schemaContext, final int moduleSize) {
         assertNotNull(schemaContext);
         assertEquals(moduleSize, schemaContext.getModules().size());
     }
