@@ -28,9 +28,11 @@ public final class EnumPairImpl implements EnumPair, Immutable {
     private final Status status;
     private final Integer value;
     private final String name;
+    private final String rawName;
 
     public EnumPairImpl(final String name, final Integer value, final SchemaPath path, final String description,
-            final String reference, final Status status, final Collection<UnknownSchemaNode> unknownSchemaNodes) {
+            final String reference, final Status status, final Collection<UnknownSchemaNode> unknownSchemaNodes,
+                        final String rawName) {
         this.path = Preconditions.checkNotNull(path);
         this.value = Preconditions.checkNotNull(value);
         this.name = Preconditions.checkNotNull(name);
@@ -38,6 +40,7 @@ public final class EnumPairImpl implements EnumPair, Immutable {
         this.reference = reference;
         this.status = Preconditions.checkNotNull(status);
         this.unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodes);
+        this.rawName = rawName;
     }
 
     @Override
@@ -73,6 +76,11 @@ public final class EnumPairImpl implements EnumPair, Immutable {
     @Override
     public String getName() {
         return name;
+    }
+
+    @Override
+    public String getRawName() {
+        return rawName;
     }
 
     @Override

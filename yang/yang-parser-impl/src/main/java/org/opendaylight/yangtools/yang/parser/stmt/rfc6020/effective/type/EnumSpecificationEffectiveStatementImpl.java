@@ -47,7 +47,7 @@ public final class EnumSpecificationEffectiveStatementImpl extends
                     }
 
                     p = new EnumPairImpl(p.getName(), newValue, p.getPath(), p.getDescription(), p.getReference(),
-                        p.getStatus(), p.getUnknownSchemaNodes());
+                        p.getStatus(), p.getUnknownSchemaNodes(), p.getRawName());
                 }
 
                 if (highestValue == null || highestValue < p.getValue()) {

@@ -66,6 +66,13 @@ public interface EnumTypeDefinition extends TypeDefinition<EnumTypeDefinition> {
         String getName();
 
         /**
+         * The raw name specified for name of an enumeration type.
+         *
+         * @return raw name specified for name of enumeration type.
+         */
+        String getRawName();
+
+        /**
          * The "value" statement, which is optional, is used to associate an
          * integer value with the assigned name for the enum. This integer value
          * MUST be in the range -2147483648 to 2147483647, and it MUST be unique

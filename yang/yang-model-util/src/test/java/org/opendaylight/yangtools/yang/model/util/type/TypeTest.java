@@ -440,7 +440,7 @@ public class TypeTest {
         final Collection<UnknownSchemaNode> collection = new ArrayList<>(1);
         collection.add(UNKNOWN_SCHEMA_NODE);
         final EnumPairImpl enumPair = new EnumPairImpl("enum1", 1, SCHEMA_PATH, "description", "reference",
-                Status.CURRENT, collection);
+                Status.CURRENT, collection, "enum1");
 
         final InvalidLengthConstraintException invalidLengthConstraintException = new InvalidLengthConstraintException(
                 lengthConstraint, "error msg", "other important messages");
@@ -481,9 +481,9 @@ public class TypeTest {
         final Collection<UnknownSchemaNode> collection = new ArrayList<>(1);
         collection.add(UNKNOWN_SCHEMA_NODE);
         final EnumPairImpl enumPair1 = new EnumPairImpl("enum1", 1, SCHEMA_PATH, "description", "reference",
-                Status.CURRENT, collection);
+                Status.CURRENT, collection, "enum1");
         final EnumPairImpl enumPair2 = new EnumPairImpl("enum", 1, SCHEMA_PATH, "description", "reference",
-                Status.CURRENT, collection);
+                Status.CURRENT, collection, "enum");
         final EnumerationTypeBuilder enumerationTypeBuilder = BaseTypes.enumerationTypeBuilder(SCHEMA_PATH);
         enumerationTypeBuilder.addEnum(enumPair1);
         enumerationTypeBuilder.addEnum(enumPair2);
