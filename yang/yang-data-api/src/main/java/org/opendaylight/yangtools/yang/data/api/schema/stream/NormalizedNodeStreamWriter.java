@@ -7,13 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
+import com.google.common.base.Preconditions;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 
 /**
@@ -74,7 +77,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * and resources needlessly.
  *
  */
-public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
+public interface NormalizedNodeStreamWriter extends Closeable, Flushable, DataSchemaNodeAware {
 
     /**
      * Methods in this interface allow users to hint the underlying
@@ -471,6 +474,18 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      * @throws IOException if an underlying IO error occurs
      */
     void endNode() throws IOException;
+
+    /**
+     * Attach the specified {@link DataSchemaNode} to the next node which will get started or emitted. The default
+     * implementation does nothing.
+     *
+     * @param schema DataSchemaNode
+     * @throws NullPointerException if the argument is null
+     */
+    @Override
+    default void nextDataSchemaNode(@Nonnull final DataSchemaNode schema) {
+        Preconditions.checkNotNull(schema);
+    }
 
     @Override
     void close() throws IOException;
