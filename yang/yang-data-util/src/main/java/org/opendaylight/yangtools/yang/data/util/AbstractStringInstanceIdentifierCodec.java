@@ -59,7 +59,7 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
                 }
             } else if (arg instanceof NodeWithValue) {
                 sb.append("[.='");
-                sb.append(((NodeWithValue) arg).getValue());
+                sb.append(((NodeWithValue<?>) arg).getValue());
                 sb.append("']");
             }
         }

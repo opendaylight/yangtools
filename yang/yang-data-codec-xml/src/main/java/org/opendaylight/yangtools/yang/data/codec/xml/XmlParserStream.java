@@ -113,7 +113,7 @@ public final class XmlParserStream implements Closeable, Flushable {
         return this;
     }
 
-    private String readAnyXmlValue(final XMLStreamReader in) throws XMLStreamException {
+    private static String readAnyXmlValue(final XMLStreamReader in) throws XMLStreamException {
         String result = "";
         String anyXmlElementName = in.getLocalName();
 
@@ -241,7 +241,7 @@ public final class XmlParserStream implements Closeable, Flushable {
         return codecs.codecFor(node).deserialize(value);
     }
 
-    private AbstractNodeDataWithSchema newEntryNode(final AbstractNodeDataWithSchema parent) {
+    private static AbstractNodeDataWithSchema newEntryNode(final AbstractNodeDataWithSchema parent) {
         AbstractNodeDataWithSchema newChild;
         if (parent instanceof ListNodeDataWithSchema) {
             newChild = new ListEntryNodeDataWithSchema(parent.getSchema());

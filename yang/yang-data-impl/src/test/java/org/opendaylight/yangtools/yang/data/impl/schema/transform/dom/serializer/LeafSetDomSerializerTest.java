@@ -11,7 +11,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.serialize
 import java.io.IOException;
 import java.text.ParseException;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -23,7 +23,7 @@ import org.w3c.dom.Element;
 public class LeafSetDomSerializerTest {
     private LeafSetEntryNodeDomSerializer temp;
     private LeafListSchemaNode currentLeafList;
-    private LeafSetEntryNode tempLeafList;
+    private LeafSetEntryNode<?> tempLeafList;
 
     @Test
     public void leafSetDomSerializerTest() throws IOException, YangSyntaxErrorException, ParseException, ReactorException {
@@ -39,8 +39,7 @@ public class LeafSetDomSerializerTest {
         currentLeafList = (LeafListSchemaNode) currentContainer.getDataChildByName(DomSerializerTestUtils
                 .generateQname("first-leaf-list"));
 
-        final YangInstanceIdentifier.NodeWithValue barPath = new YangInstanceIdentifier.NodeWithValue
-                (DomSerializerTestUtils.generateQname("first-leaf-list"), "bar");
+        final NodeWithValue<?> barPath = new NodeWithValue<>(DomSerializerTestUtils.generateQname("first-leaf-list"), "bar");
         tempLeafList = ImmutableLeafSetEntryNodeBuilder.create()
                 .withNodeIdentifier(barPath)
                 .withValue("bar")
