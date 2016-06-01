@@ -15,7 +15,10 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * Mixin interface for {@link NormalizedNodeStreamWriter} allowing callers to inform the writer of the
  * {@link DataSchemaNode} corresponding to the next node which will either be started or emitted. This interface should
  * not be implemented directly.
+ *
+ * @deprecated This interface has been integrated into {@link NormalizedNodeStreamWriter}.
  */
+@Deprecated
 @Beta
 public interface DataSchemaNodeAware {
     /**
