@@ -11,7 +11,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
@@ -140,38 +139,38 @@ public class BuilderTest {
 
     @Test
     public void immutableOrderedLeafSetNodeBuilderTest() {
-        final NormalizedNode orderedLeafSet = ImmutableOrderedLeafSetNodeBuilder.create()
+        final NormalizedNode<?, ?> orderedLeafSet = ImmutableOrderedLeafSetNodeBuilder.create()
                 .withNodeIdentifier(NODE_IDENTIFIER_LEAF_LIST)
                 .withChild(LEAF_SET_ENTRY_NODE)
                 .withChildValue("baz")
                 .removeChild(BAR_PATH)
                 .build();
-        final LinkedList<LeafSetNode> mapEntryNodeColl = new LinkedList();
+        final LinkedList<LeafSetNode> mapEntryNodeColl = new LinkedList<>();
         mapEntryNodeColl.add((LeafSetNode)orderedLeafSet);
-        final UnmodifiableCollection leafSetCollection = (UnmodifiableCollection)orderedLeafSet.getValue();
-        final NormalizedNode orderedMapNodeSchemaAware = ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(leafList)
+        final UnmodifiableCollection<?> leafSetCollection = (UnmodifiableCollection<?>)orderedLeafSet.getValue();
+        final NormalizedNode<?, ?> orderedMapNodeSchemaAware = ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(leafList)
                 .withChildValue("baz")
                 .build();
-        final UnmodifiableCollection SchemaAwareleafSetCollection = (UnmodifiableCollection)orderedMapNodeSchemaAware
+        final UnmodifiableCollection<?> SchemaAwareleafSetCollection = (UnmodifiableCollection<?>)orderedMapNodeSchemaAware
                 .getValue();
-        final NormalizedNode orderedLeafSetShemaAware = ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(leafList,
-                (LeafSetNode)orderedLeafSet)
+        final NormalizedNode<?, ?> orderedLeafSetShemaAware = ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(leafList,
+                (LeafSetNode<?>)orderedLeafSet)
                 .build();
 
         assertNotNull(Builders.orderedLeafSetBuilder(leafList));
         assertNotNull(Builders.anyXmlBuilder());
         assertNotNull(orderedLeafSetShemaAware.hashCode());
         assertNotNull(orderedLeafSetShemaAware);
-        assertEquals(1, ((OrderedLeafSetNode)orderedLeafSet).getSize());
-        assertEquals("baz", ((OrderedLeafSetNode)orderedLeafSet).getChild(0).getValue());
-        assertNotNull(((OrderedLeafSetNode)orderedLeafSet).getChild(BAR_PATH));
+        assertEquals(1, ((OrderedLeafSetNode<?>)orderedLeafSet).getSize());
+        assertEquals("baz", ((OrderedLeafSetNode<?>)orderedLeafSet).getChild(0).getValue());
+        assertNotNull(((OrderedLeafSetNode<?>)orderedLeafSet).getChild(BAR_PATH));
         assertEquals(1, leafSetCollection.size());
         assertEquals(1, SchemaAwareleafSetCollection.size());
     }
 
     @Test
     public void immutableMapNodeBuilderTest() {
-        final LinkedList<MapEntryNode> mapEntryNodeColl = new LinkedList();
+        final LinkedList<MapEntryNode> mapEntryNodeColl = new LinkedList<>();
         mapEntryNodeColl.add(LIST_MAIN_CHILD_3);
         final CollectionNodeBuilder<MapEntryNode, MapNode> collectionNodeBuilder = ImmutableMapNodeBuilder.create(1);
         assertNotNull(collectionNodeBuilder);
