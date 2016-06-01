@@ -8,20 +8,23 @@
 package org.opendaylight.yangtools.concepts;
 
 import java.io.Serializable;
+import javax.annotation.concurrent.ThreadSafe;
 
 /**
- * General identifier interface. It is primarily a marker for all things that
- * identify concepts -- such as names, addresses, classes, etc. We do not
- * require too much, just that the identifiers are serializable (and this
+ * General identifier interface. It is primarily a marker for all things that identify concepts -- such as names,
+ * addresses, classes, etc. We do not require too much, just that the identifiers are serializable (and this
  * transferable).
  *
- * Implementations are expected to implement hashCode() and equals() methods
- * in a way, which ensures that objects before and after serialization are
- * considered equal.
+ * Implementations are expected to implement {@link #hashCode()} and {@link #equals(Object)} methods in a way, which
+ * ensures that objects before and after serialization are considered equal.
  *
- * Implementations are advised to use the Externalizable Proxy pattern to
- * allow future evolution of their serialization format.
+ * Implementations are advised to use the {@link java.io.Externalizable} Proxy pattern to allow future evolution
+ * of their serialization format. For further efficiency, implementation should implement {@link WritableObject},
+ * so they can be efficiently embedded in other {@link Serializable} objects.
+ *
+ * Note that this class is annotated as {@link ThreadSafe}, hence all implementations are expected to be thread-safe.
  */
+@ThreadSafe
 public interface Identifier extends Serializable, Immutable {
     @Override
     boolean equals(Object o);
