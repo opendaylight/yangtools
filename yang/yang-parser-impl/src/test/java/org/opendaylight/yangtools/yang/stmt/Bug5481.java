@@ -12,7 +12,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import org.junit.Test;
@@ -37,7 +36,7 @@ public class Bug5481 {
         verifyExtendedLeaf(topContainer);
     }
 
-    private ContainerSchemaNode verifyTopContainer(SchemaContext context) {
+    private static ContainerSchemaNode verifyTopContainer(final SchemaContext context) {
         QName top = QName.create("http://example.com/module1", "2016-03-09", "top");
         DataSchemaNode dataChildByName = context.getDataChildByName(top);
         assertTrue(dataChildByName instanceof ContainerSchemaNode);
@@ -52,7 +51,7 @@ public class Bug5481 {
         return topContainer;
     }
 
-    private void verifyExtendedLeaf(ContainerSchemaNode topContainer) {
+    private static void verifyExtendedLeaf(final ContainerSchemaNode topContainer) {
         DataSchemaNode dataChildByName2 = topContainer.getDataChildByName(QName.create("http://example.com/module2",
                 "2016-03-09", "extended-leaf"));
         assertTrue(dataChildByName2 instanceof LeafSchemaNode);
