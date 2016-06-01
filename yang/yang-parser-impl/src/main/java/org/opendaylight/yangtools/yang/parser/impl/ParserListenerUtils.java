@@ -625,6 +625,7 @@ public final class ParserListenerUtils {
         result.status = status;
         result.name = name;
         result.value = value;
+        result.rawName = ctx.getText();
         return result;
     }
 
@@ -640,6 +641,7 @@ public final class ParserListenerUtils {
         private final List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
         private String name;
         private Integer value;
+        private String rawName;
 
         @Override
         public QName getQName() {
@@ -674,6 +676,11 @@ public final class ParserListenerUtils {
         @Override
         public String getName() {
             return name;
+        }
+
+        @Override
+        public String getRawName() {
+            return rawName;
         }
 
         @Override

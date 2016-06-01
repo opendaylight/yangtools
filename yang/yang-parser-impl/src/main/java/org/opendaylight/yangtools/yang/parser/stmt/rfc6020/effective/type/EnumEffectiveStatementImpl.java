@@ -37,13 +37,14 @@ public class EnumEffectiveStatementImpl extends DeclaredEffectiveStatementBase<S
     private Status status = Status.CURRENT;
     private Integer value;
     private final QName maybeQNameArgument;
+    private String rawName;
 
     public EnumEffectiveStatementImpl(final StmtContext<String, EnumStatement, ?> ctx) {
         super(ctx);
 
         SchemaPath parentPath = ctx.getParentContext().getSchemaPath().get();
         QNameModule moduleQName = parentPath.getLastComponent().getModule();
-        QName maybeQNameArgumentInit = null;
+        QName maybeQNameArgumentInit;
         try {
             maybeQNameArgumentInit = QName.create(moduleQName, argument());
         } catch (IllegalArgumentException e) {
@@ -53,7 +54,7 @@ public class EnumEffectiveStatementImpl extends DeclaredEffectiveStatementBase<S
         }
         this.maybeQNameArgument = maybeQNameArgumentInit;
         this.path = parentPath.createChild(this.maybeQNameArgument);
-
+        this.rawName = ctx.rawStatementArgument();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof DescriptionEffectiveStatementImpl) {
                 description = ((DescriptionEffectiveStatementImpl) effectiveStatement).argument();
@@ -73,6 +74,11 @@ public class EnumEffectiveStatementImpl extends DeclaredEffectiveStatementBase<S
     @Override
     public String getName() {
         return argument();
+    }
+
+    @Override
+    public String getRawName() {
+        return rawName;
     }
 
     @Override
