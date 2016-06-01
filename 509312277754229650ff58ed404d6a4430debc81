@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da5c1566_cce32204",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlCodecFactory.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-01T22:49:47Z",
+      "side": 1,
+      "message": "also add @ThreadSafe, as we want instances of this class to be reusable by multiple threads",
+      "range": {
+        "startLine": 35,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 5
+      },
+      "revId": "509312277754229650ff58ed404d6a4430debc81",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_acdd0e45",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlCodecFactory.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-01T22:49:47Z",
+      "side": 1,
+      "message": "these two are specific to the document being parsed. Hence they should not be in the Factory, as we expect to instantiate one factory per SchemaContext and parse multiple documents with it (concurrently).",
+      "range": {
+        "startLine": 75,
+        "startChar": 0,
+        "endLine": 76,
+        "endChar": 60
+      },
+      "revId": "509312277754229650ff58ed404d6a4430debc81",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_6cbad6e2",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlCodecProvider.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-01T22:49:47Z",
+      "side": 1,
+      "message": "missing javadoc: what is the purpose of this interface? should it really be public?",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 13,
+        "endChar": 35
+      },
+      "revId": "509312277754229650ff58ed404d6a4430debc81",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
