@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da5c1566_e5cd6188",
+        "filename": "yang-validation-tool/src/main/java/org/opendaylight/yangtools/yang/validation/tool/Main.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-06-01T09:14:35Z",
+      "side": 1,
+      "message": "this block shouldn\u0027t be empty",
+      "range": {
+        "startLine": 27,
+        "startChar": 14,
+        "endLine": 29,
+        "endChar": 13
+      },
+      "revId": "88dfd3847842f471f4427599c729c5f352ab4060",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_a5ab6988",
+        "filename": "yang-validation-tool/src/main/java/org/opendaylight/yangtools/yang/validation/tool/Params.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-06-01T09:14:35Z",
+      "side": 1,
+      "message": "I guess this should remain unchanged as long as we don\u0027t create brand new class. Check other files too.",
+      "revId": "88dfd3847842f471f4427599c729c5f352ab4060",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_25c8f973",
+        "filename": "yang-validation-tool/src/main/java/org/opendaylight/yangtools/yang/validation/tool/Params.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-06-01T09:14:35Z",
+      "side": 1,
+      "message": "why are we not using slf4j logger anymore?",
+      "range": {
+        "startLine": 43,
+        "startChar": 11,
+        "endLine": 43,
+        "endChar": 30
+      },
+      "revId": "88dfd3847842f471f4427599c729c5f352ab4060",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
