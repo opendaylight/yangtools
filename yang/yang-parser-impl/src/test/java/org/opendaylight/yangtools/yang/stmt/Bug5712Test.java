@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -43,7 +42,7 @@ public class Bug5712Test {
         checkThing2TypeDef(badModule);
     }
 
-    private void checkThing2TypeDef(Module badModule) {
+    private static void checkThing2TypeDef(final Module badModule) {
         TypeDefinition<?> thing2 = null;
         for (TypeDefinition<?> typeDef : badModule.getTypeDefinitions()) {
             if (typeDef.getQName().getLocalName().equals("thing2")) {
