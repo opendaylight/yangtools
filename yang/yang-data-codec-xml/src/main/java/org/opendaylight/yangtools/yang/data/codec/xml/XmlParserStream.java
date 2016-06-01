@@ -25,9 +25,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.DataSchemaNodeAwareAdaptor;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema;
@@ -57,7 +55,7 @@ import org.xml.sax.SAXException;
 public final class XmlParserStream implements Closeable, Flushable {
 
     private String rootElement = null;
-    private final SchemaAwareNormalizedNodeStreamWriter writer;
+    private final NormalizedNodeStreamWriter writer;
     private final XmlCodecFactory codecs;
     private final SchemaContext schema;
     private final DataSchemaNode parentNode;
@@ -65,7 +63,7 @@ public final class XmlParserStream implements Closeable, Flushable {
     private XmlParserStream(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
                              final DataSchemaNode parentNode) {
         this.schema = Preconditions.checkNotNull(schemaContext);
-        this.writer = DataSchemaNodeAwareAdaptor.forWriter(writer);
+        this.writer = Preconditions.checkNotNull(writer);
         this.codecs = XmlCodecFactory.create(schemaContext);
         this.parentNode = parentNode;
     }
@@ -115,7 +113,7 @@ public final class XmlParserStream implements Closeable, Flushable {
         return this;
     }
 
-    private String readAnyXmlValue(XMLStreamReader in) throws XMLStreamException {
+    private String readAnyXmlValue(final XMLStreamReader in) throws XMLStreamException {
         String result = "";
         String anyXmlElementName = in.getLocalName();
 
@@ -138,7 +136,7 @@ public final class XmlParserStream implements Closeable, Flushable {
         return result;
     }
 
-    private void read(final XMLStreamReader in, AbstractNodeDataWithSchema parent) throws XMLStreamException,
+    private void read(final XMLStreamReader in, final AbstractNodeDataWithSchema parent) throws XMLStreamException,
             URISyntaxException, ParserConfigurationException, SAXException, IOException {
         if (in.hasNext()) {
             if (parent instanceof LeafNodeDataWithSchema || parent instanceof LeafListEntryNodeDataWithSchema) {
