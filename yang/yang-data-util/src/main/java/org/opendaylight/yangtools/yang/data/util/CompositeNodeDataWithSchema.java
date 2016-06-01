@@ -19,10 +19,9 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map.Entry;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
@@ -189,7 +188,7 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
     }
 
     @Override
-    public void write(final SchemaAwareNormalizedNodeStreamWriter writer) throws IOException {
+    public void write(final NormalizedNodeStreamWriter writer) throws IOException {
         for (AbstractNodeDataWithSchema child : children) {
             child.write(writer);
         }
@@ -216,7 +215,7 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
      * @param child child node
      * @return augmentation schema
      */
-    private AugmentationSchema findCorrespondingAugment(final DataSchemaNode parent, final DataSchemaNode child) {
+    private static AugmentationSchema findCorrespondingAugment(final DataSchemaNode parent, final DataSchemaNode child) {
         if (parent instanceof AugmentationTarget && !(parent instanceof ChoiceSchemaNode)) {
             for (AugmentationSchema augmentation : ((AugmentationTarget) parent).getAvailableAugmentations()) {
                 DataSchemaNode childInAugmentation = augmentation.getDataChildByName(child.getQName());
@@ -233,10 +232,5 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
         return new YangInstanceIdentifier.AugmentationIdentifier(ImmutableSet.copyOf(qnames));
     }
 
-    private static final Function<DataSchemaNode, QName> QNAME_FUNCTION = new Function<DataSchemaNode, QName>() {
-        @Override
-        public QName apply(@Nonnull final DataSchemaNode input) {
-            return input.getQName();
-        }
-    };
+    private static final Function<DataSchemaNode, QName> QNAME_FUNCTION = input -> input.getQName();
 }

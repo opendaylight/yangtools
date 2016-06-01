@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -49,7 +49,7 @@ public class ListEntryNodeDataWithSchema extends CompositeNodeDataWithSchema {
     }
 
     @Override
-    public void write(final SchemaAwareNormalizedNodeStreamWriter writer) throws IOException {
+    public void write(final NormalizedNodeStreamWriter writer) throws IOException {
         final Collection<QName> keyDef = ((ListSchemaNode) getSchema()).getKeyDefinition();
         if (keyDef.isEmpty()) {
             writer.nextDataSchemaNode(getSchema());
