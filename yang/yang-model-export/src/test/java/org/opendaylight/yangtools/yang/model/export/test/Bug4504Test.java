@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.export.test;
 
 import static org.junit.Assert.assertNotNull;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -29,7 +28,7 @@ public class Bug4504Test {
         }
     }
 
-    private File exportModule(final SchemaContext schemaContext, final Module module, final File outDir)
+    private static File exportModule(final SchemaContext schemaContext, final Module module, final File outDir)
             throws Exception {
         final File outFile = new File(outDir, YinExportUtils.wellFormedYinName(module.getName(), module.getRevision()));
         try (OutputStream output = new FileOutputStream(outFile)) {

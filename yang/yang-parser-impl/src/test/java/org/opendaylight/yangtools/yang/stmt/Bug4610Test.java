@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
 import java.net.URI;
 import java.util.Date;
 import org.junit.Test;
@@ -64,7 +63,7 @@ public class Bug4610Test {
 
     }
 
-    private ContainerEffectiveStatementImpl findContainer(SchemaContext context, QName... path) {
+    private static ContainerEffectiveStatementImpl findContainer(final SchemaContext context, final QName... path) {
         SchemaNode node = SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, path));
         assertTrue(node instanceof ContainerEffectiveStatementImpl);
         ContainerEffectiveStatementImpl container = (ContainerEffectiveStatementImpl) node;

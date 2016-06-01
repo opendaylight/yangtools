@@ -130,13 +130,13 @@ public class TypesResolutionTest {
         List<TypeDefinition<?>> unionTypes = baseType.getTypes();
 
         StringTypeDefinition ipv4 = (StringTypeDefinition) unionTypes.get(0);
-        assertTrue(ipv4.getBaseType() instanceof StringTypeDefinition);
+        assertNotNull(ipv4.getBaseType());
         String expectedPattern = "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}"
                 + "([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])" + "(%[\\p{N}\\p{L}]+)?$";
         assertEquals(expectedPattern, ipv4.getPatternConstraints().get(0).getRegularExpression());
 
         StringTypeDefinition ipv6 = (StringTypeDefinition) unionTypes.get(1);
-        assertTrue(ipv6.getBaseType() instanceof StringTypeDefinition);
+        assertNotNull(ipv6.getBaseType());
         List<PatternConstraint> ipv6Patterns = ipv6.getPatternConstraints();
         expectedPattern = "^((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}"
                 + "((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|" + "(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}"
@@ -153,7 +153,7 @@ public class TypesResolutionTest {
         Module tested = TestUtils.findModule(testedModules, "ietf-inet-types");
         Set<TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         StringTypeDefinition type = (StringTypeDefinition) TestUtils.findTypedef(typedefs, "domain-name");
-        assertTrue(type.getBaseType() instanceof StringTypeDefinition);
+        assertNotNull(type.getBaseType());
         List<PatternConstraint> patterns = type.getPatternConstraints();
         assertEquals(1, patterns.size());
         String expectedPattern = "^((([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.)*"
