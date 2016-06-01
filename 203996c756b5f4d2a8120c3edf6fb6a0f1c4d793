@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da5c1566_0cc51a5b",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/type/EnumTypeDefinition.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-01T22:53:23Z",
+      "side": 1,
+      "message": "I think we should change definition of getName() and move its mapping up to mdsal binding mapping.",
+      "range": {
+        "startLine": 73,
+        "startChar": 8,
+        "endLine": 73,
+        "endChar": 28
+      },
+      "revId": "203996c756b5f4d2a8120c3edf6fb6a0f1c4d793",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
