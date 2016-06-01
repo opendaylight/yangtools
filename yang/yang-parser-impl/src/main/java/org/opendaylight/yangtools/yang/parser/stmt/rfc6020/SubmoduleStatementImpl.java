@@ -11,7 +11,6 @@ import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.M
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 import com.google.common.base.Optional;
-import java.net.URI;
 import java.util.Date;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
