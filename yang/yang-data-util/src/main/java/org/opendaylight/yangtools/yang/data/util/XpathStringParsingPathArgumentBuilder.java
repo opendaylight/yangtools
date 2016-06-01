@@ -76,7 +76,7 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
     private DataSchemaContextNode<?> current;
     private int offset;
 
-    XpathStringParsingPathArgumentBuilder(AbstractStringInstanceIdentifierCodec codec, String data) {
+    XpathStringParsingPathArgumentBuilder(final AbstractStringInstanceIdentifierCodec codec, final String data) {
         this.codec = Preconditions.checkNotNull(codec);
         this.data = Preconditions.checkNotNull(data);
         this.current = codec.getDataContextTree().getRoot();
@@ -106,7 +106,7 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
     }
 
 
-    private DataSchemaContextNode<?> nextContextNode(QName name) {
+    private DataSchemaContextNode<?> nextContextNode(final QName name) {
         current = current.getChild(name);
         checkValid(current != null, "%s is not correct schema node identifier.",name);
         while(current.isMixin()) {
@@ -133,7 +133,7 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
      * @param name QName of node, for which predicates are computed.
      * @return PathArgument representing node selection with predictes
      */
-    private PathArgument computeIdentifierWithPredicate(QName name) {
+    private PathArgument computeIdentifierWithPredicate(final QName name) {
         DataSchemaContextNode<?> currentNode = nextContextNode(name);
         checkValid(currentNode.isKeyedEntry(), "Entry %s does not allow specifying predicates.", name);
 
@@ -158,7 +158,7 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
             // Break-out from method for leaf-list case
             if(key == null && currentNode.isLeaf()) {
                 checkValid(offset == data.length(), "Leaf argument must be last argument of instance identifier.");
-                return new YangInstanceIdentifier.NodeWithValue(name, keyValue);
+                return new YangInstanceIdentifier.NodeWithValue<>(name, keyValue);
             }
             final DataSchemaContextNode<?> keyNode = currentNode.getChild(key);
             checkValid(keyNode != null, "%s is not correct schema node identifier.", key);
@@ -169,7 +169,7 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
     }
 
 
-    private PathArgument computeIdentifier(QName name) {
+    private PathArgument computeIdentifier(final QName name) {
         DataSchemaContextNode<?> currentNode = nextContextNode(name);
         checkValid(!currentNode.isKeyedEntry(), "Entry %s requires key or value predicate to be present", name);
         return currentNode.getIdentifier();
@@ -210,7 +210,7 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
     }
 
 
-    private QName createQName(String prefix, String localName) {
+    private QName createQName(final String prefix, final String localName) {
         return codec.createQName(prefix, localName);
     }
 
@@ -221,7 +221,7 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
      * @param expected Expected character
      * @param errorMsg Error message if {@link #currentChar()} does not match expected.
      */
-    private void checkCurrentAndSkip(char expected, String errorMsg) {
+    private void checkCurrentAndSkip(final char expected, final String errorMsg) {
         checkValid(expected == currentChar(), errorMsg);
         offset++;
     }
@@ -235,7 +235,7 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
      * @param value Value to be checked and deserialized
      * @return Object representing value in yang-data-api format.
      */
-    private Object deserializeValue(@Nullable QName key, String value) {
+    private Object deserializeValue(@Nullable final QName key, final String value) {
         // FIXME: Use codec to deserialize value to correct Java type
         return value;
     }
@@ -251,7 +251,7 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
      * @param errorMsg Error message which will be provided to user.
      * @param attributes
      */
-    private void checkValid(boolean condition, String errorMsg, Object... attributes) {
+    private void checkValid(final boolean condition, final String errorMsg, final Object... attributes) {
         Preconditions.checkArgument(condition, "Could not parse Instance Identifier '%s'. Offset: %s : Reason: %s",
                 data,
                 offset,
@@ -314,13 +314,13 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
         return data.substring(start, offset);
     }
 
-    private void nextSequenceEnd(CharMatcher matcher) {
+    private void nextSequenceEnd(final CharMatcher matcher) {
         while(!allCharactersConsumed() && matcher.matches(data.charAt(offset))) {
             offset++;
         }
     }
 
-    private void checkValidQuotation(char quoteChar) {
+    private void checkValidQuotation(final char quoteChar) {
         checkValid(
                 SQUOTE.matches(quoteChar) || DQUOTE.matches(quoteChar),
                 "Value must be qoute escaped with ''' or '\"'.");
