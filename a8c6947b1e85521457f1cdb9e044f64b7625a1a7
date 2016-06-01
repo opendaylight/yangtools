@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da5c1566_98820cff",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-06-01T10:43:18Z",
+      "side": 1,
+      "message": "Has the change a bug number ?",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 41
+      },
+      "revId": "a8c6947b1e85521457f1cdb9e044f64b7625a1a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_78b0d8f4",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodec.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-06-01T10:43:18Z",
+      "side": 1,
+      "message": "Is it always necessary to create new TreeSet ? Could not be data already instanceof SortedSet in some cases ?",
+      "range": {
+        "startLine": 55,
+        "startChar": 43,
+        "endLine": 55,
+        "endChar": 69
+      },
+      "revId": "a8c6947b1e85521457f1cdb9e044f64b7625a1a7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
