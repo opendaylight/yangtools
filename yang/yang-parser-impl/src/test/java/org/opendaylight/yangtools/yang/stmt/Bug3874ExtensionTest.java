@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -56,7 +55,6 @@ public class Bug3874ExtensionTest {
             assertEquals(1, unknownSchemaNodes.size());
 
             UnknownSchemaNode next = unknownSchemaNodes.iterator().next();
-            assertTrue(next instanceof UnknownSchemaNode);
             assertTrue(next instanceof AnyxmlSchemaLocationEffectiveStatementImpl);
             AnyxmlSchemaLocationEffectiveStatementImpl anyxmlSchemaLocationUnknownNode= (AnyxmlSchemaLocationEffectiveStatementImpl) next;
             assertEquals(SupportedExtensionsMapping.ANYXML_SCHEMA_LOCATION.getStatementName(), anyxmlSchemaLocationUnknownNode.getNodeType());

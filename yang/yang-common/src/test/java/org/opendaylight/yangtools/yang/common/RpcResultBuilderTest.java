@@ -11,8 +11,6 @@ package org.opendaylight.yangtools.yang.common;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import com.google.common.util.concurrent.ListenableFuture;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
@@ -133,7 +131,7 @@ public class RpcResultBuilderTest {
         assertEquals(rpcErrorShort.getErrorType(), rpcErrorShortWarn.getErrorType());
         assertEquals(rpcErrorLong.getErrorType(), rpcErrorLongWarn.getErrorType());
         assertEquals(rpcResultRpcResultBuilder1, rpcResultRpcResultBuilder2);
-        assertTrue(rpcResultBuilder.buildFuture() instanceof ListenableFuture);
+        assertNotNull(rpcResultBuilder.buildFuture());
         assertEquals("RpcResult [successful=true, result=null, errors=[RpcError [message=msg, severity=ERROR, " +
                 "errorType=RPC, tag=tag, applicationTag=null, info=null, cause=null]]]", rpcResult.toString());
     }
@@ -169,9 +167,9 @@ public class RpcResultBuilderTest {
                 "error message", "my-app-tag", "my-info", cause );
     }
 
-    void verifyRpcError( RpcResult<?> result, int errorIndex, ErrorSeverity expSeverity,
-            ErrorType expErrorType, String expTag, String expMessage, String expAppTag,
-            String expInfo, Throwable expCause ) {
+    void verifyRpcError( final RpcResult<?> result, final int errorIndex, final ErrorSeverity expSeverity,
+            final ErrorType expErrorType, final String expTag, final String expMessage, final String expAppTag,
+            final String expInfo, final Throwable expCause ) {
 
         List<RpcError> errors = new ArrayList<>( result.getErrors() );
         assertTrue( "Expected error at index " + errorIndex + " not found",
@@ -186,7 +184,7 @@ public class RpcResultBuilderTest {
         assertEquals( "getCause", expCause, error.getCause() );
     }
 
-    void verifyRpcResult( RpcResult<?> result, boolean expSuccess, Object expValue ) {
+    void verifyRpcResult( final RpcResult<?> result, final boolean expSuccess, final Object expValue ) {
         assertEquals( "isSuccessful", expSuccess, result.isSuccessful() );
         assertEquals( "getResult", expValue, result.getResult() );
     }

@@ -32,13 +32,13 @@ class SchemaNodeIdentifierBuildNamespace extends
 
     @Override
     public StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> get(
-            SchemaNodeIdentifier key) {
+            final SchemaNodeIdentifier key) {
         throw new UnsupportedOperationException("Direct access to namespace is not supported");
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> getFrom(NamespaceStorageNode storage, SchemaNodeIdentifier key) {
+    public StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> getFrom(final NamespaceStorageNode storage, final SchemaNodeIdentifier key) {
 
         final NamespaceStorageNode lookupStartStorage;
         if (key.isAbsolute() || storage.getStorageNodeType() == StorageNodeType.ROOT_STATEMENT_LOCAL) {
@@ -73,10 +73,10 @@ class SchemaNodeIdentifierBuildNamespace extends
         return current;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    private Mutable<?, ?, EffectiveStatement<?, ?>> tryToFindUnknownStatement(final String localName,
+    @SuppressWarnings("unchecked")
+    private static Mutable<?, ?, EffectiveStatement<?, ?>> tryToFindUnknownStatement(final String localName,
             final Mutable<?, ?, EffectiveStatement<?, ?>> current) {
-        Collection<StmtContext<?, ?, ?>> unknownSubstatements = (Collection)StmtContextUtils.findAllSubstatements(current,
+        Collection<StmtContext<?, ?, ?>> unknownSubstatements = StmtContextUtils.findAllSubstatements(current,
                 UnknownStatement.class);
         for (StmtContext<?, ?, ?> unknownSubstatement : unknownSubstatements) {
             if (localName.equals(unknownSubstatement.rawStatementArgument())) {
@@ -87,7 +87,7 @@ class SchemaNodeIdentifierBuildNamespace extends
     }
 
     @Override
-    public QName getSignificantKey(SchemaNodeIdentifier key) {
+    public QName getSignificantKey(final SchemaNodeIdentifier key) {
         return key.getLastComponent();
     }
 
