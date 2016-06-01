@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.sal.java.api.generator.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
@@ -30,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
@@ -52,12 +49,7 @@ public class CompilationTest extends BaseCompilationTest {
      */
     private static Collection<Method> abstractMethods(final Class<?> clazz) {
         // Filter out
-        return Collections2.filter(Arrays.asList(clazz.getDeclaredMethods()), new Predicate<Method>() {
-            @Override
-            public boolean apply(final Method input) {
-                return Modifier.isAbstract(input.getModifiers());
-            }
-        });
+        return Collections2.filter(Arrays.asList(clazz.getDeclaredMethods()), input -> Modifier.isAbstract(input.getModifiers()));
     }
 
     @Test
@@ -590,15 +582,15 @@ public class CompilationTest extends BaseCompilationTest {
 
         final String pkg = CompilationTestUtils.BASE_PKG + ".urn.yang.foo.rev160102";
         final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
-        final Class cls = loader.loadClass(pkg + ".FooData");
-        final Class clsContainer = loader.loadClass(pkg + ".ContainerMain");
-        final Class clsTypedefDepr = loader.loadClass(pkg + ".TypedefDeprecated");
-        final Class clsTypedefCur = loader.loadClass(pkg + ".TypedefCurrent");
-        final Class clsGroupingDepr = loader.loadClass(pkg + ".GroupingDeprecated");
-        final Class clsGroupingCur = loader.loadClass(pkg + ".GroupingCurrent");
-        final Class clsTypeDef1 = loader.loadClass(pkg + ".Typedef1");
-        final Class clsTypeDef2 = loader.loadClass(pkg + ".Typedef2");
-        final Class clsTypeDef3 = loader.loadClass(pkg + ".Typedef3");
+        final Class<?> cls = loader.loadClass(pkg + ".FooData");
+        final Class<?> clsContainer = loader.loadClass(pkg + ".ContainerMain");
+        final Class<?> clsTypedefDepr = loader.loadClass(pkg + ".TypedefDeprecated");
+        final Class<?> clsTypedefCur = loader.loadClass(pkg + ".TypedefCurrent");
+        final Class<?> clsGroupingDepr = loader.loadClass(pkg + ".GroupingDeprecated");
+        final Class<?> clsGroupingCur = loader.loadClass(pkg + ".GroupingCurrent");
+        final Class<?> clsTypeDef1 = loader.loadClass(pkg + ".Typedef1");
+        final Class<?> clsTypeDef2 = loader.loadClass(pkg + ".Typedef2");
+        final Class<?> clsTypeDef3 = loader.loadClass(pkg + ".Typedef3");
         assertTrue(clsTypedefDepr.getAnnotations()[0].toString().contains("Deprecated"));
         assertTrue(clsTypedefCur.getAnnotations().length == 0);
         assertTrue(clsGroupingDepr.getAnnotations()[0].toString().contains("Deprecated"));
@@ -672,12 +664,7 @@ public class CompilationTest extends BaseCompilationTest {
         final List<File> sourceFiles = CompilationTestUtils.getSourceFiles(resourceDirPath);
         final SchemaContext context = TestUtils.parseYangSources(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);
-        Collections.sort(types, new Comparator<Type>() {
-            @Override
-            public int compare(final Type o1, final Type o2) {
-                return o2.getName().compareTo(o1.getName());
-            }
-        });
+        Collections.sort(types, (o1, o2) -> o2.getName().compareTo(o1.getName()));
         final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
         generator.generateToFile(sourcesOutputDir);
     }

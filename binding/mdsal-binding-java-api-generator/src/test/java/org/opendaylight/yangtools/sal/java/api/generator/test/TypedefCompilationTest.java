@@ -10,10 +10,6 @@ package org.opendaylight.yangtools.sal.java.api.generator.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsFieldWithValue;
-import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsMethod;
-import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsRestrictionCheck;
-
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import java.io.File;
