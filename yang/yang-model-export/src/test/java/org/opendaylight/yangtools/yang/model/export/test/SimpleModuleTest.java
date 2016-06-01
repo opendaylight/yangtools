@@ -87,7 +87,7 @@ public class SimpleModuleTest {
         }
     }
 
-    private File exportModule(final SchemaContext schemaContext, final Module module, final File outDir)
+    private static File exportModule(final SchemaContext schemaContext, final Module module, final File outDir)
             throws Exception {
         final File outFile = new File(outDir, YinExportUtils.wellFormedYinName(module.getName(), module.getRevision()));
         try (OutputStream output = new FileOutputStream(outFile)) {
