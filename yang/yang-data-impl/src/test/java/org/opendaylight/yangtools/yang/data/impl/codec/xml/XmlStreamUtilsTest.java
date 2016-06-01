@@ -57,7 +57,7 @@ public class XmlStreamUtilsTest {
 
     @BeforeClass
     public static void initialize() throws URISyntaxException, FileNotFoundException, ReactorException {
-        final File file = new File(org.opendaylight.yangtools.yang.data.impl.codec.xml.retest.XmlStreamUtils.class.getResource("/leafref-test.yang").toURI());
+        final File file = new File(XmlStreamUtils.class.getResource("/leafref-test.yang").toURI());
         schemaContext = TestUtils.parseYangSources(file);
         assertNotNull(schemaContext);
         assertEquals(1, schemaContext.getModules().size());

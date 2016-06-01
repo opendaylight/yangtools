@@ -30,8 +30,6 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Prefix_stmtContext
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Revision_date_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Status_argContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.StringContext;
-//import org.opendaylight.yangtools.yang.parser.impl.BasicValidations;
-//import org.opendaylight.yangtools.yang.parser.impl.ValidationUtil;
 import org.opendaylight.yangtools.yang.parser.impl.YangModelBasicValidationListener;
 import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
 
