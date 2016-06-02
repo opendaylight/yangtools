@@ -14,23 +14,19 @@ import org.opendaylight.yangtools.concepts.Identifier;
 /**
  * Utility {@link Identifier} backed by a {@link UUID}.
  *
- * @deprecated Treats instantiations as equal, not providing safety against mixing instances from different modules.
- *             Use a subclass of {@link AbstractUUIDIdentifier} instead.
+ * @author Robert Varga
  */
-@Deprecated
 @Beta
-public final class UUIDIdentifier extends AbstractUUIDIdentifier<UUIDIdentifier> {
+public abstract class AbstractStringIdentifier<T extends AbstractStringIdentifier<T>>
+        extends AbstractIdentifier<String> implements Comparable<T> {
     private static final long serialVersionUID = 1L;
 
-    public UUIDIdentifier(final UUID uuid) {
-        super(uuid);
+    protected AbstractStringIdentifier(final String string) {
+        super(string);
     }
 
-    /**
-     * @deprecated Use {@link #getValue()} instead.
-     */
-    @Deprecated
-    public UUID getUuid() {
-        return getValue();
+    @Override
+    public final int compareTo(final T o) {
+        return getValue().compareTo(o.getValue());
     }
 }
