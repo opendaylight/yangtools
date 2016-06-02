@@ -70,6 +70,30 @@
       "revId": "8419fc9281352530b9f4573d5bfb99deb0df2db9",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_e70ba129",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MandatoryLeafEnforcer.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-06-02T09:56:40Z",
+      "side": 0,
+      "message": "I only tried to say that the enforcement of mandatory nodes works with this code correctly for the example above, but I understand now what you meant.",
+      "parentUuid": "da5c1566_dc02c10a",
+      "range": {
+        "startLine": 78,
+        "startChar": 20,
+        "endLine": 80,
+        "endChar": 21
+      },
+      "revId": "8419fc9281352530b9f4573d5bfb99deb0df2db9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
