@@ -43,9 +43,9 @@ class EnumTemplate extends BaseTemplate {
         return body
     }
 
-    def writeEnumItem(String name, int value, String description) '''
+    def writeEnumItem(String name, String mappedName, int value, String description) '''
         «asJavadoc(encodeAngleBrackets(description))»
-        «name»(«value»)
+        «mappedName»(«value», "«name»")
     '''
 
     /**
@@ -59,6 +59,7 @@ class EnumTemplate extends BaseTemplate {
             «writeEnumeration(enums)»
 
 
+            String name;
             int value;
             private static final java.util.Map<java.lang.Integer, «enums.name»> VALUE_MAP;
 
@@ -72,8 +73,18 @@ class EnumTemplate extends BaseTemplate {
                 VALUE_MAP = b.build();
             }
 
-            private «enums.name»(int value) {
+            private «enums.name»(int value, String name) {
                 this.value = value;
+                this.name = name;
+            }
+
+            /**
+             * Returns the name of the enumeration item as it is specified in the input yang.
+             *
+             * @return the name of the enumeration item as it is specified in the input yang
+             */
+            public String getName() {
+                return name;
             }
 
             /**
@@ -96,7 +107,7 @@ class EnumTemplate extends BaseTemplate {
     def writeEnumeration(Enumeration enumeration)
     '''
     «FOR v : enumeration.values SEPARATOR ",\n" AFTER ";"»
-    «writeEnumItem(v.name, v.value, v.description)»«
+    «writeEnumItem(v.name, v.mappedName, v.value, v.description)»«
     ENDFOR»
     '''
 }
