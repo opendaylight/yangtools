@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -32,12 +33,13 @@ import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 
-public final class UsesEffectiveStatementImpl extends DeclaredEffectiveStatementBase<QName, UsesStatement> implements UsesNode {
+public final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, UsesStatement> implements UsesNode {
     private final SchemaPath groupingPath;
     private final boolean addedByUses;
     private final Map<SchemaPath, SchemaNode> refines;
     private final Set<AugmentationSchema> augmentations;
     private final List<UnknownSchemaNode> unknownNodes;
+    private final RevisionAwareXPath whenCondition;
 
     public UsesEffectiveStatementImpl(
             final StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
@@ -79,6 +81,9 @@ public final class UsesEffectiveStatementImpl extends DeclaredEffectiveStatement
         this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
         this.refines = ImmutableMap.copyOf(refinesInit);
+
+        WhenEffectiveStatementImpl whenStmt = firstEffective(WhenEffectiveStatementImpl.class);
+        this.whenCondition = (whenStmt == null) ? null : whenStmt.argument();
     }
 
     @Override
@@ -106,8 +111,14 @@ public final class UsesEffectiveStatementImpl extends DeclaredEffectiveStatement
         return refines;
     }
 
+    @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;
+    }
+
+    @Override
+    public RevisionAwareXPath getWhenCondition() {
+        return whenCondition;
     }
 
     @Override

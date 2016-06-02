@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import javax.annotation.Nullable;
+
 /**
  *
  * Node which can have documentation assigned.
@@ -20,7 +22,9 @@ public interface DocumentedNode {
      * @return string with textual description the node which represents the
      *         argument of the YANG <code>description</code> substatement
      */
-    String getDescription();
+    default String getDescription() {
+        return "";
+    }
 
     /**
      * Returns reference of the instance of the type <code>SchemaNode</code>
@@ -32,7 +36,9 @@ public interface DocumentedNode {
      *         represents the argument of the YANG <code>reference</code>
      *         substatement
      */
-    String getReference();
+    default String getReference() {
+        return "";
+    }
 
     /**
      * Returns status of the instance of the type <code>SchemaNode</code>
@@ -40,5 +46,8 @@ public interface DocumentedNode {
      * @return status of this node which represents the argument of the YANG
      *         <code>status</code> substatement
      */
-    Status getStatus();
+    @Nullable
+    default Status getStatus() {
+        return null;
+    }
 }

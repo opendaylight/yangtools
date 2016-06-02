@@ -7,15 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * Contains the methods for getting data and checking properties of the YANG
  * <code>uses</code> substatement.
  *
  */
-public interface UsesNode {
+public interface UsesNode extends DocumentedNode {
 
     /**
      * Returns the schema path to used grouping.
@@ -58,4 +61,30 @@ public interface UsesNode {
      *         refined node
      */
     Map<SchemaPath, SchemaNode> getRefines();
+
+    /**
+     * Returns when statement
+     *
+     * If when condition is present node defined by the parent data definition
+     * statement is only valid when the returned XPath expression conceptually
+     * evaluates to "true" for a particular instance, then the node defined by
+     * the parent data definition statement is valid; otherwise, it is not.
+     *
+     * @return XPath condition
+     */
+    @Nullable
+    default RevisionAwareXPath getWhenCondition() {
+        return null;
+    }
+
+    /**
+     *
+     * Returns unknown schema nodes which belongs to this instance of the type
+     * <code>UsesNode</code>.
+     *
+     * @return list of unknown schema nodes defined under this uses node.
+     */
+    default List<UnknownSchemaNode> getUnknownSchemaNodes() {
+        return Collections.emptyList();
+    }
 }
