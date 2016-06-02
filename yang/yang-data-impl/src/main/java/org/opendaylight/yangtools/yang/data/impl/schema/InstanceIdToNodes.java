@@ -78,7 +78,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
     abstract boolean isMixin();
 
     public void addModifyOpIfPresent(final Optional<Entry<QName,ModifyAction>> operation, final AttributesBuilder<?> builder) {
-        if(operation.isPresent()) {
+        if (operation.isPresent()) {
             builder.withAttributes(Collections.singletonMap(operation.get().getKey(), modifyOperationToXmlString(operation.get().getValue())));
         }
     }
@@ -128,7 +128,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
 
         @Override
         public NormalizedNode<?, ?> create(final YangInstanceIdentifier instanceId, final Optional<NormalizedNode<?, ?>> deepestChild, final Optional<Entry<QName,ModifyAction>> operation) {
-            if(deepestChild.isPresent()) {
+            if (deepestChild.isPresent()) {
                 Preconditions.checkState(deepestChild instanceof AnyXmlNode);
                 final NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> anyXmlBuilder =
                         Builders.anyXmlBuilder().withNodeIdentifier(getIdentifier()).withValue(((AnyXmlNode) deepestChild).getValue());

@@ -274,7 +274,7 @@ public class LeafRefValidatation {
                 }
             }
         }
-        // FIXME if(node instance of UnkeyedListNode ...
+        // FIXME if (node instance of UnkeyedListNode ...
     }
 
     private static LeafRefContext findReferencingCtxUnderChoice(

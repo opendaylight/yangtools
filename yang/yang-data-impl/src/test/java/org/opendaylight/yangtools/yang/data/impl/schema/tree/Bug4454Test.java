@@ -399,7 +399,7 @@ public class Bug4454Test {
         UnmodifiableCollection<?> collectionChildren = (UnmodifiableCollection<?>) minMaxListRead.get().getValue();
 
         for (Object collectionChild : collectionChildren) {
-            if(collectionChild.toString().contains(first)){
+            if (collectionChild.toString().contains(first)){
                 assertTrue(collectionChild.toString().contains(first));
             } else {
                 assertTrue(collectionChild.toString().contains(second));

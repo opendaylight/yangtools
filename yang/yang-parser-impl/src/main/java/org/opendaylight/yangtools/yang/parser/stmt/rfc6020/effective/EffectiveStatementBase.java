@@ -78,7 +78,7 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
         final Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements = ctx.effectiveSubstatements();
         final Collection<StatementContextBase<?, ?, ?>> substatementsInit = new ArrayList<>();
 
-        for(StatementContextBase<?, ?, ?> declaredSubstatement : ctx.declaredSubstatements()) {
+        for (StatementContextBase<?, ?, ?> declaredSubstatement : ctx.declaredSubstatements()) {
             if (declaredSubstatement.getPublicDefinition().equals(Rfc6020Mapping.USES)) {
                 substatementsInit.add(declaredSubstatement);
                 substatementsInit.addAll(declaredSubstatement.getEffectOfStatement());

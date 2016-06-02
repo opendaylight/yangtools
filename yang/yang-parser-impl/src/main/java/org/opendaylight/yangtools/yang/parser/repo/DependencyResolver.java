@@ -96,7 +96,7 @@ final class DependencyResolver {
                 final Set<ModuleImport> dependencies = dep.getDependencies();
 
                 // in case of submodule, remember belongs to
-                if(dep instanceof YangModelDependencyInfo.SubmoduleDependencyInfo) {
+                if (dep instanceof YangModelDependencyInfo.SubmoduleDependencyInfo) {
                     final String parent = ((YangModelDependencyInfo.SubmoduleDependencyInfo) dep).getParentModule();
                     submodules.put(id, new BelongsToDependency(parent));
                 }

@@ -418,7 +418,7 @@ public class SchemaContextProxyTest {
 
         Set<Module> modSet = Sets.newHashSet();
 
-        if(expected!=null) {
+        if (expected!=null) {
 
             modSet = Sets.newHashSet(expected);
         }
@@ -428,7 +428,7 @@ public class SchemaContextProxyTest {
         assertEquals(modSet, modSetFiltering);
 
         //asserting collections
-        if(expected!=null) {
+        if (expected!=null) {
             for (final Module module : expected) {
                 assertEquals(module, filteringSchemaContextProxy.findModuleByName(module.getName(), module.getRevision()));
 
@@ -447,7 +447,7 @@ public class SchemaContextProxyTest {
 
         Set<Module> modulesSet = new HashSet<>();
 
-        if(modules!=null) {
+        if (modules!=null) {
 
             modulesSet = Sets.newHashSet(modules);
 
@@ -460,7 +460,7 @@ public class SchemaContextProxyTest {
 
         Set<ModuleId> moduleIds = Sets.newHashSet();
 
-        if(modules!=null && modules.size()>0) {
+        if (modules!=null && modules.size()>0) {
 
             for (Module module : modules) {
 

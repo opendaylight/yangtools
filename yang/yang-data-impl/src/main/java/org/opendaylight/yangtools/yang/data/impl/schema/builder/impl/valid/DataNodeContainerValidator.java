@@ -36,7 +36,7 @@ public class DataNodeContainerValidator {
 
         this.childNodes = getChildNodes(schema);
 
-        if(schema instanceof AugmentationTarget) {
+        if (schema instanceof AugmentationTarget) {
             for (AugmentationSchema augmentationSchema : ((AugmentationTarget) schema).getAvailableAugmentations()) {
                 augments.add(SchemaUtils.getNodeIdentifierForAugmentation(augmentationSchema));
             }
@@ -67,7 +67,7 @@ public class DataNodeContainerValidator {
         Set<QName> allChildNodes = Sets.newHashSet();
 
         for (DataSchemaNode childSchema : nodeContainer.getChildNodes()) {
-            if(childSchema instanceof ChoiceCaseNode) {
+            if (childSchema instanceof ChoiceCaseNode) {
                 allChildNodes.addAll(getChildNodes((DataNodeContainer) childSchema));
             } else if (!(childSchema instanceof AugmentationSchema)) {
                 allChildNodes.add(childSchema.getQName());

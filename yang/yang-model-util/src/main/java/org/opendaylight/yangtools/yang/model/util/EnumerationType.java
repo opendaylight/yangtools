@@ -39,7 +39,7 @@ public final class EnumerationType implements EnumTypeDefinition {
     private EnumerationType(final SchemaPath path, final List<EnumPair> enums, final Optional<EnumPair> defaultEnum) {
         this.path = Preconditions.checkNotNull(path,"path must not be null");
         this.enums = ImmutableList.copyOf(Preconditions.checkNotNull(enums, "enums must not be null."));
-        if(defaultEnum.isPresent()) {
+        if (defaultEnum.isPresent()) {
             Preconditions.checkArgument(enums.contains(defaultEnum.get()),"defaultEnum must be contained in defined enumerations.");
             this.defaultEnum = defaultEnum.get();
         } else {

@@ -198,7 +198,7 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
         tracker.endNode();
         context = context.endNode(codecs.getSchemaContext(), writer);
 
-        if(context instanceof JSONStreamWriterRootContext) {
+        if (context instanceof JSONStreamWriterRootContext) {
             context.emitEnd(writer);
         }
     }

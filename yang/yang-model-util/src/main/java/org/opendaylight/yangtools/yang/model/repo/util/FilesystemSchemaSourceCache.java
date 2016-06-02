@@ -73,7 +73,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
 
         checkSupportedRepresentation(representation);
 
-        if(!storageDirectory.exists()) {
+        if (!storageDirectory.exists()) {
             Preconditions.checkArgument(storageDirectory.mkdirs(), "Unable to create cache directory at %s", storageDirectory);
         }
         Preconditions.checkArgument(storageDirectory.exists());
@@ -86,7 +86,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
 
     private static void checkSupportedRepresentation(final Class<? extends SchemaSourceRepresentation> representation) {
         for (final Class<? extends SchemaSourceRepresentation> supportedRepresentation : STORAGE_ADAPTERS.keySet()) {
-            if(supportedRepresentation.isAssignableFrom(representation)) {
+            if (supportedRepresentation.isAssignableFrom(representation)) {
                 return;
             }
         }
@@ -116,7 +116,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
     @Override
     public synchronized CheckedFuture<? extends T, SchemaSourceException> getSource(final SourceIdentifier sourceIdentifier) {
         final File file = sourceIdToFile(sourceIdentifier, storageDirectory);
-        if(file.exists() && file.canRead()) {
+        if (file.exists() && file.canRead()) {
             LOG.trace("Source {} found in cache as {}", sourceIdentifier, file);
             final SchemaSourceRepresentation restored = STORAGE_ADAPTERS.get(representation).restore(sourceIdentifier, file);
             return Futures.immediateCheckedFuture(representation.cast(restored));
@@ -130,7 +130,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
     protected synchronized void offer(final T source) {
         LOG.trace("Source {} offered to cache", source.getIdentifier());
         final File file = sourceIdToFile(source);
-        if(file.exists()) {
+        if (file.exists()) {
             LOG.debug("Source {} already in cache as {}", source.getIdentifier(), file);
             return;
         }
@@ -276,7 +276,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
             fileName = com.google.common.io.Files.getNameWithoutExtension(fileName);
 
             final Optional<SourceIdentifier> si = getSourceIdentifier(fileName);
-            if(si.isPresent()) {
+            if (si.isPresent()) {
                 LOG.trace("Restoring cached file {} as {}", file, si.get());
                 cachedSchemas.add(si.get());
             } else {

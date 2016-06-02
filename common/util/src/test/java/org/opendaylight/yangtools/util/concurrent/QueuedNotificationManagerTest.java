@@ -61,22 +61,22 @@ public class QueuedNotificationManagerTest {
         void onNotification( N data ) {
 
             try {
-                if( sleepTime > 0 ) {
+                if (sleepTime > 0) {
                     Uninterruptibles.sleepUninterruptibly( sleepTime, TimeUnit.MILLISECONDS );
                 }
 
-                if( cacheNotifications ) {
+                if (cacheNotifications) {
                     actual.add( data );
                 }
 
                 RuntimeException localRuntimeEx = runtimeEx;
-                if( localRuntimeEx != null ) {
+                if (localRuntimeEx != null) {
                     runtimeEx = null;
                     throw localRuntimeEx;
                 }
 
                 Error localJvmError = jvmError;
-                if( localJvmError != null ) {
+                if (localJvmError != null) {
                     jvmError = null;
                     throw localJvmError;
                 }
@@ -88,7 +88,7 @@ public class QueuedNotificationManagerTest {
 
         void verifyNotifications() {
             boolean done = Uninterruptibles.awaitUninterruptibly( latch, 10, TimeUnit.SECONDS );
-            if( !done ) {
+            if (!done) {
                 long actualCount = latch.getCount();
                 fail( name + ": Received " + (expCount - actualCount) +
                       " notifications. Expected " + expCount );
@@ -138,7 +138,7 @@ public class QueuedNotificationManagerTest {
 
     @After
     public void tearDown() {
-        if( queueExecutor != null ) {
+        if (queueExecutor != null) {
             queueExecutor.shutdownNow();
         }
     }
@@ -172,7 +172,7 @@ public class QueuedNotificationManagerTest {
 
         List<Integer> expNotifications = Lists.newArrayListWithCapacity( nNotifications );
         expNotifications.addAll( Arrays.asList( 1, 2, 3, 4, 5, 6 ) );
-        for( int i = 1; i <= nNotifications - initialCount; i++ ) {
+        for (int i = 1; i <= nNotifications - initialCount; i++) {
             Integer v = Integer.valueOf( initialCount + i );
             expNotifications.add( v );
             manager.submitNotification( listener, v );
@@ -197,14 +197,14 @@ public class QueuedNotificationManagerTest {
                             " notifications each..." );
 
         final Integer[] notifications = new Integer[nNotifications];
-        for( int i = 1; i <= nNotifications; i++ ) {
+        for (int i = 1; i <= nNotifications; i++) {
             notifications[i-1] = Integer.valueOf( i );
         }
 
         Stopwatch stopWatch = Stopwatch.createStarted();
 
         List<TestListener<Integer>> listeners = Lists.newArrayList();
-        for( int i = 1; i <= nListeners; i++ ) {
+        for (int i = 1; i <= nListeners; i++) {
             final TestListener<Integer> listener =
                     i == 2 ? new TestListener2<>(nNotifications, i) :
                     i == 3 ? new TestListener3<>(nNotifications, i) :
@@ -214,7 +214,7 @@ public class QueuedNotificationManagerTest {
             new Thread( new Runnable() {
                 @Override
                 public void run() {
-                    for( int j = 1; j <= nNotifications; j++ ) {
+                    for (int j = 1; j <= nNotifications; j++) {
                         final Integer n = notifications[j-1];
                         stagingExecutor.execute( new Runnable() {
                             @Override
@@ -228,7 +228,7 @@ public class QueuedNotificationManagerTest {
         }
 
         try {
-            for( TestListener<Integer> listener: listeners ) {
+            for (TestListener<Integer> listener: listeners) {
                 listener.verifyNotifications();
                 System.out.println( listener.name + " succeeded" );
             }

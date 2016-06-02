@@ -67,7 +67,7 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespa
                 toNotify.add(listener);
             }
         }
-        for(ValueAddedListener<K> listener : toNotify) {
+        for (ValueAddedListener<K> listener : toNotify) {
             listener.trigger(value);
         }
     }

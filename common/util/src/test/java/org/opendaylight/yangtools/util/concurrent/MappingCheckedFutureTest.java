@@ -59,7 +59,7 @@ public class MappingCheckedFutureTest {
 
         @Override
         public Throwable extractWrappedTestEx( final Exception from ) {
-            if( from instanceof ExecutionException ) {
+            if (from instanceof ExecutionException ) {
                 return ((ExecutionException)from).getCause();
             }
 
@@ -75,7 +75,7 @@ public class MappingCheckedFutureTest {
 
         @Override
         public Throwable extractWrappedTestEx( final Exception from ) {
-            if( from instanceof ExecutionException ) {
+            if (from instanceof ExecutionException ) {
                 return ((ExecutionException)from).getCause();
             }
 
@@ -174,7 +174,7 @@ public class MappingCheckedFutureTest {
             assertNotNull( "Expected returned exception is null", expectedTestEx );
             assertEquals( "Exception type", TestException.class, expectedTestEx.getClass() );
 
-            if( cause instanceof TestException ) {
+            if (cause instanceof TestException ) {
                 assertNull( "Expected null cause", expectedTestEx.getCause() );
             } else {
                 assertSame( "TestException cause", cause, expectedTestEx.getCause() );
@@ -241,7 +241,7 @@ public class MappingCheckedFutureTest {
         thread.interrupt();
         assertEquals( "get call completed", true, doneLatch.await( 5, TimeUnit.SECONDS ) );
 
-        if( assertError.get() != null ) {
+        if (assertError.get() != null ) {
             throw assertError.get();
         }
     }

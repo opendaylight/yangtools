@@ -48,7 +48,7 @@ public final class StoreTreeNodes {
         T current = tree;
 
         int i = 1;
-        for(PathArgument pathArg : path.getPathArguments()) {
+        for (PathArgument pathArg : path.getPathArguments()) {
             Optional<T> potential = current.getChild(pathArg);
             if (!potential.isPresent()) {
                 throw new IllegalArgumentException(String.format("Child %s is not present in tree.",

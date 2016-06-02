@@ -81,7 +81,7 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
 
     @Override
     void verifyStructure(final NormalizedNode<?, ?> writtenValue, final boolean verifyChildren) {
-        if(verifyChildrenStructure() && verifyChildren) {
+        if (verifyChildrenStructure() && verifyChildren) {
             enforceCases(writtenValue);
         }
         super.verifyStructure(writtenValue, verifyChildren);

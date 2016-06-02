@@ -36,7 +36,7 @@ public class ThreadPoolExecutorTest {
 
     @After
     public void tearDown() {
-        if( executor != null ) {
+        if (executor != null) {
             executor.shutdownNow();
         }
     }
@@ -54,7 +54,7 @@ public class ThreadPoolExecutorTest {
 
         executor = SpecialExecutors.newBoundedFastThreadPool( 1, 1, "TestPool" );
 
-        for( int i = 0; i < 5; i++ ) {
+        for (int i = 0; i < 5; i++) {
             executor.execute( new Task( null, null, null, null,
                     TimeUnit.MICROSECONDS.convert( 5, TimeUnit.SECONDS ) ) );
         }
@@ -82,7 +82,7 @@ public class ThreadPoolExecutorTest {
 
         ExecutorService executor = SpecialExecutors.newBoundedCachedThreadPool( 1, 1, "TestPool" );
 
-        for( int i = 0; i < 5; i++ ) {
+        for (int i = 0; i < 5; i++) {
             executor.execute( new Task( null, null, null, null,
                     TimeUnit.MICROSECONDS.convert( 5, TimeUnit.SECONDS ) ) );
         }
@@ -113,8 +113,8 @@ public class ThreadPoolExecutorTest {
         new Thread() {
             @Override
             public void run() {
-                for( int i = 0; i < numTasksToRun; i++ ) {
-//                    if(i%100 == 0) {
+                for (int i = 0; i < numTasksToRun; i++) {
+//                    if (i%100 == 0) {
 //                        Uninterruptibles.sleepUninterruptibly( 20, TimeUnit.MICROSECONDS );
 //                    }
 
@@ -128,17 +128,17 @@ public class ThreadPoolExecutorTest {
 
         stopWatch.stop();
 
-        if( !done ) {
+        if (!done) {
             fail( (numTasksToRun - tasksRunLatch.getCount()) + " tasks out of " +
                    numTasksToRun + " executed" );
         }
 
-        if( threadError.get() != null ) {
+        if (threadError.get() != null) {
             throw threadError.get();
         }
 
         System.out.println( taskCountPerThread.size() + " threads used:" );
-        for( Map.Entry<Thread, AtomicLong> e : taskCountPerThread.entrySet() ) {
+        for (Map.Entry<Thread, AtomicLong> e : taskCountPerThread.entrySet()) {
             System.out.println( "  " + e.getKey().getName() + " - " + e.getValue() + " tasks" );
         }
 
@@ -178,24 +178,24 @@ public class ThreadPoolExecutorTest {
         public void run() {
             try {
                 try {
-                    if( delay > 0 ) {
+                    if (delay > 0) {
                         TimeUnit.MICROSECONDS.sleep( delay );
-                    } else if( blockLatch != null ) {
+                    } else if (blockLatch != null) {
                         blockLatch.await();
                     }
                 } catch( InterruptedException e ) {}
 
-                if( expThreadPrefix != null ) {
+                if (expThreadPrefix != null) {
                     assertEquals( "Thread name starts with " + expThreadPrefix, true,
                             Thread.currentThread().getName().startsWith( expThreadPrefix ) );
                 }
 
-                if( taskCountPerThread != null ) {
+                if (taskCountPerThread != null) {
                     AtomicLong count = taskCountPerThread.get( Thread.currentThread() );
-                    if( count == null ) {
+                    if (count == null) {
                         count = new AtomicLong( 0 );
                         AtomicLong prev = taskCountPerThread.putIfAbsent( Thread.currentThread(), count );
-                        if( prev != null ) {
+                        if (prev != null) {
                             count = prev;
                         }
                     }
@@ -204,11 +204,11 @@ public class ThreadPoolExecutorTest {
                 }
 
             } catch( AssertionError e ) {
-                if( threadError != null ) {
+                if (threadError != null) {
                     threadError.set( e );
                 }
             } finally {
-                if( tasksRunLatch != null ) {
+                if (tasksRunLatch != null) {
                     tasksRunLatch.countDown();
                 }
             }

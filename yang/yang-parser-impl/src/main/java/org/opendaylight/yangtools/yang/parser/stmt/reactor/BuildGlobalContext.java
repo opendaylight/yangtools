@@ -268,7 +268,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
                 // We reset progressing to false.
                 progressing = false;
                 Iterator<SourceSpecificContext> currentSource = sourcesToProgress.iterator();
-                while(currentSource.hasNext()) {
+                while (currentSource.hasNext()) {
                     SourceSpecificContext nextSourceCtx = currentSource.next();
                     PhaseCompletionProgress sourceProgress = nextSourceCtx.tryToCompletePhase(currentPhase);
                     switch (sourceProgress) {

@@ -129,7 +129,7 @@ public final class SchemaUtils {
 
         for (ChoiceCaseNode choiceCaseNode : schema.getCases()) {
             schemaForAugment = findAugment(choiceCaseNode, qNames);
-            if(schemaForAugment.isPresent()) {
+            if (schemaForAugment.isPresent()) {
                 break;
             }
         }
@@ -150,7 +150,7 @@ public final class SchemaUtils {
                 }
             }));
 
-            if(qNamesFromAugment.equals(qNames)) {
+            if (qNamesFromAugment.equals(qNames)) {
                 return Optional.of(augment);
             }
         }
@@ -209,7 +209,7 @@ public final class SchemaUtils {
         }
 
         for (AugmentationSchema augmentationSchema : ((AugmentationTarget) schema).getAvailableAugmentations()) {
-            if(augmentationSchema.getDataChildByName(childSchema.getQName()) != null) {
+            if (augmentationSchema.getDataChildByName(childSchema.getQName()) != null) {
                 return true;
             }
         }
@@ -292,11 +292,11 @@ public final class SchemaUtils {
         Set<QName> allChildNodes = Sets.newHashSet();
 
         for (DataSchemaNode childSchema : nodeContainer.getChildNodes()) {
-            if(childSchema instanceof ChoiceSchemaNode) {
+            if (childSchema instanceof ChoiceSchemaNode) {
                 for (ChoiceCaseNode choiceCaseNode : ((ChoiceSchemaNode) childSchema).getCases()) {
                     allChildNodes.addAll(getChildNodesRecursive(choiceCaseNode));
                 }
-            } else if(childSchema instanceof AugmentationSchema || childSchema instanceof ChoiceCaseNode) {
+            } else if (childSchema instanceof AugmentationSchema || childSchema instanceof ChoiceCaseNode) {
                 allChildNodes.addAll(getChildNodesRecursive((DataNodeContainer) childSchema));
             }
             else {
@@ -324,12 +324,12 @@ public final class SchemaUtils {
 
         Set<DataSchemaNode> realChildNodes = Sets.newHashSet();
 
-        if(targetSchema instanceof DataNodeContainer) {
+        if (targetSchema instanceof DataNodeContainer) {
             realChildNodes = getRealSchemasForAugment((DataNodeContainer)targetSchema, augmentSchema);
-        } else if(targetSchema instanceof ChoiceSchemaNode) {
+        } else if (targetSchema instanceof ChoiceSchemaNode) {
             for (DataSchemaNode dataSchemaNode : augmentSchema.getChildNodes()) {
                 for (ChoiceCaseNode choiceCaseNode : ((ChoiceSchemaNode) targetSchema).getCases()) {
-                    if(getChildNodesRecursive(choiceCaseNode).contains(dataSchemaNode.getQName())) {
+                    if (getChildNodesRecursive(choiceCaseNode).contains(dataSchemaNode.getQName())) {
                         realChildNodes.add(choiceCaseNode.getDataChildByName(dataSchemaNode.getQName()));
                     }
                 }
@@ -370,7 +370,7 @@ public final class SchemaUtils {
                 currentAugmentChildNodes.add(dataSchemaNode.getQName());
             }
 
-            if(childToProcess.getPossibleChildNames().equals(currentAugmentChildNodes)){
+            if (childToProcess.getPossibleChildNames().equals(currentAugmentChildNodes)){
                 return true;
             }
         }
@@ -413,14 +413,14 @@ public final class SchemaUtils {
         SchemaNode current = Preconditions.checkNotNull(schemaContext);
         for (final QName qname : path.getPathFromRoot()) {
             SchemaNode child;
-            if(current instanceof DataNodeContainer) {
+            if (current instanceof DataNodeContainer) {
                 child = ((DataNodeContainer) current).getDataChildByName(qname);
 
                 if (child == null && current instanceof SchemaContext) {
                     child = tryFindGroupings((SchemaContext) current, qname).orNull();
                 }
 
-                if(child == null && current instanceof SchemaContext) {
+                if (child == null && current instanceof SchemaContext) {
                     child = tryFindNotification((SchemaContext) current, qname)
                             .or(tryFindRpc(((SchemaContext) current), qname)).orNull();
                 }

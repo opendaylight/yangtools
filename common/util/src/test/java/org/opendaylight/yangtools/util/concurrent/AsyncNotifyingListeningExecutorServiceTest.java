@@ -50,11 +50,11 @@ public class AsyncNotifyingListeningExecutorServiceTest {
 
     @After
     public void tearDown() {
-        if( listenerExecutor != null ) {
+        if (listenerExecutor != null ) {
             listenerExecutor.shutdownNow();
         }
 
-        if( testExecutor != null ) {
+        if (testExecutor != null ) {
             testExecutor.shutdownNow();
         }
     }
@@ -113,7 +113,7 @@ public class AsyncNotifyingListeningExecutorServiceTest {
         assertTrue( "ListenableFuture callback was not notified of onSuccess",
                     futureNotifiedLatch.await( 5, TimeUnit.SECONDS ) );
 
-        if( assertError.get() != null ) {
+        if (assertError.get() != null ) {
             throw assertError.get();
         }
 
@@ -126,7 +126,7 @@ public class AsyncNotifyingListeningExecutorServiceTest {
         assertTrue( "ListenableFuture callback was not notified of onSuccess",
                     futureNotifiedLatch.await( 5, TimeUnit.SECONDS ) );
 
-        if( assertError.get() != null ) {
+        if (assertError.get() != null ) {
             throw assertError.get();
         }
     }

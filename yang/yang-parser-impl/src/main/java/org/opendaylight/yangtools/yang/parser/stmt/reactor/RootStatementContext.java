@@ -145,7 +145,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
         copy.addAllToCopyHistory(this.getCopyHistory());
         copy.addToCopyHistory(typeOfCopy);
 
-        if(this.getOriginalCtx() != null) {
+        if (this.getOriginalCtx() != null) {
             copy.setOriginalCtx(this.getOriginalCtx());
         } else {
             copy.setOriginalCtx(this);

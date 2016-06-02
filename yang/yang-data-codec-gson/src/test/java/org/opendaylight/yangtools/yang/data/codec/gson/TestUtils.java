@@ -69,7 +69,7 @@ public class TestUtils {
 
         StatementStreamSource[] sources = new StatementStreamSource[files.length];
 
-        for(int i = 0; i<files.length; i++) {
+        for (int i = 0; i<files.length; i++) {
             sources[i] = new YangStatementSourceImpl(new FileInputStream(files[i]));
         }
 

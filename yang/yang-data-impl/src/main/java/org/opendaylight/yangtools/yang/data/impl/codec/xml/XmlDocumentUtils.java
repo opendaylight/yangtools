@@ -80,7 +80,7 @@ public final class XmlDocumentUtils {
 
     public static Optional<ModifyAction> getModifyOperationFromAttributes(final Element xmlElement) {
         Attr attributeNodeNS = xmlElement.getAttributeNodeNS(OPERATION_ATTRIBUTE_QNAME.getNamespace().toString(), OPERATION_ATTRIBUTE_QNAME.getLocalName());
-        if(attributeNodeNS == null) {
+        if (attributeNodeNS == null) {
             return Optional.absent();
         }
 

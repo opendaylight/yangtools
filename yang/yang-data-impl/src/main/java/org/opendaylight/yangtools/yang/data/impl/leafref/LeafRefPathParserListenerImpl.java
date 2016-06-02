@@ -205,7 +205,7 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener{
         final Set<ModuleImport> imports = module.getImports();
 
         for (final ModuleImport moduleImport : imports) {
-            if(moduleImport.getPrefix().equals(prefix)) {
+            if (moduleImport.getPrefix().equals(prefix)) {
                 return moduleImport;
             }
         }

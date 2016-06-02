@@ -41,7 +41,7 @@ class StatementContextWriter implements StatementWriter {
     }
 
     void defferedCreate() throws SourceException {
-        if(current != null) {
+        if (current != null) {
             parent = current.build();
             current = null;
         }

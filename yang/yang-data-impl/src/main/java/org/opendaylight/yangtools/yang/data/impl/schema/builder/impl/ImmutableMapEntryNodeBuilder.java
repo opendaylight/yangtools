@@ -66,7 +66,7 @@ public class ImmutableMapEntryNodeBuilder extends AbstractImmutableDataContainer
             final PathArgument identifier = childId.getIdentifier();
 
             // Augmentation nodes cannot be keys, and do not have to be present in childrenQNamesToPaths map
-            if(isAugment(identifier)) {
+            if (isAugment(identifier)) {
                 continue;
             }
 
@@ -88,7 +88,7 @@ public class ImmutableMapEntryNodeBuilder extends AbstractImmutableDataContainer
     @Override
     public DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> withChild(final DataContainerChild<?, ?> child) {
         // Augmentation nodes cannot be keys, and do not have to be present in childrenQNamesToPaths map
-        if(!isAugment(child.getIdentifier())) {
+        if (!isAugment(child.getIdentifier())) {
             childrenQNamesToPaths.put(child.getNodeType(), child.getIdentifier());
         }
 

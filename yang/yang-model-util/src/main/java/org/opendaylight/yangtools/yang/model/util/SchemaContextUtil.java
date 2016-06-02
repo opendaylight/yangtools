@@ -655,13 +655,13 @@ public final class SchemaContextUtil {
         // FIXME this is just to preserve backwards compatibility since yangtools do not mind wrong leafref xpaths
         // and current expected behaviour for such cases is to just use pure string
         // This should throw an exception about incorrect XPath in leafref
-        if(dataSchemaNode == null) {
+        if (dataSchemaNode == null) {
             return null;
         }
 
         final TypeDefinition<?> targetTypeDefinition = typeDefinition(dataSchemaNode);
 
-        if(targetTypeDefinition instanceof LeafrefTypeDefinition) {
+        if (targetTypeDefinition instanceof LeafrefTypeDefinition) {
             return getBaseTypeForLeafRef(((LeafrefTypeDefinition) targetTypeDefinition), schemaContext, dataSchemaNode);
         } else {
             return targetTypeDefinition;

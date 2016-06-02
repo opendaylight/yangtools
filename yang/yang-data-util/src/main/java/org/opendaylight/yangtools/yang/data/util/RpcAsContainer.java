@@ -118,10 +118,10 @@ public final class RpcAsContainer implements ContainerSchemaNode {
         final List<DataSchemaNode> ret = new ArrayList<>();
         final ContainerSchemaNode input = getInput();
         final ContainerSchemaNode output = getOutput();
-        if(input != null) {
+        if (input != null) {
             ret.add(input);
         }
-        if(output != null) {
+        if (output != null) {
             ret.add(output);
         }
         return ret;

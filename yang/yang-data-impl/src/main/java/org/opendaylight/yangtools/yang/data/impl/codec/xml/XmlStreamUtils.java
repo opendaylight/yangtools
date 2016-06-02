@@ -205,7 +205,7 @@ public class XmlStreamUtils {
     }
 
     public void writeInstanceIdentifier(final XMLStreamWriter writer, final YangInstanceIdentifier value) throws XMLStreamException {
-        if(schemaContext.isPresent()) {
+        if (schemaContext.isPresent()) {
             RandomPrefixInstanceIdentifierSerializer iiCodec = new RandomPrefixInstanceIdentifierSerializer(schemaContext.get());
             String serializedValue = iiCodec.serialize(value);
             writeNamespaceDeclarations(writer,iiCodec.getPrefixes());

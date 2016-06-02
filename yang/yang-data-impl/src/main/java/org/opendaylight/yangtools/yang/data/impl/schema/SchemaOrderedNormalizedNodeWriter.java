@@ -130,7 +130,7 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
                     write(qNameToNodes.get(schemaNode.getQName()), schemaNode);
                 }
             }
-        } else if(parentSchemaNode instanceof ChoiceSchemaNode) {
+        } else if (parentSchemaNode instanceof ChoiceSchemaNode) {
             for (ChoiceCaseNode ccNode : ((ChoiceSchemaNode) parentSchemaNode).getCases()) {
                 for (DataSchemaNode dsn : ccNode.getChildNodes()) {
                     if (qNameToNodes.containsKey(dsn.getQName())) {
