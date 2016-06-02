@@ -287,6 +287,10 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         } else {
             throw new IllegalArgumentException("Unsupported leaf node type " + schema.getClass());
         }
+        return getCodec(valueType, instantiatedType);
+    }
+
+    Codec<Object, Object> getCodec(final Class<?> valueType, final TypeDefinition<?> instantiatedType) {
         if (Class.class.equals(valueType)) {
             @SuppressWarnings({ "unchecked", "rawtypes" })
             final Codec<Object, Object> casted = (Codec) identityCodec;
@@ -300,12 +304,12 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
                 return ValueTypeCodec.EMPTY_CODEC;
             }
         } else if (BindingReflections.isBindingClass(valueType)) {
-                            return getCodec(valueType, instantiatedType);
+            return getCodecForBindingClass(valueType, instantiatedType);
         }
         return ValueTypeCodec.NOOP_CODEC;
     }
 
-    private Codec<Object, Object> getCodec(final Class<?> valueType, final TypeDefinition<?> instantiatedType) {
+    private Codec<Object, Object> getCodecForBindingClass(final Class<?> valueType, final TypeDefinition<?> instantiatedType) {
         @SuppressWarnings("rawtypes")
         TypeDefinition rootType = instantiatedType;
         while (rootType.getBaseType() != null) {
@@ -316,7 +320,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         } else if (rootType instanceof InstanceIdentifierTypeDefinition) {
             return ValueTypeCodec.encapsulatedValueCodecFor(valueType, instanceIdentifierCodec);
         } else if (rootType instanceof UnionTypeDefinition) {
-            final Callable<UnionTypeCodec> loader = UnionTypeCodec.loader(valueType, (UnionTypeDefinition) rootType);
+            final Callable<UnionTypeCodec> loader = UnionTypeCodec.loader(valueType, (UnionTypeDefinition) rootType, this);
             try {
                 return loader.call();
             } catch (final Exception e) {

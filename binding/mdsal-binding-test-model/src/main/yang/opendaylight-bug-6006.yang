@@ -1,0 +1,36 @@
+module opendaylight-bug-6006 {
+    namespace "urn:opendaylight:params:xml:ns:yang:mdsal:test:bug:6006";
+    prefix bug-6006-test;
+
+    description
+        "This module contains test case for bug 6006.
+         https://bugs.opendaylight.org/show_bug.cgi?id=6006";
+
+    revision "2016-06-07" {
+        description
+        "Test model for testing union data types.";
+    }
+
+    identity ident-base;
+    identity ident-one {
+        base ident-base;
+    }
+    identity ident-two {
+        base ident-base;
+    }
+
+    typedef union-type {
+        type union {
+            type uint8;
+            type identityref {
+                base ident-base;
+            }
+        }
+    }
+
+    container union-node {
+        leaf value {
+            type union-type;
+        }
+    }
+}
