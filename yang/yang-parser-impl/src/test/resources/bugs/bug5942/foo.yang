@@ -1,0 +1,25 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+    yang-version 1;
+
+    revision "2016-06-02";
+
+    grouping grp {
+        container bar;
+    }
+
+    container root {
+        uses grp {
+            description "uses description";
+            reference "uses reference";
+            status "deprecated";
+            when "0!=1";
+            foo:e "argument";
+        }
+    }
+
+    extension e {
+        argument name;
+    }
+}
