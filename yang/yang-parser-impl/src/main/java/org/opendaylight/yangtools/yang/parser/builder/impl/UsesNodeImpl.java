@@ -17,6 +17,7 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
@@ -64,6 +65,7 @@ final class UsesNodeImpl implements UsesNode {
         return refines;
     }
 
+    @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;
     }
@@ -111,5 +113,20 @@ final class UsesNodeImpl implements UsesNode {
         return UsesNodeImpl.class.getSimpleName() + "[groupingPath=" +
                 groupingPath +
                 "]";
+    }
+
+    @Override
+    public String getDescription() {
+        return "";
+    }
+
+    @Override
+    public String getReference() {
+        return "";
+    }
+
+    @Override
+    public Status getStatus() {
+        return null;
     }
 }

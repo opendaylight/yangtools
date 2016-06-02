@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import javax.annotation.Nullable;
+
 /**
  *
  * Node which can have documentation assigned.
@@ -40,5 +42,6 @@ public interface DocumentedNode {
      * @return status of this node which represents the argument of the YANG
      *         <code>status</code> substatement
      */
+    @Nullable
     Status getStatus();
 }
