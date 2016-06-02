@@ -1,0 +1,16 @@
+module bug2872 {
+    yang-version 1;
+    namespace "bug2872";
+    prefix bug2872;
+
+    revision 2016-06-08 {
+        description "Bug 2872 test model";
+    }
+
+    leaf bar {
+        type enumeration {
+            enum "value-one";
+            enum "value-two";
+        }
+    }
+}
