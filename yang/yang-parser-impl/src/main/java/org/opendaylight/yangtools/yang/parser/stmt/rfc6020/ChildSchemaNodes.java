@@ -54,7 +54,7 @@ public class ChildSchemaNodes<D extends DeclaredStatement<QName>,E extends Effec
 
     private static NamespaceStorageNode globalOrStatementSpecific(final NamespaceBehaviour.NamespaceStorageNode storage) {
         NamespaceStorageNode current = storage;
-        while(current.getStorageNodeType() != StorageNodeType.STATEMENT_LOCAL && current.getStorageNodeType() != StorageNodeType.GLOBAL) {
+        while (current.getStorageNodeType() != StorageNodeType.STATEMENT_LOCAL && current.getStorageNodeType() != StorageNodeType.GLOBAL) {
             current = current.getParentNamespaceStorage();
         }
         return current;

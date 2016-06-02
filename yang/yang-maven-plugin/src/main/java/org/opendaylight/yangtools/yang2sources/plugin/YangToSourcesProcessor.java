@@ -235,7 +235,7 @@ class YangToSourcesProcessor {
 
             File actualGeneratedYangDir = new File(project.getBuild().getDirectory(),
                     CodeGeneratorArg.YANG_GENERATED_DIR.replace("target" + File.separator, ""));
-            if(!actualGeneratedYangDir.equals(generatedYangDir)) {
+            if (!actualGeneratedYangDir.equals(generatedYangDir)) {
                 addYangsToMetaInf(project, yangFilesRootDir, excludedFiles, actualGeneratedYangDir);
             }
         }

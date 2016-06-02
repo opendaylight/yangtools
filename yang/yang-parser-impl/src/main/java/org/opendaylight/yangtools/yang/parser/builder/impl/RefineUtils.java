@@ -263,7 +263,7 @@ public final class RefineUtils {
 
 
         final DocumentedNodeBuilder documentedNode;
-        if(node instanceof DocumentedNodeBuilder) {
+        if (node instanceof DocumentedNodeBuilder) {
             documentedNode = ((DocumentedNodeBuilder) node);
         } else {
             documentedNode = null;
@@ -273,7 +273,7 @@ public final class RefineUtils {
 
 
         if (description != null) {
-            if(documentedNode != null) {
+            if (documentedNode != null) {
                 documentedNode.setDescription(description);
             } else {
                 throw new YangParseException(moduleName, line, String.format("Cannot refine description in of target %s",refine.getTargetPathString()));
@@ -283,7 +283,7 @@ public final class RefineUtils {
 
         String reference = refine.getReference();
         if (reference != null) {
-            if(documentedNode != null) {
+            if (documentedNode != null) {
                 documentedNode.setReference(reference);
             } else {
                 throw new YangParseException(moduleName, line, String.format("Cannot refine reference in of target %s",refine.getTargetPathString()));
@@ -292,7 +292,7 @@ public final class RefineUtils {
 
         Boolean config = refine.isConfiguration();
         if (config != null) {
-            if(node instanceof DataSchemaNodeBuilder) {
+            if (node instanceof DataSchemaNodeBuilder) {
                 ((DataSchemaNodeBuilder) node).setConfiguration(config);
             } else {
                 throw new YangParseException(moduleName, line, String.format("Cannot refine config of target %s ",refine.getTargetPathString()));

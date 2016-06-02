@@ -68,11 +68,11 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         Map<K, V> localNamespace = (Map<K,V>) namespaces.get(type);
 
         V potential = null;
-        if(localNamespace != null) {
+        if (localNamespace != null) {
             potential = localNamespace.get(key);
         }
 
-        if(potential == null && Utils.isModuleIdentifierWithoutSpecifiedRevision(key)) {
+        if (potential == null && Utils.isModuleIdentifierWithoutSpecifiedRevision(key)) {
             potential = getRegardlessOfRevision((ModuleIdentifier)key,(Map<ModuleIdentifier,V>)localNamespace);
         }
 
@@ -108,7 +108,7 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
     public <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(final Class<N> type, final K key, final V value) {
         @SuppressWarnings("unchecked")
         Map<K, V> localNamespace = (Map<K,V>) namespaces.get(type);
-        if(localNamespace == null) {
+        if (localNamespace == null) {
             checkLocalNamespaceAllowed(type);
             localNamespace = new HashMap<>();
             namespaces.put(type, localNamespace);

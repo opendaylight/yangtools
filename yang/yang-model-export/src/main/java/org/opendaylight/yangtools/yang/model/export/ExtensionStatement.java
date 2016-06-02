@@ -34,7 +34,7 @@ final class ExtensionStatement implements StatementDefinition {
 
     static Map<QName,StatementDefinition> mapFrom(final Collection<ExtensionDefinition> definitions) {
         final HashMap<QName,StatementDefinition> ret = new HashMap<>(definitions.size());
-        for(final ExtensionDefinition def : definitions) {
+        for (final ExtensionDefinition def : definitions) {
             final StatementDefinition value = from(def);
             ret.put(value.getStatementName(), value);
         }

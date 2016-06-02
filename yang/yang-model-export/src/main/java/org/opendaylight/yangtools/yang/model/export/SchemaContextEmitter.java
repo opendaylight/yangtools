@@ -692,7 +692,7 @@ class SchemaContextEmitter {
     }
 
     private void emitMust(@Nullable final MustDefinition mustCondition) {
-        if(mustCondition != null && mustCondition.getXpath() != null) {
+        if (mustCondition != null && mustCondition.getXpath() != null) {
             writer.startMustNode(mustCondition.getXpath());
             emitErrorMessageNode(mustCondition.getErrorMessage());
             emitErrorAppTagNode(mustCondition.getErrorAppTag());
@@ -1073,7 +1073,7 @@ class SchemaContextEmitter {
         emitStatusNode(augmentation.getStatus());
         emitDescriptionNode(augmentation.getDescription());
         emitReferenceNode(augmentation.getReference());
-        for(final UsesNode uses: augmentation.getUses()) {
+        for (final UsesNode uses: augmentation.getUses()) {
             emitUsesNode(uses);
         }
 
@@ -1114,7 +1114,7 @@ class SchemaContextEmitter {
     }
 
     private void emitWhen(final RevisionAwareXPath revisionAwareXPath) {
-        if(revisionAwareXPath != null) {
+        if (revisionAwareXPath != null) {
             writer.startWhenNode(revisionAwareXPath);
             writer.endNode();
         }
@@ -1131,10 +1131,10 @@ class SchemaContextEmitter {
         emitDescriptionNode(rpc.getDescription());
         emitReferenceNode(rpc.getReference());
 
-        for(final TypeDefinition<?> typedef : rpc.getTypeDefinitions()) {
+        for (final TypeDefinition<?> typedef : rpc.getTypeDefinitions()) {
             emitTypedefNode(typedef);
         }
-        for(final GroupingDefinition grouping : rpc.getGroupings()) {
+        for (final GroupingDefinition grouping : rpc.getGroupings()) {
             emitGrouping(grouping);
         }
         emitInput(rpc.getInput());
@@ -1179,11 +1179,11 @@ class SchemaContextEmitter {
     private static <T> boolean  isPrefix(final Iterable<T> prefix, final Iterable<T> other) {
         final Iterator<T> prefixIt = prefix.iterator();
         final Iterator<T> otherIt = other.iterator();
-        while(prefixIt.hasNext()) {
-            if(!otherIt.hasNext()) {
+        while (prefixIt.hasNext()) {
+            if (!otherIt.hasNext()) {
                 return false;
             }
-            if(!Objects.deepEquals(prefixIt.next(), otherIt.next())) {
+            if (!Objects.deepEquals(prefixIt.next(), otherIt.next())) {
                 return false;
             }
         }

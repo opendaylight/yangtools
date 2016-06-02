@@ -164,7 +164,7 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
                     task = super.poll( waitTime, TimeUnit.MILLISECONDS );
 
                     totalWaitTime -= POLL_WAIT_TIME_IN_MS;
-                    if( totalWaitTime <= 0 ) {
+                    if (totalWaitTime <= 0 ) {
                         break;
                     }
 

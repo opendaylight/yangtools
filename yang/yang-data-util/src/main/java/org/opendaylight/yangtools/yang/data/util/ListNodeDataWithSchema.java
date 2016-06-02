@@ -24,7 +24,7 @@ public class ListNodeDataWithSchema extends CompositeNodeDataWithSchema {
         writer.nextDataSchemaNode(schema);
         if (schema.getKeyDefinition().isEmpty()) {
             writer.startUnkeyedList(provideNodeIdentifier(), childSizeHint());
-        } else if(schema.isUserOrdered()) {
+        } else if (schema.isUserOrdered()) {
             writer.startOrderedMapNode(provideNodeIdentifier(), childSizeHint());
         } else {
             writer.startMapNode(provideNodeIdentifier(), childSizeHint());

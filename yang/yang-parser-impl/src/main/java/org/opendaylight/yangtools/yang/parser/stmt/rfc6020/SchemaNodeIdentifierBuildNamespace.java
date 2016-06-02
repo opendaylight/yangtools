@@ -41,14 +41,14 @@ class SchemaNodeIdentifierBuildNamespace extends
     public StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> getFrom(NamespaceStorageNode storage, SchemaNodeIdentifier key) {
 
         final NamespaceStorageNode lookupStartStorage;
-        if(key.isAbsolute() || storage.getStorageNodeType() == StorageNodeType.ROOT_STATEMENT_LOCAL) {
+        if (key.isAbsolute() || storage.getStorageNodeType() == StorageNodeType.ROOT_STATEMENT_LOCAL) {
             lookupStartStorage = NamespaceBehaviour.findClosestTowardsRoot(storage, StorageNodeType.GLOBAL);
         } else {
             lookupStartStorage = storage;
         }
         Iterator<QName> iterator = key.getPathFromRoot().iterator();
-        if(!iterator.hasNext()) {
-            if(lookupStartStorage instanceof StmtContext<?, ?, ?>) {
+        if (!iterator.hasNext()) {
+            if (lookupStartStorage instanceof StmtContext<?, ?, ?>) {
                 return (StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>) lookupStartStorage;
             } else {
                 return null;
@@ -57,7 +57,7 @@ class SchemaNodeIdentifierBuildNamespace extends
         QName nextPath = iterator.next();
         StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> current = (StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>) lookupStartStorage
                 .getFromLocalStorage(ChildSchemaNodes.class, nextPath);
-        if(current == null && lookupStartStorage instanceof StmtContext<?, ?, ?>) {
+        if (current == null && lookupStartStorage instanceof StmtContext<?, ?, ?>) {
             return tryToFindUnknownStatement(nextPath.getLocalName(), (Mutable<?, ?, EffectiveStatement<?, ?>>) lookupStartStorage);
         }
         while (current != null && iterator.hasNext()) {

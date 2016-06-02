@@ -42,7 +42,7 @@ final class AugmentationModificationStrategy extends AbstractDataNodeContainerMo
 
     private static AugmentationSchema createAugmentProxy(final AugmentationSchema schema, final DataNodeContainer resolved) {
         final Set<DataSchemaNode> realChildSchemas = new HashSet<>();
-        for(final DataSchemaNode augChild : schema.getChildNodes()) {
+        for (final DataSchemaNode augChild : schema.getChildNodes()) {
             realChildSchemas.add(resolved.getDataChildByName(augChild.getQName()));
         }
         return new EffectiveAugmentationSchema(schema, realChildSchemas);

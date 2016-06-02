@@ -389,7 +389,7 @@ public final class ParserListenerUtils {
             final String str = stringNode.getText();
             char firstChar = str.charAt(0);
             final CharMatcher quoteMatcher;
-            if(SINGLE_QUOTE_MATCHER.matches(firstChar)) {
+            if (SINGLE_QUOTE_MATCHER.matches(firstChar)) {
                 quoteMatcher = SINGLE_QUOTE_MATCHER;
             } else if (DOUBLE_QUOTE_MATCHER.matches(firstChar)) {
                 quoteMatcher = DOUBLE_QUOTE_MATCHER;
@@ -1981,7 +1981,7 @@ public final class ParserListenerUtils {
 
     public static <T extends ParserRuleContext> Optional<T> getFirstContext(final ParserRuleContext context,final Class<T> contextType) {
         List<T> potential = context.getRuleContexts(contextType);
-        if(potential.isEmpty()) {
+        if (potential.isEmpty()) {
             return Optional.absent();
         }
         return Optional.of(potential.get(0));

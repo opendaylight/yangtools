@@ -26,7 +26,7 @@ public final class ExecutorServiceUtil {
     private static final class WaitInQueueExecutionHandler implements RejectedExecutionHandler {
         @Override
         public void rejectedExecution(final Runnable r, final ThreadPoolExecutor executor) {
-            if( executor.isShutdown() ) {
+            if (executor.isShutdown() ) {
                 throw new RejectedExecutionException( "Executor has been shutdown." );
             }
 
@@ -90,7 +90,7 @@ public final class ExecutorServiceUtil {
         executor.shutdown();
 
         try {
-            if(!executor.awaitTermination(timeout, unit)) {
+            if (!executor.awaitTermination(timeout, unit)) {
                 executor.shutdownNow();
             }
         } catch( InterruptedException e ) {

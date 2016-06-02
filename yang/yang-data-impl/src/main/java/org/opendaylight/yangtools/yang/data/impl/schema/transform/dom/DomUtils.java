@@ -76,7 +76,7 @@ public final class DomUtils {
         final List<Element> childNodesCollection = Lists.newArrayList();
         final NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
-            if(childNodes.item(i) instanceof Element) {
+            if (childNodes.item(i) instanceof Element) {
                 childNodesCollection.add((Element) childNodes.item(i));
             }
         }
@@ -107,7 +107,7 @@ public final class DomUtils {
             }
 
             // Skip namespace definitions
-            if(namespace.equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI)) {
+            if (namespace.equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI)) {
                 continue;
             }
 

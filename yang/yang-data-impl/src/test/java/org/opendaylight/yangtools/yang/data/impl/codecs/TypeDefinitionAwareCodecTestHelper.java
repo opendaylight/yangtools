@@ -51,7 +51,7 @@ public class TypeDefinitionAwareCodecTestHelper {
 
     public static EnumTypeDefinition toEnumTypeDefinition( String... enums ) {
         List<EnumTypeDefinition.EnumPair> enumList = Lists.newArrayList();
-        for( String en: enums ) {
+        for (String en: enums ) {
             EnumTypeDefinition.EnumPair mockEnum = mock( EnumTypeDefinition.EnumPair.class );
             when( mockEnum.getName() ).thenReturn( en );
             enumList.add( mockEnum );
@@ -67,7 +67,7 @@ public class TypeDefinitionAwareCodecTestHelper {
 
     public static BitsTypeDefinition toBitsTypeDefinition( String... bits ) {
         List<BitsTypeDefinition.Bit> bitList = Lists.newArrayList();
-        for( String bit: bits ) {
+        for (String bit: bits ) {
             BitsTypeDefinition.Bit mockBit = mock( BitsTypeDefinition.Bit.class );
             when( mockBit.getName() ).thenReturn( bit );
             bitList.add( mockBit );

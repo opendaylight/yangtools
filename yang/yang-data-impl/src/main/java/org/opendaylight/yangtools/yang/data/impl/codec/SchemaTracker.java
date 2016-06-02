@@ -90,17 +90,17 @@ public final class SchemaTracker {
         final Object parent = getParent();
         SchemaNode schema = null;
         final QName qname = name.getNodeType();
-        if(parent instanceof DataNodeContainer) {
+        if (parent instanceof DataNodeContainer) {
             schema = ((DataNodeContainer)parent).getDataChildByName(qname);
 
-            if(schema == null && parent instanceof GroupingDefinition) {
+            if (schema == null && parent instanceof GroupingDefinition) {
                 schema = ((GroupingDefinition) parent);
             }
 
-            if(schema == null && parent instanceof NotificationDefinition) {
+            if (schema == null && parent instanceof NotificationDefinition) {
                 schema = ((NotificationDefinition) parent);
             }
-        } else if(parent instanceof ChoiceSchemaNode) {
+        } else if (parent instanceof ChoiceSchemaNode) {
             schema = findChildInCases((ChoiceSchemaNode) parent, qname);
         } else {
             throw new IllegalStateException("Unsupported schema type "+ parent.getClass() +" on stack.");
@@ -111,9 +111,9 @@ public final class SchemaTracker {
 
     private static SchemaNode findChildInCases(final ChoiceSchemaNode parent, final QName qname) {
         DataSchemaNode schema = null;
-        for(final ChoiceCaseNode caze : parent.getCases()) {
+        for (final ChoiceCaseNode caze : parent.getCases()) {
             final DataSchemaNode potential = caze.getDataChildByName(qname);
-            if(potential != null) {
+            if (potential != null) {
                 schema = potential;
                 break;
             }
@@ -123,9 +123,9 @@ public final class SchemaTracker {
 
     private static SchemaNode findCaseByChild(final ChoiceSchemaNode parent, final QName qname) {
         DataSchemaNode schema = null;
-        for(final ChoiceCaseNode caze : parent.getCases()) {
+        for (final ChoiceCaseNode caze : parent.getCases()) {
             final DataSchemaNode potential = caze.getDataChildByName(qname);
-            if(potential != null) {
+            if (potential != null) {
                 schema = caze;
                 break;
             }
@@ -206,14 +206,14 @@ public final class SchemaTracker {
         Object parent = getParent();
 
         Preconditions.checkArgument(parent instanceof AugmentationTarget, "Augmentation not allowed under %s", parent);
-        if(parent instanceof ChoiceSchemaNode) {
+        if (parent instanceof ChoiceSchemaNode) {
             final QName name = Iterables.get(identifier.getPossibleChildNames(), 0);
             parent = findCaseByChild((ChoiceSchemaNode) parent, name);
         }
         Preconditions.checkArgument(parent instanceof DataNodeContainer, "Augmentation allowed only in DataNodeContainer",parent);
         final AugmentationSchema schema = SchemaUtils.findSchemaForAugment((AugmentationTarget) parent, identifier.getPossibleChildNames());
         final HashSet<DataSchemaNode> realChildSchemas = new HashSet<>();
-        for(final DataSchemaNode child : schema.getChildNodes()) {
+        for (final DataSchemaNode child : schema.getChildNodes()) {
             realChildSchemas.add(((DataNodeContainer) parent).getDataChildByName(child.getQName()));
         }
         final AugmentationSchema resolvedSchema = new EffectiveAugmentationSchema(schema, realChildSchemas);

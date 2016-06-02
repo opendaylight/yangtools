@@ -251,7 +251,7 @@ public class ImmutableNormalizedNodeStreamWriter implements SchemaAwareNormalize
 
     @Override
     public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint) {
-        if(!(getCurrent() instanceof NormalizedNodeResultBuilder)) {
+        if (!(getCurrent() instanceof NormalizedNodeResultBuilder)) {
             Preconditions.checkArgument(getCurrent() instanceof ImmutableMapNodeBuilder || getCurrent() instanceof ImmutableOrderedMapNodeBuilder);
         }
 

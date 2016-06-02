@@ -247,7 +247,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
 
     protected static NamespaceStorageNode findClosestTowardsRoot(NamespaceStorageNode storage, StorageNodeType type) {
         NamespaceStorageNode current = storage;
-        while(current != null && current.getStorageNodeType() != type) {
+        while (current != null && current.getStorageNodeType() != type) {
             current = current.getParentNamespaceStorage();
         }
         return current;

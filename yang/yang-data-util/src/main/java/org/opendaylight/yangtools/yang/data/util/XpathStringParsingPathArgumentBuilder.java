@@ -97,7 +97,7 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
         skipCurrentChar();
         checkValid(!allCharactersConsumed(), "Identifier cannot end with '/'.");
         QName name = nextQName();
-        if(allCharactersConsumed() || SLASH == currentChar()) {
+        if (allCharactersConsumed() || SLASH == currentChar()) {
             return computeIdentifier(name);
         } else {
             checkValid(PRECONDITION_START == currentChar(), "Last element must be identifier, predicate or '/'");
@@ -109,7 +109,7 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
     private DataSchemaContextNode<?> nextContextNode(QName name) {
         current = current.getChild(name);
         checkValid(current != null, "%s is not correct schema node identifier.",name);
-        while(current.isMixin()) {
+        while (current.isMixin()) {
             product.add(current.getIdentifier());
             current = current.getChild(name);
         }
@@ -138,11 +138,11 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
         checkValid(currentNode.isKeyedEntry(), "Entry %s does not allow specifying predicates.", name);
 
         ImmutableMap.Builder<QName,Object> keyValues = ImmutableMap.builder();
-        while(!allCharactersConsumed() && PRECONDITION_START == currentChar()) {
+        while (!allCharactersConsumed() && PRECONDITION_START == currentChar()) {
             skipCurrentChar();
             skipWhitespaces();
             final QName key;
-            if(DOT == currentChar()) {
+            if (DOT == currentChar()) {
                 key = null;
                 skipCurrentChar();
             } else {
@@ -156,7 +156,7 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
             checkCurrentAndSkip(PRECONDITION_END, "Precondition must ends with ']'");
 
             // Break-out from method for leaf-list case
-            if(key == null && currentNode.isLeaf()) {
+            if (key == null && currentNode.isLeaf()) {
                 checkValid(offset == data.length(), "Leaf argument must be last argument of instance identifier.");
                 return new YangInstanceIdentifier.NodeWithValue(name, keyValue);
             }
@@ -186,7 +186,7 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
         // Consume prefix or identifie
         final String maybePrefix = nextIdentifier();
         final String prefix,localName;
-        if(COLON == currentChar()) {
+        if (COLON == currentChar()) {
             // previous token is prefix;
             prefix = maybePrefix;
             skipCurrentChar();
@@ -315,7 +315,7 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
     }
 
     private void nextSequenceEnd(CharMatcher matcher) {
-        while(!allCharactersConsumed() && matcher.matches(data.charAt(offset))) {
+        while (!allCharactersConsumed() && matcher.matches(data.charAt(offset))) {
             offset++;
         }
     }

@@ -86,7 +86,7 @@ public final class YinExportUtils {
     private static Map<String, URI> prefixToNamespace(final SchemaContext ctx, final Module module) {
         final BiMap<String, URI> prefixMap = HashBiMap.create(module.getImports().size() + 1);
         prefixMap.put(module.getPrefix(), module.getNamespace());
-        for(final ModuleImport imp : module.getImports()) {
+        for (final ModuleImport imp : module.getImports()) {
             final String prefix = imp.getPrefix();
             final URI namespace = getModuleNamespace(ctx,imp.getModuleName());
             prefixMap.put(prefix, namespace);
@@ -95,8 +95,8 @@ public final class YinExportUtils {
     }
 
     private static URI getModuleNamespace(final SchemaContext ctx, final String moduleName) {
-        for(final Module module : ctx.getModules()) {
-            if(moduleName.equals(module.getName())) {
+        for (final Module module : ctx.getModules()) {
+            if (moduleName.equals(module.getName())) {
                 return module.getNamespace();
             }
         }

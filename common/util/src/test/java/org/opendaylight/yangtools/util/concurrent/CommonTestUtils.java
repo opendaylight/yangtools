@@ -33,7 +33,7 @@ public class CommonTestUtils {
             return executor.submit( new Callable<Void>() {
                 @Override
                 public Void call() throws Exception {
-                    if( blockingLatch != null ) {
+                    if (blockingLatch != null ) {
                         Uninterruptibles.awaitUninterruptibly( blockingLatch );
                     }
                     return null;
@@ -49,7 +49,7 @@ public class CommonTestUtils {
             return executor.submit( new Runnable() {
                 @Override
                 public void run() {
-                    if( blockingLatch != null ) {
+                    if (blockingLatch != null ) {
                         Uninterruptibles.awaitUninterruptibly( blockingLatch );
                     }
                 }
@@ -64,7 +64,7 @@ public class CommonTestUtils {
             return executor.submit( new Runnable() {
                 @Override
                 public void run() {
-                    if( blockingLatch != null ) {
+                    if (blockingLatch != null ) {
                         Uninterruptibles.awaitUninterruptibly( blockingLatch );
                     }
                 }

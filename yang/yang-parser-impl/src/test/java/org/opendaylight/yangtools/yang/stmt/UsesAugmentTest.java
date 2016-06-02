@@ -615,8 +615,8 @@ public class UsesAugmentTest {
         Set<TypeDefinition<?>> types = testModule.getTypeDefinitions();
 
         TypeDefinition<?> intExt = null;
-        for(TypeDefinition<?> td : types) {
-            if("int-ext".equals(td.getQName().getLocalName())) {
+        for (TypeDefinition<?> td : types) {
+            if ("int-ext".equals(td.getQName().getLocalName())) {
                 intExt = td;
             }
         }
@@ -629,10 +629,10 @@ public class UsesAugmentTest {
 
         TypeDefinition<?> uint8 = null;
         TypeDefinition<?> pv = null;
-        for(TypeDefinition<?> td : union.getTypes()) {
-            if("uint8".equals(td.getQName().getLocalName())) {
+        for (TypeDefinition<?> td : union.getTypes()) {
+            if ("uint8".equals(td.getQName().getLocalName())) {
                 uint8 = td;
-            } else if("protocol-version".equals(td.getQName().getLocalName())) {
+            } else if ("protocol-version".equals(td.getQName().getLocalName())) {
                 pv = td;
             }
         }

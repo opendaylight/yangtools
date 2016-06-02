@@ -121,7 +121,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     private void writeStartElement(final QName qname) throws XMLStreamException {
         String ns = qname.getNamespace().toString();
         writer.writeStartElement(XMLConstants.DEFAULT_NS_PREFIX, qname.getLocalName(), ns);
-        if(writer.getNamespaceContext() != null) {
+        if (writer.getNamespaceContext() != null) {
             String parentNs = writer.getNamespaceContext().getNamespaceURI(XMLConstants.DEFAULT_NS_PREFIX);
             if (!ns.equals(parentNs)) {
                 writer.writeDefaultNamespace(ns);
@@ -200,7 +200,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
             try {
                 final String namespace = qNameStringEntry.getKey().getNamespace().toString();
 
-                if(Strings.isNullOrEmpty(namespace)) {
+                if (Strings.isNullOrEmpty(namespace)) {
                     writer.writeAttribute(qNameStringEntry.getKey().getLocalName(), qNameStringEntry.getValue());
                 } else {
                     final String prefix = randomPrefix.encodePrefix(qNameStringEntry.getKey().getNamespace());

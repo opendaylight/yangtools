@@ -193,16 +193,16 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
 
         for (ModuleId rootModule : rootModules) {
 
-            if(rootModule.equals(new ModuleId(module.getName(), module.getRevision()))) {
+            if (rootModule.equals(new ModuleId(module.getName(), module.getRevision()))) {
                 return true;
             }
 
             //handling/checking imports regarding root modules
             for (ModuleImport moduleImport : module.getImports()) {
 
-                if(moduleImport.getModuleName().equals(rootModule.getName())) {
+                if (moduleImport.getModuleName().equals(rootModule.getName())) {
 
-                    if(moduleImport.getRevision() != null && !moduleImport.getRevision().equals(rootModule.getRev())) {
+                    if (moduleImport.getRevision() != null && !moduleImport.getRevision().equals(rootModule.getRev())) {
                         return false;
                     }
 

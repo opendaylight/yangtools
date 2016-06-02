@@ -107,7 +107,7 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
     public void submitNotification( final L listener, final N notification )
             throws RejectedExecutionException {
 
-        if( notification == null ) {
+        if (notification == null) {
             return;
         }
 
@@ -121,11 +121,11 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
     public void submitNotifications( final L listener, final Iterable<N> notifications )
             throws RejectedExecutionException {
 
-        if( notifications == null || listener == null ) {
+        if (notifications == null || listener == null) {
             return;
         }
 
-        if( LOG.isTraceEnabled() ) {
+        if (LOG.isTraceEnabled()) {
             LOG.trace( "{}: submitNotifications for listener {}: {}",
                        name, listener.toString(), notifications );
         }
@@ -138,10 +138,10 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
         // will occur.
 
         try {
-            while( true ) {
+            while (true) {
                 NotificationTask existingTask = listenerCache.get( key );
 
-                if( existingTask == null || !existingTask.submitNotifications( notifications ) ) {
+                if (existingTask == null || !existingTask.submitNotifications( notifications )) {
 
                     // Either there's no existing task or we couldn't add our notifications to the
                     // existing one because it's in the process of exiting and removing itself from
@@ -151,12 +151,12 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
                     // shouldn't be called concurrently for the same listener as that would violate
                     // notification ordering. In any case loop back up and try again.
 
-                    if( newNotificationTask == null ) {
+                    if (newNotificationTask == null) {
                         newNotificationTask = new NotificationTask( key, notifications );
                     }
 
                     existingTask = listenerCache.putIfAbsent( key, newNotificationTask );
-                    if( existingTask == null ) {
+                    if (existingTask == null) {
 
                         // We were able to put our new task - now submit it to the executor and
                         // we're done. If it throws a RejectedxecutionException, let that propagate
@@ -184,7 +184,7 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
                        name, listener.toString() );
         }
 
-        if( LOG.isTraceEnabled() ) {
+        if (LOG.isTraceEnabled()) {
             LOG.trace( "{}: submitNotifications dine for listener {}",
                        name, listener.toString() );
         }
@@ -196,7 +196,7 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
      */
     public List<ListenerNotificationQueueStats> getListenerNotificationQueueStats() {
         List<ListenerNotificationQueueStats> statsList = new ArrayList<>( listenerCache.size() );
-        for( NotificationTask task: listenerCache.values() ) {
+        for (NotificationTask task: listenerCache.values()) {
             statsList.add( new ListenerNotificationQueueStats(
                     task.listenerKey.toString(), task.notificationQueue.size() ) );
         }
@@ -283,7 +283,7 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
             this.listenerKey = listenerKey;
             this.notificationQueue = new LinkedBlockingQueue<>( maxQueueCapacity );
 
-            for( N notification: notifications ) {
+            for (N notification: notifications) {
                 this.notificationQueue.add( notification );
             }
         }
@@ -296,24 +296,24 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
                 // Check the done flag - if true then #run is in the process of exiting so return
                 // false to indicate such. Otherwise, offer the notifications to the queue.
 
-                if( done ) {
+                if (done) {
                     return false;
                 }
 
-                for( N notification: notifications ) {
+                for (N notification: notifications) {
                     boolean notificationOfferAttemptSuccess = false;
                     // The offer is attempted for up to 10 minutes, with a status message printed each minute
                     for (int notificationOfferAttempts = 0;
-                         notificationOfferAttempts < MAX_NOTIFICATION_OFFER_ATTEMPTS; notificationOfferAttempts++ ) {
+                         notificationOfferAttempts < MAX_NOTIFICATION_OFFER_ATTEMPTS; notificationOfferAttempts++) {
 
                         // Try to offer for up to a minute and log a message if it times out.
-                        if( LOG.isDebugEnabled() ) {
+                        if (LOG.isDebugEnabled()) {
                             LOG.debug( "{}: Offering notification to the queue for listener {}: {}",
                                        name, listenerKey.toString(), notification );
                         }
 
-                        if( notificationOfferAttemptSuccess = notificationQueue.offer(
-                                notification, 1, TimeUnit.MINUTES ) ) {
+                        if (notificationOfferAttemptSuccess = notificationQueue.offer(
+                                notification, 1, TimeUnit.MINUTES)) {
                             break;
                         }
 
@@ -353,19 +353,19 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
             try {
                 // Loop until we've dispatched all the notifications in the queue.
 
-                while( true ) {
+                while (true) {
 
                     // Get the notification at the head of the queue, waiting a little bit for one
                     // to get offered.
 
                     N notification = notificationQueue.poll( 10, TimeUnit.MILLISECONDS );
-                    if( notification == null ) {
+                    if (notification == null) {
 
                         // The queue is empty - try to get the queuingLock. If we can't get the lock
                         // then #submitNotifications is in the process of offering to the queue so
                         // we'll loop back up and poll the queue again.
 
-                        if( queuingLock.tryLock() ) {
+                        if (queuingLock.tryLock()) {
                             try {
 
                                 // Check the queuedNotifications flag to see if #submitNotifications
@@ -374,7 +374,7 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
                                 // Once we set the done flag and unlock, calls to
                                 // #submitNotifications will fail and a new task will be created.
 
-                                if( !queuedNotifications ) {
+                                if (!queuedNotifications) {
                                     done = true;
                                     break;
                                 }
@@ -408,13 +408,13 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
 
         private void notifyListener( N notification ) {
 
-            if( notification == null ) {
+            if (notification == null) {
                 return;
             }
 
             try {
 
-                if( LOG.isDebugEnabled() ) {
+                if (LOG.isDebugEnabled()) {
                     LOG.debug( "{}: Invoking listener {} with notification: {}",
                                name, listenerKey.toString(), notification );
                 }

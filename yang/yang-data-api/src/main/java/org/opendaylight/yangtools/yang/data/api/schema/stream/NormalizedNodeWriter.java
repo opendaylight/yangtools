@@ -137,7 +137,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         if (node instanceof LeafSetEntryNode) {
             final LeafSetEntryNode<?> nodeAsLeafList = (LeafSetEntryNode<?>)node;
             final QName name = nodeAsLeafList.getIdentifier().getNodeType();
-            if(writer instanceof NormalizedNodeStreamAttributeWriter) {
+            if (writer instanceof NormalizedNodeStreamAttributeWriter) {
                 ((NormalizedNodeStreamAttributeWriter) writer).leafSetEntryNode(name, nodeAsLeafList.getValue(),
                         nodeAsLeafList.getAttributes());
             } else {
@@ -146,7 +146,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
             return true;
         } else if (node instanceof LeafNode) {
             final LeafNode<?> nodeAsLeaf = (LeafNode<?>)node;
-            if(writer instanceof NormalizedNodeStreamAttributeWriter) {
+            if (writer instanceof NormalizedNodeStreamAttributeWriter) {
                 ((NormalizedNodeStreamAttributeWriter) writer).leafNode(nodeAsLeaf.getIdentifier(), nodeAsLeaf.getValue(), nodeAsLeaf.getAttributes());
             } else {
                 writer.leafNode(nodeAsLeaf.getIdentifier(), nodeAsLeaf.getValue());
@@ -190,7 +190,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
     protected boolean wasProcessedAsCompositeNode(final NormalizedNode<?, ?> node) throws IOException {
         if (node instanceof ContainerNode) {
             final ContainerNode n = (ContainerNode) node;
-            if(writer instanceof NormalizedNodeStreamAttributeWriter) {
+            if (writer instanceof NormalizedNodeStreamAttributeWriter) {
                 ((NormalizedNodeStreamAttributeWriter) writer).startContainerNode(n.getIdentifier(), childSizeHint(n.getValue()), n.getAttributes());
             } else {
                 writer.startContainerNode(n.getIdentifier(), childSizeHint(n.getValue()));
@@ -263,7 +263,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         @Override
         protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
             final NormalizedNodeStreamWriter nnWriter = getWriter();
-            if(nnWriter instanceof NormalizedNodeStreamAttributeWriter) {
+            if (nnWriter instanceof NormalizedNodeStreamAttributeWriter) {
                 ((NormalizedNodeStreamAttributeWriter) nnWriter).startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()), node.getAttributes());
             } else {
                 nnWriter.startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()));

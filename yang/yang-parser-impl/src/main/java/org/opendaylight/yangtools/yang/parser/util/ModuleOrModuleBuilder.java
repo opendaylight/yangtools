@@ -48,7 +48,7 @@ class ModuleOrModuleBuilder {
 
     static List<ModuleOrModuleBuilder> fromAll(final Collection<Module> modules, final Collection<ModuleBuilder> moduleBuilders) {
         List<ModuleOrModuleBuilder> result = new ArrayList<>(modules.size() + moduleBuilders.size());
-        for(Module m: modules){
+        for (Module m: modules){
             result.add(new ModuleOrModuleBuilder(m));
         }
         for (ModuleBuilder mb : moduleBuilders) {

@@ -24,7 +24,7 @@ public class SchemaNodeUtils {
     }
 
     public static Optional<SchemaNode> getOriginalIfPossible(final SchemaNode node) {
-        if(node instanceof DerivableSchemaNode) {
+        if (node instanceof DerivableSchemaNode) {
             @SuppressWarnings("unchecked")
             final Optional<SchemaNode> ret  = (Optional<SchemaNode>) (((DerivableSchemaNode) node).getOriginal());
             return ret;
@@ -35,7 +35,7 @@ public class SchemaNodeUtils {
     public static SchemaNode getRootOriginalIfPossible(final SchemaNode data) {
         Optional<SchemaNode> previous = Optional.absent();
         Optional<SchemaNode> next = getOriginalIfPossible(data);
-        while(next.isPresent()) {
+        while (next.isPresent()) {
             previous = next;
             next = getOriginalIfPossible(next.get());
         }

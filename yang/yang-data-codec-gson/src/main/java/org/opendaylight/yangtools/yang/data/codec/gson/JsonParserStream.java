@@ -159,7 +159,7 @@ public final class JsonParserStream implements Closeable, Flushable {
              * without wrapping array.
              *
              */
-            if(isArray(parent)) {
+            if (isArray(parent)) {
                 parent = newArrayEntry(parent);
             }
             while (in.hasNext()) {

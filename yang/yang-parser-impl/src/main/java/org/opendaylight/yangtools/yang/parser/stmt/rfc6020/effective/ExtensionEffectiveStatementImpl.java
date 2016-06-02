@@ -80,7 +80,7 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
 
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        if(unknownNodes == null) {
+        if (unknownNodes == null) {
             initUnknownSchemaNodes();
         }
         return unknownNodes;

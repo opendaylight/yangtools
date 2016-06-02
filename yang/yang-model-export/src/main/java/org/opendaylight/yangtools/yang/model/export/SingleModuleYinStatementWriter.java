@@ -106,13 +106,13 @@ class SingleModuleYinStatementWriter implements StatementTextWriter {
     public void writeArgument(final SchemaPath targetPath) {
         checkArgumentApplicable();
         final StringBuilder valueStr = new StringBuilder();
-        if(targetPath.isAbsolute()) {
+        if (targetPath.isAbsolute()) {
             valueStr.append("/");
         }
         final Iterator<QName> argIt = targetPath.getPathFromRoot().iterator();
-        while(argIt.hasNext()) {
+        while (argIt.hasNext()) {
             valueStr.append(toPrefixedString(argIt.next()));
-            if(argIt.hasNext()) {
+            if (argIt.hasNext()) {
                 valueStr.append("/");
             }
         }
@@ -175,7 +175,7 @@ class SingleModuleYinStatementWriter implements StatementTextWriter {
     }
 
     private @Nullable String ensureAndGetXmlNamespacePrefix(final URI namespace) {
-        if(YangConstants.RFC6020_YANG_NAMESPACE.equals(namespace)) {
+        if (YangConstants.RFC6020_YANG_NAMESPACE.equals(namespace)) {
          // YANG namespace does not have prefix if used in arguments.
             return null;
 
@@ -185,7 +185,7 @@ class SingleModuleYinStatementWriter implements StatementTextWriter {
             // FIXME: declare prefix
             prefix =prefixToNamespace.inverse().get(namespace);
         }
-        if(prefix == null) {
+        if (prefix == null) {
             throw new IllegalArgumentException("Namespace " + namespace + " is not bound to imported prefixes.");
         }
         return prefix;

@@ -174,7 +174,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
      */
     @Override
     public Module build() {
-        if(instance != null) {
+        if (instance != null) {
             return instance;
         }
 

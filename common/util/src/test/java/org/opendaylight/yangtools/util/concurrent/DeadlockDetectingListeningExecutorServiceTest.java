@@ -77,7 +77,7 @@ public class DeadlockDetectingListeningExecutorServiceTest {
 
     @After
     public void tearDown() {
-        if( executor != null ) {
+        if (executor != null ) {
             executor.shutdownNow();
         }
     }
@@ -166,7 +166,7 @@ public class DeadlockDetectingListeningExecutorServiceTest {
         assertTrue( "Task did not complete - executor likely deadlocked",
                 futureCompletedLatch.await( 5, TimeUnit.SECONDS ) );
 
-        if( caughtEx.get() != null ) {
+        if (caughtEx.get() != null ) {
             throw caughtEx.get();
         }
     }

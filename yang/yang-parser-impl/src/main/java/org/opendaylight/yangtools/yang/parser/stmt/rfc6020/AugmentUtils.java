@@ -118,7 +118,7 @@ public final class AugmentUtils {
          * If the statement argument is not QName, it cannot be mandatory statement,
          * therefore return false and skip mandatory nodes validation
          */
-        if(!(sourceCtx.getStatementArgument() instanceof QName)) {
+        if (!(sourceCtx.getStatementArgument() instanceof QName)) {
             return false;
         }
         QName sourceStmtQName = (QName) sourceCtx.getStatementArgument();

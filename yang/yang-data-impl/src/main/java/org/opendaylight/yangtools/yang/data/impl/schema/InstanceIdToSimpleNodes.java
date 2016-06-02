@@ -39,7 +39,7 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
         final PathArgument pathArgument = instanceId.getPathArguments().get(0);
         final NormalizedNodeAttrBuilder<? extends PathArgument, Object, ? extends NormalizedNode<? extends PathArgument, Object>> builder = getBuilder(pathArgument);
 
-        if(deepestChild.isPresent()) {
+        if (deepestChild.isPresent()) {
             builder.withValue(deepestChild.get().getValue());
         }
 

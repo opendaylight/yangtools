@@ -50,7 +50,7 @@ public abstract class DerivedType<T extends TypeDefinition<T>> implements TypeDe
     }
 
     public static TypeDefinition<?> from(final TypeDefinition<?> type) {
-        if(type instanceof ExtendedType) {
+        if (type instanceof ExtendedType) {
             return from((ExtendedType) type);
         }
         return type;
@@ -88,13 +88,13 @@ public abstract class DerivedType<T extends TypeDefinition<T>> implements TypeDe
         if (baseType instanceof StringTypeDefinition) {
             return new DerivedStringType(type);
         }
-        if(baseType instanceof UnionTypeDefinition) {
+        if (baseType instanceof UnionTypeDefinition) {
             return new DerivedUnionType(type);
         }
-        if(baseType instanceof EnumTypeDefinition) {
+        if (baseType instanceof EnumTypeDefinition) {
             return new DerivedEnumType(type);
         }
-        if(baseType instanceof BitsTypeDefinition) {
+        if (baseType instanceof BitsTypeDefinition) {
             return new DerivedBitsType(type);
         }
         throw new IllegalArgumentException("Not supported base type of " + baseType.getClass());

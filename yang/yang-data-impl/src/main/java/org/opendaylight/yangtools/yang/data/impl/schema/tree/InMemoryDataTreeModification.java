@@ -151,7 +151,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         ModifiedNode modification = rootNode;
 
         int i = 1;
-        for(final PathArgument pathArg : path.getPathArguments()) {
+        for (final PathArgument pathArg : path.getPathArguments()) {
             final Optional<ModificationApplyOperation> potential = operation.getChild(pathArg);
             if (!potential.isPresent()) {
                 throw new SchemaValidationFailedException(String.format("Child %s is not present in schema tree.",

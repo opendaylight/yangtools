@@ -142,7 +142,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         copy.addAllToCopyHistory(this.getCopyHistory());
         copy.addToCopyHistory(typeOfCopy);
 
-        if(this.getOriginalCtx() != null) {
+        if (this.getOriginalCtx() != null) {
             copy.setOriginalCtx(this.getOriginalCtx());
         } else {
             copy.setOriginalCtx(this);

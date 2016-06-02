@@ -124,7 +124,7 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
         final YangErrorListener errorListener = new YangErrorListener();
         parser.addErrorListener(errorListener);
 
-        if(stream instanceof NamedFileInputStream) {
+        if (stream instanceof NamedFileInputStream) {
             sourceName = stream.toString();
         } else {
             sourceName = null;

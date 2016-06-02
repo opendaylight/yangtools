@@ -33,7 +33,7 @@ public class CountingRejectedExecutionHandlerTest {
 
     @After
     public void tearDown() {
-        if( executor != null ) {
+        if (executor != null) {
             executor.shutdownNow();
         }
     }
@@ -54,7 +54,7 @@ public class CountingRejectedExecutionHandlerTest {
 
         executor.execute( new Task( tasksRunLatch, blockLatch ) );
 
-        for( int i = 0; i < nTasks - 1; i++ ) {
+        for (int i = 0; i < nTasks - 1; i++) {
             executor.execute( new Task( null, null, null, null, 0 ) );
         }
 
@@ -81,7 +81,7 @@ public class CountingRejectedExecutionHandlerTest {
 
         executor.execute( new Task( tasksRunLatch, blockLatch ) );
 
-        for( int i = 0; i < nTasks - 1; i++ ) {
+        for (int i = 0; i < nTasks - 1; i++) {
             try {
                 executor.execute( new Task( null, null, null, null, 0 ) );
                 fail( "Expected RejectedExecutionException" );

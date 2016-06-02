@@ -93,7 +93,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
 
     private static SchemaAwareApplyOperation fromLeafListSchemaNode(final LeafListSchemaNode schemaNode, final TreeType treeType) {
         final SchemaAwareApplyOperation op;
-        if(schemaNode.isUserOrdered()) {
+        if (schemaNode.isUserOrdered()) {
             op =  new OrderedLeafSetModificationStrategy(schemaNode, treeType);
         } else {
             op = new UnorderedLeafSetModificationStrategy(schemaNode, treeType);
@@ -146,7 +146,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
              * it should not cause transaction to fail, since result of this merge
              * leads to same data.
              */
-            if(!original.get().getData().equals(current.get().getData())) {
+            if (!original.get().getData().equals(current.get().getData())) {
                 checkNotConflicting(path, original.get(), current.get());
             }
         }
@@ -167,7 +167,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         final Optional<TreeNode> original = modification.getOriginal();
         if (original.isPresent() && current.isPresent()) {
             checkNotConflicting(path, original.get(), current.get());
-        } else if(original.isPresent()) {
+        } else if (original.isPresent()) {
             throw new ConflictingModificationAppliedException(path,"Node was deleted by other transaction.");
         } else if (current.isPresent()) {
             throw new ConflictingModificationAppliedException(path, "Node was created by other transaction.");

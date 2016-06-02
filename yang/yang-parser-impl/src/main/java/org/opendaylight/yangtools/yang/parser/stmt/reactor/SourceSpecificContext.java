@@ -353,7 +353,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     private PrefixToModule preLinkagePrefixes() {
         PrefixToModuleMap preLinkagePrefixes = new PrefixToModuleMap(true);
         Map<String, URI> prefixToNamespaceMap = getAllFromLocalStorage(ImpPrefixToNamespace.class);
-        if(prefixToNamespaceMap == null) {
+        if (prefixToNamespaceMap == null) {
             //:FIXME if it is a submodule without any import, the map is null. Handle also submodules and includes...
             return null;
         }

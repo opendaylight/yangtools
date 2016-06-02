@@ -66,7 +66,7 @@ public class TrackingLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
 
     @Override
     public boolean offer( final E e, final long timeout, final TimeUnit unit ) throws InterruptedException {
-        if( super.offer( e, timeout, unit ) ) {
+        if (super.offer( e, timeout, unit ) ) {
             updateLargestQueueSize();
             return true;
         }
@@ -76,7 +76,7 @@ public class TrackingLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
 
     @Override
     public boolean offer( final E e ) {
-        if( super.offer( e ) ) {
+        if (super.offer( e ) ) {
             updateLargestQueueSize();
             return true;
         }
