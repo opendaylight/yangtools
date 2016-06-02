@@ -31,6 +31,7 @@ public class EnumEffectiveStatementImpl extends DeclaredEffectiveStatementBase<S
 
     private static final Logger LOG = LoggerFactory.getLogger(EnumEffectiveStatementImpl.class);
 
+    private final String name;
     private final SchemaPath path;
     private String description;
     private String reference;
@@ -41,6 +42,7 @@ public class EnumEffectiveStatementImpl extends DeclaredEffectiveStatementBase<S
     public EnumEffectiveStatementImpl(final StmtContext<String, EnumStatement, ?> ctx) {
         super(ctx);
 
+        name = ctx.rawStatementArgument();
         SchemaPath parentPath = ctx.getParentContext().getSchemaPath().get();
         QNameModule moduleQName = parentPath.getLastComponent().getModule();
         QName maybeQNameArgumentInit = null;
@@ -72,7 +74,7 @@ public class EnumEffectiveStatementImpl extends DeclaredEffectiveStatementBase<S
 
     @Override
     public String getName() {
-        return argument();
+        return name;
     }
 
     @Override
