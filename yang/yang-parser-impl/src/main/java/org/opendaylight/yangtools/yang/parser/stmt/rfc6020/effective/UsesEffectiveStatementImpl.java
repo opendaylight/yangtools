@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -20,6 +21,7 @@ import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -32,24 +34,25 @@ import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 
-public final class UsesEffectiveStatementImpl extends DeclaredEffectiveStatementBase<QName, UsesStatement> implements UsesNode {
+public final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, UsesStatement> implements UsesNode {
     private final SchemaPath groupingPath;
     private final boolean addedByUses;
     private final Map<SchemaPath, SchemaNode> refines;
     private final Set<AugmentationSchema> augmentations;
     private final List<UnknownSchemaNode> unknownNodes;
+    private final RevisionAwareXPath whenCondition;
 
     public UsesEffectiveStatementImpl(
             final StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
         super(ctx);
 
         // initGroupingPath
-        StmtContext<?, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> grpCtx = ctx.getFromNamespace(
+        final StmtContext<?, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> grpCtx = ctx.getFromNamespace(
                 GroupingNamespace.class, ctx.getStatementArgument());
         this.groupingPath = grpCtx.getSchemaPath().get();
 
         // initCopyType
-        List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
+        final List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
         if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
             addedByUses = true;
         } else {
@@ -57,28 +60,31 @@ public final class UsesEffectiveStatementImpl extends DeclaredEffectiveStatement
         }
 
         // initSubstatementCollections
-        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
-        Set<AugmentationSchema> augmentationsInit = new HashSet<>();
-        Map<SchemaPath, SchemaNode> refinesInit = new HashMap<>();
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+        final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
+        final List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
+        final Set<AugmentationSchema> augmentationsInit = new HashSet<>();
+        final Map<SchemaPath, SchemaNode> refinesInit = new HashMap<>();
+        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
-                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
+                final UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
                 unknownNodesInit.add(unknownNode);
             }
             if (effectiveStatement instanceof AugmentationSchema) {
-                AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
+                final AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
                 augmentationsInit.add(augmentationSchema);
             }
             if (effectiveStatement instanceof RefineEffectiveStatementImpl) {
-                RefineEffectiveStatementImpl refineStmt = (RefineEffectiveStatementImpl) effectiveStatement;
-                SchemaNodeIdentifier identifier = refineStmt.argument();
+                final RefineEffectiveStatementImpl refineStmt = (RefineEffectiveStatementImpl) effectiveStatement;
+                final SchemaNodeIdentifier identifier = refineStmt.argument();
                 refinesInit.put(identifier.asSchemaPath(), refineStmt.getRefineTargetNode());
             }
         }
         this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
         this.refines = ImmutableMap.copyOf(refinesInit);
+
+        final WhenEffectiveStatementImpl whenStmt = firstEffective(WhenEffectiveStatementImpl.class);
+        this.whenCondition = (whenStmt == null) ? null : whenStmt.argument();
     }
 
     @Override
@@ -106,8 +112,14 @@ public final class UsesEffectiveStatementImpl extends DeclaredEffectiveStatement
         return refines;
     }
 
+    @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;
+    }
+
+    @Override
+    public Optional<RevisionAwareXPath> getWhenCondition() {
+        return Optional.fromNullable(whenCondition);
     }
 
     @Override
