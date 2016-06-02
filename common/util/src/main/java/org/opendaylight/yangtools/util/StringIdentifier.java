@@ -8,43 +8,29 @@
 package org.opendaylight.yangtools.util;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.concepts.Identifier;
 
 /**
  * Utility {@link Identifier} backed by a {@link String}.
+ *
+ * @deprecated Treats instantiations as equal, not providing safety against mixing instances from different modules.
+ *             Use a subclass of {@link AbstractStringIdentifier} instead.
  */
+@Deprecated
 @Beta
-public final class StringIdentifier implements Identifier, Comparable<StringIdentifier> {
+public final class StringIdentifier extends AbstractStringIdentifier<StringIdentifier> {
     private static final long serialVersionUID = 1L;
-    private final String string;
 
     public StringIdentifier(final String string) {
-        this.string = Preconditions.checkNotNull(string);
+        super(string);
     }
 
+    /**
+     * @deprecated use {@link #getValue()} instead.
+     * @return
+     */
+    @Deprecated
     public String getString() {
-        return string;
-    }
-
-    @Override
-    public int hashCode() {
-        return string.hashCode();
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        return this == o || (o instanceof StringIdentifier && string.equals(((StringIdentifier)o).string));
-    }
-
-    @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(StringIdentifier.class).add("string", string).toString();
-    }
-
-    @Override
-    public int compareTo(final StringIdentifier o) {
-        return string.compareTo(o.string);
+        return getValue();
     }
 }
