@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da5c1566_3cbe4700",
+        "filename": "common/checkstyle-logging/src/main/java/org/opendaylight/yangtools/checkstyle/FileNameUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-03T09:33:35Z",
+      "side": 1,
+      "message": "java.util.Optional is preferred",
+      "range": {
+        "startLine": 13,
+        "startChar": 29,
+        "endLine": 13,
+        "endChar": 38
+      },
+      "revId": "c3733ae93e461b67d305349268a4c544d2137fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_dcabcbd4",
+        "filename": "common/checkstyle-logging/src/main/java/org/opendaylight/yangtools/checkstyle/LogMessageExtractorCheck.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-03T09:33:35Z",
+      "side": 1,
+      "message": "should be called LOG",
+      "range": {
+        "startLine": 33,
+        "startChar": 32,
+        "endLine": 33,
+        "endChar": 38
+      },
+      "revId": "c3733ae93e461b67d305349268a4c544d2137fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_1cb6e33d",
+        "filename": "common/checkstyle-logging/src/main/java/org/opendaylight/yangtools/checkstyle/LogMessageExtractorCheck.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-03T09:33:35Z",
+      "side": 1,
+      "message": "fields should not be accessible from outside: add an explicit getter/setter if needed",
+      "range": {
+        "startLine": 36,
+        "startChar": 4,
+        "endLine": 36,
+        "endChar": 14
+      },
+      "revId": "c3733ae93e461b67d305349268a4c544d2137fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_9cf833e7",
+        "filename": "common/checkstyle-logging/src/main/java/org/opendaylight/yangtools/checkstyle/LogMessageExtractorCheck.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-03T09:33:35Z",
+      "side": 1,
+      "message": "move comment to previous line, as this will trigger a sonar warning",
+      "range": {
+        "startLine": 62,
+        "startChar": 47,
+        "endLine": 62,
+        "endChar": 51
+      },
+      "revId": "c3733ae93e461b67d305349268a4c544d2137fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_dc92ab9e",
+        "filename": "common/checkstyle-logging/src/main/java/org/opendaylight/yangtools/checkstyle/LogMessageExtractorCheck.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-03T09:33:35Z",
+      "side": 1,
+      "message": "please do not align members",
+      "range": {
+        "startLine": 63,
+        "startChar": 24,
+        "endLine": 63,
+        "endChar": 28
+      },
+      "revId": "c3733ae93e461b67d305349268a4c544d2137fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_9c81534d",
+        "filename": "common/checkstyle-logging/src/main/java/org/opendaylight/yangtools/checkstyle/LogMessageExtractorCheck.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-03T09:33:35Z",
+      "side": 1,
+      "message": "Preconditions.checkNotNull() for things that cannot be null",
+      "range": {
+        "startLine": 67,
+        "startChar": 35,
+        "endLine": 67,
+        "endChar": 39
+      },
+      "revId": "c3733ae93e461b67d305349268a4c544d2137fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_5cd5fb41",
+        "filename": "common/checkstyle-logging/src/test/java/org/opendaylight/yangtools/checkstyle/CheckstyleTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-03T09:33:35Z",
+      "side": 1,
+      "message": "StandardCharsets.UTF_8",
+      "range": {
+        "startLine": 80,
+        "startChar": 69,
+        "endLine": 80,
+        "endChar": 83
+      },
+      "revId": "c3733ae93e461b67d305349268a4c544d2137fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
