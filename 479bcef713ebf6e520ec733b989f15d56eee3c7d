@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da5c1566_1c90a3eb",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/DependencyResolver.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-03T10:37:58Z",
+      "side": 1,
+      "message": "no longer needed --just iterate over pending",
+      "range": {
+        "startLine": 99,
+        "startChar": 8,
+        "endLine": 99,
+        "endChar": 33
+      },
+      "revId": "479bcef713ebf6e520ec733b989f15d56eee3c7d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_9ca4b358",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/SharedSchemaContextFactory.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 184,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-03T10:37:58Z",
+      "side": 1,
+      "message": "turn this into a switch",
+      "range": {
+        "startLine": 184,
+        "startChar": 33,
+        "endLine": 184,
+        "endChar": 87
+      },
+      "revId": "479bcef713ebf6e520ec733b989f15d56eee3c7d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_1ca70351",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/util/ASTSchemaSource.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-03T10:37:58Z",
+      "side": 1,
+      "message": "YangModelDependencyInfo should return Optional\u003cSemVer\u003e to make this check not rely on magic values.\n\nOther callers can use Optional.or() to set default.",
+      "range": {
+        "startLine": 150,
+        "startChar": 19,
+        "endLine": 150,
+        "endChar": 47
+      },
+      "revId": "479bcef713ebf6e520ec733b989f15d56eee3c7d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
