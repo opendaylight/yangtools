@@ -17,6 +17,7 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
+    <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>third-party-aggregator</artifactId>
     <packaging>pom</packaging>
 
