@@ -31,6 +31,7 @@ public final class WritableObjects {
      * @param out Data output
      * @param value long value to write
      * @throws IOException if an I/O error occurs
+     * @throws NullPointerException if output is null
      */
     public static void writeLong(final DataOutput out, final long value) throws IOException {
         writeLong(out, value, 0);
@@ -52,6 +53,7 @@ public final class WritableObjects {
      * @param value long value to write
      * @param flags flags to store
      * @throws IOException if an I/O error occurs
+     * @throws NullPointerException if output is null
      */
     public static void writeLong(final DataOutput out, final long value, final int flags) throws IOException {
         Preconditions.checkArgument((flags & 0xFFFFFF0F) == 0, "Invalid flags {}", flags);
@@ -66,6 +68,7 @@ public final class WritableObjects {
      * @param in Data input
      * @return long value extracted from the data input
      * @throws IOException if an I/O error occurs
+     * @throws NullPointerException if input is null
      */
     public static long readLong(final @Nonnull DataInput in) throws IOException {
         return readLongBody(in, readLongHeader(in));
@@ -78,6 +81,7 @@ public final class WritableObjects {
      * @param in Data input
      * @return Header of next value
      * @throws IOException if an I/O error occurs
+     * @throws NullPointerException if input is null
      */
     public static byte readLongHeader(final @Nonnull DataInput in) throws IOException {
         return in.readByte();
@@ -100,6 +104,7 @@ public final class WritableObjects {
      * @param in Data input
      * @param header Value header, as returned by {@link #readLongHeader(DataInput)}
      * @throws IOException if an I/O error occurs
+     * @throws NullPointerException if input is null
      */
     public static long readLongBody(final @Nonnull DataInput in, final byte header) throws IOException {
         int bytes = header & 0xF;
@@ -126,6 +131,51 @@ public final class WritableObjects {
         }
     }
 
+    /**
+     * Write two consecutive long values. These values can be read back using {@link #readLongHeader(DataInput)},
+     * {@link #readFirstLong(DataInput, byte)} and {@link #readSecondLong(DataInput, byte)}.
+     *
+     * This is a more efficient way of serializing two longs than {@link #writeLong(DataOutput, long)}. This is achieved
+     * by using the flags field to hold the length of the second long -- hence saving one byte.
+     *
+     * @param out Data output
+     * @param value0 first long value to write
+     * @param value1 second long value to write
+     * @throws IOException if an I/O error occurs
+     * @throws NullPointerException if output is null
+     */
+    public static void writeLongs(final @Nonnull DataOutput out, final long value0, final long value1) throws IOException {
+        final int clen = WritableObjects.valueBytes(value1);
+        writeLong(out, value0, clen << 4);
+        WritableObjects.writeValue(out, value1, clen);
+    }
+
+    /**
+     * Read first long value from an input.
+     *
+     * @param in Data input
+     * @param header Value header, as returned by {@link #readLongHeader(DataInput)}
+     * @return First long specified in {@link #writeLongs(DataOutput, long, long)}
+     * @throws IOException if an I/O error occurs
+     * @throws NullPointerException if input is null
+     */
+    public static long readFirstLong(final @Nonnull DataInput in, final byte header) throws IOException {
+        return WritableObjects.readLongBody(in, header);
+    }
+
+    /**
+     * Read second long value from an input.
+     *
+     * @param in Data input
+     * @param header Value header, as returned by {@link #readLongHeader(DataInput)}
+     * @return Second long specified in {@link #writeLongs(DataOutput, long, long)}
+     * @throws IOException if an I/O error occurs
+     * @throws NullPointerException if input is null
+     */
+    public static long readSecondLong(final @Nonnull DataInput in, final byte header) throws IOException {
+        return WritableObjects.readLongBody(in, (byte)(header >>> 4));
+    }
+
     private static void writeValue(final DataOutput out, final long value, final int bytes) throws IOException {
         if (bytes < 8) {
             int left = bytes;
@@ -146,7 +196,8 @@ public final class WritableObjects {
     }
 
     private static int valueBytes(final long value) {
-        // This is a binary search for the first match. Note that we need to mask bits from the most significant one
+        // This is a binary search for the first match. Note that we need to mask bits from the most significant one.
+        // It completes completes in three to four mask-and-compare operations.
         if ((value & 0xFFFFFFFF00000000L) != 0) {
             if ((value & 0xFFFF000000000000L) != 0) {
                 return (value & 0xFF00000000000000L) != 0 ? 8 : 7;
