@@ -11,6 +11,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -27,13 +28,20 @@ import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
-import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<ChoiceStatement> implements
         ChoiceSchemaNode, DerivableSchemaNode {
+    /**
+     * Comparator based on alphabetical order of local name of SchemaNode's
+     * qname.
+     */
+    private static final Comparator<SchemaNode> SCHEMA_NODE_COMP = (o1, o2) -> {
+        return o1.getQName().compareTo(o2.getQName());
+    };
 
     private final ChoiceSchemaNode original;
     private final String defaultCase;
@@ -52,7 +60,7 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
         // initSubstatementCollectionsAndFields
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
         Set<AugmentationSchema> augmentationsInit = new HashSet<>();
-        SortedSet<ChoiceCaseNode> casesInit = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
+        SortedSet<ChoiceCaseNode> casesInit = new TreeSet<>(SCHEMA_NODE_COMP);
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof AugmentationSchema) {

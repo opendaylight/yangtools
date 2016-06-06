@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl.util;
 
-import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.getArgumentString;
-
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
@@ -20,14 +17,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Belongs_to_stmtContext;
-import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Import_stmtContext;
-import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Include_stmtContext;
-import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Module_stmtContext;
-import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Revision_date_stmtContext;
-import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Revision_stmtContext;
-import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Revision_stmtsContext;
-import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Submodule_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.concepts.SemVer;
@@ -36,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMapping;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
@@ -198,18 +186,6 @@ public abstract class YangModelDependencyInfo {
             return parseAST(rootStatement);
         }
 
-        final Optional<Module_stmtContext> moduleCtx = ParserListenerUtils
-                .getFirstContext(tree, Module_stmtContext.class);
-        if (moduleCtx.isPresent()) {
-            return parseModuleContext(moduleCtx.get());
-        }
-
-        final Optional<Submodule_stmtContext> submoduleCtx = ParserListenerUtils
-                .getFirstContext(tree, Submodule_stmtContext.class);
-        if (submoduleCtx.isPresent()) {
-            return parseSubmoduleContext(submoduleCtx.get());
-        }
-
         throw new YangSyntaxErrorException(name, 0, 0, "Unknown YANG text type");
     }
 
@@ -250,18 +226,6 @@ public abstract class YangModelDependencyInfo {
         final StatementContext yangAST = new YangStatementSourceImpl(yangStream)
                 .getYangAST();
         return parseAST(yangAST);
-    }
-
-    private static YangModelDependencyInfo parseModuleContext(
-            final Module_stmtContext module) {
-        final String name = getArgumentString(module);
-        final String latestRevision = getLatestRevision(module.revision_stmts());
-        final ImmutableSet<ModuleImport> imports = parseImports(module
-                .linkage_stmts().import_stmt());
-        final ImmutableSet<ModuleImport> includes = parseIncludes(module
-                .linkage_stmts().include_stmt());
-
-        return new ModuleDependencyInfo(name, latestRevision, imports, includes);
     }
 
     private static YangModelDependencyInfo parseModuleContext(
@@ -339,8 +303,7 @@ public abstract class YangModelDependencyInfo {
     }
 
     private static String getRevisionDateString(final StatementContext importStatement) {
-        final List<StatementContext> importSubStatements = importStatement
-                .statement();
+        final List<StatementContext> importSubStatements = importStatement.statement();
         String revisionDateStr = null;
         for (final StatementContext importSubStatement : importSubStatements) {
             if (importSubStatement
@@ -353,17 +316,6 @@ public abstract class YangModelDependencyInfo {
             }
         }
         return revisionDateStr;
-    }
-
-    private static ImmutableSet<ModuleImport> parseImports(
-            final List<Import_stmtContext> importStatements) {
-        final ImmutableSet.Builder<ModuleImport> builder = ImmutableSet.builder();
-        for (final Import_stmtContext importStmt : importStatements) {
-            final String moduleName = getArgumentString(importStmt);
-            final Date revision = getRevision(importStmt.revision_date_stmt());
-            builder.add(new ModuleImportImpl(moduleName, revision));
-        }
-        return builder.build();
     }
 
     public static String getLatestRevision(
@@ -382,21 +334,6 @@ public abstract class YangModelDependencyInfo {
                         || latestRevision.compareTo(currentRevision) == -1) {
                     latestRevision = currentRevision;
                 }
-            }
-        }
-        return latestRevision;
-    }
-
-    public static String getLatestRevision(
-            final Revision_stmtsContext revisionStmts) {
-        final List<Revision_stmtContext> revisions = revisionStmts
-                .getRuleContexts(Revision_stmtContext.class);
-        String latestRevision = null;
-        for (final Revision_stmtContext revisionStmt : revisions) {
-            final String currentRevision = getArgumentString(revisionStmt);
-            if (latestRevision == null
-                    || latestRevision.compareTo(currentRevision) == -1) {
-                latestRevision = currentRevision;
             }
         }
         return latestRevision;
@@ -428,43 +365,6 @@ public abstract class YangModelDependencyInfo {
             }
         }
         return null;
-    }
-
-    private static YangModelDependencyInfo parseSubmoduleContext(
-            final Submodule_stmtContext submodule) {
-        final String name = getArgumentString(submodule);
-        final Belongs_to_stmtContext belongsToStmt = submodule
-                .submodule_header_stmts().belongs_to_stmt(0);
-        final String belongsTo = getArgumentString(belongsToStmt);
-
-        final String latestRevision = getLatestRevision(submodule.revision_stmts());
-        final ImmutableSet<ModuleImport> imports = parseImports(submodule
-                .linkage_stmts().import_stmt());
-        final ImmutableSet<ModuleImport> includes = parseIncludes(submodule
-                .linkage_stmts().include_stmt());
-
-        return new SubmoduleDependencyInfo(name, latestRevision, belongsTo,
-                imports, includes);
-    }
-
-    private static ImmutableSet<ModuleImport> parseIncludes(
-            final List<Include_stmtContext> importStatements) {
-        final ImmutableSet.Builder<ModuleImport> builder = ImmutableSet.builder();
-        for (final Include_stmtContext importStmt : importStatements) {
-            final String moduleName = getArgumentString(importStmt);
-            final Date revision = getRevision(importStmt.revision_date_stmt());
-            builder.add(new ModuleImportImpl(moduleName, revision));
-        }
-        return builder.build();
-    }
-
-    private static Date getRevision(
-            final Revision_date_stmtContext revisionDateStmt) {
-        if (revisionDateStmt == null) {
-            return null;
-        }
-        final String formatedDate = getArgumentString(revisionDateStmt);
-        return QName.parseRevision(formatedDate);
     }
 
     /**
