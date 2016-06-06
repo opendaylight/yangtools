@@ -41,11 +41,9 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
     private YangStatementParser.StatementContext statementContext;
     private ParseTreeWalker walker;
     private String sourceName;
-//    private String source;
-//    private InputStream sourceStream;
     private static final Logger LOG = LoggerFactory.getLogger(YangStatementSourceImpl.class);
 
-    public YangStatementSourceImpl(final String fileName, boolean isAbsolute) {
+    public YangStatementSourceImpl(final String fileName, final boolean isAbsolute) {
         try {
             statementContext = parseYangSource(loadFile(fileName, isAbsolute));
             walker = new ParseTreeWalker();
@@ -65,7 +63,7 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
         }
     }
 
-    public YangStatementSourceImpl(SourceIdentifier identifier, YangStatementParser.StatementContext statementContext) {
+    public YangStatementSourceImpl(final SourceIdentifier identifier, final YangStatementParser.StatementContext statementContext) {
         try {
             this.statementContext = statementContext;
             this.sourceName = identifier.getName();
@@ -100,17 +98,11 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
         walker.walk(yangStatementModelParser, statementContext);
     }
 
-    private NamedFileInputStream loadFile(final String fileName, boolean isAbsolute) throws URISyntaxException,
+    private NamedFileInputStream loadFile(final String fileName, final boolean isAbsolute) throws URISyntaxException,
             IOException {
         //TODO: we need absolute path first!
         return isAbsolute ? new NamedFileInputStream(new File(fileName), fileName) : new NamedFileInputStream(new File
                 (getClass().getResource(fileName).toURI()), fileName);
-
-//        final File file = new File(fileName);
-//        final ByteSource byteSource = BuilderUtils.fileToByteSource(file);
-//        source = byteSource.asCharSource(Charsets.UTF_8).read();
-//        return isAbsolute ? new NamedFileInputStream(file, fileName) : new NamedFileInputStream(new File
-//                (getClass().getResource(fileName).toURI()), fileName);
     }
 
     private YangStatementParser.StatementContext parseYangSource(final InputStream stream) throws IOException,
@@ -130,12 +122,6 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
             sourceName = null;
         }
 
-//        sourceStream = stream;
-//        sourceName = parser.getSourceName();
-//
-//        if (sourceName == null) {
-//            sourceName = stream.toString();
-//        }
         final StatementContext result = parser.statement();
         errorListener.validate();
 
@@ -151,11 +137,7 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
         return sourceName;
     }
 
-//    public InputStream getSourceStream() {
-//        return sourceStream;
-//    }
-
-    private static void logError(Exception e) {
+    private static void logError(final Exception e) {
         if (e instanceof YangSyntaxErrorException) {
             LOG.error(((YangSyntaxErrorException) e).getFormattedMessage(), e);
         } else {
