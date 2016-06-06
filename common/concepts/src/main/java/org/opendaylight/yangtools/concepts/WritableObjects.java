@@ -126,6 +126,48 @@ public final class WritableObjects {
         }
     }
 
+    /**
+     * Write two consecutive long values. These values can be read back using {@link #readLongHeader(DataInput)},
+     * {@link #readFirstLong(DataInput, byte)} and {@link #readSecondLong(DataInput, byte)}.
+     *
+     * This is a more efficient way of serializing two longs than {@link #writeLong(DataOutput, long)}. This is achieved
+     * by using the flags field to hold the length of the second long -- hence saving one byte.
+     *
+     * @param out
+     * @param value0
+     * @param value1
+     * @throws IOException
+     */
+    public static void writeLongs(final @Nonnull DataOutput out, final long value0, final long value1) throws IOException {
+        final int clen = WritableObjects.valueBytes(value1);
+        writeLong(out, value0, clen << 4);
+        WritableObjects.writeValue(out, value1, clen);
+    }
+
+    /**
+     * Read first long value from an input.
+     *
+     * @param in Data input
+     * @param header Value header, as returned by {@link #readLongHeader(DataInput)}
+     * @return First long specified in {@link #writeLongs(DataOutput, long, long)}
+     * @throws IOException if an I/O error occurs
+     */
+    public static long readFirstLong(final @Nonnull DataInput in, final byte header) throws IOException {
+        return WritableObjects.readLongBody(in, header);
+    }
+
+    /**
+     * Read second long value from an input.
+     *
+     * @param in Data input
+     * @param header Value header, as returned by {@link #readLongHeader(DataInput)}
+     * @return Second long specified in {@link #writeLongs(DataOutput, long, long)}
+     * @throws IOException if an I/O error occurs
+     */
+    public static long readSecondLong(final @Nonnull DataInput in, final byte header) throws IOException {
+        return WritableObjects.readLongBody(in, (byte)(header >>> 4));
+    }
+
     private static void writeValue(final DataOutput out, final long value, final int bytes) throws IOException {
         if (bytes < 8) {
             int left = bytes;
@@ -146,7 +188,8 @@ public final class WritableObjects {
     }
 
     private static int valueBytes(final long value) {
-        // This is a binary search for the first match. Note that we need to mask bits from the most significant one
+        // This is a binary search for the first match. Note that we need to mask bits from the most significant one.
+        // It completes completes in three to four mask-and-compare operations.
         if ((value & 0xFFFFFFFF00000000L) != 0) {
             if ((value & 0xFFFF000000000000L) != 0) {
                 return (value & 0xFF00000000000000L) != 0 ? 8 : 7;
