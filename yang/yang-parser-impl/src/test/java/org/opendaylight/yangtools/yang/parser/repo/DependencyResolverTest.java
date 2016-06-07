@@ -9,9 +9,6 @@
 package org.opendaylight.yangtools.yang.parser.repo;
 
 import static org.junit.Assert.assertEquals;
-
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-
 import com.google.common.base.Optional;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +27,7 @@ public class DependencyResolverTest {
         addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/no-revision/imported@2012-12-12.yang")));
         addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/no-revision/top@2012-10-10.yang")));
 
-        final DependencyResolver resolved = RevisionDependencyResolver.create(map);
+        final DependencyResolver resolved = DependencyResolver.create(map);
 
         assertEquals(0, resolved.getUnresolvedSources().size());
         assertEquals(0, resolved.getUnsatisfiedImports().size());
@@ -45,7 +42,7 @@ public class DependencyResolverTest {
         addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/model/bar.yang")));
         addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/model/baz.yang")));
 
-        final DependencyResolver resolved = RevisionDependencyResolver.create(map);
+        final DependencyResolver resolved = DependencyResolver.create(map);
 
         assertEquals(2, resolved.getResolvedSources().size());
         assertEquals(1, resolved.getUnresolvedSources().size());
@@ -61,7 +58,7 @@ public class DependencyResolverTest {
         addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/model/bar.yang")));
         addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/model/baz.yang")));
 
-        final DependencyResolver resolved = RevisionDependencyResolver.create(map);
+        final DependencyResolver resolved = DependencyResolver.create(map);
 
         assertEquals(4, resolved.getResolvedSources().size());
         assertEquals(0, resolved.getUnresolvedSources().size());
@@ -74,6 +71,6 @@ public class DependencyResolverTest {
 
     private static SourceIdentifier getSourceId(final YangModelDependencyInfo depInfo) {
         final String name = depInfo.getName();
-        return RevisionSourceIdentifier.create(name, Optional.fromNullable(depInfo.getFormattedRevision()));
+        return new SourceIdentifier(name, Optional.fromNullable(depInfo.getFormattedRevision()));
     }
 }

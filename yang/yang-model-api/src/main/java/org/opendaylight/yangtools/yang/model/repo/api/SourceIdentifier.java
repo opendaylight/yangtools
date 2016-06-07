@@ -10,8 +10,7 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Interner;
-import com.google.common.collect.Interners;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -20,19 +19,30 @@ import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 
 /**
- * Base class of YANG Schema source identifiers.
+ * YANG Schema source identifier
  *
- * Source identifiers are designated to be carry only necessary information to
- * look-up YANG model source and to be used by various SchemaSourceProviders.
+ * Simple transfer object represents identifier of source for YANG schema (module or submodule),
+ * which consists of
+ * <ul>
+ * <li>YANG schema name ({@link #getName()}
+ * <li>Module revision (optional) ({link {@link #getRevision()})
+ * </ul>
  *
- * (For further reference see: http://tools.ietf.org/html/rfc6020#section-5.2
- * and http://tools.ietf.org/html/rfc6022#section-3.1 ).
+ * Source identifier is designated to be carry only necessary information
+ * to look-up YANG model source and to be used by various SchemaSourceProviders.
+ *
+ * <b>Note:</b>On source retrieval layer it is impossible to distinguish
+ * between YANG module and/or submodule unless source is present.
+ *
+ * <p>
+ * (For further reference see: http://tools.ietf.org/html/rfc6020#section-5.2 and
+ * http://tools.ietf.org/html/rfc6022#section-3.1 ).
  */
 @Beta
-public abstract class SourceIdentifier implements Identifier, Immutable {
+public final class SourceIdentifier implements Identifier, Immutable {
     /**
-     * Default revision for sources without specified revision. Marks the source
-     * as oldest.
+     * Default revision for sources without specified revision.
+     * Marks the source as oldest.
      */
     public static final String NOT_PRESENT_FORMATTED_REVISION = "0000-00-00";
 
@@ -41,15 +51,13 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      * Simplified compiled revision pattern in format YYYY-mm-dd, which checks
      * only distribution of number elements.
      * <p>
-     * For checking if supplied string is real date, use
-     * {@link SimpleDateFormatUtil} instead.
+     * For checking if supplied string is real date, use {@link SimpleDateFormatUtil}
+     * instead.
      *
      */
     public static final Pattern REVISION_PATTERN = Pattern.compile("\\d\\d\\d\\d-\\d\\d-\\d\\d");
 
     private static final ObjectCache CACHE = ObjectCacheFactory.getObjectCache(SourceIdentifier.class);
-    private static final Interner<SourceIdentifier> INTERNER = Interners.newWeakInterner();
-
     private static final long serialVersionUID = 1L;
     private final String revision;
     private final String name;
@@ -57,25 +65,21 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
     /**
      *
      * Creates new YANG Schema source identifier for sources without revision.
-     * {@link SourceIdentifier#NOT_PRESENT_FORMATTED_REVISION} as default
-     * revision.
+     * {@link SourceIdentifier#NOT_PRESENT_FORMATTED_REVISION} as default revision.
      *
-     * @param name
-     *            Name of schema
+     * @param name Name of schema
      */
-    SourceIdentifier(final String name) {
+    public SourceIdentifier(final String name) {
         this(name, NOT_PRESENT_FORMATTED_REVISION);
     }
 
     /**
      * Creates new YANG Schema source identifier.
      *
-     * @param name
-     *            Name of schema
-     * @param formattedRevision
-     *            Revision of source in format YYYY-mm-dd
+     * @param name Name of schema
+     * @param formattedRevision Revision of source in format YYYY-mm-dd
      */
-    SourceIdentifier(final String name, final String formattedRevision) {
+    public SourceIdentifier(final String name, final String formattedRevision) {
         this.name = Preconditions.checkNotNull(name);
         this.revision = Preconditions.checkNotNull(formattedRevision);
     }
@@ -84,13 +88,10 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      *
      * Creates new YANG Schema source identifier.
      *
-     * @param name
-     *            Name of schema
-     * @param formattedRevision
-     *            Revision of source in format YYYY-mm-dd. If not present,
-     *            default value will be used.
+     * @param name Name of schema
+     * @param formattedRevision Revision of source in format YYYY-mm-dd. If not present, default value will be used.
      */
-    SourceIdentifier(final String name, final Optional<String> formattedRevision) {
+    public SourceIdentifier(final String name, final Optional<String> formattedRevision) {
         this(name, formattedRevision.or(NOT_PRESENT_FORMATTED_REVISION));
     }
 
@@ -99,18 +100,8 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      *
      * @return A potentially shared reference, not guaranteed to be unique.
      */
-    @Deprecated
     public SourceIdentifier cachedReference() {
         return CACHE.getReference(this);
-    }
-
-    /**
-     * Return an interned reference to a equivalent SemVerSourceIdentifier.
-     *
-     * @return Interned reference, or this object if it was interned.
-     */
-    public SourceIdentifier intern() {
-        return INTERNER.intern(this);
     }
 
     /**
@@ -131,17 +122,41 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
         return revision;
     }
 
-    @Deprecated
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Objects.hashCode(name);
+        result = prime * result + Objects.hashCode(revision);
+        return result;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        SourceIdentifier other = (SourceIdentifier) obj;
+        return Objects.equals(name, other.name) && Objects.equals(revision, other.revision);
+    }
+
     public static SourceIdentifier create(final String moduleName, final Optional<String> revision) {
-        return new RevisionSourceIdentifier(moduleName, revision);
+        return new SourceIdentifier(moduleName, revision);
     }
 
     /**
      * Returns filename for this YANG module as specified in RFC 6020.
      *
-     * Returns filename in format <code>name ['@' revision] '.yang'</code>
+     * Returns filename in format
+     * <code>name ['@' revision] '.yang'</code>
      * <p>
-     * Where revision is date in format YYYY-mm-dd.
+     * Where revision is  date in format YYYY-mm-dd.
      * <p>
      *
      * @see <a href="http://tools.ietf.org/html/rfc6020#section-5.2">RFC6020</a>
@@ -152,15 +167,22 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
         return toYangFileName(name, Optional.fromNullable(revision));
     }
 
+    @Override
+    public String toString() {
+        return "SourceIdentifier [name=" + name + "@" + revision + "]";
+    }
+
     /**
      * Returns filename for this YANG module as specified in RFC 6020.
      *
-     * Returns filename in format <code>moduleName ['@' revision] '.yang'</code>
+     * Returns filename in format
+     * <code>moduleName ['@' revision] '.yang'</code>
      *
      * Where Where revision-date is in format YYYY-mm-dd.
      *
      * <p>
-     * See http://tools.ietf.org/html/rfc6020#section-5.2
+     * See
+     * http://tools.ietf.org/html/rfc6020#section-5.2
      *
      * @return Filename for this source identifier.
      */
@@ -173,4 +195,5 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
         filename.append(".yang");
         return filename.toString();
     }
+
 }
