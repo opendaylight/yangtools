@@ -133,7 +133,7 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
                     CaseNodeDataWithSchema casePrevious = ((ChoiceNodeDataWithSchema) nodeDataWithSchema).getCase();
 
                     Preconditions.checkArgument(casePrevious.getSchema().getQName().equals(caseCandidate.getQName()),
-                        "Data from case %s are specified but other data from case %s were specified erlier. Data aren't from the same case.",
+                        "Data from case %s are specified but other data from case %s were specified earlier. Data aren't from the same case.",
                         caseCandidate.getQName(), casePrevious.getSchema().getQName());
 
                     return casePrevious;
