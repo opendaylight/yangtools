@@ -9,10 +9,14 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSortedMap;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
@@ -24,43 +28,40 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
 class BitsCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
-
-    private final ImmutableSortedMap<String, Method> valueGetters;
-    private final Constructor<?> constructor;
+    private static final MethodType CONSTRUCTOR_INVOKE_TYPE = MethodType.methodType(Object.class, Boolean[].class);
+    private final Map<String, Method> valueGetters;
+    private final MethodHandle constructor;
 
     private BitsCodec(final Class<?> typeClass, final SortedMap<String, Method> valueGetters,
-            final Constructor<?> constructor) {
+            final MethodHandle constructor) {
         super(typeClass);
         this.valueGetters = ImmutableSortedMap.copyOf(valueGetters);
-        this.constructor = constructor;
+        this.constructor = Preconditions.checkNotNull(constructor);
     }
 
     static Callable<BitsCodec> loader(final Class<?> returnType,
             final BitsTypeDefinition rootType) {
         return new Callable<BitsCodec>() {
-
             @Override
             public BitsCodec call() throws Exception {
-                try {
-                    SortedMap<String, Method> valueGetters = new TreeMap<>();
-                    for (Bit bit : rootType.getBits()) {
-                        String bindingName = BindingMapping.getClassName(bit.getName());
-                        Method valueGetter = returnType.getMethod("is" + bindingName);
-                        valueGetters.put(bit.getName(), valueGetter);
+                SortedMap<String, Method> valueGetters = new TreeMap<>();
+                for (Bit bit : rootType.getBits()) {
+                    String bindingName = BindingMapping.getClassName(bit.getName());
+                    Method valueGetter = returnType.getMethod("is" + bindingName);
+                    valueGetters.put(bit.getName(), valueGetter);
 
-                    }
-                    Constructor<?> constructor = null;
-                    for (Constructor<?> cst : returnType.getConstructors()) {
-                        if (cst.getParameterTypes()[0].equals(returnType)) {
-                            continue;
-                        }
-                        constructor = cst;
-                    }
-
-                    return new BitsCodec(returnType, valueGetters, constructor);
-                } catch (IllegalArgumentException | NoSuchMethodException | SecurityException e) {
-                    throw new IllegalStateException(e);
                 }
+                Constructor<?> constructor = null;
+                for (Constructor<?> cst : returnType.getConstructors()) {
+                    if (cst.getParameterTypes()[0].equals(returnType)) {
+                        continue;
+                    }
+                    constructor = cst;
+                }
+
+                final MethodHandle ctor = MethodHandles.publicLookup().unreflectConstructor(constructor)
+                        .asSpreader(Boolean[].class, valueGetters.size()).asType(CONSTRUCTOR_INVOKE_TYPE);
+                return new BitsCodec(returnType, valueGetters, ctor);
             }
         };
     }
@@ -71,7 +72,7 @@ class BitsCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
         @SuppressWarnings("unchecked")
         Set<String> casted = (Set<String>) input;
 
-        Object args[] = new Object[valueGetters.size()];
+        final Boolean args[] = new Boolean[valueGetters.size()];
         int currentArg = 0;
         /*
          * We can do this walk based on field set
@@ -86,9 +87,9 @@ class BitsCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
         }
 
         try {
-            return constructor.newInstance(args);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new IllegalStateException(e);
+            return constructor.invokeExact(args);
+        } catch (Throwable e) {
+            throw new IllegalStateException("Failed to instantiate object for " + input, e);
         }
     }
 
