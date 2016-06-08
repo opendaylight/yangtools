@@ -14,7 +14,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedMap;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -57,7 +56,6 @@ import org.slf4j.LoggerFactory;
 
 abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeContainer> extends DataContainerCodecContext<D,T> {
     private static final Logger LOG = LoggerFactory.getLogger(DataObjectCodecContext.class);
-    private static final Lookup LOOKUP = MethodHandles.publicLookup();
     private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class, InvocationHandler.class);
     private static final MethodType DATAOBJECT_TYPE = MethodType.methodType(DataObject.class, InvocationHandler.class);
     private static final Comparator<Method> METHOD_BY_ALPHABET = new Comparator<Method>() {
@@ -126,7 +124,8 @@ abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeCon
 
         final Class<?> proxyClass = Proxy.getProxyClass(getBindingClass().getClassLoader(),  new Class[] { getBindingClass(), AugmentationHolder.class });
         try {
-            proxyConstructor = LOOKUP.findConstructor(proxyClass, CONSTRUCTOR_TYPE).asType(DATAOBJECT_TYPE);
+            proxyConstructor = MethodHandles.publicLookup().findConstructor(proxyClass, CONSTRUCTOR_TYPE)
+                    .asType(DATAOBJECT_TYPE);
         } catch (NoSuchMethodException | IllegalAccessException e) {
             throw new IllegalStateException("Failed to find contructor for class " + proxyClass);
         }

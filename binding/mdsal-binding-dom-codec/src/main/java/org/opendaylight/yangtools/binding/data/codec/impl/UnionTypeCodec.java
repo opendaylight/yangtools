@@ -11,8 +11,9 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
 import com.google.common.util.concurrent.ExecutionError;
 import com.google.common.util.concurrent.UncheckedExecutionException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,23 +23,45 @@ import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class UnionTypeCodec extends ReflectionBasedCodec {
+    private static final MethodType CHARARRAY_LOOKUP_TYPE = MethodType.methodType(void.class, char[].class);
+    private static final MethodType CHARARRAY_INVOKE_TYPE = MethodType.methodType(Object.class, char[].class);
+    private static final MethodType CLASS_LOOKUP_TYPE = MethodType.methodType(void.class, Class.class);
+    private static final MethodType CLASS_INVOKE_TYPE = MethodType.methodType(Object.class, Object.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UnionTypeCodec.class);
 
-    private final Codec<Object, Object> identityrefCodec;
+    private final Codec<Object, Object> idRefCodec;
+    private final MethodHandle idrefConstructor;
+
     private final ImmutableSet<UnionValueOptionContext> typeCodecs;
-    private final Constructor<?> charConstructor;
+    private final MethodHandle charConstructor;
 
     private UnionTypeCodec(final Class<?> unionCls,final Set<UnionValueOptionContext> codecs,
                            @Nullable final Codec<Object, Object> identityrefCodec) {
         super(unionCls);
-        this.identityrefCodec = identityrefCodec;
-        try {
-            charConstructor = unionCls.getConstructor(char[].class);
-            typeCodecs = ImmutableSet.copyOf(codecs);
-        } catch (NoSuchMethodException | SecurityException e) {
-           throw new IllegalStateException("Required constructor is not available.",e);
+        this.idRefCodec = identityrefCodec;
+        if (idRefCodec != null) {
+            try {
+                idrefConstructor = MethodHandles.publicLookup().findConstructor(unionCls, CLASS_LOOKUP_TYPE)
+                        .asType(CLASS_INVOKE_TYPE);
+            } catch (IllegalAccessException | NoSuchMethodException e) {
+                throw new IllegalStateException("Failed to get identityref constructor", e);
+            }
+        } else {
+            idrefConstructor = null;
         }
+
+        try {
+            charConstructor = MethodHandles.publicLookup().findConstructor(unionCls, CHARARRAY_LOOKUP_TYPE)
+                    .asType(CHARARRAY_INVOKE_TYPE);
+        } catch (IllegalAccessException | NoSuchMethodException e) {
+            throw new IllegalStateException("Failed to instantiate handle for constructor", e);
+        }
+
+        typeCodecs = ImmutableSet.copyOf(codecs);
     }
 
     static Callable<UnionTypeCodec> loader(final Class<?> unionCls, final UnionTypeDefinition unionType,
@@ -63,30 +86,34 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
         };
     }
 
+    private Object deserializeString(final Object input) {
+        final String str = input instanceof byte[] ? BaseEncoding.base64().encode((byte[]) input) : input.toString();
+        try {
+            return charConstructor.invokeExact(str.toCharArray());
+        } catch (Throwable e) {
+            throw new IllegalStateException("Could not construct instance", e);
+        }
+    }
+
     @Override
     public Object deserialize(final Object input) {
-        if (identityrefCodec != null) {
+        if (idRefCodec != null) {
+            final Object identityref;
             try {
-                Object identityref = identityrefCodec.deserialize(input);
-                return getTypeClass().getConstructor(Class.class).newInstance(identityref);
+                identityref = idRefCodec.deserialize(input);
             } catch (UncheckedExecutionException | ExecutionError e) {
-                // ignore this exception caused by deserialize()
-            } catch (NoSuchMethodException e) {
-                // caused by getContructor(). this case shouldn't happen.
-                throw new IllegalStateException("Could not construct instance", e);
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                // ignore this exception caused by newInstance()
+                LOG.debug("Deserialization of {} as identityref failed", e);
+                return deserializeString(input);
+            }
+
+            try {
+                return idrefConstructor.invokeExact(identityref);
+            } catch (Throwable e) {
+                LOG.debug("Failed to instantiate based on identityref {}", identityref, e);
             }
         }
-        try {
-            if (input instanceof byte[]) {
-                return charConstructor.newInstance(BaseEncoding.base64().encode((byte[]) input).toCharArray());
-            } else {
-                return charConstructor.newInstance((input.toString().toCharArray()));
-            }
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new IllegalStateException("Could not construct instance",e);
-        }
+
+        return deserializeString(input);
     }
 
     @Override
@@ -101,5 +128,4 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
         }
         return null;
     }
-
 }

@@ -12,7 +12,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -35,7 +34,6 @@ final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates,
             return q1.getLocalName().compareToIgnoreCase(q2.getLocalName());
         }
     };
-    private static final Lookup LOOKUP = MethodHandles.publicLookup();
     private final Map<QName, ValueContext> keyValueContexts;
     private final List<QName> keysInBindingOrder;
     private final ListSchemaNode schema;
@@ -49,7 +47,7 @@ final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates,
         this.identifiable = identifiable;
 
         try {
-            ctor = LOOKUP.unreflectConstructor(getConstructor(keyClass));
+            ctor = MethodHandles.publicLookup().unreflectConstructor(getConstructor(keyClass));
         } catch (IllegalAccessException e) {
             throw new IllegalArgumentException("Missing construct in class " + keyClass);
         }
@@ -126,7 +124,6 @@ final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates,
         return new NodeIdentifierWithPredicates(schema.getQName(), values);
     }
 
-
     @SuppressWarnings("unchecked")
     private static Constructor<? extends Identifier<?>> getConstructor(final Class<? extends Identifier<?>> clazz) {
         for (@SuppressWarnings("rawtypes") final Constructor constr : clazz.getConstructors()) {
@@ -138,5 +135,4 @@ final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates,
         }
         throw new IllegalArgumentException("Supplied class " + clazz + "does not have required constructor.");
     }
-
 }

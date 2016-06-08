@@ -11,12 +11,10 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.invoke.MethodType;
 import org.opendaylight.yangtools.concepts.Codec;
 
 final class ValueContext {
-    private static final Lookup LOOKUP = MethodHandles.publicLookup();
     private static final MethodType OBJECT_METHOD = MethodType.methodType(Object.class, Object.class);
     private final Codec<Object, Object> codec;
     private final MethodHandle getter;
@@ -26,7 +24,7 @@ final class ValueContext {
     ValueContext(final Class<?> identifier, final LeafNodeCodecContext <?>leaf) {
         getterName = leaf.getGetter().getName();
         try {
-            getter = LOOKUP.unreflect(identifier.getMethod(getterName)).asType(OBJECT_METHOD);
+            getter = MethodHandles.publicLookup().unreflect(identifier.getMethod(getterName)).asType(OBJECT_METHOD);
         } catch (IllegalAccessException | NoSuchMethodException | SecurityException e) {
             throw new IllegalStateException(String.format("Cannot find method %s in class %s", getterName, identifier), e);
         }
