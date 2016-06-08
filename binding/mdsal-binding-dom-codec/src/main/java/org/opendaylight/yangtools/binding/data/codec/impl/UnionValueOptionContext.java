@@ -51,8 +51,12 @@ final class UnionValueOptionContext {
     }
 
     Object deserializeUnion(final Object input) {
-        final Object value;
+        // Side-step potential exceptions by checking the type if it is available
+        if (codec instanceof EncapsulatedValueCodec && !((EncapsulatedValueCodec) codec).canAcceptObject(input)) {
+            return null;
+        }
 
+        final Object value;
         try {
             value = codec.deserialize(input);
         } catch (Exception e) {

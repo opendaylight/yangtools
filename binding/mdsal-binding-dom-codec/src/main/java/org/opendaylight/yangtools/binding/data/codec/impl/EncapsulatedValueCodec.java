@@ -28,23 +28,39 @@ final class EncapsulatedValueCodec extends ReflectionBasedCodec implements Schem
     private static final MethodType OBJ_METHOD = MethodType.methodType(Object.class, Object.class);
     private final MethodHandle constructor;
     private final MethodHandle getter;
+    private final Class<?> valueType;
 
-    private EncapsulatedValueCodec(final Class<?> typeClz, final MethodHandle constructor, final MethodHandle getter) {
+    private EncapsulatedValueCodec(final Class<?> typeClz, final MethodHandle constructor, final MethodHandle getter,
+            final Class<?> valueType) {
         super(typeClz);
         this.constructor = Preconditions.checkNotNull(constructor);
         this.getter = Preconditions.checkNotNull(getter);
+        this.valueType = Preconditions.checkNotNull(valueType);
     }
 
     static Callable<EncapsulatedValueCodec> loader(final Class<?> typeClz) {
         return new Callable<EncapsulatedValueCodec>() {
             @Override
-            public EncapsulatedValueCodec call() throws Exception {
+            public EncapsulatedValueCodec call() throws IllegalAccessException, NoSuchMethodException, SecurityException {
                 final Method m = typeClz.getMethod("getValue");
                 final MethodHandle getter = LOOKUP.unreflect(m).asType(OBJ_METHOD);
-                final MethodHandle constructor = LOOKUP.findConstructor(typeClz, MethodType.methodType(void.class, m.getReturnType())).asType(OBJ_METHOD);
-                return new EncapsulatedValueCodec(typeClz, constructor, getter);
+                final Class<?> valueType = m.getReturnType();
+
+                final MethodHandle constructor = LOOKUP.findConstructor(typeClz,
+                    MethodType.methodType(void.class, valueType)).asType(OBJ_METHOD);
+                return new EncapsulatedValueCodec(typeClz, constructor, getter, valueType);
             }
         };
+    }
+
+    /**
+     * Quick check if a value object has a chance to deserialize using {@link #deserialize(Object)}.
+     *
+     * @param value Value to be checked
+     * @return True if the value can be encapsulated
+     */
+    boolean canAcceptObject(final Object value) {
+        return valueType.isInstance(value);
     }
 
     @Override
