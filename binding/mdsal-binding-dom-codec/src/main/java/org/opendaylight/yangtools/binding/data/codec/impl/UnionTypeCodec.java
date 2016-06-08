@@ -9,8 +9,6 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.BaseEncoding;
-import com.google.common.util.concurrent.ExecutionError;
-import com.google.common.util.concurrent.UncheckedExecutionException;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -18,7 +16,6 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -29,30 +26,13 @@ import org.slf4j.LoggerFactory;
 final class UnionTypeCodec extends ReflectionBasedCodec {
     private static final MethodType CHARARRAY_LOOKUP_TYPE = MethodType.methodType(void.class, char[].class);
     private static final MethodType CHARARRAY_INVOKE_TYPE = MethodType.methodType(Object.class, char[].class);
-    private static final MethodType CLASS_LOOKUP_TYPE = MethodType.methodType(void.class, Class.class);
-    private static final MethodType CLASS_INVOKE_TYPE = MethodType.methodType(Object.class, Object.class);
     private static final Logger LOG = LoggerFactory.getLogger(UnionTypeCodec.class);
-
-    private final Codec<Object, Object> idRefCodec;
-    private final MethodHandle idrefConstructor;
 
     private final ImmutableSet<UnionValueOptionContext> typeCodecs;
     private final MethodHandle charConstructor;
 
-    private UnionTypeCodec(final Class<?> unionCls,final Set<UnionValueOptionContext> codecs,
-                           @Nullable final Codec<Object, Object> identityrefCodec) {
+    private UnionTypeCodec(final Class<?> unionCls,final Set<UnionValueOptionContext> codecs) {
         super(unionCls);
-        this.idRefCodec = identityrefCodec;
-        if (idRefCodec != null) {
-            try {
-                idrefConstructor = MethodHandles.publicLookup().findConstructor(unionCls, CLASS_LOOKUP_TYPE)
-                        .asType(CLASS_INVOKE_TYPE);
-            } catch (IllegalAccessException | NoSuchMethodException e) {
-                throw new IllegalStateException("Failed to get identityref constructor", e);
-            }
-        } else {
-            idrefConstructor = null;
-        }
 
         try {
             charConstructor = MethodHandles.publicLookup().findConstructor(unionCls, CHARARRAY_LOOKUP_TYPE)
@@ -69,19 +49,15 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
         return new Callable<UnionTypeCodec>() {
             @Override
             public UnionTypeCodec call() throws NoSuchMethodException, SecurityException {
-                Codec<Object, Object> identityrefCodec = null;
                 Set<UnionValueOptionContext> values = new HashSet<>();
                 for (TypeDefinition<?> subtype : unionType.getTypes()) {
                     String methodName = "get" + BindingMapping.getClassName(subtype.getQName());
                     Method valueGetter = unionCls.getMethod(methodName);
                     Class<?> valueType = valueGetter.getReturnType();
                     Codec<Object, Object> valueCodec = bindingCodecContext.getCodec(valueType, subtype);
-                    if (Class.class.equals(valueType)) {
-                        identityrefCodec = valueCodec;
-                    }
-                    values.add(new UnionValueOptionContext(valueType,valueGetter, valueCodec));
+                    values.add(new UnionValueOptionContext(unionCls, valueType, valueGetter, valueCodec));
                 }
-                return new UnionTypeCodec(unionCls, values, identityrefCodec);
+                return new UnionTypeCodec(unionCls, values);
             }
         };
     }
@@ -97,22 +73,14 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
 
     @Override
     public Object deserialize(final Object input) {
-        if (idRefCodec != null) {
-            final Object identityref;
-            try {
-                identityref = idRefCodec.deserialize(input);
-            } catch (UncheckedExecutionException | ExecutionError | ClassCastException e) {
-                LOG.debug("Deserialization of {} as identityref failed", e);
-                return deserializeString(input);
-            }
-
-            try {
-                return idrefConstructor.invokeExact(identityref);
-            } catch (Throwable e) {
-                LOG.debug("Failed to instantiate based on identityref {}", identityref, e);
+        for (UnionValueOptionContext member : typeCodecs) {
+            final Object ret = member.deserializeUnion(input);
+            if (ret != null) {
+                return ret;
             }
         }
 
+        LOG.warn("Union value {} failed to deserialize efficiently, falling back to String-based instantiation", input);
         return deserializeString(input);
     }
 
