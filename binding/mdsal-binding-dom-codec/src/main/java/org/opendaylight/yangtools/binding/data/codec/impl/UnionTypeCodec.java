@@ -30,7 +30,7 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
     private final Constructor<?> charConstructor;
 
     private UnionTypeCodec(final Class<?> unionCls,final Set<UnionValueOptionContext> codecs,
-                           @Nullable Codec<Object, Object> identityrefCodec) {
+                           @Nullable final Codec<Object, Object> identityrefCodec) {
         super(unionCls);
         this.identityrefCodec = identityrefCodec;
         try {
@@ -42,7 +42,7 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
     }
 
     static Callable<UnionTypeCodec> loader(final Class<?> unionCls, final UnionTypeDefinition unionType,
-                                           BindingCodecContext bindingCodecContext) {
+                                           final BindingCodecContext bindingCodecContext) {
         return new Callable<UnionTypeCodec>() {
             @Override
             public UnionTypeCodec call() throws NoSuchMethodException, SecurityException {
@@ -68,7 +68,7 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
         if (identityrefCodec != null) {
             try {
                 Object identityref = identityrefCodec.deserialize(input);
-                return typeClass.getConstructor(Class.class).newInstance(identityref);
+                return getTypeClass().getConstructor(Class.class).newInstance(identityref);
             } catch (UncheckedExecutionException | ExecutionError e) {
                 // ignore this exception caused by deserialize()
             } catch (NoSuchMethodException e) {

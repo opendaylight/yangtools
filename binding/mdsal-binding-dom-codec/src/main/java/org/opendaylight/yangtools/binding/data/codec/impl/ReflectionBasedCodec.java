@@ -7,12 +7,17 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
+import com.google.common.base.Preconditions;
+
 abstract class ReflectionBasedCodec extends ValueTypeCodec {
 
-    protected final Class<?> typeClass;
+    private final Class<?> typeClass;
 
-    public ReflectionBasedCodec(final Class<?> typeClass) {
-        super();
-        this.typeClass = typeClass;
+    ReflectionBasedCodec(final Class<?> typeClass) {
+        this.typeClass = Preconditions.checkNotNull(typeClass);
+    }
+
+    protected final Class<?> getTypeClass() {
+        return typeClass;
     }
 }

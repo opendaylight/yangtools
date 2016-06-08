@@ -60,7 +60,7 @@ final class EnumerationCodec extends ReflectionBasedCodec implements SchemaUnawa
 
     @Override
     public Object serialize(final Object input) {
-        Preconditions.checkArgument(typeClass.isInstance(input), "Input must be instance of %s", typeClass);
+        Preconditions.checkArgument(getTypeClass().isInstance(input), "Input must be instance of %s", getTypeClass());
         return yangValueToBinding.inverse().get(input);
     }
 
