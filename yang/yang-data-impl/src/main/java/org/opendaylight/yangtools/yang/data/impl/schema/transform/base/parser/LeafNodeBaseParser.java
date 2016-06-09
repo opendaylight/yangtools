@@ -51,8 +51,10 @@ public abstract class LeafNodeBaseParser<E> implements ExtensibleParser<NodeIden
 
         leafBuilder.withAttributes(getAttributes(e));
 
+        @SuppressWarnings("rawtypes")
         final BuildingStrategy rawBuildingStrat = buildingStrategy;
-        return LeafInterner.forSchema(schema).intern((LeafNode<?>)rawBuildingStrat.build(leafBuilder.withValue(value)));
+        final LeafNode<?> sample = (LeafNode<?>)rawBuildingStrat.build(leafBuilder.withValue(value));
+        return sample == null ? null : LeafInterner.forSchema(schema).intern(sample);
     }
 
     /**
