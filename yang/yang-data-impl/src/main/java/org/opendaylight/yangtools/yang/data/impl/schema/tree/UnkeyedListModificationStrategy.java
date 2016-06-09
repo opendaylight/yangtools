@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.IncorrectDataStructureException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeConfig;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
@@ -27,8 +27,8 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
 
     private final Optional<ModificationApplyOperation> entryStrategy;
 
-    UnkeyedListModificationStrategy(final ListSchemaNode schema, final TreeType treeType) {
-        entryStrategy = Optional.of(new UnkeyedListItemModificationStrategy(schema, treeType));
+    UnkeyedListModificationStrategy(final ListSchemaNode schema, final TreeConfig treeConfig) {
+        entryStrategy = Optional.of(new UnkeyedListItemModificationStrategy(schema, treeConfig));
     }
 
     @Override
@@ -126,7 +126,7 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
     }
 
     @Override
-    void recursivelyVerifyStructure(NormalizedNode<?, ?> value) {
+    void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
         // NOOP
     }
 

@@ -12,7 +12,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeConfig;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -22,8 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
  * and by {@link StructuralContainerModificationStrategy} as a delegate.
  */
 class ContainerModificationStrategy extends AbstractDataNodeContainerModificationStrategy<ContainerSchemaNode> {
-    ContainerModificationStrategy(final ContainerSchemaNode schemaNode, final TreeType treeType) {
-        super(schemaNode, ContainerNode.class, treeType);
+    ContainerModificationStrategy(final ContainerSchemaNode schemaNode, final TreeConfig treeConfig) {
+        super(schemaNode, ContainerNode.class, treeConfig);
     }
 
     @Override
@@ -34,7 +34,7 @@ class ContainerModificationStrategy extends AbstractDataNodeContainerModificatio
     }
 
     @Override
-    protected NormalizedNode<?, ?> createEmptyValue(NormalizedNode<?, ?> original) {
+    protected NormalizedNode<?, ?> createEmptyValue(final NormalizedNode<?, ?> original) {
         Preconditions.checkArgument(original instanceof ContainerNode);
         return ImmutableContainerNodeBuilder.create().withNodeIdentifier(((ContainerNode) original).getIdentifier())
                 .build();
