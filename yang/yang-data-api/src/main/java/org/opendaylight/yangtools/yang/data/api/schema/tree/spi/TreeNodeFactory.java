@@ -8,7 +8,9 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -43,7 +45,7 @@ public final class TreeNodeFactory {
         final Iterable<NormalizedNode<?, ?>> children) {
 
         final Map<PathArgument, TreeNode> map = new HashMap<>();
-        for (NormalizedNode<?, ?> child : children) {
+        for (final NormalizedNode<?, ?> child : children) {
             map.put(child.getIdentifier(), TreeNodeFactory.createTreeNodeRecursively(child, version));
         }
 
@@ -101,12 +103,14 @@ public final class TreeNodeFactory {
     public static TreeNode createTreeNodeRecursively(final NormalizedNode<?, ?> data, final Version version) {
         if (data instanceof NormalizedNodeContainer<?, ?, ?>) {
             @SuppressWarnings("unchecked")
+            final
             NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container = (NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>>) data;
             return createNormalizedNodeRecursively(version, container);
 
         }
         if (data instanceof OrderedNodeContainer<?>) {
             @SuppressWarnings("unchecked")
+            final
             OrderedNodeContainer<NormalizedNode<?, ?>> container = (OrderedNodeContainer<NormalizedNode<?, ?>>) data;
             return createOrderedNodeRecursively(version, container);
         }
@@ -135,5 +139,28 @@ public final class TreeNodeFactory {
             return new SimpleContainerNode(container, version);
         }
         return new ValueNode(data, version);
+    }
+
+    /**
+     * Create a new AbstractTreeNode from a data node.
+     *
+     * @param data data node
+     * @param version data node version
+     * @return new AbstractTreeNode instance, covering the data tree provided
+     */
+    public static TreeNode createTreeNode(final NormalizedNode<?, ?> data, final Version version, final Map<List<YangInstanceIdentifier>, TreeNodeIndex> indexes) {
+        if (data instanceof NormalizedNodeContainer<?, ?, ?>) {
+            @SuppressWarnings("unchecked")
+            final NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container =
+                    (NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>>) data;
+            return new SimpleContainerNode(container, version, indexes);
+        }
+        if (data instanceof OrderedNodeContainer<?>) {
+            @SuppressWarnings("unchecked")
+            final OrderedNodeContainer<NormalizedNode<?, ?>> container =
+                    (OrderedNodeContainer<NormalizedNode<?, ?>>) data;
+            return new SimpleContainerNode(container, version, indexes);
+        }
+        return new ValueNode(data, version, indexes);
     }
 }

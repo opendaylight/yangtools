@@ -9,8 +9,11 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
+import com.google.common.collect.ImmutableMap;
+import java.util.List;
 import java.util.Map;
 import org.opendaylight.yangtools.util.MapAdaptor;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -24,12 +27,19 @@ abstract class AbstractMutableContainerNode implements MutableTreeNode {
     private Map<PathArgument, TreeNode> children;
     private NormalizedNode<?, ?> data;
     private Version subtreeVersion;
+    private Map<List<YangInstanceIdentifier>, TreeNodeIndex> indexes;
 
-    protected AbstractMutableContainerNode(final AbstractContainerNode parent, final Map<PathArgument, TreeNode> children) {
+    protected AbstractMutableContainerNode(final AbstractContainerNode parent,
+            final Map<PathArgument, TreeNode> children) {
+        this(parent, children, ImmutableMap.of());
+    }
+
+    protected AbstractMutableContainerNode(final AbstractContainerNode parent, final Map<PathArgument, TreeNode> children, final Map<List<YangInstanceIdentifier>, TreeNodeIndex> indexes) {
         this.data = parent.getData();
         this.version = parent.getVersion();
         this.subtreeVersion = parent.getSubtreeVersion();
         this.children = Preconditions.checkNotNull(children);
+        this.indexes = Preconditions.checkNotNull(indexes);
     }
 
     protected final Version getVersion() {
@@ -83,16 +93,26 @@ abstract class AbstractMutableContainerNode implements MutableTreeNode {
             if (dataSize != newChildren.size()) {
                 Verify.verify(dataSize > newChildren.size(), "Detected %s modified children, data has only %s",
                     newChildren.size(), dataSize);
-                ret = new LazyContainerNode(data, version, newChildren, subtreeVersion);
+                ret = new LazyContainerNode(data, version, newChildren, subtreeVersion, indexes);
             } else {
-                ret = new MaterializedContainerNode(data, version, newChildren, subtreeVersion);
+                ret = new MaterializedContainerNode(data, version, newChildren, subtreeVersion, indexes);
             }
         } else {
-            ret = new SimpleContainerNode(data, version);
+            ret = new SimpleContainerNode(data, version, indexes);
         }
 
         // This forces a NPE if this class is accessed again. Better than corruption.
         children = null;
         return ret;
+    }
+
+    @Override
+    public Map<List<YangInstanceIdentifier>, TreeNodeIndex> getIndexes() {
+        return indexes;
+    }
+
+    @Override
+    public void setIndexes(final Map<List<YangInstanceIdentifier>, TreeNodeIndex> indexes) {
+        this.indexes = Preconditions.checkNotNull(indexes);
     }
 }
