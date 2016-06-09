@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -56,7 +57,7 @@ final class ListEntryModificationStrategy extends AbstractDataNodeContainerModif
     }
 
     @Override
-    protected NormalizedNode<?, ?> createEmptyValue(NormalizedNode<?, ?> original) {
+    protected NormalizedNode<?, ?> createEmptyValue(final NormalizedNode<?, ?> original) {
         checkArgument(original instanceof MapEntryNode);
         return ImmutableMapEntryNodeBuilder.create().withNodeIdentifier(((MapEntryNode) original).getIdentifier())
                 .build();
