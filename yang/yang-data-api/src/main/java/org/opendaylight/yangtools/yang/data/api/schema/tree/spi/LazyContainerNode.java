@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
+import java.util.List;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
@@ -56,5 +59,11 @@ final class LazyContainerNode extends AbstractModifiedContainerNode {
                     return getModifiedChild(input.getIdentifier()) == null;
                 }
         }));
+    }
+
+    @Override
+    public Map<List<YangInstanceIdentifier>, TreeNodeIndex> getIndexes() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

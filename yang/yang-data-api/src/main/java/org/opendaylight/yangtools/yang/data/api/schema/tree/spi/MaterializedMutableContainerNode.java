@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
+import java.util.List;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+
 import com.google.common.base.Optional;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -19,5 +22,11 @@ final class MaterializedMutableContainerNode extends AbstractMutableContainerNod
     @Override
     public Optional<TreeNode> getChild(final PathArgument child) {
         return Optional.fromNullable(getModifiedChild(child));
+    }
+
+    @Override
+    public Map<List<YangInstanceIdentifier>, TreeNodeIndex> getIndexes() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

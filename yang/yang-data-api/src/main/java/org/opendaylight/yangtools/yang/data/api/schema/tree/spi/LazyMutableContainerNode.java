@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
+import java.util.List;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+
 import com.google.common.base.Optional;
 import java.util.Map;
 import org.opendaylight.yangtools.util.MapAdaptor;
@@ -33,5 +36,11 @@ final class LazyMutableContainerNode extends AbstractMutableContainerNode {
         }
 
         return Optional.fromNullable(AbstractContainerNode.getChildFromData(getData(), childId, getVersion()));
+    }
+
+    @Override
+    public Map<List<YangInstanceIdentifier>, TreeNodeIndex> getIndexes() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

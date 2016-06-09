@@ -7,7 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
+import java.util.List;
+import java.util.Map;
 import org.opendaylight.yangtools.concepts.Identifiable;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
@@ -57,4 +60,6 @@ public interface TreeNode extends Identifiable<PathArgument>, StoreTreeNode<Tree
      * @return Mutable copy
      */
     MutableTreeNode mutable();
+
+    Map<List<YangInstanceIdentifier>, TreeNodeIndex> getIndexes();
 }
