@@ -11,14 +11,14 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeConfig;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class UnkeyedListItemModificationStrategy extends AbstractDataNodeContainerModificationStrategy<ListSchemaNode> {
-    UnkeyedListItemModificationStrategy(final ListSchemaNode schemaNode, final TreeType treeType) {
-        super(schemaNode, UnkeyedListEntryNode.class, treeType);
+    UnkeyedListItemModificationStrategy(final ListSchemaNode schemaNode, final TreeConfig treeConfig) {
+        super(schemaNode, UnkeyedListEntryNode.class, treeConfig);
     }
 
     @Override
@@ -29,7 +29,7 @@ final class UnkeyedListItemModificationStrategy extends AbstractDataNodeContaine
     }
 
     @Override
-    protected NormalizedNode<?, ?> createEmptyValue(NormalizedNode<?, ?> original) {
+    protected NormalizedNode<?, ?> createEmptyValue(final NormalizedNode<?, ?> original) {
         checkArgument(original instanceof UnkeyedListEntryNode);
         return ImmutableUnkeyedListEntryNodeBuilder.create()
                 .withNodeIdentifier(((UnkeyedListEntryNode) original).getIdentifier()).build();

@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeConfig;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
@@ -54,7 +55,7 @@ abstract class MandatoryLeafEnforcer implements Immutable {
 
         @Override
         protected void enforceOnTreeNode(final NormalizedNode<?, ?> data) {
-            for (YangInstanceIdentifier id : mandatoryNodes) {
+            for (final YangInstanceIdentifier id : mandatoryNodes) {
                 final Optional<NormalizedNode<?, ?>> descandant = NormalizedNodes.findNode(data, id);
                 Preconditions.checkArgument(descandant.isPresent(), "Node %s is missing mandatory descendant %s",
                         data.getIdentifier(), id);
@@ -71,7 +72,7 @@ abstract class MandatoryLeafEnforcer implements Immutable {
 
     private static void findMandatoryNodes(final Builder<YangInstanceIdentifier> builder,
             final YangInstanceIdentifier id, final DataNodeContainer schema, final TreeType type) {
-        for (DataSchemaNode child : schema.getChildNodes()) {
+        for (final DataSchemaNode child : schema.getChildNodes()) {
             if (SchemaAwareApplyOperation.belongsToTree(type, child)) {
                 if (child instanceof ContainerSchemaNode) {
                     final ContainerSchemaNode container = (ContainerSchemaNode) child;
@@ -91,17 +92,18 @@ abstract class MandatoryLeafEnforcer implements Immutable {
         }
     }
 
-    static MandatoryLeafEnforcer forContainer(final DataNodeContainer schema, final TreeType type) {
-        switch (type) {
+    static MandatoryLeafEnforcer forContainer(final DataNodeContainer schema, final TreeConfig treeConfig) {
+        final TreeType treeType = treeConfig.getTreeType();
+        switch (treeType) {
         case CONFIGURATION:
             final Builder<YangInstanceIdentifier> builder = ImmutableList.builder();
-            findMandatoryNodes(builder, YangInstanceIdentifier.EMPTY, schema, type);
+            findMandatoryNodes(builder, YangInstanceIdentifier.EMPTY, schema, treeType);
             final Collection<YangInstanceIdentifier> mandatoryNodes = builder.build();
             return mandatoryNodes.isEmpty() ? NOOP_ENFORCER : new Strict(mandatoryNodes);
         case OPERATIONAL:
             return NOOP_ENFORCER;
         default:
-            throw new UnsupportedOperationException(String.format("Not supported tree type %s", type));
+            throw new UnsupportedOperationException(String.format("Not supported tree type %s", treeType));
         }
     }
 }

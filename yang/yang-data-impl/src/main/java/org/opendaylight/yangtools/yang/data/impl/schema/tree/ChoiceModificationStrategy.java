@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeConfig;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
@@ -42,16 +42,16 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
     private final Map<CaseEnforcer, Collection<CaseEnforcer>> exclusions;
     private final Map<PathArgument, CaseEnforcer> caseEnforcers;
 
-    ChoiceModificationStrategy(final ChoiceSchemaNode schemaNode, final TreeType treeType) {
-        super(ChoiceNode.class, treeType);
+    ChoiceModificationStrategy(final ChoiceSchemaNode schemaNode, final TreeConfig treeConfig) {
+        super(ChoiceNode.class, treeConfig);
 
         final Builder<PathArgument, ModificationApplyOperation> childBuilder = ImmutableMap.builder();
         final Builder<PathArgument, CaseEnforcer> enforcerBuilder = ImmutableMap.builder();
         for (final ChoiceCaseNode caze : schemaNode.getCases()) {
-            final CaseEnforcer enforcer = CaseEnforcer.forTree(caze, treeType);
+            final CaseEnforcer enforcer = CaseEnforcer.forTree(caze, treeConfig);
             if (enforcer != null) {
                 for (final Entry<NodeIdentifier, DataSchemaNode> e : enforcer.getChildEntries()) {
-                    childBuilder.put(e.getKey(), SchemaAwareApplyOperation.from(e.getValue(), treeType));
+                    childBuilder.put(e.getKey(), SchemaAwareApplyOperation.from(e.getValue(), treeConfig));
                     enforcerBuilder.put(e.getKey(), enforcer);
                 }
             }
@@ -60,7 +60,7 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
         caseEnforcers = enforcerBuilder.build();
 
         final Map<CaseEnforcer, Collection<CaseEnforcer>> exclusionsBuilder = new HashMap<>();
-        for (CaseEnforcer e : caseEnforcers.values()) {
+        for (final CaseEnforcer e : caseEnforcers.values()) {
             exclusionsBuilder.put(e, ImmutableList.copyOf(
                 Collections2.filter(caseEnforcers.values(), Predicates.not(Predicates.equalTo(e)))));
         }
@@ -100,8 +100,8 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
             Verify.verifyNotNull(enforcer, "Case enforcer cannot be null. Most probably, child node %s of choice node %s does not belong in current tree type.", firstChild.getIdentifier(), normalizedNode.getIdentifier());
 
             // Make sure no leaves from other cases are present
-            for (CaseEnforcer other : exclusions.get(enforcer)) {
-                for (NodeIdentifier id : other.getChildIdentifiers()) {
+            for (final CaseEnforcer other : exclusions.get(enforcer)) {
+                for (final NodeIdentifier id : other.getChildIdentifiers()) {
                     final Optional<NormalizedNode<?, ?>> maybeChild = NormalizedNodes.getDirectChild(normalizedNode, id);
                     Preconditions.checkArgument(!maybeChild.isPresent(),
                         "Child %s (from case %s) implies non-presence of child %s (from case %s), which is %s",
@@ -137,7 +137,7 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
     }
 
     @Override
-    protected NormalizedNode<?, ?> createEmptyValue(NormalizedNode<?, ?> original) {
+    protected NormalizedNode<?, ?> createEmptyValue(final NormalizedNode<?, ?> original) {
         checkArgument(original instanceof ChoiceNode);
         return ImmutableChoiceNodeBuilder.create().withNodeIdentifier(((ChoiceNode) original).getIdentifier()).build();
     }
