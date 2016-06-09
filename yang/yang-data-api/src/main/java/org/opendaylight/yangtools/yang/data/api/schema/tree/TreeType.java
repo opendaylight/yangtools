@@ -12,5 +12,5 @@ import com.google.common.annotations.Beta;
 @Beta
 public enum TreeType {
     CONFIGURATION,
-    OPERATIONAL,
+    OPERATIONAL
 }
