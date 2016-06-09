@@ -16,6 +16,7 @@ import java.util.Set;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -29,10 +30,11 @@ final class CaseEnforcer implements Immutable {
         this.enforcer = Preconditions.checkNotNull(enforcer);
     }
 
-    static CaseEnforcer forTree(final ChoiceCaseNode schema, final TreeType type) {
+    static CaseEnforcer forTree(final ChoiceCaseNode schema, final DataTreeConfiguration treeConfig) {
+        final TreeType type = treeConfig.getTreeType();
         final Builder<NodeIdentifier, DataSchemaNode> builder = ImmutableMap.builder();
         if (SchemaAwareApplyOperation.belongsToTree(type, schema)) {
-            for (DataSchemaNode child : schema.getChildNodes()) {
+            for (final DataSchemaNode child : schema.getChildNodes()) {
                 if (SchemaAwareApplyOperation.belongsToTree(type, child)) {
                     builder.put(NodeIdentifier.create(child.getQName()), child);
                 }
@@ -40,7 +42,8 @@ final class CaseEnforcer implements Immutable {
         }
 
         final Map<NodeIdentifier, DataSchemaNode> children = builder.build();
-        return children.isEmpty() ? null : new CaseEnforcer(children, MandatoryLeafEnforcer.forContainer(schema, type));
+        return children.isEmpty() ? null : new CaseEnforcer(children, MandatoryLeafEnforcer.forContainer(schema,
+                treeConfig));
     }
 
     Set<Entry<NodeIdentifier, DataSchemaNode>> getChildEntries() {
