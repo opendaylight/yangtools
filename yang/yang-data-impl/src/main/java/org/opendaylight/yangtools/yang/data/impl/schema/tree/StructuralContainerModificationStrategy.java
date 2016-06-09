@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeConfig;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
@@ -40,8 +40,8 @@ final class StructuralContainerModificationStrategy extends ModificationApplyOpe
     private static final Version FAKE_VERSION = Version.initial();
     private final ContainerModificationStrategy delegate;
 
-    StructuralContainerModificationStrategy(final ContainerSchemaNode schemaNode, final TreeType treeType) {
-        this.delegate = new ContainerModificationStrategy(schemaNode, treeType);
+    StructuralContainerModificationStrategy(final ContainerSchemaNode schemaNode, final TreeConfig treeConfig) {
+        this.delegate = new ContainerModificationStrategy(schemaNode, treeConfig);
     }
 
     private Optional<TreeNode> fakeMeta(final Version version) {
@@ -106,7 +106,7 @@ final class StructuralContainerModificationStrategy extends ModificationApplyOpe
     }
 
     @Override
-    void recursivelyVerifyStructure(NormalizedNode<?, ?> value) {
+    void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
         delegate.recursivelyVerifyStructure(value);
     }
 
@@ -116,7 +116,7 @@ final class StructuralContainerModificationStrategy extends ModificationApplyOpe
     }
 
     @Override
-    void mergeIntoModifiedNode(ModifiedNode modification, NormalizedNode<?, ?> value, Version version) {
+    void mergeIntoModifiedNode(final ModifiedNode modification, final NormalizedNode<?, ?> value, final Version version) {
         delegate.mergeIntoModifiedNode(modification, value, version);
     }
 

@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeConfig;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
@@ -35,7 +36,7 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTree.class);
 
     private final YangInstanceIdentifier rootPath;
-    private final TreeType treeType;
+    private final TreeConfig treeConfig;
 
     /**
      * Current data store state generation.
@@ -43,7 +44,11 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
     private volatile DataTreeState state;
 
     public InMemoryDataTree(final TreeNode rootNode, final TreeType treeType, final YangInstanceIdentifier rootPath, final SchemaContext schemaContext) {
-        this.treeType = Preconditions.checkNotNull(treeType, "treeType");
+        this(rootNode, TreeConfig.getDefault(treeType), rootPath, schemaContext);
+    }
+
+    public InMemoryDataTree(final TreeNode rootNode, final TreeConfig treeConfig, final YangInstanceIdentifier rootPath, final SchemaContext schemaContext) {
+        this.treeConfig = Preconditions.checkNotNull(treeConfig, "treeConfig");
         this.rootPath = Preconditions.checkNotNull(rootPath, "rootPath");
         state = DataTreeState.createInitial(rootNode);
         if (schemaContext != null) {
@@ -77,9 +82,9 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
         final ModificationApplyOperation rootNode;
         if (rootSchemaNode instanceof ContainerSchemaNode) {
             // FIXME: real root needs to enfore presence, but that require pre-population
-            rootNode = new ContainerModificationStrategy((ContainerSchemaNode) rootSchemaNode, treeType);
+            rootNode = new ContainerModificationStrategy((ContainerSchemaNode) rootSchemaNode, treeConfig);
         } else {
-            rootNode = SchemaAwareApplyOperation.from(rootSchemaNode, treeType);
+            rootNode = SchemaAwareApplyOperation.from(rootSchemaNode, treeConfig);
         }
 
         DataTreeState currentState, newState;
