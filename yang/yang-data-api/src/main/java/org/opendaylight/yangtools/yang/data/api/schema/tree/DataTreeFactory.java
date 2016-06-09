@@ -33,6 +33,15 @@ public interface DataTreeFactory {
     DataTree create(TreeType type);
 
     /**
+     * Create a new data tree.
+     * @param treeConfig
+     *          Tree config.
+     *
+     * @return A data tree instance.
+     */
+    DataTree create(TreeConfig treeConfig);
+
+    /**
      * Create a new data tree rooted at a particular node.
      * @param treeType
      *          Tree type.

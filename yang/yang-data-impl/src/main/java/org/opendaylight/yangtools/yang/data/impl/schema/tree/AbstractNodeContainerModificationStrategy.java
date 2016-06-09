@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
@@ -20,6 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificat
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModifiedNodeDoesNotExistException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeConfig;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
@@ -33,9 +35,9 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     private final boolean verifyChildrenStructure;
 
     protected AbstractNodeContainerModificationStrategy(final Class<? extends NormalizedNode<?, ?>> nodeClass,
-            final TreeType treeType) {
+            final TreeConfig treeConfig) {
         this.nodeClass = Preconditions.checkNotNull(nodeClass , "nodeClass");
-        this.verifyChildrenStructure = (treeType == TreeType.CONFIGURATION);
+        this.verifyChildrenStructure = (treeConfig.getTreeType() == TreeType.CONFIGURATION);
     }
 
     @SuppressWarnings("rawtypes")
@@ -61,7 +63,7 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     }
 
     @Override
-    protected void recursivelyVerifyStructure(NormalizedNode<?, ?> value) {
+    protected void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
         final NormalizedNodeContainer container = (NormalizedNodeContainer) value;
         for (final Object child : container.getValue()) {
             checkArgument(child instanceof NormalizedNode);
@@ -161,7 +163,7 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
         Verify.verify(value instanceof NormalizedNodeContainer, "Attempted to merge non-container %s", value);
         @SuppressWarnings({"unchecked", "rawtypes"})
         final Collection<NormalizedNode<?, ?>> children = ((NormalizedNodeContainer) value).getValue();
-        for (NormalizedNode<?, ?> c : children) {
+        for (final NormalizedNode<?, ?> c : children) {
             final PathArgument id = c.getIdentifier();
             modification.modifyChild(id, resolveChildOperation(id), version);
         }
@@ -170,7 +172,7 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
 
     private void mergeChildrenIntoModification(final ModifiedNode modification,
             final Collection<NormalizedNode<?, ?>> children, final Version version) {
-        for (NormalizedNode<?, ?> c : children) {
+        for (final NormalizedNode<?, ?> c : children) {
             final ModificationApplyOperation childOp = resolveChildOperation(c.getIdentifier());
             final ModifiedNode childNode = modification.modifyChild(c.getIdentifier(), childOp, version);
             childOp.mergeIntoModifiedNode(childNode, c, version);
