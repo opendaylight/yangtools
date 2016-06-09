@@ -13,7 +13,7 @@ import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeConfig;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -22,8 +22,8 @@ final class UnorderedLeafSetModificationStrategy extends AbstractNodeContainerMo
     private final Optional<ModificationApplyOperation> entryStrategy;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    UnorderedLeafSetModificationStrategy(final LeafListSchemaNode schema, final TreeType treeType) {
-        super((Class) LeafSetNode.class, treeType);
+    UnorderedLeafSetModificationStrategy(final LeafListSchemaNode schema, final TreeConfig treeConfig) {
+        super((Class) LeafSetNode.class, treeConfig);
         entryStrategy = Optional.of(new LeafSetEntryModificationStrategy(schema));
     }
 
@@ -35,7 +35,7 @@ final class UnorderedLeafSetModificationStrategy extends AbstractNodeContainerMo
     }
 
     @Override
-    protected NormalizedNode<?, ?> createEmptyValue(NormalizedNode<?, ?> original) {
+    protected NormalizedNode<?, ?> createEmptyValue(final NormalizedNode<?, ?> original) {
         checkArgument(original instanceof LeafSetNode<?>);
         return ImmutableLeafSetNodeBuilder.create().withNodeIdentifier(((LeafSetNode<?>) original).getIdentifier())
                 .build();

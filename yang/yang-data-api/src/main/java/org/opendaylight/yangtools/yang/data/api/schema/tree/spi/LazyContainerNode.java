@@ -11,8 +11,10 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import java.util.List;
 import java.util.Map;
 import org.opendaylight.yangtools.util.MapAdaptor;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
@@ -28,6 +30,11 @@ final class LazyContainerNode extends AbstractModifiedContainerNode {
     LazyContainerNode(final NormalizedNode<?, ?> data, final Version version, final Map<PathArgument, TreeNode> children,
             final Version subtreeVersion) {
         super(data, version, children, subtreeVersion);
+    }
+
+    public LazyContainerNode(final NormalizedNode<?, ?> data, final Version version, final Map<PathArgument, TreeNode> children,
+            final Version subtreeVersion, final Map<List<YangInstanceIdentifier>, TreeNodeIndex> indexes) {
+        super(data, version, children, subtreeVersion, indexes);
     }
 
     @Override
