@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -14,8 +14,11 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -24,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
 
 abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends DeclaredStatement<A>>
         extends AbstractEffectiveDocumentedNode<A, D> implements
@@ -51,8 +55,18 @@ abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends Declare
             if (effectiveStatement instanceof DataSchemaNode) {
                 final DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;
                 if (!mutableChildNodes.containsKey(dataSchemaNode.getQName())) {
-                    mutableChildNodes.put(dataSchemaNode.getQName(), dataSchemaNode);
-                    mutablePublicChildNodes.add(dataSchemaNode);
+                    /**
+                     * Add case short hand when augmenting choice with short hand
+                     **/
+                    if (this instanceof AugmentationSchema && !(effectiveStatement instanceof ChoiceCaseNode) &&
+                            Objects.equals(true, ctx.getFromNamespace(AugmentToChoiceNamespace.class, ctx))) {
+                        final CaseShorthandImpl caseShorthand = new CaseShorthandImpl(dataSchemaNode, true);
+                        mutableChildNodes.put(caseShorthand.getQName(), caseShorthand);
+                        mutablePublicChildNodes.add(caseShorthand);
+                    } else {
+                        mutableChildNodes.put(dataSchemaNode.getQName(), dataSchemaNode);
+                        mutablePublicChildNodes.add(dataSchemaNode);
+                    }
                 } else {
                     throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
                 }
