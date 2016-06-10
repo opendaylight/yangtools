@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionModuleName
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.AnyxmlSchemaLocationNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
@@ -166,6 +167,7 @@ public final class YangInferencePipeline {
             .addSupport(new OrderedByStatementImpl.Definition())
             .addSupport(new WhenStatementImpl.Definition())
             .addSupport(new AugmentStatementImpl.Definition())
+            .addSupport(treeScoped(AugmentToChoiceNamespace.class))
             .addSupport(new RefineStatementImpl.Definition())
             .addSupport(new FeatureStatementImpl.Definition())
             .addSupport(new PositionStatementImpl.Definition())
