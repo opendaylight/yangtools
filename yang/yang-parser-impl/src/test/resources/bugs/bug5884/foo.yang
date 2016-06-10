@@ -1,0 +1,78 @@
+module foo {
+    namespace "urn:yang.foo";
+    prefix "foo";
+
+    revision "2016-01-01";
+
+    container main-container {
+        uses test-grouping {
+            augment "test/test-choice" {
+                leaf short-aug-uses-inside {
+                    type string;
+                }
+            }
+
+            augment "test/test-choice" {
+                case normal-aug-uses-inside {
+                    leaf normal-aug-uses-inside {
+                        type string;
+                    }
+                }
+            }
+        }
+    }
+
+    grouping test-grouping {
+        container test {
+            choice test-choice {
+                leaf short {
+                    type string;
+                }
+                case normal {
+                    leaf normal {
+                        type string;
+                    }
+                }
+            }
+        }
+    }
+
+    choice test-choice {
+        leaf short {
+            type string;
+        }
+        case normal {
+            leaf normal {
+                type string;
+            }
+        }
+    }
+
+    augment "/test-choice" {
+        leaf short-aug-uses {
+            type string;
+        }
+    }
+
+    augment "/test-choice" {
+        case normal-aug-uses {
+            leaf normal-aug-uses {
+                type string;
+            }
+        }
+    }
+
+    augment "/main-container/test/test-choice" {
+        leaf short-aug-uses-outside {
+            type string;
+        }
+    }
+
+    augment "/main-container/test/test-choice" {
+        case normal-aug-uses-outside {
+            leaf normal-aug-uses-outside {
+                type string;
+            }
+        }
+    }
+}

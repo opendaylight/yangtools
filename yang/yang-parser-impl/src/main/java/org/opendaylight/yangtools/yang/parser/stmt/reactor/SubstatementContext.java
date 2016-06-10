@@ -11,6 +11,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import java.util.Collection;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -29,6 +30,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Regist
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.GroupingUtils;
@@ -173,7 +175,8 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
             }
 
             final SchemaPath path;
-            if (StmtContextUtils.producesDeclared(getParentContext(), ChoiceStatement.class)
+            if ((StmtContextUtils.producesDeclared(getParentContext(), ChoiceStatement.class)
+                    || Objects.equals(true, parent.getFromNamespace(AugmentToChoiceNamespace.class, parent)))
                     && isSupportedAsShorthandCase()) {
                 path = parentPath.createChild(qname);
             } else {
