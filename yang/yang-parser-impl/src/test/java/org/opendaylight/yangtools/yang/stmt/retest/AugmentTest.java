@@ -166,7 +166,7 @@ public class AugmentTest {
         assertNotNull(augmentHolder2);
 
         assertEquals(1, augment3.getChildNodes().size());
-        LeafSchemaNode pause = (LeafSchemaNode) augment3.getDataChildByName("pause");
+        ChoiceCaseNode pause = (ChoiceCaseNode) augment3.getDataChildByName("pause");
         assertNotNull(pause);
     }
 
