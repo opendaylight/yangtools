@@ -49,7 +49,7 @@ public class YangToSourcesMojoTest {
         this.mojo = new YangToSourcesMojo(processor);
         this.mojo.setProject(this.project);
         this.mojo.execute();
-        Mockito.verify(processor).execute();
+        Mockito.verify(processor).conditionalExecute(false);
     }
 
     @Test

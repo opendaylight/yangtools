@@ -97,6 +97,14 @@ class YangToSourcesProcessor {
         }
     }
 
+    public void conditionalExecute(boolean skip) throws MojoExecutionException, MojoFailureException {
+        if (skip) {
+            LOG.info("Skipping YANG code generation because property yang.skip is true");
+        } else {
+            execute();
+        }
+    }
+
     private ContextHolder processYang() throws MojoExecutionException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         SchemaContext resolveSchemaContext;
