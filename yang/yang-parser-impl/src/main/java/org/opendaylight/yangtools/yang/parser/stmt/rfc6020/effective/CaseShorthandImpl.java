@@ -37,8 +37,19 @@ final class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
     private final boolean augmenting;
 
     CaseShorthandImpl(final DataSchemaNode caseShorthandNode) {
+        this(caseShorthandNode, false);
+    }
+
+    CaseShorthandImpl(final DataSchemaNode caseShorthandNode, final boolean augmentingUses) {
+        if (augmentingUses) {
+            /**
+             *  Special case for augmenting case shorthand into choice
+             */
+            this.path = Preconditions.checkNotNull(caseShorthandNode.getPath());
+        } else {
+            this.path = Preconditions.checkNotNull(caseShorthandNode.getPath().getParent());
+        }
         this.caseShorthandNode = Preconditions.checkNotNull(caseShorthandNode);
-        this.path = Preconditions.checkNotNull(caseShorthandNode.getPath().getParent());
         this.original = getOriginalIfPresent(caseShorthandNode);
 
         // We need to cache this, as it will be reset
