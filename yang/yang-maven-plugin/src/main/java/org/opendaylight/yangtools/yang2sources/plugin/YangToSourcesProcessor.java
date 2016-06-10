@@ -90,10 +90,24 @@ class YangToSourcesProcessor {
     }
 
     public void execute() throws MojoExecutionException, MojoFailureException {
-        ContextHolder context = processYang();
-        if (context != null) {
-            generateSources(context);
-            yangProvider.addYangsToMetaInf(project, yangFilesRootDir, excludedFiles);
+        execute(false);
+    }
+
+    /**
+    *
+    * @param skip when true, then this plugin is not executed
+    * @throws MojoExecutionException
+    * @throws MojoFailureException
+    */
+    public void execute(boolean skip) throws MojoExecutionException, MojoFailureException {
+        if (skip) {
+            LOG.info("Yang sources generation is skipped");
+        } else {
+            ContextHolder context = processYang();
+            if (context != null) {
+                generateSources(context);
+                yangProvider.addYangsToMetaInf(project, yangFilesRootDir, excludedFiles);
+            }
         }
     }
 

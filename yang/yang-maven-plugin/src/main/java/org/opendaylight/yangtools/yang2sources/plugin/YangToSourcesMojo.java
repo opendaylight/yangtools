@@ -86,6 +86,9 @@ public final class YangToSourcesMojo extends AbstractMojo {
     @Parameter( readonly = true, defaultValue = "${project.remoteArtifactRepositories}" )
     private List<ArtifactRepository> remoteRepos;
 
+    // When set to "true", then the execution of the plugin is disabled
+    @Parameter( property = "yang.skip" )
+    private String yang_skip;
 
     public YangToSourcesMojo() {
     }
@@ -113,7 +116,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
             yangToSourcesProcessor = new YangToSourcesProcessor(buildContext, yangFilesRootFile,
                     excludedFiles, codeGeneratorArgs, project, inspectDependencies);
         }
-        yangToSourcesProcessor.execute();
+        yangToSourcesProcessor.execute("true".equals(yang_skip));
     }
 
     private static List<CodeGeneratorArg> processCodeGenerators(final CodeGeneratorArg[] codeGenerators) {
