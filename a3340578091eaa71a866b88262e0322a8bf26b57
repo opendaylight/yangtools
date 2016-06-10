@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da5c1566_4c588832",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/SchemalessXMLStreamNormalizedNodeStreamWriter.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-10T12:21:32Z",
+      "side": 1,
+      "message": "import Map.Entry",
+      "range": {
+        "startLine": 108,
+        "startChar": 19,
+        "endLine": 108,
+        "endChar": 28
+      },
+      "revId": "a3340578091eaa71a866b88262e0322a8bf26b57",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_8c41003c",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/SchemalessXMLStreamNormalizedNodeStreamWriter.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 112,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-10T12:21:32Z",
+      "side": 1,
+      "message": "if (\nalso elsewhere",
+      "range": {
+        "startLine": 112,
+        "startChar": 17,
+        "endLine": 112,
+        "endChar": 19
+      },
+      "revId": "a3340578091eaa71a866b88262e0322a8bf26b57",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da5c1566_0c75f097",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlParserStream.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-10T12:21:32Z",
+      "side": 1,
+      "message": "DocumentBuilderFactory f \u003d ...\nf.setNamespaceAware();\nFACTORY \u003d f;\n\nthis is to make it explicit that FACTORY initialized with fully-working instance.",
+      "range": {
+        "startLine": 67,
+        "startChar": 8,
+        "endLine": 68,
+        "endChar": 40
+      },
+      "revId": "a3340578091eaa71a866b88262e0322a8bf26b57",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
