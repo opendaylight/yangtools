@@ -164,6 +164,7 @@ public final class YangInferencePipeline {
             .addSupport(new MaxElementsStatementImpl.Definition())
             .addSupport(new MinElementsStatementImpl.Definition())
             .addSupport(new OrderedByStatementImpl.Definition())
+            
             .addSupport(new WhenStatementImpl.Definition())
             .addSupport(new AugmentStatementImpl.Definition())
             .addSupport(new RefineStatementImpl.Definition())
