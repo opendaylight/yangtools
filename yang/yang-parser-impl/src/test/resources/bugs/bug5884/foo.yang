@@ -1,0 +1,21 @@
+module foo {
+    namespace "urn:yang.foo";
+    prefix "foo";
+
+    revision "2016-01-01" {
+    }
+
+    container main-container {
+        uses test-grouping {
+            augment "test-choice" {
+                leaf short-hand {
+                    type string;
+                }
+            }
+        }
+    }
+    grouping test-grouping {
+        choice test-choice {
+        }
+    }
+}

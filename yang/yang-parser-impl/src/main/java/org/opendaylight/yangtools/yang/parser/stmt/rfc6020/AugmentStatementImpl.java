@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
+
 import com.google.common.base.Preconditions;
 import java.util.Collection;
 import java.util.regex.Pattern;
@@ -27,6 +28,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StmtOrderingNamespace;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
@@ -89,7 +91,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
 
         @Override
         public void onFullDefinitionDeclared(
-                final StmtContext.Mutable<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> augmentNode) {
+                final Mutable<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> augmentNode) {
             if (!StmtContextUtils.areFeaturesSupported(augmentNode)) {
                 return;
             }
@@ -102,7 +104,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
 
             final ModelActionBuilder augmentAction = augmentNode.newInferenceAction(
                 ModelProcessingPhase.EFFECTIVE_MODEL);
-            final ModelActionBuilder.Prerequisite<StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>>> sourceCtxPrereq =
+            final Prerequisite<StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>>> sourceCtxPrereq =
                     augmentAction.requiresCtx(augmentNode, ModelProcessingPhase.EFFECTIVE_MODEL);
             final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target =
                     augmentAction.mutatesEffectiveCtx(getSearchRoot(augmentNode), SchemaNodeIdentifierBuildNamespace.class, augmentNode.getStatementArgument());
@@ -115,6 +117,12 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                             || StmtContextUtils.isInExtensionBody(augmentTargetCtx)) {
                         augmentNode.setIsSupportedToBuildEffective(false);
                         return;
+                    }
+                    /**
+                     * Marks case short hand in augment
+                     */
+                    if (Rfc6020Mapping.CHOICE == augmentTargetCtx.getPublicDefinition()) {
+                        augmentNode.addToNs(AugmentToChoiceNamespace.class, augmentNode, true);
                     }
 
                     // FIXME: this is a workaround for models which augment a node which is added via an extension
@@ -145,7 +153,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                 }
 
                 @Override
-                public void prerequisiteFailed(final Collection<? extends ModelActionBuilder.Prerequisite<?>> failed) {
+                public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
                     throw new InferenceException(augmentNode.getStatementSourceReference(),
                         "Augment target '%s' not found", augmentNode.getStatementArgument());
                 }
