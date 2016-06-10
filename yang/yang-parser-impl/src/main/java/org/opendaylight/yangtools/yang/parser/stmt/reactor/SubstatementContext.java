@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Regist
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
@@ -179,7 +180,8 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
             }
 
             final SchemaPath path;
-            if (StmtContextUtils.producesDeclared(getParentContext(), ChoiceStatement.class)
+            if ((StmtContextUtils.producesDeclared(getParentContext(), ChoiceStatement.class)
+                    || Boolean.TRUE.equals(parent.getFromNamespace(AugmentToChoiceNamespace.class, parent)))
                     && isSupportedAsShorthandCase()) {
                 path = parentPath.createChild(qname);
             } else {

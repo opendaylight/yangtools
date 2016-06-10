@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
+
 import com.google.common.base.Preconditions;
 import java.util.Collection;
 import java.util.regex.Pattern;
@@ -27,6 +28,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StmtOrderingNamespace;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
@@ -111,6 +113,12 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                     if (!AugmentUtils.isSupportedAugmentTarget(augmentTargetCtx) || StmtContextUtils.isInExtensionBody(augmentTargetCtx)) {
                         augmentNode.setIsSupportedToBuildEffective(false);
                         return;
+                    }
+                    /**
+                     * Marks case short hand in augment
+                     */
+                    if (augmentTargetCtx.getPublicDefinition() == Rfc6020Mapping.CHOICE) {
+                        augmentNode.addToNs(AugmentToChoiceNamespace.class, augmentNode, true);
                     }
 
                     // FIXME: this is a workaround for models which augment a node which is added via an extension
