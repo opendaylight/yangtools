@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_d2daa4e8",
+        "filename": "yang/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/YangToSourcesProcessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2016-06-13T23:51:50Z",
+      "side": 1,
+      "message": "I would remove this JavaDoc, it does not really explain anything that is not already obvious from the method signature.",
+      "revId": "b2160c86eb0f1e748cb9cedb819f8a4895a9c99c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_d201043b",
+        "filename": "yang/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/YangToSourcesProcessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2016-06-13T23:51:50Z",
+      "side": 1,
+      "message": "\"Skipping YANG code generation because property yang.skip is true\" maybe clearer, and in line with what I\u0027ve seen other Maven plugins log?",
+      "revId": "b2160c86eb0f1e748cb9cedb819f8a4895a9c99c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
