@@ -61,10 +61,11 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     private static final Pattern QNAME_PATTERN_NO_NAMESPACE_NO_REVISION = Pattern.compile("^(.+)$");
     private static final char[] ILLEGAL_CHARACTERS = new char[] { '?', '(', ')', '&' };
 
-    // Mandatory
+    // Non-null
     private final QNameModule module;
-    // Mandatory
+    // Non-null
     private final String localName;
+    private int hash;
 
     private QName(final QNameModule module, final String localName) {
         this.localName = checkLocalName(localName);
@@ -177,11 +178,9 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(localName);
-        result = prime * result + module.hashCode();
-        return result;
+        if (hash == 0) {
+            hash = Objects.hash(module, localName);
+        return hash;
     }
 
     /**
