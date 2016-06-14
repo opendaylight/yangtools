@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.RegEx;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
@@ -55,10 +56,19 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     static final String QNAME_LEFT_PARENTHESIS = "(";
     static final String QNAME_RIGHT_PARENTHESIS = ")";
 
-    private static final Pattern QNAME_PATTERN_FULL = Pattern.compile("^\\((.+)\\" + QNAME_REVISION_DELIMITER
-            + "(.+)\\)(.+)$");
-    private static final Pattern QNAME_PATTERN_NO_REVISION = Pattern.compile("^\\((.+)\\)(.+)$");
-    private static final Pattern QNAME_PATTERN_NO_NAMESPACE_NO_REVISION = Pattern.compile("^(.+)$");
+    @RegEx
+    private static final String QNAME_STRING_FULL = "^\\((.+)\\?revision=(.+)\\)(.+)$";
+    private static final Pattern QNAME_PATTERN_FULL = Pattern.compile(QNAME_STRING_FULL);
+
+    @RegEx
+    private static final String QNAME_STRING_NO_REVISION = "^\\((.+)\\)(.+)$";
+    private static final Pattern QNAME_PATTERN_NO_REVISION = Pattern.compile(QNAME_STRING_NO_REVISION);
+
+    @RegEx
+    private static final String QNAME_STRING_NO_NAMESPACE_NO_REVISION = "^(.+)$";
+    private static final Pattern QNAME_PATTERN_NO_NAMESPACE_NO_REVISION =
+        Pattern.compile(QNAME_STRING_NO_NAMESPACE_NO_REVISION);
+
     private static final char[] ILLEGAL_CHARACTERS = new char[] { '?', '(', ')', '&' };
 
     // Non-null
