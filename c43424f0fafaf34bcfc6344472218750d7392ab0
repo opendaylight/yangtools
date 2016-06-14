@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_624dc772",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/AbstractEffectiveDocumentedDataNodeContainer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-06-14T09:54:51Z",
+      "side": 1,
+      "message": "only single \"anyxml\", \"container\", \"leaf\", \"list\", or\n   \"leaf-list\" statement can be used as case shorthand. Please make sure this condition is satisfied.",
+      "range": {
+        "startLine": 61,
+        "startChar": 64,
+        "endLine": 61,
+        "endChar": 108
+      },
+      "revId": "c43424f0fafaf34bcfc6344472218750d7392ab0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_c26493e7",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/AbstractEffectiveDocumentedDataNodeContainer.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-06-14T09:54:51Z",
+      "side": 1,
+      "message": "this code is executed for all augments onto a choice (not only uses-agments). Is this what we want ?",
+      "range": {
+        "startLine": 63,
+        "startChar": 24,
+        "endLine": 63,
+        "endChar": 108
+      },
+      "revId": "c43424f0fafaf34bcfc6344472218750d7392ab0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_e240b737",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/CaseShorthandImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-06-14T09:54:51Z",
+      "side": 1,
+      "message": "Why is a uses-augment special as for the schema path creation ?",
+      "range": {
+        "startLine": 43,
+        "startChar": 4,
+        "endLine": 43,
+        "endChar": 93
+      },
+      "revId": "c43424f0fafaf34bcfc6344472218750d7392ab0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_42a083f4",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/CaseShorthandImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-06-14T09:54:51Z",
+      "side": 1,
+      "message": "this code is executed for all augments onto a choice (not only uses-agments). Is this what we want ? Javadoc comments say something else...",
+      "range": {
+        "startLine": 44,
+        "startChar": 7,
+        "endLine": 48,
+        "endChar": 80
+      },
+      "revId": "c43424f0fafaf34bcfc6344472218750d7392ab0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_02b68b3d",
+        "filename": "yang/yang-parser-impl/src/test/resources/bugs/bug5884/foo.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-06-14T09:54:51Z",
+      "side": 1,
+      "message": "Please try to test at least some various combination of groupings, uses, uses-augment, augments and augment targets.",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 12
+      },
+      "revId": "c43424f0fafaf34bcfc6344472218750d7392ab0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
