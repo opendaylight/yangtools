@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ba51214e_cdc9695c",
+        "filename": "common/checkstyle-logging/src/main/java/org/opendaylight/yangtools/checkstyle/FileNameUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2016-06-14T02:04:55Z",
+      "side": 1,
+      "message": "If we have such rules, I\u0027d like Checkstyle to tell me about them, instead wasting your time for code reviews. Do you know how to write such rules with Checkstyle configuration?  I had a quick look, but couldn\u0027t find anything, so posted https://groups.google.com/d/msg/checkstyle/V73YDdZDcJk/Ie_QqeDTPAAJ",
+      "parentUuid": "da5c1566_3cbe4700",
+      "range": {
+        "startLine": 13,
+        "startChar": 29,
+        "endLine": 13,
+        "endChar": 38
+      },
+      "revId": "c3733ae93e461b67d305349268a4c544d2137fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da5c1566_dcabcbd4",
         "filename": "common/checkstyle-logging/src/main/java/org/opendaylight/yangtools/checkstyle/LogMessageExtractorCheck.java",
         "patchSetId": 3
@@ -36,6 +60,30 @@
       "writtenOn": "2016-06-03T09:33:35Z",
       "side": 1,
       "message": "should be called LOG",
+      "range": {
+        "startLine": 33,
+        "startChar": 32,
+        "endLine": 33,
+        "endChar": 38
+      },
+      "revId": "c3733ae93e461b67d305349268a4c544d2137fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_cd7b2928",
+        "filename": "common/checkstyle-logging/src/main/java/org/opendaylight/yangtools/checkstyle/LogMessageExtractorCheck.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2016-06-14T02:04:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da5c1566_dcabcbd4",
       "range": {
         "startLine": 33,
         "startChar": 32,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "ba51214e_0d76c13e",
+        "filename": "common/checkstyle-logging/src/main/java/org/opendaylight/yangtools/checkstyle/LogMessageExtractorCheck.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2016-06-14T02:04:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da5c1566_1cb6e33d",
+      "range": {
+        "startLine": 36,
+        "startChar": 4,
+        "endLine": 36,
+        "endChar": 14
+      },
+      "revId": "c3733ae93e461b67d305349268a4c544d2137fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da5c1566_9cf833e7",
         "filename": "common/checkstyle-logging/src/main/java/org/opendaylight/yangtools/checkstyle/LogMessageExtractorCheck.java",
         "patchSetId": 3
@@ -82,6 +154,30 @@
       "writtenOn": "2016-06-03T09:33:35Z",
       "side": 1,
       "message": "move comment to previous line, as this will trigger a sonar warning",
+      "range": {
+        "startLine": 62,
+        "startChar": 47,
+        "endLine": 62,
+        "endChar": 51
+      },
+      "revId": "c3733ae93e461b67d305349268a4c544d2137fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_4db6f9dd",
+        "filename": "common/checkstyle-logging/src/main/java/org/opendaylight/yangtools/checkstyle/LogMessageExtractorCheck.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2016-06-14T02:04:55Z",
+      "side": 1,
+      "message": "Seriously?? That\u0027s a dumb rule, I don\u0027t want to follow it. Particularly because neither my IDE nor the build tells me about this before hand.  Can I appeal this rule? ;) Where in ODL Git are Sonar rules defined, which list to write to about Sonar?  If it\u0027s kept, we would have to have to same rule in Checkstyle - do you know if that\u0027s possible?  Or I can try to integrate http://www.sonarlint.org/eclipse/ into https://github.com/vorburger/opendaylight-eclipse-setup, but what I don\u0027t like about that approach is that the build running locally and on Gerrit would that catch this, only Sonar would find it post-merge. That\u0027s No Good, in my view. Do we really have to start looking at getting Sonar to somehow run as part of that build? Is that even possible?",
+      "parentUuid": "da5c1566_9cf833e7",
       "range": {
         "startLine": 62,
         "startChar": 47,
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "ba51214e_cda2099a",
+        "filename": "common/checkstyle-logging/src/main/java/org/opendaylight/yangtools/checkstyle/LogMessageExtractorCheck.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2016-06-14T02:04:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da5c1566_dc92ab9e",
+      "range": {
+        "startLine": 63,
+        "startChar": 24,
+        "endLine": 63,
+        "endChar": 28
+      },
+      "revId": "c3733ae93e461b67d305349268a4c544d2137fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da5c1566_9c81534d",
         "filename": "common/checkstyle-logging/src/main/java/org/opendaylight/yangtools/checkstyle/LogMessageExtractorCheck.java",
         "patchSetId": 3
@@ -140,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "ba51214e_8db011df",
+        "filename": "common/checkstyle-logging/src/main/java/org/opendaylight/yangtools/checkstyle/LogMessageExtractorCheck.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2016-06-14T02:04:55Z",
+      "side": 1,
+      "message": "I\u0027d rather we adopt serious static null analysis, e.g. like this http://blog2.vorburger.ch/2014/07/java-8-null-type-annotations-in-eclipse.html and/or with FindBugs.  What do you think about those kind of approaches?",
+      "parentUuid": "da5c1566_9c81534d",
+      "range": {
+        "startLine": 67,
+        "startChar": 35,
+        "endLine": 67,
+        "endChar": 39
+      },
+      "revId": "c3733ae93e461b67d305349268a4c544d2137fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da5c1566_5cd5fb41",
         "filename": "common/checkstyle-logging/src/test/java/org/opendaylight/yangtools/checkstyle/CheckstyleTest.java",
         "patchSetId": 3
@@ -151,6 +295,30 @@
       "writtenOn": "2016-06-03T09:33:35Z",
       "side": 1,
       "message": "StandardCharsets.UTF_8",
+      "range": {
+        "startLine": 80,
+        "startChar": 69,
+        "endLine": 80,
+        "endChar": 83
+      },
+      "revId": "c3733ae93e461b67d305349268a4c544d2137fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_edc0ad2c",
+        "filename": "common/checkstyle-logging/src/test/java/org/opendaylight/yangtools/checkstyle/CheckstyleTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2016-06-14T02:04:55Z",
+      "side": 1,
+      "message": "Dito as my comment for Optional",
+      "parentUuid": "da5c1566_5cd5fb41",
       "range": {
         "startLine": 80,
         "startChar": 69,
