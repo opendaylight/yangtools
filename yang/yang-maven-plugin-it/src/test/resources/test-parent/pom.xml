@@ -8,15 +8,9 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>yangtools-parent</artifactId>
-        <version>@project.parent.version@</version>
-        <relativePath>/../../common/parent/pom.xml</relativePath>
-    </parent>
-
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>test-parent</artifactId>
+    <version>@project.version@</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -41,7 +35,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>properties-maven-plugin</artifactId>
-                    <version>1.0-alpha-2</version>
+                    <version>1.0.0</version>
                     <executions>
                         <execution>
                             <phase>generate-resources</phase>
