@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>test-parent</artifactId>
-        <version>@project.parent.version@</version>
+        <version>@project.version@</version>
     </parent>
 
     <artifactId>generator-test1</artifactId>

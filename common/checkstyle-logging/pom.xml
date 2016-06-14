@@ -10,12 +10,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.opendaylight.yangtools</groupId>
-        <artifactId>yangtools-parent</artifactId>
-        <version>1.0.0-SNAPSHOT</version>
-        <relativePath>/../../common/parent/pom.xml</relativePath>
+        <groupId>org.opendaylight.odlparent</groupId>
+        <artifactId>bundle-parent</artifactId>
+        <version>1.7.0-SNAPSHOT</version>
+        <relativePath/>
     </parent>
+  <groupId>org.opendaylight.yangtools</groupId>
   <artifactId>checkstyle-logging</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>bundle</packaging>
 
   <dependencies>
     <!-- This pulls in the appropriate version of checkstyle -->
