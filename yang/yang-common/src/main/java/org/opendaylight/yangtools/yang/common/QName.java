@@ -71,19 +71,6 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     /**
-     * Look up specified QName in the global cache and return a shared reference.
-     *
-     * @param qname QName instance
-     * @return Cached instance, according to {@link org.opendaylight.yangtools.objcache.ObjectCache} policy.
-     *
-     * @deprecated Use {@link #intern()} instead.
-     */
-    @Deprecated
-    public static QName cachedReference(final QName qname) {
-        return qname.intern();
-    }
-
-    /**
      * QName Constructor.
      *
      * @param namespace
