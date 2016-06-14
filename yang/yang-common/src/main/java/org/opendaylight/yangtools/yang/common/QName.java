@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.common;
 import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.getRevisionFormat;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.io.Serializable;
@@ -71,19 +72,6 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     /**
-     * Look up specified QName in the global cache and return a shared reference.
-     *
-     * @param qname QName instance
-     * @return Cached instance, according to {@link org.opendaylight.yangtools.objcache.ObjectCache} policy.
-     *
-     * @deprecated Use {@link #intern()} instead.
-     */
-    @Deprecated
-    public static QName cachedReference(final QName qname) {
-        return qname.intern();
-    }
-
-    /**
      * QName Constructor.
      *
      * @param namespace
@@ -96,12 +84,8 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     private static String checkLocalName(final String localName) {
-        if (localName == null) {
-            throw new IllegalArgumentException("Parameter 'localName' may not be null.");
-        }
-        if (localName.length() == 0) {
-            throw new IllegalArgumentException("Parameter 'localName' must be a non-empty string.");
-        }
+        Preconditions.checkArgument(localName != null, "Parameter 'localName' may not be null.");
+		Preconditions.checkArgument(!Strings.isNullOrEmpty(localName), "Parameter 'localName' must be a non-empty string.");
 
         for (final char c : ILLEGAL_CHARACTERS) {
             if (localName.indexOf(c) != -1) {

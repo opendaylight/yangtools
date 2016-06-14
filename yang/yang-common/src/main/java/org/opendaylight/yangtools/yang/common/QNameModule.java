@@ -40,19 +40,6 @@ public final class QNameModule implements Immutable, Serializable {
     }
 
     /**
-     * Look up specified module in the global cache and return a shared reference.
-     *
-     * @param module Module instance
-     * @return Cached instance, according to {@link org.opendaylight.yangtools.objcache.ObjectCache} policy.
-     *
-     * @deprecated Use {@link #intern()} instead.
-     */
-    @Deprecated
-    public static QNameModule cachedReference(final QNameModule module) {
-        return module.intern();
-    }
-
-    /**
      * Return an interned reference to a equivalent QNameModule.
      *
      * @return Interned reference, or this object if it was interned.
