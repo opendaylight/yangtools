@@ -32,7 +32,7 @@ public final class QNameModule implements Immutable, Serializable {
     private final Date revision;
 
     //Nullable
-    private volatile String formattedRevision;
+    private transient volatile String formattedRevision;
 
     private QNameModule(final URI namespace, final Date revision) {
         this.namespace = namespace;
