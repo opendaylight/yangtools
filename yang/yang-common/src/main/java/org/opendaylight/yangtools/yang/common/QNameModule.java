@@ -34,6 +34,8 @@ public final class QNameModule implements Immutable, Serializable {
     //Nullable
     private transient volatile String formattedRevision;
 
+    private transient int hash;
+
     private QNameModule(final URI namespace, final Date revision) {
         this.namespace = namespace;
         this.revision = revision;
@@ -99,10 +101,9 @@ public final class QNameModule implements Immutable, Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = Objects.hashCode(namespace);
-        result = prime * result + Objects.hashCode(revision);
-        return result;
+        if (hash == 0) {
+            hash = Objects.hash(namespace, revision);
+        return hash;
     }
 
     @Override
@@ -114,13 +115,7 @@ public final class QNameModule implements Immutable, Serializable {
             return false;
         }
         final QNameModule other = (QNameModule) obj;
-        if (!Objects.equals(revision, other.revision)) {
-            return false;
-        }
-        if (!Objects.equals(namespace, other.namespace)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(revision, other.revision) && Objects.equals(namespace, other.namespace);
     }
 
     /**
