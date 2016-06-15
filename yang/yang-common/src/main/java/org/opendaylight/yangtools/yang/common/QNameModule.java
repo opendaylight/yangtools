@@ -34,6 +34,8 @@ public final class QNameModule implements Immutable, Serializable {
     //Nullable
     private volatile String formattedRevision;
 
+    private transient int hash;
+
     private QNameModule(final URI namespace, final Date revision) {
         this.namespace = namespace;
         this.revision = revision;
@@ -99,10 +101,10 @@ public final class QNameModule implements Immutable, Serializable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = Objects.hashCode(namespace);
-        result = prime * result + Objects.hashCode(revision);
-        return result;
+        if (hash == 0) {
+            hash = Objects.hash(namespace, revision);
+        }
+        return hash;
     }
 
     @Override
@@ -114,13 +116,7 @@ public final class QNameModule implements Immutable, Serializable {
             return false;
         }
         final QNameModule other = (QNameModule) obj;
-        if (!Objects.equals(revision, other.revision)) {
-            return false;
-        }
-        if (!Objects.equals(namespace, other.namespace)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(revision, other.revision) && Objects.equals(namespace, other.namespace);
     }
 
     /**
@@ -135,28 +131,22 @@ public final class QNameModule implements Immutable, Serializable {
      *
      */
     URI getRevisionNamespace() {
-
         if (namespace == null) {
             return null;
         }
 
-        String query = "";
-        if (revision != null) {
-            query = "revision=" + getFormattedRevision();
-        }
-
-        URI compositeURI = null;
+        final String query = revision == null ? "" : "revision=" + getFormattedRevision();
         try {
-            compositeURI = new URI(namespace.getScheme(), namespace.getUserInfo(), namespace.getHost(),
+            return new URI(namespace.getScheme(), namespace.getUserInfo(), namespace.getHost(),
                     namespace.getPort(), namespace.getPath(), query, namespace.getFragment());
         } catch (final URISyntaxException e) {
-            LOG.error("", e);
+            LOG.error("Failed to construct URI for {}", this, e);
+            return null;
         }
-        return compositeURI;
     }
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).omitNullValues().add("ns", getNamespace()).add("rev", getFormattedRevision()).toString();
+        return MoreObjects.toStringHelper(QNameModule.class).omitNullValues().add("ns", getNamespace()).add("rev", getFormattedRevision()).toString();
     }
 }
