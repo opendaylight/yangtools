@@ -23,7 +23,7 @@ public final class QNameModule implements Immutable, Serializable {
     private static final Interner<QNameModule> INTERNER = Interners.newWeakInterner();
     private static final Logger LOG = LoggerFactory.getLogger(QNameModule.class);
     private static final QNameModule NULL_INSTANCE = new QNameModule(null, null);
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
 
     //Nullable
     private final URI namespace;
@@ -32,7 +32,7 @@ public final class QNameModule implements Immutable, Serializable {
     private final Date revision;
 
     //Nullable
-    private volatile String formattedRevision;
+    private transient volatile String formattedRevision;
 
     private transient int hash;
 
