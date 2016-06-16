@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -87,7 +88,15 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
             for (final Method m : context.getHashCodeAndEqualsMethods()) {
                 final Object thisValue = getBindingData(m);
                 final Object otherValue = m.invoke(other);
-                if (!Objects.equals(thisValue, otherValue)) {
+                /*
+                *   added for valid byte array comparison, when list key type is binary
+                *   deepEquals is not used since it does excessive amount of instanceof calls.
+                */
+                if (thisValue instanceof byte[] && otherValue instanceof byte[]) {
+                    if (!Arrays.equals((byte[]) thisValue, (byte[]) otherValue)) {
+                        return false;
+                    }
+                } else if (!Objects.equals(thisValue, otherValue)){
                     return false;
                 }
             }

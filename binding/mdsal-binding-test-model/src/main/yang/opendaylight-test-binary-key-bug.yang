@@ -1,0 +1,20 @@
+module binary-key {
+    yang-version 1;
+    namespace "odl:test:binary-key";
+    prefix "bk";
+
+    revision "2016-01-01" {
+    }
+
+    list binary-list {
+        key "binary-key";
+
+        leaf binary-key {
+            type binary;
+        }
+
+        leaf binary-item {
+            type string;
+        }
+    }
+}
