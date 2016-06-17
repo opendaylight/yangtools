@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_f7bb3e70",
+        "filename": "yang/yang-data-api/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-17T21:11:02Z",
+      "side": 1,
+      "message": "these should be satisfied by importing yangtools-artifacts, as the versions across project are expected to diverge.",
+      "range": {
+        "startLine": 31,
+        "startChar": 11,
+        "endLine": 31,
+        "endChar": 49
+      },
+      "revId": "0bb09ea43b9caca9fea6b906a47dbd7333763351",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
