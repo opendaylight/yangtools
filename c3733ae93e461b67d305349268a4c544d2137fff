@@ -214,6 +214,30 @@
     },
     {
       "key": {
+        "uuid": "ba51214e_20dbb5ee",
+        "filename": "common/checkstyle-logging/src/main/java/org/opendaylight/yangtools/checkstyle/LogMessageExtractorCheck.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2016-06-17T02:21:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba51214e_cde83f7f",
+      "range": {
+        "startLine": 62,
+        "startChar": 47,
+        "endLine": 62,
+        "endChar": 51
+      },
+      "revId": "c3733ae93e461b67d305349268a4c544d2137fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da5c1566_dc92ab9e",
         "filename": "common/checkstyle-logging/src/main/java/org/opendaylight/yangtools/checkstyle/LogMessageExtractorCheck.java",
         "patchSetId": 3
@@ -320,6 +344,30 @@
       "side": 1,
       "message": "static analysis is no substitute for runtime enforcement -- unless you can statically analyze all the software out there :)",
       "parentUuid": "ba51214e_8db011df",
+      "range": {
+        "startLine": 67,
+        "startChar": 35,
+        "endLine": 67,
+        "endChar": 39
+      },
+      "revId": "c3733ae93e461b67d305349268a4c544d2137fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_00d831ee",
+        "filename": "common/checkstyle-logging/src/main/java/org/opendaylight/yangtools/checkstyle/LogMessageExtractorCheck.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2016-06-17T02:21:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba51214e_ed78a32d",
       "range": {
         "startLine": 67,
         "startChar": 35,
