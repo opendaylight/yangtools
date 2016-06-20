@@ -22,6 +22,30 @@
       "revId": "0bb09ea43b9caca9fea6b906a47dbd7333763351",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_88bbc30d",
+        "filename": "yang/yang-data-api/pom.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 4540
+      },
+      "writtenOn": "2016-06-20T08:48:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba51214e_f7bb3e70",
+      "range": {
+        "startLine": 31,
+        "startChar": 11,
+        "endLine": 31,
+        "endChar": 49
+      },
+      "revId": "0bb09ea43b9caca9fea6b906a47dbd7333763351",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
