@@ -1,0 +1,187 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_91c127e7",
+        "filename": "yang/yang-data-codec-xml/src/test/java/org/opendaylight/yangtools/yang/data/codec/xml/Bug5396Test.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-06-21T14:11:02Z",
+      "side": 1,
+      "message": "visibility?",
+      "range": {
+        "startLine": 70,
+        "startChar": 3,
+        "endLine": 70,
+        "endChar": 10
+      },
+      "revId": "0fd10fe9521b21d07c27adb6083aa67ceed3ca82",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_b1bc2b6e",
+        "filename": "yang/yang-data-codec-xml/src/test/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlStreamUtilsTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-06-21T14:11:02Z",
+      "side": 1,
+      "message": "line swap might look better",
+      "range": {
+        "startLine": 156,
+        "startChar": 4,
+        "endLine": 157,
+        "endChar": 45
+      },
+      "revId": "0fd10fe9521b21d07c27adb6083aa67ceed3ca82",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_51902fec",
+        "filename": "yang/yang-data-codec-xml/src/test/java/org/opendaylight/yangtools/yang/data/codec/xml/YangModeledAnyXMLDeserializationTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-06-21T14:11:02Z",
+      "side": 1,
+      "message": "visibility?",
+      "revId": "0fd10fe9521b21d07c27adb6083aa67ceed3ca82",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_1186b7b9",
+        "filename": "yang/yang-data-codec-xml/src/test/resources/anyxml-support/yang/foo.yang",
+        "patchSetId": 8
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-06-21T14:11:02Z",
+      "side": 1,
+      "message": "trailing white-spaces",
+      "revId": "0fd10fe9521b21d07c27adb6083aa67ceed3ca82",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_31893bcb",
+        "filename": "yang/yang-data-codec-xml/src/test/resources/anyxml-support/yang/yang-ext.yang",
+        "patchSetId": 8
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-06-21T14:11:02Z",
+      "side": 1,
+      "message": "trailing white-space",
+      "revId": "0fd10fe9521b21d07c27adb6083aa67ceed3ca82",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_f19fc301",
+        "filename": "yang/yang-data-codec-xml/src/test/resources/bug5446/yang/foo.yang",
+        "patchSetId": 8
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-06-21T14:11:02Z",
+      "side": 1,
+      "message": "trailing white-space",
+      "revId": "0fd10fe9521b21d07c27adb6083aa67ceed3ca82",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_d1a43f59",
+        "filename": "yang/yang-data-codec-xml/src/test/resources/leafref-test.yang",
+        "patchSetId": 8
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-06-21T14:11:02Z",
+      "side": 1,
+      "message": "is this really new file?",
+      "range": {
+        "startLine": 2,
+        "startChar": 17,
+        "endLine": 2,
+        "endChar": 21
+      },
+      "revId": "0fd10fe9521b21d07c27adb6083aa67ceed3ca82",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_919ac712",
+        "filename": "yang/yang-data-codec-xml/src/test/resources/schema/simple.xml",
+        "patchSetId": 8
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-06-21T14:11:02Z",
+      "side": 1,
+      "message": "here and other occurrences - do we need it?",
+      "range": {
+        "startLine": 39,
+        "startChar": 11,
+        "endLine": 39,
+        "endChar": 98
+      },
+      "revId": "0fd10fe9521b21d07c27adb6083aa67ceed3ca82",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_b1954be6",
+        "filename": "yang/yang-data-codec-xml/src/test/resources/schema/test.yang",
+        "patchSetId": 8
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-06-21T14:11:02Z",
+      "side": 1,
+      "message": "is this waiting for further work or is it supposed to go away?",
+      "range": {
+        "startLine": 141,
+        "startChar": 8,
+        "endLine": 145,
+        "endChar": 11
+      },
+      "revId": "0fd10fe9521b21d07c27adb6083aa67ceed3ca82",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
