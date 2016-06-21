@@ -7,25 +7,25 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.model.util.type.BaseTypes.int32Type;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.ArrayList;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
+import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 
 public class UnionTypeTest {
 
     @Test
     public void canCreateUnion() {
         List<TypeDefinition<?>> listTypes = new ArrayList<>();
-        Int32 int32 = Int32.getInstance();
+        IntegerTypeDefinition int32 = int32Type();
         listTypes.add(int32);
         UnionType unionType = UnionType.create(listTypes);
 
