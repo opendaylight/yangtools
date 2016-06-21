@@ -68,6 +68,23 @@
       "revId": "09951d0f00e3062319ed4f0923a341099f9b4309",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_917e47e3",
+        "filename": "yang/yang-parser-impl/src/test/resources/bugs/bug5942/foo.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-06-21T13:48:21Z",
+      "side": 1,
+      "message": "trailing white-spaces",
+      "revId": "09951d0f00e3062319ed4f0923a341099f9b4309",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
