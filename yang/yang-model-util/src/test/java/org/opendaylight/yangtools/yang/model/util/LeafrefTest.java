@@ -13,11 +13,13 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
+import static org.opendaylight.yangtools.yang.model.util.BaseTypes.constructQName;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
 public class LeafrefTest {
 
@@ -27,17 +29,17 @@ public class LeafrefTest {
         final RevisionAwareXPathImpl revision = new RevisionAwareXPathImpl("/test:Cont1/test:List1", false);
         final RevisionAwareXPathImpl revision2 = new RevisionAwareXPathImpl("/test:Cont1/test:List2", false);
 
-        final Leafref leafref = Leafref.create(schemaPath, revision);
-        final Leafref leafref2 = Leafref.create(schemaPath, revision2);
-        final Leafref leafref3 = Leafref.create(schemaPath, revision);
-        final Leafref leafref4 = leafref;
+        final LeafrefTypeDefinition leafref = BaseTypes.leafrefTypeBuilder(schemaPath).setPathStatement(revision).build();
+        final LeafrefTypeDefinition leafref2 = BaseTypes.leafrefTypeBuilder(schemaPath).setPathStatement(revision2).build();
+        final LeafrefTypeDefinition leafref3 = BaseTypes.leafrefTypeBuilder(schemaPath).setPathStatement(revision).build();
+        final LeafrefTypeDefinition leafref4 = leafref;
 
         assertNotNull("Object 'leafref' shouldn't be null.", leafref);
         assertNull("Base type of 'leafref' should be null.", leafref.getBaseType());
         assertTrue("Units of 'leafref' should be empty.", leafref.getUnits().isEmpty());
         assertNull("Leafref does not have a default value", leafref.getDefaultValue());
         assertEquals("QName of 'leafref' is value '(urn:ietf:params:xml:ns:yang:1)leafref'.",
-                BaseTypes.constructQName("leafref"), leafref.getQName());
+                constructQName("leafref"), leafref.getQName());
         assertEquals("SchemaPath of 'leafref' is '/Cont1/List1'.", schemaPath, leafref.getPath());
         assertEquals("Description of 'leafref' is 'The leafref type is used to reference a particular leaf instance in the data tree.'",
                 "The leafref type is used to reference a particular leaf instance in the data tree.", leafref.getDescription());

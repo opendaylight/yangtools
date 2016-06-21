@@ -9,9 +9,8 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-
+import static org.opendaylight.yangtools.yang.model.util.type.BaseTypes.bitsTypeBuilder;
 import java.util.Collections;
-import java.util.List;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -31,8 +30,8 @@ public class BitsTypeTest {
 
         QName qName = QName.create("TestQName");
         SchemaPath schemaPath = SchemaPath.create(Collections.singletonList(qName), true);
-        List<BitsTypeDefinition.Bit> listBit = Collections.singletonList(bit);
-        BitsType bitsType = BitsType.create(schemaPath, listBit);
+
+        BitsTypeDefinition bitsType = bitsTypeBuilder(schemaPath).addBit(bit).build();
 
         assertNotEquals("Description is not null", null, bitsType.getDescription());
         assertEquals("QName", BaseTypes.BITS_QNAME, bitsType.getQName());
@@ -44,7 +43,7 @@ public class BitsTypeTest {
         assertEquals("getPath should equal schemaPath", schemaPath, bitsType.getPath());
         assertEquals("Status should be CURRENT", Status.CURRENT, bitsType.getStatus());
         assertEquals("Should be empty list", Collections.EMPTY_LIST, bitsType.getUnknownSchemaNodes());
-        assertEquals("Values should be [enumPair]", listBit, bitsType.getBits());
+        assertEquals("Values should be [enumPair]", Collections.singletonList(bit), bitsType.getBits());
 
         assertEquals("Hash code of bitsType should be equal",
                 bitsType.hashCode(), bitsType.hashCode());

@@ -10,15 +10,17 @@ package org.opendaylight.yangtools.yang.model.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.model.util.type.BaseTypes.booleanType;
 import java.util.Collections;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 
 public class BooleanTypeTest {
 
     @Test
     public void canCreateBooleanType() {
-        BooleanType boolType = BooleanType.getInstance();
+        BooleanTypeDefinition boolType = booleanType();
         String stringBoolType = boolType.toString();
 
         assertEquals("getPath gives List of BOOLEAN_QNAME",
