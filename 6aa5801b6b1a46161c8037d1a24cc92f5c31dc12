@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_9165a747",
+        "filename": "yang/yang-parser-impl/src/test/resources/bugs/bug5942/foo.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-06-21T13:48:21Z",
+      "side": 1,
+      "message": "trailing white-spaces",
+      "revId": "6aa5801b6b1a46161c8037d1a24cc92f5c31dc12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
