@@ -1,0 +1,234 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba51214e_db87400e",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/RandomPrefixInstanceIdentifierSerializer.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-21T08:41:37Z",
+      "side": 1,
+      "message": "import map.entry",
+      "range": {
+        "startLine": 26,
+        "startChar": 13,
+        "endLine": 26,
+        "endChar": 22
+      },
+      "revId": "88b6eceb569e138e612287eeda52f257ae3f1038",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_5b73304d",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlParserStream.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-21T08:41:37Z",
+      "side": 1,
+      "message": "rootElement is only accessed in read() and is kept immutable. pass it down to read and do not clutter the class.",
+      "range": {
+        "startLine": 120,
+        "startChar": 11,
+        "endLine": 120,
+        "endChar": 48
+      },
+      "revId": "88b6eceb569e138e612287eeda52f257ae3f1038",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_bb8fec22",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlParserStream.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 188,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-21T08:41:37Z",
+      "side": 1,
+      "message": "rootElement is invariant, hence rootElement.equals(xmlElementName)",
+      "range": {
+        "startLine": 188,
+        "startChar": 24,
+        "endLine": 188,
+        "endChar": 58
+      },
+      "revId": "88b6eceb569e138e612287eeda52f257ae3f1038",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_1bc7f846",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlStreamUtils.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-21T08:41:37Z",
+      "side": 1,
+      "message": "wrong year?",
+      "range": {
+        "startLine": 2,
+        "startChar": 16,
+        "endLine": 2,
+        "endChar": 22
+      },
+      "revId": "88b6eceb569e138e612287eeda52f257ae3f1038",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_1ba0988f",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlStreamUtils.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-21T08:41:37Z",
+      "side": 1,
+      "message": "who are the users outside of this package? Should this really be public? Also there are quite a few undocumented public methods.",
+      "range": {
+        "startLine": 42,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 29
+      },
+      "revId": "88b6eceb569e138e612287eeda52f257ae3f1038",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_fbb044df",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlStreamUtils.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-21T08:41:37Z",
+      "side": 1,
+      "message": "we are taking a default action: this should be a warning",
+      "range": {
+        "startLine": 141,
+        "startChar": 24,
+        "endLine": 141,
+        "endChar": 29
+      },
+      "revId": "88b6eceb569e138e612287eeda52f257ae3f1038",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_dbb580ce",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlStreamUtils.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 146,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-21T08:41:37Z",
+      "side": 1,
+      "message": "same as above",
+      "range": {
+        "startLine": 146,
+        "startChar": 16,
+        "endLine": 146,
+        "endChar": 25
+      },
+      "revId": "88b6eceb569e138e612287eeda52f257ae3f1038",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_9bbb08c4",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlStreamUtils.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-21T08:41:37Z",
+      "side": 1,
+      "message": "missing space",
+      "range": {
+        "startLine": 203,
+        "startChar": 45,
+        "endLine": 203,
+        "endChar": 47
+      },
+      "revId": "88b6eceb569e138e612287eeda52f257ae3f1038",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_bbb6ccda",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlStreamUtils.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-21T08:41:37Z",
+      "side": 1,
+      "message": "do not use temporary variables",
+      "range": {
+        "startLine": 214,
+        "startChar": 1,
+        "endLine": 216,
+        "endChar": 1
+      },
+      "revId": "88b6eceb569e138e612287eeda52f257ae3f1038",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba51214e_7bc43440",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/ImmutableNormalizedNodeStreamWriter.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-21T08:41:37Z",
+      "side": 1,
+      "message": "this should be in a separate patch",
+      "range": {
+        "startLine": 205,
+        "startChar": 2,
+        "endLine": 209,
+        "endChar": 2
+      },
+      "revId": "88b6eceb569e138e612287eeda52f257ae3f1038",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
