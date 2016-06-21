@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
  * 9223372036854775807, inclusively.</li>
  * </ul>
  *
- * @deprecated Used only by deprecated {@link Int8} and friends.
+ * @deprecated Used only by deprecated {@link Int16}.
  */
 @Deprecated
 abstract class AbstractSignedInteger implements IntegerTypeDefinition {

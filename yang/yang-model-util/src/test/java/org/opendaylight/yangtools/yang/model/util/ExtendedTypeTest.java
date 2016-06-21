@@ -7,18 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import com.google.common.base.Optional;
+import java.util.Collections;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
-
-import java.util.Collections;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
+import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
 public class ExtendedTypeTest {
     @Test
@@ -27,7 +27,7 @@ public class ExtendedTypeTest {
         String revision = "2014-08-26";
         String localName = "testType";
         QName testType = QName.create(namespace, revision, localName);
-        Int32 int32 = Int32.getInstance();
+        IntegerTypeDefinition int32 = BaseTypes.int32Type();
         String description = "This type is used for testing purpose";
         Optional<String> desc = Optional.of(description);
         String reference = "Test Reference";

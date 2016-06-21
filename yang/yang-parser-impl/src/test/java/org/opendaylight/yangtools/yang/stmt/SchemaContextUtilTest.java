@@ -10,10 +10,6 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -36,9 +32,11 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.util.Int32;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class SchemaContextUtilTest {
     @Mock
@@ -59,7 +57,7 @@ public class SchemaContextUtilTest {
         assertEquals("Should be null. Module bookstore not found", null,
                 SchemaContextUtil.findDataSchemaNode(mockSchemaContext, mockModule, xPath));
 
-        SchemaNode schemaNode = Int32.getInstance();
+        SchemaNode schemaNode = BaseTypes.int32Type();
         RevisionAwareXPath xPathRelative = new RevisionAwareXPathImpl("../prefix", false);
         assertEquals("Should be null, Module prefix not found", null,
                 SchemaContextUtil.findDataSchemaNodeForRelativeXPath(mockSchemaContext, mockModule, schemaNode,
