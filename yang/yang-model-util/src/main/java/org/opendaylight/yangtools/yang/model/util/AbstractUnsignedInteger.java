@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
  * inclusively.</li>
  * </ul>
  *
- * @deprecated Used only by deprecated {@link Uint8} and friends.
+ * @deprecated Used only by deprecated {@link Uint16}.
  */
 @Deprecated
 abstract class AbstractUnsignedInteger implements UnsignedIntegerTypeDefinition {

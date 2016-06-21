@@ -8,13 +8,12 @@
 
 package org.opendaylight.yangtools.yang.data.impl.codecs;
 
-import static org.junit.Assert.*;
-
+import static org.junit.Assert.assertEquals;
+import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx;
+import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.getCodec;
+import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.toEnumTypeDefinition;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.EnumCodec;
-import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.getCodec;
-import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx;
-import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.toEnumTypeDefinition;
 
 /**
  * Unit tests for EnumCodecString.
@@ -26,10 +25,10 @@ public class EnumCodecStringTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testSerialize() {
-        EnumCodec<String> codec = getCodec( toEnumTypeDefinition( "enum1", "enum2" ), EnumCodec.class);
+        EnumCodec<String> codec = getCodec(toEnumTypeDefinition("enum1", "enum2"), EnumCodec.class);
 
-        assertEquals( "serialize", "enum1", codec.serialize( "enum1" ) );
-        assertEquals( "serialize", "", codec.serialize( null ) );
+        assertEquals("serialize", "enum1", codec.serialize("enum1"));
+        assertEquals("serialize", "", codec.serialize(null));
     }
 
     @SuppressWarnings("unchecked")
@@ -37,9 +36,9 @@ public class EnumCodecStringTest {
     public void testDeserialize() {
         EnumCodec<String> codec = getCodec( toEnumTypeDefinition( "enum1", "enum2" ), EnumCodec.class);
 
-        assertEquals( "deserialize", "enum1", codec.deserialize( "enum1" ) );
-        assertEquals( "deserialize", "enum2", codec.deserialize( "enum2" ) );
+        assertEquals("deserialize", "enum1", codec.deserialize("enum1"));
+        assertEquals("deserialize", "enum2", codec.deserialize("enum2"));
 
-        deserializeWithExpectedIllegalArgEx( codec, "enum3" );
+        deserializeWithExpectedIllegalArgEx(codec, "enum3");
     }
 }

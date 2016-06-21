@@ -8,13 +8,12 @@
 
 package org.opendaylight.yangtools.yang.data.impl.codecs;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx;
 import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.getCodec;
-
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.Int64Codec;
-import org.opendaylight.yangtools.yang.model.util.Int64;
+import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
 /**
  * Unit tests for Int64CodecString.
@@ -26,7 +25,7 @@ public class Int64CodecStringTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testSerialize() {
-        Int64Codec<String> codec = getCodec(Int64.getInstance(), Int64Codec.class);
+        Int64Codec<String> codec = getCodec(BaseTypes.int64Type(), Int64Codec.class);
 
         assertEquals("serialize", "12345", codec.serialize(Long.valueOf( 12345 )));
         assertEquals("serialize", "", codec.serialize(null));
@@ -42,7 +41,7 @@ public class Int64CodecStringTest {
         final String integer = "+129664115727546";
         final String negInteger = "-129664115727546";
 
-        Int64Codec<String> codec = getCodec(Int64.getInstance(), Int64Codec.class);
+        Int64Codec<String> codec = getCodec(BaseTypes.int64Type(), Int64Codec.class);
 
         assertEquals("deserialize", codec.deserialize(hexa), Long.valueOf("075EDC78edCBA", 16));
         assertEquals("deserialize", codec.deserialize(negHexa), Long.valueOf("-075EDC78edCBA", 16));

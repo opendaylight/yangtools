@@ -8,11 +8,10 @@
 
 package org.opendaylight.yangtools.yang.data.impl.codecs;
 
-import static org.junit.Assert.*;
-
+import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.EmptyCodec;
-import org.opendaylight.yangtools.yang.model.util.EmptyType;
+import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
 /**
  * Unit tests for EmptyCodecString.
@@ -24,20 +23,19 @@ public class EmptyCodecStringTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testSerialize() {
-        EmptyCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec( EmptyType.getInstance(), EmptyCodec.class);
+        EmptyCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.emptyType(), EmptyCodec.class);
 
-        assertEquals( "serialize", "", codec.serialize( null ) );
+        assertEquals("serialize", "", codec.serialize(null));
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void testDeserialize() {
-        EmptyCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec( EmptyType.getInstance(), EmptyCodec.class);
+        EmptyCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.emptyType(), EmptyCodec.class);
 
-        assertEquals( "deserialize", null, codec.deserialize( "" ) );
-        assertEquals( "deserialize", null, codec.deserialize( null ) );
+        assertEquals("deserialize", null, codec.deserialize(""));
+        assertEquals("deserialize", null, codec.deserialize(null));
 
-        TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx( codec, "foo" );
+        TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx(codec, "foo");
     }
-
 }
