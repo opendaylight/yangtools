@@ -19,13 +19,14 @@ public final class InstanceIdentifierTypeBuilder extends AbstractRestrictedTypeB
         this.requireInstance = baseType.requireInstance();
     }
 
-    public void setRequireInstance(final boolean requireInstance) {
+    public InstanceIdentifierTypeBuilder setRequireInstance(final boolean requireInstance) {
         if (this.requireInstance) {
             Preconditions.checkArgument(!requireInstance, "Cannot switch require-instance off in type %s", getPath());
         }
 
         this.requireInstance = requireInstance;
         touch();
+        return this;
     }
 
     @Override

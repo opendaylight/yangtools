@@ -20,9 +20,10 @@ public final class LeafrefTypeBuilder extends TypeBuilder<LeafrefTypeDefinition>
         super(null, path);
     }
 
-    public void setPathStatement(@Nonnull final RevisionAwareXPath pathStatement) {
+    public LeafrefTypeBuilder setPathStatement(@Nonnull final RevisionAwareXPath pathStatement) {
         Preconditions.checkState(this.pathStatement == null, "Path statement already set to %s", this.pathStatement);
         this.pathStatement = Preconditions.checkNotNull(pathStatement);
+        return this;
     }
 
     @Override
