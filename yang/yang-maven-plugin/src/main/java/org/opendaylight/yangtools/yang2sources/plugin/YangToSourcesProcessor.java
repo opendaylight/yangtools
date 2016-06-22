@@ -31,7 +31,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.repo.URLSchemaContextResolver;
+import org.opendaylight.yangtools.yang.parser.repo.YangTextSchemaContextResolver;
 import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.ContextHolder;
@@ -58,7 +58,7 @@ class YangToSourcesProcessor {
     private final boolean inspectDependencies;
     private final BuildContext buildContext;
     private final YangProvider yangProvider;
-    private final URLSchemaContextResolver resolver;
+    private final YangTextSchemaContextResolver resolver;
 
     @VisibleForTesting
     YangToSourcesProcessor(File yangFilesRootDir, File[] excludedFiles, List<CodeGeneratorArg> codeGenerators,
@@ -81,7 +81,7 @@ class YangToSourcesProcessor {
         this.project = Util.checkNotNull(project, "project");
         this.inspectDependencies = inspectDependencies;
         this.yangProvider = yangProvider;
-        this.resolver = URLSchemaContextResolver.create("maven-plugin");
+        this.resolver = YangTextSchemaContextResolver.create("maven-plugin");
     }
 
     YangToSourcesProcessor(BuildContext buildContext, File yangFilesRootDir, File[] excludedFiles,
