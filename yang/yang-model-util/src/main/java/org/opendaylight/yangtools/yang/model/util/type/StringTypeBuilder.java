@@ -22,9 +22,10 @@ public final class StringTypeBuilder extends LengthRestrictedTypeBuilder<StringT
         super(baseType, path);
     }
 
-    public void addPatternConstraint(final PatternConstraint constraint) {
+    public StringTypeBuilder addPatternConstraint(final PatternConstraint constraint) {
         patternConstraints.add(Preconditions.checkNotNull(constraint));
         touch();
+        return this;
     }
 
     @Override
@@ -32,7 +33,7 @@ public final class StringTypeBuilder extends LengthRestrictedTypeBuilder<StringT
         return type.getLengthConstraints();
     }
 
-     @Override
+    @Override
     List<LengthConstraint> typeLengthConstraints() {
         /**
          * Length constraint imposed on YANG string type by our implementation. {@link String#length()} is an integer,

@@ -24,10 +24,11 @@ public final class BitsTypeBuilder extends TypeBuilder<BitsTypeDefinition> {
         super(null, path);
     }
 
-    public void addBit(@Nonnull final Bit item) {
+    public BitsTypeBuilder addBit(@Nonnull final Bit item) {
         Preconditions.checkArgument(item.getPosition() != null, "Bit %s has null position", item);
 
         builder.put(item.getName(), item);
+        return this;
     }
 
     @Override

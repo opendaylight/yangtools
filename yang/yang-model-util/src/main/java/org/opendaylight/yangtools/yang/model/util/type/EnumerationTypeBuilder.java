@@ -24,9 +24,10 @@ public final class EnumerationTypeBuilder extends TypeBuilder<EnumTypeDefinition
         super(null, path);
     }
 
-    public void addEnum(@Nonnull final EnumPair item) {
+    public EnumerationTypeBuilder addEnum(@Nonnull final EnumPair item) {
         Preconditions.checkArgument(item.getValue() != null, "Enum %s has null value", item);
         builder.put(item.getName(), item);
+        return this;
     }
 
     @Override

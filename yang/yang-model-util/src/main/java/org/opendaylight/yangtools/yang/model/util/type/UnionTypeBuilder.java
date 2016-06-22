@@ -21,8 +21,9 @@ public final class UnionTypeBuilder extends TypeBuilder<UnionTypeDefinition> {
         super(null, path);
     }
 
-    public void addType(@Nonnull final TypeDefinition<?> type) {
+    public UnionTypeBuilder addType(@Nonnull final TypeDefinition<?> type) {
         builder.add(type);
+        return this;
     }
 
     @Override

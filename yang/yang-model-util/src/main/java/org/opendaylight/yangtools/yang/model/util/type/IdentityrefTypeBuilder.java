@@ -20,9 +20,10 @@ public final class IdentityrefTypeBuilder extends TypeBuilder<IdentityrefTypeDef
         super(null, path);
     }
 
-    public void setIdentity(@Nonnull final IdentitySchemaNode identity) {
+    public IdentityrefTypeBuilder setIdentity(@Nonnull final IdentitySchemaNode identity) {
         Preconditions.checkState(this.identity == null, "Identity already set to %s", this.identity);
         this.identity = Preconditions.checkNotNull(identity);
+        return this;
     }
 
     @Override
