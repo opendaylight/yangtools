@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.YangModeledAnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
@@ -67,7 +66,7 @@ import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
  *
  *
  */
-public class ImmutableNormalizedNodeStreamWriter implements SchemaAwareNormalizedNodeStreamWriter {
+public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
 
     @SuppressWarnings("rawtypes")
     private final Deque<NormalizedNodeContainerBuilder> builders = new ArrayDeque<>();
