@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
 
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.Deviation;
+import org.opendaylight.yangtools.yang.model.api.DeviateDefinition.Deviate;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeviateEffectiveStatementImpl;
 
-public class DeviateStatementImpl extends AbstractDeclaredStatement<Deviation.Deviate> implements DeviateStatement {
+public class DeviateStatementImpl extends AbstractDeclaredStatement<Deviate> implements DeviateStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .DEVIATE)
             .add(Rfc6020Mapping.CONFIG, 0, 1)
@@ -34,44 +34,41 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<Deviation.De
             .add(Rfc6020Mapping.UNITS, 0, 1)
             .build();
 
-    protected DeviateStatementImpl(
-            StmtContext<Deviation.Deviate, DeviateStatement, ?> context) {
+    protected DeviateStatementImpl(StmtContext<Deviate, DeviateStatement, ?> context) {
         super(context);
     }
 
-    public static class Definition extends AbstractStatementSupport<Deviation.Deviate, DeviateStatement,
-            EffectiveStatement<Deviation.Deviate, DeviateStatement>> {
+    public static class Definition extends AbstractStatementSupport<Deviate, DeviateStatement,
+            EffectiveStatement<Deviate, DeviateStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.DEVIATE);
         }
 
-        @Override public Deviation.Deviate parseArgumentValue(
-                StmtContext<?, ?, ?> ctx, String value) {
+        @Override public Deviate parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
             return Utils.parseDeviateFromString(ctx, value);
         }
 
-        @Override public DeviateStatement createDeclared(
-                StmtContext<Deviation.Deviate, DeviateStatement, ?> ctx) {
+        @Override public DeviateStatement createDeclared(StmtContext<Deviate, DeviateStatement, ?> ctx) {
             return new DeviateStatementImpl(ctx);
         }
 
-        @Override public EffectiveStatement<Deviation.Deviate, DeviateStatement> createEffective(
-                StmtContext<Deviation.Deviate, DeviateStatement, EffectiveStatement<Deviation.Deviate,
+        @Override public EffectiveStatement<Deviate, DeviateStatement> createEffective(
+                StmtContext<Deviate, DeviateStatement, EffectiveStatement<Deviate,
                         DeviateStatement>> ctx) {
             return new DeviateEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<Deviation.Deviate, DeviateStatement,
-                EffectiveStatement<Deviation.Deviate, DeviateStatement>> stmt) {
+        public void onFullDefinitionDeclared(StmtContext.Mutable<Deviate, DeviateStatement,
+                EffectiveStatement<Deviate, DeviateStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
     }
 
     @Nonnull @Override
-    public Deviation.Deviate getValue() {
+    public Deviate getValue() {
         return argument();
     }
 }
