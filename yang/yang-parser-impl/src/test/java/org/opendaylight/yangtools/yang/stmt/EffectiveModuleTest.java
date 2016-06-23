@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
@@ -117,7 +118,7 @@ public class EffectiveModuleTest {
         final Deviation deviationStmt = deviations.iterator().next();
         assertNotNull(deviationStmt);
         assertEquals(contSchemaPath, deviationStmt.getTargetPath());
-        assertEquals(Deviation.Deviate.ADD, deviationStmt.getDeviate());
+        assertEquals(DeviateKind.ADD, deviationStmt.getDeviates().iterator().next().getDeviateType());
         assertEquals("deviate reference", deviationStmt.getReference());
 
         final Set<IdentitySchemaNode> identities = rootModule.getIdentities();

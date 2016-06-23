@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import javax.annotation.Nonnull;
 
-import org.opendaylight.yangtools.yang.model.api.Deviation;
+import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface DeviateStatement extends DeclaredStatement<Deviation.Deviate> {
+public interface DeviateStatement extends DeclaredStatement<DeviateKind> {
 
     @Nonnull
-    Deviation.Deviate getValue();
+    DeviateKind getValue();
 }

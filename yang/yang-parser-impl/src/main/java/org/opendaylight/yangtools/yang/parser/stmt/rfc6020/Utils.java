@@ -38,8 +38,7 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
-import org.opendaylight.yangtools.yang.model.api.Deviation;
-import org.opendaylight.yangtools.yang.model.api.Deviation.Deviate;
+import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -292,10 +291,10 @@ public final class Utils {
             .add("YiSyllables")
             .add("YijingHexagramSymbols").build();
 
-    private static final Map<String, Deviate> KEYWORD_TO_DEVIATE_MAP;
+    private static final Map<String, DeviateKind> KEYWORD_TO_DEVIATE_MAP;
     static {
-        Builder<String, Deviate> keywordToDeviateMapBuilder = ImmutableMap.builder();
-        for (Deviate deviate : Deviation.Deviate.values()) {
+        Builder<String, DeviateKind> keywordToDeviateMapBuilder = ImmutableMap.builder();
+        for (DeviateKind deviate : DeviateKind.values()) {
             keywordToDeviateMapBuilder.put(deviate.getKeyword(), deviate);
         }
         KEYWORD_TO_DEVIATE_MAP = keywordToDeviateMapBuilder.build();
@@ -574,7 +573,7 @@ public final class Utils {
                 .isAssignableFrom(UnknownStatementImpl.class);
     }
 
-    public static Deviation.Deviate parseDeviateFromString(final StmtContext<?, ?, ?> ctx, final String deviateKeyword) {
+    public static DeviateKind parseDeviateFromString(final StmtContext<?, ?, ?> ctx, final String deviateKeyword) {
         return Preconditions.checkNotNull(KEYWORD_TO_DEVIATE_MAP.get(deviateKeyword),
                 "String '%s' is not valid deviate argument. Statement source at %s", deviateKeyword,
                 ctx.getStatementSourceReference());
