@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import com.google.common.base.Preconditions;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Interface describing YANG 'deviation' statement.
@@ -21,37 +21,22 @@ import java.util.List;
 public interface Deviation {
 
     /**
-     * Enum describing YANG deviation 'deviate' statement. It defines how the
-     * device's implementation of the target node deviates from its original
-     * definition.
-     */
-    enum Deviate {
-        NOT_SUPPORTED("not-supported"), ADD("add"), REPLACE("replace"), DELETE("delete");
-
-        private final String keyword;
-
-        Deviate(final String keyword) {
-            this.keyword = Preconditions.checkNotNull(keyword);
-        }
-
-        /**
-         * @return String that corresponds to the yang keyword.
-         */
-        public String getKeyword() {
-            return keyword;
-        }
-    }
-
-    /**
      * @return SchemaPath that identifies the node in the schema tree where a
      *         deviation from the module occurs.
      */
     SchemaPath getTargetPath();
 
     /**
-     * @return deviate statement of this deviation
+     *
+     * @return Set of deviate statements of this deviation
      */
-    Deviate getDeviate();
+    Set<DeviateDefinition> getDeviates();
+
+    /**
+     *
+     * @return textual description of this deviation
+     */
+    String getDescription();
 
     /**
      * @return textual cross-reference to an external document that provides

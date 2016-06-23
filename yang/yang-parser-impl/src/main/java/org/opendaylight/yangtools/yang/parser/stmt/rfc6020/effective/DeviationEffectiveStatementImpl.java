@@ -8,10 +8,13 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.model.api.DeviateDefinition;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -23,16 +26,19 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 public class DeviationEffectiveStatementImpl extends DeclaredEffectiveStatementBase<SchemaNodeIdentifier, DeviationStatement>
         implements Deviation, Immutable {
     private final SchemaPath targetPath;
-    private final Deviate deviate;
+    private final String description;
     private final String reference;
     private final List<UnknownSchemaNode> unknownSchemaNodes;
+    private final Set<DeviateDefinition> deviateDefinitions;
 
     public DeviationEffectiveStatementImpl(final StmtContext<SchemaNodeIdentifier, DeviationStatement, ?> ctx) {
         super(ctx);
         this.targetPath = ctx.getStatementArgument().asSchemaPath();
 
-        DeviateEffectiveStatementImpl deviateStmt = firstEffective(DeviateEffectiveStatementImpl.class);
-        this.deviate = (deviateStmt == null) ? null : deviateStmt.argument();
+        this.deviateDefinitions = ImmutableSet.copyOf(allSubstatementsOfType(DeviateDefinition.class));
+
+        DescriptionEffectiveStatementImpl descriptionStmt = firstEffective(DescriptionEffectiveStatementImpl.class);
+        this.description = (descriptionStmt == null) ? null : descriptionStmt.argument();
 
         ReferenceEffectiveStatementImpl referenceStmt = firstEffective(ReferenceEffectiveStatementImpl.class);
         this.reference = (referenceStmt == null) ? null : referenceStmt.argument();
@@ -52,8 +58,13 @@ public class DeviationEffectiveStatementImpl extends DeclaredEffectiveStatementB
     }
 
     @Override
-    public Deviate getDeviate() {
-        return deviate;
+    public Set<DeviateDefinition> getDeviates() {
+        return deviateDefinitions;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
     }
 
     @Override
@@ -71,7 +82,8 @@ public class DeviationEffectiveStatementImpl extends DeclaredEffectiveStatementB
         final int prime = 31;
         int result = 1;
         result = prime * result + Objects.hashCode(targetPath);
-        result = prime * result + Objects.hashCode(deviate);
+        result = prime * result + Objects.hashCode(deviateDefinitions);
+        result = prime * result + Objects.hashCode(description);
         result = prime * result + Objects.hashCode(reference);
         return result;
     }
@@ -91,7 +103,10 @@ public class DeviationEffectiveStatementImpl extends DeclaredEffectiveStatementB
         if (!Objects.equals(targetPath, other.targetPath)) {
             return false;
         }
-        if (!Objects.equals(deviate, other.deviate)) {
+        if (!Objects.equals(deviateDefinitions, other.deviateDefinitions)) {
+            return false;
+        }
+        if (!Objects.equals(description, other.description)) {
             return false;
         }
         if (!Objects.equals(reference, other.reference)) {
@@ -104,7 +119,8 @@ public class DeviationEffectiveStatementImpl extends DeclaredEffectiveStatementB
     public String toString() {
         return DeviationEffectiveStatementImpl.class.getSimpleName() + "[" +
                 "targetPath=" + targetPath +
-                ", deviate=" + deviate +
+                ", deviates=" + deviateDefinitions +
+                ", description=" + description +
                 ", reference=" + reference +
                 "]";
     }
