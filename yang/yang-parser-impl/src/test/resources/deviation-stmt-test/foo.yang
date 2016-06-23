@@ -1,0 +1,84 @@
+module foo {
+    namespace "foo-namespace";
+    prefix "foo-prefix";
+
+    deviation "/test-container/test-leaf" {
+        description "test-leaf is not supported";
+        deviate not-supported;
+    }
+
+    deviation "/test-container/test-leaf-2" {
+        deviate add {
+            default "added-def-val";
+            config false;
+        }
+    }
+
+    deviation "/test-container/test-leaf-list" {
+        deviate add {
+            max-elements 12;
+            mandatory true;
+        }
+
+        deviate replace {
+            min-elements 5;
+            type uint32;
+        }
+
+        deviate delete {
+            must "daytime or time";
+            must "time or daytime";
+            units minutes;
+        }
+    }
+
+    deviation "/test-container/test-list" {
+        deviate delete {
+            unique "list-leaf-1 list-leaf-2";
+            unique "list-leaf-3 list-leaf-4";
+        }
+    }
+
+    container test-container {
+        leaf test-leaf {
+            type string;
+        }
+
+        leaf test-leaf-2 {
+            type string;
+        }
+
+        leaf-list test-leaf-list {
+            type int32;
+            min-elements 3;
+            must "daytime or time";
+            units minutes;
+        }
+
+        list test-list {
+            key key-leaf;
+            unique "list-leaf-1 list-leaf-2";
+            unique "list-leaf-3 list-leaf-4";
+
+            leaf key-leaf {
+                type string;
+            }
+
+            leaf list-leaf-1 {
+                type string;
+            }
+
+            leaf list-leaf-2 {
+                type string;
+            }
+
+            leaf list-leaf-3 {
+                type string;
+            }
+
+            leaf list-leaf-4 {
+                type string;
+            }
+        }
+    }
+}
