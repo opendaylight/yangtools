@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -36,8 +37,8 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
-import org.opendaylight.yangtools.yang.model.api.Deviation.Deviate;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -621,7 +622,7 @@ public class YangParserTest {
         SchemaPath expectedPath = SchemaPath.create(path, true);
 
         assertEquals(expectedPath, dev.getTargetPath());
-        assertEquals(Deviate.ADD, dev.getDeviate());
+        assertEquals(DeviateKind.ADD, dev.getDeviates().iterator().next().getDeviateType());
     }
 
     @Test
