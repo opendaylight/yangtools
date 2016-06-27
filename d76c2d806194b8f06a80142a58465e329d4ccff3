@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_daeda1f1",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/AugmentStatementImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-06-27T07:55:49Z",
+      "side": 1,
+      "message": "no change needed, you just modify existing file",
+      "revId": "d76c2d806194b8f06a80142a58465e329d4ccff3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
