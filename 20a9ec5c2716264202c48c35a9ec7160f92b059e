@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_bd126756",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/source/AugmentToChoiceNamespace.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-06-27T09:15:00Z",
+      "side": 1,
+      "message": "please reformulate this comment, it is not quite true.",
+      "range": {
+        "startLine": 14,
+        "startChar": 3,
+        "endLine": 14,
+        "endChar": 61
+      },
+      "revId": "20a9ec5c2716264202c48c35a9ec7160f92b059e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_7d09ef2b",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/CaseShorthandImpl.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-06-27T09:15:00Z",
+      "side": 1,
+      "message": "please make argument name and javadoc consistent.",
+      "range": {
+        "startLine": 44,
+        "startChar": 12,
+        "endLine": 47,
+        "endChar": 15
+      },
+      "revId": "20a9ec5c2716264202c48c35a9ec7160f92b059e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_1d043314",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/CaseShorthandImpl.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-06-27T09:15:00Z",
+      "side": 1,
+      "message": "Short hand case and its child data schema node will have the same schema path as result of this solution, which is invalid (see AugmentSchemaNode child nodes).",
+      "range": {
+        "startLine": 48,
+        "startChar": 11,
+        "endLine": 48,
+        "endChar": 80
+      },
+      "revId": "20a9ec5c2716264202c48c35a9ec7160f92b059e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_3dff7703",
+        "filename": "yang/yang-parser-impl/src/test/resources/bugs/bug5884/foo.yang",
+        "patchSetId": 8
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-06-27T09:15:00Z",
+      "side": 1,
+      "message": "The augment path is invalid (also the augments below).",
+      "range": {
+        "startLine": 50,
+        "startChar": 4,
+        "endLine": 50,
+        "endChar": 25
+      },
+      "revId": "20a9ec5c2716264202c48c35a9ec7160f92b059e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
