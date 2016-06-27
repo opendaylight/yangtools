@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_1a1719a5",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TreeConfig.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-27T08:45:32Z",
+      "side": 1,
+      "message": "this should be DataTreeConfiguration and should be a separate patch.",
+      "range": {
+        "startLine": 35,
+        "startChar": 1,
+        "endLine": 35,
+        "endChar": 25
+      },
+      "revId": "4e7b9ff26f18f77f8166840e376bfd8da9fc93a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_5a1191ab",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TreeType.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-27T08:45:32Z",
+      "side": 1,
+      "message": "why are we changing this?",
+      "range": {
+        "startLine": 15,
+        "startChar": 14,
+        "endLine": 15,
+        "endChar": 15
+      },
+      "revId": "4e7b9ff26f18f77f8166840e376bfd8da9fc93a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_3a601d35",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/spi/LazyContainerNode.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-27T08:45:32Z",
+      "side": 1,
+      "message": "this should not be public. Do we really need two constructors?",
+      "range": {
+        "startLine": 35,
+        "startChar": 4,
+        "endLine": 35,
+        "endChar": 28
+      },
+      "revId": "4e7b9ff26f18f77f8166840e376bfd8da9fc93a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_fafb4545",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/spi/TreeNode.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-27T08:45:32Z",
+      "side": 1,
+      "message": "The order of YangInstanceIdentifiers should not matter (RFC6020 7.8.3), hence the List should really be a Set.\n\nFrom end-user perspective, do we really want to leak the map, or do we really just want to provide some sort of lookup?",
+      "range": {
+        "startLine": 69,
+        "startChar": 4,
+        "endLine": 69,
+        "endChar": 52
+      },
+      "revId": "4e7b9ff26f18f77f8166840e376bfd8da9fc93a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_7ad1f5cc",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/spi/TreeNodeFactory.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-27T08:45:32Z",
+      "side": 1,
+      "message": "misaligned",
+      "range": {
+        "startLine": 107,
+        "startChar": 12,
+        "endLine": 108,
+        "endChar": 35
+      },
+      "revId": "4e7b9ff26f18f77f8166840e376bfd8da9fc93a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_ba538d6b",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/spi/TreeNodeIndex.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-27T08:45:32Z",
+      "side": 1,
+      "message": "this needs a lot better documentation.",
+      "range": {
+        "startLine": 20,
+        "startChar": 1,
+        "endLine": 20,
+        "endChar": 30
+      },
+      "revId": "4e7b9ff26f18f77f8166840e376bfd8da9fc93a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_1acc3935",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/spi/TreeNodeIndex.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-06-27T08:45:32Z",
+      "side": 1,
+      "message": "this does not look right. Can other lists be used (like, List\u003cString\u003e)? It this something we want to capture as a separate concept?",
+      "range": {
+        "startLine": 39,
+        "startChar": 39,
+        "endLine": 39,
+        "endChar": 51
+      },
+      "revId": "4e7b9ff26f18f77f8166840e376bfd8da9fc93a4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
