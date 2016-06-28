@@ -27,16 +27,34 @@ public class LoggerFactoryClassParameterCheck extends AbstractCheck {
         final String methodName = CheckLoggingUtil.getMethodName(ast);
         if (methodName.equals(METHOD_NAME)) {
             final String className = CheckLoggingUtil.getClassName(ast);
-            try {
-                final String token = ast.findFirstToken(TokenTypes.ELIST).getFirstChild().getFirstChild()
-                    .getFirstChild().getText();
-                if (!token.equals(className)) {
-                    log(ast.getLineNo(), LOG_MESSAGE);
-                }
-            } catch (NullPointerException e) {
-                log(ast.getLineNo(), String.format("Invalid parameter in \"getLogger\" method call in class: %s",
-                    className));
+            DetailAST findFirstToken = ast.findFirstToken(TokenTypes.ELIST);
+            if (findFirstToken == null) {
+                logError(ast, className);
+                return;
+            }
+            DetailAST childToken = findFirstToken.getFirstChild();
+            if (childToken == null) {
+                logError(ast, className);
+                return;
+            }
+            childToken = childToken.getFirstChild();
+            if (childToken == null) {
+                logError(ast, className);
+                return;
+            }
+            childToken = childToken.getFirstChild();
+            if (childToken == null) {
+                logError(ast, className);
+                return;
+            }
+            final String token = childToken.getText();
+            if (!token.equals(className)) {
+                log(ast.getLineNo(), LOG_MESSAGE);
             }
         }
+    }
+
+    protected void logError(DetailAST ast, String className) {
+        log(ast.getLineNo(), String.format("Invalid parameter in \"getLogger\" method call in class: %s", className));
     }
 }
