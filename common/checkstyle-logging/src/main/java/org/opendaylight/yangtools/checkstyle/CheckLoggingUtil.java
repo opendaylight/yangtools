@@ -8,15 +8,13 @@
 
 package org.opendaylight.yangtools.checkstyle;
 
-import java.util.List;
-
-import org.slf4j.Logger;
-
 import com.google.common.collect.Lists;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.FullIdent;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 import com.puppycrawl.tools.checkstyle.utils.CheckUtils;
+import java.util.List;
+import org.slf4j.Logger;
 
 public final class CheckLoggingUtil {
 

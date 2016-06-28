@@ -8,6 +8,7 @@
 
 package org.opendaylight.yangtools.checkstyle;
 
+import com.google.common.base.Optional;
 import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
@@ -27,16 +28,33 @@ public class LoggerFactoryClassParameterCheck extends AbstractCheck {
         final String methodName = CheckLoggingUtil.getMethodName(ast);
         if (methodName.equals(METHOD_NAME)) {
             final String className = CheckLoggingUtil.getClassName(ast);
-            try {
-                final String token = ast.findFirstToken(TokenTypes.ELIST).getFirstChild().getFirstChild()
-                    .getFirstChild().getText();
-                if (!token.equals(className)) {
+            final Optional<String> optLoggerArgument = getFirstArgument(ast);
+            if (optLoggerArgument.isPresent()) {
+                if (!optLoggerArgument.get().equals(className)) {
                     log(ast.getLineNo(), LOG_MESSAGE);
                 }
-            } catch (NullPointerException e) {
-                log(ast.getLineNo(), String.format("Invalid parameter in \"getLogger\" method call in class: %s",
-                    className));
+            } else {
+                log(ast.getLineNo(),
+                        String.format("Invalid parameter in \"getLogger\" method call in class: %s", className));
             }
         }
     }
+
+    protected Optional<String> getFirstArgument(DetailAST ast) {
+        final DetailAST findFirstToken = ast.findFirstToken(TokenTypes.ELIST);
+        if (findFirstToken != null) {
+            DetailAST childToken = findFirstToken.getFirstChild();
+            if (childToken != null) {
+                childToken = childToken.getFirstChild();
+                if (childToken != null) {
+                    childToken = childToken.getFirstChild();
+                    if (childToken != null) {
+                        return Optional.of(childToken.getText());
+                    }
+                }
+            }
+        }
+        return Optional.absent();
+    }
+
 }
