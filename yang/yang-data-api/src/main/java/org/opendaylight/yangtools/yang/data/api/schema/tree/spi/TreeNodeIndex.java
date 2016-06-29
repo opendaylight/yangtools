@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
-import java.util.List;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
@@ -37,7 +36,7 @@ public interface TreeNodeIndex {
      *            index key
      * @return Optional of index data associated with specified index key.
      */
-    Optional<NormalizedNode<?, ?>> get(List<Object> indexKey);
+    Optional<NormalizedNode<?, ?>> get(IndexKey indexKey);
 
     /**
      * Put data associated with specified index key into index.
@@ -50,7 +49,7 @@ public interface TreeNodeIndex {
      *             if data is unable to put into index due to index constraints
      *             or invalid data
      */
-    void put(List<Object> indexKey, MapEntryNode data);
+    void put(IndexKey indexKey, MapEntryNode data);
 
     /**
      * Remove data associated with specified index key from index.
@@ -58,5 +57,5 @@ public interface TreeNodeIndex {
      * @param indexKey
      *            index key
      */
-    void remove(List<Object> indexKey);
+    void remove(IndexKey indexKey);
 }
