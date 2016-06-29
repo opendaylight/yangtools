@@ -22,6 +22,30 @@
       "revId": "b6d2ccb032d7d583f104612477ae812f6bdb011e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_b8442375",
+        "filename": "common/checkstyle-logging/src/main/java/org/opendaylight/yangtools/checkstyle/LogMessageExtractorCheck.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2016-06-29T23:19:08Z",
+      "side": 1,
+      "message": "done, and created https://git.opendaylight.org/gerrit/#/c/41075/ so that you won\u0027t have to tell me, or anyone else, ever anymore in the future .. ;-)",
+      "parentUuid": "9a561d44_c53659e7",
+      "range": {
+        "startLine": 58,
+        "startChar": 76,
+        "endLine": 58,
+        "endChar": 84
+      },
+      "revId": "b6d2ccb032d7d583f104612477ae812f6bdb011e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
