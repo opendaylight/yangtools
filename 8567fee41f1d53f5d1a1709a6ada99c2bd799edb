@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_e5127d57",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/DeviateDefinition.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-06-29T08:55:15Z",
+      "side": 1,
+      "message": "I think we should distinguish three states here:\n1. deviate stmt has mandatory substatement with argument \"true\"\n2. deviate stmt has mandatory substatement with argument \"false\"\n3. deviate has not any mandatory substatement \n\n(the same also by other methods with boolean return type)",
+      "range": {
+        "startLine": 61,
+        "startChar": 4,
+        "endLine": 61,
+        "endChar": 34
+      },
+      "revId": "8567fee41f1d53f5d1a1709a6ada99c2bd799edb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
