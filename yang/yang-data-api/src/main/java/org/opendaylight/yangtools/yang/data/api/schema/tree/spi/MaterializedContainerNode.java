@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import com.google.common.base.Optional;
 import java.util.Map;
+import java.util.Set;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
@@ -16,9 +18,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * A fully-modified node -- we know we have all children, so it performs lookups only.
  */
 final class MaterializedContainerNode extends AbstractModifiedContainerNode {
-    protected MaterializedContainerNode(final NormalizedNode<?, ?> data, final Version version,
-            final Map<PathArgument, TreeNode> children, final Version subtreeVersion) {
-        super(data, version, children, subtreeVersion);
+    MaterializedContainerNode(final NormalizedNode<?, ?> data, final Version version,
+            final Map<PathArgument, TreeNode> children, final Version subtreeVersion,
+            final Map<Set<YangInstanceIdentifier>, TreeNodeIndex<?, ?>> indexes) {
+        super(data, version, children, subtreeVersion, indexes);
     }
 
     @Override

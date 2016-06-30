@@ -9,6 +9,10 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
+import java.util.Map;
+import java.util.Set;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.slf4j.Logger;
@@ -22,7 +26,7 @@ import org.slf4j.LoggerFactory;
 final class ValueNode extends AbstractTreeNode {
     private static final Logger LOG = LoggerFactory.getLogger(ValueNode.class);
 
-    protected ValueNode(final NormalizedNode<?, ?> data, final Version version) {
+    ValueNode(final NormalizedNode<?, ?> data, final Version version) {
         super(data, version);
     }
 
@@ -35,6 +39,16 @@ final class ValueNode extends AbstractTreeNode {
     @Override
     public Version getSubtreeVersion() {
         return getVersion();
+    }
+
+    @Override
+    public Map<Set<YangInstanceIdentifier>, TreeNodeIndex<?, ?>> getIndexes() {
+        return ImmutableMap.of();
+    }
+
+    @Override
+    public Optional<? extends NormalizedNode<?, ?>> getFromIndex(final IndexKey<?> indexKey) {
+        return Optional.absent();
     }
 
     @Override
