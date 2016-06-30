@@ -9,7 +9,13 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
+import java.util.Map;
+import java.util.Set;
+import org.opendaylight.yangtools.util.MapAdaptor;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
@@ -19,10 +25,17 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 abstract class AbstractTreeNode implements TreeNode {
     private final NormalizedNode<?, ?> data;
     private final Version version;
+    private final Map<Set<YangInstanceIdentifier>, TreeNodeIndex<?, ?>> indexes;
 
     protected AbstractTreeNode(final NormalizedNode<?, ?> data, final Version version) {
+        this(data, version, ImmutableMap.of());
+    }
+
+    protected AbstractTreeNode(final NormalizedNode<?, ?> data, final Version version,
+            final Map<Set<YangInstanceIdentifier>, TreeNodeIndex<?, ?>> indexes) {
         this.data = Preconditions.checkNotNull(data);
         this.version = Preconditions.checkNotNull(version);
+        this.indexes = MapAdaptor.getDefaultInstance().optimize(Preconditions.checkNotNull(indexes));
     }
 
     @Override
@@ -46,4 +59,15 @@ abstract class AbstractTreeNode implements TreeNode {
     }
 
     protected abstract ToStringHelper addToStringAttributes(ToStringHelper helper);
+
+    @Override
+    public Map<Set<YangInstanceIdentifier>, TreeNodeIndex<?, ?>> getIndexes() {
+        return indexes;
+    }
+
+    @Override
+    public Optional<? extends NormalizedNode<?, ?>> getFromIndex(final IndexKey<?> indexKey) {
+        final Set<?> identifierSet = indexKey.getValue().keySet();
+        return indexes.get(identifierSet).get(indexKey);
+    }
 }
