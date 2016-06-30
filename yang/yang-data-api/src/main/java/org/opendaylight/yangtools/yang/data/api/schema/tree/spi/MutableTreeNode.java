@@ -34,12 +34,21 @@ public interface MutableTreeNode extends StoreTreeNode<TreeNode> {
     void setSubtreeVersion(Version subtreeVersion);
 
     /**
-     * Add a new child node. This acts as add-or-replace operation, e.g. it
-     * succeeds even if a conflicting child is already present.
+     * Add a new child node. This acts as add-or-replace
+     * operation, e.g. it succeeds even if a conflicting child is already present.
      *
      * @param child New child node.
      */
     void addChild(TreeNode child);
+
+    /**
+     * Add a new child node and update corresponding indexes. This acts as add-or-replace
+     * operation, e.g. it succeeds even if a conflicting child is already present.
+     *
+     * @param child New child node.
+     * * @param strategy strategy for index update.
+     */
+    void addChild(TreeNode child, IndexStrategy strategy);
 
     /**
      * Remove a child node. This acts as delete-or-nothing operation, e.g. it
@@ -50,6 +59,15 @@ public interface MutableTreeNode extends StoreTreeNode<TreeNode> {
     void removeChild(PathArgument id);
 
     /**
+     * Remove a child node and update corresponding indexes. This acts as delete-or-nothing
+     * operation, e.g. it succeeds even if the corresponding child is not present.
+     *
+     * @param id Child identificator.
+     * @param strategy strategy for index update.
+     */
+    void removeChild(PathArgument id, IndexStrategy strategy);
+
+    /**
      * Finish node modification and return a read-only view of this node. After
      * this method is invoked, any further calls to this object's method result
      * in undefined behavior.
@@ -57,4 +75,6 @@ public interface MutableTreeNode extends StoreTreeNode<TreeNode> {
      * @return Read-only view of this node.
      */
     TreeNode seal();
+
+    void buildIndexes(IndexStrategy uniqueIndexUpdateStrategy);
 }

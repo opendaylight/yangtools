@@ -8,6 +8,11 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import java.util.Map;
+import java.util.Set;
+import org.opendaylight.yangtools.util.MapAdaptor;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -17,8 +22,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
  * changed is tracked by the subtree version.
  */
 abstract class AbstractContainerNode extends AbstractTreeNode {
-    protected AbstractContainerNode(final NormalizedNode<?, ?> data, final Version version) {
+    private final Map<Set<YangInstanceIdentifier>, TreeNodeIndex<?, ?>> indexes;
+
+    AbstractContainerNode(final NormalizedNode<?, ?> data, final Version version,
+            final Map<Set<YangInstanceIdentifier>, TreeNodeIndex<?, ?>> indexes) {
         super(data, version);
+        this.indexes = MapAdaptor.getDefaultInstance().optimize(Preconditions.checkNotNull(indexes));
     }
 
     @SuppressWarnings("unchecked")
@@ -29,6 +38,17 @@ abstract class AbstractContainerNode extends AbstractTreeNode {
     protected final Optional<TreeNode> getChildFromData(final PathArgument childId) {
         // We do not cache the instantiated node as it is dirt cheap
         return Optional.fromNullable(getChildFromData(castData(), childId, getVersion()));
+    }
+
+    @Override
+    public Map<Set<YangInstanceIdentifier>, TreeNodeIndex<?, ?>> getIndexes() {
+        return indexes;
+    }
+
+    @Override
+    public Optional<? extends NormalizedNode<?, ?>> getFromIndex(final IndexKey<?> indexKey) {
+        final Set<?> identifierSet = indexKey.getValue().keySet();
+        return indexes.get(identifierSet).get(indexKey);
     }
 
     static TreeNode getChildFromData(final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> data,
