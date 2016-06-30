@@ -9,6 +9,9 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Optional;
+import java.util.Map;
+import java.util.Set;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
@@ -16,8 +19,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * A container node which has not seen a modification. All nodes underneath it share the same subtree version.
  */
 final class SimpleContainerNode extends AbstractContainerNode {
-    protected SimpleContainerNode(final NormalizedNode<?, ?> data, final Version version) {
-        super(data, version);
+    SimpleContainerNode(final NormalizedNode<?, ?> data, final Version version,
+            final Map<Set<YangInstanceIdentifier>, TreeNodeIndex<?, ?>> indexes) {
+        super(data, version, indexes);
     }
 
     @Override
