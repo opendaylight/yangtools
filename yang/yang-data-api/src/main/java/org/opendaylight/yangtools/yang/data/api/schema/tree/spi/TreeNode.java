@@ -7,7 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
+import com.google.common.base.Optional;
+import java.util.Map;
+import java.util.Set;
 import org.opendaylight.yangtools.concepts.Identifiable;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
@@ -57,4 +61,20 @@ public interface TreeNode extends Identifiable<PathArgument>, StoreTreeNode<Tree
      * @return Mutable copy
      */
     MutableTreeNode mutable();
+
+    /**
+     * Return index map of current tree node.
+     *
+     * @return map of current tree node indexes.
+     */
+    Map<Set<YangInstanceIdentifier>, TreeNodeIndex<?, ?>> getIndexes();
+
+    /**
+     * Get data associated with specified index key from index.
+     *
+     * @param indexKey
+     *            index key
+     * @return Optional of data associated with specified index key
+     */
+    Optional<? extends NormalizedNode<?, ?>> getFromIndex(IndexKey<?> indexKey);
 }

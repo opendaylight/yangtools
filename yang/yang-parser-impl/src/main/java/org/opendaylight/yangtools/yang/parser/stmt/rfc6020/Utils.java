@@ -644,7 +644,7 @@ public final class Utils {
             try {
                 Pattern.compile(rawPattern);
                 return rawPattern;
-            } catch(final PatternSyntaxException ex) {
+            } catch (final PatternSyntaxException ex) {
                 LOG.debug("Invalid regex pattern syntax in: {}", rawPattern, ex);
                 if (ex.getMessage().contains("Unknown character script name")) {
                     rawPattern = fixUnknownScripts(ex.getMessage(), rawPattern);

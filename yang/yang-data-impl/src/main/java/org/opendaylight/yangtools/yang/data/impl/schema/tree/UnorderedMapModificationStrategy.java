@@ -19,11 +19,11 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMa
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class UnorderedMapModificationStrategy extends AbstractNodeContainerModificationStrategy {
+final class UnorderedMapModificationStrategy extends AbstractMapModificationStrategy {
     private final Optional<ModificationApplyOperation> entryStrategy;
 
     UnorderedMapModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
-        super(MapNode.class, treeConfig);
+        super(schema, MapNode.class, treeConfig);
         entryStrategy = Optional.of(new ListEntryModificationStrategy(schema, treeConfig));
     }
 

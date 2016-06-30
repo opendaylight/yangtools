@@ -11,7 +11,8 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.collect.Collections2;
 import java.util.Map;
-import org.opendaylight.yangtools.util.MapAdaptor;
+import java.util.Set;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
@@ -20,13 +21,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * instantiating a child node from data node. Resulting node is not cached.
  */
 final class LazyContainerNode extends AbstractModifiedContainerNode {
-    LazyContainerNode(final NormalizedNode<?, ?> data, final Version version, final Version subtreeVersion) {
-        this(data, version, MapAdaptor.getDefaultInstance().initialSnapshot(1), subtreeVersion);
-    }
-
     LazyContainerNode(final NormalizedNode<?, ?> data, final Version version, final Map<PathArgument, TreeNode> children,
-            final Version subtreeVersion) {
-        super(data, version, children, subtreeVersion);
+            final Version subtreeVersion, final Map<Set<YangInstanceIdentifier>, TreeNodeIndex<?, ?>> indexes) {
+        super(data, version, children, subtreeVersion, indexes);
     }
 
     @Override
