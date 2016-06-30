@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -39,21 +39,21 @@ abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeC
                 @Override
                 public ModificationApplyOperation load(@Nonnull final PathArgument key) {
                     if (key instanceof AugmentationIdentifier && schema instanceof AugmentationTarget) {
-                        return SchemaAwareApplyOperation.from(schema, (AugmentationTarget) schema, (AugmentationIdentifier) key, treeType);
+                        return SchemaAwareApplyOperation.from(schema, (AugmentationTarget) schema, (AugmentationIdentifier) key, treeConfig);
                     }
 
                     final DataSchemaNode child = schema.getDataChildByName(key.getNodeType());
                     Preconditions.checkArgument(child != null, "Schema %s does not have a node for child %s", schema, key.getNodeType());
-                    return SchemaAwareApplyOperation.from(child, treeType);
+                    return SchemaAwareApplyOperation.from(child, treeConfig);
                 }
             });
     private final T schema;
-    private final TreeType treeType;
+    private final DataTreeConfiguration treeConfig;
 
-    protected AbstractDataNodeContainerModificationStrategy(final T schema, final Class<? extends NormalizedNode<?, ?>> nodeClass, final TreeType treeType) {
-        super(nodeClass, treeType);
+    protected AbstractDataNodeContainerModificationStrategy(final T schema, final Class<? extends NormalizedNode<?, ?>> nodeClass, final DataTreeConfiguration treeConfig) {
+        super(nodeClass, treeConfig);
         this.schema = Preconditions.checkNotNull(schema,"schema");
-        this.treeType = Preconditions.checkNotNull(treeType,"treeType");
+        this.treeConfig = Preconditions.checkNotNull(treeConfig,"treeConfig");
     }
 
     protected final T getSchema() {

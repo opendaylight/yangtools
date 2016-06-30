@@ -14,7 +14,7 @@ import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -22,9 +22,9 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 final class OrderedMapModificationStrategy extends AbstractNodeContainerModificationStrategy {
     private final Optional<ModificationApplyOperation> entryStrategy;
 
-    OrderedMapModificationStrategy(final ListSchemaNode schema, final TreeType treeType) {
-        super(OrderedMapNode.class, treeType);
-        entryStrategy = Optional.of(new ListEntryModificationStrategy(schema, treeType));
+    OrderedMapModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
+        super(OrderedMapNode.class, treeConfig);
+        entryStrategy = Optional.of(new ListEntryModificationStrategy(schema, treeConfig));
     }
 
     @Override
@@ -40,7 +40,7 @@ final class OrderedMapModificationStrategy extends AbstractNodeContainerModifica
     }
 
     @Override
-    protected NormalizedNode<?, ?> createEmptyValue(NormalizedNode<?, ?> original) {
+    protected NormalizedNode<?, ?> createEmptyValue(final NormalizedNode<?, ?> original) {
         checkArgument(original instanceof OrderedMapNode);
         return ImmutableOrderedMapNodeBuilder.create().withNodeIdentifier(((OrderedMapNode) original).getIdentifier())
                 .build();

@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -22,8 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
 final class AugmentationModificationStrategy extends AbstractDataNodeContainerModificationStrategy<AugmentationSchema> {
-    AugmentationModificationStrategy(final AugmentationSchema schema, final DataNodeContainer resolved, final TreeType treeType) {
-        super(createAugmentProxy(schema,resolved), AugmentationNode.class, treeType);
+    AugmentationModificationStrategy(final AugmentationSchema schema, final DataNodeContainer resolved, final DataTreeConfiguration treeConfig) {
+        super(createAugmentProxy(schema,resolved), AugmentationNode.class, treeConfig);
     }
 
     @Override
@@ -34,7 +34,7 @@ final class AugmentationModificationStrategy extends AbstractDataNodeContainerMo
     }
 
     @Override
-    protected NormalizedNode<?, ?> createEmptyValue(NormalizedNode<?, ?> original) {
+    protected NormalizedNode<?, ?> createEmptyValue(final NormalizedNode<?, ?> original) {
         checkArgument(original instanceof AugmentationNode);
         return ImmutableAugmentationNodeBuilder.create()
                 .withNodeIdentifier(((AugmentationNode) original).getIdentifier()).build();
