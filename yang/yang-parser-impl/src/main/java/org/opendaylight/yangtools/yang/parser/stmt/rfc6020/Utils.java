@@ -451,6 +451,38 @@ public final class Utils {
         return string;
     }
 
+    public static String fixUnicodeScriptPattern(String rawPattern) {
+        for (int i = 0; i < UNICODE_SCRIPT_FIX_COUNTER; i++) {
+            try {
+                Pattern.compile(rawPattern);
+                return rawPattern;
+            } catch (final PatternSyntaxException ex) {
+                LOG.debug("Invalid regex pattern syntax in: {}", rawPattern, ex);
+                if (ex.getMessage().contains("Unknown character script name")) {
+                    rawPattern = fixUnknownScripts(ex.getMessage(), rawPattern);
+                } else {
+                    return rawPattern;
+                }
+            }
+        }
+
+        LOG.warn("Regex pattern could not be fixed: {}", rawPattern);
+        return rawPattern;
+    }
+
+    private static String fixUnknownScripts(final String exMessage, final String rawPattern) {
+        StringBuilder result = new StringBuilder(rawPattern);
+        final Matcher matcher = BETWEEN_CURLY_BRACES_PATTERN.matcher(exMessage);
+        if (matcher.find()) {
+            final String capturedGroup = matcher.group(1);
+            if (JAVA_UNICODE_BLOCKS.contains(capturedGroup)) {
+                final int idx = rawPattern.indexOf("Is" + capturedGroup);
+                result = result.replace(idx, idx + 2, "In");
+            }
+        }
+        return result.toString();
+    }
+
     public static boolean belongsToTheSameModule(final QName targetStmtQName, final QName sourceStmtQName) {
         if (targetStmtQName.getModule().equals(sourceStmtQName.getModule())) {
             return true;
