@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
@@ -43,6 +44,12 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
     public TipProducingDataTree create(final TreeType treeType) {
         return new InMemoryDataTree(TreeNodeFactory.createTreeNode(rootContainer, Version.initial()),
             treeType, YangInstanceIdentifier.EMPTY, null);
+    }
+
+    @Override
+    public TipProducingDataTree create(final DataTreeConfiguration treeConfig) {
+        return new InMemoryDataTree(TreeNodeFactory.createTreeNode(rootContainer, Version.initial()),
+                treeConfig, YangInstanceIdentifier.EMPTY, null);
     }
 
     @Override
