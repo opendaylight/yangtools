@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
@@ -34,16 +35,17 @@ public class MandatoryLeafTest {
         assertNotNull("Schema context must not be null.", schemaContext);
     }
 
-    private InMemoryDataTree initDataTree() {
-        InMemoryDataTree inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(
-                TreeType.CONFIGURATION);
+    private InMemoryDataTree initDataTree(final boolean enableValidation) {
+        final InMemoryDataTree inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(
+                new DataTreeConfiguration.Builder(TreeType.CONFIGURATION).setMandatoryNodesValidation(enableValidation)
+                        .build());
         inMemoryDataTree.setSchemaContext(schemaContext);
         return inMemoryDataTree;
     }
 
     @Test
     public void testCorrectMandatoryLeafWrite() throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree();
+        final InMemoryDataTree inMemoryDataTree = initDataTree(true);
         final NodeIdentifier choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
 
         final ContainerNode container = Builders
@@ -75,7 +77,7 @@ public class MandatoryLeafTest {
 
     @Test
     public void testCorrectMandatoryLeafChoiceWrite() throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree();
+        final InMemoryDataTree inMemoryDataTree = initDataTree(true);
         // Container write
         final ContainerNode container = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME)).build();
@@ -112,7 +114,7 @@ public class MandatoryLeafTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testMandatoryLeafViolation() throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree();
+        final InMemoryDataTree inMemoryDataTree = initDataTree(true);
         final NodeIdentifier choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
 
         final ContainerNode container = Builders
@@ -137,7 +139,7 @@ public class MandatoryLeafTest {
             inMemoryDataTree.validate(modificationTree);
             final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
             inMemoryDataTree.commit(prepare);
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             assertEquals(
                     "Node (urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test?revision=2014-03-13)choice1 is missing mandatory descendant /(urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test?revision=2014-03-13)case2-cont/case2-leaf1",
                     e.getMessage());
@@ -145,9 +147,37 @@ public class MandatoryLeafTest {
         }
     }
 
+    @Test
+    public void testDisabledValidation() throws DataValidationFailedException {
+        final InMemoryDataTree inMemoryDataTree = initDataTree(false);
+        final NodeIdentifier choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
+
+        final ContainerNode container = Builders
+                .containerBuilder()
+                .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
+                .withChild(
+                        Builders.choiceBuilder()
+                                .withNodeIdentifier(choice1Id)
+                                .withChild(
+                                        Builders.containerBuilder()
+                                                .withNodeIdentifier(
+                                                        new NodeIdentifier(QName.create(TestModel.TEST_QNAME,
+                                                                "case2-cont")))
+                                                .withChild(
+                                                        leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf2"),
+                                                                "leaf-value2")).build()).build()).build();
+        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        modificationTree.write(TestModel.TEST_PATH, container);
+        modificationTree.ready();
+
+        inMemoryDataTree.validate(modificationTree);
+        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
+        inMemoryDataTree.commit(prepare);
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void testMandatoryLeafViolationChoiceWrite() throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree();
+        final InMemoryDataTree inMemoryDataTree = initDataTree(true);
         // Container write
         final ContainerNode container = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME)).build();
@@ -179,11 +209,46 @@ public class MandatoryLeafTest {
             inMemoryDataTree.validate(modificationTree2);
             final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
             inMemoryDataTree.commit(prepare2);
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             assertEquals(
                     "Node (urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test?revision=2014-03-13)choice1 is missing mandatory descendant /(urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test?revision=2014-03-13)case2-cont/case2-leaf1",
                     e.getMessage());
             throw e;
         }
+    }
+
+    @Test
+    public void testDisabledValidationChoiceWrite() throws DataValidationFailedException {
+        final InMemoryDataTree inMemoryDataTree = initDataTree(false);
+        // Container write
+        final ContainerNode container = Builders.containerBuilder()
+                .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME)).build();
+
+        final InMemoryDataTreeModification modificationTree1 = inMemoryDataTree.takeSnapshot().newModification();
+        modificationTree1.write(TestModel.TEST_PATH, container);
+        modificationTree1.ready();
+
+        inMemoryDataTree.validate(modificationTree1);
+        final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
+        inMemoryDataTree.commit(prepare1);
+
+        // Choice write
+        final NodeIdentifier choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
+        final ChoiceNode choice = Builders
+                .choiceBuilder()
+                .withNodeIdentifier(choice1Id)
+                .withChild(
+                        Builders.containerBuilder()
+                                .withNodeIdentifier(
+                                        new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "case2-cont")))
+                                .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf2"), "leaf-value2"))
+                                .build()).build();
+
+        final InMemoryDataTreeModification modificationTree2 = inMemoryDataTree.takeSnapshot().newModification();
+        modificationTree2.write(TestModel.TEST_PATH.node(choice1Id), choice);
+        modificationTree2.ready();
+        inMemoryDataTree.validate(modificationTree2);
+        final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
+        inMemoryDataTree.commit(prepare2);
     }
 }
