@@ -8,6 +8,9 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 
+import java.util.Map;
+import java.util.Set;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
@@ -57,4 +60,19 @@ public interface MutableTreeNode extends StoreTreeNode<TreeNode> {
      * @return Read-only view of this node.
      */
     TreeNode seal();
+
+    /**
+     * Return index map of current tree node.
+     *
+     * @return map of current tree node indexes.
+     */
+    Map<Set<YangInstanceIdentifier>, TreeNodeIndex<?, ?>> getIndexes();
+
+    /**
+     * Set index map for current tree node.
+     *
+     * @param treeNodeIndexes
+     *            current tree node index map.
+     */
+    void setIndexes(Map<Set<YangInstanceIdentifier>, TreeNodeIndex<?, ?>> treeNodeIndexes);
 }
