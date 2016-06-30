@@ -10,23 +10,28 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import java.util.Map;
+import java.util.Set;
 import org.opendaylight.yangtools.util.MapAdaptor;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 
 /**
- * Abstract base for container-based {@link MutableTreeNode}s. It tracks modified nodes in a map and deals with
- * correctly implementing {@link #seal()}.
+ * Abstract base for container-based {@link MutableTreeNode}s. It tracks modified nodes in a map and deals
+ * with correctly implementing {@link #seal()}.
  */
 abstract class AbstractMutableContainerNode implements MutableTreeNode {
     private final Version version;
     private Map<PathArgument, TreeNode> children;
     private NormalizedNode<?, ?> data;
     private Version subtreeVersion;
+    private Map<Set<YangInstanceIdentifier>, TreeNodeIndex<?, ?>> indexes;
 
-    protected AbstractMutableContainerNode(final AbstractContainerNode parent, final Map<PathArgument, TreeNode> children) {
+    protected AbstractMutableContainerNode(final AbstractContainerNode parent,
+            final Map<PathArgument, TreeNode> children) {
         this.data = parent.getData();
+        this.indexes = parent.getIndexes();
         this.version = parent.getVersion();
         this.subtreeVersion = parent.getSubtreeVersion();
         this.children = Preconditions.checkNotNull(children);
@@ -66,6 +71,11 @@ abstract class AbstractMutableContainerNode implements MutableTreeNode {
     }
 
     @Override
+    public final void setIndexes(final Map<Set<YangInstanceIdentifier>, TreeNodeIndex<?, ?>> treeNodeIndexes) {
+        this.indexes = Preconditions.checkNotNull(treeNodeIndexes);
+    }
+
+    @Override
     public final TreeNode seal() {
         final TreeNode ret;
 
@@ -82,17 +92,23 @@ abstract class AbstractMutableContainerNode implements MutableTreeNode {
             final int dataSize = getData().getValue().size();
             if (dataSize != newChildren.size()) {
                 Verify.verify(dataSize > newChildren.size(), "Detected %s modified children, data has only %s",
-                    newChildren.size(), dataSize);
-                ret = new LazyContainerNode(data, version, newChildren, subtreeVersion);
+                        newChildren.size(), dataSize);
+                ret = new LazyContainerNode(data, version, newChildren, subtreeVersion, indexes);
             } else {
-                ret = new MaterializedContainerNode(data, version, newChildren, subtreeVersion);
+                ret = new MaterializedContainerNode(data, version, newChildren, subtreeVersion, indexes);
             }
         } else {
-            ret = new SimpleContainerNode(data, version);
+            ret = new SimpleContainerNode(data, version, indexes);
         }
 
-        // This forces a NPE if this class is accessed again. Better than corruption.
+        // This forces a NPE if this class is accessed again. Better than
+        // corruption.
         children = null;
         return ret;
+    }
+
+    @Override
+    public Map<Set<YangInstanceIdentifier>, TreeNodeIndex<?, ?>> getIndexes() {
+        return indexes;
     }
 }

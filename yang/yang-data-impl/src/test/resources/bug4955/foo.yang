@@ -1,0 +1,82 @@
+module foo {
+    yang-version 1;
+    namespace "foo";
+    prefix foo;
+
+    revision 2016-05-17 {
+        description "test";
+    }
+
+    container task-container {
+        list task {
+            key "task-id";
+            unique "my-leaf-1 my-leaf-2";
+            unique "my-leaf-1 my-container/my-leaf-3";
+
+            leaf task-id {
+                type string;
+            }
+            leaf my-leaf-1 {
+                type string;
+            }
+            leaf my-leaf-2 {
+                type string;
+            }
+            container my-container {
+                leaf my-leaf-3 {
+                    type string;
+                }
+            }
+        }
+    }
+
+    list inside-list {
+        list inner {
+            leaf inner-leaf {
+                type string;
+            }
+        }
+
+        unique "inner/inner-leaf";
+    }
+
+    list cross-list {
+        key "k";
+        leaf k {
+            type string;
+        }
+        list one {
+            key "one"; 
+            leaf one {
+                type string;
+            }
+            leaf one-leaf {
+                type string;
+            }
+        }
+
+        list two {
+            key "two";
+            leaf two {
+                type string;
+            }
+            leaf two-leaf {
+                type string;
+            }
+        }
+
+        unique "one/one-leaf two/two-leaf";
+    }
+
+    list nested-list {
+        list one {
+            list two {
+                leaf two-leaf {
+                    type string;
+                }
+            }
+        }
+
+        unique "one/two/two-leaf";
+    }
+}

@@ -8,6 +8,9 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import com.google.common.base.Optional;
+import java.util.Map;
+import java.util.Set;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -19,6 +22,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 abstract class AbstractContainerNode extends AbstractTreeNode {
     protected AbstractContainerNode(final NormalizedNode<?, ?> data, final Version version) {
         super(data, version);
+    }
+
+    public AbstractContainerNode(final NormalizedNode<?, ?> data, final Version version,
+            final Map<Set<YangInstanceIdentifier>, TreeNodeIndex<?, ?>> indexes) {
+        super(data, version, indexes);
     }
 
     @SuppressWarnings("unchecked")
