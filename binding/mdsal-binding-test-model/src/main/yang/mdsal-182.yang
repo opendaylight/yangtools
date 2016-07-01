@@ -1,0 +1,27 @@
+module mdsal-182 {
+	namespace "mdsal-182";
+	prefix "mdsal182";
+
+    grouping foo {
+        leaf foo {
+            type leafref {
+                path "../../bar";
+            }
+        }
+    }
+
+    container one {
+        leaf bar {
+            type string;
+        }
+        uses foo;
+    }
+
+    container two {
+        leaf bar {
+            type uint16;
+        }
+        uses foo;
+    }
+}
+
