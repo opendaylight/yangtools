@@ -39,7 +39,7 @@ public final class BindingMapping {
     public static final String PACKAGE_PREFIX = "org.opendaylight.yang.gen.v1";
     public static final String AUGMENTATION_FIELD = "augmentation";
 
-    private static final Splitter CAMEL_SPLITTER = Splitter.on(CharMatcher.anyOf(" _.-").precomputed())
+    private static final Splitter CAMEL_SPLITTER = Splitter.on(CharMatcher.anyOf(" _.-/").precomputed())
             .omitEmptyStrings().trimResults();
     private static final Pattern COLON_SLASH_SLASH = Pattern.compile("://", Pattern.LITERAL);
     private static final String QUOTED_DOT = Matcher.quoteReplacement(".");
