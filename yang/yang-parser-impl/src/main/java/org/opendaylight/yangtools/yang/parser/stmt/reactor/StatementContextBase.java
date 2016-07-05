@@ -9,11 +9,12 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
-import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.EventListener;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -92,8 +93,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private ModelProcessingPhase completedPhase;
 
-    private final Multimap<ModelProcessingPhase, OnPhaseFinished> phaseListeners = HashMultimap.create();
-    private final Multimap<ModelProcessingPhase, ContextMutation> phaseMutation = HashMultimap.create();
+    private final Multimap<ModelProcessingPhase, OnPhaseFinished> phaseListeners =
+            Multimaps.newListMultimap(new EnumMap<>(ModelProcessingPhase.class), () -> new ArrayList<>());
+
+    private final Multimap<ModelProcessingPhase, ContextMutation> phaseMutation =
+            Multimaps.newListMultimap(new EnumMap<>(ModelProcessingPhase.class), () -> new ArrayList<>());
 
     private D declaredInstance;
     private E effectiveInstance;
