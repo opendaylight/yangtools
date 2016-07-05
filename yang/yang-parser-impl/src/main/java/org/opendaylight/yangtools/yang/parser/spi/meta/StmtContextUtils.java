@@ -12,7 +12,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
-import java.util.ArrayList;
+import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.function.Predicate;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -237,12 +237,12 @@ public final class StmtContextUtils {
     }
 
     public static boolean areFeaturesSupported(final StmtContext<?, ?, ?> stmtContext) {
+        Iterable<StatementContextBase<?, ?, ?>> substatements = Iterables.concat(
+                stmtContext.declaredSubstatements(),
+                stmtContext.effectiveSubstatements());
+
         Predicate<QName> isFeatureSupported = stmtContext.getFromNamespace(SupportedFeaturesNamespace.class,
                 SupportedFeatures.SUPPORTED_FEATURES);
-        Collection<StatementContextBase<?, ?, ?>> substatements = new ArrayList<>();
-        substatements.addAll(stmtContext.declaredSubstatements());
-        substatements.addAll(stmtContext.effectiveSubstatements());
-
         boolean isSupported = false;
         boolean containsIfFeature = false;
         for (StatementContextBase<?, ?, ?> stmt: substatements) {
@@ -259,4 +259,5 @@ public final class StmtContextUtils {
 
         return !containsIfFeature || isSupported;
     }
+
 }
