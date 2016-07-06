@@ -15,4 +15,5 @@ public interface Nodes extends //
         ChildOf<DataRoot>, //
         DataObject {
 
+    Iterable getNode();
 }

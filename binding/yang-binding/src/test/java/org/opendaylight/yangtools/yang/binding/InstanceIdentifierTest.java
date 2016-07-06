@@ -12,8 +12,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 
+import com.google.common.collect.ImmutableList;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.Field;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.InstanceIdentifierBuilder;
 import org.opendaylight.yangtools.yang.binding.test.mock.FooChild;
 import org.opendaylight.yangtools.yang.binding.test.mock.InstantiatedFoo;
 import org.opendaylight.yangtools.yang.binding.test.mock.Node;
@@ -26,13 +34,12 @@ public class InstanceIdentifierTest {
 
     @Test
     public void constructWithPredicates() {
-        InstanceIdentifier<Nodes> nodes = InstanceIdentifier.builder(Nodes.class).build();
+        final InstanceIdentifier<Nodes> nodes = InstanceIdentifier.builder(Nodes.class).build();
 
         assertNotNull(nodes);
         assertEquals(Nodes.class, nodes.getTargetType());
 
-
-        InstanceIdentifier<Node> node = nodes.builder().child(Node.class).build();
+        final InstanceIdentifier<Node> node = nodes.builder().child(Node.class).build();
 
         assertNotNull(node);
         assertEquals(Node.class, node.getTargetType());
@@ -42,8 +49,8 @@ public class InstanceIdentifierTest {
 
     @Test
     public void fluentConstruction() {
-        InstanceIdentifier<Nodes> nodes = InstanceIdentifier.builder(Nodes.class).build();
-        InstanceIdentifier<Node> node =
+        final InstanceIdentifier<Nodes> nodes = InstanceIdentifier.builder(Nodes.class).build();
+        final InstanceIdentifier<Node> node =
                 InstanceIdentifier.builder(Nodes.class).child(Node.class,new NodeKey(10)).build();
 
         assertNotNull(node);
@@ -52,17 +59,16 @@ public class InstanceIdentifierTest {
         assertTrue(nodes.contains(node));
     }
 
-
     @Test
     public void negativeContains() {
-        InstanceIdentifier<FooChild> fooChild =
+        final InstanceIdentifier<FooChild> fooChild =
                 InstanceIdentifier.builder(Nodes.class).child(InstantiatedFoo.class).child(FooChild.class).build();
 
-        InstanceIdentifier<Node> nodeTen = InstanceIdentifier.builder(Nodes.class) //
+        final InstanceIdentifier<Node> nodeTen = InstanceIdentifier.builder(Nodes.class) //
                 .child(Node.class,new NodeKey(10)).build();
-        InstanceIdentifier<Node> nodeOne = InstanceIdentifier.builder(Nodes.class) //
+        final InstanceIdentifier<Node> nodeOne = InstanceIdentifier.builder(Nodes.class) //
                 .child(Node.class,new NodeKey(1)).build();
-        InstanceIdentifier<Nodes> nodes = InstanceIdentifier.builder(Nodes.class).build();
+        final InstanceIdentifier<Nodes> nodes = InstanceIdentifier.builder(Nodes.class).build();
 
         assertFalse(fooChild.contains(nodeTen));
         assertFalse(nodeTen.contains(nodes));
@@ -76,19 +82,18 @@ public class InstanceIdentifierTest {
 
     @Test
     public void containsWildcarded() {
-        InstanceIdentifier<Nodes> nodes = InstanceIdentifier.builder(Nodes.class).build();
-        InstanceIdentifier<Node> wildcarded = InstanceIdentifier.builder(Nodes.class).child(Node.class).build();
-        InstanceIdentifier<NodeChild> wildcardedChildren = InstanceIdentifier.builder(Nodes.class) //
+        final InstanceIdentifier<Nodes> nodes = InstanceIdentifier.builder(Nodes.class).build();
+        final InstanceIdentifier<Node> wildcarded = InstanceIdentifier.builder(Nodes.class).child(Node.class).build();
+        final InstanceIdentifier<NodeChild> wildcardedChildren = InstanceIdentifier.builder(Nodes.class) //
                 .child(Node.class) //
                 .child(NodeChild.class).build();
 
         assertTrue(wildcarded.isWildcarded());
         assertTrue(wildcardedChildren.isWildcarded());
 
-
-        InstanceIdentifier<Node> nodeTen = InstanceIdentifier.builder(Nodes.class) //
+        final InstanceIdentifier<Node> nodeTen = InstanceIdentifier.builder(Nodes.class) //
                 .child(Node.class,new NodeKey(10)).build();
-        InstanceIdentifier<Node> nodeOne = InstanceIdentifier.builder(Nodes.class) //
+        final InstanceIdentifier<Node> nodeOne = InstanceIdentifier.builder(Nodes.class) //
                 .child(Node.class,new NodeKey(1)).build();
 
         assertFalse(nodeTen.isWildcarded());
@@ -96,52 +101,109 @@ public class InstanceIdentifierTest {
         assertTrue(nodes.containsWildcarded(nodeOne));
         assertTrue(wildcarded.containsWildcarded(nodeOne));
         assertTrue(wildcarded.containsWildcarded(nodeTen));
+        assertFalse(InstanceIdentifier.builder(Nodes.class)
+                .child(InstantiatedFoo.class).build().containsWildcarded(wildcarded));
 
-
-        InstanceIdentifier<NodeChild> nodeTenChildWildcarded = InstanceIdentifier.builder(Nodes.class) //
+        final InstanceIdentifier<NodeChild> nodeTenChildWildcarded = InstanceIdentifier.builder(Nodes.class) //
                 .child(Node.class,new NodeKey(10)).child(NodeChild.class).build();
 
         assertTrue(nodeTenChildWildcarded.isWildcarded());
 
-        InstanceIdentifier<NodeChild> nodeTenChild = InstanceIdentifier.builder(Nodes.class) //
+        final InstanceIdentifier<NodeChild> nodeTenChild = InstanceIdentifier.builder(Nodes.class) //
                 .child(Node.class,new NodeKey(10)).child(NodeChild.class, new NodeChildKey(10)).build();
-        InstanceIdentifier<NodeChild> nodeOneChild = InstanceIdentifier.builder(Nodes.class) //
+        final InstanceIdentifier<NodeChild> nodeOneChild = InstanceIdentifier.builder(Nodes.class) //
                 .child(Node.class,new NodeKey(1)).child(NodeChild.class, new NodeChildKey(1)).build();
-
 
         assertFalse(nodeTenChildWildcarded.containsWildcarded(nodeOneChild));
         assertTrue(nodeTenChildWildcarded.containsWildcarded(nodeTenChild));
-
-    }
-
-    void childOfTest() {
-        InstanceIdentifier.builder(Nodes.class).child(InstantiatedFoo.class).child(FooChild.class);
     }
 
     @Test
-    public void basicTests() {
-        InstanceIdentifier<DataObject> instanceIdentifier1 = InstanceIdentifier.create(DataObject.class);
-        InstanceIdentifier<DataObject> instanceIdentifier2 = InstanceIdentifier.create(DataObject.class);
-        Object object = new Object();
+    public void basicTests() throws Exception {
+        final InstanceIdentifier<DataObject> instanceIdentifier1 = InstanceIdentifier.create(DataObject.class);
+        final InstanceIdentifier<DataObject> instanceIdentifier2 = InstanceIdentifier.create(DataObject.class);
+        final InstanceIdentifier<DataObject> instanceIdentifier4 = InstanceIdentifier.create(DataObject.class);
+        final InstanceIdentifier<NodeChild> instanceIdentifier3 = InstanceIdentifier.builder(Nodes.class)
+                .child(Node.class, new NodeKey(10)).child(NodeChild.class).build();
+        final Object object = new Object();
 
         assertTrue(instanceIdentifier1.equals(instanceIdentifier1));
         assertFalse(instanceIdentifier1.equals(null));
         assertFalse(instanceIdentifier1.equals(object));
         assertTrue(instanceIdentifier1.equals(instanceIdentifier2));
 
-        assertNotNull(instanceIdentifier1.hashCode());
+        final Field pathArgumentsField = InstanceIdentifier.class.getDeclaredField("pathArguments");
+        final Field wildCardField = InstanceIdentifier.class.getDeclaredField("wildcarded");
+        pathArgumentsField.setAccessible(true);
+        wildCardField.setAccessible(true);
+        pathArgumentsField.set(instanceIdentifier2, instanceIdentifier1.pathArguments);
+        wildCardField.set(instanceIdentifier4, true);
 
+        assertTrue(instanceIdentifier1.equals(instanceIdentifier2));
+
+        assertFalse(instanceIdentifier1.equals(instanceIdentifier3));
+        assertFalse(instanceIdentifier1.equals(instanceIdentifier4));
+        final InstanceIdentifier instanceIdentifier5 = InstanceIdentifier.create(Node.class);
+        final Field hashField = InstanceIdentifier.class.getDeclaredField("hash");
+        hashField.setAccessible(true);
+        hashField.set(instanceIdentifier5, instanceIdentifier1.hashCode());
+        wildCardField.set(instanceIdentifier5, false);
+
+        assertFalse(instanceIdentifier1.equals(instanceIdentifier5));
+        assertNotNull(InstanceIdentifier.create(ImmutableList.copyOf(instanceIdentifier1.getPathArguments())));
+        assertNotNull(InstanceIdentifier.create(Nodes.class).child(Node.class));
+        assertNotNull(InstanceIdentifier.create(Nodes.class).child(Node.class, new NodeKey(5)));
+        assertNotNull(instanceIdentifier5.augmentation(DataObject.class));
+        assertNotNull(instanceIdentifier1.hashCode());
         assertNotNull(instanceIdentifier1.toString());
+
+        final InstanceIdentifierBuilder instanceIdentifierBuilder = instanceIdentifier1.builder();
+        assertEquals(instanceIdentifier1.hashCode(), instanceIdentifierBuilder.hashCode());
+        assertNotNull(instanceIdentifierBuilder.augmentation(InstantiatedFoo.class));
+        assertNotNull(instanceIdentifierBuilder.toInstance());
     }
 
     @Test
     public void firstIdentifierOfTest() {
-        InstanceIdentifier<Node> instanceIdentifier =
+        final InstanceIdentifier<Node> instanceIdentifier =
                 InstanceIdentifier.builder(Nodes.class).child(Node.class,new NodeKey(10)).build();
-
-        InstanceIdentifier<Nodes> nodesIdentifier = instanceIdentifier.firstIdentifierOf(Nodes.class);
+        final InstanceIdentifier<Nodes> nodesIdentifier = instanceIdentifier.firstIdentifierOf(Nodes.class);
         assertNotNull(nodesIdentifier);
-        InstanceIdentifier<DataObject> dataObjectIdentifier = instanceIdentifier.firstIdentifierOf(DataObject.class);
+        final InstanceIdentifier<DataObject> dataObjectIdentifier =
+                instanceIdentifier.firstIdentifierOf(DataObject.class);
         assertNull(dataObjectIdentifier);
+    }
+
+    @Test
+    public void firstKeyOfTest() {
+        final InstanceIdentifier<Node> instanceIdentifier =
+                InstanceIdentifier.builder(Nodes.class).child(Node.class,new NodeKey(10)).build();
+        final InstanceIdentifier<DataObject> instanceIdentifier1 = InstanceIdentifier.create(DataObject.class);
+        assertNotNull(instanceIdentifier.firstKeyOf(Node.class, null));
+        assertNull(instanceIdentifier1.firstKeyOf(Node.class));
+    }
+
+    @Test
+    public void keyOfTest() throws Exception {
+        final Identifier identifier = mock(Identifier.class);
+        assertEquals(identifier, InstanceIdentifier.keyOf(
+                new KeyedInstanceIdentifier(Identifiable.class, ImmutableList.of(), false, 0, identifier)));
+    }
+
+    @Test
+    public void serializationTest() throws Exception {
+        final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        final ObjectOutputStream outputStream = new ObjectOutputStream(byteArrayOutputStream);
+
+        final InstanceIdentifier<DataObject> instanceIdentifier = InstanceIdentifier.create(DataObject.class);
+        outputStream.writeObject(instanceIdentifier);
+        outputStream.flush();
+        outputStream.close();
+
+        final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+        final ObjectInputStream inputStream = new ObjectInputStream(byteArrayInputStream);
+        final InstanceIdentifier deserialized = (InstanceIdentifier) inputStream.readObject();
+
+        assertEquals(instanceIdentifier, deserialized);
     }
 }
