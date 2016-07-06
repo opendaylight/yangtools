@@ -445,7 +445,7 @@ class ClassTemplate extends BaseTemplate {
                             ENDIF»«
                         ENDFOR»);
 
-                        «generateStaticInicializationBlock»
+                        «generateStaticInitializationBlock»
                     «ENDIF»
                 «ELSE»
                     «emitConstant(c)»
@@ -459,7 +459,7 @@ class ClassTemplate extends BaseTemplate {
      *
      * @return string with static initialization block in JAVA format
      */
-    def protected generateStaticInicializationBlock() '''
+    def protected generateStaticInitializationBlock() '''
         static {
             final «Pattern.importedName» a[] = new «Pattern.importedName»[«TypeConstants.PATTERN_CONSTANT_NAME».size()];
             int i = 0;
