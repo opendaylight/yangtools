@@ -1,0 +1,18 @@
+module foo {
+    namespace "urn:test:foo";
+    prefix foo;
+
+    revision 2016-07-06 {
+    }
+
+    leaf class {
+        type string;
+    }
+
+    container foo-container {
+        leaf foo-in-container {
+            type string;
+            description "foo-in-container description";
+        }
+    }
+}

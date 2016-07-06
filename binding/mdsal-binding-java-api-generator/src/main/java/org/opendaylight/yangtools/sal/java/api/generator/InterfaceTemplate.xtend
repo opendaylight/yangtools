@@ -175,7 +175,12 @@ class InterfaceTemplate extends BaseTemplate {
     def private generateMethods() '''
         «IF !methods.empty»
             «FOR m : methods SEPARATOR "\n"»
-                «m.comment.asJavadoc»
+                «IF !m.isAccessor»
+                    «m.comment.asJavadoc»
+                «ELSE»
+                    «formatDataForJavaDoc(m, "@return " + asCode(m.returnType.fullyQualifiedName) + " "
+                    + asCode(propertyNameFromGetter(m)) + ", or " + asCode("null") + " if not present")»
+                «ENDIF»
                 «m.annotations.generateAnnotations»
                 «m.returnType.importedName» «m.name»(«m.parameters.generateParameters»);
             «ENDFOR»

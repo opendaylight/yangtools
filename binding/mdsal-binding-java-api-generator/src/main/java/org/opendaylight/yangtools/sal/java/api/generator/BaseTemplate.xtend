@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 import org.opendaylight.yangtools.sal.binding.model.api.Type
+import org.opendaylight.yangtools.sal.binding.model.api.TypeMember
 import org.opendaylight.yangtools.yang.common.QName
 
 abstract class BaseTemplate {
@@ -94,6 +95,10 @@ abstract class BaseTemplate {
             throw new IllegalArgumentException("Not a getter")
         }
         return getter.name.substring(prefix).toFirstLower;
+    }
+
+    final protected def isAccessor(MethodSignature maybeGetter) {
+        return maybeGetter.name.startsWith("is") || maybeGetter.name.startsWith("get");
     }
 
     /**
@@ -240,6 +245,25 @@ abstract class BaseTemplate {
         return '''
             «typeDescription.toString»
         '''.toString
+    }
+
+    def protected String formatDataForJavaDoc(TypeMember type, String additionalComment) {
+        val StringBuilder typeDescriptionBuilder = new StringBuilder();
+        if (!type.comment.nullOrEmpty) {
+            typeDescriptionBuilder.append(formatToParagraph(type.comment))
+            typeDescriptionBuilder.append(NEW_LINE)
+            typeDescriptionBuilder.append(NEW_LINE)
+            typeDescriptionBuilder.append(NEW_LINE)
+        }
+        typeDescriptionBuilder.append(additionalComment)
+        var typeDescription = wrapToDocumentation(typeDescriptionBuilder.toString)
+        return '''
+            «typeDescription»
+        '''.toString
+    }
+
+    def asCode(String text) {
+        return "<code>" + text + "</code>"
     }
 
     def asLink(String text) {
