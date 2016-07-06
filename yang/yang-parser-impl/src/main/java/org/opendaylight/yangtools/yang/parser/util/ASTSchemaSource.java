@@ -65,14 +65,12 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
     private final ParserRuleContext tree;
     private final SourceIdentifier id;
     private final SemVerSourceIdentifier semVerId;
-    private final String text;
 
-    private ASTSchemaSource(@Nonnull final SourceIdentifier id, @Nonnull final SemVerSourceIdentifier semVerId, @Nonnull final ParserRuleContext tree, @Nonnull final YangModelDependencyInfo depInfo, final String text) {
+    private ASTSchemaSource(@Nonnull final SourceIdentifier id, @Nonnull final SemVerSourceIdentifier semVerId, @Nonnull final ParserRuleContext tree, @Nonnull final YangModelDependencyInfo depInfo) {
         this.depInfo = Preconditions.checkNotNull(depInfo);
         this.tree = Preconditions.checkNotNull(tree);
         this.id = Preconditions.checkNotNull(id);
         this.semVerId = Preconditions.checkNotNull(semVerId);
-        this.text = text;
     }
 
     /**
@@ -88,7 +86,7 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
         final YangModelDependencyInfo depInfo = YangModelDependencyInfo.fromAST(name, tree);
         final SourceIdentifier id = getSourceId(depInfo);
         final SemVerSourceIdentifier semVerId = getSemVerSourceId(depInfo);
-        return new ASTSchemaSource(id, semVerId, tree, depInfo, null);
+        return new ASTSchemaSource(id, semVerId, tree, depInfo);
     }
 
     private static SourceIdentifier getSourceId(final YangModelDependencyInfo depInfo) {
@@ -109,26 +107,6 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
      * Create a new instance of AST representation for a abstract syntax tree,
      * performing minimal semantic analysis to acquire dependency information.
      *
-     * @param name YANG source name. Used only for error reporting.
-     * @param tree ANTLR abstract syntax tree
-     * @param text YANG text source
-     * @return A new representation instance.
-     * @throws YangSyntaxErrorException if we fail to extract dependency information.
-     *
-     * @deprecated Migration only, will be removed as soon as the migration is completed.
-     */
-    @Deprecated
-    public static ASTSchemaSource create(@Nonnull final String name, @Nonnull final ParserRuleContext tree, final String text) throws YangSyntaxErrorException {
-        final YangModelDependencyInfo depInfo = YangModelDependencyInfo.fromAST(name, tree);
-        final SourceIdentifier id = getSourceId(depInfo);
-        final SemVerSourceIdentifier semVerId = getSemVerSourceId(depInfo);
-        return new ASTSchemaSource(id, semVerId, tree, depInfo, text);
-    }
-
-    /**
-     * Create a new instance of AST representation for a abstract syntax tree,
-     * performing minimal semantic analysis to acquire dependency information.
-     *
      * @param identifier
      *            SourceIdentifier of yang schema source.
      * @param tree
@@ -138,7 +116,6 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
      * @return A new representation instance.
      * @throws YangSyntaxErrorException
      *             if we fail to extract dependency information.
-     *
      */
     public static ASTSchemaSource create(@Nonnull final SourceIdentifier identifier,
             @Nonnull final ParserRuleContext tree, final String text) throws YangSyntaxErrorException {
@@ -152,7 +129,7 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
             semVerId = getSemVerSourceId(depInfo);
         }
 
-        return new ASTSchemaSource(id, semVerId, tree, depInfo, text);
+        return new ASTSchemaSource(id, semVerId, tree, depInfo);
     }
 
     @Override
@@ -188,18 +165,5 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
      */
     @Nonnull public YangModelDependencyInfo getDependencyInformation() {
         return depInfo;
-    }
-
-    /**
-     * Return the semantically-equivalent text YANG text source.
-     *
-     * @return YANG text source
-     * @deprecated Used for migration purposes. Users are advised to use the
-     *             schema repository to acquire the representation of their
-     *             choice. Will be removed as soon as the migration is completed.
-     */
-    @Deprecated
-    @Nonnull public String getYangText() {
-        return text;
     }
 }
