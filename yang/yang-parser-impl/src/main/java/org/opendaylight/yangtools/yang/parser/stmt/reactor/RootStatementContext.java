@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Namesp
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 /**
  * root statement class for a Yang source
@@ -55,8 +56,11 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
      */
     private void copyDeclaredStmts(final RootStatementContext<A, D, E> original, final QNameModule newQNameModule,
             final TypeOfCopy typeOfCopy) {
-        Collection<? extends StmtContext<?, ?, ?>> originalDeclaredSubstatements = original.declaredSubstatements();
-        for (StmtContext<?, ?, ?> stmtContext : originalDeclaredSubstatements) {
+        final Collection<StatementContextBase<?, ?, ?>> originalDeclaredSubstatements = original.declaredSubstatements();
+        for (final StatementContextBase<?, ?, ?> stmtContext : originalDeclaredSubstatements) {
+            if (!StmtContextUtils.areFeaturesSupported(stmtContext)) {
+                continue;
+            }
             this.addEffectiveSubstatement(stmtContext.createCopy(newQNameModule, this, typeOfCopy));
         }
     }
@@ -70,8 +74,8 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
      */
     private void copyEffectiveStmts(final RootStatementContext<A, D, E> original, final QNameModule newQNameModule,
             final TypeOfCopy typeOfCopy) {
-        Collection<? extends StmtContext<?, ?, ?>> originalEffectiveSubstatements = original.effectiveSubstatements();
-        for (StmtContext<?, ?, ?> stmtContext : originalEffectiveSubstatements) {
+        final Collection<? extends StmtContext<?, ?, ?>> originalEffectiveSubstatements = original.effectiveSubstatements();
+        for (final StmtContext<?, ?, ?> stmtContext : originalEffectiveSubstatements) {
             this.addEffectiveSubstatement(stmtContext.createCopy(newQNameModule, this, typeOfCopy));
         }
     }
@@ -140,7 +144,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     @Override
     public StatementContextBase<A, D, E> createCopy(final QNameModule newQNameModule,
             final StatementContextBase<?, ?, ?> newParent, final TypeOfCopy typeOfCopy) {
-        RootStatementContext<A, D, E> copy = new RootStatementContext<>(this, newQNameModule, typeOfCopy);
+        final RootStatementContext<A, D, E> copy = new RootStatementContext<>(this, newQNameModule, typeOfCopy);
 
         copy.addAllToCopyHistory(this.getCopyHistory());
         copy.addToCopyHistory(typeOfCopy);
