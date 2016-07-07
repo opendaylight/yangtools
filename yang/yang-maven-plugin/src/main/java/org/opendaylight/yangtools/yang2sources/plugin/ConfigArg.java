@@ -46,6 +46,7 @@ public abstract class ConfigArg {
         private static final String TARGET_GENERATED_SOURCES = "target" + File.separator + "generated-sources";
         private static final String CODE_GEN_DEFAULT_RESOURCE_DIR = TARGET_GENERATED_SOURCES + File.separator + "spi";
         public static final String YANG_GENERATED_DIR = TARGET_GENERATED_SOURCES + File.separator + "yang";
+        public static final String YANG_SERVICES_GENERATED_DIR = TARGET_GENERATED_SOURCES + File.separator + "spi";
 
 
         private String codeGeneratorClass;
