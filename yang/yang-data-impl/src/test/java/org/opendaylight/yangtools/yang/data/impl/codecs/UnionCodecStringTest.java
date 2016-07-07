@@ -9,16 +9,17 @@
 package org.opendaylight.yangtools.yang.data.impl.codecs;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
 import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx;
 import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.getCodec;
 import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.toEnumTypeDefinition;
-import java.util.Arrays;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.UnionCodec;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.UnionType;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
+import org.opendaylight.yangtools.yang.model.util.type.UnionTypeBuilder;
 
 /**
  * Unit tests forUnionCodecString.
@@ -27,7 +28,13 @@ import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
  */
 public class UnionCodecStringTest {
     private static UnionTypeDefinition toUnionTypeDefinition(final TypeDefinition<?>... types) {
-        return UnionType.create(Arrays.asList(types));
+        final UnionTypeBuilder builder = BaseTypes.unionTypeBuilder(mock(SchemaPath.class));
+
+        for (TypeDefinition<?> t : types) {
+            builder.addType(t);
+        }
+
+        return builder.build();
     }
 
     @SuppressWarnings("unchecked")
