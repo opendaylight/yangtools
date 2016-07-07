@@ -29,30 +29,27 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> implements EffectiveStatement<A, D> {
 
-    private static final Predicate<StmtContext<?, ?,?>> IS_SUPPORTED_TO_BUILD_EFFECTIVE =
-            new Predicate<StmtContext<?,?,?>>() {
+    private static final Predicate<StmtContext<?, ?, ?>> IS_SUPPORTED_TO_BUILD_EFFECTIVE = new Predicate<StmtContext<?, ?, ?>>() {
         @Override
         public boolean apply(final StmtContext<?, ?, ?> input) {
             return input.isSupportedToBuildEffective();
         }
     };
 
-    private static final Predicate<StmtContext<?, ?,?>> IS_UNKNOWN_STATEMENT_CONTEXT =
-            new Predicate<StmtContext<?,?,?>>() {
+    private static final Predicate<StmtContext<?, ?, ?>> IS_UNKNOWN_STATEMENT_CONTEXT = new Predicate<StmtContext<?, ?, ?>>() {
         @Override
         public boolean apply(final StmtContext<?, ?, ?> input) {
             return StmtContextUtils.isUnknownStatement(input);
         }
     };
 
-    private static final Predicate<StmtContext<?, ?, ?>> ARE_FEATURES_SUPPORTED =
-            new Predicate<StmtContext<?, ?, ?>>() {
+    private static final Predicate<StatementContextBase<?, ?, ?>> ARE_FEATURES_SUPPORTED = new Predicate<StatementContextBase<?, ?, ?>>() {
 
-                @Override
-                public boolean apply(StmtContext<?, ?, ?> input) {
-                    return StmtContextUtils.areFeaturesSupported(input);
-                }
-            };
+        @Override
+        public boolean apply(final StatementContextBase<?, ?, ?> input) {
+            return StmtContextUtils.areFeaturesSupported(input);
+        }
+    };
 
     private final List<? extends EffectiveStatement<?, ?>> substatements;
     private final List<StatementContextBase<?, ?, ?>> unknownSubstatementsToBuild;
@@ -73,12 +70,14 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
      *            method. The main purpose of this is to allow the build of
      *            recursive extension definitions.
      */
-    protected EffectiveStatementBase(final StmtContext<A, D, ?> ctx, boolean buildUnknownSubstatements) {
+    protected EffectiveStatementBase(final StmtContext<A, D, ?> ctx, final boolean buildUnknownSubstatements) {
 
         final Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements = ctx.effectiveSubstatements();
         final Collection<StatementContextBase<?, ?, ?>> substatementsInit = new ArrayList<>();
 
-        for (StatementContextBase<?, ?, ?> declaredSubstatement : ctx.declaredSubstatements()) {
+        final Collection<StatementContextBase<?, ?, ?>> supportedDeclaredSubStmts = Collections2.filter(
+                ctx.declaredSubstatements(), ARE_FEATURES_SUPPORTED);
+        for (final StatementContextBase<?, ?, ?> declaredSubstatement : supportedDeclaredSubStmts) {
             if (declaredSubstatement.getPublicDefinition().equals(Rfc6020Mapping.USES)) {
                 substatementsInit.add(declaredSubstatement);
                 substatementsInit.addAll(declaredSubstatement.getEffectOfStatement());
@@ -101,14 +100,14 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
             this.unknownSubstatementsToBuild = ImmutableList.of();
         }
 
-        substatementsToBuild = Collections2.filter(substatementsToBuild, ARE_FEATURES_SUPPORTED);
-
-        Function<StmtContext<?, ?, ? extends EffectiveStatement<?, ?>>, EffectiveStatement<?, ?>> buildEffective = StmtContextUtils.buildEffective();
+        final Function<StmtContext<?, ?, ? extends EffectiveStatement<?, ?>>, EffectiveStatement<?, ?>> buildEffective = StmtContextUtils
+                .buildEffective();
         this.substatements = ImmutableList.copyOf(Collections2.transform(substatementsToBuild, buildEffective));
     }
 
     Collection<EffectiveStatement<?, ?>> getOmittedUnknownSubstatements() {
-        Function<StmtContext<?, ?, ? extends EffectiveStatement<?, ?>>, EffectiveStatement<?, ?>> buildEffective = StmtContextUtils.buildEffective();
+        final Function<StmtContext<?, ?, ? extends EffectiveStatement<?, ?>>, EffectiveStatement<?, ?>> buildEffective = StmtContextUtils
+                .buildEffective();
         return Collections2.transform(unknownSubstatementsToBuild, buildEffective);
     }
 
@@ -132,13 +131,13 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
     }
 
     protected final <S extends EffectiveStatement<?, ?>> S firstEffective(final Class<S> type) {
-        Optional<? extends EffectiveStatement<?, ?>> possible = Iterables.tryFind(substatements,
+        final Optional<? extends EffectiveStatement<?, ?>> possible = Iterables.tryFind(substatements,
                 Predicates.instanceOf(type));
         return possible.isPresent() ? type.cast(possible.get()) : null;
     }
 
     protected final <S extends SchemaNode> S firstSchemaNode(final Class<S> type) {
-        Optional<? extends EffectiveStatement<?, ?>> possible = Iterables.tryFind(substatements,
+        final Optional<? extends EffectiveStatement<?, ?>> possible = Iterables.tryFind(substatements,
                 Predicates.instanceOf(type));
         return possible.isPresent() ? type.cast(possible.get()) : null;
     }
@@ -149,13 +148,13 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
     }
 
     protected final <T> T firstSubstatementOfType(final Class<T> type) {
-        Optional<? extends EffectiveStatement<?, ?>> possible = Iterables.tryFind(substatements,
+        final Optional<? extends EffectiveStatement<?, ?>> possible = Iterables.tryFind(substatements,
                 Predicates.instanceOf(type));
         return possible.isPresent() ? type.cast(possible.get()) : null;
     }
 
     protected final <R> R firstSubstatementOfType(final Class<?> type, final Class<R> returnType) {
-        Optional<? extends EffectiveStatement<?, ?>> possible = Iterables.tryFind(substatements,
+        final Optional<? extends EffectiveStatement<?, ?>> possible = Iterables.tryFind(substatements,
                 Predicates.and(Predicates.instanceOf(type), Predicates.instanceOf(returnType)));
         return possible.isPresent() ? returnType.cast(possible.get()) : null;
     }
