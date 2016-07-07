@@ -24,6 +24,7 @@ import java.util.function.Predicate;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.repo.api.IfFeaturePredicates;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -55,7 +56,7 @@ public class CrossSourceStatementReactor {
     }
 
     public final BuildAction newBuild() {
-        return newBuild(StatementParserMode.DEFAULT_MODE, t -> true);
+        return newBuild(StatementParserMode.DEFAULT_MODE, IfFeaturePredicates.ALL_FEATURES);
     }
 
     public final BuildAction newBuild(final Predicate<QName> isFeatureSupported) {
@@ -63,7 +64,7 @@ public class CrossSourceStatementReactor {
     }
 
     public final BuildAction newBuild(final StatementParserMode statementParserMode) {
-        return new BuildAction(statementParserMode, t -> true);
+        return new BuildAction(statementParserMode, IfFeaturePredicates.ALL_FEATURES);
     }
 
     public final BuildAction newBuild(final StatementParserMode statementParserMode,
@@ -96,18 +97,18 @@ public class CrossSourceStatementReactor {
         private final BuildGlobalContext context;
 
         public BuildAction() {
-            this(StatementParserMode.DEFAULT_MODE, t -> true);
+            this(StatementParserMode.DEFAULT_MODE, IfFeaturePredicates.ALL_FEATURES);
         }
 
-        public BuildAction(StatementParserMode statementParserMode) {
-            this(statementParserMode, t -> true);
+        public BuildAction(final StatementParserMode statementParserMode) {
+            this(statementParserMode, IfFeaturePredicates.ALL_FEATURES);
         }
 
-        public BuildAction(Predicate<QName> isFeatureSupported) {
+        public BuildAction(final Predicate<QName> isFeatureSupported) {
             this(StatementParserMode.DEFAULT_MODE, isFeatureSupported);
         }
 
-        public BuildAction(StatementParserMode statementParserMode, Predicate<QName> isFeatureSupported) {
+        public BuildAction(final StatementParserMode statementParserMode, final Predicate<QName> isFeatureSupported) {
             this.context = new BuildGlobalContext(supportedTerminology, supportedValidation, statementParserMode,
                     isFeatureSupported);
         }
@@ -117,7 +118,7 @@ public class CrossSourceStatementReactor {
         }
 
         public void addSources(final StatementStreamSource... sources) {
-            for (StatementStreamSource source : sources) {
+            for (final StatementStreamSource source : sources) {
                 context.addSource(source);
             }
         }
@@ -136,7 +137,7 @@ public class CrossSourceStatementReactor {
 
         public SchemaContext buildEffective(final Collection<ByteSource> yangByteSources) throws ReactorException,
                 IOException {
-            for (ByteSource yangByteSource : yangByteSources) {
+            for (final ByteSource yangByteSource : yangByteSources) {
                 addSource(new YangStatementSourceImpl(yangByteSource.openStream()));
             }
 
@@ -144,7 +145,7 @@ public class CrossSourceStatementReactor {
         }
 
         public SchemaContext buildEffective(final List<InputStream> yangInputStreams) throws ReactorException {
-            for (InputStream yangInputStream : yangInputStreams) {
+            for (final InputStream yangInputStream : yangInputStreams) {
                 addSource(new YangStatementSourceImpl(yangInputStream));
             }
 
@@ -162,17 +163,17 @@ public class CrossSourceStatementReactor {
                 return Collections.emptyMap();
             }
 
-            Map<String, File> pathToFile = new HashMap<>();
-            Map<File, Module> sourceFileToModule = new HashMap<>();
+            final Map<String, File> pathToFile = new HashMap<>();
+            final Map<File, Module> sourceFileToModule = new HashMap<>();
 
-            for (File yangFile : yangFiles) {
+            for (final File yangFile : yangFiles) {
                 addSource(new YangStatementSourceImpl(new NamedFileInputStream(yangFile, yangFile.getPath())));
                 pathToFile.put(yangFile.getPath(), yangFile);
             }
 
-            EffectiveSchemaContext schema = buildEffective();
-            Set<Module> modules = schema.getModules();
-            for (Module module : modules) {
+            final EffectiveSchemaContext schema = buildEffective();
+            final Set<Module> modules = schema.getModules();
+            for (final Module module : modules) {
                 sourceFileToModule.put(pathToFile.get(module.getModuleSourcePath()), module);
             }
 
