@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.DerivedType;
 
 public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> implements DataStringCodec<J> {
     private final Optional<T> typeDefinition;
@@ -48,31 +47,29 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
     @SuppressWarnings("unchecked")
     public static <T extends TypeDefinition<T>> TypeDefinitionAwareCodec<?, T> fromType(final T typeDefinition) {
-        // FIXME: this is not necessary with yang.model.util.type
-        final T normalizedType = (T) DerivedType.from(typeDefinition);
         @SuppressWarnings("rawtypes")
         final TypeDefinitionAwareCodec codec;
 
-        if (normalizedType instanceof BinaryTypeDefinition) {
-            codec = BinaryStringCodec.from((BinaryTypeDefinition)normalizedType);
-        } else if (normalizedType instanceof BitsTypeDefinition) {
-            codec = BitsStringCodec.from((BitsTypeDefinition)normalizedType);
-        } else if (normalizedType instanceof BooleanTypeDefinition) {
-            codec = BooleanStringCodec.from((BooleanTypeDefinition)normalizedType);
-        } else if (normalizedType instanceof DecimalTypeDefinition) {
-            codec = DecimalStringCodec.from((DecimalTypeDefinition)normalizedType);
-        } else if (normalizedType instanceof EmptyTypeDefinition) {
+        if (typeDefinition instanceof BinaryTypeDefinition) {
+            codec = BinaryStringCodec.from((BinaryTypeDefinition)typeDefinition);
+        } else if (typeDefinition instanceof BitsTypeDefinition) {
+            codec = BitsStringCodec.from((BitsTypeDefinition)typeDefinition);
+        } else if (typeDefinition instanceof BooleanTypeDefinition) {
+            codec = BooleanStringCodec.from((BooleanTypeDefinition)typeDefinition);
+        } else if (typeDefinition instanceof DecimalTypeDefinition) {
+            codec = DecimalStringCodec.from((DecimalTypeDefinition)typeDefinition);
+        } else if (typeDefinition instanceof EmptyTypeDefinition) {
             codec = EmptyStringCodec.INSTANCE;
-        } else if (normalizedType instanceof EnumTypeDefinition) {
-            codec = EnumStringCodec.from((EnumTypeDefinition)normalizedType);
-        } else if (normalizedType instanceof IntegerTypeDefinition) {
-            codec = AbstractIntegerStringCodec.from((IntegerTypeDefinition) normalizedType);
-        } else if (normalizedType instanceof StringTypeDefinition) {
-            codec = StringStringCodec.from((StringTypeDefinition)normalizedType);
-        } else if (normalizedType instanceof UnionTypeDefinition) {
-            codec = UnionStringCodec.from((UnionTypeDefinition)normalizedType);
-        } else if (normalizedType instanceof UnsignedIntegerTypeDefinition) {
-            codec = AbstractIntegerStringCodec.from((UnsignedIntegerTypeDefinition) normalizedType);
+        } else if (typeDefinition instanceof EnumTypeDefinition) {
+            codec = EnumStringCodec.from((EnumTypeDefinition)typeDefinition);
+        } else if (typeDefinition instanceof IntegerTypeDefinition) {
+            codec = AbstractIntegerStringCodec.from((IntegerTypeDefinition) typeDefinition);
+        } else if (typeDefinition instanceof StringTypeDefinition) {
+            codec = StringStringCodec.from((StringTypeDefinition)typeDefinition);
+        } else if (typeDefinition instanceof UnionTypeDefinition) {
+            codec = UnionStringCodec.from((UnionTypeDefinition)typeDefinition);
+        } else if (typeDefinition instanceof UnsignedIntegerTypeDefinition) {
+            codec = AbstractIntegerStringCodec.from((UnsignedIntegerTypeDefinition) typeDefinition);
         } else {
             codec = null;
         }

@@ -678,17 +678,11 @@ public final class SchemaContextUtil {
             nodeType = ((LeafSchemaNode) schemaNode).getType();
         } else if (schemaNode instanceof LeafListSchemaNode) {
             nodeType = ((LeafListSchemaNode) schemaNode).getType();
+        } else {
+            throw new IllegalArgumentException("Unsupported node " + schemaNode);
         }
 
-        if (nodeType instanceof ExtendedType) {
-            while (nodeType.getBaseType() instanceof ExtendedType) {
-                nodeType = nodeType.getBaseType();
-            }
-
-            QNameModule typeDefModuleQname = nodeType.getQName().getModule();
-            return schemaContext.findModuleByNamespaceAndRevision(typeDefModuleQname.getNamespace(),
-                    typeDefModuleQname.getRevision());
-        } else if (nodeType.getBaseType() != null) {
+        if (nodeType.getBaseType() != null) {
             while (nodeType.getBaseType() != null) {
                 nodeType = nodeType.getBaseType();
             }
