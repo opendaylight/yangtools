@@ -22,6 +22,30 @@
       "revId": "ff12d2a12d9dc9d10814430e827d1ac528a62e36",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_4e0d2090",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/StatementContextBase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2016-07-07T15:21:32Z",
+      "side": 1,
+      "message": "I should be in line with the likely number of typically expected entries (OnPhaseFinished), but I just made it up... ;-) Removed it now, for clarity; better. Thanks for catching.",
+      "parentUuid": "9a561d44_282709b8",
+      "range": {
+        "startLine": 97,
+        "startChar": 103,
+        "endLine": 97,
+        "endChar": 105
+      },
+      "revId": "ff12d2a12d9dc9d10814430e827d1ac528a62e36",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
