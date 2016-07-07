@@ -36,8 +36,8 @@ import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNa
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.GroupingUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends StatementContextBase<A, D, E> {
+final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> extends
+        StatementContextBase<A, D, E> {
 
     private final StatementContextBase<?, ?, ?> parent;
     private final A argument;
@@ -50,22 +50,19 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     }
 
     @SuppressWarnings("unchecked")
-    SubstatementContext(final SubstatementContext<A, D, E> original,
-            final QNameModule newQNameModule,
+    SubstatementContext(final SubstatementContext<A, D, E> original, final QNameModule newQNameModule,
             final StatementContextBase<?, ?, ?> newParent, final TypeOfCopy typeOfCopy) {
         super(original);
         this.parent = newParent;
 
         if (newQNameModule != null) {
             if (original.argument instanceof QName) {
-                QName originalQName = (QName) original.argument;
-                this.argument = (A)
-                        getFromNamespace(QNameCacheNamespace.class,
-                            QName.create(newQNameModule, originalQName.getLocalName()));
+                final QName originalQName = (QName) original.argument;
+                this.argument = (A) getFromNamespace(QNameCacheNamespace.class,
+                        QName.create(newQNameModule, originalQName.getLocalName()));
             } else if (StmtContextUtils.producesDeclared(original, KeyStatement.class)) {
                 this.argument = (A) StmtContextUtils.replaceModuleQNameForKey(
-                                (StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?>) original,
-                                newQNameModule);
+                        (StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?>) original, newQNameModule);
             } else {
                 this.argument = original.argument;
             }
@@ -74,15 +71,16 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         }
     }
 
-
-    private void copyDeclaredStmts(final SubstatementContext<A, D, E> original,
-            final QNameModule newQNameModule, final TypeOfCopy typeOfCopy) {
-        Collection<? extends StatementContextBase<?, ?, ?>> originalDeclaredSubstatements = original
+    private void copyDeclaredStmts(final SubstatementContext<A, D, E> original, final QNameModule newQNameModule,
+            final TypeOfCopy typeOfCopy) {
+        final Collection<? extends StatementContextBase<?, ?, ?>> originalDeclaredSubstatements = original
                 .declaredSubstatements();
-        for (StatementContextBase<?, ?, ?> stmtContext : originalDeclaredSubstatements) {
+        for (final StatementContextBase<?, ?, ?> stmtContext : originalDeclaredSubstatements) {
+            if (!StmtContextUtils.areFeaturesSupported(stmtContext)) {
+                continue;
+            }
             if (GroupingUtils.needToCopyByUses(stmtContext)) {
-                StatementContextBase<?, ?, ?> copy = stmtContext.createCopy(
-                        newQNameModule, this, typeOfCopy);
+                final StatementContextBase<?, ?, ?> copy = stmtContext.createCopy(newQNameModule, this, typeOfCopy);
                 this.addEffectiveSubstatement(copy);
             } else if (GroupingUtils.isReusedByUses(stmtContext)) {
                 this.addEffectiveSubstatement(stmtContext);
@@ -90,14 +88,13 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         }
     }
 
-    private void copyEffectiveStmts(final SubstatementContext<A, D, E> original,
-            final QNameModule newQNameModule, final TypeOfCopy typeOfCopy) {
-        Collection<? extends StatementContextBase<?, ?, ?>> originalEffectiveSubstatements = original
+    private void copyEffectiveStmts(final SubstatementContext<A, D, E> original, final QNameModule newQNameModule,
+            final TypeOfCopy typeOfCopy) {
+        final Collection<? extends StatementContextBase<?, ?, ?>> originalEffectiveSubstatements = original
                 .effectiveSubstatements();
-        for (StatementContextBase<?, ?, ?> stmtContext : originalEffectiveSubstatements) {
+        for (final StatementContextBase<?, ?, ?> stmtContext : originalEffectiveSubstatements) {
             if (GroupingUtils.needToCopyByUses(stmtContext)) {
-                StatementContextBase<?, ?, ?> copy = stmtContext.createCopy(
-                        newQNameModule, this, typeOfCopy);
+                final StatementContextBase<?, ?, ?> copy = stmtContext.createCopy(newQNameModule, this, typeOfCopy);
                 this.addEffectiveSubstatement(copy);
             } else if (GroupingUtils.isReusedByUses(stmtContext)) {
                 this.addEffectiveSubstatement(stmtContext);
@@ -131,15 +128,15 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     }
 
     @Override
-    public StatementContextBase<?, ?, ?> createCopy(
-            final StatementContextBase<?, ?, ?> newParent, final TypeOfCopy typeOfCopy) {
+    public StatementContextBase<?, ?, ?> createCopy(final StatementContextBase<?, ?, ?> newParent,
+            final TypeOfCopy typeOfCopy) {
         return createCopy(null, newParent, typeOfCopy);
     }
 
     @Override
     public StatementContextBase<A, D, E> createCopy(final QNameModule newQNameModule,
             final StatementContextBase<?, ?, ?> newParent, final TypeOfCopy typeOfCopy) {
-        SubstatementContext<A, D, E> copy = new SubstatementContext<>(this, newQNameModule, newParent, typeOfCopy);
+        final SubstatementContext<A, D, E> copy = new SubstatementContext<>(this, newQNameModule, newParent, typeOfCopy);
 
         copy.addAllToCopyHistory(this.getCopyHistory());
         copy.addToCopyHistory(typeOfCopy);
@@ -169,7 +166,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         final SchemaPath parentPath = maybeParentPath.get();
 
         if (argument instanceof QName) {
-            QName qname = (QName) argument;
+            final QName qname = (QName) argument;
             if (StmtContextUtils.producesDeclared(this, UsesStatement.class)) {
                 return maybeParentPath.orNull();
             }
@@ -187,13 +184,13 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         if (argument instanceof String) {
             // FIXME: This may yield illegal argument exceptions
             final StatementContextBase<?, ?, ?> originalCtx = getOriginalCtx();
-            final QName qname = (originalCtx != null) ? Utils.qNameFromArgument(originalCtx, (String) argument)
-                    : Utils.qNameFromArgument(this, (String) argument);
+            final QName qname = (originalCtx != null) ? Utils.qNameFromArgument(originalCtx, (String) argument) : Utils
+                    .qNameFromArgument(this, (String) argument);
             return parentPath.createChild(qname);
         }
-        if (argument instanceof SchemaNodeIdentifier &&
-                (StmtContextUtils.producesDeclared(this, AugmentStatement.class)
-                   || StmtContextUtils.producesDeclared(this, RefineStatement.class))) {
+        if (argument instanceof SchemaNodeIdentifier
+                && (StmtContextUtils.producesDeclared(this, AugmentStatement.class) || StmtContextUtils
+                        .producesDeclared(this, RefineStatement.class))) {
 
             return parentPath.createChild(((SchemaNodeIdentifier) argument).getPathFromRoot());
         }
@@ -229,8 +226,8 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
     @Override
     public boolean isConfiguration() {
-        StmtContext<Boolean, ?, ?> configStatement = StmtContextUtils
-                .findFirstSubstatement(this, ConfigStatement.class);
+        final StmtContext<Boolean, ?, ?> configStatement = StmtContextUtils.findFirstSubstatement(this,
+                ConfigStatement.class);
 
         /*
          * If "config" statement is not specified, the default is the same as
@@ -241,8 +238,8 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         }
 
         /*
-         * If a parent node has "config" set to "true", the node underneath it can
-         * have "config" set to "true" or "false".
+         * If a parent node has "config" set to "true", the node underneath it
+         * can have "config" set to "true" or "false".
          */
         if (parent.isConfiguration()) {
             return configStatement.getStatementArgument();

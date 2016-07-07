@@ -34,7 +34,7 @@ public interface SchemaContextFactory {
      */
     default CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
             @Nonnull Collection<SourceIdentifier> requiredSources) {
-        return createSchemaContext(requiredSources, StatementParserMode.DEFAULT_MODE, t -> true);
+        return createSchemaContext(requiredSources, StatementParserMode.DEFAULT_MODE, IfFeaturePredicates.ALL_FEATURES);
     }
 
     /**
@@ -51,7 +51,7 @@ public interface SchemaContextFactory {
      */
     default CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
             Collection<SourceIdentifier> requiredSources, StatementParserMode statementParserMode) {
-        return createSchemaContext(requiredSources, statementParserMode, t -> true);
+        return createSchemaContext(requiredSources, statementParserMode, IfFeaturePredicates.ALL_FEATURES);
     }
 
     /**
