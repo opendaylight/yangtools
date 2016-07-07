@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.DerivedType;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,15 +95,14 @@ public final class JSONCodecFactory {
 
     @SuppressWarnings("unchecked")
     private JSONCodec<Object> createCodec(final DataSchemaNode key, final TypeDefinition<?> type) {
-        final TypeDefinition<?> normalizedType = DerivedType.from(type);
-        if (normalizedType instanceof LeafrefTypeDefinition) {
-            return createReferencedTypeCodec(key, (LeafrefTypeDefinition) normalizedType);
-        } else if (normalizedType instanceof IdentityrefTypeDefinition) {
+        if (type instanceof LeafrefTypeDefinition) {
+            return createReferencedTypeCodec(key, (LeafrefTypeDefinition) type);
+        } else if (type instanceof IdentityrefTypeDefinition) {
             final JSONCodec<?> jsonStringIdentityrefCodec =
                     new JSONStringIdentityrefCodec(schemaContext, key.getQName().getModule());
             return (JSONCodec<Object>) jsonStringIdentityrefCodec;
         }
-        return createFromSimpleType(normalizedType);
+        return createFromSimpleType(type);
     }
 
     private JSONCodec<Object> createReferencedTypeCodec(final DataSchemaNode schema,
