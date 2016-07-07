@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.DerivedType;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -118,19 +117,17 @@ public final class DomUtils {
     }
 
     public static Object parseXmlValue(final Element xml, final XmlCodecProvider codecProvider, final DataSchemaNode schema, final TypeDefinition<?> type, final SchemaContext schemaCtx) {
-        TypeDefinition<?> baseType = DerivedType.from(type);
-
         String text = xml.getTextContent();
         text = text.trim();
         final Object value;
 
-        if (baseType instanceof LeafrefTypeDefinition) {
-            final LeafrefTypeDefinition leafrefTypeDefinition = (LeafrefTypeDefinition) baseType;
-            baseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypeDefinition, schemaCtx, schema);
+        if (type instanceof LeafrefTypeDefinition) {
+            final LeafrefTypeDefinition leafrefTypeDefinition = (LeafrefTypeDefinition) type;
+            TypeDefinition<?> baseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypeDefinition, schemaCtx, schema);
             value = parseXmlValue(xml, codecProvider, schema, baseType, schemaCtx);
-        } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
+        } else if (type instanceof InstanceIdentifierTypeDefinition) {
             value = InstanceIdentifierForXmlCodec.deserialize(xml, schemaCtx);
-        } else if (baseType instanceof IdentityrefTypeDefinition) {
+        } else if (type instanceof IdentityrefTypeDefinition) {
             value = InstanceIdentifierForXmlCodec.toIdentity(text, xml, schemaCtx);
         } else {
             value = parseXmlValue(xml, codecProvider, type);
