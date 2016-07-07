@@ -101,6 +101,12 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     List<TypeOfCopy> getCopyHistory();
 
+    enum SupportedByFeatures {
+        UNDEFINED, SUPPORTED, NOT_SUPPORTED
+    }
+
+    SupportedByFeatures getSupportedByFeatures();
+
     void addAllToCopyHistory(List<TypeOfCopy> typeOfCopyList);
 
     void addToCopyHistory(TypeOfCopy typeOfCopy);
@@ -137,6 +143,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(
                 Class<N> namespace, KT key, StmtContext<?, ?, ?> stmt);
 
+        void setSupportedByFeatures(boolean isSupported);
     }
 
 }
