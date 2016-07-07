@@ -91,6 +91,20 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <artifactId>maven-help-plugin</artifactId>
+                <configuration>
+                    <output>${project.build.directory}/effective-settings.xml</output>
+                </configuration>
+                <executions>
+                    <execution>
+                      <phase>pre-integration-test</phase>
+                      <goals>
+                          <goal>effective-settings</goal>
+                      </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
