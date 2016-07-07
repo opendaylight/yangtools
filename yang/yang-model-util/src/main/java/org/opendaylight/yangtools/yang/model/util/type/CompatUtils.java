@@ -20,11 +20,10 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 
 /**
- * Compatibility utilities for dealing with differences between the {@link ExtendedType}-driven type representation
- * versus the representation this package models.
+ * Compatibility utilities for dealing with differences between the old parser's ExtendedType-driven type
+ * representation versus the representation this package models.
  *
  * @deprecated This class is provided strictly for compatibility only. No new users should be introduced, as this class
  *             is scheduled for removal when its two OpenDaylight users, Java Binding v1 and YANG JMX Bindings are
@@ -111,11 +110,6 @@ public final class CompatUtils {
     @Nonnull public static TypeDefinition<?> compatLeafType(@Nonnull final LeafSchemaNode leaf) {
         final TypeDefinition<?> leafType = leaf.getType();
         Preconditions.checkNotNull(leafType);
-
-        if (leafType instanceof ExtendedType) {
-            // Old parser referring to a typedef
-            return leafType;
-        }
 
         if (!leaf.getPath().equals(leafType.getPath())) {
             // Old parser semantics, or no new default/units defined for this leaf
