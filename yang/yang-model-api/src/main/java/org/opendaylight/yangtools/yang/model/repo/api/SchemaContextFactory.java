@@ -33,8 +33,8 @@ public interface SchemaContextFactory {
      *         failed.
      */
     default CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
-            @Nonnull Collection<SourceIdentifier> requiredSources) {
-        return createSchemaContext(requiredSources, StatementParserMode.DEFAULT_MODE, t -> true);
+            @Nonnull final Collection<SourceIdentifier> requiredSources) {
+        return createSchemaContext(requiredSources, StatementParserMode.DEFAULT_MODE, IfFeaturePredicates.ALL_FEATURES);
     }
 
     /**
@@ -50,8 +50,8 @@ public interface SchemaContextFactory {
      *         failed.
      */
     default CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
-            Collection<SourceIdentifier> requiredSources, StatementParserMode statementParserMode) {
-        return createSchemaContext(requiredSources, statementParserMode, t -> true);
+            final Collection<SourceIdentifier> requiredSources, final StatementParserMode statementParserMode) {
+        return createSchemaContext(requiredSources, statementParserMode, IfFeaturePredicates.ALL_FEATURES);
     }
 
     /**
@@ -68,7 +68,7 @@ public interface SchemaContextFactory {
      *         failed.
      */
     default CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
-            @Nonnull Collection<SourceIdentifier> requiredSources, Predicate<QName> isFeatureSupported) {
+            @Nonnull final Collection<SourceIdentifier> requiredSources, final Predicate<QName> isFeatureSupported) {
         return createSchemaContext(requiredSources, StatementParserMode.DEFAULT_MODE, isFeatureSupported);
     }
 

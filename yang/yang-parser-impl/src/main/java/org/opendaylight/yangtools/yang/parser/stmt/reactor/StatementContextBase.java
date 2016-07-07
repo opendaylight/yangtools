@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
@@ -102,6 +101,17 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private final List<TypeOfCopy> copyHistory = new ArrayList<>(1);
 
     private boolean isSupportedToBuildEffective = true;
+    private SupportedByFeatures supportedByFeatures = SupportedByFeatures.UNDEFINED;
+
+    @Override
+    public SupportedByFeatures getSupportedByFeatures() {
+        return supportedByFeatures;
+    }
+
+    @Override
+    public void setSupportedByFeatures(final boolean isSupported) {
+        this.supportedByFeatures = isSupported ? SupportedByFeatures.SUPPORTED : SupportedByFeatures.NOT_SUPPORTED;
+    }
 
     @Override
     public boolean isSupportedToBuildEffective() {
@@ -251,9 +261,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     public void removeStatementFromEffectiveSubstatements(final StatementDefinition refineSubstatementDef) {
-        Iterator<StatementContextBase<?, ?, ?>> iterator = effective.iterator();
+        final Iterator<StatementContextBase<?, ?, ?>> iterator = effective.iterator();
         while (iterator.hasNext()) {
-            StatementContextBase<?, ?, ?> next = iterator.next();
+            final StatementContextBase<?, ?, ?> next = iterator.next();
             if (next.getPublicDefinition().equals(refineSubstatementDef)) {
                 iterator.remove();
             }
@@ -318,7 +328,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             public StatementContextBase build() throws SourceException {
                 StatementContextBase<?, ?, ?> potential = null;
 
-                StatementDefinition stmtDef = getDefinition().getPublicView();
+                final StatementDefinition stmtDef = getDefinition().getPublicView();
                 if (stmtDef != Rfc6020Mapping.AUGMENT && stmtDef != Rfc6020Mapping.DEVIATION
                         && stmtDef != Rfc6020Mapping.TYPE) {
                     potential = substatements.get(createIdentifier());
@@ -399,20 +409,20 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *             when an error occured in source parsing
      */
     boolean tryToCompletePhase(final ModelProcessingPhase phase) {
-        Iterator<ContextMutation> openMutations = phaseMutation.get(phase).iterator();
+        final Iterator<ContextMutation> openMutations = phaseMutation.get(phase).iterator();
         boolean finished = true;
         while (openMutations.hasNext()) {
-            ContextMutation current = openMutations.next();
+            final ContextMutation current = openMutations.next();
             if (current.isFinished()) {
                 openMutations.remove();
             } else {
                 finished = false;
             }
         }
-        for (StatementContextBase<?, ?, ?> child : declared) {
+        for (final StatementContextBase<?, ?, ?> child : declared) {
             finished &= child.tryToCompletePhase(phase);
         }
-        for (StatementContextBase<?, ?, ?> child : effective) {
+        for (final StatementContextBase<?, ?, ?> child : effective) {
             finished &= child.tryToCompletePhase(phase);
         }
 
@@ -433,9 +443,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      */
     private void onPhaseCompleted(final ModelProcessingPhase phase) {
         completedPhase = phase;
-        Iterator<OnPhaseFinished> listener = phaseListeners.get(completedPhase).iterator();
+        final Iterator<OnPhaseFinished> listener = phaseListeners.get(completedPhase).iterator();
         while (listener.hasNext()) {
-            OnPhaseFinished next = listener.next();
+            final OnPhaseFinished next = listener.next();
             if (next.phaseFinished(this, phase)) {
                 listener.remove();
             }
@@ -476,20 +486,20 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type, final K key,
             final OnNamespaceItemAdded listener) throws SourceException {
-        Object potential = getFromNamespace(type, key);
+        final Object potential = getFromNamespace(type, key);
         if (potential != null) {
             listener.namespaceItemAdded(this, type, key, potential);
             return;
         }
-        NamespaceBehaviour<K, V, N> behaviour = getBehaviourRegistry().getNamespaceBehaviour(type);
+        final NamespaceBehaviour<K, V, N> behaviour = getBehaviourRegistry().getNamespaceBehaviour(type);
         if (behaviour instanceof NamespaceBehaviourWithListeners) {
-            NamespaceBehaviourWithListeners<K, V, N> casted = (NamespaceBehaviourWithListeners<K, V, N>) behaviour;
+            final NamespaceBehaviourWithListeners<K, V, N> casted = (NamespaceBehaviourWithListeners<K, V, N>) behaviour;
             casted.addValueListener(new ValueAddedListener<K>(this, key) {
                 @Override
                 void onValueAdded(final Object key, final Object value) {
                     try {
                         listener.namespaceItemAdded(StatementContextBase.this, type, key, value);
-                    } catch (SourceException e) {
+                    } catch (final SourceException e) {
                         throw Throwables.propagate(e);
                     }
                 }
