@@ -14,6 +14,7 @@ import static org.junit.Assert.fail;
 import com.google.common.base.Joiner;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -25,6 +26,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class YangToSourcesPluginTestIT {
+
     private static String GLOBAL_SETTINGS_OVERRIDE;
     private static String USER_SETTINGS_OVERRIDE;
 
@@ -121,7 +123,7 @@ public class YangToSourcesPluginTestIT {
     }
 
     static Verifier setUp(final String project, final boolean ignoreF)
-            throws VerificationException, URISyntaxException {
+            throws VerificationException, URISyntaxException, IOException {
         final URL path = YangToSourcesPluginTestIT.class.getResource("/"
                 + project + "pom.xml");
         File parent = new File(path.toURI());
@@ -155,12 +157,7 @@ public class YangToSourcesPluginTestIT {
         v1.executeGoal("clean");
         v1.executeGoal("package");
 
-        Properties sp = new Properties();
-        try (InputStream is = new FileInputStream(v1.getBasedir() + "/it-project.properties")) {
-            sp.load(is);
-        }
-        String buildDir = sp.getProperty("target.dir");
-
+        String buildDir = getMavenBuildDirectory(v1);
         v1.assertFilePresent(buildDir + "/classes/META-INF/yang/testfile1.yang");
         v1.assertFilePresent(buildDir + "/classes/META-INF/yang/testfile2.yang");
         v1.assertFilePresent(buildDir + "/classes/META-INF/yang/testfile3.yang");
@@ -170,16 +167,19 @@ public class YangToSourcesPluginTestIT {
         v2.executeGoal("clean");
         v2.executeGoal("package");
 
-        sp = new Properties();
-        try (InputStream is = new FileInputStream(v2.getBasedir() + "/it-project.properties")) {
-            sp.load(is);
-        }
-        buildDir = sp.getProperty("target.dir");
-
+        buildDir = getMavenBuildDirectory(v2);
         v2.assertFilePresent(buildDir + "/classes/META-INF/yang/private.yang");
         v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/testfile1.yang");
         v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/testfile2.yang");
         v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/testfile3.yang");
+    }
+
+    private static String getMavenBuildDirectory(Verifier verifier) throws IOException {
+        Properties sp = new Properties();
+        try (InputStream is = new FileInputStream(verifier.getBasedir() + "/it-project.properties")) {
+            sp.load(is);
+        }
+        return sp.getProperty("target.dir");
     }
 
 }
