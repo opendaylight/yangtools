@@ -50,6 +50,7 @@ class YangToSourcesProcessor {
     static final String LOG_PREFIX = "yang-to-sources:";
     static final String META_INF_YANG_STRING = "META-INF" + File.separator + "yang";
     static final String META_INF_YANG_STRING_JAR = "META-INF" + "/" + "yang";
+    static final String META_INF_YANG_SERVICES_STRING_JAR = "META-INF" + "/" + "services";
 
     private final File yangFilesRootDir;
     private final File[] excludedFiles;
@@ -100,6 +101,18 @@ class YangToSourcesProcessor {
     void conditionalExecute(boolean skip) throws MojoExecutionException, MojoFailureException {
         if (skip) {
             LOG.info("Skipping YANG code generation because property yang.skip is true");
+
+            // But manually add resources
+            // add META_INF/yang
+            yangProvider.addYangsToMetaInf(project, yangFilesRootDir, excludedFiles);
+
+            // add META_INF/services
+            File generatedServicesDir = new File(project.getBasedir(), CodeGeneratorArg.YANG_SERVICES_GENERATED_DIR);
+            yangProvider.setResource(generatedServicesDir, project);
+            LOG.debug("{} Yang services files from: {} marked as resources: {}", LOG_PREFIX, generatedServicesDir,
+                    META_INF_YANG_SERVICES_STRING_JAR);
+
+
         } else {
             execute();
         }
