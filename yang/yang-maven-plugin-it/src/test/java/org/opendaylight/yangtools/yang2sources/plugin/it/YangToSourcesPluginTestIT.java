@@ -14,10 +14,12 @@ import static org.junit.Assert.fail;
 import com.google.common.base.Joiner;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Properties;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
@@ -121,7 +123,7 @@ public class YangToSourcesPluginTestIT {
     }
 
     static Verifier setUp(final String project, final boolean ignoreF)
-            throws VerificationException, URISyntaxException {
+            throws VerificationException, URISyntaxException, IOException {
         final URL path = YangToSourcesPluginTestIT.class.getResource("/"
                 + project + "pom.xml");
         File parent = new File(path.toURI());
@@ -132,6 +134,9 @@ public class YangToSourcesPluginTestIT {
         if (GLOBAL_SETTINGS_OVERRIDE != null) {
             verifier.addCliOption("-gs");
             verifier.addCliOption(GLOBAL_SETTINGS_OVERRIDE);
+        } else if (getEffectiveSettingsXML().isPresent()) {
+            verifier.addCliOption("-gs");
+            verifier.addCliOption(getEffectiveSettingsXML().get());
         }
         if (USER_SETTINGS_OVERRIDE != null) {
             verifier.addCliOption("-s");
@@ -180,6 +185,18 @@ public class YangToSourcesPluginTestIT {
         v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/testfile1.yang");
         v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/testfile2.yang");
         v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/testfile3.yang");
+    }
+
+    private static Optional<String> getEffectiveSettingsXML() throws URISyntaxException, VerificationException, IOException {
+        final URL path = YangToSourcesPluginTestIT.class.getResource("/test-parent/pom.xml");
+        File buildDir = new File(path.toURI()).getParentFile().getParentFile().getParentFile();
+        File effectiveSettingsXML = new File(buildDir, "effective-settings.xml");
+        if (effectiveSettingsXML.exists()) {
+            return Optional.of(effectiveSettingsXML.getAbsolutePath());
+        } else {
+            fail(effectiveSettingsXML.getAbsolutePath());
+            return Optional.empty();
+        }
     }
 
 }
