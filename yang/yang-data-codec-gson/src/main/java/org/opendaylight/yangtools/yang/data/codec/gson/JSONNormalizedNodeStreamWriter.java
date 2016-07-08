@@ -92,7 +92,7 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
     @Override
     public void leafNode(final NodeIdentifier name, final Object value) throws IOException {
         final LeafSchemaNode schema = tracker.leafNode(name);
-        final JSONCodec<Object> codec = codecs.codecFor(schema);
+        final JSONCodec<?> codec = codecs.codecFor(schema);
         context.emittingChild(codecs.getSchemaContext(), writer);
         context.writeChildJsonIdentifier(codecs.getSchemaContext(), writer, name.getNodeType());
         writeValue(value, codec);
@@ -107,7 +107,7 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
     @Override
     public void leafSetEntryNode(final QName name, final Object value) throws IOException {
         final LeafListSchemaNode schema = tracker.leafSetEntryNode();
-        final JSONCodec<Object> codec = codecs.codecFor(schema);
+        final JSONCodec<?> codec = codecs.codecFor(schema);
         context.emittingChild(codecs.getSchemaContext(), writer);
         writeValue(value, codec);
     }
@@ -203,9 +203,9 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
         }
     }
 
-    private void writeValue(final Object value, final JSONCodec<Object> codec)
+    private void writeValue(final Object value, final JSONCodec<?> codec)
             throws IOException {
-        codec.serializeToWriter(writer,value);
+        ((JSONCodec<Object>) codec).serializeToWriter(writer, value);
     }
 
     @Override
