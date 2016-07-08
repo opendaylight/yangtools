@@ -59,9 +59,9 @@ public class UnionCodecStringTest {
                 UnionCodec.class);
 
         assertEquals("deserialize", "enum1", codec.deserialize("enum1"));
-        assertEquals("deserialize", "123", codec.deserialize("123"));
-        assertEquals("deserialize", "-123", codec.deserialize("-123"));
-        assertEquals("deserialize", "41234567890", codec.deserialize("41234567890"));
+        assertEquals("deserialize", Integer.valueOf(123), codec.deserialize("123"));
+        assertEquals("deserialize", Integer.valueOf(-123), codec.deserialize("-123"));
+        assertEquals("deserialize", Long.valueOf(41234567890L), codec.deserialize("41234567890"));
         assertEquals("deserialize", "", codec.deserialize(""));
         assertEquals("deserialize", null, codec.deserialize(null));
 

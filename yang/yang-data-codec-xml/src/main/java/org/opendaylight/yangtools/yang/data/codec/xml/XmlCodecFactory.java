@@ -20,6 +20,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -103,7 +104,7 @@ public final class XmlCodecFactory {
                     new XmlStringIdentityrefCodec(schemaContext, key.getQName().getModule(), namespaceContext);
             return xmlStringIdentityrefCodec;
         }
-        return createFromSimpleType(type, namespaceContext);
+        return createFromSimpleType(type, namespaceContext, key.getQName().getModule());
     }
 
     private XmlCodec<?> createReferencedTypeCodec(final DataSchemaNode schema, final LeafrefTypeDefinition type,
@@ -115,7 +116,8 @@ public final class XmlCodecFactory {
         return createCodec(schema, referencedType, namespaceContext);
     }
 
-    private XmlCodec<?> createFromSimpleType(final TypeDefinition<?> type, final NamespaceContext namespaceContext) {
+    private XmlCodec<?> createFromSimpleType(final TypeDefinition<?> type, final NamespaceContext namespaceContext,
+                                             final QNameModule parentModule) {
         if (type instanceof InstanceIdentifierTypeDefinition) {
             final XmlCodec<YangInstanceIdentifier> iidCodec = new XmlStringInstanceIdentifierCodec(schemaContext, this,
                     namespaceContext);
@@ -125,7 +127,7 @@ public final class XmlCodecFactory {
             return XmlEmptyCodec.INSTANCE;
         }
 
-        final TypeDefinitionAwareCodec<Object, ?> codec = TypeDefinitionAwareCodec.from(type);
+        final TypeDefinitionAwareCodec<Object, ?> codec = TypeDefinitionAwareCodec.from(type, schemaContext, parentModule);
         if (codec == null) {
             LOG.debug("Codec for type \"{}\" is not implemented yet.", type.getQName().getLocalName());
             return NULL_CODEC;

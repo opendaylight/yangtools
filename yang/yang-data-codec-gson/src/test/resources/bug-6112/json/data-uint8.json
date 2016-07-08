@@ -1,0 +1,5 @@
+{
+    "union:identityref:test:root": {
+        "leaf-value": "1"
+    }
+}
