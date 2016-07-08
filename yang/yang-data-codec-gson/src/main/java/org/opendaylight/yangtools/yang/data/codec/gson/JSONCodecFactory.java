@@ -15,6 +15,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -104,7 +105,7 @@ public final class JSONCodecFactory {
                     new JSONStringIdentityrefCodec(schemaContext, key.getQName().getModule());
             return (JSONCodec<Object>) jsonStringIdentityrefCodec;
         }
-        return createFromSimpleType(normalizedType);
+        return createFromSimpleType(normalizedType, key.getQName().getModule());
     }
 
     private JSONCodec<Object> createReferencedTypeCodec(final DataSchemaNode schema,
@@ -117,7 +118,7 @@ public final class JSONCodecFactory {
     }
 
     @SuppressWarnings("unchecked")
-    private JSONCodec<Object> createFromSimpleType(final TypeDefinition<?> type) {
+    private JSONCodec<Object> createFromSimpleType(final TypeDefinition<?> type, final QNameModule parentModule) {
         if (type instanceof InstanceIdentifierTypeDefinition) {
             return (JSONCodec<Object>) iidCodec;
         }
@@ -125,7 +126,7 @@ public final class JSONCodecFactory {
             return JSONEmptyCodec.INSTANCE;
         }
 
-        final TypeDefinitionAwareCodec<Object, ?> codec = TypeDefinitionAwareCodec.from(type);
+        final TypeDefinitionAwareCodec<Object, ?> codec = TypeDefinitionAwareCodec.from(type, schemaContext, parentModule);
         if (codec == null) {
             LOG.debug("Codec for type \"{}\" is not implemented yet.", type.getQName()
                     .getLocalName());

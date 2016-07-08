@@ -11,7 +11,9 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 import com.google.common.base.Optional;
 import com.google.common.io.BaseEncoding;
 import java.util.Objects;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.codec.UnionCodec;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.slf4j.Logger;
@@ -21,49 +23,80 @@ final class UnionStringCodec extends TypeDefinitionAwareCodec<Object, UnionTypeD
 
     private final static Logger LOG = LoggerFactory.getLogger(UnionStringCodec.class);
 
-    private UnionStringCodec(final Optional<UnionTypeDefinition> typeDef) {
+    final SchemaContext context;
+    final QNameModule parentModule;
+
+    private UnionStringCodec(
+        final Optional<UnionTypeDefinition> typeDef, final SchemaContext context, final QNameModule parentModule) {
         super(typeDef, Object.class);
+        this.context = context;
+        this.parentModule = parentModule;
     }
 
+    static TypeDefinitionAwareCodec<?, UnionTypeDefinition> from(
+        final UnionTypeDefinition normalizedType, final SchemaContext context, final QNameModule parentModule) {
+        return new UnionStringCodec(Optional.fromNullable(normalizedType), context, parentModule);
+    }
+
+    @Deprecated
     static TypeDefinitionAwareCodec<?, UnionTypeDefinition> from(final UnionTypeDefinition normalizedType) {
-        return new UnionStringCodec(Optional.fromNullable(normalizedType));
+        return from(normalizedType, null, null);
     }
 
     @Override
     public String serialize(final Object data) {
-        if (data instanceof byte[]) {
-            return BaseEncoding.base64().encode((byte[]) data);
-        } else {
-            return Objects.toString(data, "");
+        for (final TypeDefinition<?> type : getTypeDefinition().get().getTypes()) {
+            final TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> typeAwareCodec = from(type, context, parentModule);
+            Class<?> inputClass = typeAwareCodec.getInputClass();
+            if (inputClass.isInstance(data) ||
+                (inputClass == Void.class && data == null)) { // EmptyStringCodec
+                try {
+                    return typeAwareCodec.serialize(data);
+                } catch (final Exception e) {
+                    LOG.debug("Data {} did not match for {}", data, type, e);
+                    // invalid - try the next union type.
+                }
+            }
         }
+        throw new IllegalArgumentException("Invalid data \"" + data + "\" for union type.");
     }
 
     @Override
     public Object deserialize(final String stringRepresentation) {
 
+        if (stringRepresentation == null) {
+            return null;
+        }
         if (!getTypeDefinition().isPresent()) {
             return stringRepresentation;
         }
 
+        Object returnValue = null;
         for (final TypeDefinition<?> type : getTypeDefinition().get().getTypes()) {
-            final TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> typeAwareCodec = from(type);
+            final TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> typeAwareCodec = from(type, context, parentModule);
             if (typeAwareCodec == null) {
                 /*
                  * This is a type for which we have no codec (eg identity ref) so we'll say it's
                  * valid
                  */
-                return stringRepresentation;
+                returnValue = stringRepresentation;
+                continue;
             }
 
             try {
-                typeAwareCodec.deserialize(stringRepresentation);
-                return stringRepresentation;
+                final Object deserialized = typeAwareCodec.deserialize(stringRepresentation);
+                if (deserialized != null) {
+                    return deserialized;
+                }
+                returnValue = stringRepresentation;
             } catch (final Exception e) {
                 LOG.debug("Value {} did not matched representation for {}",stringRepresentation,type,e);
                 // invalid - try the next union type.
             }
         }
-
+        if (returnValue != null) {
+            return returnValue;
+        }
         throw new IllegalArgumentException("Invalid value \"" + stringRepresentation + "\" for union type.");
     }
 }
