@@ -21,6 +21,7 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.codec.CodecFactory;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -37,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 @Beta
 @ThreadSafe
-public final class XmlCodecFactory {
+public final class XmlCodecFactory implements CodecFactory<XmlCodec<?>> {
 
     private static final Logger LOG = LoggerFactory.getLogger(XmlCodecFactory.class);
     private static final XmlCodec<Object> NULL_CODEC = new XmlCodec<Object>() {
@@ -79,9 +80,16 @@ public final class XmlCodecFactory {
             });
 
     private final SchemaContext schemaContext;
+    private final NamespaceContext namespaceContext;
 
     private XmlCodecFactory(final SchemaContext context) {
         this.schemaContext = Preconditions.checkNotNull(context);
+        this.namespaceContext = null;
+    }
+
+    private XmlCodecFactory(final SchemaContext context, NamespaceContext namespaceContext) {
+        this.schemaContext = Preconditions.checkNotNull(context);
+        this.namespaceContext = Preconditions.checkNotNull(namespaceContext);
     }
 
     /**
@@ -99,11 +107,9 @@ public final class XmlCodecFactory {
         if (type instanceof LeafrefTypeDefinition) {
             return createReferencedTypeCodec(key, (LeafrefTypeDefinition) type, namespaceContext);
         } else if (type instanceof IdentityrefTypeDefinition) {
-            final XmlCodec<?> xmlStringIdentityrefCodec =
-                    new XmlStringIdentityrefCodec(schemaContext, key.getQName().getModule(), namespaceContext);
-            return xmlStringIdentityrefCodec;
+            return codecForIdentityref(key);
         }
-        return createFromSimpleType(type, namespaceContext);
+        return createFromSimpleType(key, type, namespaceContext);
     }
 
     private XmlCodec<?> createReferencedTypeCodec(final DataSchemaNode schema, final LeafrefTypeDefinition type,
@@ -115,7 +121,9 @@ public final class XmlCodecFactory {
         return createCodec(schema, referencedType, namespaceContext);
     }
 
-    private XmlCodec<?> createFromSimpleType(final TypeDefinition<?> type, final NamespaceContext namespaceContext) {
+    private XmlCodec<?> createFromSimpleType(
+        final DataSchemaNode schema, final TypeDefinition<?> type,
+        final NamespaceContext namespaceContext) {
         if (type instanceof InstanceIdentifierTypeDefinition) {
             final XmlCodec<YangInstanceIdentifier> iidCodec = new XmlStringInstanceIdentifierCodec(schemaContext, this,
                     namespaceContext);
@@ -125,7 +133,7 @@ public final class XmlCodecFactory {
             return XmlEmptyCodec.INSTANCE;
         }
 
-        final TypeDefinitionAwareCodec<Object, ?> codec = TypeDefinitionAwareCodec.from(type);
+        final TypeDefinitionAwareCodec<Object, ?> codec = TypeDefinitionAwareCodec.from(schema, type, this);
         if (codec == null) {
             LOG.debug("Codec for type \"{}\" is not implemented yet.", type.getQName().getLocalName());
             return NULL_CODEC;
@@ -138,6 +146,18 @@ public final class XmlCodecFactory {
     }
 
     XmlCodec<?> codecFor(final DataSchemaNode schema, final NamespaceContext namespaceContext) {
+        XmlCodecFactory codecFactory = new XmlCodecFactory(schemaContext, namespaceContext);
+        return codecFactory.codecFor(schema);
+    }
+
+    private XmlCodec<?> codecFor(final DataSchemaNode schema) {
+        Preconditions.checkNotNull(namespaceContext);
         return codecs.getUnchecked(new SimpleImmutableEntry<>(schema, namespaceContext));
+    }
+
+    public XmlCodec<?> codecForIdentityref(final DataSchemaNode schema) {
+        final XmlCodec<?> xmlStringIdentityrefCodec =
+                new XmlStringIdentityrefCodec(schemaContext, schema.getQName().getModule(), namespaceContext);
+        return xmlStringIdentityrefCodec;
     }
 }

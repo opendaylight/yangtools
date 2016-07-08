@@ -15,20 +15,17 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringIdentityrefCodec;
+import org.opendaylight.yangtools.yang.data.util.ModuleStringIdentityrefCodec;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-final class XmlStringIdentityrefCodec extends AbstractModuleStringIdentityrefCodec implements XmlCodec<QName> {
+final class XmlStringIdentityrefCodec extends ModuleStringIdentityrefCodec implements XmlCodec<QName> {
 
-    private final SchemaContext context;
-    private final QNameModule parentModuleQname;
     private final NamespaceContext namespaceContext;
 
     XmlStringIdentityrefCodec(final SchemaContext context, final QNameModule parentModule,
                               final NamespaceContext namespaceContext) {
-        this.context = Preconditions.checkNotNull(context);
-        this.parentModuleQname = Preconditions.checkNotNull(parentModule);
+        super(context, parentModule);
         this.namespaceContext = Preconditions.checkNotNull(namespaceContext);
     }
 
@@ -41,12 +38,6 @@ final class XmlStringIdentityrefCodec extends AbstractModuleStringIdentityrefCod
             final String prefixedNS = namespaceContext.getNamespaceURI(prefix);
             return context.findModuleByNamespaceAndRevision(URI.create(prefixedNS), null);
         }
-    }
-
-    @Override
-    protected String prefixForNamespace(final URI namespace) {
-        final Module module = context.findModuleByNamespaceAndRevision(namespace, null);
-        return module == null ? null : module.getName();
     }
 
     /**

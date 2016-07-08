@@ -15,6 +15,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
+import org.opendaylight.yangtools.yang.data.api.codec.CodecFactory;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -34,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * a particular {@link SchemaContext}, but can be reused by multiple {@link JSONNormalizedNodeStreamWriter}s.
  */
 @Beta
-public final class JSONCodecFactory {
+public final class JSONCodecFactory implements CodecFactory<JSONCodec<Object>> {
     private static final Logger LOG = LoggerFactory.getLogger(JSONCodecFactory.class);
     private static final JSONCodec<Object> NULL_CODEC = new JSONCodec<Object>() {
         @Override
@@ -98,11 +99,9 @@ public final class JSONCodecFactory {
         if (type instanceof LeafrefTypeDefinition) {
             return createReferencedTypeCodec(key, (LeafrefTypeDefinition) type);
         } else if (type instanceof IdentityrefTypeDefinition) {
-            final JSONCodec<?> jsonStringIdentityrefCodec =
-                    new JSONStringIdentityrefCodec(schemaContext, key.getQName().getModule());
-            return (JSONCodec<Object>) jsonStringIdentityrefCodec;
+            return codecForIdentityref(key);
         }
-        return createFromSimpleType(type);
+        return createFromSimpleType(key, type);
     }
 
     private JSONCodec<Object> createReferencedTypeCodec(final DataSchemaNode schema,
@@ -115,7 +114,7 @@ public final class JSONCodecFactory {
     }
 
     @SuppressWarnings("unchecked")
-    private JSONCodec<Object> createFromSimpleType(final TypeDefinition<?> type) {
+    private JSONCodec<Object> createFromSimpleType(final DataSchemaNode schema, final TypeDefinition<?> type) {
         if (type instanceof InstanceIdentifierTypeDefinition) {
             return (JSONCodec<Object>) iidCodec;
         }
@@ -123,7 +122,7 @@ public final class JSONCodecFactory {
             return JSONEmptyCodec.INSTANCE;
         }
 
-        final TypeDefinitionAwareCodec<Object, ?> codec = TypeDefinitionAwareCodec.from(type);
+        final TypeDefinitionAwareCodec<Object, ?> codec = TypeDefinitionAwareCodec.from(schema, type, this);
         if (codec == null) {
             LOG.debug("Codec for type \"{}\" is not implemented yet.", type.getQName()
                     .getLocalName());
@@ -138,6 +137,12 @@ public final class JSONCodecFactory {
 
     JSONCodec<Object> codecFor(final DataSchemaNode schema) {
         return codecs.getUnchecked(schema);
+    }
+
+    public JSONCodec<Object> codecForIdentityref(final DataSchemaNode schema) {
+        final JSONCodec<?> jsonStringIdentityrefCodec =
+                new JSONStringIdentityrefCodec(schemaContext, schema.getQName().getModule());
+        return (JSONCodec<Object>) jsonStringIdentityrefCodec;
     }
 
 }
