@@ -20,6 +20,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -31,6 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,11 +101,11 @@ public final class XmlCodecFactory {
         if (type instanceof LeafrefTypeDefinition) {
             return createReferencedTypeCodec(key, (LeafrefTypeDefinition) type, namespaceContext);
         } else if (type instanceof IdentityrefTypeDefinition) {
-            final XmlCodec<?> xmlStringIdentityrefCodec =
-                    new XmlStringIdentityrefCodec(schemaContext, key.getQName().getModule(), namespaceContext);
-            return xmlStringIdentityrefCodec;
+            return createIdentityrefTypeCodec(key, namespaceContext);
+        } else if (type instanceof UnionTypeDefinition) {
+            return createUnionTypeCodec(key, (UnionTypeDefinition)type, namespaceContext);
         }
-        return createFromSimpleType(type, namespaceContext);
+        return createFromSimpleType(key, type, namespaceContext);
     }
 
     private XmlCodec<?> createReferencedTypeCodec(final DataSchemaNode schema, final LeafrefTypeDefinition type,
@@ -115,7 +117,22 @@ public final class XmlCodecFactory {
         return createCodec(schema, referencedType, namespaceContext);
     }
 
-    private XmlCodec<?> createFromSimpleType(final TypeDefinition<?> type, final NamespaceContext namespaceContext) {
+    public XmlCodec<QName> createIdentityrefTypeCodec(final DataSchemaNode schema,
+                                                      final NamespaceContext namespaceContext) {
+        final XmlCodec<QName> xmlStringIdentityrefCodec =
+                new XmlStringIdentityrefCodec(getSchemaContext(), schema.getQName().getModule(), namespaceContext);
+        return xmlStringIdentityrefCodec;
+    }
+
+    private XmlCodec<Object> createUnionTypeCodec(final DataSchemaNode schema, final UnionTypeDefinition type,
+                                                  final NamespaceContext namespaceContext) {
+        final XmlCodec<Object> xmlStringUnionCodec = new XmlStringUnionCodec(schema, type, this, namespaceContext);
+        return xmlStringUnionCodec;
+    }
+
+    private XmlCodec<?> createFromSimpleType(
+        final DataSchemaNode schema, final TypeDefinition<?> type,
+        final NamespaceContext namespaceContext) {
         if (type instanceof InstanceIdentifierTypeDefinition) {
             final XmlCodec<YangInstanceIdentifier> iidCodec = new XmlStringInstanceIdentifierCodec(schemaContext, this,
                     namespaceContext);
@@ -139,5 +156,10 @@ public final class XmlCodecFactory {
 
     XmlCodec<?> codecFor(final DataSchemaNode schema, final NamespaceContext namespaceContext) {
         return codecs.getUnchecked(new SimpleImmutableEntry<>(schema, namespaceContext));
+    }
+
+    XmlCodec<?> codecFor(final DataSchemaNode schema, final TypeDefinition<?> unionSubType,
+                         final NamespaceContext namespaceContext) {
+        return createCodec(schema, unionSubType, namespaceContext);
     }
 }
