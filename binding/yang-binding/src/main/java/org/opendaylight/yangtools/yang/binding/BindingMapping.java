@@ -106,7 +106,10 @@ public final class BindingMapping {
         }
 
         packageNameBuilder.append(chars);
-        packageNameBuilder.append(".rev");
+        if (chars[chars.length - 1] != '.') {
+            packageNameBuilder.append('.');
+        }
+        packageNameBuilder.append("rev");
         packageNameBuilder.append(PACKAGE_DATE_FORMAT.get().format(module.getRevision()));
         return normalizePackageName(packageNameBuilder.toString());
     }
