@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_4e56b3d3",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 348,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-07-11T13:46:12Z",
+      "side": 1,
+      "message": "This looks like a separate fix which needs to be backported to Be",
+      "range": {
+        "startLine": 348,
+        "startChar": 73,
+        "endLine": 348,
+        "endChar": 95
+      },
+      "revId": "eeb428203047be1acd1b072b503ca1b13c1a6b1c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
