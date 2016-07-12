@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
@@ -20,6 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -47,11 +49,15 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
                 return new PresenceContainerModificationStrategy(containerSchema, treeConfig);
             }
 
-            return new StructuralContainerModificationStrategy(containerSchema, treeConfig);
+            return new StructuralModificationStrategyWrapper(
+                new ContainerModificationStrategy(containerSchema, treeConfig),
+                ImmutableNodes.containerNode(containerSchema.getQName()));
         } else if (schemaNode instanceof ListSchemaNode) {
             return fromListSchemaNode((ListSchemaNode) schemaNode, treeConfig);
         } else if (schemaNode instanceof ChoiceSchemaNode) {
-            return new ChoiceModificationStrategy((ChoiceSchemaNode) schemaNode, treeConfig);
+            return new StructuralModificationStrategyWrapper(
+                new ChoiceModificationStrategy((ChoiceSchemaNode) schemaNode, treeConfig),
+                ImmutableNodes.choiceNode(schemaNode.getQName()));
         } else if (schemaNode instanceof LeafListSchemaNode) {
             return fromLeafListSchemaNode((LeafListSchemaNode) schemaNode, treeConfig);
         } else if (schemaNode instanceof LeafSchemaNode) {
@@ -81,21 +87,38 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         }
     }
 
-    private static SchemaAwareApplyOperation fromListSchemaNode(final ListSchemaNode schemaNode,
+    private static ModificationApplyOperation fromListSchemaNode(final ListSchemaNode schemaNode,
             final DataTreeConfiguration treeConfig) {
+        final ModificationApplyOperation op;
+        final NormalizedNode<?, ?> emptyNode;
+
+        // Structural strategy wrapper is used to enable "structural" behaviour for auto create/delete mixin, parent
+        // list-like nodes
         final List<QName> keyDefinition = schemaNode.getKeyDefinition();
-        final SchemaAwareApplyOperation op;
-        if (keyDefinition == null || keyDefinition.isEmpty()) {
+        final boolean hasNoKey = keyDefinition == null || keyDefinition.isEmpty();
+
+        if (hasNoKey) {
+            // Unkeyed lists are not wrapped since they are not addressable (yet) and it's not allowed to modify
+            // unkeyed list entries. That's why auto create/delete is not needed
             op = new UnkeyedListModificationStrategy(schemaNode, treeConfig);
+            emptyNode = null;
         } else if (schemaNode.isUserOrdered()) {
             op = new OrderedMapModificationStrategy(schemaNode, treeConfig);
+            emptyNode = ImmutableNodes.orderedMapNode(schemaNode.getQName());
         } else {
             op = new UnorderedMapModificationStrategy(schemaNode, treeConfig);
+            emptyNode = ImmutableNodes.mapNode(schemaNode.getQName());
         }
-        return MinMaxElementsValidation.from(op, schemaNode);
+
+        final ModificationApplyOperation minMaxWrapper = MinMaxElementsValidation.from(op, schemaNode);
+
+        // It's important that StructuralModificationStrategyWrapper is on top of minMax, because minMax might perform
+        // validation on top of just deleted empty list parent node. This way, StructuralModificationStrategyWrapper
+        // can prevent it
+        return hasNoKey ? minMaxWrapper : new StructuralModificationStrategyWrapper(minMaxWrapper, emptyNode);
     }
 
-    private static SchemaAwareApplyOperation fromLeafListSchemaNode(final LeafListSchemaNode schemaNode,
+    private static ModificationApplyOperation fromLeafListSchemaNode(final LeafListSchemaNode schemaNode,
             final DataTreeConfiguration treeConfig) {
         final SchemaAwareApplyOperation op;
         if (schemaNode.isUserOrdered()) {
@@ -140,7 +163,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
                 break;
             default:
                 throw new UnsupportedOperationException(
-                    "Suplied modification type " + modification.getOperation() + " is not supported.");
+                    "Supplied modification type " + modification.getOperation() + " is not supported.");
         }
     }
 
@@ -285,4 +308,5 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     static boolean belongsToTree(final TreeType treeType, final DataSchemaNode node) {
         return treeType == TreeType.OPERATIONAL || node.isConfiguration();
     }
+
 }

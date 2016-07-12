@@ -24,21 +24,21 @@ import org.opendaylight.yangtools.yang.model.api.ElementCountConstraintAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
+final class MinMaxElementsValidation extends ModificationApplyOperation {
     private static final Logger LOG = LoggerFactory.getLogger(MinMaxElementsValidation.class);
 
-    private final SchemaAwareApplyOperation delegate;
+    private final ModificationApplyOperation delegate;
     private final int minElements;
     private final int maxElements;
 
-    private MinMaxElementsValidation(final SchemaAwareApplyOperation delegate, final Integer minElements,
-            final Integer maxElements) {
+    private MinMaxElementsValidation(final ModificationApplyOperation delegate, final Integer minElements,
+                                     final Integer maxElements) {
         this.delegate = Preconditions.checkNotNull(delegate);
         this.minElements = minElements != null ? minElements : 0;
         this.maxElements = maxElements != null ? maxElements : Integer.MAX_VALUE;
     }
 
-    static SchemaAwareApplyOperation from(final SchemaAwareApplyOperation delegate, final DataSchemaNode schema) {
+    static ModificationApplyOperation from(final SchemaAwareApplyOperation delegate, final DataSchemaNode schema) {
         if (!(schema instanceof ElementCountConstraintAware)) {
             return delegate;
         }
@@ -104,27 +104,6 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
     }
 
     @Override
-    protected void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
-        delegate.checkTouchApplicable(path, modification, current, version);
-        checkMinMaxElements(path, modification, current, version);
-    }
-
-    @Override
-    protected void checkMergeApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
-        delegate.checkMergeApplicable(path, modification, current, version);
-        checkMinMaxElements(path, modification, current, version);
-    }
-
-    @Override
-    protected void checkWriteApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
-        delegate.checkWriteApplicable(path, modification, current, version);
-        checkMinMaxElements(path, modification, current, version);
-    }
-
-    @Override
     public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
         return delegate.getChild(child);
     }
@@ -144,37 +123,23 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
     }
 
     @Override
-    protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
-        final TreeNode validated = modification.getValidatedNode(this, Optional.of(currentMeta));
+    Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
+                             final Version version) {
+        final TreeNode validated = modification.getValidatedNode(this, storeMeta);
         if (validated != null) {
-            return validated;
+            return Optional.of(validated);
         }
 
         // FIXME: the result moved, make sure we enforce again
-        return delegate.applyMerge(modification, currentMeta, version);
+        return delegate.apply(modification, storeMeta, version);
     }
 
     @Override
-    protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
-        final TreeNode validated = modification.getValidatedNode(this, Optional.of(currentMeta));
-        if (validated != null) {
-            return validated;
-        }
-
-        // FIXME: the result moved, make sure we enforce again
-        return delegate.applyTouch(modification, currentMeta, version);
-    }
-
-    @Override
-    protected TreeNode applyWrite(final ModifiedNode modification, final Optional<TreeNode> currentMeta,
-            final Version version) {
-        final TreeNode validated = modification.getValidatedNode(this, currentMeta);
-        if (validated != null) {
-            return validated;
-        }
-
-        // FIXME: the result moved, make sure we enforce again
-        return delegate.applyWrite(modification, currentMeta, version);
+    void checkApplicable(final ModificationPath path, final NodeModification modification,
+                         final Optional<TreeNode> current,
+                         final Version version) throws DataValidationFailedException {
+        delegate.checkApplicable(path, modification, current, version);
+        checkMinMaxElements(path, modification, current, version);
     }
 
     @Override
