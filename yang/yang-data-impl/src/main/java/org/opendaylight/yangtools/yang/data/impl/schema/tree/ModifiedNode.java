@@ -64,7 +64,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     private TreeNode writtenOriginal;
 
     // Internal cache for TreeNodes created as part of validation
-    private SchemaAwareApplyOperation validatedOp;
+    private ModificationApplyOperation validatedOp;
     private Optional<TreeNode> validatedCurrent;
     private TreeNode validatedNode;
 
@@ -279,11 +279,16 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             case WRITE:
                 // A WRITE can collapse all of its children
                 if (!children.isEmpty()) {
-                    value = schema.apply(this, getOriginal(), version).get().getData();
+                    final Optional<TreeNode> apply = schema.apply(this, getOriginal(), version);
+                    // Nodes managed by StructuralModificationStrategyWrapper can be
+                    // deleted during write
+                    value = apply.isPresent() ? apply.get().getData() : null;
                     children.clear();
                 }
 
-                schema.verifyStructure(value, true);
+                if (value != null) {
+                    schema.verifyStructure(value, true);
+                }
                 break;
             default:
                 break;
@@ -349,13 +354,13 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         return new ModifiedNode(metadataTree.getIdentifier(), Optional.of(metadataTree), childPolicy);
     }
 
-    void setValidatedNode(final SchemaAwareApplyOperation op, final Optional<TreeNode> current, final TreeNode node) {
+    void setValidatedNode(final ModificationApplyOperation op, final Optional<TreeNode> current, final TreeNode node) {
         this.validatedOp = Preconditions.checkNotNull(op);
         this.validatedCurrent = Preconditions.checkNotNull(current);
         this.validatedNode = Preconditions.checkNotNull(node);
     }
 
-    TreeNode getValidatedNode(final SchemaAwareApplyOperation op, final Optional<TreeNode> current) {
+    TreeNode getValidatedNode(final ModificationApplyOperation op, final Optional<TreeNode> current) {
         return op.equals(validatedOp) && current.equals(validatedCurrent) ? validatedNode : null;
     }
 }
