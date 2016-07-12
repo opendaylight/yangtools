@@ -76,13 +76,10 @@ public class SubstatementValidatorTest {
                 ("/substatement-validator/missing-element").toURI());
     }
 
-    @Test
-    public void emptyElementException() throws URISyntaxException, ReactorException {
-        expectedEx.expect(NoSuchElementException.class);
-
-        Set<Module> modules = TestUtils.loadModules(getClass().getResource
-                ("/substatement-validator/empty-element").toURI());
-    }
+    // Since refine can be in fact empty, there is no obvious cause for NoSuchElementException.
+    // "/substatement-validator/empty-element" now contains a different module, currently throwing NPE.
+    // TODO: Either construct a module which causes genuine NoSuchElementException,
+    //       or remove the code that was causing it when refine was not alowed to be empty.
 
     @Test
     public void bug4310test() throws URISyntaxException, ReactorException {
