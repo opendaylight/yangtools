@@ -9,7 +9,7 @@ module Bug4454Test {
 
     container master-container {
         list min-max-list {
-            min-elements 1;
+            min-elements 2;
             max-elements 3;
 
             key "min-max-key-leaf";
