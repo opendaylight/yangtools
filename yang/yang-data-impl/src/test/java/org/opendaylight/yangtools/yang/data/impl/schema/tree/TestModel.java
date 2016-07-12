@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -30,6 +29,11 @@ public class TestModel {
     public static final QName VALUE_QNAME = QName.create(TEST_QNAME, "value");
     private static final String DATASTORE_TEST_YANG = "/odl-datastore-test.yang";
 
+    public static final QName NON_PRESENCE_QNAME = QName.create(TEST_QNAME, "non-presence");
+    public static final QName DEEP_CHOICE_QNAME = QName.create(TEST_QNAME, "deep-choice");
+    public static final QName A_LIST_QNAME = QName.create(TEST_QNAME, "a-list");
+    public static final QName A_NAME_QNAME = QName.create(TEST_QNAME, "a-name");
+
     public static final YangInstanceIdentifier TEST_PATH = YangInstanceIdentifier.of(TEST_QNAME);
     public static final YangInstanceIdentifier OUTER_LIST_PATH = YangInstanceIdentifier.builder(TEST_PATH)
             .node(OUTER_LIST_QNAME).build();
@@ -47,8 +51,8 @@ public class TestModel {
         return YangParserTestUtils.parseYangStreams(Arrays.asList(getDatastoreTestInputStream()));
     }
 
-    public static SchemaContext createTestContext(String resourcePath) throws ReactorException {
-        InputStream yangStream = TestModel.class.getResourceAsStream(resourcePath);
+    public static SchemaContext createTestContext(final String resourcePath) throws ReactorException {
+        final InputStream yangStream = TestModel.class.getResourceAsStream(resourcePath);
         return YangParserTestUtils.parseYangStreams(Collections.singletonList(yangStream));
     }
 }
