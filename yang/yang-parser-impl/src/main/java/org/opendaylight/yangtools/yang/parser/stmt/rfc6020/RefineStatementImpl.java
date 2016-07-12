@@ -35,7 +35,7 @@ public class RefineStatementImpl extends AbstractDeclaredStatement<SchemaNodeIde
             .add(Rfc6020Mapping.MUST, 0, MAX)
             .add(Rfc6020Mapping.MIN_ELEMENTS, 0, 1)
             .add(Rfc6020Mapping.MAX_ELEMENTS, 0, 1)
-            .build(SubstatementValidator.SpecialCase.NOTNULL);
+            .build();
 
     protected RefineStatementImpl(final StmtContext<SchemaNodeIdentifier, RefineStatement, ?> context) {
         super(context);
