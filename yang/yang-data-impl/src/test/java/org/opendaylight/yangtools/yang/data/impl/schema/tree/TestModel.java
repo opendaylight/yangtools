@@ -25,6 +25,11 @@ public final class TestModel {
     public static final QName VALUE_QNAME = QName.create(TEST_QNAME, "value");
     private static final String DATASTORE_TEST_YANG = "/odl-datastore-test.yang";
 
+    public static final QName NON_PRESENCE_QNAME = QName.create(TEST_QNAME, "non-presence");
+    public static final QName DEEP_CHOICE_QNAME = QName.create(TEST_QNAME, "deep-choice");
+    public static final QName A_LIST_QNAME = QName.create(TEST_QNAME, "a-list");
+    public static final QName A_NAME_QNAME = QName.create(TEST_QNAME, "a-name");
+
     public static final YangInstanceIdentifier TEST_PATH = YangInstanceIdentifier.of(TEST_QNAME);
     public static final YangInstanceIdentifier OUTER_LIST_PATH = YangInstanceIdentifier.builder(TEST_PATH)
             .node(OUTER_LIST_QNAME).build();
