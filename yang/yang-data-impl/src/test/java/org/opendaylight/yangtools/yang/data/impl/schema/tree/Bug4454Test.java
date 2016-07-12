@@ -221,6 +221,7 @@ public class Bug4454Test {
 
         DataTreeModification tempMod2 = test2.newModification();
         tempMod2.write(MIN_MAX_LIST_PATH, mapNodeBaz);
+        tempMod2.merge(MIN_MAX_LIST_PATH, mapNodeBar);
         tempMod2.write(pathToBaz, newNode2);
 
         tempMod2.ready();
@@ -231,7 +232,7 @@ public class Bug4454Test {
         DataTreeSnapshot test3 = inMemoryDataTree.takeSnapshot();
         minMaxListRead = test3.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
-        assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 1);
+        assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 2);
         assertTrue(minMaxListRead.get().getValue().toString().contains("test2"));
 
         DataTreeModification tempMod3 = test3.newModification();
@@ -317,7 +318,43 @@ public class Bug4454Test {
         key.clear();
         key.put(MIN_MAX_KEY_LEAF_QNAME, "baz");
 
-        mapEntryPath2 = new NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME, key);
+        modificationTree.write(MIN_MAX_LIST_PATH, mapNodeFooWithNodes);
+        modificationTree.merge(MIN_MAX_LIST_PATH, mapNodeBar);
+        modificationTree.merge(MIN_MAX_LIST_PATH, mapNodeBaz);
+        modificationTree.delete(MIN_MAX_LEAF_FOO);
+        modificationTree.delete(MIN_MAX_LEAF_BAR);
+
+        modificationTree.ready();
+
+        inMemoryDataTree.validate(modificationTree);
+    }
+
+    @Test
+    public void minMaxListDeleteAllNoExTest() throws DataValidationFailedException {
+        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+
+        Map<QName, Object> key = new HashMap<>();
+        key.put(MIN_MAX_KEY_LEAF_QNAME, "foo");
+
+        YangInstanceIdentifier.NodeIdentifierWithPredicates mapEntryPath2 = new YangInstanceIdentifier
+                .NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME , key);
+
+        YangInstanceIdentifier MIN_MAX_LEAF_FOO = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH)
+                .node(MIN_MAX_LIST_QNAME).node(mapEntryPath2).build();
+
+        key.clear();
+        key.put(MIN_MAX_KEY_LEAF_QNAME, "bar");
+
+        mapEntryPath2 = new YangInstanceIdentifier.NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME, key);
+
+        YangInstanceIdentifier MIN_MAX_LEAF_BAR = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH).node
+                (MIN_MAX_LIST_QNAME)
+                .node(mapEntryPath2).build();
+
+        key.clear();
+        key.put(MIN_MAX_KEY_LEAF_QNAME, "baz");
+
+        mapEntryPath2 = new YangInstanceIdentifier.NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME, key);
 
         final YangInstanceIdentifier minMaxLeafBaz = MASTER_CONTAINER_PATH
                 .node(MIN_MAX_LIST_QNAME).node(mapEntryPath2);
@@ -334,15 +371,16 @@ public class Bug4454Test {
         inMemoryDataTree.validate(modificationTree);
         final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);
+
+        final InMemoryDataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
+        final Optional<NormalizedNode<?, ?>> minMaxListRead = snapshotAfterCommit.readNode(MASTER_CONTAINER_PATH);
+        assertFalse(minMaxListRead.isPresent());
     }
 
     @Test
     public void minMaxListNoMinMaxDeleteTest() throws DataValidationFailedException {
         final MapEntryNode fooEntryNoMinMaxNode =
                 ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME_NO_MINMAX, MIN_MAX_KEY_LEAF_QNAME, "foo");
-        final MapNode mapNode1 = ImmutableNodes.mapNodeBuilder()
-                .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME_NO_MINMAX))
-                .withChild(fooEntryNoMinMaxNode).build();
 
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
@@ -363,9 +401,9 @@ public class Bug4454Test {
         YangInstanceIdentifier minMaxLeafNel = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH)
                 .node(MIN_MAX_LIST_QNAME_NO_MINMAX).node(mapEntryPath2).build();
 
-        modificationTree.write(MIN_MAX_LIST_NO_MINMAX_PATH, mapNode1);
-        modificationTree.delete(minMaxLeafFoo);
-        modificationTree.delete(minMaxLeafNel);
+        modificationTree.write(MIN_MAX_LEAF_FOO, fooEntryNode);
+        modificationTree.delete(MIN_MAX_LEAF_FOO);
+        modificationTree.delete(MIN_MAX_LEAF_NEL);
 
         modificationTree.ready();
 
@@ -374,9 +412,8 @@ public class Bug4454Test {
         inMemoryDataTree.commit(prepare);
 
         final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
-        final Optional<NormalizedNode<?, ?>> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_NO_MINMAX_PATH);
-        assertTrue(minMaxListRead.isPresent());
-        assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 0);
+        final Optional<NormalizedNode<?, ?>> minMaxListRead = snapshotAfterCommit.readNode(MASTER_CONTAINER_PATH);
+        assertFalse(minMaxListRead.isPresent());
     }
 
     private static void testLoop(final DataTreeSnapshot snapshot, final String first, final String second) {
