@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
@@ -28,6 +29,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableCo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -43,6 +45,28 @@ public final class ImmutableNodes {
 
     public static CollectionNodeBuilder<MapEntryNode, MapNode> mapNodeBuilder(final QName name) {
         return ImmutableMapNodeBuilder.create().withNodeIdentifier(NodeIdentifier.create(name));
+    }
+
+    /**
+     * Create immutable map node
+     */
+    public static MapNode mapNode(final QName qname) {
+        return mapNodeBuilder(qname).build();
+    }
+
+    private static CollectionNodeBuilder<MapEntryNode, OrderedMapNode> orderedMapNodeBuilder(final QName qname) {
+        return orderedMapNodeBuilder().withNodeIdentifier(NodeIdentifier.create(qname));
+    }
+
+    private static CollectionNodeBuilder<MapEntryNode, OrderedMapNode> orderedMapNodeBuilder() {
+        return ImmutableOrderedMapNodeBuilder.create();
+    }
+
+    /**
+     * Create immutable ordered map node
+     */
+    public static MapNode orderedMapNode(final QName qname) {
+        return orderedMapNodeBuilder(qname).build();
     }
 
     /**
