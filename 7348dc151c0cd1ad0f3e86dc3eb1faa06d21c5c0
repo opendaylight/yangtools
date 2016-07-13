@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_51892a25",
+        "filename": "yang/yang-parser-impl/src/test/resources/substatement-validator/empty-element/empty.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 3635
+      },
+      "writtenOn": "2016-07-13T12:33:58Z",
+      "side": 1,
+      "message": "Not quite sure why this one is showing up in the changeset... nothing was actually changed here.",
+      "revId": "7348dc151c0cd1ad0f3e86dc3eb1faa06d21c5c0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
