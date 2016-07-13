@@ -47,7 +47,6 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      */
     public static final Pattern REVISION_PATTERN = Pattern.compile("\\d\\d\\d\\d-\\d\\d-\\d\\d");
 
-    private static final ObjectCache CACHE = ObjectCacheFactory.getObjectCache(SourceIdentifier.class);
     private static final Interner<SourceIdentifier> INTERNER = Interners.newWeakInterner();
 
     private static final long serialVersionUID = 1L;
@@ -92,16 +91,6 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      */
     SourceIdentifier(final String name, final Optional<String> formattedRevision) {
         this(name, formattedRevision.or(NOT_PRESENT_FORMATTED_REVISION));
-    }
-
-    /**
-     * Return a cached reference to an object equal to this object.
-     *
-     * @return A potentially shared reference, not guaranteed to be unique.
-     */
-    @Deprecated
-    public SourceIdentifier cachedReference() {
-        return CACHE.getReference(this);
     }
 
     /**
