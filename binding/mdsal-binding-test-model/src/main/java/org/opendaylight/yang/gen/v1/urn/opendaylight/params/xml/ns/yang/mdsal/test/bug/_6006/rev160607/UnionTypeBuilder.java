@@ -16,13 +16,19 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 public class UnionTypeBuilder {
 
     public static UnionType getDefaultInstance(java.lang.String defaultValue) {
-        Class<? extends IdentBase> identityref = null;
         if (defaultValue.equals("IdentOne")) {
             return new UnionType(IdentOne.class);
         }
         if (defaultValue.equals("IdentTwo")) {
             return new UnionType(IdentTwo.class);
         }
+
+        try {
+            return new UnionType(Short.valueOf(defaultValue));
+        } catch(NumberFormatException e) {
+            /* do nothing */;
+        }
+
         throw new IllegalArgumentException("Unknown UnionType string " + defaultValue);
     }
 

@@ -101,7 +101,7 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
             final Object identityref;
             try {
                 identityref = idRefCodec.deserialize(input);
-            } catch (UncheckedExecutionException | ExecutionError e) {
+            } catch (UncheckedExecutionException | ExecutionError | ClassCastException e) {
                 LOG.debug("Deserialization of {} as identityref failed", e);
                 return deserializeString(input);
             }

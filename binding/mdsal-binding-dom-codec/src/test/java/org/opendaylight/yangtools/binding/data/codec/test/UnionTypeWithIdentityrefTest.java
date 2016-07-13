@@ -50,9 +50,8 @@ public class UnionTypeWithIdentityrefTest extends AbstractBindingRuntimeTest {
         registry.onBindingRuntimeContextUpdated(getRuntimeContext());
     }
 
-    @Test
-    public void bug6006Test() {
-        UnionType unionType = UnionTypeBuilder.getDefaultInstance(identOneString);
+    private DataObject createValueNode(final String valueString) {
+        UnionType unionType = UnionTypeBuilder.getDefaultInstance(valueString);
         UnionNode unionNode = new UnionNodeBuilder().setValue(unionType).build();
         NormalizedNode<?, ?> normalizedUnionNode = registry
             .toNormalizedNode(InstanceIdentifier.builder(UnionNode.class).build(), unionNode)
@@ -62,8 +61,22 @@ public class UnionTypeWithIdentityrefTest extends AbstractBindingRuntimeTest {
                 YangInstanceIdentifier.of(normalizedUnionNode.getNodeType()), normalizedUnionNode);
         DataObject unionNodeObj = unionNodeEntry.getValue();
         assertTrue(unionNodeObj instanceof UnionNode);
+        return unionNodeObj;
+    }
+
+    @Test
+    public void bug6006Test() {
+        DataObject unionNodeObj = createValueNode(identOneString);
         UnionType unionTypeObj = ((UnionNode) unionNodeObj).getValue();
         assertEquals(null, unionTypeObj.getUint8());
         assertEquals(IdentOne.class, unionTypeObj.getIdentityref());
+    }
+
+    @Test
+    public void bug6112Test() {
+        DataObject unionNodeObj = createValueNode("1");
+        UnionType unionTypeObj = ((UnionNode) unionNodeObj).getValue();
+        assertEquals(Short.valueOf((short)1), unionTypeObj.getUint8());
+        assertEquals(null, unionTypeObj.getIdentityref());
     }
 }
