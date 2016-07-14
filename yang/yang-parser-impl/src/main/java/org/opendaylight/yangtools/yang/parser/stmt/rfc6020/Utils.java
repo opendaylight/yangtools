@@ -69,8 +69,6 @@ import org.slf4j.LoggerFactory;
 public final class Utils {
     private static final int UNICODE_SCRIPT_FIX_COUNTER = 30;
     private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
-    private static final CharMatcher DOUBLE_QUOTE_MATCHER = CharMatcher.is('"');
-    private static final CharMatcher SINGLE_QUOTE_MATCHER = CharMatcher.is('\'');
     private static final CharMatcher LEFT_PARENTHESIS_MATCHER = CharMatcher.is('(');
     private static final CharMatcher RIGHT_PARENTHESIS_MATCHER = CharMatcher.is(')');
     private static final CharMatcher AMPERSAND_MATCHER = CharMatcher.is('&');
@@ -293,8 +291,8 @@ public final class Utils {
 
     private static final Map<String, DeviateKind> KEYWORD_TO_DEVIATE_MAP;
     static {
-        Builder<String, DeviateKind> keywordToDeviateMapBuilder = ImmutableMap.builder();
-        for (DeviateKind deviate : DeviateKind.values()) {
+        final Builder<String, DeviateKind> keywordToDeviateMapBuilder = ImmutableMap.builder();
+        for (final DeviateKind deviate : DeviateKind.values()) {
             keywordToDeviateMapBuilder.put(deviate.getKeyword(), deviate);
         }
         KEYWORD_TO_DEVIATE_MAP = keywordToDeviateMapBuilder.build();
@@ -312,16 +310,17 @@ public final class Utils {
     }
 
     /**
-     * Cleanup any resources attached to the current thread. Threads interacting with this class can cause thread-local
-     * caches to them. Invoke this method if you want to detach those resources.
+     * Cleanup any resources attached to the current thread. Threads interacting
+     * with this class can cause thread-local caches to them. Invoke this method
+     * if you want to detach those resources.
      */
     public static void detachFromCurrentThread() {
         XPATH_FACTORY.remove();
     }
 
-    public static Collection<SchemaNodeIdentifier.Relative> transformKeysStringToKeyNodes(final StmtContext<?, ?, ?> ctx,
-            final String value) {
-        List<String> keyTokens = SPACE_SPLITTER.splitToList(value);
+    public static Collection<SchemaNodeIdentifier.Relative> transformKeysStringToKeyNodes(
+            final StmtContext<?, ?, ?> ctx, final String value) {
+        final List<String> keyTokens = SPACE_SPLITTER.splitToList(value);
 
         // to detect if key contains duplicates
         if ((new HashSet<>(keyTokens)).size() < keyTokens.size()) {
@@ -329,11 +328,11 @@ public final class Utils {
             throw new SourceException(ctx.getStatementSourceReference(), "Duplicate value in list key: %s", value);
         }
 
-        Set<SchemaNodeIdentifier.Relative> keyNodes = new HashSet<>();
+        final Set<SchemaNodeIdentifier.Relative> keyNodes = new HashSet<>();
 
-        for (String keyToken : keyTokens) {
+        for (final String keyToken : keyTokens) {
 
-            SchemaNodeIdentifier.Relative keyNode = (Relative) SchemaNodeIdentifier.Relative.create(false,
+            final SchemaNodeIdentifier.Relative keyNode = (Relative) SchemaNodeIdentifier.Relative.create(false,
                     Utils.qNameFromArgument(ctx, keyToken));
             keyNodes.add(keyNode);
         }
@@ -344,7 +343,7 @@ public final class Utils {
     static Collection<SchemaNodeIdentifier.Relative> parseUniqueConstraintArgument(final StmtContext<?, ?, ?> ctx,
             final String argumentValue) {
         final Set<SchemaNodeIdentifier.Relative> uniqueConstraintNodes = new HashSet<>();
-        for (String uniqueArgToken : SPACE_SPLITTER.split(argumentValue)) {
+        for (final String uniqueArgToken : SPACE_SPLITTER.split(argumentValue)) {
             final SchemaNodeIdentifier nodeIdentifier = Utils.nodeIdentifierFromPath(ctx, uniqueArgToken);
             SourceException.throwIf(nodeIdentifier.isAbsolute(), ctx.getStatementSourceReference(),
                     "Unique statement argument '%s' contains schema node identifier '%s' "
@@ -364,9 +363,10 @@ public final class Utils {
 
         final String trimmed = trimSingleLastSlashFromXPath(path);
         try {
-            // TODO: we could capture the result and expose its 'evaluate' method
+            // TODO: we could capture the result and expose its 'evaluate'
+            // method
             xPath.compile(trimmed);
-        } catch (XPathExpressionException e) {
+        } catch (final XPathExpressionException e) {
             LOG.warn("Argument \"{}\" is not valid XPath string at \"{}\"", path, ctx.getStatementSourceReference(), e);
         }
 
@@ -374,11 +374,11 @@ public final class Utils {
     }
 
     public static QName trimPrefix(final QName identifier) {
-        String prefixedLocalName = identifier.getLocalName();
-        String[] namesParts = prefixedLocalName.split(":");
+        final String prefixedLocalName = identifier.getLocalName();
+        final String[] namesParts = prefixedLocalName.split(":");
 
         if (namesParts.length == 2) {
-            String localName = namesParts[1];
+            final String localName = namesParts[1];
             return QName.create(identifier.getModule(), localName);
         }
 
@@ -386,7 +386,7 @@ public final class Utils {
     }
 
     public static String trimPrefix(final String identifier) {
-        List<String> namesParts = COLON_SPLITTER.splitToList(identifier);
+        final List<String> namesParts = COLON_SPLITTER.splitToList(identifier);
         if (namesParts.size() == 2) {
             return namesParts.get(1);
         }
@@ -395,13 +395,19 @@ public final class Utils {
 
     /**
      *
-     * Based on identifier read from source and collections of relevant prefixes and statement definitions mappings
-     * provided for actual phase, method resolves and returns valid QName for declared statement to be written.
+     * Based on identifier read from source and collections of relevant prefixes
+     * and statement definitions mappings provided for actual phase, method
+     * resolves and returns valid QName for declared statement to be written.
      * This applies to any declared statement, including unknown statements.
      *
-     * @param prefixes - collection of all relevant prefix mappings supplied for actual parsing phase
-     * @param stmtDef - collection of all relevant statement definition mappings provided for actual parsing phase
-     * @param identifier - statement to parse from source
+     * @param prefixes
+     *            - collection of all relevant prefix mappings supplied for
+     *            actual parsing phase
+     * @param stmtDef
+     *            - collection of all relevant statement definition mappings
+     *            provided for actual parsing phase
+     * @param identifier
+     *            - statement to parse from source
      * @return valid QName for declared statement to be written
      *
      */
@@ -410,28 +416,28 @@ public final class Utils {
         if (stmtDef.get(identifier) != null) {
             return stmtDef.get(identifier).getStatementName();
         } else {
-            String prefixedLocalName = identifier.getLocalName();
-            String[] namesParts = prefixedLocalName.split(":");
+            final String prefixedLocalName = identifier.getLocalName();
+            final String[] namesParts = prefixedLocalName.split(":");
 
             if (namesParts.length == 2) {
-                String prefix = namesParts[0];
-                String localName = namesParts[1];
+                final String prefix = namesParts[0];
+                final String localName = namesParts[1];
 
                 if (prefixes == null) {
                     return null;
                 }
 
-                QNameModule qNameModule = prefixes.get(prefix);
+                final QNameModule qNameModule = prefixes.get(prefix);
                 if (qNameModule == null) {
                     return null;
                 }
 
                 if (prefixes.isPreLinkageMap()) {
-                    StatementDefinition foundStmtDef = stmtDef.getByNamespaceAndLocalName(qNameModule.getNamespace(),
-                            localName);
+                    final StatementDefinition foundStmtDef = stmtDef.getByNamespaceAndLocalName(
+                            qNameModule.getNamespace(), localName);
                     return foundStmtDef != null ? foundStmtDef.getStatementName() : null;
                 } else {
-                    QName qName = QName.create(qNameModule, localName);
+                    final QName qName = QName.create(qNameModule, localName);
                     return stmtDef.get(qName) != null ? qName : null;
                 }
             }
@@ -442,13 +448,13 @@ public final class Utils {
     static SchemaNodeIdentifier nodeIdentifierFromPath(final StmtContext<?, ?, ?> ctx, final String path) {
         // FIXME: is the path trimming really necessary??
         final List<QName> qNames = new ArrayList<>();
-        for (String nodeName : SLASH_SPLITTER.split(trimSingleLastSlashFromXPath(path))) {
+        for (final String nodeName : SLASH_SPLITTER.split(trimSingleLastSlashFromXPath(path))) {
             try {
                 final QName qName = Utils.qNameFromArgument(ctx, nodeName);
                 qNames.add(qName);
-            } catch (Exception e) {
-                throw new IllegalArgumentException(
-                    String.format("Failed to parse node '%s' in path '%s'", nodeName, path), e);
+            } catch (final Exception e) {
+                throw new IllegalArgumentException(String.format("Failed to parse node '%s' in path '%s'", nodeName,
+                        path), e);
             }
         }
 
@@ -456,24 +462,32 @@ public final class Utils {
     }
 
     public static String stringFromStringContext(final YangStatementParser.ArgumentContext context) {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         List<TerminalNode> strings = context.STRING();
         if (strings.isEmpty()) {
             strings = Collections.singletonList(context.IDENTIFIER());
         }
-        for (TerminalNode stringNode : strings) {
+        for (final TerminalNode stringNode : strings) {
             final String str = stringNode.getText();
-            char firstChar = str.charAt(0);
-            final CharMatcher quoteMatcher;
-            if (SINGLE_QUOTE_MATCHER.matches(firstChar)) {
-                quoteMatcher = SINGLE_QUOTE_MATCHER;
-            } else if (DOUBLE_QUOTE_MATCHER.matches(firstChar)) {
-                quoteMatcher = DOUBLE_QUOTE_MATCHER;
+            final char firstChar = str.charAt(0);
+            final char lastChar = str.charAt(str.length() - 1);
+            if (firstChar == '"' && lastChar == '"') {
+                final String innerStr = str.substring(1, str.length() - 1);
+                /*
+                 * Unescape escaped double quotes, tabs, new line and backslash
+                 * in the inner string and trim the result.
+                 */
+                sb.append(innerStr.replace("\\\"", "\"").replace("\\\\", "\\").replace("\\n", "\n")
+                        .replace("\\t", "\t").trim());
+            } else if (firstChar == '\'' && lastChar == '\'') {
+                /*
+                 * According to RFC6020 a single quote character cannot occur in
+                 * a single-quoted string, even when preceded by a backslash.
+                 */
+                sb.append(str.substring(1, str.length() - 1));
             } else {
                 sb.append(str);
-                continue;
             }
-            sb.append(quoteMatcher.removeFrom(str.substring(1, str.length() - 1)));
         }
         return sb.toString();
     }
@@ -487,7 +501,7 @@ public final class Utils {
         QNameModule qNameModule = null;
         String localName = null;
 
-        String[] namesParts = value.split(":");
+        final String[] namesParts = value.split(":");
         switch (namesParts.length) {
         case 1:
             localName = namesParts[0];
@@ -497,10 +511,11 @@ public final class Utils {
             prefix = namesParts[0];
             localName = namesParts[1];
             qNameModule = getModuleQNameByPrefix(ctx, prefix);
-            // in case of unknown statement argument, we're not going to parse it
+            // in case of unknown statement argument, we're not going to parse
+            // it
             if (qNameModule == null
                     && ctx.getPublicDefinition().getDeclaredRepresentationClass()
-                    .isAssignableFrom(UnknownStatementImpl.class)) {
+                            .isAssignableFrom(UnknownStatementImpl.class)) {
                 localName = value;
                 qNameModule = getRootModuleQName(ctx);
             }
@@ -513,12 +528,12 @@ public final class Utils {
         }
 
         Preconditions.checkArgument(qNameModule != null,
-                "Error in module '%s': can not resolve QNameModule for '%s'. Statement source at %s",
-                ctx.getRoot().rawStatementArgument(), value, ctx.getStatementSourceReference());
+                "Error in module '%s': can not resolve QNameModule for '%s'. Statement source at %s", ctx.getRoot()
+                        .rawStatementArgument(), value, ctx.getStatementSourceReference());
         final QNameModule resultQNameModule;
         if (qNameModule.getRevision() == null) {
             resultQNameModule = QNameModule.create(qNameModule.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV)
-                .intern();
+                    .intern();
         } else {
             resultQNameModule = qNameModule;
         }
@@ -531,7 +546,7 @@ public final class Utils {
         final QNameModule qNameModule = ctx.getFromNamespace(ModuleIdentifierToModuleQName.class, modId);
 
         if (qNameModule == null && StmtContextUtils.producesDeclared(ctx.getRoot(), SubmoduleStatement.class)) {
-            String moduleName = ctx.getRoot().getFromNamespace(BelongsToPrefixToModuleName.class, prefix);
+            final String moduleName = ctx.getRoot().getFromNamespace(BelongsToPrefixToModuleName.class, prefix);
             return ctx.getFromNamespace(ModuleNameToModuleQName.class, moduleName);
         }
         return qNameModule;
@@ -565,7 +580,8 @@ public final class Utils {
     @Nullable
     public static StatementContextBase<?, ?, ?> findNode(final StmtContext<?, ?, ?> rootStmtCtx,
             final SchemaNodeIdentifier node) {
-        return (StatementContextBase<?, ?, ?>) rootStmtCtx.getFromNamespace(SchemaNodeIdentifierBuildNamespace.class, node);
+        return (StatementContextBase<?, ?, ?>) rootStmtCtx.getFromNamespace(SchemaNodeIdentifierBuildNamespace.class,
+                node);
     }
 
     public static boolean isUnknownNode(final StmtContext<?, ?, ?> stmtCtx) {
@@ -595,13 +611,13 @@ public final class Utils {
 
     public static Date getLatestRevision(final Iterable<? extends StmtContext<?, ?, ?>> subStmts) {
         Date revision = null;
-        for (StmtContext<?, ?, ?> subStmt : subStmts) {
-            if (subStmt.getPublicDefinition().getDeclaredRepresentationClass().isAssignableFrom(RevisionStatement
-                    .class)) {
+        for (final StmtContext<?, ?, ?> subStmt : subStmts) {
+            if (subStmt.getPublicDefinition().getDeclaredRepresentationClass()
+                    .isAssignableFrom(RevisionStatement.class)) {
                 if (revision == null && subStmt.getStatementArgument() != null) {
                     revision = (Date) subStmt.getStatementArgument();
-                } else if (subStmt.getStatementArgument() != null && ((Date) subStmt.getStatementArgument()).compareTo
-                        (revision) > 0) {
+                } else if (subStmt.getStatementArgument() != null
+                        && ((Date) subStmt.getStatementArgument()).compareTo(revision) > 0) {
                     revision = (Date) subStmt.getStatementArgument();
                 }
             }
@@ -637,7 +653,7 @@ public final class Utils {
             try {
                 Pattern.compile(rawPattern);
                 return rawPattern;
-            } catch(PatternSyntaxException ex) {
+            } catch (final PatternSyntaxException ex) {
                 LOG.debug("Invalid regex pattern syntax in: {}", rawPattern, ex);
                 if (ex.getMessage().contains("Unknown character script name")) {
                     rawPattern = fixUnknownScripts(ex.getMessage(), rawPattern);
@@ -653,25 +669,25 @@ public final class Utils {
 
     private static String fixUnknownScripts(final String exMessage, final String rawPattern) {
         StringBuilder result = new StringBuilder(rawPattern);
-        Matcher matcher = BETWEEN_CURLY_BRACES_PATTERN.matcher(exMessage);
+        final Matcher matcher = BETWEEN_CURLY_BRACES_PATTERN.matcher(exMessage);
         if (matcher.find()) {
-            String capturedGroup = matcher.group(1);
+            final String capturedGroup = matcher.group(1);
             if (JAVA_UNICODE_BLOCKS.contains(capturedGroup)) {
-                int idx = rawPattern.indexOf("Is" + capturedGroup);
+                final int idx = rawPattern.indexOf("Is" + capturedGroup);
                 result = result.replace(idx, idx + 2, "In");
             }
         }
         return result.toString();
     }
 
-    public static boolean belongsToTheSameModule(QName targetStmtQName, QName sourceStmtQName) {
+    public static boolean belongsToTheSameModule(final QName targetStmtQName, final QName sourceStmtQName) {
         if (targetStmtQName.getModule().equals(sourceStmtQName.getModule())) {
             return true;
         }
         return false;
     }
 
-    public static boolean isPresenceContainer(StatementContextBase<?, ?, ?> targetCtx) {
+    public static boolean isPresenceContainer(final StatementContextBase<?, ?, ?> targetCtx) {
         if (!targetCtx.getPublicDefinition().equals(Rfc6020Mapping.CONTAINER)) {
             return false;
         }
