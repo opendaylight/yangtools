@@ -1,0 +1,8 @@
+module string-test {
+    namespace "test";
+    prefix test;
+
+    description "    1. this text contains \"string enclosed in double quotes\" and special characters: \\,\n,\t      " +
+                "    2. this text contains \"string enclosed in double quotes\" and special characters: \\,\n,
+,                     3. this text contains \"string enclosed in double quotes\" and special characters: \\,\n,\t      ";
+}
