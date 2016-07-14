@@ -124,7 +124,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 def = resolveTypeBodyStmts(name.getLocalName());
             }
         } else if (current != null && current.definition().getRepresentingClass().equals(UnknownStatementImpl.class)) {
-            QName qName = Utils.qNameFromArgument(current, name.getLocalName());
+            final QName qName = Utils.qNameFromArgument(current, name.getLocalName());
 
             def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition(
                 getNewStatementDefinition(qName)));
@@ -176,7 +176,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     void startPhase(final ModelProcessingPhase phase) {
         @Nullable
-        ModelProcessingPhase previousPhase = phase.getPreviousPhase();
+        final ModelProcessingPhase previousPhase = phase.getPreviousPhase();
         Preconditions.checkState(Objects.equals(previousPhase, finishedPhase));
         Preconditions.checkState(modifiers.get(previousPhase).isEmpty());
         inProgressPhase = phase;
@@ -202,8 +202,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         if (potentialLocal != null) {
             return potentialLocal;
         }
-        for (NamespaceStorageNode importedSource : importedNamespaces) {
-            V potential = importedSource.getFromLocalStorage(type, key);
+        for (final NamespaceStorageNode importedSource : importedNamespaces) {
+            final V potential = importedSource.getFromLocalStorage(type, key);
             if (potential != null) {
                 return potential;
             }
@@ -242,11 +242,12 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     PhaseCompletionProgress tryToCompletePhase(final ModelProcessingPhase phase) throws SourceException {
-        Collection<ModifierImpl> currentPhaseModifiers = modifiers.get(phase);
+        final Collection<ModifierImpl> currentPhaseModifiers = modifiers.get(phase);
 
         boolean hasProgressed = tryToProgress(currentPhaseModifiers);
 
-        boolean phaseCompleted = root.tryToCompletePhase(phase);
+        Preconditions.checkNotNull(this.root, "Malformed source. Valid root element is missing.");
+        final boolean phaseCompleted = root.tryToCompletePhase(phase);
 
         hasProgressed = (tryToProgress(currentPhaseModifiers) | hasProgressed);
 
@@ -278,7 +279,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     ModelActionBuilder newInferenceAction(final ModelProcessingPhase phase) {
-        ModifierImpl action = new ModifierImpl(phase);
+        final ModifierImpl action = new ModifierImpl(phase);
         modifiers.put(phase, action);
         return action;
     }
@@ -291,10 +292,10 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     SourceException failModifiers(final ModelProcessingPhase identifier) {
         final List<SourceException> exceptions = new ArrayList<>();
-        for (ModifierImpl mod : modifiers.get(identifier)) {
+        for (final ModifierImpl mod : modifiers.get(identifier)) {
             try {
                 mod.failModifier();
-            } catch (SourceException e) {
+            } catch (final SourceException e) {
                 exceptions.add(e);
             }
         }
@@ -355,13 +356,13 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     private PrefixToModule preLinkagePrefixes() {
-        PrefixToModuleMap preLinkagePrefixes = new PrefixToModuleMap(true);
-        Map<String, URI> prefixToNamespaceMap = getAllFromLocalStorage(ImpPrefixToNamespace.class);
+        final PrefixToModuleMap preLinkagePrefixes = new PrefixToModuleMap(true);
+        final Map<String, URI> prefixToNamespaceMap = getAllFromLocalStorage(ImpPrefixToNamespace.class);
         if (prefixToNamespaceMap == null) {
             //:FIXME if it is a submodule without any import, the map is null. Handle also submodules and includes...
             return null;
         }
-        for (Entry<String, URI> prefixToNamespace : prefixToNamespaceMap.entrySet()) {
+        for (final Entry<String, URI> prefixToNamespace : prefixToNamespaceMap.entrySet()) {
             preLinkagePrefixes.put(prefixToNamespace.getKey(), QNameModule.create(prefixToNamespace.getValue(), null));
         }
 
@@ -377,7 +378,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             allPrefixes.putAll(belongsToPrefixes);
         }
 
-        for (Entry<String, ModuleIdentifier> stringModuleIdentifierEntry : allPrefixes.entrySet()) {
+        for (final Entry<String, ModuleIdentifier> stringModuleIdentifierEntry : allPrefixes.entrySet()) {
             final QNameModule namespace = getRoot().getFromNamespace(ModuleIdentifierToModuleQName.class,
                 stringModuleIdentifierEntry.getValue());
             prefixToModuleMap.put(stringModuleIdentifierEntry.getKey(), namespace);
@@ -387,18 +388,18 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     private QNameToStatementDefinition stmtDef() {
         // regular YANG statements and extension supports added
-        ImmutableMap<QName, StatementSupport<?, ?, ?>> definitions = currentContext.getSupportsForPhase(
+        final ImmutableMap<QName, StatementSupport<?, ?, ?>> definitions = currentContext.getSupportsForPhase(
                 inProgressPhase).getDefinitions();
-        for (Entry<QName, StatementSupport<?, ?, ?>> entry : definitions.entrySet()) {
+        for (final Entry<QName, StatementSupport<?, ?, ?>> entry : definitions.entrySet()) {
             qNameToStmtDefMap.put(entry.getKey(), entry.getValue());
         }
 
         // extensions added
         if (inProgressPhase.equals(ModelProcessingPhase.FULL_DECLARATION)) {
-            Map<QName, StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>>> extensions =
+            final Map<QName, StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>>> extensions =
                     currentContext.getAllFromNamespace(ExtensionNamespace.class);
             if (extensions != null) {
-                for (Entry<QName, StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>>> extension :
+                for (final Entry<QName, StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>>> extension :
                     extensions.entrySet()) {
                     if(qNameToStmtDefMap.get(extension.getKey()) == null) {
                         qNameToStmtDefMap.put((extension.getKey()),
