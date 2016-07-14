@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_00fd9a3a",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-07-14T13:05:04Z",
+      "side": 1,
+      "message": "Xpath expression of \u0027when\u0027 statement in the test model \u0027foo.yang\u0027 contains escaped double quotes (\\\"), which must be unescaped back to double quotes (\\\" -\u003e \") in order to compile this expression successfully. We could do this by path.replace(\"\\\\\\\"\", \"\\\"\"), what will works fine for almost all cases, but I am not sure whether we really want to do this, because some special cases maybe would not work .. ?",
+      "range": {
+        "startLine": 364,
+        "startChar": 7,
+        "endLine": 364,
+        "endChar": 66
+      },
+      "revId": "a233ec1c1d99c1ea02552d6c0a9c78bb3211a611",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
