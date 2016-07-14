@@ -16,6 +16,24 @@
       "revId": "7348dc151c0cd1ad0f3e86dc3eb1faa06d21c5c0",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_60ebb6b0",
+        "filename": "yang/yang-parser-impl/src/test/resources/substatement-validator/empty-element/empty.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-07-14T12:32:48Z",
+      "side": 1,
+      "message": "Base did not have endline at the end of the file.",
+      "parentUuid": "9a561d44_51892a25",
+      "revId": "7348dc151c0cd1ad0f3e86dc3eb1faa06d21c5c0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
