@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_7a96bef1",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceSpecificContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-07-14T18:20:03Z",
+      "side": 1,
+      "message": "I think this would still throw a NullPointerException, just with a message added. Do we want to throw SourceException instead?",
+      "range": {
+        "startLine": 249,
+        "startChar": 22,
+        "endLine": 249,
+        "endChar": 34
+      },
+      "revId": "f86115e8f9ee76f275692805158164843c427a14",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_baa05644",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/stmt/Bug6131Test.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-07-14T18:20:03Z",
+      "side": 1,
+      "message": "Maybe catch the exact Exception subclass?",
+      "range": {
+        "startLine": 24,
+        "startChar": 23,
+        "endLine": 24,
+        "endChar": 32
+      },
+      "revId": "f86115e8f9ee76f275692805158164843c427a14",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
