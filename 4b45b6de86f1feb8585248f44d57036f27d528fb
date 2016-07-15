@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_c920e6b2",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-07-15T16:45:57Z",
+      "side": 1,
+      "message": "please don\u0027t, it makes the construction unreadable. also refrain from reformatting sources along with functional changes.",
+      "range": {
+        "startLine": 82,
+        "startChar": 3,
+        "endLine": 132,
+        "endChar": 69
+      },
+      "revId": "4b45b6de86f1feb8585248f44d57036f27d528fb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
