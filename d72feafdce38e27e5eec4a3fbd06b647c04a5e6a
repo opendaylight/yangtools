@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_8486d511",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2016-07-15T18:37:49Z",
+      "side": 1,
+      "message": "Please reformat the commit message. The first line should be a short summary, prefixed with the bug ID if any, e.g. \"Bug 1234: Fix issue with leafSetEntryNode in SchemaTracker\", then a blank line, then details as to the issue and what you changed/fixed.",
+      "revId": "d72feafdce38e27e5eec4a3fbd06b647c04a5e6a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
