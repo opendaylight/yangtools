@@ -154,7 +154,7 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
 
     @Override
     public void leafSetEntryNode(final QName name, final Object value, final Map<QName, String> attributes) throws IOException {
-        final LeafListSchemaNode schema = tracker.leafSetEntryNode();
+        final LeafListSchemaNode schema = tracker.leafSetEntryNode(name);
         writeElement(schema.getQName(), schema, value, attributes);
     }
 
@@ -206,7 +206,7 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
 
     @Override
     public void leafSetEntryNode(final QName name, final Object value) throws IOException {
-        final LeafListSchemaNode schema = tracker.leafSetEntryNode();
+        final LeafListSchemaNode schema = tracker.leafSetEntryNode(name);
         writeElement(schema.getQName(), schema, value);
     }
 
