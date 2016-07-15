@@ -106,7 +106,7 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
 
     @Override
     public void leafSetEntryNode(final QName name, final Object value) throws IOException {
-        final LeafListSchemaNode schema = tracker.leafSetEntryNode();
+        final LeafListSchemaNode schema = tracker.leafSetEntryNode(name);
         final JSONCodec<Object> codec = codecs.codecFor(schema);
         context.emittingChild(codecs.getSchemaContext(), writer);
         writeValue(value, codec);

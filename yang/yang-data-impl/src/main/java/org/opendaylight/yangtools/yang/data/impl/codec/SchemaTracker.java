@@ -57,39 +57,45 @@ public final class SchemaTracker {
     private SchemaTracker(final SchemaContext context, final SchemaPath path) {
         SchemaNode current = Preconditions.checkNotNull(context);
         for (final QName qname : path.getPathFromRoot()) {
-            SchemaNode child;
-            if(current instanceof DataNodeContainer) {
-                child = ((DataNodeContainer) current).getDataChildByName(qname);
-
-                if (child == null && current instanceof SchemaContext) {
-                    child = tryFindGroupings((SchemaContext) current, qname).orNull();
-                }
-
-                if(child == null && current instanceof SchemaContext) {
-                    child = tryFindNotification((SchemaContext) current, qname)
-                            .or(tryFindRpc(((SchemaContext) current), qname)).orNull();
-                }
-            } else if (current instanceof ChoiceSchemaNode) {
-                child = ((ChoiceSchemaNode) current).getCaseNodeByName(qname);
-            } else if (current instanceof RpcDefinition) {
-                switch (qname.getLocalName()) {
-                    case "input":
-                        child = ((RpcDefinition) current).getInput();
-                        break;
-                    case "output":
-                        child = ((RpcDefinition) current).getOutput();
-                        break;
-                    default:
-                        child = null;
-                        break;
-                }
-            } else {
-                throw new IllegalArgumentException(String.format("Schema node %s does not allow children.", current));
-            }
-            current = child;
+            current = getChild(current, qname);
         }
         Preconditions.checkArgument(current instanceof DataNodeContainer,"Schema path must point to container or list or an rpc input/output. Supplied path %s pointed to: %s",path,current);
         root = (DataNodeContainer) current;
+    }
+
+    private SchemaNode getChild(final SchemaNode node, final QName qname) {
+        SchemaNode child = null;
+
+        if (node instanceof DataNodeContainer) {
+            child = ((DataNodeContainer) node).getDataChildByName(qname);
+
+            if (child == null && node instanceof SchemaContext) {
+                child = tryFindGroupings((SchemaContext) node, qname).orNull();
+            }
+
+            if(child == null && node instanceof SchemaContext) {
+                child = tryFindNotification((SchemaContext) node, qname)
+                        .or(tryFindRpc(((SchemaContext) node), qname)).orNull();
+            }
+        } else if (node instanceof ChoiceSchemaNode) {
+            child = ((ChoiceSchemaNode) node).getCaseNodeByName(qname);
+        } else if (node instanceof RpcDefinition) {
+            switch (qname.getLocalName()) {
+                case "input":
+                    child = ((RpcDefinition) node).getInput();
+                    break;
+                case "output":
+                    child = ((RpcDefinition) node).getOutput();
+                    break;
+                default:
+                    child = null;
+                    break;
+            }
+        } else {
+            throw new IllegalArgumentException(String.format("Schema node %s does not allow children.", node));
+        }
+
+        return child;
     }
 
     private static Optional<SchemaNode> tryFindGroupings(final SchemaContext ctx, final QName qname) {
@@ -207,11 +213,15 @@ public final class SchemaTracker {
         return (LeafListSchemaNode)schema;
     }
 
-    public LeafListSchemaNode leafSetEntryNode() {
+    public LeafListSchemaNode leafSetEntryNode(QName qname) {
         final Object parent = getParent();
-
-        Preconditions.checkArgument(parent instanceof LeafListSchemaNode, "Not currently in a leaf-list");
-        return (LeafListSchemaNode) parent;
+        if (parent instanceof LeafListSchemaNode) {
+            return (LeafListSchemaNode) parent;
+        } else {
+            final SchemaNode child = getChild((SchemaNode) parent, qname);
+            Preconditions.checkArgument(child instanceof LeafListSchemaNode, "Node %s is neither a leaf-list nor currently in a leaf-list", child.getPath());
+            return (LeafListSchemaNode) child;
+        }
     }
 
     public ChoiceSchemaNode startChoiceNode(final NodeIdentifier name) {
