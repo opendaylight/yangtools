@@ -224,9 +224,7 @@ public class EffectiveStatementTypeTest {
         assertFalse(enumSpecEff.equals("test"));
         assertTrue(enumSpecEff.equals(enumSpecEff));
 
-        assertEquals("zero", enumEff.getQName().getLocalName());
         assertEquals("zero", enumEff.getName());
-        assertNotNull(enumEff.getPath());
         assertNotNull(enumEff.getUnknownSchemaNodes());
         assertEquals("test enum", enumEff.getDescription());
         assertEquals("test enum ref", enumEff.getReference());
