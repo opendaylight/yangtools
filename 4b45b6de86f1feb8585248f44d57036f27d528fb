@@ -22,6 +22,29 @@
       "revId": "4b45b6de86f1feb8585248f44d57036f27d528fb",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_24a384b3",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-07-18T09:53:00Z",
+      "side": 1,
+      "message": "If we do this here, we should probably also perform the other replacements defined for double-quoted strings: \\n, \\t, \\\\ and elimination of trailing and indentation whitespace.\nhttps://tools.ietf.org/html/rfc6020#section-6.1.3",
+      "range": {
+        "startLine": 321,
+        "startChar": 35,
+        "endLine": 321,
+        "endChar": 42
+      },
+      "revId": "4b45b6de86f1feb8585248f44d57036f27d528fb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
