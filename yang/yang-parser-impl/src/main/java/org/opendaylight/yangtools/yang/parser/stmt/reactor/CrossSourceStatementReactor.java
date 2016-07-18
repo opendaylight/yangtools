@@ -9,20 +9,14 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Predicate;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.IfFeaturePredicates;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
@@ -33,7 +27,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
-import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 
 public class CrossSourceStatementReactor {
 
@@ -150,34 +143,6 @@ public class CrossSourceStatementReactor {
             }
 
             return buildEffective();
-        }
-
-        /**
-         * @deprecated This method was never used and relies on deprecated
-         *             module methods.
-         */
-        @Deprecated
-        public Map<File, Module> buildEffectiveMappedToSource(final List<File> yangFiles) throws ReactorException,
-                FileNotFoundException {
-            if (yangFiles == null || yangFiles.isEmpty()) {
-                return Collections.emptyMap();
-            }
-
-            final Map<String, File> pathToFile = new HashMap<>();
-            final Map<File, Module> sourceFileToModule = new HashMap<>();
-
-            for (final File yangFile : yangFiles) {
-                addSource(new YangStatementSourceImpl(new NamedFileInputStream(yangFile, yangFile.getPath())));
-                pathToFile.put(yangFile.getPath(), yangFile);
-            }
-
-            final EffectiveSchemaContext schema = buildEffective();
-            final Set<Module> modules = schema.getModules();
-            for (final Module module : modules) {
-                sourceFileToModule.put(pathToFile.get(module.getModuleSourcePath()), module);
-            }
-
-            return sourceFileToModule;
         }
     }
 }
