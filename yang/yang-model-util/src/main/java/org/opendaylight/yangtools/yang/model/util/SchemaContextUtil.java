@@ -696,52 +696,6 @@ public final class SchemaContextUtil {
     }
 
     /**
-     * @deprecated due to expensive lookup
-     * Returns parent Yang Module for specified Schema Context in which Schema
-     * Node is declared. If Schema Node is of type 'ExtendedType' it tries to find parent module
-     * in which the type was originally declared (needed for correct leafref path resolution). <br>
-     * If the Schema Node is not present in Schema Context the
-     * operation will return <code>null</code>. <br>
-     * If Schema Context or Schema Node contains <code>null</code> references
-     * the method will throw IllegalArgumentException
-     *
-     * @throws IllegalArgumentException
-     *
-     * @param schemaContext
-     *            Schema Context
-     * @param schemaNode
-     *            Schema Node
-     * @return Yang Module for specified Schema Context and Schema Node, if
-     *         Schema Node is NOT present, the method will returns
-     *         <code>null</code>
-     */
-    @Deprecated
-    public static Module findParentModuleByType(final SchemaContext schemaContext, final SchemaNode schemaNode) {
-        Preconditions.checkArgument(schemaContext != null, "Schema Context reference cannot be NULL!");
-        Preconditions.checkArgument(schemaNode != null, "Schema Node cannot be NULL!");
-        TypeDefinition<?> nodeType = null;
-
-        if (schemaNode instanceof LeafSchemaNode) {
-            nodeType = ((LeafSchemaNode) schemaNode).getType();
-        } else if (schemaNode instanceof LeafListSchemaNode) {
-            nodeType = ((LeafListSchemaNode) schemaNode).getType();
-        }
-
-        if (!BaseTypes.isYangBuildInType(nodeType) && nodeType.getBaseType() != null) {
-            while (nodeType.getBaseType() != null && !BaseTypes.isYangBuildInType(nodeType.getBaseType())) {
-                nodeType = nodeType.getBaseType();
-            }
-
-            QNameModule typeDefModuleQname = nodeType.getQName().getModule();
-
-            return schemaContext.findModuleByNamespaceAndRevision(typeDefModuleQname.getNamespace(),
-                    typeDefModuleQname.getRevision());
-        }
-
-        return SchemaContextUtil.findParentModule(schemaContext, schemaNode);
-    }
-
-    /**
      * Returns base type for {@code typeDefinition} which belongs to module specified via {@code qName}. This handle case
      * when leafref type isn't specified as type substatement of leaf or leaf-list but is defined in other module as typedef
      * which is then imported to referenced module.
