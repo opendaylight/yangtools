@@ -2,9 +2,27 @@ module foo {
     namespace "foo-namespace";
     prefix "f";
 
+    identity ident-base;
+    identity ident-one {
+        base ident-base;
+    }
+
+    typedef union-type {
+        type union {
+            type uint8;
+            type identityref {
+                base ident-base;
+            }
+        }
+    }
+
     container parent-container {
 
         container leaf-container {
+
+            leaf union-identityref-leaf {
+                type union-type;
+            }
 
             leaf int32-leaf {
                 type int32;
