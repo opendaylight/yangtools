@@ -9,11 +9,11 @@
 package org.opendaylight.yangtools.yang.parser.util;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Charsets;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
@@ -42,7 +42,7 @@ public final class TextToASTTransformer extends SchemaSourceTransformer<YangText
                 //:TODO missing validation (YangModelBasicValidationListener should be re-implemented to new parser)
 
                 // Backwards compatibility
-                final String text = input.asCharSource(Charsets.UTF_8).read();
+                final String text = input.asCharSource(StandardCharsets.UTF_8).read();
 
                 return Futures.immediateCheckedFuture(ASTSchemaSource.create(input.getIdentifier(), ctx, text));
             }

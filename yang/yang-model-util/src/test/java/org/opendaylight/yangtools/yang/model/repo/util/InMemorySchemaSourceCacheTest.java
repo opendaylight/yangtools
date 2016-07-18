@@ -10,13 +10,13 @@ package org.opendaylight.yangtools.yang.model.repo.util;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.util.concurrent.CheckedFuture;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
@@ -143,7 +143,7 @@ public class InMemorySchemaSourceCacheTest {
 
         @Override
         public InputStream openStream() throws IOException {
-            return new ByteArrayInputStream(this.content.getBytes(Charsets.UTF_8));
+            return new ByteArrayInputStream(this.content.getBytes(StandardCharsets.UTF_8));
         }
     }
 
