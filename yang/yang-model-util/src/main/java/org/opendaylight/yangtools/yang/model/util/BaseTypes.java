@@ -9,10 +9,8 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
-import java.net.URI;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -25,17 +23,6 @@ public final class BaseTypes {
 
     private BaseTypes() {
     }
-
-    /**
-     * @deprecated Use {@link YangConstants#RFC6020_YANG_NAMESPACE} instead. To be removed in Boron release.
-     */
-    @Deprecated
-    public static final URI BASE_TYPES_NAMESPACE = YangConstants.RFC6020_YANG_NAMESPACE;
-    /**
-     * @deprecated Use {@link YangConstants#RFC6020_YANG_MODULE} instead. To be removed in Boron release.
-     */
-    @Deprecated
-    public static final QNameModule BASE_TYPES_MODULE = YangConstants.RFC6020_YANG_MODULE;
 
     public static final QName BINARY_QNAME = constructQName("binary");
     public static final QName BITS_QNAME = constructQName("bits");
