@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_2fd23d5c",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/DeviateDefinition.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-07-18T11:50:22Z",
+      "side": 1,
+      "message": "missing javadoc and @Beta annotation for newly-introduced interface",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 36
+      },
+      "revId": "72de9014c5e4e7cd7fa46da7bea588c8c399a746",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_6f5a75f4",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/DeviateDefinition.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-07-18T11:50:22Z",
+      "side": 1,
+      "message": "Pull this up into a top-level enum called DeviateKind",
+      "range": {
+        "startLine": 22,
+        "startChar": 9,
+        "endLine": 22,
+        "endChar": 16
+      },
+      "revId": "72de9014c5e4e7cd7fa46da7bea588c8c399a746",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_4f5df1e8",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/Deviation.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-07-18T11:50:22Z",
+      "side": 1,
+      "message": "add proper javadocs",
+      "range": {
+        "startLine": 30,
+        "startChar": 5,
+        "endLine": 30,
+        "endChar": 6
+      },
+      "revId": "72de9014c5e4e7cd7fa46da7bea588c8c399a746",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_0f0ad9d1",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/Deviation.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-07-18T11:50:22Z",
+      "side": 1,
+      "message": "Should this be a Collection or a List? DeviateDefinition does not define hashcode/equals, hence interaction with Set is problematic.",
+      "range": {
+        "startLine": 33,
+        "startChar": 4,
+        "endLine": 33,
+        "endChar": 41
+      },
+      "revId": "72de9014c5e4e7cd7fa46da7bea588c8c399a746",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
