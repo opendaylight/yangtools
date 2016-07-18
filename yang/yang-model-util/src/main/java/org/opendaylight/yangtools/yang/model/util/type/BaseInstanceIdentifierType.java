@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
@@ -17,12 +16,6 @@ final class BaseInstanceIdentifierType extends AbstractBaseType<InstanceIdentifi
 
     private BaseInstanceIdentifierType() {
         super(BaseTypes.INSTANCE_IDENTIFIER_QNAME);
-    }
-
-    @Deprecated
-    @Override
-    public RevisionAwareXPath getPathStatement() {
-        throw new UnsupportedOperationException("API design error");
     }
 
     @Override
