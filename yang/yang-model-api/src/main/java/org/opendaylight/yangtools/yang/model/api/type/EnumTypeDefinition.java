@@ -45,7 +45,9 @@ public interface EnumTypeDefinition extends TypeDefinition<EnumTypeDefinition> {
          */
         @Deprecated
         @Override
-        SchemaPath getPath();
+        default SchemaPath getPath() {
+            throw new UnsupportedOperationException("Enum pairs do not have SchemaPath");
+        }
 
         /**
          *
@@ -56,7 +58,9 @@ public interface EnumTypeDefinition extends TypeDefinition<EnumTypeDefinition> {
          */
         @Deprecated
         @Override
-        QName getQName();
+        default QName getQName() {
+            throw new UnsupportedOperationException("Enum pairs do not have QName, only name");
+        }
 
         /**
          * The name to specify each assigned name of an enumeration type.
