@@ -58,7 +58,7 @@ import org.opendaylight.yangtools.concepts.SemVer;
     </code>
  */
 @Immutable
-public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIdentifier {
+public interface Module extends DataNodeContainer, ModuleIdentifier {
     /**
      * Default semantic version of Module.
      */
