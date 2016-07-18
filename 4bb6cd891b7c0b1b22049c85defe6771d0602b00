@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_e4822c93",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/ModuleStringIdentityrefCodec.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-07-18T10:48:39Z",
+      "side": 1,
+      "message": "In case of identityref type defined inside union type this code is executed for both JSON and XML sources. For JSON sources it works fine, but XML sources should be handled in slightly different way (see the method in XmlStringIdentityrefCodec). So this solution throws IllegalArgumentException for XML sources, which contain prefixed indentityref type defined inside union type (simple identityref types work fine also for XML sources). Please see the following test: https://git.opendaylight.org/gerrit/#/c/41951/1",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 5
+      },
+      "revId": "4bb6cd891b7c0b1b22049c85defe6771d0602b00",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
