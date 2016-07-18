@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
@@ -21,12 +20,6 @@ final class RestrictedInstanceIdentifierType extends AbstractRestrictedType<Inst
         final Collection<UnknownSchemaNode> unknownSchemaNodes, final boolean requireInstance) {
         super(baseType, path, unknownSchemaNodes);
         this.requireInstance = requireInstance;
-    }
-
-    @Deprecated
-    @Override
-    public RevisionAwareXPath getPathStatement() {
-        throw new UnsupportedOperationException("API design mistake");
     }
 
     @Override
