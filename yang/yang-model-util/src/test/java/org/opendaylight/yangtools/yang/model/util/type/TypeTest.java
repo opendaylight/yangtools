@@ -439,7 +439,7 @@ public class TypeTest {
         final UnknownSchemaNode UNKNOWN_SCHEMA_NODE= mock(UnknownSchemaNode.class);
         final Collection<UnknownSchemaNode> collection = new ArrayList<>(1);
         collection.add(UNKNOWN_SCHEMA_NODE);
-        final EnumPairImpl enumPair = new EnumPairImpl("enum1", 1, SCHEMA_PATH, "description", "reference",
+        final EnumPairImpl enumPair = new EnumPairImpl("enum1", 1, "description", "reference",
                 Status.CURRENT, collection);
 
         final InvalidLengthConstraintException invalidLengthConstraintException = new InvalidLengthConstraintException(
@@ -480,9 +480,9 @@ public class TypeTest {
         final UnknownSchemaNode UNKNOWN_SCHEMA_NODE= mock(UnknownSchemaNode.class);
         final Collection<UnknownSchemaNode> collection = new ArrayList<>(1);
         collection.add(UNKNOWN_SCHEMA_NODE);
-        final EnumPairImpl enumPair1 = new EnumPairImpl("enum1", 1, SCHEMA_PATH, "description", "reference",
+        final EnumPairImpl enumPair1 = new EnumPairImpl("enum1", 1, "description", "reference",
                 Status.CURRENT, collection);
-        final EnumPairImpl enumPair2 = new EnumPairImpl("enum", 1, SCHEMA_PATH, "description", "reference",
+        final EnumPairImpl enumPair2 = new EnumPairImpl("enum", 1, "description", "reference",
                 Status.CURRENT, collection);
         final EnumerationTypeBuilder enumerationTypeBuilder = BaseTypes.enumerationTypeBuilder(SCHEMA_PATH);
         enumerationTypeBuilder.addEnum(enumPair1);
