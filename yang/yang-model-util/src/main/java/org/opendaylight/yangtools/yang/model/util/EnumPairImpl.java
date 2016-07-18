@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -24,30 +23,27 @@ public final class EnumPairImpl implements EnumPair, Immutable {
     private final List<UnknownSchemaNode> unknownSchemaNodes;
     private final String description;
     private final String reference;
-    private final SchemaPath path;
     private final Status status;
     private final Integer value;
     private final String name;
 
+    /**
+     * @deprecated Use the constructor without a SchemaPath
+     */
+    @Deprecated
     public EnumPairImpl(final String name, final Integer value, final SchemaPath path, final String description,
             final String reference, final Status status, final Collection<UnknownSchemaNode> unknownSchemaNodes) {
-        this.path = Preconditions.checkNotNull(path);
+        this(name, value, description, reference, status, unknownSchemaNodes);
+    }
+
+    public EnumPairImpl(final String name, final Integer value, final String description, final String reference,
+            final Status status, final Collection<UnknownSchemaNode> unknownSchemaNodes) {
         this.value = Preconditions.checkNotNull(value);
         this.name = Preconditions.checkNotNull(name);
         this.description = description;
         this.reference = reference;
         this.status = Preconditions.checkNotNull(status);
         this.unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodes);
-    }
-
-    @Override
-    public QName getQName() {
-        return path.getLastComponent();
-    }
-
-    @Override
-    public SchemaPath getPath() {
-        return path;
     }
 
     @Override
@@ -84,8 +80,6 @@ public final class EnumPairImpl implements EnumPair, Immutable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Objects.hashCode(path.getLastComponent());
-        result = prime * result + Objects.hashCode(path);
         result = prime * result + Objects.hashCode(unknownSchemaNodes);
         result = prime * result + Objects.hashCode(name);
         result = prime * result + Objects.hashCode(value);
@@ -105,7 +99,7 @@ public final class EnumPairImpl implements EnumPair, Immutable {
             return false;
         }
 
-        return Objects.equals(value, other.getValue()) && Objects.equals(getPath(), other.getPath()) &&
+        return Objects.equals(value, other.getValue()) &&
                 Objects.equals(unknownSchemaNodes, other.getUnknownSchemaNodes());
     }
 

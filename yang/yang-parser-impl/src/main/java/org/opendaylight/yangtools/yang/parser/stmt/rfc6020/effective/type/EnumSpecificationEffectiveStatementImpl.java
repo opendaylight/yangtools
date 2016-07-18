@@ -46,8 +46,8 @@ public final class EnumSpecificationEffectiveStatementImpl extends
                             "Enum '%s' must have a value statement", p);
                     }
 
-                    p = new EnumPairImpl(p.getName(), newValue, p.getPath(), p.getDescription(), p.getReference(),
-                        p.getStatus(), p.getUnknownSchemaNodes());
+                    p = new EnumPairImpl(p.getName(), newValue, p.getDescription(), p.getReference(), p.getStatus(),
+                        p.getUnknownSchemaNodes());
                 }
 
                 if (highestValue == null || highestValue < p.getValue()) {
