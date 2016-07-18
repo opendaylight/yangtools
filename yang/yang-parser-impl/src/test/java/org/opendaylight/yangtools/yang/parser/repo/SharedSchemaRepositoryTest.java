@@ -21,9 +21,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-
-import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
@@ -39,10 +36,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.charset.StandardCharsets;
 import java.util.concurrent.ExecutionException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
@@ -226,16 +225,16 @@ public class SharedSchemaRepositoryTest {
         sharedSchemaRepository.registerSchemaSourceListener(listener);
 
         final File test = new File(storageDir, "test.yang");
-        Files.write("content-test", test, Charsets.UTF_8);
+        Files.write("content-test", test, StandardCharsets.UTF_8);
 
         final File test2 = new File(storageDir, "test@2012-12-12.yang");
-        Files.write("content-test-2012", test2, Charsets.UTF_8);
+        Files.write("content-test-2012", test2, StandardCharsets.UTF_8);
 
         final File test3 = new File(storageDir, "test@2013-12-12.yang");
-        Files.write("content-test-2013", test3, Charsets.UTF_8);
+        Files.write("content-test-2013", test3, StandardCharsets.UTF_8);
 
         final File test4 = new File(storageDir, "module@2010-12-12.yang");
-        Files.write("content-module-2010", test4, Charsets.UTF_8);
+        Files.write("content-module-2010", test4, StandardCharsets.UTF_8);
 
 
         final FilesystemSchemaSourceCache<YangTextSchemaSource> cache = new FilesystemSchemaSourceCache<>(sharedSchemaRepository, YangTextSchemaSource.class, storageDir);

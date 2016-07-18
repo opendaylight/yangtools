@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.operations.retest;
 
 import static org.junit.Assert.assertNull;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.io.Files;
@@ -24,7 +23,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-
+import java.util.charset.StandardCharsets;
 import javax.activation.UnsupportedDataTypeException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -140,7 +139,7 @@ public class YangDataOperationsTest {
             return ModifyAction.MERGE;
         }
 
-        return ModifyAction.fromXmlValue(Files.toString(new File(resource.toURI()), Charsets.UTF_8).trim());
+        return ModifyAction.fromXmlValue(Files.toString(new File(resource.toURI()), StandardCharsets.UTF_8).trim());
     }
 
     private void verifyModificationResult(final Optional<ContainerNode> result, final Optional<ContainerNode> expectedResult)

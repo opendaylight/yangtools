@@ -21,7 +21,6 @@ import static org.mockito.Mockito.verify;
 
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
@@ -35,6 +34,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.charset.StandardCharsets;
 import java.util.concurrent.ExecutionException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -83,8 +83,8 @@ public class FilesystemSchemaSourceCacheTest {
 
         assertThat(fileNames, both(hasItem("test2@0000-00-00")).and(hasItem("test@2012-12-12")));
 
-        assertThat(Files.toString(storedFiles.get(0), Charsets.UTF_8), either(containsString(content)).or(containsString(content2)));
-        assertThat(Files.toString(storedFiles.get(1), Charsets.UTF_8), either(containsString(content)).or(containsString(content2)));
+        assertThat(Files.toString(storedFiles.get(0), StandardCharsets.UTF_8), either(containsString(content)).or(containsString(content2)));
+        assertThat(Files.toString(storedFiles.get(1), StandardCharsets.UTF_8), either(containsString(content)).or(containsString(content2)));
 
         verify(this.registry, times(2)).registerSchemaSource(any(SchemaSourceProvider.class), any(PotentialSchemaSource.class));
 
@@ -240,7 +240,7 @@ public class FilesystemSchemaSourceCacheTest {
 
         @Override
         public InputStream openStream() throws IOException {
-            return new ByteArrayInputStream(this.content.getBytes(Charsets.UTF_8));
+            return new ByteArrayInputStream(this.content.getBytes(StandardCharsets.UTF_8));
         }
     }
 }

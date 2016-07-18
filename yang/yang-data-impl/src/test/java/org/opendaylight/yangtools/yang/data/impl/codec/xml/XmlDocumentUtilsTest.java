@@ -8,7 +8,6 @@
 
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import java.io.ByteArrayInputStream;
@@ -19,6 +18,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.charset.StandardCharsets;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -84,7 +84,7 @@ public class XmlDocumentUtilsTest {
     }
 
     public static Document readXmlToDocument(final String xmlContent) throws SAXException, IOException {
-        return readXmlToDocument(new ByteArrayInputStream(xmlContent.getBytes(Charsets.UTF_8)));
+        return readXmlToDocument(new ByteArrayInputStream(xmlContent.getBytes(StandardCharsets.UTF_8)));
     }
 
     public static Document readXmlToDocument(final InputStream xmlContent) throws SAXException, IOException {
