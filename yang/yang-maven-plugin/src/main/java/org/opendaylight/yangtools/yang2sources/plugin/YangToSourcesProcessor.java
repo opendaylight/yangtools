@@ -12,6 +12,7 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -29,10 +30,12 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.repo.YangTextSchemaContextResolver;
+import org.opendaylight.yangtools.yang.parser.repo.YangTextSchemaSourceRegistration;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.ContextHolder;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.YangsInZipsResult;
@@ -59,7 +62,6 @@ class YangToSourcesProcessor {
     private final boolean inspectDependencies;
     private final BuildContext buildContext;
     private final YangProvider yangProvider;
-    private final YangTextSchemaContextResolver resolver;
 
     @VisibleForTesting
     YangToSourcesProcessor(final File yangFilesRootDir, final File[] excludedFiles, final List<CodeGeneratorArg> codeGenerators,
@@ -69,8 +71,8 @@ class YangToSourcesProcessor {
     }
 
     private YangToSourcesProcessor(final BuildContext buildContext, final File yangFilesRootDir, final File[] excludedFiles,
-            final List<CodeGeneratorArg> codeGenerators, final MavenProject project, final boolean inspectDependencies, final YangProvider
-                                           yangProvider) {
+            final List<CodeGeneratorArg> codeGenerators, final MavenProject project, final boolean inspectDependencies,
+            final YangProvider yangProvider) {
         this.buildContext = Util.checkNotNull(buildContext, "buildContext");
         this.yangFilesRootDir = Util.checkNotNull(yangFilesRootDir, "yangFilesRootDir");
         this.excludedFiles = new File[excludedFiles.length];
@@ -82,11 +84,11 @@ class YangToSourcesProcessor {
         this.project = Util.checkNotNull(project, "project");
         this.inspectDependencies = inspectDependencies;
         this.yangProvider = yangProvider;
-        this.resolver = YangTextSchemaContextResolver.create("maven-plugin");
     }
 
     YangToSourcesProcessor(final BuildContext buildContext, final File yangFilesRootDir, final File[] excludedFiles,
-                           final List<CodeGeneratorArg> codeGenerators, final MavenProject project, final boolean inspectDependencies) {
+                           final List<CodeGeneratorArg> codeGenerators, final MavenProject project,
+                           final boolean inspectDependencies) {
         this(yangFilesRootDir, excludedFiles, codeGenerators, project, inspectDependencies, new YangProvider());
     }
 
@@ -119,10 +121,8 @@ class YangToSourcesProcessor {
     }
 
     private ContextHolder processYang() throws MojoExecutionException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        SchemaContext resolveSchemaContext;
-        List<Closeable> closeables = new ArrayList<>();
         LOG.info("{} Inspecting {}", LOG_PREFIX, yangFilesRootDir);
+
         try {
             /*
              * Collect all files which affect YANG context. This includes all
@@ -130,8 +130,6 @@ class YangToSourcesProcessor {
              * dependencies.
              */
             final Collection<File> yangFilesInProject = Util.listFiles(yangFilesRootDir, excludedFiles);
-
-
             final Collection<File> allFiles = new ArrayList<>(yangFilesInProject);
             if (inspectDependencies) {
                 allFiles.addAll(Util.findYangFilesInDependencies(project));
@@ -160,15 +158,23 @@ class YangToSourcesProcessor {
                 return null;
             }
 
-            final List<NamedFileInputStream> yangsInProject = new ArrayList<>();
+            // First collect YANG modules in this project. Registering a source forces it to be parsed into
+            // ASTSchemaSource, which has enough information to extract accurate module identifier.
+            final YangTextSchemaContextResolver resolver = YangTextSchemaContextResolver.create("maven-plugin");
+            final Collection<String> yangFilenamesInProject = new ArrayList<>();
+            final Set<SourceIdentifier> yangSourcesInProject = new HashSet<>();
+            final List<InputStream> all = new ArrayList<>();
+
             for (final File f : yangFilesInProject) {
-                // FIXME: This is hack - normal path should be reported.
-                yangsInProject.add(new NamedFileInputStream(f, META_INF_YANG_STRING + File.separator + f.getName()));
+                yangFilenamesInProject.add(META_INF_YANG_STRING + File.separator + f.getName());
+                all.add(new FileInputStream(f));
+
+                final YangTextSchemaSourceRegistration reg = resolver.registerSource(f.toURI().toURL());
+                yangSourcesInProject.addAll(resolver.getAvailableSources());
+                reg.close();
             }
 
-            List<InputStream> all = new ArrayList<>();
-            all.addAll(yangsInProject);
-            closeables.addAll(yangsInProject);
+            final List<Closeable> closeables = new ArrayList<>(all);
 
             /**
              * Set contains all modules generated from input sources. Number of
@@ -177,6 +183,8 @@ class YangToSourcesProcessor {
              * cannot contains null values.
              */
             Set<Module> projectYangModules;
+            SchemaContext resolveSchemaContext;
+
             try {
                 if (inspectDependencies) {
                     YangsInZipsResult dependentYangResult = Util.findYangFilesInDependenciesAsStream(project);
@@ -187,22 +195,20 @@ class YangToSourcesProcessor {
                     closeables.addAll(yangStreams);
                 }
 
+                final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+
                 resolveSchemaContext = reactor.buildEffective(all);
 
                 Set<Module> parsedAllYangModules = resolveSchemaContext.getModules();
                 projectYangModules = new HashSet<>();
                 for (Module module : parsedAllYangModules) {
-                    final String path = module.getModuleSourcePath();
-                    if (path != null) {
-                        LOG.debug("Looking for source {}", path);
-                        for (NamedFileInputStream is : yangsInProject) {
-                            LOG.debug("In project destination {}", is.getFileDestination());
-                            if (path.equals(is.getFileDestination())) {
-                                LOG.debug("Module {} belongs to current project", module);
-                                projectYangModules.add(module);
-                                break;
-                            }
-                        }
+                    final SourceIdentifier id = RevisionSourceIdentifier.create(module.getName(),
+                        module.getQNameModule().getFormattedRevision());
+                    if (yangSourcesInProject.contains(id)) {
+                        LOG.debug("Module {} belongs to current project", module);
+                        projectYangModules.add(module);
+                    } else {
+                        LOG.debug("Module {} does not belong to current project", module);
                     }
                 }
             } finally {
@@ -211,7 +217,7 @@ class YangToSourcesProcessor {
                 }
             }
 
-            LOG.info("{} {} files parsed from {}", LOG_PREFIX, Util.YANG_SUFFIX.toUpperCase(), yangsInProject);
+            LOG.info("{} {} files parsed from {}", LOG_PREFIX, Util.YANG_SUFFIX.toUpperCase(), yangFilenamesInProject);
             return new ContextHolder(resolveSchemaContext, projectYangModules);
 
             // MojoExecutionException is thrown since execution cannot continue
