@@ -77,7 +77,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * and resources needlessly.
  *
  */
-public interface NormalizedNodeStreamWriter extends Closeable, Flushable, DataSchemaNodeAware {
+public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
 
     /**
      * Methods in this interface allow users to hint the underlying
@@ -482,7 +482,6 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable, DataSc
      * @param schema DataSchemaNode
      * @throws NullPointerException if the argument is null
      */
-    @Override
     default void nextDataSchemaNode(@Nonnull final DataSchemaNode schema) {
         Preconditions.checkNotNull(schema);
     }
