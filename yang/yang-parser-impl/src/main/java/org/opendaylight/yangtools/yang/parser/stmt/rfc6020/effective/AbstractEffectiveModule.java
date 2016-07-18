@@ -52,14 +52,12 @@ import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> extends
         AbstractEffectiveDocumentedNode<String, D> implements Module, MutableStatement {
     private final String name;
-    private final String sourcePath;
     private final String prefix;
     private final YangVersion yangVersion;
     private final String organization;
@@ -117,12 +115,6 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
 
         final ContactEffectiveStatementImpl contactStmt = firstEffective(ContactEffectiveStatementImpl.class);
         this.contact = contactStmt == null ? null : contactStmt.argument();
-
-        if (ctx.getStatementSourceReference() instanceof DeclarationInTextSource) {
-            this.sourcePath = ((DeclarationInTextSource) ctx.getStatementSourceReference()).getSourceName();
-        } else {
-            this.sourcePath = null;
-        }
 
         // init submodules and substatements of submodules
         final List<EffectiveStatement<?, ?>> substatementsOfSubmodules;
@@ -284,11 +276,6 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
         this.typeDefinitions = ImmutableSet.copyOf(mutableTypeDefinitions);
         this.uses = ImmutableSet.copyOf(mutableUses);
 
-    }
-
-    @Override
-    public String getModuleSourcePath() {
-        return sourcePath;
     }
 
     @Override
