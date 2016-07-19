@@ -80,7 +80,8 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
             }
         }
 
-        LOG.warn("Union value {} failed to deserialize efficiently, falling back to String-based instantiation", input);
+        LOG.warn("Union class {} value {} failed to deserialize efficiently, falling back to String-based instantiation",
+            getTypeClass(), input);
         return deserializeString(input);
     }
 

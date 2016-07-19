@@ -56,7 +56,7 @@ final class UnionValueOptionContext {
         try {
             value = codec.deserialize(input);
         } catch (Exception e) {
-            LOG.debug("Codec failed to deserialize input {}", input, e);
+            LOG.debug("Codec {} failed to deserialize input {}", codec, input, e);
             return null;
         }
 
@@ -64,7 +64,7 @@ final class UnionValueOptionContext {
             return unionCtor.invokeExact(value);
         } catch (ClassCastException e) {
             // This case can happen. e.g. NOOP_CODEC
-            LOG.debug("Codec failed to instantiate {} {}", codec, input);
+            LOG.debug("Failed to instantiate {} for input {} value {}", bindingType, input, value, e);
             return null;
         } catch (Throwable e) {
             throw new IllegalArgumentException("Failed to construct union for value " + value, e);
