@@ -1,0 +1,8 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+
+    container root {
+        must "not(deref(.)/../same-pass)";
+    }
+}
