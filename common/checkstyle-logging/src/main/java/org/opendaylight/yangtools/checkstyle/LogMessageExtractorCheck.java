@@ -55,7 +55,12 @@ public class LogMessageExtractorCheck extends AbstractLogMessageCheck {
 
     protected void updateMessagesReportFile(LogMessageOccurence log) {
         try {
-            Files.append(log.toString() + "\n", getLogMessagesReportFile(), StandardCharsets.UTF_8);
+            final File file = getLogMessagesReportFile();
+            if (file.exists()) {
+                Files.append(log.toString() + "\n", file, StandardCharsets.UTF_8);
+            } else {
+                Files.write(log.toString() + "\n", file, StandardCharsets.UTF_8);
+            }
         } catch (IOException e) {
             LOG.error("Failed to append to file: {}", logMessagesReportFile.getPath(), e);
         }
