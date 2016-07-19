@@ -13,7 +13,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import org.opendaylight.yangtools.concepts.Codec;
@@ -49,7 +49,7 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
         return new Callable<UnionTypeCodec>() {
             @Override
             public UnionTypeCodec call() throws NoSuchMethodException, SecurityException {
-                Set<UnionValueOptionContext> values = new HashSet<>();
+                Set<UnionValueOptionContext> values = new LinkedHashSet<>();
                 for (TypeDefinition<?> subtype : unionType.getTypes()) {
                     String methodName = "get" + BindingMapping.getClassName(subtype.getQName());
                     Method valueGetter = unionCls.getMethod(methodName);
