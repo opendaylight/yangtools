@@ -8,10 +8,6 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.io.BaseEncoding;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -20,27 +16,12 @@ import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 final class UnionTypeCodec extends ReflectionBasedCodec {
-    private static final MethodType CHARARRAY_LOOKUP_TYPE = MethodType.methodType(void.class, char[].class);
-    private static final MethodType CHARARRAY_INVOKE_TYPE = MethodType.methodType(Object.class, char[].class);
-    private static final Logger LOG = LoggerFactory.getLogger(UnionTypeCodec.class);
-
     private final ImmutableSet<UnionValueOptionContext> typeCodecs;
-    private final MethodHandle charConstructor;
 
     private UnionTypeCodec(final Class<?> unionCls,final Set<UnionValueOptionContext> codecs) {
         super(unionCls);
-
-        try {
-            charConstructor = MethodHandles.publicLookup().findConstructor(unionCls, CHARARRAY_LOOKUP_TYPE)
-                    .asType(CHARARRAY_INVOKE_TYPE);
-        } catch (IllegalAccessException | NoSuchMethodException e) {
-            throw new IllegalStateException("Failed to instantiate handle for constructor", e);
-        }
-
         typeCodecs = ImmutableSet.copyOf(codecs);
     }
 
@@ -58,15 +39,6 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
         };
     }
 
-    private Object deserializeString(final Object input) {
-        final String str = input instanceof byte[] ? BaseEncoding.base64().encode((byte[]) input) : input.toString();
-        try {
-            return charConstructor.invokeExact(str.toCharArray());
-        } catch (Throwable e) {
-            throw new IllegalStateException("Could not construct instance", e);
-        }
-    }
-
     @Override
     public Object deserialize(final Object input) {
         for (UnionValueOptionContext member : typeCodecs) {
@@ -76,16 +48,15 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
             }
         }
 
-        LOG.warn("Union class {} value {} failed to deserialize efficiently, falling back to String-based instantiation",
-            getTypeClass(), input);
-        return deserializeString(input);
+        throw new IllegalArgumentException(String.format("Failed to construct instance of %s for input %s",
+            getTypeClass(), input));
     }
 
     @Override
     public Object serialize(final Object input) {
         if (input != null) {
             for (UnionValueOptionContext valCtx : typeCodecs) {
-                Object domValue = valCtx.serialize(input);
+                final Object domValue = valCtx.serialize(input);
                 if (domValue != null) {
                     return domValue;
                 }
