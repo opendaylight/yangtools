@@ -45,6 +45,30 @@
       "revId": "4b45b6de86f1feb8585248f44d57036f27d528fb",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_7cb5ff2f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-07-20T13:21:09Z",
+      "side": 1,
+      "message": "I did it, but I am worried about performance impact of now four replacements by reading of each string.. Backslashes, tabs or new lines are not used in strings so widely as escaped double quotes, so I am hesitating a little bit whether it is really neccessary... Please, any opinion from someone ?",
+      "parentUuid": "9a561d44_24a384b3",
+      "range": {
+        "startLine": 321,
+        "startChar": 35,
+        "endLine": 321,
+        "endChar": 42
+      },
+      "revId": "4b45b6de86f1feb8585248f44d57036f27d528fb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
