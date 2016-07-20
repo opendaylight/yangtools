@@ -8,9 +8,8 @@
 
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.TestCase.fail;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
