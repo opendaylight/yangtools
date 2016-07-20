@@ -69,6 +69,30 @@
       "revId": "4b45b6de86f1feb8585248f44d57036f27d528fb",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_bc3b179b",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 321,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-07-20T13:34:01Z",
+      "side": 1,
+      "message": "You can upload the next patch set and then look at console output of distribution-check job. The last finished run waited 125 seconds for Restconf to start working [0]. If that time increases too much for your patch, you can revert to this one.\n\n[0] https://logs.opendaylight.org/releng/jenkins092/yangtools-distribution-check-boron/223/_console-output.log.gz",
+      "parentUuid": "9a561d44_7cb5ff2f",
+      "range": {
+        "startLine": 321,
+        "startChar": 35,
+        "endLine": 321,
+        "endChar": 42
+      },
+      "revId": "4b45b6de86f1feb8585248f44d57036f27d528fb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
