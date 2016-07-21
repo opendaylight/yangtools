@@ -3,7 +3,7 @@
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
- *  and is available at http://www.eclipse.org/legal/epl-v10.html
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 package org.opendaylight.yangtools.binding.data.codec.test;
 
@@ -433,7 +433,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingRunti
                         .build())
                 .build();
         try {
-            final Map.Entry<InstanceIdentifier<?>, DataObject> entryChoiceContainer = registry.fromNormalizedNode
+            registry.fromNormalizedNode
                     (yangInstanceIdentifierValid, containerNodeValid);
             fail("Incorect YangInstanceIdentifier should fail");
         } catch (IllegalStateException e) {
@@ -451,7 +451,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingRunti
                         .build())
                 .build();
         try {
-            final Map.Entry<InstanceIdentifier<?>, DataObject> entry4798 = registry.fromNormalizedNode
+            registry.fromNormalizedNode
                     (yangInstanceIdentifier4798, containerNode4798);
             fail("Incorect YangInstanceIdentifier should fail");
         } catch (IllegalStateException e) {
@@ -499,8 +499,6 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingRunti
                         ImmutableOrderedMapNodeBuilder.create().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(NESTED_LIST_QNAME))
                                 .withChild(mapEntry(NESTED_LIST_QNAME, NESTED_LIST_KEY_QNAME, "foo"))
                                 .withChild(mapEntry(NESTED_LIST_QNAME, NESTED_LIST_KEY_QNAME, "bar")).build()).build();
-        final InstanceIdentifier<TopLevelList> ii = BA_TOP_LEVEL_LIST;
-
         final Map.Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(BI_TOP_LEVEL_LIST_FOO_PATH, foo);
         final List<NestedList> nestedLists = new ArrayList<>();
         nestedLists.add(new NestedListBuilder().setKey(new NestedListKey("foo")).build());
