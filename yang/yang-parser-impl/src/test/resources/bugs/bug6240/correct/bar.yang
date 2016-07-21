@@ -1,0 +1,14 @@
+module bar {
+    namespace "bar";
+    prefix "bar";
+
+    include sub-bar {
+        revision-date 2016-07-19;
+    }
+    import foo { prefix foo; revision-date 2016-07-19; }
+
+    revision "2016-07-19";
+
+    uses foo:sub-foo-grp;
+    uses foo:foo-grp;
+}

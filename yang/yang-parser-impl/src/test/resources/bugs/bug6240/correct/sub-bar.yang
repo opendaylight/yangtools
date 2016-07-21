@@ -1,0 +1,14 @@
+submodule sub-bar {
+    belongs-to bar {
+        prefix bar;
+    }
+    
+    import foo { prefix foo; revision-date 2016-07-19; }
+    
+    revision 2016-07-19;
+
+    container sub-bar-con {
+        uses foo:sub-foo-grp;
+        uses foo:foo-grp;
+    }
+}

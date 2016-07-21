@@ -1,0 +1,15 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+
+    include sub-foo {
+        revision-date 2016-07-19;
+    }
+
+    revision 2016-07-19;
+    
+    grouping foo-grp {
+        container foo-grp-con {
+        }
+    }
+}
