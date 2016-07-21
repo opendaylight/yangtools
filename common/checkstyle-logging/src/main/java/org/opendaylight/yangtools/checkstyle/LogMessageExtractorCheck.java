@@ -56,6 +56,7 @@ public class LogMessageExtractorCheck extends AbstractLogMessageCheck {
     protected void updateMessagesReportFile(LogMessageOccurence log) {
         try {
             final File file = getLogMessagesReportFile();
+            file.getParentFile().mkdirs();
             if (file.exists()) {
                 Files.append(log.toString() + "\n", file, StandardCharsets.UTF_8);
             } else {
