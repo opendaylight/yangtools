@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_0ce930b8",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlCodecFactory.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 4561
+      },
+      "writtenOn": "2016-07-21T07:51:48Z",
+      "side": 1,
+      "message": "NamespaceContext is specific to the xml document being parsed. Therefore it should not be a field in this class as we expect to instantiate one factory per SchemaContext and parse multiple documents with it (concurrently).",
+      "range": {
+        "startLine": 83,
+        "startChar": 4,
+        "endLine": 83,
+        "endChar": 52
+      },
+      "revId": "6228ffba7a43cf6796c2f55752091d94d1a21669",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
