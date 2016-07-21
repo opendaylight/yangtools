@@ -22,8 +22,6 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import org.opendaylight.yangtools.websocket.server.WebSocketServerHandler;
 
-/**
- */
 public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel> {
     @Override
     public void initChannel(SocketChannel ch) throws Exception {
