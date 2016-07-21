@@ -328,12 +328,17 @@ final class Util {
     static Collection<File> findYangFilesInDependencies(MavenProject project) throws MojoFailureException {
         final List<File> yangsFilesFromDependencies = new ArrayList<>();
 
+        List<File> filesOnCp;
         try {
-            List<File> filesOnCp = Util.getClassPath(project);
-            LOG.info("{} Searching for yang files in following dependencies: {}", YangToSourcesProcessor.LOG_PREFIX,
-                    filesOnCp);
+            filesOnCp = Util.getClassPath(project);
+        } catch (Exception e) {
+            throw new MojoFailureException("Failed to scan for YANG files in dependencies", e);
+        }
+        LOG.info("{} Searching for yang files in following dependencies: {}", YangToSourcesProcessor.LOG_PREFIX,
+            filesOnCp);
 
-            for (File file : filesOnCp) {
+        for (File file : filesOnCp) {
+            try {
                 // is it jar file or directory?
                 if (file.isDirectory()) {
                     //FIXME: code duplicate
@@ -366,9 +371,9 @@ final class Util {
                         }
                     }
                 }
+            } catch (Exception e) {
+                throw new MojoFailureException("Failed to scan for YANG files in dependency: " + file.toString(), e);
             }
-        } catch (Exception e) {
-            throw new MojoFailureException("Failed to scan for YANG files in depedencies", e);
         }
         return yangsFilesFromDependencies;
     }
