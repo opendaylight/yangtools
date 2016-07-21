@@ -93,14 +93,7 @@ abstract class ValueTypeCodec implements Codec<Object, Object> {
         if (BindingReflections.isBindingClass(typeClz)) {
             return getCachedSchemaUnawareCodec(typeClz, getCodecLoader(typeClz, def));
         }
-        TypeDefinition<?> rootType = def;
-        while (rootType.getBaseType() != null) {
-            rootType = rootType.getBaseType();
-        }
-        if (rootType instanceof EmptyTypeDefinition) {
-            return EMPTY_CODEC;
-        }
-        return NOOP_CODEC;
+        return def instanceof EmptyTypeDefinition ? EMPTY_CODEC : NOOP_CODEC;
     }
 
     private static SchemaUnawareCodec getCachedSchemaUnawareCodec(final Class<?> typeClz, final Callable<? extends SchemaUnawareCodec> loader) {

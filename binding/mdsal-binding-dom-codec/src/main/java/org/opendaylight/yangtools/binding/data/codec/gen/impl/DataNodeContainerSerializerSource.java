@@ -109,20 +109,16 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
         final TypeDefinition<?> type ;
         if (node instanceof LeafSchemaNode) {
             type = ((LeafSchemaNode) node).getType();
-        } else if(node instanceof LeafListSchemaNode) {
+        } else if (node instanceof LeafListSchemaNode) {
             type = ((LeafListSchemaNode) node).getType();
         } else {
             type = null;
         }
-        String prefix = "get";
-        if(type != null) {
-            TypeDefinition<?> rootType = type;
-            while (rootType.getBaseType() != null) {
-                rootType = rootType.getBaseType();
-            }
-            if(rootType instanceof BooleanTypeDefinition || rootType instanceof EmptyTypeDefinition) {
-                prefix = "is";
-            }
+        final String prefix;
+        if (type instanceof BooleanTypeDefinition || type instanceof EmptyTypeDefinition) {
+            prefix = "is";
+        } else {
+            prefix = "get";
         }
         return prefix + BindingMapping.getGetterSuffix(node.getQName());
     }

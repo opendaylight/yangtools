@@ -236,11 +236,8 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         return getLeafNodesUsingReflection(parentClass, getterToLeafSchema);
     }
 
-    private static String getGetterName(final QName qName, TypeDefinition<?> typeDef) {
+    private static String getGetterName(final QName qName, final TypeDefinition<?> typeDef) {
         final String suffix = BindingMapping.getGetterSuffix(qName);
-        while (typeDef.getBaseType() != null) {
-            typeDef = typeDef.getBaseType();
-        }
         if (typeDef instanceof BooleanTypeDefinition || typeDef instanceof EmptyTypeDefinition) {
             return "is" + suffix;
         }
@@ -309,30 +306,25 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         return ValueTypeCodec.NOOP_CODEC;
     }
 
-    private Codec<Object, Object> getCodecForBindingClass(final Class<?> valueType, final TypeDefinition<?> instantiatedType) {
-        @SuppressWarnings("rawtypes")
-        TypeDefinition rootType = instantiatedType;
-        while (rootType.getBaseType() != null) {
-            rootType = rootType.getBaseType();
-        }
-        if (rootType instanceof IdentityrefTypeDefinition) {
+    private Codec<Object, Object> getCodecForBindingClass(final Class<?> valueType, final TypeDefinition<?> typeDef) {
+        if (typeDef instanceof IdentityrefTypeDefinition) {
             return ValueTypeCodec.encapsulatedValueCodecFor(valueType, identityCodec);
-        } else if (rootType instanceof InstanceIdentifierTypeDefinition) {
+        } else if (typeDef instanceof InstanceIdentifierTypeDefinition) {
             return ValueTypeCodec.encapsulatedValueCodecFor(valueType, instanceIdentifierCodec);
-        } else if (rootType instanceof UnionTypeDefinition) {
-            final Callable<UnionTypeCodec> loader = UnionTypeCodec.loader(valueType, (UnionTypeDefinition) rootType, this);
+        } else if (typeDef instanceof UnionTypeDefinition) {
+            final Callable<UnionTypeCodec> loader = UnionTypeCodec.loader(valueType, (UnionTypeDefinition) typeDef, this);
             try {
                 return loader.call();
             } catch (final Exception e) {
                 throw new IllegalStateException("Unable to load codec for " + valueType, e);
             }
-        } else if (rootType instanceof LeafrefTypeDefinition) {
+        } else if (typeDef instanceof LeafrefTypeDefinition) {
             final Entry<GeneratedType, Object> typeWithSchema = context.getTypeWithSchema(valueType);
             final Object schema = typeWithSchema.getValue();
             Preconditions.checkState(schema instanceof TypeDefinition<?>);
             return getCodec(valueType, (TypeDefinition<?>) schema);
         }
-        return ValueTypeCodec.getCodecFor(valueType, instantiatedType);
+        return ValueTypeCodec.getCodecFor(valueType, typeDef);
     }
 
     @Override
