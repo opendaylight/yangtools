@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
-class BitsCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
+final class BitsCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
     private static final MethodType CONSTRUCTOR_INVOKE_TYPE = MethodType.methodType(Object.class, Boolean[].class);
     private final Map<String, Method> valueGetters;
     private final MethodHandle constructor;
@@ -39,30 +39,23 @@ class BitsCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
         this.constructor = Preconditions.checkNotNull(constructor);
     }
 
-    static Callable<BitsCodec> loader(final Class<?> returnType,
-            final BitsTypeDefinition rootType) {
-        return new Callable<BitsCodec>() {
-            @Override
-            public BitsCodec call() throws Exception {
-                SortedMap<String, Method> valueGetters = new TreeMap<>();
-                for (Bit bit : rootType.getBits()) {
-                    String bindingName = BindingMapping.getClassName(bit.getName());
-                    Method valueGetter = returnType.getMethod("is" + bindingName);
-                    valueGetters.put(bit.getName(), valueGetter);
-
-                }
-                Constructor<?> constructor = null;
-                for (Constructor<?> cst : returnType.getConstructors()) {
-                    if (cst.getParameterTypes()[0].equals(returnType)) {
-                        continue;
-                    }
+    static Callable<BitsCodec> loader(final Class<?> returnType, final BitsTypeDefinition rootType) {
+        return () -> {
+            final SortedMap<String, Method> valueGetters = new TreeMap<>();
+            for (Bit bit : rootType.getBits()) {
+                final Method valueGetter = returnType.getMethod("is" + BindingMapping.getClassName(bit.getName()));
+                valueGetters.put(bit.getName(), valueGetter);
+            }
+            Constructor<?> constructor = null;
+            for (Constructor<?> cst : returnType.getConstructors()) {
+                if (!cst.getParameterTypes()[0].equals(returnType)) {
                     constructor = cst;
                 }
-
-                final MethodHandle ctor = MethodHandles.publicLookup().unreflectConstructor(constructor)
-                        .asSpreader(Boolean[].class, valueGetters.size()).asType(CONSTRUCTOR_INVOKE_TYPE);
-                return new BitsCodec(returnType, valueGetters, ctor);
             }
+
+            final MethodHandle ctor = MethodHandles.publicLookup().unreflectConstructor(constructor)
+                    .asSpreader(Boolean[].class, valueGetters.size()).asType(CONSTRUCTOR_INVOKE_TYPE);
+            return new BitsCodec(returnType, valueGetters, ctor);
         };
     }
 

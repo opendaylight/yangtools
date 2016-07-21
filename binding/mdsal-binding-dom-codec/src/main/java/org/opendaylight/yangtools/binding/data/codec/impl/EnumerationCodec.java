@@ -18,35 +18,29 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
 final class EnumerationCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
-
     private final ImmutableBiMap<String, Enum<?>> yangValueToBinding;
 
-    public EnumerationCodec(final Class<? extends Enum<?>> enumeration, final Map<String, Enum<?>> schema) {
+    EnumerationCodec(final Class<? extends Enum<?>> enumeration, final Map<String, Enum<?>> schema) {
         super(enumeration);
         yangValueToBinding = ImmutableBiMap.copyOf(schema);
     }
 
-    static Callable<EnumerationCodec> loader(final Class<?> returnType,
-            final EnumTypeDefinition enumSchema) {
+    static Callable<EnumerationCodec> loader(final Class<?> returnType, final EnumTypeDefinition enumSchema) {
         Preconditions.checkArgument(Enum.class.isAssignableFrom(returnType));
         @SuppressWarnings({ "rawtypes", "unchecked" })
         final Class<? extends Enum<?>> enumType = (Class) returnType;
-        return new Callable<EnumerationCodec>() {
-            @Override
-            public EnumerationCodec call() throws Exception {
-
-                Map<String, Enum<?>> nameToValue = new HashMap<>();
-                for (Enum<?> enumValue : enumType.getEnumConstants()) {
-                    nameToValue.put(enumValue.toString(), enumValue);
-                }
-                Map<String, Enum<?>> yangNameToBinding = new HashMap<>();
-                for (EnumPair yangValue : enumSchema.getValues()) {
-                    final String bindingName = BindingMapping.getClassName(yangValue.getName());
-                    final Enum<?> bindingVal = nameToValue.get(bindingName);
-                    yangNameToBinding.put(yangValue.getName(), bindingVal);
-                }
-                return new EnumerationCodec(enumType, yangNameToBinding);
+        return () -> {
+            Map<String, Enum<?>> nameToValue = new HashMap<>();
+            for (Enum<?> enumValue : enumType.getEnumConstants()) {
+                nameToValue.put(enumValue.toString(), enumValue);
             }
+            Map<String, Enum<?>> yangNameToBinding = new HashMap<>();
+            for (EnumPair yangValue : enumSchema.getValues()) {
+                final String bindingName = BindingMapping.getClassName(yangValue.getName());
+                final Enum<?> bindingVal = nameToValue.get(bindingName);
+                yangNameToBinding.put(yangValue.getName(), bindingVal);
+            }
+            return new EnumerationCodec(enumType, yangNameToBinding);
         };
     }
 
@@ -63,5 +57,4 @@ final class EnumerationCodec extends ReflectionBasedCodec implements SchemaUnawa
         Preconditions.checkArgument(getTypeClass().isInstance(input), "Input must be instance of %s", getTypeClass());
         return yangValueToBinding.inverse().get(input);
     }
-
 }

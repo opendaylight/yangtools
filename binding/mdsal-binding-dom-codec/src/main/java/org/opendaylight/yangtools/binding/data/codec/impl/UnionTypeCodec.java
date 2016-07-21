@@ -46,19 +46,15 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
 
     static Callable<UnionTypeCodec> loader(final Class<?> unionCls, final UnionTypeDefinition unionType,
                                            final BindingCodecContext bindingCodecContext) {
-        return new Callable<UnionTypeCodec>() {
-            @Override
-            public UnionTypeCodec call() throws NoSuchMethodException, SecurityException {
-                Set<UnionValueOptionContext> values = new LinkedHashSet<>();
-                for (TypeDefinition<?> subtype : unionType.getTypes()) {
-                    String methodName = "get" + BindingMapping.getClassName(subtype.getQName());
-                    Method valueGetter = unionCls.getMethod(methodName);
-                    Class<?> valueType = valueGetter.getReturnType();
-                    Codec<Object, Object> valueCodec = bindingCodecContext.getCodec(valueType, subtype);
-                    values.add(new UnionValueOptionContext(unionCls, valueType, valueGetter, valueCodec));
-                }
-                return new UnionTypeCodec(unionCls, values);
+        return () -> {
+            final Set<UnionValueOptionContext> values = new LinkedHashSet<>();
+            for (TypeDefinition<?> subtype : unionType.getTypes()) {
+                Method valueGetter = unionCls.getMethod("get" + BindingMapping.getClassName(subtype.getQName()));
+                Class<?> valueType = valueGetter.getReturnType();
+                Codec<Object, Object> valueCodec = bindingCodecContext.getCodec(valueType, subtype);
+                values.add(new UnionValueOptionContext(unionCls, valueType, valueGetter, valueCodec));
             }
+            return new UnionTypeCodec(unionCls, values);
         };
     }
 
