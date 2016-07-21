@@ -1,0 +1,11 @@
+module foo-imp {
+    namespace "foo-imp";
+    prefix foo-imp;
+
+    revision 2016-07-19;
+
+    grouping foo-imp-grp {
+        container foo-imp-grp-con {
+        }
+    }
+}
