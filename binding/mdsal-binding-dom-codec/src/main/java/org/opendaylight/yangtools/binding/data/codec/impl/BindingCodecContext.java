@@ -200,7 +200,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         }
 
         if (currentList != null) {
-            if(bindingArguments != null) {
+            if (bindingArguments != null) {
                 bindingArguments.add(currentList.getBindingPathArgument(null));
             }
             return currentList;
@@ -300,7 +300,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
             final Codec<Object, Object> casted = (Codec) instanceIdentifierCodec;
             return casted;
         } else if (Boolean.class.equals(valueType)) {
-            if(instantiatedType instanceof EmptyTypeDefinition) {
+            if (instantiatedType instanceof EmptyTypeDefinition) {
                 return ValueTypeCodec.EMPTY_CODEC;
             }
         } else if (BindingReflections.isBindingClass(valueType)) {
@@ -326,7 +326,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
             } catch (final Exception e) {
                 throw new IllegalStateException("Unable to load codec for " + valueType, e);
             }
-        } else if(rootType instanceof LeafrefTypeDefinition) {
+        } else if (rootType instanceof LeafrefTypeDefinition) {
             final Entry<GeneratedType, Object> typeWithSchema = context.getTypeWithSchema(valueType);
             final Object schema = typeWithSchema.getValue();
             Preconditions.checkState(schema instanceof TypeDefinition<?>);
