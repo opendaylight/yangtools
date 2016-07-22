@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_4ae02396",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/SchemaTracker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 216,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2016-07-22T09:01:43Z",
+      "side": 1,
+      "message": "This is public method, and you removed previous one, which results into API incompatibility in stable branch.\n\nPlease still also provide original method with signature leafSetEntryNode() otherwise this would cause API breakage.",
+      "range": {
+        "startLine": 216,
+        "startChar": 3,
+        "endLine": 216,
+        "endChar": 61
+      },
+      "revId": "da984492ee143968cf9e4ff39c0fc5afa2aee347",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
