@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_3b4d3f3f",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/stmt/Bug6180Test.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-07-22T15:18:33Z",
+      "side": 1,
+      "message": "If the double-quoted string contains a line break followed by space\n   or tab characters that are used to indent the text according to the\n   layout in the YANG file, this leading whitespace is stripped from the\n   string, up to and including the column of the double quote character,\n   or to the first non-whitespace character, whichever occurs first.  In\n   this process, a tab character is treated as 8 space characters.\n\nhttps://tools.ietf.org/html/rfc6020#section-6.1.3\n\nIn other words, this assert verifies ODL does NOT fully conform to the RFC yet.",
+      "range": {
+        "startLine": 45,
+        "startChar": 50,
+        "endLine": 45,
+        "endChar": 67
+      },
+      "revId": "1fe002477a027b07e91056cfca528e2c15a611d6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_1b4afb25",
+        "filename": "yang/yang-parser-impl/src/test/resources/bugs/bug6180/string-test.yang",
+        "patchSetId": 7
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-07-22T15:18:33Z",
+      "side": 1,
+      "message": "This should be removed from the resulting string according to the RFC.",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 17
+      },
+      "revId": "1fe002477a027b07e91056cfca528e2c15a611d6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
