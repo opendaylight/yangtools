@@ -42,12 +42,12 @@ public final class WritableObjects {
      * serializing counters and similar, which have a wide range, but typically do not use it. The value provided is
      * treated as unsigned.
      *
-     * This methods writes the number of trailing non-zero in the value. It then writes the minimum required bytes
+     * <p>This methods writes the number of trailing non-zero in the value. It then writes the minimum required bytes
      * to reconstruct the value by left-padding zeroes. Inverse operation is performed by {@link #readLong(DataInput)}
      * or a combination of {@link #readLongHeader(DataInput)} and {@link #readLongBody(DataInput, byte)}.
      *
-     * Additionally the caller can use the top four bits (i.e. 0xF0) for caller-specific flags. These will be ignored
-     * by {@link #readLong(DataInput)}, but can be extracted via {@link #readLongHeader(DataInput)}.
+     * <p>Additionally the caller can use the top four bits (i.e. 0xF0) for caller-specific flags. These will be
+     * ignored by {@link #readLong(DataInput)}, but can be extracted via {@link #readLongHeader(DataInput)}.
      *
      * @param out Data output
      * @param value long value to write
@@ -103,6 +103,7 @@ public final class WritableObjects {
      *
      * @param in Data input
      * @param header Value header, as returned by {@link #readLongHeader(DataInput)}
+     * @return long value
      * @throws IOException if an I/O error occurs
      * @throws NullPointerException if input is null
      */
@@ -135,8 +136,8 @@ public final class WritableObjects {
      * Write two consecutive long values. These values can be read back using {@link #readLongHeader(DataInput)},
      * {@link #readFirstLong(DataInput, byte)} and {@link #readSecondLong(DataInput, byte)}.
      *
-     * This is a more efficient way of serializing two longs than {@link #writeLong(DataOutput, long)}. This is achieved
-     * by using the flags field to hold the length of the second long -- hence saving one byte.
+     * <p>This is a more efficient way of serializing two longs than {@link #writeLong(DataOutput, long)}. This is
+     * achieved by using the flags field to hold the length of the second long -- hence saving one byte.
      *
      * @param out Data output
      * @param value0 first long value to write
@@ -144,7 +145,8 @@ public final class WritableObjects {
      * @throws IOException if an I/O error occurs
      * @throws NullPointerException if output is null
      */
-    public static void writeLongs(final @Nonnull DataOutput out, final long value0, final long value1) throws IOException {
+    public static void writeLongs(final @Nonnull DataOutput out, final long value0, final long value1)
+            throws IOException {
         final int clen = WritableObjects.valueBytes(value1);
         writeLong(out, value0, clen << 4);
         WritableObjects.writeValue(out, value1, clen);

@@ -44,56 +44,62 @@ public final class SemVer implements Comparable<SemVer>, Serializable {
         return new SemVer(major, minor, patch);
     }
 
-    public static SemVer valueOf(@Nonnull final String s) {
-        final int minorIdx = s.indexOf('.');
+    public static SemVer valueOf(@Nonnull final String str) {
+        final int minorIdx = str.indexOf('.');
         if (minorIdx == -1) {
-            return create(Integer.parseInt(s));
+            return create(Integer.parseInt(str));
         }
 
         final String minorStr;
-        final int patchIdx = s.indexOf('.', minorIdx + 1);
+        final int patchIdx = str.indexOf('.', minorIdx + 1);
         if (patchIdx == -1) {
-            minorStr = s.substring(minorIdx + 1);
+            minorStr = str.substring(minorIdx + 1);
         } else {
-            minorStr = s.substring(minorIdx + 1, patchIdx);
+            minorStr = str.substring(minorIdx + 1, patchIdx);
         }
 
-        return create(Integer.parseInt(s.substring(0, minorIdx), 10), Integer.parseInt(minorStr, 10),
-            Integer.parseInt(s.substring(patchIdx + 1), 10));
+        return create(Integer.parseInt(str.substring(0, minorIdx), 10), Integer.parseInt(minorStr, 10),
+            Integer.parseInt(str.substring(patchIdx + 1), 10));
     }
 
     /**
-     * @return the major
+     * Return the major version number.
+     *
+     * @return major version number
      */
     public int getMajor() {
         return major;
     }
 
     /**
-     * @return the minor
+     * Return the minor version number.
+     *
+     * @return minor version number
      */
     public int getMinor() {
         return minor;
     }
 
     /**
-     * @return the patch
+     * Return the patch version number.
+     *
+     * @return patch version number
      */
     public int getPatch() {
         return patch;
     }
 
     @Override
-    public int compareTo(final SemVer o) {
-        int i = Integer.compare(major, o.major);
-        if (i == 0) {
-            i = Integer.compare(minor, o.minor);
-            if (i == 0) {
-                return Integer.compare(patch, o.patch);
+    public int compareTo(final SemVer other) {
+        int cmp = Integer.compare(major, other.major);
+        if (cmp == 0) {
+            cmp = Integer.compare(minor, other.minor);
+            if (cmp == 0) {
+                return Integer.compare(patch, other.patch);
             }
         }
 
-        return i;
+        return cmp;
     }
 
     @Override

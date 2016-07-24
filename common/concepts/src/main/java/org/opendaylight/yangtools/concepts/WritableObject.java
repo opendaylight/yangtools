@@ -20,8 +20,8 @@ import javax.annotation.Nonnull;
  *      public static CLASS readFrom(DataInput in) throws IOException;
  * </pre>
  *
- * The serialization format provided by this abstraction does not guarantee versioning. Callers are responsible for
- * ensuring the source stream is correctly positioned.
+ * <p>The serialization format provided by this abstraction does not guarantee versioning. Callers are responsible
+ * for ensuring the source stream is correctly positioned.
  *
  * @author Robert Varga
  */

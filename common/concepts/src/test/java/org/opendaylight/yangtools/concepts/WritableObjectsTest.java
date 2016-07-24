@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.concepts;
 
 import static org.junit.Assert.assertEquals;
+
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import java.io.IOException;
