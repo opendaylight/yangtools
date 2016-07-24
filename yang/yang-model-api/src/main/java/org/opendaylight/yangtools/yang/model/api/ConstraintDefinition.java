@@ -21,7 +21,7 @@ public interface ConstraintDefinition {
      * Specifies the condition when the data node which contains
      * <code>when</code> YANG substatement has to be present. If XPath
      * expression is evaluated as true then the data node has to be present.
-     * 
+     *
      * @return XPath expression.
      */
     RevisionAwareXPath getWhenCondition();
@@ -29,8 +29,8 @@ public interface ConstraintDefinition {
     /**
      * Specifies the rules which the node which contains <code>must</code> YANG
      * substatement has to match.
-     * 
-     * 
+     *
+     *
      * @return set of <code>MustDefinition</code> (XPath) instances which
      *         represents the concrete data constraints
      */
@@ -39,11 +39,11 @@ public interface ConstraintDefinition {
     /**
      * Expreses if the presence of the data element for which this constraint is
      * specified is|isn't required.
-     * 
+     *
      * Contains the value of the <b>mandatory</b> YANG substatement.
-     * 
+     *
      * It is used with YANG statements leaf, choice, anyxml, deviate.
-     * 
+     *
      * @return boolean value:
      *         <ul>
      *         <li>true - if <code>mandatory</code> YANG keyword argument =
@@ -57,12 +57,12 @@ public interface ConstraintDefinition {
     /**
      * Returns the minimum required number of data elements for node where this
      * constraint is specified.
-     * 
+     *
      * The returning value equals to value of the argument of the
      * <b>min-elements</b> YANG substatement.
-     * 
+     *
      * It is used with YANG statements leaf-list, list, deviate.
-     * 
+     *
      * @return integer with minimal number of elements
      */
     Integer getMinElements();
@@ -70,12 +70,12 @@ public interface ConstraintDefinition {
     /**
      * Returns the maximum admissible number of data elements for node where
      * this constraint is specified.
-     * 
+     *
      * The returning value equals to value of the argument of the
      * <b>max-elements</b> YANG substatement.
-     * 
+     *
      * It is used with YANG statements leaf-list, list, deviate.
-     * 
+     *
      * @return integer with maximum number of elements
      */
     Integer getMaxElements();

@@ -12,13 +12,13 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 /**
  * Contains the method for getting the data from the YANG <code>pattern</code>
  * which is substatement of <code>type</code> statement.
- * 
+ *
  */
 public interface PatternConstraint extends ConstraintMetaDefinition {
 
     /**
      * Returns a regular expression (pattern).
-     * 
+     *
      * @return string with regular expression which is equal to the argument of
      *         the YANG <code>pattern</code> substatement
      */

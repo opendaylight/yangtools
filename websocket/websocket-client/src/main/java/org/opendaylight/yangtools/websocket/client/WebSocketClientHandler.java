@@ -38,12 +38,12 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 
     /**
      * Create new Web Socket Client Handler.
-     * 
+     *
      * @param handshaker
      *            manages handshake process
      * @param listener
-     * 
-     * 
+     *
+     *
      */
     public WebSocketClientHandler(WebSocketClientHandshaker handshaker,
             ClientMessageCallback listener) {
@@ -53,7 +53,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 
     /**
      * Notifies by Future when handshake process succeeds or fails.
-     * 
+     *
      * @return information about the completation of the handshake
      */
     public ChannelFuture handshakeFuture() {

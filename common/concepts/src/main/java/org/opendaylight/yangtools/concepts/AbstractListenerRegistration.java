@@ -11,7 +11,7 @@ import java.util.EventListener;
 
 public abstract class AbstractListenerRegistration<T extends EventListener> extends AbstractObjectRegistration<T>
         implements ListenerRegistration<T> {
-    
+
     protected AbstractListenerRegistration(final T listener) {
         super(listener);
     }

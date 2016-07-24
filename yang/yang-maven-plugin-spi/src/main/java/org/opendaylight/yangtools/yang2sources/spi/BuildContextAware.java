@@ -18,7 +18,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
 public interface BuildContextAware {
     /**
      * Set the build context to be used during the lifetime of this reactor.
-     *  
+     *
      * @param buildContext current build context reference.
      */
     void setBuildContext(BuildContext buildContext);

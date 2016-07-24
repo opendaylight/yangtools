@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.concepts;
 
 /**
  * Mutation behavior
- * 
+ *
  * This interface is used to prevent same class extends multiple types of MutationBehaviour
  * such as {@link Immutable} and {@link Mutable} which are mutually exclusive.
- * 
+ *
  * @author Tony Tkacik
  *
  * @param <T> Mutation Type

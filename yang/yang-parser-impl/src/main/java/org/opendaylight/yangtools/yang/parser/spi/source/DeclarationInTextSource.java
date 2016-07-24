@@ -89,7 +89,7 @@ public abstract class DeclarationInTextSource implements StatementSourceReferenc
         public String toString() {
             return String.format("%s:%d", getSourceName(),line);
         }
-        
+
         public int getLine() {
             return line;
         }
