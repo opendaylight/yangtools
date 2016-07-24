@@ -14,7 +14,7 @@ public interface ClientMessageCallback {
 
     /**
      * Notifies client that some event has occurred.
-     * 
+     *
      * @param message
      *            the message which aid to will be client notified
      */

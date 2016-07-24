@@ -76,7 +76,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
     }
 
     @Nullable public abstract DataSchemaContextNode<?> getChild(final PathArgument child);
-              
+
     @Nullable public abstract DataSchemaContextNode<?> getChild(QName child);
 
     public abstract boolean isLeaf();

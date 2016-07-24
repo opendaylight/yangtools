@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
  * Contains the method which access union item in the union type.
- * 
+ *
  */
 public interface UnionTypeDefinition extends TypeDefinition<UnionTypeDefinition> {
 
@@ -21,7 +21,7 @@ public interface UnionTypeDefinition extends TypeDefinition<UnionTypeDefinition>
      * Returns type definitions which represent the values of the arguments for
      * all YANG <code>type</code> substatement in the main <code>union</code>
      * statement.
-     * 
+     *
      * @return list of the type definition which contains the union items.
      */
     List<TypeDefinition<?>> getTypes();

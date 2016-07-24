@@ -13,22 +13,22 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
- * 
+ *
  * Makes is possible to access to the individual bits values of this type.
- * 
+ *
  */
 public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
 
     /**
      * Returns all bit values.
-     * 
+     *
      * @return list of <code>Bit</code> type instastances with data about all
      *         individual bits of <code>bits</code> YANG built-in type
      */
     List<Bit> getBits();
 
     /**
-     * 
+     *
      * Contains the methods for accessing the data about the individual bit of
      * <code>bits</code> YANG type.
      */
@@ -36,14 +36,14 @@ public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
         /**
          * The position value MUST be in the range 0 to 4294967295, and it MUST
          * be unique within the bits type.
-         * 
+         *
          * @return The position value of bit in range from 0 to 4294967295.
          */
         Long getPosition();
 
         /**
          * Returns the name of the concrete bit.
-         * 
+         *
          * @return string with the name of the concrete bit
          */
         String getName();
