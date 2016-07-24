@@ -12,12 +12,12 @@ import java.util.Arrays;
 // TODO rename to ModifyOperation
 
 /**
- * http://tools.ietf.org/html/rfc6241#section-7.2
+ * https://tools.ietf.org/html/rfc6241#section-7.2
  */
 public enum ModifyAction {
-    MERGE, REPLACE, CREATE, DELETE, REMOVE, NONE;
+    MERGE(true), REPLACE(true), CREATE(false), DELETE(false), REMOVE(false), NONE(true, false);
 
-    public static ModifyAction fromXmlValue(String xmlNameOfAction) {
+    public static ModifyAction fromXmlValue(final String xmlNameOfAction) {
         switch (xmlNameOfAction) {
         case "merge":
             return MERGE;
@@ -37,15 +37,23 @@ public enum ModifyAction {
         }
     }
 
+    private final boolean asDefaultPermitted;
+    private final boolean onElementPermitted;
+
+    private ModifyAction(final boolean asDefaultPermitted, final boolean onElementPermitted) {
+        this.asDefaultPermitted = asDefaultPermitted;
+        this.onElementPermitted = onElementPermitted;
+    }
+
+    private ModifyAction(final boolean asDefaultPermitted) {
+        this(asDefaultPermitted, true);
+    }
+
     public boolean isAsDefaultPermitted() {
-        boolean isPermitted = this == MERGE;
-        isPermitted |= this == REPLACE;
-        isPermitted |= this == NONE;
-        return isPermitted;
+        return asDefaultPermitted;
     }
 
     public boolean isOnElementPermitted() {
-        return this != NONE;
+        return onElementPermitted;
     }
-
 }
