@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_c4da5f4b",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-07-25T12:42:33Z",
+      "side": 1,
+      "message": "please do not reformat unrelated content",
+      "range": {
+        "startLine": 313,
+        "startChar": 0,
+        "endLine": 316,
+        "endChar": 7
+      },
+      "revId": "208218f4bb83f157d263a889b6747353b63688f5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
