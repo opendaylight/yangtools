@@ -9,7 +9,6 @@
 package org.opendaylight.yangtools.util.concurrent;
 
 import com.google.common.annotations.Beta;
-
 import java.util.Collection;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;

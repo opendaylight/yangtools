@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.util.concurrent;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 

@@ -9,11 +9,9 @@
 package org.opendaylight.yangtools.util.concurrent;
 
 import com.google.common.base.Preconditions;
-
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
-
 import org.opendaylight.yangtools.util.ExecutorServiceUtil;
 
 /**

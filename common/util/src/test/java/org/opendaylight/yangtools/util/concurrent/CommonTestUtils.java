@@ -8,11 +8,11 @@
 
 package org.opendaylight.yangtools.util.concurrent;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.Uninterruptibles;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * Some common test utilities.

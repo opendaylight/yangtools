@@ -8,10 +8,9 @@
 
 package org.opendaylight.yangtools.util;
 
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Strings;
 
 /**
  * Provides utilities for system properties.

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.util.concurrent;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import com.google.common.base.Stopwatch;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -19,11 +20,8 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
-
 import org.junit.After;
 import org.junit.Test;
-
-import com.google.common.base.Stopwatch;
 
 /**
  * Tests various ThreadPoolExecutor implementations.

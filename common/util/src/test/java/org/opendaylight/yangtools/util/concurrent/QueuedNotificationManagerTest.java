@@ -8,9 +8,12 @@
 
 package org.opendaylight.yangtools.util.concurrent;
 
-import static org.junit.Assert.fail;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
+import com.google.common.base.Stopwatch;
+import com.google.common.collect.Lists;
+import com.google.common.util.concurrent.Uninterruptibles;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -20,13 +23,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
 import org.junit.After;
 import org.junit.Test;
-
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.Uninterruptibles;
 
 /**
  * Unit tests for QueuedNotificationManager.

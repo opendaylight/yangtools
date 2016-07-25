@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.util.concurrent;
 import static org.junit.Assert.assertEquals;
 
 import java.util.concurrent.ExecutionException;
-
 import org.junit.Test;
 
 public final class ReflectiveExceptionMapperTest {

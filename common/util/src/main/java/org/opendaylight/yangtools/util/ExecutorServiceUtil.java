@@ -7,17 +7,15 @@
  */
 package org.opendaylight.yangtools.util;
 
+import com.google.common.util.concurrent.ForwardingBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.util.concurrent.ForwardingBlockingQueue;
 
 /**
  * Utility methods for dealing with {@link ExecutorService}s.
