@@ -24,10 +24,9 @@ import javax.annotation.Nonnull;
  * {@link Collections#unmodifiableCollection(Collection)}, this class checks its
  * argument to ensure multiple encapsulation does not occur.
  *
- * this class checks
+ * <p>This class checks
  * the argument so it prevents multiple encapsulation. Subclasses of
  * {@link ImmutableCollection} are also recognized and not encapsulated.
- * An attempt is also made to identi
  *
  * @param <E> the type of elements in this collection
  */

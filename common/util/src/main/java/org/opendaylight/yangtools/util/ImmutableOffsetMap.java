@@ -102,14 +102,18 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
     abstract void setFields(List<K> keys, V[] values) throws IOException;
 
     /**
-     * Create an {@link ImmutableOffsetMap} as a copy of an existing map. This is actually not completely true,
-     * as this method returns an {@link ImmutableMap} for empty and singleton inputs, as those are more memory-efficient.
-     * This method also recognizes {@link ImmutableOffsetMap} on input, and returns it back without doing anything else.
-     * It also recognizes {@link MutableOffsetMap} (as returned by {@link #toModifiableMap()}) and makes an efficient
-     * copy of its contents. All other maps are converted to an {@link ImmutableOffsetMap} with the same iteration
-     * order as input.
+     * Create an {@link ImmutableOffsetMap} as a copy of an existing map. This
+     * is actually not completely true, as this method returns an
+     * {@link ImmutableMap} for empty and singleton inputs, as those are more
+     * memory-efficient. This method also recognizes {@link ImmutableOffsetMap}
+     * on input, and returns it back without doing anything else. It also
+     * recognizes {@link MutableOffsetMap} (as returned by
+     * {@link #toModifiableMap()}) and makes an efficient copy of its contents.
+     * All other maps are converted to an {@link ImmutableOffsetMap} with the
+     * same iteration order as input.
      *
-     * @param m Input map, may not be null.
+     * @param m
+     *            Input map, may not be null.
      * @return An isolated, immutable copy of the input map
      */
     @Nonnull public static <K, V> Map<K, V> orderedCopyOf(@Nonnull final Map<K, V> m) {
@@ -145,14 +149,18 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
     }
 
     /**
-     * Create an {@link ImmutableOffsetMap} as a copy of an existing map. This is actually not completely true,
-     * as this method returns an {@link ImmutableMap} for empty and singleton inputs, as those are more memory-efficient.
-     * This method also recognizes {@link ImmutableOffsetMap} on input, and returns it back without doing anything else.
-     * It also recognizes {@link MutableOffsetMap} (as returned by {@link #toModifiableMap()}) and makes an efficient
-     * copy of its contents. All other maps are converted to an {@link ImmutableOffsetMap}. Iterator order is not
-     * guaranteed to be retained.
+     * Create an {@link ImmutableOffsetMap} as a copy of an existing map. This
+     * is actually not completely true, as this method returns an
+     * {@link ImmutableMap} for empty and singleton inputs, as those are more
+     * memory-efficient. This method also recognizes {@link ImmutableOffsetMap}
+     * on input, and returns it back without doing anything else. It also
+     * recognizes {@link MutableOffsetMap} (as returned by
+     * {@link #toModifiableMap()}) and makes an efficient copy of its contents.
+     * All other maps are converted to an {@link ImmutableOffsetMap}. Iterator
+     * order is not guaranteed to be retained.
      *
-     * @param m Input map, may not be null.
+     * @param m
+     *            Input map, may not be null.
      * @return An isolated, immutable copy of the input map
      */
     @Nonnull public static <K, V> Map<K, V> unorderedCopyOf(@Nonnull final Map<K, V> m) {
@@ -385,7 +393,8 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         return f;
     }
 
-    private static void setField(final ImmutableOffsetMap<?, ?> map, final Field field, final Object value) throws IOException {
+    private static void setField(final ImmutableOffsetMap<?, ?> map, final Field field, final Object value)
+            throws IOException {
         try {
             field.set(map, value);
         } catch (IllegalArgumentException | IllegalAccessException e) {

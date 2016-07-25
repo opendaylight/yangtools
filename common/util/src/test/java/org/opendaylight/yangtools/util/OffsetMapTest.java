@@ -51,7 +51,7 @@ public class OffsetMapTest {
         OffsetMapCache.invalidateCache();
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testWrongImmutableConstruction() {
         new ImmutableOffsetMap.Ordered<>(Collections.<String, Integer>emptyMap(), new String[1]);
     }
@@ -127,18 +127,21 @@ public class OffsetMapTest {
             map.values().add("v1");
             fail();
         } catch (UnsupportedOperationException e) {
+            // OK
         }
 
         try {
             map.values().remove("v1");
             fail();
         } catch (UnsupportedOperationException e) {
+            // OK
         }
 
         try {
             map.values().clear();
             fail();
         } catch (UnsupportedOperationException e) {
+            // OK
         }
 
         try {
@@ -147,24 +150,28 @@ public class OffsetMapTest {
             it.remove();
             fail();
         } catch (UnsupportedOperationException e) {
+            // OK
         }
 
         try {
             map.keySet().add("k1");
             fail();
         } catch (UnsupportedOperationException e) {
+            // OK
         }
 
         try {
             map.keySet().clear();
             fail();
         } catch (UnsupportedOperationException e) {
+            // OK
         }
 
         try {
             map.keySet().remove("k1");
             fail();
         } catch (UnsupportedOperationException e) {
+            // OK
         }
 
         try {
@@ -173,24 +180,28 @@ public class OffsetMapTest {
             it.remove();
             fail();
         } catch (UnsupportedOperationException e) {
+            // OK
         }
 
         try {
             map.entrySet().clear();
             fail();
         } catch (UnsupportedOperationException e) {
+            // OK
         }
 
         try {
             map.entrySet().add(new SimpleEntry<>("k1", "v1"));
             fail();
         } catch (UnsupportedOperationException e) {
+            // OK
         }
 
         try {
             map.entrySet().remove(new SimpleEntry<>("k1", "v1"));
             fail();
         } catch (UnsupportedOperationException e) {
+            // OK
         }
 
         try {
@@ -199,30 +210,35 @@ public class OffsetMapTest {
             it.remove();
             fail();
         } catch (UnsupportedOperationException e) {
+            // OK
         }
 
         try {
             map.clear();
             fail();
         } catch (UnsupportedOperationException e) {
+            // OK
         }
 
         try {
             map.put("k1", "fail");
             fail();
         } catch (UnsupportedOperationException e) {
+            // OK
         }
 
         try {
             map.putAll(ImmutableMap.of("k1", "fail"));
             fail();
         } catch (UnsupportedOperationException e) {
+            // OK
         }
 
         try {
             map.remove("k1");
             fail();
         } catch (UnsupportedOperationException e) {
+            // OK
         }
     }
 
@@ -314,7 +330,8 @@ public class OffsetMapTest {
         mutable.remove("non-existent");
 
         // Resulting map should be equal, but not the same object
-        final ImmutableOffsetMap<String, String> result = (ImmutableOffsetMap<String, String>) mutable.toUnmodifiableMap();
+        final ImmutableOffsetMap<String, String> result = (ImmutableOffsetMap<String, String>) mutable
+                .toUnmodifiableMap();
         assertNotSame(source, result);
         assertEquals(source, result);
 
@@ -331,7 +348,8 @@ public class OffsetMapTest {
         mutable.remove("k1");
         mutable.put("k1", "v1");
 
-        final ImmutableOffsetMap<String, String> result = (ImmutableOffsetMap<String, String>) mutable.toUnmodifiableMap();
+        final ImmutableOffsetMap<String, String> result = (ImmutableOffsetMap<String, String>) mutable
+                .toUnmodifiableMap();
         assertTrue(source.equals(result));
         assertTrue(result.equals(source));
 
@@ -347,7 +365,8 @@ public class OffsetMapTest {
         mutable.remove("k1");
         mutable.put("k1", "v1");
 
-        final ImmutableOffsetMap<String, String> result = (ImmutableOffsetMap<String, String>) mutable.toUnmodifiableMap();
+        final ImmutableOffsetMap<String, String> result = (ImmutableOffsetMap<String, String>) mutable
+                .toUnmodifiableMap();
         assertEquals(source, result);
 
         // Only offsets should be shared
@@ -461,7 +480,8 @@ public class OffsetMapTest {
 
         mutable.put("k1", "replaced");
 
-        final ImmutableOffsetMap<String, String> result = (ImmutableOffsetMap<String, String>) mutable.toUnmodifiableMap();
+        final ImmutableOffsetMap<String, String> result = (ImmutableOffsetMap<String, String>) mutable
+                .toUnmodifiableMap();
         final Map<String, String> reference = ImmutableMap.of("k1", "replaced", "k2", "v2");
 
         assertEquals(reference, result);
@@ -497,7 +517,8 @@ public class OffsetMapTest {
         assertTrue(result.needClone());
 
         // Forced copy, no cloning needed, but maps are equal
-        final ImmutableOffsetMap<String, String> immutable = (ImmutableOffsetMap<String, String>) source.toUnmodifiableMap();
+        final ImmutableOffsetMap<String, String> immutable = (ImmutableOffsetMap<String, String>) source
+                .toUnmodifiableMap();
         assertFalse(source.needClone());
         assertTrue(source.equals(immutable));
         assertTrue(immutable.equals(source));
@@ -531,7 +552,8 @@ public class OffsetMapTest {
         assertTrue(result.needClone());
 
         // Creates a immutable view, which shares the array
-        final ImmutableOffsetMap<String, String> immutable = (ImmutableOffsetMap<String, String>) source.toUnmodifiableMap();
+        final ImmutableOffsetMap<String, String> immutable = (ImmutableOffsetMap<String, String>) source
+                .toUnmodifiableMap();
         assertTrue(source.needClone());
         assertSame(source.array(), immutable.objects());
     }
@@ -564,16 +586,19 @@ public class OffsetMapTest {
             it.hasNext();
             fail();
         } catch (ConcurrentModificationException e) {
+            // OK
         }
         try {
             it.next();
             fail();
         } catch (ConcurrentModificationException e) {
+            // OK
         }
         try {
             it.remove();
             fail();
         } catch (ConcurrentModificationException e) {
+            // OK
         }
     }
 
@@ -605,6 +630,7 @@ public class OffsetMapTest {
             it.remove();
             fail();
         } catch (IllegalStateException e) {
+            // OK
         }
 
         assertTrue(it.hasNext());
@@ -618,6 +644,7 @@ public class OffsetMapTest {
             it.next();
             fail();
         } catch (NoSuchElementException e) {
+            // OK
         }
     }
 

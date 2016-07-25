@@ -80,10 +80,12 @@ public final class MapAdaptor {
         return DEFAULT_INSTANCE;
     }
 
-    public static MapAdaptor getInstance(final boolean useSingleton, final int copyMaxItems, final int persistMinItems) {
+    public static MapAdaptor getInstance(final boolean useSingleton, final int copyMaxItems,
+            final int persistMinItems) {
         Preconditions.checkArgument(copyMaxItems >= 0, "copyMaxItems has to be a non-negative integer");
         Preconditions.checkArgument(persistMinItems >= 0, "persistMinItems has to be a positive integer");
-        Preconditions.checkArgument(persistMinItems <= copyMaxItems, "persistMinItems must be less than or equal to copyMaxItems");
+        Preconditions.checkArgument(persistMinItems <= copyMaxItems,
+                "persistMinItems must be less than or equal to copyMaxItems");
         return new MapAdaptor(useSingleton, copyMaxItems, persistMinItems);
     }
 
@@ -111,9 +113,6 @@ public final class MapAdaptor {
 
     /**
      * Input is treated is supposed to be left unmodified, result must be mutable.
-     *
-     * @param input
-     * @return
      */
     @SuppressWarnings("static-method")
     public <K, V> Map<K, V> takeSnapshot(final Map<K, V> input) {
@@ -134,18 +133,18 @@ public final class MapAdaptor {
         if (size <= 6) {
             final int target;
             switch (size) {
-            case 0:
-            case 1:
-                target = 1;
-                break;
-            case 2:
-                target = 2;
-                break;
-            case 3:
-                target = 4;
-                break;
-            default:
-                target = 8;
+                case 0:
+                case 1:
+                    target = 1;
+                    break;
+                case 2:
+                    target = 2;
+                    break;
+                case 3:
+                    target = 4;
+                    break;
+                default:
+                    target = 8;
             }
 
             ret = new HashMap<>(target);

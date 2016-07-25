@@ -16,10 +16,15 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
  */
 // TODO: once DurationStatsTracker is gone make this class final
 class ConcurrentDurationStatisticsTracker extends DurationStatisticsTracker {
-    private static final AtomicReferenceFieldUpdater<ConcurrentDurationStatisticsTracker, DurationWithTime> LONGEST_UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(ConcurrentDurationStatisticsTracker.class, DurationWithTime.class, "longest");
-    private static final AtomicReferenceFieldUpdater<ConcurrentDurationStatisticsTracker, DurationWithTime> SHORTEST_UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(ConcurrentDurationStatisticsTracker.class, DurationWithTime.class, "shortest");
+
+    private static final AtomicReferenceFieldUpdater<ConcurrentDurationStatisticsTracker, DurationWithTime>
+        LONGEST_UPDATER = AtomicReferenceFieldUpdater.newUpdater(ConcurrentDurationStatisticsTracker.class,
+                DurationWithTime.class, "longest");
+
+    private static final AtomicReferenceFieldUpdater<ConcurrentDurationStatisticsTracker, DurationWithTime>
+        SHORTEST_UPDATER = AtomicReferenceFieldUpdater.newUpdater(ConcurrentDurationStatisticsTracker.class,
+                DurationWithTime.class, "shortest");
+
     private static final AtomicLongFieldUpdater<ConcurrentDurationStatisticsTracker> COUNT_UPDATER =
             AtomicLongFieldUpdater.newUpdater(ConcurrentDurationStatisticsTracker.class, "count");
     private static final AtomicLongFieldUpdater<ConcurrentDurationStatisticsTracker> SUM_UPDATER =

@@ -45,7 +45,8 @@ public final class ReflectiveExceptionMapper<X extends Exception> extends Except
      * @throws IllegalArgumentException when the supplied exception class does not pass sanity checks
      * @throws SecurityException when the required constructor is not accessible
      */
-    public static <X extends Exception> ReflectiveExceptionMapper<X> create(final String opName, final Class<X> exceptionType) throws SecurityException {
+    public static <X extends Exception> ReflectiveExceptionMapper<X> create(final String opName,
+            final Class<X> exceptionType) throws SecurityException {
         final Constructor<X> c;
         try {
             c = exceptionType.getConstructor(String.class, Throwable.class);
@@ -55,7 +56,8 @@ public final class ReflectiveExceptionMapper<X extends Exception> extends Except
 
         try {
             c.newInstance(opName, new Throwable());
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException e) {
             throw new IllegalArgumentException("Constructor " + c.getName() + " failed to pass instantiation test", e);
         }
 

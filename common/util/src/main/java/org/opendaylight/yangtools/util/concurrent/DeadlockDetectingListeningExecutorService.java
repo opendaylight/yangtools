@@ -24,8 +24,8 @@ import javax.annotation.Nullable;
 /**
  * An implementation of ListeningExecutorService that attempts to detect deadlock scenarios that
  * could occur if clients invoke the returned Future's <code>get</code> methods synchronously.
- * <p>
- * Deadlock scenarios are most apt to occur with a backing single-threaded executor where setting of
+ *
+ * <p>Deadlock scenarios are most apt to occur with a backing single-threaded executor where setting of
  * the Future's result is executed on the single thread. Here's a scenario:
  * <ul>
  * <li>Client code is currently executing in an executor's single thread.</li>
@@ -35,13 +35,13 @@ import javax.annotation.Nullable;
  * The second submitted task will never execute since the single thread is currently executing
  * the client code which is blocked waiting for the submitted task to complete. Thus, deadlock has
  * occurred.
- * <p>
- * This class prevents this scenario via the use of a ThreadLocal variable. When a task is invoked,
+ *
+ * <p>This class prevents this scenario via the use of a ThreadLocal variable. When a task is invoked,
  * the ThreadLocal is set and, when a task completes, the ThreadLocal is cleared. Futures returned
  * from this class override the <code>get</code> methods to check if the ThreadLocal is set. If it is,
  * an ExecutionException is thrown with a custom cause.
  *
- * Note that the ThreadLocal is not removed automatically, so some state may be left hanging off of
+ * <p>Note that the ThreadLocal is not removed automatically, so some state may be left hanging off of
  * threads which have encountered this class. If you need to clean that state up, use
  * {@link #cleanStateForCurrentThread()}.
  *

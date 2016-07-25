@@ -35,7 +35,7 @@ import java.util.Set;
  * </code>
  * results in source and result sharing the backing objects.
  *
- * This map does not support null keys nor values.
+ * <p>This map does not support null keys nor values.
  *
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
@@ -176,8 +176,11 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     }
 
     abstract Object removedObject();
+
     abstract UnmodifiableMapPhase<K, V> modifiedMap(List<K> keys, V[] objects);
+
     abstract UnmodifiableMapPhase<K, V> unmodifiedMap(Map<K, Integer> offsets, V[] objects);
+
     abstract SharedSingletonMap<K, V> singletonMap();
 
     @Override
@@ -390,7 +393,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         try {
             ret = (MutableOffsetMap<K, V>) super.clone();
         } catch (CloneNotSupportedException e) {
-           throw new IllegalStateException("Clone is expected to work", e);
+            throw new IllegalStateException("Clone is expected to work", e);
         }
 
         ret.newKeys = (HashMap<K, V>) newKeys.clone();
@@ -573,7 +576,8 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         private final Iterator<Entry<K, Integer>> oldIterator = offsets.entrySet().iterator();
         private final Iterator<K> newIterator = newKeys.keySet().iterator();
         private int expectedModCount = modCount;
-        private K currentKey, nextKey;
+        private K currentKey;
+        private K nextKey;
 
         AbstractSetIterator() {
             updateNextKey();

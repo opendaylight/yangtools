@@ -21,23 +21,31 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Nullable;
 
 /**
- * An {@link com.google.common.util.concurrent.ListeningExecutorService} implementation that also allows for an {@link Executor} to be
- * specified on construction that is used to execute {@link ListenableFuture} callback Runnables,
- * registered via {@link com.google.common.util.concurrent.Futures#addCallback} or {@link ListenableFuture#addListener} directly,
- * asynchronously when a task that is run on this executor completes. This is useful when you want
- * to guarantee listener callback executions are off-loaded onto another thread to avoid blocking
- * the thread that completed the task, as a common use case is to pass an executor that runs tasks
- * in the same thread as the caller (ie <code>MoreExecutors#sameThreadExecutor</code>}) to
+ * An {@link com.google.common.util.concurrent.ListeningExecutorService}
+ * implementation that also allows for an {@link Executor} to be specified on
+ * construction that is used to execute {@link ListenableFuture} callback
+ * Runnables, registered via
+ * {@link com.google.common.util.concurrent.Futures#addCallback} or
+ * {@link ListenableFuture#addListener} directly, asynchronously when a task
+ * that is run on this executor completes. This is useful when you want to
+ * guarantee listener callback executions are off-loaded onto another thread to
+ * avoid blocking the thread that completed the task, as a common use case is to
+ * pass an executor that runs tasks in the same thread as the caller (ie
+ * <code>MoreExecutors#sameThreadExecutor</code>}) to
  * {@link ListenableFuture#addListener}.
+ *
  * <p>
- * Most commonly, this class would be used in lieu of <code>MoreExecutors#listeningDecorator</code>
- * when the underlying delegate Executor is single-threaded, in which case, you may not want
- * ListenableFuture callbacks to block the single thread.
+ * Most commonly, this class would be used in lieu of
+ * <code>MoreExecutors#listeningDecorator</code> when the underlying delegate
+ * Executor is single-threaded, in which case, you may not want ListenableFuture
+ * callbacks to block the single thread.
+ *
  * <p>
- * Note: the Executor specified on construction does not replace the Executor specified in
- * {@link ListenableFuture#addListener}. The latter Executor is still used however, if it is
- * detected that the listener Runnable would execute in the thread that completed the task, the
- * listener is executed on Executor specified on construction.
+ * Note: the Executor specified on construction does not replace the Executor
+ * specified in {@link ListenableFuture#addListener}. The latter Executor is
+ * still used however, if it is detected that the listener Runnable would
+ * execute in the thread that completed the task, the listener is executed on
+ * Executor specified on construction.
  *
  * @author Thomas Pantelis
  * @see AsyncNotifyingListenableFutureTask

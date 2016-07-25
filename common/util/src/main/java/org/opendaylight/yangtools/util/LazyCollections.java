@@ -33,14 +33,14 @@ public final class LazyCollections {
         final List<T> ret;
 
         switch (list.size()) {
-        case 0:
-            return Collections.singletonList(obj);
-        case 1:
-            ret = new ArrayList<>(2);
-            ret.addAll(list);
-            break;
-        default:
-            ret = list;
+            case 0:
+                return Collections.singletonList(obj);
+            case 1:
+                ret = new ArrayList<>(2);
+                ret.addAll(list);
+                break;
+            default:
+                ret = list;
         }
 
         ret.add(obj);

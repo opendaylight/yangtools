@@ -67,36 +67,42 @@ public class ConstantArrayCollectionTest {
             c.add(null);
             fail();
         } catch (UnsupportedOperationException e) {
+            // OK
         }
 
         try {
             c.remove(null);
             fail();
         } catch (UnsupportedOperationException e) {
+            // OK
         }
 
         try {
             c.addAll(null);
             fail();
         } catch (UnsupportedOperationException e) {
+            // OK
         }
 
         try {
             c.removeAll(null);
             fail();
         } catch (UnsupportedOperationException e) {
+            // OK
         }
 
         try {
             c.retainAll(null);
             fail();
         } catch (UnsupportedOperationException e) {
+            // OK
         }
 
         try {
             c.clear();
             fail();
         } catch (UnsupportedOperationException e) {
+            // OK
         }
     }
 }

@@ -13,7 +13,9 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 
 public final class Identifiables {
-    private static final Function<Identifiable<Object>, Object> EXTRACT_IDENTIFIER = new Function<Identifiable<Object>, Object>() {
+
+    private static final Function<Identifiable<Object>, Object> EXTRACT_IDENTIFIER =
+            new Function<Identifiable<Object>, Object>() {
         @Override
         public Object apply(@Nonnull final Identifiable<Object> input) {
             Preconditions.checkNotNull(input);

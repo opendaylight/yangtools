@@ -14,20 +14,28 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
 /**
- * Utility exception mapper which translates an Exception to a specified type of Exception.
+ * Utility exception mapper which translates an Exception to a specified type of
+ * Exception.
  *
- * This mapper is intended to be used with {@link com.google.common.util.concurrent.Futures#makeChecked(com.google.common.util.concurrent.ListenableFuture, Function)}
+ * <p>
+ * This mapper is intended to be used with
+ * {@link com.google.common.util.concurrent.Futures#makeChecked(com.google.common.util.concurrent.ListenableFuture, Function)}
  * <ul>
- * <li>if exception is the specified type or one of its subclasses, it returns original exception.
- * <li>if exception is {@link ExecutionException} and the cause is of the specified type, it returns the cause
- * <li>otherwise returns an instance of the specified exception type with original exception as the cause.
+ * <li>if exception is the specified type or one of its subclasses, it returns
+ * original exception.
+ * <li>if exception is {@link ExecutionException} and the cause is of the
+ * specified type, it returns the cause
+ * <li>otherwise returns an instance of the specified exception type with
+ * original exception as the cause.
  * </ul>
  *
  * @author Thomas Pantelis
  *
- * @param <X> the exception type
+ * @param <X>
+ *            the exception type
  */
 public abstract class ExceptionMapper<X extends Exception> implements Function<Exception, X> {
+
     private final Class<X> exceptionType;
     private final String opName;
 

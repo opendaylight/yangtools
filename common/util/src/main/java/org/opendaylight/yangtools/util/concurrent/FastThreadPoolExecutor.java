@@ -17,8 +17,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * A ThreadPoolExecutor with a specified bounded queue capacity that favors creating new threads
  * over queuing, as the former is faster.
- * <p>
- * See {@link SpecialExecutors#newBoundedFastThreadPool} for more details.
+ *
+ * <p>See {@link SpecialExecutors#newBoundedFastThreadPool} for more details.
  *
  * @author Thomas Pantelis
  */

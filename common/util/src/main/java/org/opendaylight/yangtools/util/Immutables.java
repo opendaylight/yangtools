@@ -28,7 +28,7 @@ public final class Immutables {
     /**
      * Determines if object is known to be immutable
      *
-     * Note: This method may return false to immutable objects which
+     * <p>Note: This method may return false to immutable objects which
      * immutability is not known, was defined not using concepts term.
      *
      * @param o

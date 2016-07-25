@@ -20,11 +20,11 @@ import java.util.concurrent.TimeoutException;
 /**
  * An implementation of CheckedFuture that provides similar behavior for the <code>get</code> methods
  * that the <code>checkedGet</code> methods provide.
- * <p>
- * For {@link CancellationException} and {@link InterruptedException}, the specified exception mapper
+ *
+ * <p>For {@link CancellationException} and {@link InterruptedException}, the specified exception mapper
  * is invoked to translate them to the checked exception type.
- * <p>
- * For {@link ExecutionException}, the mapper is invoked to translate the cause to the checked exception
+ *
+ * <p>For {@link ExecutionException}, the mapper is invoked to translate the cause to the checked exception
  * and a new ExecutionException is thrown with the translated cause.
  *
  * @author Thomas Pantelis
@@ -67,12 +67,12 @@ public final class MappingCheckedFuture<V, X extends Exception> extends Abstract
     public V get() throws InterruptedException, ExecutionException {
         try {
             return super.get();
-        } catch( final InterruptedException e ) {
+        } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
             throw wrapInExecutionException( "Operation was interrupted", e );
-        } catch( final CancellationException e ) {
+        } catch (final CancellationException e) {
             throw wrapInExecutionException( "Operation was cancelled", e );
-        } catch( final ExecutionException e ) {
+        } catch (final ExecutionException e) {
             throw wrapInExecutionException( e.getMessage(), e );
         }
     }
@@ -82,12 +82,12 @@ public final class MappingCheckedFuture<V, X extends Exception> extends Abstract
             throws InterruptedException, ExecutionException, TimeoutException {
         try {
             return super.get( timeout, unit );
-        } catch( final InterruptedException e ) {
+        } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
             throw wrapInExecutionException( "Operation was interrupted", e );
-        } catch( final CancellationException e ) {
+        } catch (final CancellationException e) {
             throw wrapInExecutionException( "Operation was cancelled", e );
-        } catch( final ExecutionException e ) {
+        } catch (final ExecutionException e) {
             throw wrapInExecutionException( e.getMessage(), e );
         }
     }

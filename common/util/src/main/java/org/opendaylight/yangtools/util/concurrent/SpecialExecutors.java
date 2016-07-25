@@ -26,17 +26,17 @@ public final class SpecialExecutors {
      * threads over queuing, as the former is faster, so threads will only be reused when the thread
      * limit is exceeded and tasks are queued. If the maximum queue capacity is reached, subsequent
      * tasks will be rejected.
-     * <p>
-     * For example, if the maximum number of threads is 100 and 100 short-lived tasks are submitted
+     *
+     * <p>For example, if the maximum number of threads is 100 and 100 short-lived tasks are submitted
      * within say 10 seconds, then 100 threads will be created and used - previously constructed
      * idle threads will not be reused. This provides the fastest execution of the 100 tasks at the
      * expense of memory and thread resource overhead. Therefore it is advisable to specify a
      * relatively small thread limit (probably no more than 50).
-     * <p>
-     * Threads that have not been used for 15 seconds are terminated and removed from the pool.
+     *
+     * <p>Threads that have not been used for 15 seconds are terminated and removed from the pool.
      * Thus, a pool that remains idle for long enough will not consume any resources.
-     * <p>
-     * If you need an executor with less memory and thread resource overhead where slower execution
+     *
+     * <p>If you need an executor with less memory and thread resource overhead where slower execution
      * time is acceptable, consider using {@link #newBoundedCachedThreadPool }.
      *
      * @param maximumPoolSize
@@ -85,14 +85,14 @@ public final class SpecialExecutors {
      * thread to execute. If the specified maximum thread limit is reached, subsequent tasks will be
      * queued and will execute as threads become available. If the maximum queue capacity is
      * reached, subsequent tasks will be rejected.
-     * <p>
-     * Threads that have not been used for sixty seconds are terminated and removed from the pool.
+     *
+     * <p>Threads that have not been used for sixty seconds are terminated and removed from the pool.
      * Thus, a pool that remains idle for long enough will not consume any resources.
-     * <p>
-     * By reusing threads when possible, this executor optimizes for reduced memory and thread
+     *
+     * <p>By reusing threads when possible, this executor optimizes for reduced memory and thread
      * resource overhead at the expense of execution time.
-     * <p>
-     * If you need an executor with faster execution time where increased memory and thread resource
+     *
+     * <p>If you need an executor with faster execution time where increased memory and thread resource
      * overhead is acceptable, consider using {@link #newBoundedFastThreadPool }.
      *
      * @param maximumPoolSize

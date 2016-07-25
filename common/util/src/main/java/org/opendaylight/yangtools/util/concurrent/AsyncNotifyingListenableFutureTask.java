@@ -29,13 +29,13 @@ import org.slf4j.LoggerFactory;
  * to avoid blocking the thread that completed this task, as a common use case is to pass an
  * executor that runs tasks in the same thread as the caller (ie MoreExecutors#sameThreadExecutor)
  * to {@link #addListener}.
- * <p>
- * Note: the Executor specified on construction does not replace the Executor specified in
+ *
+ * <p>Note: the Executor specified on construction does not replace the Executor specified in
  * {@link #addListener}. The latter Executor is still used however, if it is detected that the
  * listener Runnable would execute in the thread that completed this task, the listener
  * is executed on Executor specified on construction.
  *
- * Also note that the use of this task may attach some (small) amount of state to the threads
+ * <p>Also note that the use of this task may attach some (small) amount of state to the threads
  * interacting with it. That state will not be detached automatically, but you can use
  *  {@link #cleanStateForCurrentThread()} to clean it up.
  *
@@ -45,13 +45,17 @@ import org.slf4j.LoggerFactory;
  * @param <V> the Future result value type
  */
 public class AsyncNotifyingListenableFutureTask<V> extends FutureTask<V> implements ListenableFuture<V> {
-    private static final class DelegatingAsyncNotifyingListenableFutureTask<V> extends AsyncNotifyingListenableFutureTask<V> {
+
+    private static final class DelegatingAsyncNotifyingListenableFutureTask<V>
+            extends AsyncNotifyingListenableFutureTask<V> {
+
         /**
          * The executor used to run listener callbacks.
          */
         private final Executor listenerExecutor;
 
-        private DelegatingAsyncNotifyingListenableFutureTask(final Callable<V> callable, @Nullable final Executor listenerExecutor) {
+        private DelegatingAsyncNotifyingListenableFutureTask(final Callable<V> callable,
+                @Nullable final Executor listenerExecutor) {
             super(callable);
             this.listenerExecutor = Preconditions.checkNotNull(listenerExecutor);
         }

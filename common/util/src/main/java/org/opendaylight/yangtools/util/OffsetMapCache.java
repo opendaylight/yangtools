@@ -35,7 +35,7 @@ final class OffsetMapCache {
                 public Map<?, Integer> load(final List<?> key) {
                     return createMap(key);
                 }
-    });
+            });
     /*
      * Cache for offsets where order does not mapper. The key is a Set of elements. We use manual two-stage loading
      * because of the nature of the objects we store as values, which is ImmutableMaps. An ImmutableMap, when queried

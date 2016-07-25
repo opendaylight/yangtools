@@ -47,7 +47,7 @@ public class ThreadPoolExecutorTest {
                 100000, "TestPool", 0 );
     }
 
-    @Test(expected=RejectedExecutionException.class)
+    @Test(expected = RejectedExecutionException.class)
     public void testFastThreadPoolRejectingTask() throws Exception {
 
         executor = SpecialExecutors.newBoundedFastThreadPool( 1, 1, "TestPool" );
@@ -75,7 +75,7 @@ public class ThreadPoolExecutorTest {
                 100000, "TestPool", 0 );
     }
 
-    @Test(expected=RejectedExecutionException.class)
+    @Test(expected = RejectedExecutionException.class)
     public void testCachedThreadRejectingTask() throws Exception {
 
         ExecutorService executor = SpecialExecutors.newBoundedCachedThreadPool( 1, 1, "TestPool" );
@@ -99,8 +99,7 @@ public class ThreadPoolExecutorTest {
 
         this.executor = executor;
 
-        System.out.println( "\nTesting " + executor.getClass().getSimpleName() + " with " +
-                numTasksToRun + " tasks." );
+        System.out.println("\nTesting " + executor.getClass().getSimpleName() + " with " + numTasksToRun + " tasks.");
 
         final CountDownLatch tasksRunLatch = new CountDownLatch( numTasksToRun );
         final ConcurrentMap<Thread, AtomicLong> taskCountPerThread = new ConcurrentHashMap<>();
@@ -127,8 +126,7 @@ public class ThreadPoolExecutorTest {
         stopWatch.stop();
 
         if (!done) {
-            fail( (numTasksToRun - tasksRunLatch.getCount()) + " tasks out of " +
-                   numTasksToRun + " executed" );
+            fail((numTasksToRun - tasksRunLatch.getCount()) + " tasks out of " + numTasksToRun + " executed");
         }
 
         if (threadError.get() != null) {
@@ -181,7 +179,8 @@ public class ThreadPoolExecutorTest {
                     } else if (blockLatch != null) {
                         blockLatch.await();
                     }
-                } catch( InterruptedException e ) {}
+                } catch (InterruptedException e) {
+                }
 
                 if (expThreadPrefix != null) {
                     assertEquals( "Thread name starts with " + expThreadPrefix, true,
@@ -201,7 +200,7 @@ public class ThreadPoolExecutorTest {
                     count.incrementAndGet();
                 }
 
-            } catch( AssertionError e ) {
+            } catch (AssertionError e) {
                 if (threadError != null) {
                     threadError.set( e );
                 }

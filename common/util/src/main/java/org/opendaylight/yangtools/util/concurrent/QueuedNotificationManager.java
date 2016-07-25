@@ -29,8 +29,8 @@ import org.slf4j.LoggerFactory;
  * This class manages queuing and dispatching notifications for multiple listeners concurrently.
  * Notifications are queued on a per-listener basis and dispatched serially to each listener via an
  * {@link Executor}.
- * <p>
- * This class optimizes its memory footprint by only allocating and maintaining a queue and executor
+ *
+ * <p>This class optimizes its memory footprint by only allocating and maintaining a queue and executor
  * task for a listener when there are pending notifications. On the first notification(s), a queue
  * is created and a task is submitted to the executor to dispatch the queue to the associated
  * listener. Any subsequent notifications that occur before all previous notifications have been
@@ -172,7 +172,7 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
                     break;
                 }
             }
-        } catch( InterruptedException e ) {
+        } catch (InterruptedException e) {
 
             // We were interrupted trying to offer to the listener's queue. Somebody's probably
             // telling us to quit.
@@ -204,14 +204,14 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
     /**
      * Returns the maximum listener queue capacity.
      */
-    public int getMaxQueueCapacity(){
+    public int getMaxQueueCapacity() {
         return maxQueueCapacity;
     }
 
     /**
      * Returns the {@link Executor} to used for notification tasks.
      */
-    public Executor getExecutor(){
+    public Executor getExecutor() {
         return executor;
     }
 
@@ -226,7 +226,7 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
 
         private final L listener;
 
-        public ListenerKey( L listener ) {
+        ListenerKey( L listener ) {
             this.listener = listener;
         }
 
@@ -315,19 +315,18 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
                         }
 
                         LOG.warn(
-                            "{}: Timed out trying to offer a notification to the queue for listener {} " +
-                            "on attempt {} of {}. " +
-                            "The queue has reached its capacity of {}",
-                            name, listenerKey.toString(), notificationOfferAttempts, MAX_NOTIFICATION_OFFER_ATTEMPTS,
-                            maxQueueCapacity );
+                                "{}: Timed out trying to offer a notification to the queue for listener {} "
+                                        + "on attempt {} of {}. " + "The queue has reached its capacity of {}",
+                                name, listenerKey.toString(), notificationOfferAttempts,
+                                MAX_NOTIFICATION_OFFER_ATTEMPTS, maxQueueCapacity);
                     }
                     if (!notificationOfferAttemptSuccess) {
                         LOG.warn(
-                            "{}: Failed to offer a notification to the queue for listener {}. " +
-                            "Exceeded max allowable attempts of {} in {} minutes; the listener " +
-                            "is likely in an unrecoverable state (deadlock or endless loop).",
-                            name, listenerKey.toString(), MAX_NOTIFICATION_OFFER_ATTEMPTS,
-                            MAX_NOTIFICATION_OFFER_ATTEMPTS );
+                                "{}: Failed to offer a notification to the queue for listener {}. "
+                                        + "Exceeded max allowable attempts of {} in {} minutes; the listener "
+                                        + "is likely in an unrecoverable state (deadlock or endless loop).",
+                                name, listenerKey.toString(), MAX_NOTIFICATION_OFFER_ATTEMPTS,
+                                MAX_NOTIFICATION_OFFER_ATTEMPTS);
                     }
                 }
 
@@ -389,7 +388,7 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
 
                     notifyListener( notification );
                 }
-            } catch( InterruptedException e ) {
+            } catch (InterruptedException e) {
 
                 // The executor is probably shutting down so log as debug.
                 LOG.debug( "{}: Interrupted trying to remove from {} listener's queue",
@@ -418,7 +417,7 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
 
                 listenerInvoker.invokeListener( listenerKey.getListener(), notification );
 
-            } catch( RuntimeException e ) {
+            } catch (RuntimeException e ) {
 
                 // We'll let a RuntimeException from the listener slide and keep sending any
                 // remaining notifications.
@@ -426,7 +425,7 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
                 LOG.error( String.format( "%1$s: Error notifying listener %2$s", name,
                            listenerKey.toString() ), e );
 
-            } catch( Error e ) {
+            } catch (Error e) {
 
                 // A JVM Error is severe - best practice is to throw them up the chain. Set done to
                 // true so no new notifications can be added to this task as we're about to bail.

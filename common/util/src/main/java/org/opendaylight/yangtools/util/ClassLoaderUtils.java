@@ -33,7 +33,7 @@ public final class ClassLoaderUtils {
     /**
      * Runs {@link Supplier} with provided {@link ClassLoader}.
      *
-     * Invokes supplies function and makes sure that original {@link ClassLoader}
+     * <p>Invokes supplies function and makes sure that original {@link ClassLoader}
      * is context {@link ClassLoader} after execution.
      *
      * @param cls {@link ClassLoader} to be used.
@@ -85,14 +85,9 @@ public final class ClassLoaderUtils {
     }
 
     /**
-     *
      * Loads class using this supplied classloader.
      *
-     *
-     * @param cls
      * @param name String name of class.
-     * @return
-     * @throws ClassNotFoundException
      */
     public static Class<?> loadClass(final ClassLoader cls, final String name) throws ClassNotFoundException {
         if ("byte[]".equals(name)) {
@@ -148,10 +143,12 @@ public final class ClassLoaderUtils {
     }
 
     public static <S,G,P> Class<P> findFirstGenericArgument(final Class<S> scannedClass, final Class<G> genericType) {
-        return withClassLoader(scannedClass.getClassLoader(), ClassLoaderUtils.findFirstGenericArgumentTask(scannedClass, genericType));
+        return withClassLoader(scannedClass.getClassLoader(),
+                ClassLoaderUtils.findFirstGenericArgumentTask(scannedClass, genericType));
     }
 
-    private static <S,G,P> Supplier<Class<P>> findFirstGenericArgumentTask(final Class<S> scannedClass, final Class<G> genericType) {
+    private static <S, G, P> Supplier<Class<P>> findFirstGenericArgumentTask(final Class<S> scannedClass,
+            final Class<G> genericType) {
         return new Supplier<Class<P>>() {
             @Override
             @SuppressWarnings("unchecked")

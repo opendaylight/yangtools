@@ -91,7 +91,7 @@ public final class ExecutorServiceUtil {
             if (!executor.awaitTermination(timeout, unit)) {
                 executor.shutdownNow();
             }
-        } catch( InterruptedException e ) {
+        } catch (InterruptedException e) {
             executor.shutdownNow();
         }
     }

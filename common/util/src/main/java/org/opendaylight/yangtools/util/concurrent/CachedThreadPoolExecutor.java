@@ -22,8 +22,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * A ThreadPoolExecutor with a specified bounded queue capacity that favors reusing previously
  * constructed threads, when they are available, over creating new threads.
- * <p>
- * See {@link SpecialExecutors#newBoundedCachedThreadPool} for more details.
+ *
+ * <p>See {@link SpecialExecutors#newBoundedCachedThreadPool} for more details.
  *
  * @author Thomas Pantelis
  */
@@ -50,7 +50,7 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
      * @param threadPrefix
      *            the name prefix for threads created by this executor.
      */
-    public CachedThreadPoolExecutor( final int maximumPoolSize, final int maximumQueueSize, final String threadPrefix ) {
+    public CachedThreadPoolExecutor(final int maximumPoolSize, final int maximumQueueSize, final String threadPrefix) {
         // We're using a custom SynchronousQueue that has a backing bounded LinkedBlockingQueue.
         // We don't specify any core threads (first parameter) so, when a task is submitted,
         // the base class will always try to offer to the queue. If there is an existing waiting
@@ -204,7 +204,7 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
             this.delegateRejectedExecutionHandler = delegateRejectedExecutionHandler;
         }
 
-        RejectedExecutionHandler getDelegateRejectedExecutionHandler(){
+        RejectedExecutionHandler getDelegateRejectedExecutionHandler() {
             return delegateRejectedExecutionHandler;
         }
 

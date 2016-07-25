@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  * their size, and determining the size of a TrieMap is expensive, we make sure
  * to update it as we go.
  *
- * FIXME: this map does not support modification view the keySet()/values()/entrySet()
+ * <p>FIXME: this map does not support modification view the keySet()/values()/entrySet()
  *        methods.
  *
  * @param <K> Key type

@@ -14,13 +14,18 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Mutable;
 
 /**
- * A {@link Map} which can be modified and supports efficient conversion to an unmodifiable map. This interface is the
- * logical counterpart to {@link UnmodifiableMapPhase}, but it does not require implementations of {@link #toUnmodifiableMap()}
- * to return an implementation of that interface. The reason for that empty and singleton mappings are efficiently
- * represented as {@link ImmutableMap}, which does not implement {@link UnmodifiableMapPhase}.
+ * A {@link Map} which can be modified and supports efficient conversion to an
+ * unmodifiable map. This interface is the logical counterpart to
+ * {@link UnmodifiableMapPhase}, but it does not require implementations of
+ * {@link #toUnmodifiableMap()} to return an implementation of that interface.
+ * The reason for that empty and singleton mappings are efficiently represented
+ * as {@link ImmutableMap}, which does not implement
+ * {@link UnmodifiableMapPhase}.
  *
- * @param <K> the type of keys maintained by this map
- * @param <V> the type of mapped values
+ * @param <K>
+ *            the type of keys maintained by this map
+ * @param <V>
+ *            the type of mapped values
  */
 @Beta
 public interface ModifiableMapPhase<K, V> extends Map<K, V>, Mutable {

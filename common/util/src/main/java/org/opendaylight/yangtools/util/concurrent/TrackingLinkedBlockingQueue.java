@@ -22,13 +22,15 @@ import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
  * @param <E> the element t.ype
  */
 public class TrackingLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
-    @SuppressWarnings("rawtypes")
-    private static final AtomicIntegerFieldUpdater<TrackingLinkedBlockingQueue> LARGEST_QUEUE_SIZE_UPDATER = AtomicIntegerFieldUpdater.newUpdater(TrackingLinkedBlockingQueue.class, "largestQueueSize");
     private static final long serialVersionUID = 1L;
+
+    @SuppressWarnings("rawtypes")
+    private static final AtomicIntegerFieldUpdater<TrackingLinkedBlockingQueue> LARGEST_QUEUE_SIZE_UPDATER
+        = AtomicIntegerFieldUpdater.newUpdater(TrackingLinkedBlockingQueue.class, "largestQueueSize");
 
     /**
      * Holds largestQueueSize, this long field should be only accessed
-     * using {@link #LARGEST_QUEUE_SIZE_UPDATER}
+     * using {@link #LARGEST_QUEUE_SIZE_UPDATER}.
      */
     private volatile int largestQueueSize = 0;
 
@@ -56,7 +58,7 @@ public class TrackingLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
     /**
      * Returns the largest queue size.
      *
-     * FIXME: the this return will be changed to int in a future release.
+     * <p>FIXME: the this return will be changed to int in a future release.
      */
     @Beta
     public long getLargestQueueSize() {
@@ -64,7 +66,7 @@ public class TrackingLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
     }
 
     @Override
-    public boolean offer( final E e, final long timeout, final TimeUnit unit ) throws InterruptedException {
+    public boolean offer(final E e, final long timeout, final TimeUnit unit) throws InterruptedException {
         if (super.offer( e, timeout, unit ) ) {
             updateLargestQueueSize();
             return true;
@@ -74,7 +76,7 @@ public class TrackingLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
     }
 
     @Override
-    public boolean offer( final E e ) {
+    public boolean offer(final E e) {
         if (super.offer( e ) ) {
             updateLargestQueueSize();
             return true;
@@ -90,14 +92,14 @@ public class TrackingLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
     }
 
     @Override
-    public boolean add( final E e ) {
+    public boolean add(final E e) {
         boolean result = super.add( e );
         updateLargestQueueSize();
         return result;
     }
 
     @Override
-    public boolean addAll( final Collection<? extends E> c ) {
+    public boolean addAll(final Collection<? extends E> c) {
         try {
             return super.addAll( c );
         } finally {

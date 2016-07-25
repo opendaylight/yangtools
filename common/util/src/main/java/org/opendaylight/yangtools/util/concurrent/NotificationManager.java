@@ -22,8 +22,8 @@ public interface NotificationManager<L, N> {
 
     /**
      * Submits a notification to be queued and dispatched to the given listener.
-     * <p>
-     * <b>Note:</b> This method may block if the listener queue is currently full.
+     *
+     * <p><b>Note:</b> This method may block if the listener queue is currently full.
      *
      * @param listener the listener to notify
      * @param notification the notification to dispatch
@@ -33,8 +33,8 @@ public interface NotificationManager<L, N> {
 
     /**
      * Submits notifications to be queued and dispatched to the given listener.
-     * <p>
-     * <b>Note:</b> This method may block if the listener queue is currently full.
+     *
+     * <p><b>Note:</b> This method may block if the listener queue is currently full.
      *
      * @param listener the listener to notify
      * @param notifications the notifications to dispatch
