@@ -1,0 +1,85 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+      <groupId>org.opendaylight.odlparent</groupId>
+      <artifactId>bundle-parent</artifactId>
+      <version>1.7.0-SNAPSHOT</version>
+      <relativePath/>
+  </parent>
+
+  <groupId>org.opendaylight.yangtools</groupId>
+  <artifactId>testutils</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <!-- Currently not needed, maybe later: <packaging>bundle</packaging> -->
+
+  <dependencyManagement>
+      <dependencies>
+          <dependency>
+              <groupId>org.opendaylight.yangtools</groupId>
+              <artifactId>yangtools-artifacts</artifactId>
+              <version>${project.version}</version>
+              <scope>import</scope>
+              <type>pom</type>
+          </dependency>
+      </dependencies>
+  </dependencyManagement>
+
+  <dependencies>
+    <!-- NOTE: The use of <scope> here is a little particular, compared to other standard projects...
+
+        As this test helper project is intended to itself be used as a <scope>test
+        <dependency> so that the utility code in src/main/java of this project can
+        be used to write src/test/java code in projects using it, all <dependencies>
+        here are <scope>compile here (the default, don't mention it), and NOT <scope>test.
+        (Only a <dependency> which only this project would want to use in its own src/test/java code
+        but not expose to projects depending on it would be <scope>test.  However that kind of against
+        the whole point of this project, and currently there no such dependencies here.
+      -->
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.google.truth</groupId>
+      <artifactId>truth</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.xtend</groupId>
+      <artifactId>org.eclipse.xtend.lib</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <!-- TODO Remove this when https://git.opendaylight.org/gerrit/#/c/42515/ is merged -->
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <compilerArgs>
+            <arg>-parameters</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.eclipse.xtend</groupId>
+        <artifactId>xtend-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
