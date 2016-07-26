@@ -10,18 +10,7 @@ package org.opendaylight.yangtools.yang.model.api;
 /**
  * Interface describing YANG 'leaf-list' statement.
  */
-public interface LeafListSchemaNode extends DataSchemaNode {
-
-    /**
-     * Returns type of the instance which implements <code>DataSchemaNode</code>
-     * .
-     *
-     * @return type definition of leaf-list schema node which represents the
-     *         value of the argument of the YANG <code>type</code> substatement
-     *         of the <code>leaf-list</code> statement
-     */
-    TypeDefinition<? extends TypeDefinition<?>> getType();
-
+public interface LeafListSchemaNode extends ValueSchemaNode {
     /**
      * YANG 'ordered-by' statement. It defines whether the order of entries
      * within this leaf-list are determined by the user or the system. If not
@@ -30,5 +19,4 @@ public interface LeafListSchemaNode extends DataSchemaNode {
      * @return true if ordered-by argument is "user", false otherwise
      */
     boolean isUserOrdered();
-
 }
