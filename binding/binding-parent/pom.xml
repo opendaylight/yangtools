@@ -29,6 +29,18 @@
         <salGeneratorPath>target/generated-sources/mdsal-binding</salGeneratorPath>
     </properties>
 
+    <build>
+      <!-- https://bugs.opendaylight.org/show_bug.cgi?id=6252 -->
+      <resources>
+        <resource>
+          <directory>target/generated-sources/spi/</directory>
+        </resource>
+        <resource>
+          <directory>target/generated-sources/yang</directory>
+        </resource>
+      </resources>
+    </build>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -126,7 +138,6 @@
                                     </goals>
                                     <configuration>
                                         <sources>
-                                            <source>src/main/yang</source>
                                             <source>${salGeneratorPath}</source>
                                         </sources>
                                     </configuration>
