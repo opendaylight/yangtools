@@ -32,6 +32,7 @@
         <module>object-cache-guava</module>
         <module>object-cache-noop</module>
         <module>util</module>
+        <module>testutils</module>
     </modules>
 
   <!--
