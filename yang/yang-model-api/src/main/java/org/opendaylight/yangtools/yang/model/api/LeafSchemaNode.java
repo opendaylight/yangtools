@@ -20,17 +20,7 @@ package org.opendaylight.yangtools.yang.model.api;
  * The 'leaf' statement is used to define a leaf node in the schema tree.
  * </p>
  */
-public interface LeafSchemaNode extends DataSchemaNode {
-
-    /**
-     * Returns the YANG <code>type</code> of the instance of the type
-     * <code>LeafSchemaNode</code>.
-     *
-     * @return type definition which represents the value of the YANG
-     *         <code>type</code> substatement for <code>leaf</code> statement
-     */
-    TypeDefinition<?> getType();
-
+public interface LeafSchemaNode extends TypedSchemaNode {
     /**
      * Returns the default value of YANG <code>leaf</code>.
      *
