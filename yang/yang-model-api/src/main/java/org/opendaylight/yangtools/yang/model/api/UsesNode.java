@@ -8,8 +8,6 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -74,16 +72,5 @@ public interface UsesNode extends DocumentedNode {
      */
     default Optional<RevisionAwareXPath> getWhenCondition() {
         return Optional.absent();
-    }
-
-    /**
-     *
-     * Returns unknown schema nodes which belongs to this instance of the type
-     * <code>UsesNode</code>.
-     *
-     * @return list of unknown schema nodes defined under this uses node.
-     */
-    default List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return ImmutableList.of();
     }
 }

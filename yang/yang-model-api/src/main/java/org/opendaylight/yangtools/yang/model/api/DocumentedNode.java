@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import com.google.common.collect.ImmutableList;
+import java.util.List;
 import javax.annotation.Nullable;
 
 /**
@@ -42,6 +44,14 @@ public interface DocumentedNode {
      * @return status of this node which represents the argument of the YANG
      *         <code>status</code> substatement
      */
-    @Nullable
-    Status getStatus();
+    @Nullable Status getStatus();
+
+    /**
+     * Returns unknown schema nodes which belongs to this instance.
+     *
+     * @return list of unknown schema nodes defined under this node.
+     */
+    default List<UnknownSchemaNode> getUnknownSchemaNodes() {
+        return ImmutableList.of();
+    }
 }

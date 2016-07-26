@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -30,14 +28,4 @@ public interface SchemaNode extends DocumentedNode {
      * @return schema path of the schema node
      */
     SchemaPath getPath();
-
-    /**
-     *
-     * Returns unknown schema nodes which belongs to this instance of the type
-     * <code>SchemaNode</code>.
-     *
-     * @return list of unknown schema nodes defined under this schema node.
-     */
-    List<UnknownSchemaNode> getUnknownSchemaNodes();
-
 }
