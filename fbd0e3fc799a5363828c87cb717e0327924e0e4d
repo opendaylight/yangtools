@@ -22,6 +22,30 @@
       "revId": "fbd0e3fc799a5363828c87cb717e0327924e0e4d",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_bf7f6daa",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/MoreObjects2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2016-07-26T11:52:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a561d44_ffd5651c",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 33
+      },
+      "revId": "fbd0e3fc799a5363828c87cb717e0327924e0e4d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
