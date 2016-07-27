@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_76c97758",
+        "filename": "common/testutils/src/test/java/org/opendaylight/yangtools/testutils/mockito/tests/MockitoExampleTutorialTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 4540
+      },
+      "writtenOn": "2016-07-27T16:11:42Z",
+      "side": 1,
+      "message": "Why is this here?",
+      "revId": "c84f8d1af49a9fc7033ea7579b495377ccc907af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
