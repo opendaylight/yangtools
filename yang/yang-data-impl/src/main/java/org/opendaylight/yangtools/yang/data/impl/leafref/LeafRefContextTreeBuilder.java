@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
 class LeafRefContextTreeBuilder {
@@ -116,16 +117,8 @@ class LeafRefContextTreeBuilder {
                 }
             }
 
-        } else if (node instanceof LeafSchemaNode
-                || node instanceof LeafListSchemaNode) {
-
-            TypeDefinition<?> type = null;
-
-            if (node instanceof LeafSchemaNode) {
-                type = ((LeafSchemaNode) node).getType();
-            } else {
-                type = ((LeafListSchemaNode) node).getType();
-            }
+        } else if (node instanceof TypedSchemaNode) {
+            final TypeDefinition<?> type = ((TypedSchemaNode) node).getType();
 
             // FIXME: fix case when type is e.g. typedef -> typedef -> leafref
             if (type instanceof LeafrefTypeDefinition) {
