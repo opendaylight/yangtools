@@ -16,6 +16,24 @@
       "revId": "c84f8d1af49a9fc7033ea7579b495377ccc907af",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_71950186",
+        "filename": "common/testutils/src/test/java/org/opendaylight/yangtools/testutils/mockito/tests/MockitoExampleTutorialTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2016-07-27T18:16:37Z",
+      "side": 1,
+      "message": "This MockitoExampleTutorialTest is here to illustrate the basic use of Mockito without the new helpers being introduced in this change. Yesterday someone from Ericson wanted an example about what the point of CallsRealOrExceptionAnswer was, and being able to point him to look at comparing the usingMockitoToStubComplexCase() method in MockitoExampleTutorialTest VS the MikitoTest helped to illustrate the point I was making.  I therefore believe it would be useful to keep this example test here for future reference - I cannot see the harm? If a 2nd person (yangtools commiter) downvotes this change because of the inclusion of this MockitoExampleTutorialTest, I would gladly remove it.",
+      "parentUuid": "9a561d44_76c97758",
+      "revId": "c84f8d1af49a9fc7033ea7579b495377ccc907af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
