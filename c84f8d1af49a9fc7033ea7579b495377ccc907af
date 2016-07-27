@@ -2,6 +2,190 @@
   "comments": [
     {
       "key": {
+        "uuid": "9a561d44_cc91d4f2",
+        "filename": "common/testutils/src/main/java/org/opendaylight/yangtools/testutils/mockito/Answers2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-07-27T23:06:44Z",
+      "side": 1,
+      "message": "MoreAnswers?",
+      "range": {
+        "startLine": 22,
+        "startChar": 13,
+        "endLine": 22,
+        "endChar": 21
+      },
+      "revId": "c84f8d1af49a9fc7033ea7579b495377ccc907af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_0cbf4c62",
+        "filename": "common/testutils/src/main/java/org/opendaylight/yangtools/testutils/mockito/Answers2.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-07-27T23:06:44Z",
+      "side": 1,
+      "message": "can we get some javadocs? Also the Mockito pattern seems to be to expose these through methods, not constants.",
+      "range": {
+        "startLine": 27,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 44
+      },
+      "revId": "c84f8d1af49a9fc7033ea7579b495377ccc907af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_8cb23c92",
+        "filename": "common/testutils/src/main/java/org/opendaylight/yangtools/testutils/mockito/CallsRealOrExceptionAnswer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-07-27T23:06:44Z",
+      "side": 1,
+      "message": "introduced for the first time, should be @Beta",
+      "range": {
+        "startLine": 114,
+        "startChar": 0,
+        "endLine": 114,
+        "endChar": 12
+      },
+      "revId": "c84f8d1af49a9fc7033ea7579b495377ccc907af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_6cafe82a",
+        "filename": "common/testutils/src/main/java/org/opendaylight/yangtools/testutils/mockito/CallsRealOrExceptionAnswer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-07-27T23:06:44Z",
+      "side": 1,
+      "message": "How is Serializable useful here?",
+      "range": {
+        "startLine": 114,
+        "startChar": 67,
+        "endLine": 114,
+        "endChar": 79
+      },
+      "revId": "c84f8d1af49a9fc7033ea7579b495377ccc907af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_aca58048",
+        "filename": "common/testutils/src/main/java/org/opendaylight/yangtools/testutils/mockito/CallsRealOrExceptionAnswer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-07-27T23:06:44Z",
+      "side": 1,
+      "message": "no fields, this does look like a singleton. Implement readResolve()?",
+      "range": {
+        "startLine": 115,
+        "startChar": 30,
+        "endLine": 115,
+        "endChar": 46
+      },
+      "revId": "c84f8d1af49a9fc7033ea7579b495377ccc907af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_ecc3f8ea",
+        "filename": "common/testutils/src/main/java/org/opendaylight/yangtools/testutils/mockito/CallsRealOrExceptionAnswer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-07-27T23:06:44Z",
+      "side": 1,
+      "message": "do we want to allow external subclasses? If not, make constructor package-private.",
+      "range": {
+        "startLine": 120,
+        "startChar": 4,
+        "endLine": 120,
+        "endChar": 13
+      },
+      "revId": "c84f8d1af49a9fc7033ea7579b495377ccc907af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_ec6ad8ec",
+        "filename": "common/testutils/src/main/java/org/opendaylight/yangtools/testutils/mockito/ThrowsMethodExceptionAnswer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-07-27T23:06:44Z",
+      "side": 1,
+      "message": "already exposed through Answers2, this singleton singleton should be called \u0027INSTANCE\u0027, should be package-private and referenced from Answers2.",
+      "range": {
+        "startLine": 40,
+        "startChar": 39,
+        "endLine": 40,
+        "endChar": 55
+      },
+      "revId": "c84f8d1af49a9fc7033ea7579b495377ccc907af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_4c6ca408",
+        "filename": "common/testutils/src/main/java/org/opendaylight/yangtools/testutils/mockito/ThrowsMethodExceptionAnswer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-07-27T23:06:44Z",
+      "side": 1,
+      "message": "if subclassing is not expected, this should be a private constructor.",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 46,
+        "endChar": 5
+      },
+      "revId": "c84f8d1af49a9fc7033ea7579b495377ccc907af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a561d44_76c97758",
         "filename": "common/testutils/src/test/java/org/opendaylight/yangtools/testutils/mockito/tests/MockitoExampleTutorialTest.java",
         "patchSetId": 1
@@ -31,6 +215,29 @@
       "side": 1,
       "message": "This MockitoExampleTutorialTest is here to illustrate the basic use of Mockito without the new helpers being introduced in this change. Yesterday someone from Ericson wanted an example about what the point of CallsRealOrExceptionAnswer was, and being able to point him to look at comparing the usingMockitoToStubComplexCase() method in MockitoExampleTutorialTest VS the MikitoTest helped to illustrate the point I was making.  I therefore believe it would be useful to keep this example test here for future reference - I cannot see the harm? If a 2nd person (yangtools commiter) downvotes this change because of the inclusion of this MockitoExampleTutorialTest, I would gladly remove it.",
       "parentUuid": "9a561d44_76c97758",
+      "revId": "c84f8d1af49a9fc7033ea7579b495377ccc907af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_ec9c9811",
+        "filename": "common/testutils/src/test/java/org/opendaylight/yangtools/testutils/mockito/tests/MockitoExampleTutorialTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-07-27T23:06:44Z",
+      "side": 1,
+      "message": "invocation.getArgumentAt(0, File.class)",
+      "range": {
+        "startLine": 54,
+        "startChar": 24,
+        "endLine": 54,
+        "endChar": 60
+      },
       "revId": "c84f8d1af49a9fc7033ea7579b495377ccc907af",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
