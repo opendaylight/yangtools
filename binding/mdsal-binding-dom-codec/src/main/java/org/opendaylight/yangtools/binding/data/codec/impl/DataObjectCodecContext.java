@@ -165,7 +165,7 @@ abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeCon
     public <DV extends DataObject> Optional<DataContainerCodecContext<DV, ?>> possibleStreamChild(
             final Class<DV> childClass) {
         final DataContainerCodecPrototype<?> childProto = streamChildPrototype(childClass);
-        if(childProto != null) {
+        if (childProto != null) {
             return Optional.<DataContainerCodecContext<DV,?>>of((DataContainerCodecContext<DV,?>) childProto.get());
         }
         return Optional.absent();
@@ -197,15 +197,16 @@ abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeCon
     @Override
     public NodeCodecContext<D> yangPathArgumentChild(final YangInstanceIdentifier.PathArgument arg) {
         final NodeContextSupplier childSupplier;
-        if(arg instanceof NodeIdentifierWithPredicates) {
+        if (arg instanceof NodeIdentifierWithPredicates) {
             childSupplier = byYang.get(new NodeIdentifier(arg.getNodeType()));
         } else if (arg instanceof AugmentationIdentifier) {
             childSupplier = yangAugmentationChild((AugmentationIdentifier) arg);
         } else {
             childSupplier = byYang.get(arg);
         }
-        childNonNull(childSupplier != null, arg, "Argument %s is not valid child of %s", arg, getSchema());
-        return (NodeCodecContext<D>) childSupplier.get();
+
+        return (NodeCodecContext<D>) childNonNull(childSupplier, arg,
+            "Argument %s is not valid child of %s", arg, getSchema()).get();
     }
 
     protected final LeafNodeCodecContext<?> getLeafChild(final String name) {
@@ -352,7 +353,7 @@ abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeCon
             if (childValue instanceof AugmentationNode) {
                 final AugmentationNode augDomNode = (AugmentationNode) childValue;
                 final DataContainerCodecPrototype<?> codecProto = yangAugmentationChild(augDomNode.getIdentifier());
-                if(codecProto != null) {
+                if (codecProto != null) {
                     final DataContainerCodecContext<?, ?> codec = codecProto.get();
                     map.put(codec.getBindingClass(), codec.deserializeObject(augDomNode));
                 }

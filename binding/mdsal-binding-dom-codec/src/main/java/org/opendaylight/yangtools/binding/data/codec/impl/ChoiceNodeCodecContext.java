@@ -91,7 +91,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
          */
         for(final Class<?> substitution : potentialSubstitutions) {
             search: for(final Entry<Class<?>, DataContainerCodecPrototype<?>> real : byClassBuilder.entrySet()) {
-                if(BindingReflections.isSubstitutionFor(substitution, real.getKey())) {
+                if (BindingReflections.isSubstitutionFor(substitution, real.getKey())) {
                     bySubstitutionBuilder.put(substitution, real.getValue());
                     break search;
                 }
@@ -115,7 +115,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
     public <DV extends DataObject> Optional<DataContainerCodecContext<DV, ?>> possibleStreamChild(
             final Class<DV> childClass) {
         final DataContainerCodecPrototype<?> child = byClass.get(childClass);
-        if(child != null) {
+        if (child != null) {
             return Optional.<DataContainerCodecContext<DV,?>>of((DataContainerCodecContext<DV, ?>) child.get());
         }
         return Optional.absent();
@@ -144,8 +144,8 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
             cazeProto = byYangCaseChild.get(arg);
         }
 
-        childNonNull(cazeProto != null, arg,"Argument %s is not valid child of %s", arg, getSchema());
-        return cazeProto.get().yangPathArgumentChild(arg);
+        return childNonNull(cazeProto, arg,"Argument %s is not valid child of %s", arg, getSchema()).get()
+                .yangPathArgumentChild(arg);
     }
 
     @SuppressWarnings("unchecked")
