@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_2c485086",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/MoreObjects2.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-07-27T23:13:07Z",
+      "side": 1,
+      "message": "I was thinking about naming of this, I do hate Collections2 ... how about \u0027EvenMoreObjects\u0027 ?",
+      "range": {
+        "startLine": 23,
+        "startChar": 19,
+        "endLine": 23,
+        "endChar": 31
+      },
+      "revId": "affcc02dbe649b2d17456156ea7396694dc04993",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
