@@ -116,7 +116,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
             final Class<DV> childClass) {
         final DataContainerCodecPrototype<?> child = byClass.get(childClass);
         if (child != null) {
-            return Optional.<DataContainerCodecContext<DV,?>>of((DataContainerCodecContext<DV, ?>) child.get());
+            return Optional.of((DataContainerCodecContext<DV, ?>) child.get());
         }
         return Optional.absent();
     }
