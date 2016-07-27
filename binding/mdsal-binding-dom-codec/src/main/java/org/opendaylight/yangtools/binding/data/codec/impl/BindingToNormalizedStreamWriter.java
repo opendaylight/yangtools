@@ -129,7 +129,7 @@ final class BindingToNormalizedStreamWriter implements BindingStreamEventWriter,
     @Override
     public void leafSetEntryNode(final Object value) throws IOException {
         LeafNodeCodecContext<?> ctx = (LeafNodeCodecContext<?>) current();
-        getDelegate().leafSetEntryNode(((DataSchemaNode) ctx.getSchema()).getQName(),
+        getDelegate().leafSetEntryNode(ctx.getSchema().getQName(),
             ctx.getValueCodec().serialize(value));
     }
 
