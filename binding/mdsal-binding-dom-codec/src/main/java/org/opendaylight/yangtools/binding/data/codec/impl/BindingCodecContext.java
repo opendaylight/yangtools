@@ -52,6 +52,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
@@ -221,17 +222,9 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
             final DataNodeContainer childSchema) {
         final Map<String, DataSchemaNode> getterToLeafSchema = new HashMap<>();
         for (final DataSchemaNode leaf : childSchema.getChildNodes()) {
-            final TypeDefinition<?> typeDef;
-            if (leaf instanceof LeafSchemaNode) {
-                typeDef = ((LeafSchemaNode) leaf).getType();
-            } else if (leaf instanceof LeafListSchemaNode) {
-                typeDef = ((LeafListSchemaNode) leaf).getType();
-            } else {
-                continue;
+            if (leaf instanceof TypedSchemaNode) {
+                getterToLeafSchema.put(getGetterName(leaf.getQName(), ((TypedSchemaNode) leaf).getType()), leaf);
             }
-
-            final String getterName = getGetterName(leaf.getQName(), typeDef);
-            getterToLeafSchema.put(getterName, leaf);
         }
         return getLeafNodesUsingReflection(parentClass, getterToLeafSchema);
     }
@@ -276,15 +269,9 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
     }
 
     private Codec<Object, Object> getCodec(final Class<?> valueType, final DataSchemaNode schema) {
-        final TypeDefinition<?> instantiatedType;
-        if (schema instanceof LeafSchemaNode) {
-            instantiatedType = ((LeafSchemaNode) schema).getType();
-        } else if (schema instanceof LeafListSchemaNode) {
-            instantiatedType = ((LeafListSchemaNode) schema).getType();
-        } else {
-            throw new IllegalArgumentException("Unsupported leaf node type " + schema.getClass());
-        }
-        return getCodec(valueType, instantiatedType);
+        Preconditions.checkArgument(schema instanceof TypedSchemaNode, "Unsupported leaf node type %s", schema);
+
+        return getCodec(valueType, ((TypedSchemaNode)schema).getType());
     }
 
     Codec<Object, Object> getCodec(final Class<?> valueType, final TypeDefinition<?> instantiatedType) {
