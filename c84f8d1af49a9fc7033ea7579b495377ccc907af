@@ -140,6 +140,52 @@
     },
     {
       "key": {
+        "uuid": "9a561d44_6c76c8d8",
+        "filename": "common/testutils/src/main/java/org/opendaylight/yangtools/testutils/mockito/MethodExtensions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-07-27T23:10:23Z",
+      "side": 1,
+      "message": "should be final",
+      "range": {
+        "startLine": 21,
+        "startChar": 0,
+        "endLine": 21,
+        "endChar": 13
+      },
+      "revId": "c84f8d1af49a9fc7033ea7579b495377ccc907af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_ac7c60b6",
+        "filename": "common/testutils/src/main/java/org/opendaylight/yangtools/testutils/mockito/MethodExtensions.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-07-27T23:10:23Z",
+      "side": 1,
+      "message": "unneeded parentheses",
+      "range": {
+        "startLine": 36,
+        "startChar": 38,
+        "endLine": 36,
+        "endChar": 62
+      },
+      "revId": "c84f8d1af49a9fc7033ea7579b495377ccc907af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a561d44_ec6ad8ec",
         "filename": "common/testutils/src/main/java/org/opendaylight/yangtools/testutils/mockito/ThrowsMethodExceptionAnswer.java",
         "patchSetId": 1
