@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a561d44_82d04df7",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/AbstractEffectiveDocumentedDataNodeContainer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-07-27T07:47:59Z",
+      "side": 1,
+      "message": "This condition can be simplified.",
+      "range": {
+        "startLine": 63,
+        "startChar": 24,
+        "endLine": 66,
+        "endChar": 107
+      },
+      "revId": "caa8ec348f763cd4cee5e2cd449324fd2439ba7b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
