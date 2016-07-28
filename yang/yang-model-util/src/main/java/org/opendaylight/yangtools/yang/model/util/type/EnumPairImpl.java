@@ -5,25 +5,18 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.util;
+package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
-/**
- * @deprecated use {@link org.opendaylight.yangtools.yang.model.util.type.EnumPairBuilder} instead.
- */
-@Deprecated
-public final class EnumPairImpl implements EnumPair, Immutable {
+final class EnumPairImpl implements EnumPair, Immutable {
     private final List<UnknownSchemaNode> unknownSchemaNodes;
     private final String description;
     private final String reference;
@@ -31,19 +24,14 @@ public final class EnumPairImpl implements EnumPair, Immutable {
     private final Integer value;
     private final String name;
 
-    public EnumPairImpl(final String name, final Integer value, final SchemaPath path, final String description,
-            final String reference, final Status status, final Collection<UnknownSchemaNode> unknownSchemaNodes) {
-        this(name, value, description, reference, status, unknownSchemaNodes);
-    }
-
-    public EnumPairImpl(final String name, final Integer value, final String description, final String reference,
-            final Status status, final Collection<UnknownSchemaNode> unknownSchemaNodes) {
+    EnumPairImpl(final String name, final Integer value, final String description, final String reference,
+            final Status status, final List<UnknownSchemaNode> unknownSchemaNodes) {
         this.value = Preconditions.checkNotNull(value);
         this.name = Preconditions.checkNotNull(name);
         this.description = description;
         this.reference = reference;
         this.status = Preconditions.checkNotNull(status);
-        this.unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodes);
+        this.unknownSchemaNodes = Preconditions.checkNotNull(unknownSchemaNodes);
     }
 
     @Override
@@ -80,9 +68,9 @@ public final class EnumPairImpl implements EnumPair, Immutable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Objects.hashCode(unknownSchemaNodes);
-        result = prime * result + Objects.hashCode(name);
-        result = prime * result + Objects.hashCode(value);
+        result = prime * result + unknownSchemaNodes.hashCode();
+        result = prime * result + name.hashCode();
+        result = prime * result + value.hashCode();
         return result;
     }
 

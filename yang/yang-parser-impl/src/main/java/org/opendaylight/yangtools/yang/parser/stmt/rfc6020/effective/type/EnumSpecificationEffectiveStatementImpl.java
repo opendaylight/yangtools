@@ -12,8 +12,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.EnumSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
-import org.opendaylight.yangtools.yang.model.util.EnumPairImpl;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
+import org.opendaylight.yangtools.yang.model.util.type.EnumPairBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.EnumerationTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -46,8 +46,9 @@ public final class EnumSpecificationEffectiveStatementImpl extends
                             "Enum '%s' must have a value statement", p);
                     }
 
-                    p = new EnumPairImpl(p.getName(), newValue, p.getDescription(), p.getReference(), p.getStatus(),
-                        p.getUnknownSchemaNodes());
+                    p = EnumPairBuilder.create(p.getName(), newValue).setDescription(p.getDescription())
+                            .setReference(p.getReference()).setStatus(p.getStatus())
+                            .setUnknownSchemaNodes(p.getUnknownSchemaNodes()).build();
                 }
 
                 if (highestValue == null || highestValue < p.getValue()) {

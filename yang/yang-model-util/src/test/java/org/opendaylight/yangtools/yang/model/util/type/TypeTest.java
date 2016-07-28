@@ -15,7 +15,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import com.google.common.base.Optional;
 import java.util.ArrayList;
-import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -27,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
@@ -37,7 +37,6 @@ import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 import org.opendaylight.yangtools.yang.model.util.BitImpl;
-import org.opendaylight.yangtools.yang.model.util.EnumPairImpl;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.model.util.UnresolvedNumber;
 
@@ -436,11 +435,9 @@ public class TypeTest {
         final UnresolvedNumber max = UnresolvedNumber.max();
         final LengthConstraint lengthConstraint = BaseConstraints.newLengthConstraint(min, max, absent, absent);
         final RangeConstraint rangeConstraint= BaseConstraints.newRangeConstraint(min, max, absent, absent);
-        final UnknownSchemaNode UNKNOWN_SCHEMA_NODE= mock(UnknownSchemaNode.class);
-        final Collection<UnknownSchemaNode> collection = new ArrayList<>(1);
-        collection.add(UNKNOWN_SCHEMA_NODE);
-        final EnumPairImpl enumPair = new EnumPairImpl("enum1", 1, "description", "reference",
-                Status.CURRENT, collection);
+
+        final EnumPair enumPair = EnumPairBuilder.create("enum1", 1).setDescription("description")
+                .setReference("reference").setUnknownSchemaNodes(mock(UnknownSchemaNode.class)).build();
 
         final InvalidLengthConstraintException invalidLengthConstraintException = new InvalidLengthConstraintException(
                 lengthConstraint, "error msg", "other important messages");
@@ -478,12 +475,10 @@ public class TypeTest {
     @Test(expected = InvalidEnumDefinitionException.class)
     public void invalidEnumDefinitionExceptionTest() {
         final UnknownSchemaNode UNKNOWN_SCHEMA_NODE= mock(UnknownSchemaNode.class);
-        final Collection<UnknownSchemaNode> collection = new ArrayList<>(1);
-        collection.add(UNKNOWN_SCHEMA_NODE);
-        final EnumPairImpl enumPair1 = new EnumPairImpl("enum1", 1, "description", "reference",
-                Status.CURRENT, collection);
-        final EnumPairImpl enumPair2 = new EnumPairImpl("enum", 1, "description", "reference",
-                Status.CURRENT, collection);
+        final EnumPair enumPair1 = EnumPairBuilder.create("enum1", 1).setDescription("description")
+                .setReference("reference").setUnknownSchemaNodes(UNKNOWN_SCHEMA_NODE).build();
+        final EnumPair enumPair2 = EnumPairBuilder.create("enum", 1).setDescription("description")
+                .setReference("reference").setUnknownSchemaNodes(UNKNOWN_SCHEMA_NODE).build();
         final EnumerationTypeBuilder enumerationTypeBuilder = BaseTypes.enumerationTypeBuilder(SCHEMA_PATH);
         enumerationTypeBuilder.addEnum(enumPair1);
         enumerationTypeBuilder.addEnum(enumPair2);
