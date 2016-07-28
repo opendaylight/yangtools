@@ -18,10 +18,10 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModifiedNodeDoesNotExistException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
@@ -34,10 +34,14 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     private final Class<? extends NormalizedNode<?, ?>> nodeClass;
     private final boolean verifyChildrenStructure;
 
-    protected AbstractNodeContainerModificationStrategy(final Class<? extends NormalizedNode<?, ?>> nodeClass,
+    AbstractNodeContainerModificationStrategy(final Class<? extends NormalizedNode<?, ?>> nodeClass,
             final DataTreeConfiguration treeConfig) {
         this.nodeClass = Preconditions.checkNotNull(nodeClass , "nodeClass");
         this.verifyChildrenStructure = (treeConfig.getTreeType() == TreeType.CONFIGURATION);
+    }
+
+    final boolean verifyChildrenStructure() {
+        return verifyChildrenStructure;
     }
 
     @SuppressWarnings("rawtypes")
@@ -45,7 +49,7 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     void verifyStructure(final NormalizedNode<?, ?> writtenValue, final boolean verifyChildren) {
         checkArgument(nodeClass.isInstance(writtenValue), "Node %s is not of type %s", writtenValue, nodeClass);
         checkArgument(writtenValue instanceof NormalizedNodeContainer);
-        if (verifyChildrenStructure && verifyChildren) {
+        if (verifyChildren && verifyChildrenStructure) {
             final NormalizedNodeContainer container = (NormalizedNodeContainer) writtenValue;
             for (final Object child : container.getValue()) {
                 checkArgument(child instanceof NormalizedNode);
@@ -64,7 +68,7 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
 
     @Override
     protected void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
-        final NormalizedNodeContainer container = (NormalizedNodeContainer) value;
+        final NormalizedNodeContainer<?, ?, ?> container = (NormalizedNodeContainer<?, ?, ?>) value;
         for (final Object child : container.getValue()) {
             checkArgument(child instanceof NormalizedNode);
             final NormalizedNode<?, ?> castedChild = (NormalizedNode<?, ?>) child;
@@ -312,10 +316,6 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
         if (current.isPresent()) {
             checkChildPreconditions(path, modification, current.get(), version);
         }
-    }
-
-    protected boolean verifyChildrenStructure() {
-        return verifyChildrenStructure;
     }
 
     @SuppressWarnings("rawtypes")

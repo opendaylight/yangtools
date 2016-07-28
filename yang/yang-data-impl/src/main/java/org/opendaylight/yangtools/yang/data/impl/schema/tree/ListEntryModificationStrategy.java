@@ -28,6 +28,14 @@ final class ListEntryModificationStrategy extends AbstractDataNodeContainerModif
     }
 
     @Override
+    void verifyStructure(final NormalizedNode<?, ?> writtenValue, final boolean verifyChildren) {
+        if (verifyChildren && verifyChildrenStructure()) {
+            enforcer.enforceOnTreeNode(writtenValue);
+        }
+        super.verifyStructure(writtenValue, verifyChildren);
+    }
+
+    @Override
     protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
         final TreeNode ret = super.applyMerge(modification, currentMeta, version);
         enforcer.enforceOnTreeNode(ret);
