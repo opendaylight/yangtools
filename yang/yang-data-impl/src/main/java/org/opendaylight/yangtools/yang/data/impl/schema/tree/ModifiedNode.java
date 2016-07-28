@@ -279,6 +279,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
                 if (children.isEmpty()) {
                     updateOperationType(LogicalOperation.NONE);
                 }
+
                 break;
             case WRITE:
                 // A WRITE can collapse all of its children
@@ -288,6 +289,9 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
                 }
 
                 schema.verifyStructure(value, true);
+                break;
+            case MERGE:
+                schema.verifyStructure(schema.apply(this, getOriginal(), version).get().getData(), true);
                 break;
             default:
                 break;
