@@ -94,6 +94,30 @@
     },
     {
       "key": {
+        "uuid": "9a561d44_63853606",
+        "filename": "common/testutils/src/main/java/org/opendaylight/yangtools/testutils/mockito/CallsRealOrExceptionAnswer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 4540
+      },
+      "writtenOn": "2016-07-28T07:31:22Z",
+      "side": 1,
+      "message": "This should go upstream, hint, hint...",
+      "parentUuid": "9a561d44_8cb23c92",
+      "range": {
+        "startLine": 114,
+        "startChar": 0,
+        "endLine": 114,
+        "endChar": 12
+      },
+      "revId": "c84f8d1af49a9fc7033ea7579b495377ccc907af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a561d44_aca58048",
         "filename": "common/testutils/src/main/java/org/opendaylight/yangtools/testutils/mockito/CallsRealOrExceptionAnswer.java",
         "patchSetId": 1
@@ -261,6 +285,24 @@
       "side": 1,
       "message": "This MockitoExampleTutorialTest is here to illustrate the basic use of Mockito without the new helpers being introduced in this change. Yesterday someone from Ericson wanted an example about what the point of CallsRealOrExceptionAnswer was, and being able to point him to look at comparing the usingMockitoToStubComplexCase() method in MockitoExampleTutorialTest VS the MikitoTest helped to illustrate the point I was making.  I therefore believe it would be useful to keep this example test here for future reference - I cannot see the harm? If a 2nd person (yangtools commiter) downvotes this change because of the inclusion of this MockitoExampleTutorialTest, I would gladly remove it.",
       "parentUuid": "9a561d44_76c97758",
+      "revId": "c84f8d1af49a9fc7033ea7579b495377ccc907af",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a561d44_e399467a",
+        "filename": "common/testutils/src/test/java/org/opendaylight/yangtools/testutils/mockito/tests/MockitoExampleTutorialTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 4540
+      },
+      "writtenOn": "2016-07-28T07:31:22Z",
+      "side": 1,
+      "message": "Sounds reasonable to me — that should all be explained in the class\u0027s Javadocs ;-).\n\nI asked because some of these tests effectively test Mockito, and I don\u0027t like having tests to test underlying frameworks (unless there is a specific bug we need to check, or some other specific reason). The tests involving EXCEPTION_ANSWER are appropriate since they test that; as long as it\u0027s documented, I don\u0027t have an objection to keeping the others for comparison.",
+      "parentUuid": "9a561d44_71950186",
       "revId": "c84f8d1af49a9fc7033ea7579b495377ccc907af",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
