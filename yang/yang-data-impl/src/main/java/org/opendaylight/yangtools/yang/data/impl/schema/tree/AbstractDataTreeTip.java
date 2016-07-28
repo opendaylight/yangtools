@@ -53,6 +53,8 @@ abstract class AbstractDataTreeTip implements DataTreeTip {
         final Optional<TreeNode> newRoot = m.getStrategy().apply(m.getRootModification(),
             Optional.of(currentRoot), m.getVersion());
         Preconditions.checkState(newRoot.isPresent(), "Apply strategy failed to produce root node for modification %s", modification);
+        m.getStrategy().verifyStructure(newRoot.get().getData(), true);
+
         return new InMemoryDataTreeCandidate(PUBLIC_ROOT_PATH, root, currentRoot, newRoot.get());
     }
 }
