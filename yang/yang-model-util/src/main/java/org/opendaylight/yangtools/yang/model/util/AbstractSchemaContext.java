@@ -233,6 +233,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
         return null;
     }
 
+    @Deprecated
     @Override
     public DataSchemaNode getDataChildByName(final String name) {
         for (Module module : getModules()) {
