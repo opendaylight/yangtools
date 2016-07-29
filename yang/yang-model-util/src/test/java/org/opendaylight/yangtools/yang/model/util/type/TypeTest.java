@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
@@ -36,7 +37,6 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
-import org.opendaylight.yangtools.yang.model.util.BitImpl;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.model.util.UnresolvedNumber;
 
@@ -44,8 +44,8 @@ public class TypeTest {
     private static final QName Q_NAME = QName.create("test.namespace", "2016-01-01", "test-name");
     private static final SchemaPath SCHEMA_PATH = SchemaPath.create(true, Q_NAME);
     private static final RevisionAwareXPath REVISION_AWARE_XPATH = new RevisionAwareXPathImpl("/test", true);
-    private static final BitImpl BIT_A = new BitImpl(55L, Q_NAME, SCHEMA_PATH, "description", "reference", Status.CURRENT,
-            null);
+    private static final Bit BIT_A = BitBuilder.create(SCHEMA_PATH, 55L).setDescription("description")
+            .setReference("reference").build();
     private static final Optional<String> ABSENT = Optional.absent();
 
     @Test
@@ -466,9 +466,8 @@ public class TypeTest {
         final BitsTypeBuilder bitsTypeBuilder = BaseTypes.bitsTypeBuilder(SCHEMA_PATH);
         final QName qName = QName.create("test.namespace.1", "2016-01-02", "test-name-1");
         final SchemaPath schemaPath = SchemaPath.create(true, qName);
-        final BitImpl bitB = new BitImpl(55L, qName, schemaPath, null, null, Status.CURRENT, null);
         bitsTypeBuilder.addBit(BIT_A);
-        bitsTypeBuilder.addBit(bitB);
+        bitsTypeBuilder.addBit(BitBuilder.create(schemaPath, 55L).build());
         bitsTypeBuilder.build();
     }
 
