@@ -12,8 +12,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.BitsSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
-import org.opendaylight.yangtools.yang.model.util.BitImpl;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
+import org.opendaylight.yangtools.yang.model.util.type.BitBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.BitsTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -45,8 +45,14 @@ public final class BitsSpecificationEffectiveStatementImpl extends
                             "Bit %s must have a position statement", b);
                     }
 
-                    b = new BitImpl(newPos, b.getQName(), b.getPath(), b.getDescription(), b.getReference(),
-                        b.getStatus(), b.getUnknownSchemaNodes());
+                    final BitBuilder bitBuilder = BitBuilder.create(b.getPath(), newPos)
+                            .setDescription(b.getDescription()).setReference(b.getReference())
+                            .setUnknownSchemaNodes(b.getUnknownSchemaNodes());
+                    if (b.getStatus() != null) {
+                        bitBuilder.setStatus(b.getStatus());
+                    }
+
+                    b = bitBuilder.build();
                 }
 
                 SourceException.throwIf(b.getPosition() < 0L && b.getPosition() > 4294967295L,
