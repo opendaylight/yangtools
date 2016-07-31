@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -26,7 +27,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ReferenceEf
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.StatusEffectiveStatementImpl;
 
 public class BitEffectiveStatementImpl extends DeclaredEffectiveStatementBase<QName, BitStatement> implements
-        BitsTypeDefinition.Bit {
+        SchemaNode {
 
     private final QName qName;
     private final SchemaPath schemaPath;
