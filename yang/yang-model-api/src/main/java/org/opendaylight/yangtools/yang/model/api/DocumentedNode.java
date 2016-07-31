@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.collect.ImmutableList;
 import java.util.List;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -24,7 +25,7 @@ public interface DocumentedNode {
      * @return string with textual description the node which represents the
      *         argument of the YANG <code>description</code> substatement
      */
-    String getDescription();
+    @Nullable String getDescription();
 
     /**
      * Returns reference of the instance of the type <code>SchemaNode</code>
@@ -36,7 +37,7 @@ public interface DocumentedNode {
      *         represents the argument of the YANG <code>reference</code>
      *         substatement
      */
-    String getReference();
+    @Nullable String getReference();
 
     /**
      * Returns status of the instance of the type <code>SchemaNode</code>
@@ -44,14 +45,14 @@ public interface DocumentedNode {
      * @return status of this node which represents the argument of the YANG
      *         <code>status</code> substatement
      */
-    @Nullable Status getStatus();
+    @Nonnull Status getStatus();
 
     /**
      * Returns unknown schema nodes which belongs to this instance.
      *
      * @return list of unknown schema nodes defined under this node.
      */
-    default List<UnknownSchemaNode> getUnknownSchemaNodes() {
+    default @Nonnull List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return ImmutableList.of();
     }
 }

@@ -33,7 +33,7 @@ public class BitEffectiveStatementImpl extends DeclaredEffectiveStatementBase<QN
     private Long position;
     private String description;
     private String reference;
-    private Status status;
+    private Status status = Status.CURRENT;
     private final List<UnknownSchemaNode> unknownSchemaNodes;
 
     public BitEffectiveStatementImpl(final StmtContext<QName, BitStatement, ?> ctx) {

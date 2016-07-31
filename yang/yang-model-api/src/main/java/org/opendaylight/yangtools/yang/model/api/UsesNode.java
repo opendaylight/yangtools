@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api;
 import com.google.common.base.Optional;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nonnull;
 
 /**
  * Contains the methods for getting data and checking properties of the YANG
@@ -23,7 +24,7 @@ public interface UsesNode extends DocumentedNode {
      *
      * @return schema path to 'grouping' on which this 'uses' statement points
      */
-    SchemaPath getGroupingPath();
+    @Nonnull SchemaPath getGroupingPath();
 
     /**
      *
@@ -31,7 +32,7 @@ public interface UsesNode extends DocumentedNode {
      *
      * @return Set of augment statements defined under this uses node
      */
-    Set<AugmentationSchema> getAugmentations();
+    @Nonnull Set<AugmentationSchema> getAugmentations();
 
     /**
      * Returns <code>true</code> if the data node was added by augmentation,
@@ -58,7 +59,7 @@ public interface UsesNode extends DocumentedNode {
      * @return Map, where key is schema path of refined node and value is
      *         refined node
      */
-    Map<SchemaPath, SchemaNode> getRefines();
+    @Nonnull Map<SchemaPath, SchemaNode> getRefines();
 
     /**
      * Returns when statement
@@ -70,7 +71,7 @@ public interface UsesNode extends DocumentedNode {
      *
      * @return Optional of XPath condition
      */
-    default Optional<RevisionAwareXPath> getWhenCondition() {
+    default @Nonnull Optional<RevisionAwareXPath> getWhenCondition() {
         return Optional.absent();
     }
 }

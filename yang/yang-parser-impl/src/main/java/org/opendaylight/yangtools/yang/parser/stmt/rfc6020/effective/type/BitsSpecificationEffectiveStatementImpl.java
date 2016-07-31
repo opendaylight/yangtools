@@ -45,14 +45,9 @@ public final class BitsSpecificationEffectiveStatementImpl extends
                             "Bit %s must have a position statement", b);
                     }
 
-                    final BitBuilder bitBuilder = BitBuilder.create(b.getPath(), newPos)
-                            .setDescription(b.getDescription()).setReference(b.getReference())
-                            .setUnknownSchemaNodes(b.getUnknownSchemaNodes());
-                    if (b.getStatus() != null) {
-                        bitBuilder.setStatus(b.getStatus());
-                    }
-
-                    b = bitBuilder.build();
+                    b = BitBuilder.create(b.getPath(), newPos).setDescription(b.getDescription())
+                            .setReference(b.getReference()).setStatus(b.getStatus())
+                            .setUnknownSchemaNodes(b.getUnknownSchemaNodes()).build();
                 }
 
                 SourceException.throwIf(b.getPosition() < 0L && b.getPosition() > 4294967295L,
