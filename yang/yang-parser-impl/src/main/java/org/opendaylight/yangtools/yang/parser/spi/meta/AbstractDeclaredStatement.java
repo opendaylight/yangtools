@@ -8,7 +8,6 @@
 
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
@@ -44,8 +43,7 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
          * original collection, which may contains references to mutable context.
          */
         Collection<StatementContextBase<?, ?, ?>> declaredSubstatements = context.declaredSubstatements();
-        Function<StmtContext<?, ? extends DeclaredStatement<?>, ?>, DeclaredStatement<?>> buildDeclared = StmtContextUtils.buildDeclared();
-        substatements = ImmutableList.copyOf(Collections2.transform(declaredSubstatements, buildDeclared));
+        substatements = ImmutableList.copyOf(Collections2.transform(declaredSubstatements, StatementContextBase::buildDeclared));
     }
 
     protected final <S extends DeclaredStatement<?>> S firstDeclared(final Class<S> type) {
