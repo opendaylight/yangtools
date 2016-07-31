@@ -26,30 +26,33 @@ public final class EnumSpecificationEffectiveStatementImpl extends
 
     private final EnumTypeDefinition typeDefinition;
 
-    public EnumSpecificationEffectiveStatementImpl(final StmtContext<String, EnumSpecification, EffectiveStatement<String, EnumSpecification>> ctx) {
+    public EnumSpecificationEffectiveStatementImpl(
+            final StmtContext<String, EnumSpecification, EffectiveStatement<String, EnumSpecification>> ctx) {
         super(ctx);
 
         final EnumerationTypeBuilder builder = BaseTypes.enumerationTypeBuilder(ctx.getSchemaPath().get());
         Integer highestValue = null;
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof EnumPair) {
-                EnumPair p = (EnumPair) stmt;
+            if (stmt instanceof EnumEffectiveStatementImpl) {
+                final EnumEffectiveStatementImpl enumSubStmt = (EnumEffectiveStatementImpl) stmt;
 
-                if (p.getValue() == null) {
-                    final Integer newValue;
-                    if (highestValue == null) {
-                        newValue = 0;
-                    } else if (highestValue != 2147483647) {
-                        newValue = highestValue + 1;
+                final int effectiveValue;
+                if (enumSubStmt.getDeclaredValue() == null) {
+                    if (highestValue != null) {
+                        SourceException.throwIf(highestValue == 2147483647, ctx.getStatementSourceReference(),
+                                "Enum '%s' must have a value statement", enumSubStmt);
+                        effectiveValue = highestValue + 1;
                     } else {
-                        throw new SourceException(ctx.getStatementSourceReference(),
-                            "Enum '%s' must have a value statement", p);
+                        effectiveValue = 0;
                     }
-
-                    p = EnumPairBuilder.create(p.getName(), newValue).setDescription(p.getDescription())
-                            .setReference(p.getReference()).setStatus(p.getStatus())
-                            .setUnknownSchemaNodes(p.getUnknownSchemaNodes()).build();
+                } else {
+                    effectiveValue = enumSubStmt.getDeclaredValue();
                 }
+
+                final EnumPair p = EnumPairBuilder.create(enumSubStmt.getName(), effectiveValue)
+                        .setDescription(enumSubStmt.getDescription()).setReference(enumSubStmt.getReference())
+                        .setStatus(enumSubStmt.getStatus()).setUnknownSchemaNodes(enumSubStmt.getUnknownSchemaNodes())
+                        .build();
 
                 if (highestValue == null || highestValue < p.getValue()) {
                     highestValue = p.getValue();
@@ -58,7 +61,7 @@ public final class EnumSpecificationEffectiveStatementImpl extends
                 builder.addEnum(p);
             }
             if (stmt instanceof UnknownEffectiveStatementImpl) {
-                builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl)stmt);
+                builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl) stmt);
             }
         }
 

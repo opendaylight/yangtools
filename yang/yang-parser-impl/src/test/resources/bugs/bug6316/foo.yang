@@ -1,0 +1,40 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+
+    typedef my-enumeration {
+        type enumeration {
+            enum zero;
+            enum twenty {
+                value 20;
+            }
+            enum twenty-one;
+            enum two {
+                value 2;
+            }
+            enum twenty-two;
+        }
+    }
+
+    typedef my-bits {
+        type bits {
+            bit zero;
+            bit twenty {
+                position 20;
+            }
+            bit twenty-one;
+            bit two {
+                position 2;
+            }
+            bit twenty-two;
+        }
+    }
+
+    leaf enum-leaf {
+        type my-enumeration;
+    }
+
+    leaf bits-leaf {
+        type my-bits;
+    }
+}

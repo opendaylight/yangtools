@@ -25,30 +25,33 @@ public final class BitsSpecificationEffectiveStatementImpl extends
 
     private final BitsTypeDefinition typeDefinition;
 
-    public BitsSpecificationEffectiveStatementImpl(final StmtContext<String, BitsSpecification, EffectiveStatement<String, BitsSpecification>> ctx) {
+    public BitsSpecificationEffectiveStatementImpl(
+            final StmtContext<String, BitsSpecification, EffectiveStatement<String, BitsSpecification>> ctx) {
         super(ctx);
 
         final BitsTypeBuilder builder = BaseTypes.bitsTypeBuilder(ctx.getSchemaPath().get());
         Long highestPosition = null;
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof Bit) {
-                Bit b = (Bit) stmt;
+            if (stmt instanceof BitEffectiveStatementImpl) {
+                final BitEffectiveStatementImpl bitSubStmt = (BitEffectiveStatementImpl) stmt;
 
-                if (b.getPosition() == null) {
-                    final Long newPos;
-                    if (highestPosition == null) {
-                        newPos = 0L;
-                    } else if (highestPosition != 4294967295L) {
-                        newPos = highestPosition + 1;
+                final long effectivePos;
+                if (bitSubStmt.getDeclaredPosition() == null) {
+                    if (highestPosition != null) {
+                        SourceException.throwIf(highestPosition == 4294967295L, ctx.getStatementSourceReference(),
+                                "Bit %s must have a position statement", bitSubStmt);
+                        effectivePos = highestPosition + 1;
                     } else {
-                        throw new SourceException(ctx.getStatementSourceReference(),
-                            "Bit %s must have a position statement", b);
+                        effectivePos = 0L;
                     }
-
-                    b = BitBuilder.create(b.getPath(), newPos).setDescription(b.getDescription())
-                            .setReference(b.getReference()).setStatus(b.getStatus())
-                            .setUnknownSchemaNodes(b.getUnknownSchemaNodes()).build();
+                } else {
+                    effectivePos = bitSubStmt.getDeclaredPosition();
                 }
+
+                final Bit b = BitBuilder.create(bitSubStmt.getPath(), effectivePos)
+                        .setDescription(bitSubStmt.getDescription()).setReference(bitSubStmt.getReference())
+                        .setStatus(bitSubStmt.getStatus()).setUnknownSchemaNodes(bitSubStmt.getUnknownSchemaNodes())
+                        .build();
 
                 SourceException.throwIf(b.getPosition() < 0L && b.getPosition() > 4294967295L,
                         ctx.getStatementSourceReference(), "Bit %s has illegal position", b);
@@ -60,7 +63,7 @@ public final class BitsSpecificationEffectiveStatementImpl extends
                 builder.addBit(b);
             }
             if (stmt instanceof UnknownEffectiveStatementImpl) {
-                builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl)stmt);
+                builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl) stmt);
             }
         }
 

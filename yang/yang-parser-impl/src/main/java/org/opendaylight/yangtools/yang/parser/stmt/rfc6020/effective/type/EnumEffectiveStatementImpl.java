@@ -13,16 +13,14 @@ import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
-import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AbstractEffectiveDocumentedNode;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ValueEffectiveStatementImpl;
 
-public class EnumEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<String, EnumStatement>
-        implements EnumPair {
+public class EnumEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<String, EnumStatement> {
     private final List<UnknownSchemaNode> unknownSchemaNodes;
     private final String name;
-    private Integer value;
+    private final Integer declaredValue;
 
     public EnumEffectiveStatementImpl(final StmtContext<String, EnumStatement, ?> ctx) {
         super(ctx);
@@ -30,26 +28,26 @@ public class EnumEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<
         name = ctx.rawStatementArgument();
 
         final List<UnknownSchemaNode> unknownSchemaNodesInit = new ArrayList<>();
+        Integer declaredValueInit = null;
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof ValueEffectiveStatementImpl) {
-                value = ((ValueEffectiveStatementImpl) effectiveStatement).argument();
+                declaredValueInit = ((ValueEffectiveStatementImpl) effectiveStatement).argument();
             }
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 unknownSchemaNodesInit.add((UnknownSchemaNode) effectiveStatement);
             }
         }
 
+        declaredValue = declaredValueInit;
         unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodesInit);
     }
 
-    @Override
     public String getName() {
         return name;
     }
 
-    @Override
-    public Integer getValue() {
-        return value;
+    public Integer getDeclaredValue() {
+        return declaredValue;
     }
 
     @Override
