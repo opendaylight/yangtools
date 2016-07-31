@@ -50,11 +50,6 @@ public final class JSONCodecFactory {
         }
 
         @Override
-        public boolean needQuotes() {
-            return false;
-        }
-
-        @Override
         public void serializeToWriter(final JsonWriter writer, final Object value) throws IOException {
             // NOOP since codec is unkwown.
             LOG.warn("Call of the serializeToWriter method on JSONCodecFactory.NULL_CODEC object. No operation performed.");
@@ -95,7 +90,6 @@ public final class JSONCodecFactory {
         return new JSONCodecFactory(context);
     }
 
-    @SuppressWarnings("unchecked")
     private JSONCodec<?> createCodec(final DataSchemaNode key, final TypeDefinition<?> type) {
         if (type instanceof LeafrefTypeDefinition) {
             return createReferencedTypeCodec(key, (LeafrefTypeDefinition) type);
@@ -127,10 +121,9 @@ public final class JSONCodecFactory {
         return jsonStringUnionCodec;
     }
 
-    @SuppressWarnings("unchecked")
     private JSONCodec<?> createFromSimpleType(final DataSchemaNode schema, final TypeDefinition<?> type) {
         if (type instanceof InstanceIdentifierTypeDefinition) {
-            return (JSONCodec<Object>) iidCodec;
+            return iidCodec;
         }
         if (type instanceof EmptyTypeDefinition) {
             return JSONEmptyCodec.INSTANCE;

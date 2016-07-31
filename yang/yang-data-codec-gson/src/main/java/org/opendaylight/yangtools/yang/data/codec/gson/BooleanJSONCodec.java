@@ -21,11 +21,6 @@ final class BooleanJSONCodec extends AbstractJSONCodec<Boolean> {
         super(codec);
     }
 
-    @Override
-    public boolean needQuotes() {
-        return false;
-    }
-
     /**
      * Serialize specified value with specified JsonWriter.
      *

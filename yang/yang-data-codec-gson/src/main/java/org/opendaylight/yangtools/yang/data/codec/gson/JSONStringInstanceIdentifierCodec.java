@@ -19,8 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-final class JSONStringInstanceIdentifierCodec
-        extends AbstractModuleStringInstanceIdentifierCodec
+final class JSONStringInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec
         implements JSONCodec<YangInstanceIdentifier> {
     private final DataSchemaContextTree dataContextTree;
     private final JSONCodecFactory codecFactory;
@@ -46,11 +45,6 @@ final class JSONStringInstanceIdentifierCodec
     @Override
     protected DataSchemaContextTree getDataContextTree() {
         return dataContextTree;
-    }
-
-    @Override
-    public boolean needQuotes() {
-        return true;
     }
 
     @Override
