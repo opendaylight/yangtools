@@ -12,14 +12,14 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredStatement<A>>
+public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredStatement<A>>
         extends DeclaredEffectiveStatementBase<A, D> implements DocumentedNode {
 
     private final String description;
     private final String reference;
     private final Status status;
 
-    AbstractEffectiveDocumentedNode(final StmtContext<A, D, ?> ctx) {
+    protected AbstractEffectiveDocumentedNode(final StmtContext<A, D, ?> ctx) {
         this(ctx, true);
     }
 
@@ -35,7 +35,7 @@ abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredStatement<A>
      *            method of EffectiveStatementBase class. The main purpose of
      *            this is to allow the build of recursive extension definitions.
      */
-    AbstractEffectiveDocumentedNode(final StmtContext<A, D, ?> ctx, boolean buildUnknownSubstatements) {
+    protected AbstractEffectiveDocumentedNode(final StmtContext<A, D, ?> ctx, boolean buildUnknownSubstatements) {
         super(ctx, buildUnknownSubstatements);
 
         DescriptionEffectiveStatementImpl descStmt = firstEffective(DescriptionEffectiveStatementImpl.class);
@@ -79,5 +79,4 @@ abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredStatement<A>
     public final Status getStatus() {
         return status;
     }
-
 }
