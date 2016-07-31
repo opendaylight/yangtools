@@ -13,7 +13,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
@@ -124,8 +123,7 @@ public class EffectiveStatementTypeTest {
         assertNotNull(bitEff.toString());
         assertEquals("one", bitEff.getName());
         assertNotNull(bitEff.getQName());
-        assertEquals("0", bitEff.getPosition().toString());
-        assertEquals(0, bitEff.getPosition().longValue());
+        assertEquals(0, bitEff.getPosition());
     }
 
     @Test

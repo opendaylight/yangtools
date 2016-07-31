@@ -37,13 +37,12 @@ public final class EnumSpecificationEffectiveStatementImpl extends
 
                 if (p.getValue() == null) {
                     final Integer newValue;
-                    if (highestValue == null) {
-                        newValue = 0;
-                    } else if (highestValue != 2147483647) {
-                        newValue = highestValue + 1;
+                    if (highestValue != null) {
+                        SourceException.throwIf(highestValue == 2147483647, ctx.getStatementSourceReference(),
+                                "Enum '%s' must have a value statement", p);
+                            newValue = highestValue + 1;
                     } else {
-                        throw new SourceException(ctx.getStatementSourceReference(),
-                            "Enum '%s' must have a value statement", p);
+                        newValue = 0;
                     }
 
                     p = EnumPairBuilder.create(p.getName(), newValue).setDescription(p.getDescription())

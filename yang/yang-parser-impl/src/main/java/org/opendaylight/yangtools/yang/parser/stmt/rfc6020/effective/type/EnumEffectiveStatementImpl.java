@@ -22,7 +22,7 @@ public class EnumEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<
         implements EnumPair {
     private final List<UnknownSchemaNode> unknownSchemaNodes;
     private final String name;
-    private Integer value;
+    private final int value;
 
     public EnumEffectiveStatementImpl(final StmtContext<String, EnumStatement, ?> ctx) {
         super(ctx);
@@ -30,13 +30,21 @@ public class EnumEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<
         name = ctx.rawStatementArgument();
 
         final List<UnknownSchemaNode> unknownSchemaNodesInit = new ArrayList<>();
+        Integer declaredValue = null;
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof ValueEffectiveStatementImpl) {
-                value = ((ValueEffectiveStatementImpl) effectiveStatement).argument();
+                declaredValue = ((ValueEffectiveStatementImpl) effectiveStatement).argument();
             }
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 unknownSchemaNodesInit.add((UnknownSchemaNode) effectiveStatement);
             }
+        }
+
+        if (declaredValue == null) {
+            // FIXME: BUG-6316: derive value
+            throw new UnsupportedOperationException();
+        } else {
+            value = declaredValue;
         }
 
         unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodesInit);
@@ -48,7 +56,7 @@ public class EnumEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<
     }
 
     @Override
-    public Integer getValue() {
+    public int getValue() {
         return value;
     }
 

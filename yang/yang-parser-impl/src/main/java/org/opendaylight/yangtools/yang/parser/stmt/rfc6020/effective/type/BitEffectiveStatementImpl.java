@@ -26,31 +26,38 @@ public class BitEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
 
     private final QName qName;
     private final SchemaPath schemaPath;
-    private Long position;
+    private final long position;
     private final List<UnknownSchemaNode> unknownSchemaNodes;
 
     public BitEffectiveStatementImpl(final StmtContext<QName, BitStatement, ?> ctx) {
         super(ctx);
 
-        List<UnknownSchemaNode> unknownSchemaNodesInit = new ArrayList<>();
-
         qName = ctx.getStatementArgument();
         schemaPath = ctx.getSchemaPath().get();
 
+        final List<UnknownSchemaNode> unknownSchemaNodesInit = new ArrayList<>();
+        Long declaredPosition = null;
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof PositionEffectiveStatementImpl) {
-                position = ((PositionEffectiveStatementImpl) effectiveStatement).argument();
+                declaredPosition = ((PositionEffectiveStatementImpl) effectiveStatement).argument();
             }
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 unknownSchemaNodesInit.add((UnknownSchemaNode) effectiveStatement);
             }
         }
 
+        if (declaredPosition == null) {
+            // FIXME: BUG-6316: derive position
+            throw new UnsupportedOperationException();
+        } else {
+            position = declaredPosition;
+        }
+
         unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodesInit);
     }
 
     @Override
-    public Long getPosition() {
+    public long getPosition() {
         return position;
     }
 

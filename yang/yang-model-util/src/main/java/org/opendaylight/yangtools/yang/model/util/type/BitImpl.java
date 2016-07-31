@@ -25,10 +25,12 @@ final class BitImpl implements Bit, Immutable {
     private final Status status;
     private final Long position;
 
-    BitImpl(final SchemaPath schemaPath, final Long position, final String description,
+    BitImpl(final SchemaPath schemaPath, final long position, final String description,
             final String reference, final Status status, final List<UnknownSchemaNode> unknownNodes) {
         this.schemaPath = Preconditions.checkNotNull(schemaPath, "Schema Path should not be null");
-        this.position = Preconditions.checkNotNull(position, "Position should not be null");
+
+        Preconditions.checkArgument(position >= 0L && position <= 4294967295L, "Invalid position %s", position);
+        this.position = position;
         this.description = description;
         this.reference = reference;
         this.status = Preconditions.checkNotNull(status);
@@ -66,7 +68,7 @@ final class BitImpl implements Bit, Immutable {
     }
 
     @Override
-    public Long getPosition() {
+    public long getPosition() {
         return position;
     }
 

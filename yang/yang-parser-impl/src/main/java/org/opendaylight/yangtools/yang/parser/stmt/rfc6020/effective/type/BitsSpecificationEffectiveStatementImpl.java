@@ -36,13 +36,12 @@ public final class BitsSpecificationEffectiveStatementImpl extends
 
                 if (b.getPosition() == null) {
                     final Long newPos;
-                    if (highestPosition == null) {
-                        newPos = 0L;
-                    } else if (highestPosition != 4294967295L) {
+                    if (highestPosition != null) {
+                        SourceException.throwIf(highestPosition == 4294967295L, ctx.getStatementSourceReference(),
+                                "Bit %s must have a position statement", b);
                         newPos = highestPosition + 1;
                     } else {
-                        throw new SourceException(ctx.getStatementSourceReference(),
-                            "Bit %s must have a position statement", b);
+                        newPos = 0L;
                     }
 
                     b = BitBuilder.create(b.getPath(), newPos).setDescription(b.getDescription())
