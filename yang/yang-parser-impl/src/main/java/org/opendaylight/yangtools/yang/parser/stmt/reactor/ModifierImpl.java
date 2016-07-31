@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.EFFECTIVE_MODEL;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.FULL_DECLARATION;
-
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import java.util.HashSet;
@@ -24,7 +23,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase.ContextMutation;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase.OnNamespaceItemAdded;
@@ -174,7 +172,7 @@ class ModifierImpl implements ModelActionBuilder {
 
     @Override
     public <D extends DeclaredStatement<?>> Prerequisite<D> requiresDeclared(final StmtContext<?, ? extends D, ?> context) {
-        return requiresCtxImpl(context, FULL_DECLARATION).transform(StmtContextUtils.buildDeclared());
+        return requiresCtxImpl(context, FULL_DECLARATION).transform(input -> input.buildDeclared());
     }
 
     @Override
@@ -187,12 +185,12 @@ class ModifierImpl implements ModelActionBuilder {
     public <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>> Prerequisite<D> requiresDeclared(
             final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
         final AbstractPrerequisite<StmtContext<?,D,?>> rawContext = requiresCtxImpl(context, namespace, key, FULL_DECLARATION);
-        return rawContext.transform(StmtContextUtils.buildDeclared());
+        return rawContext.transform(input -> input.buildDeclared());
     }
 
     @Override
     public <E extends EffectiveStatement<?, ?>> Prerequisite<E> requiresEffective(final StmtContext<?, ?, ? extends E> stmt) {
-        return requiresCtxImpl(stmt, EFFECTIVE_MODEL).transform(StmtContextUtils.buildEffective());
+        return requiresCtxImpl(stmt, EFFECTIVE_MODEL).transform(input -> input.buildEffective());
     }
 
     @Override
@@ -205,7 +203,7 @@ class ModifierImpl implements ModelActionBuilder {
     public <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>> Prerequisite<E> requiresEffective(
             final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
         final AbstractPrerequisite<StmtContext<?,?,E>> rawContext = requiresCtxImpl(context, namespace, key, EFFECTIVE_MODEL);
-        return rawContext.transform(StmtContextUtils.buildEffective());
+        return rawContext.transform(input -> input.buildEffective());
     }
 
 

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import com.google.common.base.Function;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -18,7 +17,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.IfFeaturePredicates;
@@ -30,32 +28,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 public final class StmtContextUtils {
     public static final Splitter LIST_KEY_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
 
-    private static final Function<StmtContext<?, ?, ?>, DeclaredStatement<?>> BUILD_DECLARED = new Function<StmtContext<?, ?, ?>, DeclaredStatement<?>>() {
-        @Override
-        public DeclaredStatement<?> apply(final StmtContext<?, ?, ?> input) {
-            return input.buildDeclared();
-        }
-    };
-
-    private static final Function<StmtContext<?, ?, ?>, EffectiveStatement<?, ?>> BUILD_EFFECTIVE = new Function<StmtContext<?, ?, ?>, EffectiveStatement<?, ?>>() {
-        @Override
-        public EffectiveStatement<?, ?> apply(final StmtContext<?, ?, ?> input) {
-            return input.buildEffective();
-        }
-    };
-
     private StmtContextUtils() {
         throw new UnsupportedOperationException("Utility class");
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <D extends DeclaredStatement<?>> Function<StmtContext<?, ? extends D, ?>, D> buildDeclared() {
-        return Function.class.cast(BUILD_DECLARED);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static <E extends EffectiveStatement<?, ?>> Function<StmtContext<?, ?, ? extends E>, E> buildEffective() {
-        return Function.class.cast(BUILD_EFFECTIVE);
     }
 
     @SuppressWarnings("unchecked")
