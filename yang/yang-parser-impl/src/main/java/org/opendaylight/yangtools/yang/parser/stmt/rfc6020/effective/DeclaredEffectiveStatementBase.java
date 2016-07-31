@@ -21,7 +21,7 @@ public abstract class DeclaredEffectiveStatementBase<A, D extends DeclaredStatem
     private final A argument;
     private final D declaredInstance;
 
-    public DeclaredEffectiveStatementBase(final StmtContext<A, D, ?> ctx) {
+    protected DeclaredEffectiveStatementBase(final StmtContext<A, D, ?> ctx) {
         this(ctx, true);
     }
 
@@ -48,7 +48,8 @@ public abstract class DeclaredEffectiveStatementBase<A, D extends DeclaredStatem
          * statements which have been copied or derived from this original
          * declared statement.
          */
-        StatementContextBase<A, D, ?> originalCtx = (StatementContextBase<A, D, ?>) ctx.getOriginalCtx();
+        @SuppressWarnings("unchecked")
+        final StatementContextBase<A, D, ?> originalCtx = (StatementContextBase<A, D, ?>) ctx.getOriginalCtx();
         if (originalCtx != null) {
             ctx = originalCtx;
         }

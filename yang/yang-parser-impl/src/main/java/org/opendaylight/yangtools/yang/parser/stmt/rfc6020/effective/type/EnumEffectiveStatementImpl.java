@@ -7,25 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import java.util.Collections;
+import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
 import java.util.List;
-import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DescriptionEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ReferenceEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.StatusEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AbstractEffectiveDocumentedNode;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ValueEffectiveStatementImpl;
 
-public class EnumEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, EnumStatement> implements EnumPair {
+public class EnumEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<String, EnumStatement>
+        implements EnumPair {
+    private final List<UnknownSchemaNode> unknownSchemaNodes;
     private final String name;
-    private String description;
-    private String reference;
-    private Status status = Status.CURRENT;
     private Integer value;
 
     public EnumEffectiveStatementImpl(final StmtContext<String, EnumStatement, ?> ctx) {
@@ -33,20 +29,17 @@ public class EnumEffectiveStatementImpl extends DeclaredEffectiveStatementBase<S
 
         name = ctx.rawStatementArgument();
 
+        final List<UnknownSchemaNode> unknownSchemaNodesInit = new ArrayList<>();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof DescriptionEffectiveStatementImpl) {
-                description = ((DescriptionEffectiveStatementImpl) effectiveStatement).argument();
-            }
-            if (effectiveStatement instanceof ReferenceEffectiveStatementImpl) {
-                reference = ((ReferenceEffectiveStatementImpl) effectiveStatement).argument();
-            }
-            if (effectiveStatement instanceof StatusEffectiveStatementImpl) {
-                status = ((StatusEffectiveStatementImpl) effectiveStatement).argument();
-            }
             if (effectiveStatement instanceof ValueEffectiveStatementImpl) {
                 value = ((ValueEffectiveStatementImpl) effectiveStatement).argument();
             }
+            if (effectiveStatement instanceof UnknownSchemaNode) {
+                unknownSchemaNodesInit.add((UnknownSchemaNode) effectiveStatement);
+            }
         }
+
+        unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodesInit);
     }
 
     @Override
@@ -61,21 +54,6 @@ public class EnumEffectiveStatementImpl extends DeclaredEffectiveStatementBase<S
 
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public String getReference() {
-        return reference;
-    }
-
-    @Override
-    public Status getStatus() {
-        return status;
+        return unknownSchemaNodes;
     }
 }

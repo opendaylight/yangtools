@@ -13,27 +13,20 @@ import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DescriptionEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AbstractEffectiveDocumentedNode;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PositionEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ReferenceEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.StatusEffectiveStatementImpl;
 
-public class BitEffectiveStatementImpl extends DeclaredEffectiveStatementBase<QName, BitStatement> implements
-        BitsTypeDefinition.Bit {
+public class BitEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, BitStatement> implements Bit {
 
     private final QName qName;
     private final SchemaPath schemaPath;
     private Long position;
-    private String description;
-    private String reference;
-    private Status status = Status.CURRENT;
     private final List<UnknownSchemaNode> unknownSchemaNodes;
 
     public BitEffectiveStatementImpl(final StmtContext<QName, BitStatement, ?> ctx) {
@@ -45,19 +38,9 @@ public class BitEffectiveStatementImpl extends DeclaredEffectiveStatementBase<QN
         schemaPath = ctx.getSchemaPath().get();
 
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof DescriptionEffectiveStatementImpl) {
-                description = ((DescriptionEffectiveStatementImpl) effectiveStatement).argument();
-            }
-            if (effectiveStatement instanceof ReferenceEffectiveStatementImpl) {
-                reference = ((ReferenceEffectiveStatementImpl) effectiveStatement).argument();
-            }
-            if (effectiveStatement instanceof StatusEffectiveStatementImpl) {
-                status = ((StatusEffectiveStatementImpl) effectiveStatement).argument();
-            }
             if (effectiveStatement instanceof PositionEffectiveStatementImpl) {
                 position = ((PositionEffectiveStatementImpl) effectiveStatement).argument();
             }
-
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 unknownSchemaNodesInit.add((UnknownSchemaNode) effectiveStatement);
             }
@@ -89,21 +72,6 @@ public class BitEffectiveStatementImpl extends DeclaredEffectiveStatementBase<QN
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownSchemaNodes;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public String getReference() {
-        return reference;
-    }
-
-    @Override
-    public Status getStatus() {
-        return status;
     }
 
     @Override
