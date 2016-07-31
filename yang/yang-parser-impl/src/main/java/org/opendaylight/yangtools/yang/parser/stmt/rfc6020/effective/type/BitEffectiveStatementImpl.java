@@ -17,54 +17,50 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AbstractEffectiveDocumentedNode;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PositionEffectiveStatementImpl;
 
-public class BitEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, BitStatement> implements Bit {
+public class BitEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, BitStatement> {
 
     private final QName qName;
     private final SchemaPath schemaPath;
-    private Long position;
+    private final Long declaredPosition;
     private final List<UnknownSchemaNode> unknownSchemaNodes;
 
     public BitEffectiveStatementImpl(final StmtContext<QName, BitStatement, ?> ctx) {
         super(ctx);
 
-        List<UnknownSchemaNode> unknownSchemaNodesInit = new ArrayList<>();
-
         qName = ctx.getStatementArgument();
         schemaPath = ctx.getSchemaPath().get();
 
+        final List<UnknownSchemaNode> unknownSchemaNodesInit = new ArrayList<>();
+        Long declaredPositionInit = null;
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof PositionEffectiveStatementImpl) {
-                position = ((PositionEffectiveStatementImpl) effectiveStatement).argument();
+                declaredPositionInit = ((PositionEffectiveStatementImpl) effectiveStatement).argument();
             }
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 unknownSchemaNodesInit.add((UnknownSchemaNode) effectiveStatement);
             }
         }
 
+        declaredPosition = declaredPositionInit;
         unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodesInit);
     }
 
-    @Override
-    public Long getPosition() {
-        return position;
+    public Long getDeclaredPosition() {
+        return declaredPosition;
     }
 
-    @Override
     public String getName() {
         return qName.getLocalName();
     }
 
-    @Override
     public QName getQName() {
         return qName;
     }
 
-    @Override
     public SchemaPath getPath() {
         return schemaPath;
     }
@@ -80,7 +76,7 @@ public class BitEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
         int result = 1;
         result = prime * result + qName.hashCode();
         result = prime * result + schemaPath.hashCode();
-        result = prime * result + Objects.hashCode(position);
+        result = prime * result + Objects.hashCode(declaredPosition);
         result = prime * result + Objects.hashCode(unknownSchemaNodes);
         return result;
     }
@@ -96,13 +92,13 @@ public class BitEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
         if (getClass() != obj.getClass()) {
             return false;
         }
-        BitsTypeDefinition.Bit other = (BitsTypeDefinition.Bit) obj;
+        final BitsTypeDefinition.Bit other = (BitsTypeDefinition.Bit) obj;
         return Objects.equals(qName, other.getQName()) && Objects.equals(schemaPath, other.getPath());
     }
 
     @Override
     public String toString() {
         return BitEffectiveStatementImpl.class.getSimpleName() + "[name=" + qName.getLocalName() + ", position="
-                + position + "]";
+                + declaredPosition + "]";
     }
 }
