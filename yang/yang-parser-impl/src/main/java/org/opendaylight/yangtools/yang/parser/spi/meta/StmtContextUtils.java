@@ -30,19 +30,11 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 public final class StmtContextUtils {
     public static final Splitter LIST_KEY_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
 
-    private static final Function<StmtContext<?, ?, ?>, DeclaredStatement<?>> BUILD_DECLARED = new Function<StmtContext<?, ?, ?>, DeclaredStatement<?>>() {
-        @Override
-        public DeclaredStatement<?> apply(final StmtContext<?, ?, ?> input) {
-            return input.buildDeclared();
-        }
-    };
+    private static final Function<StmtContext<?, ?, ?>, DeclaredStatement<?>> BUILD_DECLARED =
+            input -> input.buildDeclared();
 
-    private static final Function<StmtContext<?, ?, ?>, EffectiveStatement<?, ?>> BUILD_EFFECTIVE = new Function<StmtContext<?, ?, ?>, EffectiveStatement<?, ?>>() {
-        @Override
-        public EffectiveStatement<?, ?> apply(final StmtContext<?, ?, ?> input) {
-            return input.buildEffective();
-        }
-    };
+    private static final Function<StmtContext<?, ?, ?>, EffectiveStatement<?, ?>> BUILD_EFFECTIVE =
+            input -> input.buildEffective();
 
     private StmtContextUtils() {
         throw new UnsupportedOperationException("Utility class");
