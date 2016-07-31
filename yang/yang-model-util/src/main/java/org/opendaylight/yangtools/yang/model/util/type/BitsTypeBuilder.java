@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.HashMap;
@@ -25,8 +24,6 @@ public final class BitsTypeBuilder extends TypeBuilder<BitsTypeDefinition> {
     }
 
     public BitsTypeBuilder addBit(@Nonnull final Bit item) {
-        Preconditions.checkArgument(item.getPosition() != null, "Bit %s has null position", item);
-
         builder.put(item.getName(), item);
         return this;
     }
