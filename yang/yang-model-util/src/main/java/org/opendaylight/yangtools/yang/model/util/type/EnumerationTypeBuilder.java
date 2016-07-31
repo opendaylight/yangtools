@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.HashMap;
@@ -25,7 +24,6 @@ public final class EnumerationTypeBuilder extends TypeBuilder<EnumTypeDefinition
     }
 
     public EnumerationTypeBuilder addEnum(@Nonnull final EnumPair item) {
-        Preconditions.checkArgument(item.getValue() != null, "Enum %s has null value", item);
         builder.put(item.getName(), item);
         return this;
     }
