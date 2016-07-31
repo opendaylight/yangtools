@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import java.util.Collections;
 import java.util.List;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
-import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DescriptionEffectiveStatementImpl;
@@ -21,7 +21,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ReferenceEf
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.StatusEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ValueEffectiveStatementImpl;
 
-public class EnumEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, EnumStatement> implements EnumPair {
+public class EnumEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, EnumStatement>
+        implements DocumentedNode {
     private final String name;
     private String description;
     private String reference;
