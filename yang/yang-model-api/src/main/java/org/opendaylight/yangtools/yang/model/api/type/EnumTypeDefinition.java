@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.List;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -18,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  *
  */
 public interface EnumTypeDefinition extends TypeDefinition<EnumTypeDefinition> {
-
     /**
      * Returns all enumeration values.
      *
@@ -26,7 +26,7 @@ public interface EnumTypeDefinition extends TypeDefinition<EnumTypeDefinition> {
      *         data about all individual enumeration pairs of
      *         <code>enumeration</code> YANG built-in type
      */
-    List<EnumPair> getValues();
+    @Nonnull List<EnumPair> getValues();
 
     /**
      *

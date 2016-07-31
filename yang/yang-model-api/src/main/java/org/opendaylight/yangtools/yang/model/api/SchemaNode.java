@@ -7,19 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  * SchemaNode represents a node in schema tree.
  */
 public interface SchemaNode extends DocumentedNode {
-
     /**
      * Returns QName of the instance of the type <code>SchemaNode</code>.
      *
      * @return QName with the name of the schema node
      */
-    QName getQName();
+    @Nonnull QName getQName();
 
     /**
      * Returns the schema path of the instance of the type
@@ -27,5 +27,5 @@ public interface SchemaNode extends DocumentedNode {
      *
      * @return schema path of the schema node
      */
-    SchemaPath getPath();
+    @Nonnull SchemaPath getPath();
 }

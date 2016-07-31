@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.List;
-
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -18,14 +18,13 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  *
  */
 public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
-
     /**
      * Returns all bit values.
      *
      * @return list of <code>Bit</code> type instastances with data about all
      *         individual bits of <code>bits</code> YANG built-in type
      */
-    List<Bit> getBits();
+    @Nonnull List<Bit> getBits();
 
     /**
      *
@@ -46,6 +45,6 @@ public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
          *
          * @return string with the name of the concrete bit
          */
-        String getName();
+        @Nonnull String getName();
     }
 }
