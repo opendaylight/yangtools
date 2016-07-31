@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.util;
+package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.base.Preconditions;
 import java.util.Date;
@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 
-public final class ModuleImportImpl implements ModuleImport {
+final class ModuleImportImpl implements ModuleImport {
     private final String moduleName;
     private final Date revision;
     private final SemVer semVer;
