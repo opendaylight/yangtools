@@ -115,7 +115,7 @@ public class YangParserTest {
         assertEquals("http://www.opendaylight.org/", foo.getContact());
         Date expectedRevision = TestUtils.createDate("2013-02-27");
         assertEquals(expectedRevision, foo.getRevision());
-        assertEquals(" WILL BE DEFINED LATER", foo.getReference());
+        assertNull(foo.getReference());
     }
 
     @Test

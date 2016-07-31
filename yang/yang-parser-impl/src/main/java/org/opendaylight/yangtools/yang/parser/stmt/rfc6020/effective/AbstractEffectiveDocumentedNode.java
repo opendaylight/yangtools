@@ -38,26 +38,21 @@ public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredState
     protected AbstractEffectiveDocumentedNode(final StmtContext<A, D, ?> ctx, boolean buildUnknownSubstatements) {
         super(ctx, buildUnknownSubstatements);
 
-        DescriptionEffectiveStatementImpl descStmt = firstEffective(DescriptionEffectiveStatementImpl.class);
+        final DescriptionEffectiveStatementImpl descStmt = firstEffective(DescriptionEffectiveStatementImpl.class);
         if (descStmt != null) {
             description = descStmt.argument();
         } else {
             description = null;
         }
 
-        ReferenceEffectiveStatementImpl refStmt = firstEffective(ReferenceEffectiveStatementImpl.class);
+        final ReferenceEffectiveStatementImpl refStmt = firstEffective(ReferenceEffectiveStatementImpl.class);
         if (refStmt != null) {
             reference = refStmt.argument();
         } else {
-            RevisionEffectiveStatementImpl revision = firstEffective(RevisionEffectiveStatementImpl.class);
-            if (revision != null) {
-                reference = revision.getReference();
-            } else {
-                reference = null;
-            }
+            reference = null;
         }
 
-        StatusEffectiveStatementImpl statusStmt = firstEffective(StatusEffectiveStatementImpl.class);
+        final StatusEffectiveStatementImpl statusStmt = firstEffective(StatusEffectiveStatementImpl.class);
         if (statusStmt != null) {
             status = statusStmt.argument();
         } else {
