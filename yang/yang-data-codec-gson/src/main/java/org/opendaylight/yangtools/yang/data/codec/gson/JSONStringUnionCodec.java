@@ -10,18 +10,13 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import com.google.common.base.Preconditions;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
-
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.data.util.AbstractStringUnionCodec;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 final class JSONStringUnionCodec extends AbstractStringUnionCodec implements JSONCodec<Object> {
-    private static final Logger LOG = LoggerFactory.getLogger(JSONStringUnionCodec.class);
-
     private final JSONCodecFactory codecFactory;
 
     JSONStringUnionCodec(final DataSchemaNode schema, final UnionTypeDefinition typeDefinition,
@@ -31,15 +26,11 @@ final class JSONStringUnionCodec extends AbstractStringUnionCodec implements JSO
     }
 
     @Override
-    public boolean needQuotes() {
-        return true;
-    }
-
-    @Override
     public void serializeToWriter(JsonWriter writer, Object value) throws IOException {
         writer.value(serialize(value));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected Codec<String, Object> codecFor(final TypeDefinition<?> type) {
         return (Codec<String, Object>) codecFactory.codecFor(schema, type);

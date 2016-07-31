@@ -41,15 +41,16 @@ abstract class AbstractJSONCodec<T> implements JSONCodec<T> {
     public static JSONCodec<?> create(final Codec<String, ?> codec) {
         if (codec instanceof BooleanCodec) {
             return new BooleanJSONCodec((BooleanCodec<String>) codec);
-        } else if (codec instanceof DecimalCodec || codec instanceof Int8Codec
+        }
+        if (codec instanceof DecimalCodec || codec instanceof Int8Codec
                 || codec instanceof Int16Codec || codec instanceof Int32Codec
                 || codec instanceof Int64Codec || codec instanceof Uint8Codec
                 || codec instanceof Uint16Codec || codec instanceof Uint32Codec
                 || codec instanceof Uint64Codec) {
             return new NumberJSONCodec(codec);
-        } else {
-            return new QuotedJSONCodec<>(codec);
         }
+
+        return new QuotedJSONCodec<>(codec);
     }
 
     @Override

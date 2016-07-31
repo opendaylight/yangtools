@@ -30,15 +30,9 @@ final class JSONEmptyCodec implements JSONCodec<Object> {
     }
 
     @Override
-    public boolean needQuotes() {
-        return false;
-    }
-
-    @Override
     public void serializeToWriter(final JsonWriter writer, final Object value) throws IOException {
         writer.beginArray();
         writer.value((String) null);
         writer.endArray();
     }
-
 }

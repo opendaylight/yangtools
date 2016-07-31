@@ -21,11 +21,6 @@ final class NumberJSONCodec<T extends Number> extends AbstractJSONCodec<T > {
         super(codec);
     }
 
-    @Override
-    public boolean needQuotes() {
-        return false;
-    }
-
     /**
      * Serialize specified value with specified JsonWriter.
      *

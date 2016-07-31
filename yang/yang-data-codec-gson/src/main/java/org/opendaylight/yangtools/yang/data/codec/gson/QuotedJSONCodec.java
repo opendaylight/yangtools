@@ -21,11 +21,6 @@ final class QuotedJSONCodec<T> extends AbstractJSONCodec<T> {
         super(codec);
     }
 
-    @Override
-    public boolean needQuotes() {
-        return true;
-    }
-
     /**
      * Serialize specified value with specified JsonWriter.
      *
