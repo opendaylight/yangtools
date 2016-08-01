@@ -138,7 +138,7 @@ public abstract class SchemaNodeIdentifier implements Immutable {
      *            boolean value which specifies if the path is absolute or
      *            relative
      *
-     * @return A SchemaPath instance.
+     * @return A SchemaNodeIdentifier instance.
      */
     public static SchemaNodeIdentifier create(final Iterable<QName> path, final boolean absolute) {
         final SchemaNodeIdentifier parent = absolute ? ROOT : SAME;
