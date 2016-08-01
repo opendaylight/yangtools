@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -36,26 +37,31 @@ public class YinFileUsesStmtTest {
 
     @Test
     public void testUses() {
-        Module testModule = TestUtils.findModule(modules, "main-impl");
+        final Module testModule = TestUtils.findModule(modules, "main-impl");
         assertNotNull(testModule);
 
-        Set<AugmentationSchema> augmentations = testModule.getAugmentations();
+        final Set<AugmentationSchema> augmentations = testModule.getAugmentations();
         assertEquals(1, augmentations.size());
 
-        Iterator<AugmentationSchema> augmentIterator = augmentations.iterator();
-        AugmentationSchema augment = augmentIterator.next();
+        final Iterator<AugmentationSchema> augmentIterator = augmentations.iterator();
+        final AugmentationSchema augment = augmentIterator.next();
 
-        ChoiceCaseNode caseNode = (ChoiceCaseNode) augment.getDataChildByName("main-impl");
+        final ChoiceCaseNode caseNode = (ChoiceCaseNode) augment.getDataChildByName(QName.create(testModule.getQNameModule(),
+                "main-impl"));
         assertNotNull(caseNode);
 
-        ContainerSchemaNode container = (ContainerSchemaNode) caseNode.getDataChildByName("notification-service");
+        final ContainerSchemaNode container = (ContainerSchemaNode) caseNode.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "notification-service"));
         assertNotNull(container);
 
         assertEquals(1, container.getUses().size());
-        UsesNode usesNode = container.getUses().iterator().next();
+        final UsesNode usesNode = container.getUses().iterator().next();
         assertNotNull(usesNode);
-        assertTrue(usesNode.getGroupingPath().toString().contains("[(urn:opendaylight:params:xml:ns:yang:controller:" +
-                "config?revision=2013-04-05)service-ref]"));
+        assertTrue(usesNode
+                .getGroupingPath()
+                .toString()
+                .contains(
+                        "[(urn:opendaylight:params:xml:ns:yang:controller:" + "config?revision=2013-04-05)service-ref]"));
         assertEquals(1, usesNode.getRefines().size());
     }
 }
