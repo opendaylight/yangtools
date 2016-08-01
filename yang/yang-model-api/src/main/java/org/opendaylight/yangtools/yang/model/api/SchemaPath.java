@@ -102,13 +102,7 @@ public abstract class SchemaPath implements Immutable {
      */
     private volatile ImmutableList<QName> legacyPath;
 
-    /**
-     * @deprecated This constructor will be hidden in a future release.
-     * @param parent
-     * @param qname
-     */
-    @Deprecated
-    protected SchemaPath(final SchemaPath parent, final QName qname) {
+    SchemaPath(final SchemaPath parent, final QName qname) {
         this.parent = parent;
         this.qname = qname;
 
