@@ -232,23 +232,19 @@ class YangModuleInfoTemplate {
         var StringBuilder builder;
         if (typePackageName.equals(importedPackageName)) {
             builder = new StringBuilder(type.getName());
-            addActualTypeParameters(builder, type);
             if (builder.toString().equals("Void")) {
                 return "void";
             }
+            addActualTypeParameters(builder, type);
         } else {
-            builder = new StringBuilder();
-            if (typePackageName.startsWith("java.lang")) {
-                builder.append(type.getName());
-            } else {
-                if (!typePackageName.isEmpty()) {
-                    builder.append(typePackageName + Constants.DOT + type.getName());
-                } else {
-                    builder.append(type.getName());
-                }
-            }
             if (type.equals(Types.voidType())) {
                 return "void";
+            }
+            builder = new StringBuilder();
+            if (!typePackageName.isEmpty()) {
+                builder.append(typePackageName + Constants.DOT + type.getName());
+            } else {
+                builder.append(type.getName());
             }
             addActualTypeParameters(builder, type);
         }
