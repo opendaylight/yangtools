@@ -9,17 +9,17 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertTrue;
 
-import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import java.net.URISyntaxException;
 import java.util.Set;
-
 import org.junit.Ignore;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class AugmentToExtensionTest {
@@ -31,9 +31,9 @@ public class AugmentToExtensionTest {
 
     }
 
-    /* 
+    /*
      * FIXME: Figure way to determine use case of tail-f:input without hacks
-     * 
+     *
      */
     @Test
     @Ignore
@@ -42,17 +42,18 @@ public class AugmentToExtensionTest {
         try {
         modules = TestUtils.loadModules(getClass().getResource(
                 "/augment-to-extension-test/correct-path-into-unsupported-target").toURI());
-        } catch (Exception e) {
+        } catch (final Exception e) {
             StmtTestUtils.log(e, "    ");
             throw e;
         }
 
-        Module devicesModule = TestUtils.findModule(modules, "augment-module");
+        final Module devicesModule = TestUtils.findModule(modules, "augment-module");
 
-        ContainerSchemaNode devicesContainer = (ContainerSchemaNode) devicesModule.getDataChildByName("my-container");
-        Set<UsesNode> uses = devicesContainer.getUses();
+        final ContainerSchemaNode devicesContainer = (ContainerSchemaNode) devicesModule.getDataChildByName(QName
+                .create(devicesModule.getQNameModule(), "my-container"));
+        final Set<UsesNode> uses = devicesContainer.getUses();
 
-        for (UsesNode usesNode : uses) {
+        for (final UsesNode usesNode : uses) {
             assertTrue(usesNode.getAugmentations().isEmpty());
         }
     }
@@ -62,15 +63,16 @@ public class AugmentToExtensionTest {
     public void testCorrectAugment() throws URISyntaxException, SourceException, ReactorException {
         modules = TestUtils.loadModules(getClass().getResource("/augment-to-extension-test/correct-augment").toURI());
 
-        Module devicesModule = TestUtils.findModule(modules, "augment-module");
+        final Module devicesModule = TestUtils.findModule(modules, "augment-module");
 
-        ContainerSchemaNode devicesContainer = (ContainerSchemaNode) devicesModule.getDataChildByName("my-container");
-        Set<UsesNode> uses = devicesContainer.getUses();
+        final ContainerSchemaNode devicesContainer = (ContainerSchemaNode) devicesModule.getDataChildByName(QName
+                .create(devicesModule.getQNameModule(), "my-container"));
+        final Set<UsesNode> uses = devicesContainer.getUses();
 
         boolean augmentationIsInContainer = false;
-        for (UsesNode usesNode : uses) {
-            Set<AugmentationSchema> augmentations = usesNode.getAugmentations();
-            for (AugmentationSchema augmentationSchema : augmentations) {
+        for (final UsesNode usesNode : uses) {
+            final Set<AugmentationSchema> augmentations = usesNode.getAugmentations();
+            for (final AugmentationSchema augmentationSchema : augmentations) {
                 augmentationIsInContainer = true;
             }
         }

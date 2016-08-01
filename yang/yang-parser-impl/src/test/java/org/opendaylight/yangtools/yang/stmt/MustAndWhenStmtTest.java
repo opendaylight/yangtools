@@ -18,6 +18,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Iterator;
 import java.util.Set;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
@@ -36,23 +37,23 @@ public class MustAndWhenStmtTest {
 
     @Test
     public void mustStmtTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         StmtTestUtils.addSources(reactor, MUST_MODULE);
 
-        EffectiveSchemaContext result = reactor.buildEffective();
+        final EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        Module testModule = result.findModuleByName("must-test", null);
+        final Module testModule = result.findModuleByName("must-test", null);
         assertNotNull(testModule);
 
-        ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName("interface");
+        final ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "interface"));
         assertNotNull(container);
         assertTrue(container.isPresenceContainer());
 
-        Set<MustDefinition> musts = container.getConstraints().getMustConstraints();
+        final Set<MustDefinition> musts = container.getConstraints().getMustConstraints();
         assertEquals(2, musts.size());
 
-        Iterator<MustDefinition> mustsIterator = musts.iterator();
+        final Iterator<MustDefinition> mustsIterator = musts.iterator();
         MustDefinition mustStmt = mustsIterator.next();
         assertThat(mustStmt.getXpath().toString(), anyOf(is("ifType != 'ethernet' or (ifType = 'ethernet' and " +
                 "ifMTU = 1500)"), is("ifType != 'atm' or (ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)")));
@@ -69,16 +70,16 @@ public class MustAndWhenStmtTest {
 
     @Test
     public void whenStmtTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         StmtTestUtils.addSources(reactor, WHEN_MODULE);
 
-        EffectiveSchemaContext result = reactor.buildEffective();
+        final EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        Module testModule = result.findModuleByName("when-test", null);
+        final Module testModule = result.findModuleByName("when-test", null);
         assertNotNull(testModule);
 
-        ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName("test-container");
+        final ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "test-container"));
         assertNotNull(container);
         assertEquals("conditional-leaf = 'autumn-leaf'", container.getConstraints().getWhenCondition().toString());
     }

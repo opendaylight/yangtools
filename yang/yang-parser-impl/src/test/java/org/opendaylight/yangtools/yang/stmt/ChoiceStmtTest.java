@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -34,19 +35,21 @@ public class ChoiceStmtTest {
 
     @Test
     public void choiceAndCaseTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         StmtTestUtils.addSources(reactor, CHOICE_MODULE, IMPORTED_MODULE1, IMPORTED_MODULE2, INCLUDED_MODULE);
 
-        EffectiveSchemaContext result = reactor.buildEffective();
+        final EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        Module testModule = result.findModuleByName("foo", null);
+        final Module testModule = result.findModuleByName("foo", null);
         assertNotNull(testModule);
 
-        ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName("transfer");
+        final ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "transfer"));
         assertNotNull(container);
 
-        ChoiceSchemaNode choice = (ChoiceSchemaNode) container.getDataChildByName("how");
+        final ChoiceSchemaNode choice = (ChoiceSchemaNode) container.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "how"));
         assertNotNull(choice);
         assertEquals(5, choice.getCases().size());
 

@@ -234,17 +234,6 @@ abstract class AbstractEffectiveSchemaContext implements SchemaContext {
     }
 
     @Override
-    public DataSchemaNode getDataChildByName(final String name) {
-        for (Module module : getModules()) {
-            final DataSchemaNode result = module.getDataChildByName(name);
-            if (result != null) {
-                return result;
-            }
-        }
-        return null;
-    }
-
-    @Override
     public Set<UsesNode> getUses() {
         return Collections.emptySet();
     }

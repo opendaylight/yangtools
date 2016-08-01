@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import java.util.Set;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -26,19 +27,20 @@ public class Bug394Test {
 
     @Test
     public void testParseList() throws Exception {
-        Set<Module> modules = TestUtils.loadModules(getClass().getResource("/bugs/bug394-retest").toURI());
-        Module bug394 = TestUtils.findModule(modules, "bug394");
+        final Set<Module> modules = TestUtils.loadModules(getClass().getResource("/bugs/bug394-retest").toURI());
+        final Module bug394 = TestUtils.findModule(modules, "bug394");
         assertNotNull(bug394);
-        Module bug394_ext = TestUtils.findModule(modules, "bug394-ext");
+        final Module bug394_ext = TestUtils.findModule(modules, "bug394-ext");
         assertNotNull(bug394_ext);
 
-        ContainerSchemaNode logrecords = (ContainerSchemaNode) bug394.getDataChildByName("logrecords");
+        final ContainerSchemaNode logrecords = (ContainerSchemaNode) bug394.getDataChildByName(QName.create(
+                bug394.getQNameModule(), "logrecords"));
         assertNotNull(logrecords);
 
-        List<UnknownSchemaNode> nodes = logrecords.getUnknownSchemaNodes();
+        final List<UnknownSchemaNode> nodes = logrecords.getUnknownSchemaNodes();
         assertEquals(2, nodes.size());
 
-        List<ExtensionDefinition> extensions = bug394_ext.getExtensionSchemaNodes();
+        final List<ExtensionDefinition> extensions = bug394_ext.getExtensionSchemaNodes();
         assertEquals(3, extensions.size());
 
         assertTrue(extensions.contains(nodes.get(0).getExtensionDefinition()));

@@ -17,6 +17,7 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.augmenta
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
+
 import com.google.common.collect.Sets;
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
@@ -216,7 +217,7 @@ public class JsonStreamToNormalizedNodeTest {
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final SchemaNode parentNode = schemaContext.getDataChildByName("cont1");
+        final SchemaNode parentNode = schemaContext.getDataChildByName(CONT_1);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, schemaContext, parentNode);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
@@ -229,7 +230,7 @@ public class JsonStreamToNormalizedNodeTest {
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final SchemaNode parentNode = schemaContext.getDataChildByName("cont1");
+        final SchemaNode parentNode = schemaContext.getDataChildByName(CONT_1);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, schemaContext, parentNode);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
@@ -242,10 +243,10 @@ public class JsonStreamToNormalizedNodeTest {
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final SchemaNode parentNode = schemaContext.getDataChildByName("cont1");
+        final SchemaNode parentNode = schemaContext.getDataChildByName(CONT_1);
 
-        QName augmentChoice1QName = QName.create(parentNode.getQName(), "augment-choice1");
-        QName augmentChoice2QName = QName.create(augmentChoice1QName, "augment-choice2");
+        final QName augmentChoice1QName = QName.create(parentNode.getQName(), "augment-choice1");
+        final QName augmentChoice2QName = QName.create(augmentChoice1QName, "augment-choice2");
         final QName containerQName = QName.create(augmentChoice1QName, "case11-choice-case-container");
         final QName leafQName = QName.create(augmentChoice1QName, "case11-choice-case-leaf");
 
