@@ -12,12 +12,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Set;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -33,41 +35,41 @@ public class TypedefConstraintsTest {
     @Test
     public void decimalRangeConstraintsTest() throws SourceException,
             FileNotFoundException, ReactorException, URISyntaxException {
-        SchemaContext context = StmtTestUtils
+        final SchemaContext context = StmtTestUtils
                 .parseYangSources("/stmt-test/constraints");
 
         assertNotNull(context);
 
-        Set<TypeDefinition<?>> typeDefinitions = context.getTypeDefinitions();
+        final Set<TypeDefinition<?>> typeDefinitions = context.getTypeDefinitions();
         assertNotNull(typeDefinitions);
         assertEquals(1, typeDefinitions.size());
 
-        TypeDefinition<?> myDecimal = typeDefinitions.iterator().next();
+        final TypeDefinition<?> myDecimal = typeDefinitions.iterator().next();
 
         assertNotNull(myDecimal);
         assertTrue(myDecimal instanceof DecimalTypeDefinition);
 
-        List<RangeConstraint> rangeConstraints = ((DecimalTypeDefinition) myDecimal)
+        final List<RangeConstraint> rangeConstraints = ((DecimalTypeDefinition) myDecimal)
                 .getRangeConstraints();
 
         assertNotNull(rangeConstraints);
         assertEquals(1, rangeConstraints.size());
 
-        DataSchemaNode dataNode = context.getDataChildByName("id-decimal64");
+        final DataSchemaNode dataNode = context.getDataChildByName(QName.create("urn:opendaylight.foo", "2013-10-08", "id-decimal64"));
         assertNotNull(dataNode);
         assertTrue(dataNode instanceof LeafSchemaNode);
 
-        LeafSchemaNode leafDecimal = (LeafSchemaNode) dataNode;
-        TypeDefinition<?> type = leafDecimal.getType();
+        final LeafSchemaNode leafDecimal = (LeafSchemaNode) dataNode;
+        final TypeDefinition<?> type = leafDecimal.getType();
 
         assertTrue(type instanceof DecimalTypeDefinition);
-        DecimalTypeDefinition decType = (DecimalTypeDefinition) type;
+        final DecimalTypeDefinition decType = (DecimalTypeDefinition) type;
 
-        List<RangeConstraint> decRangeConstraints = decType.getRangeConstraints();
+        final List<RangeConstraint> decRangeConstraints = decType.getRangeConstraints();
 
         assertEquals(1, decRangeConstraints.size());
 
-        RangeConstraint range = decRangeConstraints.iterator().next();
+        final RangeConstraint range = decRangeConstraints.iterator().next();
         assertEquals(new BigDecimal(1.5), range.getMin());
         assertEquals(new BigDecimal(5.5), range.getMax());
 

@@ -120,15 +120,6 @@ final class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
     }
 
     @Override
-    public DataSchemaNode getDataChildByName(final String name) {
-        if (getQName().getLocalName().equals(name)) {
-            return caseShorthandNode;
-        } else {
-            return null;
-        }
-    }
-
-    @Override
     public Set<UsesNode> getUses() {
         return ImmutableSet.of();
     }

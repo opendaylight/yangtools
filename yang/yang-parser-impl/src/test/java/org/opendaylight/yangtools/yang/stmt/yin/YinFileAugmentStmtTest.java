@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -28,20 +29,20 @@ public class YinFileAugmentStmtTest {
 
     @Before
     public void init() throws URISyntaxException, ReactorException {
-            modules = TestUtils.loadYinModules(getClass().getResource("/semantic-statement-parser/yin/modules").toURI());
-            assertEquals(9, modules.size());
+        modules = TestUtils.loadYinModules(getClass().getResource("/semantic-statement-parser/yin/modules").toURI());
+        assertEquals(9, modules.size());
     }
 
     @Test
     public void testAugment() {
-        Module testModule = TestUtils.findModule(modules, "main-impl");
+        final Module testModule = TestUtils.findModule(modules, "main-impl");
         assertNotNull(testModule);
 
-        Set<AugmentationSchema> augmentations = testModule.getAugmentations();
+        final Set<AugmentationSchema> augmentations = testModule.getAugmentations();
         assertEquals(1, augmentations.size());
 
-        Iterator<AugmentationSchema> augmentIterator = augmentations.iterator();
-        AugmentationSchema augment = augmentIterator.next();
+        final Iterator<AugmentationSchema> augmentIterator = augmentations.iterator();
+        final AugmentationSchema augment = augmentIterator.next();
         assertNotNull(augment);
         assertTrue(augment.getTargetPath().toString().contains(
                 "(urn:opendaylight:params:xml:ns:yang:controller:config?revision=2013-04-05)modules, " +
@@ -49,7 +50,8 @@ public class YinFileAugmentStmtTest {
                         "(urn:opendaylight:params:xml:ns:yang:controller:config?revision=2013-04-05)configuration"));
 
         assertEquals(1, augment.getChildNodes().size());
-        ChoiceCaseNode caseNode = (ChoiceCaseNode) augment.getDataChildByName("main-impl");
+        final ChoiceCaseNode caseNode = (ChoiceCaseNode) augment.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "main-impl"));
         assertNotNull(caseNode);
     }
 

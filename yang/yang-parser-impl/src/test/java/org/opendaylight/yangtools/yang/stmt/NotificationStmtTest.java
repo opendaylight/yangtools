@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Set;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -32,27 +33,27 @@ public class NotificationStmtTest {
 
     @Test
     public void notificationTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         StmtTestUtils.addSources(reactor, NOTIFICATION_MODULE, IMPORTED_MODULE);
 
-        EffectiveSchemaContext result = reactor.buildEffective();
+        final EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        Module testModule = result.findModuleByName("baz", null);
+        final Module testModule = result.findModuleByName("baz", null);
         assertNotNull(testModule);
 
-        Set<NotificationDefinition> notifications = testModule.getNotifications();
+        final Set<NotificationDefinition> notifications = testModule.getNotifications();
         assertEquals(1, notifications.size());
 
-        NotificationDefinition notification = notifications.iterator().next();
+        final NotificationDefinition notification = notifications.iterator().next();
         assertEquals("event", notification.getQName().getLocalName());
         assertEquals(3, notification.getChildNodes().size());
 
-        LeafSchemaNode leaf = (LeafSchemaNode) notification.getDataChildByName("event-class");
+        LeafSchemaNode leaf = (LeafSchemaNode) notification.getDataChildByName(QName.create(testModule.getQNameModule(), "event-class"));
         assertNotNull(leaf);
-        leaf = (LeafSchemaNode) notification.getDataChildByName("severity");
+        leaf = (LeafSchemaNode) notification.getDataChildByName(QName.create(testModule.getQNameModule(), "severity"));
         assertNotNull(leaf);
-        AnyXmlSchemaNode anyXml = (AnyXmlSchemaNode) notification.getDataChildByName("reporting-entity");
+        final AnyXmlSchemaNode anyXml = (AnyXmlSchemaNode) notification.getDataChildByName(QName.create(testModule.getQNameModule(), "reporting-entity"));
         assertNotNull(anyXml);
     }
 }

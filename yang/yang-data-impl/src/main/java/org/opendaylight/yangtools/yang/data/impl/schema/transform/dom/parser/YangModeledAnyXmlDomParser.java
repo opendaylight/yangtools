@@ -13,8 +13,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
+import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.NodeParserDispatcher;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.YangModeledAnyXmlNodeBaseParser;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -41,14 +43,15 @@ public class YangModeledAnyXmlDomParser extends YangModeledAnyXmlNodeBaseParser<
 
         final ContainerSchemaNode schema = yangModeledAnyXmlSchemaNode.getSchemaOfAnyXmlData();
 
-        Builder<DataContainerChild<? extends PathArgument, ?>> value = ImmutableList.builder();
-        NodeList childNodes = element.getChildNodes();
+        final Builder<DataContainerChild<? extends PathArgument, ?>> value = ImmutableList.builder();
+        final NodeList childNodes = element.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
-            Node node = childNodes.item(i);
+            final Node node = childNodes.item(i);
             if (node instanceof Element) {
-                Element elementChild = (Element) node;
-                // :FIXME get child by local name and namespace, not only by localName ?
-                DataSchemaNode schemaChild = schema.getDataChildByName(elementChild.getLocalName());
+                final Element elementChild = (Element) node;
+                final QName elementChildQName = QName.create(elementChild.getNamespaceURI(),
+                        elementChild.getLocalName(), SimpleDateFormatUtil.DEFAULT_DATE_REV);
+                final DataSchemaNode schemaChild = SchemaUtils.findSchemaForChild(schema, elementChildQName, false);
 
                 Preconditions.checkNotNull(schemaChild,
                         "Unable to find schema for child element %s of yang modeled anyXml data %s.",
