@@ -13,6 +13,8 @@ import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -41,7 +43,9 @@ public class RevisionDateStatementImpl extends AbstractDeclaredStatement<Date> i
             try {
                 return SimpleDateFormatUtil.getRevisionFormat().parse(value);
             } catch (ParseException e) {
-                throw new SourceException(ctx.getStatementSourceReference(), e,
+                final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                        (String) ctx.getRoot().getStatementArgument());
+                throw new SourceException(ctx.getStatementSourceReference(), sourceId, e,
                     "Revision value %s is not in required format yyyy-MM-dd", value);
             }
         }

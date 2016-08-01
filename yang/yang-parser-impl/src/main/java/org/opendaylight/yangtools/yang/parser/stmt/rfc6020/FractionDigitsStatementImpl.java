@@ -12,6 +12,8 @@ import com.google.common.collect.Range;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -45,8 +47,10 @@ public class FractionDigitsStatementImpl extends AbstractDeclaredStatement<Integ
             try {
                 fractionDigits = Integer.parseInt(value);
             } catch (NumberFormatException e) {
+                final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                        (String) ctx.getRoot().getStatementArgument(), Utils.qNameFromArgument(ctx, value).getFormattedRevision());
                 throw new SourceException(String.format("%s is not valid fraction-digits integer argument",
-                        value), ctx.getStatementSourceReference(), e);
+                        value), ctx.getStatementSourceReference(), sourceId, e);
             }
 
             Preconditions.checkArgument(FRAC_DIGITS_ALLOWED.contains(fractionDigits),

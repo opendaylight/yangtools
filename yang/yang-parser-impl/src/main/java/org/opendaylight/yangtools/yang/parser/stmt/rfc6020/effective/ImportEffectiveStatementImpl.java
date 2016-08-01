@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import com.google.common.base.Optional;
 import java.util.Date;
 import java.util.Objects;
 import org.opendaylight.yangtools.concepts.SemVer;
@@ -15,12 +16,17 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToSemVerModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, ImportStatement> implements
         ModuleImport {
+
+    private static final Optional<Date> DEFAULT_REVISION = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
 
     private final String moduleName;
     private final Date revision;
@@ -35,8 +41,13 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
         if (prefixStmt != null) {
             this.prefix = prefixStmt.argument();
         } else {
+            final Optional<Date> revisionDate = Optional.fromNullable(
+                    Utils.getLatestRevision(ctx.getRoot().declaredSubstatements())).or(DEFAULT_REVISION);
+            final String formattedRevisionDate = SimpleDateFormatUtil.getRevisionFormat().format(revisionDate.get());
+            final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                    (String) ctx.getRoot().getStatementArgument(), formattedRevisionDate);
             throw new MissingSubstatementException("Prefix is mandatory substatement of import statement",
-                    ctx.getStatementSourceReference());
+                    ctx.getStatementSourceReference(), sourceId);
         }
 
         if (!ctx.isEnabledSemanticVersioning()) {

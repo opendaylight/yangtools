@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
@@ -18,17 +19,18 @@ public class InferenceException extends SourceException {
     private static final long serialVersionUID = 1L;
 
     public InferenceException(@Nonnull final String message, @Nonnull final StatementSourceReference source,
-            final Throwable cause) {
-        super(message, source, cause);
+            final SourceIdentifier sourceId, final Throwable cause) {
+        super(message, source, sourceId, cause);
     }
 
-    public InferenceException(@Nonnull final String message, @Nonnull final StatementSourceReference source) {
-        super(message, source);
+    public InferenceException(@Nonnull final String message, @Nonnull final StatementSourceReference source,
+            final SourceIdentifier sourceId) {
+        super(message, source, sourceId);
     }
 
-    public InferenceException(@Nonnull final StatementSourceReference source, @Nonnull final String format,
-            final Object... args) {
-        this(String.format(format, args), source);
+    public InferenceException(@Nonnull final StatementSourceReference source, final SourceIdentifier sourceId,
+            @Nonnull final String format, final Object... args) {
+        this(String.format(format, args), source, sourceId);
     }
 
     /**
@@ -42,9 +44,9 @@ public class InferenceException extends SourceException {
      * @throws InferenceException if the expression evaluates to true.
      */
     public static void throwIf(final boolean expression, @Nonnull final StatementSourceReference source,
-            @Nonnull final String format, final Object... args) {
+            final SourceIdentifier sourceId, @Nonnull final String format, final Object... args) {
         if (expression) {
-            throw new InferenceException(source, format, args);
+            throw new InferenceException(source, sourceId, format, args);
         }
     }
 }

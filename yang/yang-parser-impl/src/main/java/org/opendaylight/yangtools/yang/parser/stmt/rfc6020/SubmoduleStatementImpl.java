@@ -20,6 +20,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
@@ -105,7 +107,10 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
                     stmt.declaredSubstatements(), BelongsToStatement.class);
             StmtContext<?, ?, ?> prefixSubStmtCtx = findFirstDeclaredSubstatement(
                     stmt, 0, BelongsToStatement.class, PrefixStatement.class);
-            SourceException.throwIfNull(prefixSubStmtCtx, stmt.getStatementSourceReference(),
+            final String formattedRevisionDate = SimpleDateFormatUtil.getRevisionFormat().format(revisionDate.get());
+            final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                    stmt.getStatementArgument(), formattedRevisionDate);
+            SourceException.throwIfNull(prefixSubStmtCtx, stmt.getStatementSourceReference(), sourceId,
                 "Prefix of belongsTo statement is missing in submodule [%s]", stmt.getStatementArgument());
 
             String prefix = (String) prefixSubStmtCtx.getStatementArgument();

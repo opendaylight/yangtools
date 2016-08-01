@@ -8,11 +8,19 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import com.google.common.base.Optional;
+import java.util.Date;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 final class EffectiveStmtUtils {
+
+    private static final Optional<Date> DEFAULT_REVISION = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
 
     private EffectiveStmtUtils() {
         throw new UnsupportedOperationException("Utility class");
@@ -20,7 +28,12 @@ final class EffectiveStmtUtils {
 
     static SourceException createNameCollisionSourceException(final StmtContext<?, ?, ?> ctx,
             final EffectiveStatement<?, ?> effectiveStatement) {
-        return new SourceException(ctx.getStatementSourceReference(),
+        final Optional<Date> revisionDate = Optional.fromNullable(
+                Utils.getLatestRevision(ctx.getRoot().declaredSubstatements())).or(DEFAULT_REVISION);
+        final String formattedRevisionDate = SimpleDateFormatUtil.getRevisionFormat().format(revisionDate.get());
+        final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                (String) ctx.getRoot().getStatementArgument(), formattedRevisionDate);
+        return new SourceException(ctx.getStatementSourceReference(), sourceId,
             "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared.",
             ctx.getRoot().getStatementArgument(),
             effectiveStatement.argument(),

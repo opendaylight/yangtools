@@ -16,6 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -32,8 +34,10 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
         super(ctx);
         this.original = ctx.getOriginalCtx() == null ? null : (LeafSchemaNode) ctx.getOriginalCtx().buildEffective();
 
+        final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                (String) ctx.getRoot().getStatementArgument(), ctx.getStatementArgument().getFormattedRevision());
         final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
-                firstSubstatementOfType(TypeEffectiveStatement.class), ctx.getStatementSourceReference(),
+                firstSubstatementOfType(TypeEffectiveStatement.class), ctx.getStatementSourceReference(), sourceId,
                 "Leaf is missing a 'type' statement");
 
         String dflt = null;

@@ -15,6 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
@@ -89,7 +91,10 @@ public class BaseStatementImpl extends AbstractDeclaredStatement<QName> implemen
 
                     @Override
                     public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                        throw new InferenceException(baseStmtCtx.getStatementSourceReference(),
+                        final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                                (String) baseStmtCtx.getRoot().getStatementArgument(),
+                                baseStmtCtx.getStatementArgument().getFormattedRevision());
+                        throw new InferenceException(baseStmtCtx.getStatementSourceReference(), sourceId,
                             "Unable to resolve identity %s and base identity %s",
                             baseParentCtx.getStatementArgument(), baseStmtCtx.getStatementArgument());
                     }

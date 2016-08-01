@@ -20,6 +20,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
@@ -107,9 +109,14 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
 
                 @Override
                 public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
+                    final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                            (String) usesNode.getRoot().getStatementArgument(),
+                            usesNode.getStatementArgument().getFormattedRevision());
                     InferenceException.throwIf(failed.contains(sourceGroupingPre),
-                            usesNode.getStatementSourceReference(), "Grouping '%s' was not resolved.", groupingName);
-                    throw new InferenceException("Unknown error occurred.", usesNode.getStatementSourceReference());
+                            usesNode.getStatementSourceReference(), sourceId, "Grouping '%s' was not resolved.",
+                            groupingName);
+                    throw new InferenceException("Unknown error occurred.", usesNode.getStatementSourceReference(),
+                            sourceId);
                 }
             });
         }

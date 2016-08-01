@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
@@ -14,6 +15,7 @@ import com.google.common.collect.Multimap;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -23,12 +25,15 @@ import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImportedNamespaceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -63,6 +68,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBehaviour.Registry, Mutable {
+
+    private static final Optional<Date> DEFAULT_REVISION = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
 
     public enum PhaseCompletionProgress {
         NO_PROGRESS,
@@ -110,8 +117,13 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 final StatementContextBase<?, ?, ?> extension =
                         (StatementContextBase<?, ?, ?>) currentContext.getAllFromNamespace(ExtensionNamespace.class).get(name);
 
-                SourceException.throwIfNull(extension, current.getStatementSourceReference(), "Extension %s not found",
-                    name);
+                final Optional<Date> revisionDate = Optional.fromNullable(
+                        Utils.getLatestRevision(current.getRoot().declaredSubstatements())).or(DEFAULT_REVISION);
+                final String formattedRevisionDate = SimpleDateFormatUtil.getRevisionFormat().format(revisionDate.get());
+                final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                        (String) current.getRoot().getStatementArgument(), formattedRevisionDate);
+                SourceException.throwIfNull(extension, current.getStatementSourceReference(), sourceId,
+                        "Extension %s not found", name);
 
                 final QName arg = (QName) extension.getStatementArgument();
                 final QName qName = current.getFromNamespace(QNameCacheNamespace.class,
@@ -300,13 +312,18 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             }
         }
 
+        final Optional<Date> revisionDate = Optional.fromNullable(
+                Utils.getLatestRevision(root.declaredSubstatements())).or(DEFAULT_REVISION);
+        final String formattedRevisionDate = SimpleDateFormatUtil.getRevisionFormat().format(revisionDate.get());
+        final SourceIdentifier sourceId = RevisionSourceIdentifier.create((String) root.getStatementArgument(),
+                formattedRevisionDate);
         final String message = String.format("Yang model processing phase %s failed", identifier);
         if (exceptions.isEmpty()) {
-            return new InferenceException(message, root.getStatementSourceReference());
+            return new InferenceException(message, root.getStatementSourceReference(), sourceId);
         }
 
         final InferenceException e = new InferenceException(message, root.getStatementSourceReference(),
-            exceptions.get(0));
+            exceptions.get(0).getSourceIdentifier(), exceptions.get(0));
         final Iterator<SourceException> it = exceptions.listIterator(1);
         while (it.hasNext()) {
             e.addSuppressed(it.next());

@@ -151,7 +151,7 @@ public class YinStatementParserImpl {
                 }
             } else {
                 //if statement not found through all phases, throw exception
-                SourceException.throwIf(writer.getPhase().equals(ModelProcessingPhase.FULL_DECLARATION), ref,
+                SourceException.throwIf(writer.getPhase().equals(ModelProcessingPhase.FULL_DECLARATION), ref, null,
                     "%s is not a YIN statement or use of extension.", identifier.getLocalName());
 
                 //otherwise skip it (statement not to be read yet)

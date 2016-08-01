@@ -12,6 +12,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.BitsSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.util.BitImpl;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.BitsTypeBuilder;
@@ -34,6 +36,10 @@ public final class BitsSpecificationEffectiveStatementImpl extends
             if (stmt instanceof Bit) {
                 Bit b = (Bit) stmt;
 
+                final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                        (String) ctx.getRoot().getStatementArgument(),
+                        ctx.getSchemaPath().get().getLastComponent().getFormattedRevision());
+
                 if (b.getPosition() == null) {
                     final Long newPos;
                     if (highestPosition == null) {
@@ -41,7 +47,7 @@ public final class BitsSpecificationEffectiveStatementImpl extends
                     } else if (highestPosition != 4294967295L) {
                         newPos = highestPosition + 1;
                     } else {
-                        throw new SourceException(ctx.getStatementSourceReference(),
+                        throw new SourceException(ctx.getStatementSourceReference(), sourceId,
                             "Bit %s must have a position statement", b);
                     }
 
@@ -50,7 +56,7 @@ public final class BitsSpecificationEffectiveStatementImpl extends
                 }
 
                 SourceException.throwIf(b.getPosition() < 0L && b.getPosition() > 4294967295L,
-                        ctx.getStatementSourceReference(), "Bit %s has illegal position", b);
+                        ctx.getStatementSourceReference(), sourceId, "Bit %s has illegal position", b);
 
                 if (highestPosition == null || highestPosition < b.getPosition()) {
                     highestPosition = b.getPosition();

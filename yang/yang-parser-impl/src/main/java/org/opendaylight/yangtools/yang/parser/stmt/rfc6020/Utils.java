@@ -50,6 +50,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -323,8 +325,10 @@ public final class Utils {
 
         // to detect if key contains duplicates
         if ((new HashSet<>(keyTokens)).size() < keyTokens.size()) {
+            final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                    (String) ctx.getRoot().getStatementArgument(), Utils.qNameFromArgument(ctx, value).getFormattedRevision());
             // FIXME: report all duplicate keys
-            throw new SourceException(ctx.getStatementSourceReference(), "Duplicate value in list key: %s", value);
+            throw new SourceException(ctx.getStatementSourceReference(), sourceId, "Duplicate value in list key: %s", value);
         }
 
         final Set<SchemaNodeIdentifier.Relative> keyNodes = new HashSet<>();
@@ -344,7 +348,10 @@ public final class Utils {
         final Set<SchemaNodeIdentifier.Relative> uniqueConstraintNodes = new HashSet<>();
         for (final String uniqueArgToken : SPACE_SPLITTER.split(argumentValue)) {
             final SchemaNodeIdentifier nodeIdentifier = Utils.nodeIdentifierFromPath(ctx, uniqueArgToken);
-            SourceException.throwIf(nodeIdentifier.isAbsolute(), ctx.getStatementSourceReference(),
+            final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                    (String) ctx.getRoot().getStatementArgument(),
+                    Utils.qNameFromArgument(ctx, argumentValue).getFormattedRevision());
+            SourceException.throwIf(nodeIdentifier.isAbsolute(), ctx.getStatementSourceReference(), sourceId,
                     "Unique statement argument '%s' contains schema node identifier '%s' "
                             + "which is not in the descendant node identifier form.", argumentValue, uniqueArgToken);
             uniqueConstraintNodes.add((SchemaNodeIdentifier.Relative) nodeIdentifier);

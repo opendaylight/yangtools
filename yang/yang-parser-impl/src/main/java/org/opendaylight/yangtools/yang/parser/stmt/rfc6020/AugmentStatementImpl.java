@@ -9,15 +9,20 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.Collection;
+import java.util.Date;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -40,6 +45,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
     private static final Logger LOG = LoggerFactory.getLogger(AugmentStatementImpl.class);
     private static final Pattern PATH_REL_PATTERN1 = Pattern.compile("\\.\\.?\\s*/(.+)");
     private static final Pattern PATH_REL_PATTERN2 = Pattern.compile("//.*");
+    private static final Optional<Date> DEFAULT_REVISION = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator
             .builder(Rfc6020Mapping.AUGMENT)
             .add(Rfc6020Mapping.ANYXML, 0, MAX)
@@ -154,7 +160,12 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
 
                 @Override
                 public void prerequisiteFailed(final Collection<? extends ModelActionBuilder.Prerequisite<?>> failed) {
-                    throw new InferenceException(augmentNode.getStatementSourceReference(),
+                    final Optional<Date> revisionDate = Optional.fromNullable(
+                            Utils.getLatestRevision(augmentNode.getRoot().declaredSubstatements())).or(DEFAULT_REVISION);
+                    final String formattedRevisionDate = SimpleDateFormatUtil.getRevisionFormat().format(revisionDate.get());
+                    final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                            (String) augmentNode.getRoot().getStatementArgument(), formattedRevisionDate);
+                    throw new InferenceException(augmentNode.getStatementSourceReference(), sourceId,
                         "Augment target '%s' not found", augmentNode.getStatementArgument());
                 }
             });

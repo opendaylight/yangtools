@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -37,8 +39,10 @@ public class PositionStatementImpl extends AbstractDeclaredStatement<Long> imple
             try {
                 return Long.parseLong(value);
             } catch (NumberFormatException e) {
+                final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                        (String) ctx.getRoot().getStatementArgument(), Utils.qNameFromArgument(ctx, value).getFormattedRevision());
                 throw new SourceException(String.format("Bit position value %s is not valid integer", value),
-                        ctx.getStatementSourceReference(), e);
+                        ctx.getStatementSourceReference(), sourceId, e);
             }
         }
 

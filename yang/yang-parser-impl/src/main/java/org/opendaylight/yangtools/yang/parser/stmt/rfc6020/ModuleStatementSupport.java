@@ -25,6 +25,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
@@ -107,12 +109,13 @@ public class ModuleStatementSupport extends
 
         final URI moduleNs = firstAttributeOf(stmt.declaredSubstatements(),
                 NamespaceStatement.class);
-        SourceException.throwIfNull(moduleNs, stmt.getStatementSourceReference(),
+        final SourceIdentifier sourceId = RevisionSourceIdentifier.create(moduleName);
+        SourceException.throwIfNull(moduleNs, stmt.getStatementSourceReference(), sourceId,
             "Namespace of the module [%s] is missing", stmt.getStatementArgument());
         stmt.addToNs(ModuleNameToNamespace.class, moduleName, moduleNs);
 
         final String modulePrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
-        SourceException.throwIfNull(modulePrefix, stmt.getStatementSourceReference(),
+        SourceException.throwIfNull(modulePrefix, stmt.getStatementSourceReference(), sourceId,
             "Prefix of the module [%s] is missing", stmt.getStatementArgument());
         stmt.addToNs(ImpPrefixToNamespace.class, modulePrefix, moduleNs);
 
@@ -124,13 +127,16 @@ public class ModuleStatementSupport extends
 
         Optional<URI> moduleNs = Optional.fromNullable(firstAttributeOf(stmt.declaredSubstatements(),
                 NamespaceStatement.class));
-        SourceException.throwIf(!moduleNs.isPresent(), stmt.getStatementSourceReference(),
-            "Namespace of the module [%s] is missing", stmt.getStatementArgument());
-
         Optional<Date> revisionDate = Optional.fromNullable(Utils.getLatestRevision(stmt.declaredSubstatements()));
         if (!revisionDate.isPresent()) {
             revisionDate = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
         }
+
+        final String formattedRevisionDate = SimpleDateFormatUtil.getRevisionFormat().format(revisionDate.get());
+        final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                stmt.getStatementArgument(), formattedRevisionDate);
+        SourceException.throwIf(!moduleNs.isPresent(), stmt.getStatementSourceReference(), sourceId,
+            "Namespace of the module [%s] is missing", stmt.getStatementArgument());
 
         QNameModule qNameModule = QNameModule.create(moduleNs.get(), revisionDate.orNull()).intern();
         ModuleIdentifier moduleIdentifier = new ModuleIdentifierImpl(stmt.getStatementArgument(),
@@ -141,7 +147,7 @@ public class ModuleStatementSupport extends
         stmt.addContext(NamespaceToModule.class, qNameModule, stmt);
 
         final String modulePrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
-        SourceException.throwIfNull(modulePrefix, stmt.getStatementSourceReference(),
+        SourceException.throwIfNull(modulePrefix, stmt.getStatementSourceReference(), sourceId,
             "Prefix of the module [%s] is missing", stmt.getStatementArgument());
 
         stmt.addToNs(PrefixToModule.class, modulePrefix, qNameModule);

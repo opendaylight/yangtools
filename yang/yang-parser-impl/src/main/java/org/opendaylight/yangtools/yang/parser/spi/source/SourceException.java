@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 /**
  * Thrown to indicate error in YANG model source.
@@ -17,6 +18,7 @@ public class SourceException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     private final StatementSourceReference sourceRef;
+    private final SourceIdentifier sourceId;
 
     /**
      * Create a new instance with the specified message and source. The message will be appended with
@@ -25,9 +27,11 @@ public class SourceException extends RuntimeException {
      * @param message Context message
      * @param source Statement source
      */
-    public SourceException(@Nonnull final String message, @Nonnull final StatementSourceReference source) {
+    public SourceException(@Nonnull final String message, @Nonnull final StatementSourceReference source,
+            final SourceIdentifier id) {
         super(createMessage(message, source));
         sourceRef = source;
+        sourceId = id;
     }
 
     /**
@@ -39,9 +43,10 @@ public class SourceException extends RuntimeException {
      * @param cause Underlying cause of this exception
      */
     public SourceException(@Nonnull final String message, @Nonnull final StatementSourceReference source,
-            final Throwable cause) {
+            final SourceIdentifier id, final Throwable cause) {
         super(createMessage(message, source), cause);
         sourceRef = source;
+        sourceId = id;
     }
 
     /**
@@ -52,9 +57,9 @@ public class SourceException extends RuntimeException {
      * @param format Format string, according to {@link String#format(String, Object...)}.
      * @param args Format string arguments, according to {@link String#format(String, Object...)}
      */
-    public SourceException(@Nonnull final StatementSourceReference source, @Nonnull final String format,
-            final Object... args) {
-        this(String.format(format, args), source);
+    public SourceException(@Nonnull final StatementSourceReference source, final SourceIdentifier id,
+            @Nonnull final String format, final Object... args) {
+        this(String.format(format, args), source, id);
     }
 
     /**
@@ -66,9 +71,9 @@ public class SourceException extends RuntimeException {
      * @param format Format string, according to {@link String#format(String, Object...)}.
      * @param args Format string arguments, according to {@link String#format(String, Object...)}
      */
-    public SourceException(@Nonnull final StatementSourceReference source, final Throwable cause,
-            @Nonnull final String format, final Object... args) {
-        this(String.format(format, args), source, cause);
+    public SourceException(@Nonnull final StatementSourceReference source, final SourceIdentifier id,
+            final Throwable cause, @Nonnull final String format, final Object... args) {
+        this(String.format(format, args), source, id, cause);
     }
 
     /**
@@ -78,6 +83,10 @@ public class SourceException extends RuntimeException {
      */
     public @Nonnull StatementSourceReference getSourceReference() {
         return sourceRef;
+    }
+
+    public SourceIdentifier getSourceIdentifier() {
+        return sourceId;
     }
 
     /**
@@ -91,9 +100,9 @@ public class SourceException extends RuntimeException {
      * @throws SourceException if the expression evaluates to true.
      */
     public static void throwIf(final boolean expression, @Nonnull final StatementSourceReference source,
-            @Nonnull final String format, final Object... args) {
+            final SourceIdentifier id, @Nonnull final String format, final Object... args) {
         if (expression) {
-            throw new SourceException(source, format, args);
+            throw new SourceException(source, id, format, args);
         }
     }
 
@@ -109,8 +118,8 @@ public class SourceException extends RuntimeException {
      * @throws SourceException if object is null
      */
     @Nonnull public static <T> T throwIfNull(final T obj, @Nonnull final StatementSourceReference source,
-            @Nonnull final String format, final Object... args) {
-        throwIf(obj == null, source, format, args);
+            final SourceIdentifier id, @Nonnull final String format, final Object... args) {
+        throwIf(obj == null, source, id, format, args);
         return obj;
     }
 

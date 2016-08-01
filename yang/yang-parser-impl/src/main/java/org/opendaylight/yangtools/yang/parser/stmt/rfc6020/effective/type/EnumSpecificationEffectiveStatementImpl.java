@@ -12,6 +12,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.EnumSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.EnumPairBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.EnumerationTypeBuilder;
@@ -42,7 +44,10 @@ public final class EnumSpecificationEffectiveStatementImpl extends
                     } else if (highestValue != 2147483647) {
                         newValue = highestValue + 1;
                     } else {
-                        throw new SourceException(ctx.getStatementSourceReference(),
+                        final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                                (String) ctx.getRoot().getStatementArgument(),
+                                ctx.getSchemaPath().get().getLastComponent().getFormattedRevision());
+                        throw new SourceException(ctx.getStatementSourceReference(), sourceId,
                             "Enum '%s' must have a value statement", p);
                     }
 

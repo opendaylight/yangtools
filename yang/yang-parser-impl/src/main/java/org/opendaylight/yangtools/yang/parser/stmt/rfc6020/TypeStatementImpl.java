@@ -32,6 +32,8 @@ import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
@@ -149,7 +151,10 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
                 final QName qname = Utils.qNameFromArgument(ctx, ctx.getStatementArgument());
                 final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> typedef =
                         ctx.getFromNamespace(TypeNamespace.class, qname);
-                SourceException.throwIfNull(typedef, ctx.getStatementSourceReference(), "Type '%s' not found", qname);
+                final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                        (String) ctx.getRoot().getStatementArgument(), qname.getFormattedRevision());
+                SourceException.throwIfNull(typedef, ctx.getStatementSourceReference(), sourceId, "Type '%s' not found",
+                        qname);
 
                 final TypedefEffectiveStatement effectiveTypedef = typedef.buildEffective();
                 Verify.verify(effectiveTypedef instanceof TypeDefEffectiveStatementImpl);
@@ -221,8 +226,10 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
 
                 @Override
                 public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
+                    final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                            (String) stmt.getRoot().getStatementArgument(), typeQName.getFormattedRevision());
                     InferenceException.throwIf(failed.contains(typePrereq), stmt.getStatementSourceReference(),
-                        "Type [%s] was not found.", typeQName);
+                        sourceId, "Type [%s] was not found.", typeQName);
                 }
             });
         }

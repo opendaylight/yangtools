@@ -13,6 +13,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.util.type.InvalidRangeConstraintException;
 import org.opendaylight.yangtools.yang.model.util.type.RangeRestrictedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
@@ -48,7 +50,9 @@ public final class IntegerTypeEffectiveStatementImpl extends
             typeDefinition = builder.build();
         } catch (InvalidRangeConstraintException e) {
             final RangeConstraint c = e.getOffendingConstraint();
-            throw new SourceException(ctx.getStatementSourceReference(), e, "Invalid range constraint: <%s, %s>",
+            final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                    (String) ctx.getRoot().getStatementArgument(), ctx.getSchemaPath().get().getLastComponent().getFormattedRevision());
+            throw new SourceException(ctx.getStatementSourceReference(), sourceId, e, "Invalid range constraint: <%s, %s>",
                 c.getMin(), c.getMax());
         }
     }

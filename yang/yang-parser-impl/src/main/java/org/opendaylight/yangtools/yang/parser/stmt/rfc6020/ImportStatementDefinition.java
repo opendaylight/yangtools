@@ -30,6 +30,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
@@ -107,7 +109,9 @@ public class ImportStatementDefinition extends
 
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                InferenceException.throwIf(failed.contains(imported), stmt.getStatementSourceReference(),
+                final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                        (String) stmt.getRoot().getStatementArgument());
+                InferenceException.throwIf(failed.contains(imported), stmt.getStatementSourceReference(), sourceId,
                         "Imported module [%s] was not found.", moduleName);
             }
         });
@@ -168,7 +172,9 @@ public class ImportStatementDefinition extends
                 @Override
                 public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
                     if (failed.contains(imported)) {
-                        throw new InferenceException(stmt.getStatementSourceReference(),
+                        final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                                (String) stmt.getRoot().getStatementArgument());
+                        throw new InferenceException(stmt.getStatementSourceReference(), sourceId,
                                 "Imported module [%s] was not found.", impIdentifier);
                     }
                 }
@@ -222,6 +228,9 @@ public class ImportStatementDefinition extends
             final Prerequisite<Mutable<?, ?, ?>> linkageTarget = importAction
                     .mutatesCtx(stmt.getRoot(), SOURCE_LINKAGE);
 
+            final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                    (String) stmt.getRoot().getStatementArgument());
+
             importAction.apply(new InferenceAction() {
                 @Override
                 public void apply() {
@@ -236,7 +245,7 @@ public class ImportStatementDefinition extends
                         importedModuleIdentifier = importedModule.getFromNamespace(ModuleCtxToModuleIdentifier.class, importedModule);
                         semVerModuleIdentifier = createSemVerModuleIdentifier(importedModuleIdentifier, importedModuleEntry.getKey());
                     } else {
-                        throw new InferenceException(stmt.getStatementSourceReference(),
+                        throw new InferenceException(stmt.getStatementSourceReference(), sourceId,
                                 "Unable to find module compatible with requested import [%s(%s)].", impIdentifier
                                         .getName(), getRequestedImportVersion(stmt));
                     }
@@ -253,7 +262,7 @@ public class ImportStatementDefinition extends
                 @Override
                 public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
                     if (failed.contains(imported)) {
-                        throw new InferenceException(stmt.getStatementSourceReference(),
+                        throw new InferenceException(stmt.getStatementSourceReference(), sourceId,
                                 "Unable to find module compatible with requested import [%s(%s)].", impIdentifier
                                         .getName(), getRequestedImportVersion(stmt));
                     }

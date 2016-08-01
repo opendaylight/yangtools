@@ -18,6 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
@@ -70,7 +72,9 @@ public class TypedefStatementImpl extends AbstractDeclaredStatement<QName> imple
             if (stmt != null && stmt.getParentContext() != null) {
                 final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> existing =
                         stmt.getParentContext().getFromNamespace(TypeNamespace.class, stmt.getStatementArgument());
-                SourceException.throwIf(existing != null, stmt.getStatementSourceReference(),
+                final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                        (String) stmt.getRoot().getStatementArgument(), stmt.getStatementArgument().getFormattedRevision());
+                SourceException.throwIf(existing != null, stmt.getStatementSourceReference(), sourceId,
                         "Duplicate name for typedef %s", stmt.getStatementArgument());
 
                 stmt.getParentContext().addContext(TypeNamespace.class, stmt.getStatementArgument(), stmt);

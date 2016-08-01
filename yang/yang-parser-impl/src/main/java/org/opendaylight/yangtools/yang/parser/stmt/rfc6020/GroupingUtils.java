@@ -19,6 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
@@ -194,9 +196,12 @@ public final class GroupingUtils {
             final StatementContextBase<?, ?, ?> refineTargetNodeCtx) {
 
         final StatementDefinition refineSubstatementDef = refineSubstatementCtx.getPublicDefinition();
+        final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                (String) refineSubstatementCtx.getRoot().getStatementArgument(),
+                ((QName) refineTargetNodeCtx.getStatementArgument()).getFormattedRevision());
 
         SourceException.throwIf(!isSupportedRefineTarget(refineSubstatementCtx, refineTargetNodeCtx),
-                refineSubstatementCtx.getStatementSourceReference(),
+                refineSubstatementCtx.getStatementSourceReference(), sourceId,
                 "Error in module '%s' in the refine of uses '%s': can not perform refine of '%s' for the target '%s'.",
                 refineSubstatementCtx.getRoot().getStatementArgument(), refineSubstatementCtx.getParentContext()
                         .getStatementArgument(), refineSubstatementCtx.getPublicDefinition(), refineTargetNodeCtx

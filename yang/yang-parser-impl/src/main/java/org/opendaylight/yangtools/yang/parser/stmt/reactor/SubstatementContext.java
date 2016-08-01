@@ -11,9 +11,11 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -24,6 +26,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
@@ -38,6 +42,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> extends
         StatementContextBase<A, D, E> {
+
+    private static final Optional<Date> DEFAULT_REVISION = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
 
     private final StatementContextBase<?, ?, ?> parent;
     private final A argument;
@@ -253,9 +259,14 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
             return false;
         }
 
+        final Optional<Date> revisionDate = Optional.fromNullable(
+                Utils.getLatestRevision(getRoot().declaredSubstatements())).or(DEFAULT_REVISION);
+        final String formattedRevisionDate = SimpleDateFormatUtil.getRevisionFormat().format(revisionDate.get());
+        final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                (String) getRoot().getStatementArgument(), formattedRevisionDate);
         throw new InferenceException(
                 "Parent node has config statement set to false, therefore no node underneath it can have config set to true",
-                getStatementSourceReference());
+                getStatementSourceReference(), sourceId);
     }
 
     @Override

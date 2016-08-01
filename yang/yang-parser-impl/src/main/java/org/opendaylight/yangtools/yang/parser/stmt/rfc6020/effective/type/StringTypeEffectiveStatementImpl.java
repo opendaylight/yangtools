@@ -14,6 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.util.type.InvalidLengthConstraintException;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.model.util.type.StringTypeBuilder;
@@ -58,9 +60,11 @@ public final class StringTypeEffectiveStatementImpl extends DeclaredEffectiveSta
         try {
             typeDefinition = builder.build();
         } catch (InvalidLengthConstraintException e) {
+            final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                    (String) ctx.getRoot().getStatementArgument(), ctx.getSchemaPath().get().getLastComponent().getFormattedRevision());
             final LengthConstraint c = e.getOffendingConstraint();
-            throw new SourceException(ctx.getStatementSourceReference(), e, "Invalid length constraint: <%s, %s>",
-                c.getMin(), c.getMax());
+            throw new SourceException(ctx.getStatementSourceReference(), sourceId, e,
+                    "Invalid length constraint: <%s, %s>", c.getMin(), c.getMax());
         }
     }
 

@@ -22,6 +22,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.util.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
@@ -97,8 +99,10 @@ public final class TypeUtils {
         try {
             return new BigInteger(value);
         } catch (NumberFormatException e) {
+            final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                    (String) ctx.getRoot().getStatementArgument(), Utils.qNameFromArgument(ctx, value).getFormattedRevision());
             throw new SourceException(String.format("Value %s is not a valid integer", value),
-                    ctx.getStatementSourceReference(), e);
+                    ctx.getStatementSourceReference(), sourceId, e);
         }
     }
 
@@ -113,8 +117,10 @@ public final class TypeUtils {
         try {
             return value.indexOf('.') != -1 ? new BigDecimal(value) : new BigInteger(value);
         } catch (NumberFormatException e) {
+            final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                    (String) ctx.getRoot().getStatementArgument(), Utils.qNameFromArgument(ctx, value).getFormattedRevision());
             throw new SourceException(String.format("Value %s is not a valid decimal number", value),
-                    ctx.getStatementSourceReference(), e);
+                    ctx.getStatementSourceReference(), sourceId, e);
         }
     }
 
@@ -130,15 +136,19 @@ public final class TypeUtils {
             final Iterator<String> boundaries = TWO_DOTS_SPLITTER.splitToList(singleRange).iterator();
             final Number min = parseDecimalConstraintValue(ctx, boundaries.next());
 
+            final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                    (String) ctx.getRoot().getStatementArgument(),
+                    Utils.qNameFromArgument(ctx, rangeArgument).getFormattedRevision());
+
             final Number max;
             if (boundaries.hasNext()) {
                 max = parseDecimalConstraintValue(ctx, boundaries.next());
 
                 // if min larger than max then error
-                InferenceException.throwIf(compareNumbers(min, max) == 1, ctx.getStatementSourceReference(),
+                InferenceException.throwIf(compareNumbers(min, max) == 1, ctx.getStatementSourceReference(), sourceId,
                         "Range constraint %s has descending order of boundaries; should be ascending", singleRange);
 
-                SourceException.throwIf(boundaries.hasNext(), ctx.getStatementSourceReference(),
+                SourceException.throwIf(boundaries.hasNext(), ctx.getStatementSourceReference(), sourceId,
                     "Wrong number of boundaries in range constraint %s", singleRange);
             } else {
                 max = min;
@@ -146,7 +156,7 @@ public final class TypeUtils {
 
             // some of intervals overlapping
             if (rangeConstraints.size() > 1 && compareNumbers(min, Iterables.getLast(rangeConstraints).getMax()) != 1) {
-                throw new InferenceException(ctx.getStatementSourceReference(),
+                throw new InferenceException(ctx.getStatementSourceReference(), sourceId,
                     "Some of the ranges in %s are not disjoint", rangeArgument);
             }
 
@@ -184,7 +194,10 @@ public final class TypeUtils {
 
             // some of intervals overlapping
             if (lengthConstraints.size() > 1 && compareNumbers(min, Iterables.getLast(lengthConstraints).getMax()) != 1) {
-                throw new InferenceException(ctx.getStatementSourceReference(),
+                final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                        (String) ctx.getRoot().getStatementArgument(),
+                        Utils.qNameFromArgument(ctx, lengthArgument).getFormattedRevision());
+                throw new InferenceException(ctx.getStatementSourceReference(), sourceId,
                     "Some of the length ranges in %s are not disjoint", lengthArgument);
             }
 

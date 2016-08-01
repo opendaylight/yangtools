@@ -264,6 +264,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
             if (!addedCause) {
                 addedCause = true;
                 buildFailure.initCause(sourceEx);
+                buildFailure.setSourceId(sourceEx.getSourceIdentifier());
             } else {
                 buildFailure.addSuppressed(sourceEx);
             }

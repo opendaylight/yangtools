@@ -8,12 +8,15 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.base.Preconditions;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 
 public class ReactorException extends Exception {
 
     private static final long serialVersionUID = 1L;
     private final ModelProcessingPhase phase;
+
+    private SourceIdentifier sourceId;
 
     public ReactorException(ModelProcessingPhase phase, String message, Throwable cause) {
         super(message, cause);
@@ -29,4 +32,11 @@ public class ReactorException extends Exception {
         return phase;
     }
 
+    public final SourceIdentifier getSourceIdentifier() {
+        return sourceId;
+    }
+
+    public final void setSourceId(final SourceIdentifier sourceId) {
+        this.sourceId = sourceId;
+    }
 }

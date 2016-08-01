@@ -20,6 +20,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
@@ -88,13 +90,17 @@ public final class AugmentUtils {
             return;
         }
 
+        final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                (String) sourceCtx.getRoot().getStatementArgument(),
+                sourceCtx.getSchemaPath().get().getLastComponent().getFormattedRevision());
+
         if (typeOfCopy == TypeOfCopy.ADDED_BY_AUGMENTATION && reguiredCheckOfMandatoryNodes(sourceCtx, targetCtx)) {
             final List<StatementContextBase<?, ?, ?>> sourceSubStatements = new Builder<StatementContextBase<?, ?, ?>>()
                     .addAll(sourceCtx.declaredSubstatements()).addAll(sourceCtx.effectiveSubstatements()).build();
 
             for (final StatementContextBase<?, ?, ?> sourceSubStatement : sourceSubStatements) {
                 InferenceException.throwIf(MandatoryStatement.class.equals(sourceSubStatement.getPublicDefinition()
-                        .getDeclaredRepresentationClass()), sourceCtx.getStatementSourceReference(),
+                        .getDeclaredRepresentationClass()), sourceCtx.getStatementSourceReference(), sourceId,
                         "An augment cannot add node '%s' because it is mandatory and in module different from target",
                         sourceCtx.rawStatementArgument());
             }
@@ -112,7 +118,7 @@ public final class AugmentUtils {
             final boolean qNamesEqual = sourceIsDataNode && targetIsDataNode
                     && Objects.equals(sourceCtx.getStatementArgument(), subStatement.getStatementArgument());
 
-            InferenceException.throwIf(qNamesEqual, sourceCtx.getStatementSourceReference(),
+            InferenceException.throwIf(qNamesEqual, sourceCtx.getStatementSourceReference(), sourceId,
                     "An augment cannot add node named '%s' because this name is already used in target",
                     sourceCtx.rawStatementArgument());
         }

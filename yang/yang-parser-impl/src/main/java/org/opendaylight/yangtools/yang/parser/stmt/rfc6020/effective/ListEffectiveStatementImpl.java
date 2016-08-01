@@ -24,6 +24,8 @@ import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
@@ -66,7 +68,10 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
                 final QName keyQName = key.getLastComponent();
 
                 if (!possibleLeafQNamesForKey.contains(keyQName)) {
-                    throw new InferenceException(ctx.getStatementSourceReference(),
+                    final SourceIdentifier sourceId = RevisionSourceIdentifier.create(
+                            (String) ctx.getRoot().getStatementArgument(),
+                            ctx.getStatementArgument().getFormattedRevision());
+                    throw new InferenceException(ctx.getStatementSourceReference(), sourceId,
                         "Key '%s' misses node '%s' in list '%s'", keyEffectiveSubstatement.getDeclared().rawArgument(),
                         keyQName.getLocalName(), ctx.getStatementArgument());
                 }
