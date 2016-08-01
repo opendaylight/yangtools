@@ -39,19 +39,10 @@ import org.slf4j.LoggerFactory;
  * by no means final and subject to change as more functionality is centralized here.
  */
 @Beta
-public class XmlStreamUtils {
+public final class XmlStreamUtils {
     private static final Logger LOG = LoggerFactory.getLogger(XmlStreamUtils.class);
     private final XmlCodecProvider codecProvider;
     private final Optional<SchemaContext> schemaContext;
-
-    /**
-     * @deprecated Use {@link #create(XmlCodecProvider)} instead. This method will be hidden and the class
-     *             made final in a future release.
-     */
-    @Deprecated
-    protected XmlStreamUtils(final XmlCodecProvider codecProvider) {
-        this(codecProvider, null);
-    }
 
     private XmlStreamUtils(final XmlCodecProvider codecProvider, final SchemaContext schemaContext) {
         this.codecProvider = Preconditions.checkNotNull(codecProvider);
