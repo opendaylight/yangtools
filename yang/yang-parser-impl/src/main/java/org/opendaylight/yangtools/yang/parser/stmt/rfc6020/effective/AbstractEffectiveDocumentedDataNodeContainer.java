@@ -132,18 +132,7 @@ abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends Declare
     }
 
     @Override
-    public final DataSchemaNode getDataChildByName(final String name) {
-        for (DataSchemaNode node : childNodes.values()) {
-            if (node.getQName().getLocalName().equals(name)) {
-                return node;
-            }
-        }
-        return null;
-    }
-
-    @Override
     public Set<UsesNode> getUses() {
         return uses;
     }
-
 }

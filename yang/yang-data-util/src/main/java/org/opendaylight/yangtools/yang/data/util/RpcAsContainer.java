@@ -83,12 +83,8 @@ public final class RpcAsContainer implements ContainerSchemaNode {
 
     @Override
     public DataSchemaNode getDataChildByName(final QName name) {
-        return getDataChildByName(name.getLocalName());
-    }
-
-    @Override
-    public DataSchemaNode getDataChildByName(final String name) {
-        switch (name) {
+        // FIXME: check QNameModule
+        switch (name.getLocalName()) {
             case "input":
                 return delegate.getInput();
             case "output":

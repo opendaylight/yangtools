@@ -48,20 +48,7 @@ public interface DataNodeContainer {
     DataSchemaNode getDataChildByName(QName name);
 
     /**
-     * @param name
-     *            name of seeked child as String
-     * @return child node of this DataNodeContainer if child with given name is
-     *         present, null otherwise
-     *
-     * @deprecated This method disregards the namespace and thus leads to unpredictable results
-     *             when multiple children exist with the same localname, but with different namespaces.
-     */
-    @Deprecated
-    DataSchemaNode getDataChildByName(String name);
-
-    /**
      * @return Set of all uses nodes defined within this DataNodeContainer
      */
     Set<UsesNode> getUses();
-
 }

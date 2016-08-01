@@ -97,12 +97,6 @@ public class EffectiveAugmentationSchema implements AugmentationSchema {
     }
 
     @Override
-    public DataSchemaNode getDataChildByName(final String name) {
-        // Unused
-        throw new UnsupportedOperationException("Unable to retrieve child node by name");
-    }
-
-    @Override
     public Set<UsesNode> getUses() {
         return delegate.getUses();
     }
