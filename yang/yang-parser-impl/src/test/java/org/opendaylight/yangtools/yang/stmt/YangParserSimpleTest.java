@@ -12,6 +12,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -52,12 +53,12 @@ public class YangParserSimpleTest {
 
     @Test
     public void testParseAnyXml() {
-        Module testModule = TestUtils.findModule(modules, "simple-nodes");
-        AnyXmlSchemaNode data = (AnyXmlSchemaNode) testModule.getDataChildByName("data");
+        final Module testModule = TestUtils.findModule(modules, "simple-nodes");
+        final AnyXmlSchemaNode data = (AnyXmlSchemaNode) testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "data"));
         assertNotNull("'anyxml data not found'", data);
 
         // test SchemaNode args
-        QName qname = data.getQName();
+        final QName qname = data.getQName();
         assertEquals("data", qname.getLocalName());
         assertEquals(snNS, qname.getNamespace());
         assertEquals(snRev, qname.getRevision());
@@ -68,19 +69,19 @@ public class YangParserSimpleTest {
         // test DataSchemaNode args
         assertFalse(data.isAugmenting());
         assertFalse(data.isConfiguration());
-        ConstraintDefinition constraints = data.getConstraints();
+        final ConstraintDefinition constraints = data.getConstraints();
         assertEquals("class != 'wheel'", constraints.getWhenCondition().toString());
-        Set<MustDefinition> mustConstraints = constraints.getMustConstraints();
+        final Set<MustDefinition> mustConstraints = constraints.getMustConstraints();
         assertEquals(2, constraints.getMustConstraints().size());
 
-        String must1 = "ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)";
-        String errMsg1 = "An ethernet MTU must be 1500";
-        String must2 = "ifType != 'atm' or (ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)";
-        String errMsg2 = "An atm MTU must be  64 .. 17966";
+        final String must1 = "ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)";
+        final String errMsg1 = "An ethernet MTU must be 1500";
+        final String must2 = "ifType != 'atm' or (ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)";
+        final String errMsg2 = "An atm MTU must be  64 .. 17966";
 
         boolean found1 = false;
         boolean found2 = false;
-        for (MustDefinition must : mustConstraints) {
+        for (final MustDefinition must : mustConstraints) {
             if (must1.equals(must.toString())) {
                 found1 = true;
                 assertEquals(errMsg1, must.getErrorMessage());
@@ -102,13 +103,13 @@ public class YangParserSimpleTest {
 
     @Test
     public void testParseContainer() {
-        Module test = TestUtils.findModule(modules, "simple-nodes");
+        final Module test = TestUtils.findModule(modules, "simple-nodes");
 
-        ContainerSchemaNode nodes = (ContainerSchemaNode) test.getDataChildByName("nodes");
+        final ContainerSchemaNode nodes = (ContainerSchemaNode) test.getDataChildByName(QName.create(test.getQNameModule(), "nodes"));
         // test SchemaNode args
-        QName expectedQName = QName.create(snNS, snRev, "nodes");
+        final QName expectedQName = QName.create(snNS, snRev, "nodes");
         assertEquals(expectedQName, nodes.getQName());
-        SchemaPath expectedPath = TestUtils.createPath(true, snNS, snRev, snPref, "nodes");
+        final SchemaPath expectedPath = TestUtils.createPath(true, snNS, snRev, snPref, "nodes");
         assertEquals(expectedPath, nodes.getPath());
         assertEquals("nodes collection", nodes.getDescription());
         assertEquals("nodes ref", nodes.getReference());
@@ -119,18 +120,18 @@ public class YangParserSimpleTest {
         assertFalse(nodes.isConfiguration());
 
         // constraints
-        ConstraintDefinition constraints = nodes.getConstraints();
+        final ConstraintDefinition constraints = nodes.getConstraints();
         assertEquals("class != 'wheel'", constraints.getWhenCondition().toString());
-        Set<MustDefinition> mustConstraints = constraints.getMustConstraints();
+        final Set<MustDefinition> mustConstraints = constraints.getMustConstraints();
         assertEquals(2, constraints.getMustConstraints().size());
 
-        String must1 = "ifType != 'atm' or (ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)";
-        String errMsg1 = "An atm MTU must be  64 .. 17966";
-        String must2 = "ifId != 0";
+        final String must1 = "ifType != 'atm' or (ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)";
+        final String errMsg1 = "An atm MTU must be  64 .. 17966";
+        final String must2 = "ifId != 0";
 
         boolean found1 = false;
         boolean found2 = false;
-        for (MustDefinition must : mustConstraints) {
+        for (final MustDefinition must : mustConstraints) {
             if (must1.equals(must.toString())) {
                 found1 = true;
                 assertEquals(errMsg1, must.getErrorMessage());
@@ -151,12 +152,12 @@ public class YangParserSimpleTest {
         assertTrue(nodes.isPresenceContainer());
 
         // typedef
-        Set<TypeDefinition<?>> typedefs = nodes.getTypeDefinitions();
+        final Set<TypeDefinition<?>> typedefs = nodes.getTypeDefinitions();
         assertEquals(1, typedefs.size());
-        TypeDefinition<?> nodesType = typedefs.iterator().next();
-        QName typedefQName = QName.create(snNS, snRev, "nodes-type");
+        final TypeDefinition<?> nodesType = typedefs.iterator().next();
+        final QName typedefQName = QName.create(snNS, snRev, "nodes-type");
         assertEquals(typedefQName, nodesType.getQName());
-        SchemaPath nodesTypePath = TestUtils.createPath(true, snNS, snRev, snPref, "nodes", "nodes-type");
+        final SchemaPath nodesTypePath = TestUtils.createPath(true, snNS, snRev, snPref, "nodes", "nodes-type");
         assertEquals(nodesTypePath, nodesType.getPath());
         assertNull(nodesType.getDescription());
         assertNull(nodesType.getReference());
@@ -166,24 +167,24 @@ public class YangParserSimpleTest {
         // child nodes
         // total size = 8: defined 6, inserted by uses 2
         assertEquals(8, nodes.getChildNodes().size());
-        LeafListSchemaNode added = (LeafListSchemaNode)nodes.getDataChildByName("added");
+        final LeafListSchemaNode added = (LeafListSchemaNode)nodes.getDataChildByName(QName.create(test.getQNameModule(), "added"));
         assertEquals(createPath("nodes", "added"), added.getPath());
         assertEquals(createPath("mytype"), added.getType().getPath());
 
-        ListSchemaNode links = (ListSchemaNode) nodes.getDataChildByName("links");
+        final ListSchemaNode links = (ListSchemaNode) nodes.getDataChildByName(QName.create(test.getQNameModule(), "links"));
         assertFalse(links.isUserOrdered());
 
-        Set<GroupingDefinition> groupings = nodes.getGroupings();
+        final Set<GroupingDefinition> groupings = nodes.getGroupings();
         assertEquals(1, groupings.size());
-        GroupingDefinition nodeGroup = groupings.iterator().next();
-        QName groupQName = QName.create(snNS, snRev, "node-group");
+        final GroupingDefinition nodeGroup = groupings.iterator().next();
+        final QName groupQName = QName.create(snNS, snRev, "node-group");
         assertEquals(groupQName, nodeGroup.getQName());
-        SchemaPath nodeGroupPath = TestUtils.createPath(true, snNS, snRev, snPref, "nodes", "node-group");
+        final SchemaPath nodeGroupPath = TestUtils.createPath(true, snNS, snRev, snPref, "nodes", "node-group");
         assertEquals(nodeGroupPath, nodeGroup.getPath());
 
-        Set<UsesNode> uses = nodes.getUses();
+        final Set<UsesNode> uses = nodes.getUses();
         assertEquals(1, uses.size());
-        UsesNode use = uses.iterator().next();
+        final UsesNode use = uses.iterator().next();
         assertEquals(nodeGroupPath, use.getGroupingPath());
     }
 
@@ -195,12 +196,12 @@ public class YangParserSimpleTest {
     private SchemaPath createPath(final String... names) {
         try {
             rev = new SimpleDateFormat("yyyy-MM-dd").parse("2013-07-30");
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             e.printStackTrace();
         }
 
-        List<QName> path = new ArrayList<>();
-        for (String name : names) {
+        final List<QName> path = new ArrayList<>();
+        for (final String name : names) {
             path.add(QName.create(ns, rev, name));
         }
         return SchemaPath.create(path, true);

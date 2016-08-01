@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -30,34 +31,34 @@ public class RpcStmtTest {
 
     @Test
     public void rpcTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         StmtTestUtils.addSources(reactor, RPC_MODULE, IMPORTED_MODULE);
 
-        EffectiveSchemaContext result = reactor.buildEffective();
+        final EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        Module testModule = result.findModuleByName("baz", null);
+        final Module testModule = result.findModuleByName("baz", null);
         assertNotNull(testModule);
 
         assertEquals(1, testModule.getRpcs().size());
 
-        RpcDefinition rpc = testModule.getRpcs().iterator().next();
+        final RpcDefinition rpc = testModule.getRpcs().iterator().next();
         assertEquals("get-config", rpc.getQName().getLocalName());
 
-        ContainerSchemaNode input = rpc.getInput();
+        final ContainerSchemaNode input = rpc.getInput();
         assertNotNull(input);
         assertEquals(2, input.getChildNodes().size());
 
-        ContainerSchemaNode container = (ContainerSchemaNode) input.getDataChildByName("source");
+        final ContainerSchemaNode container = (ContainerSchemaNode) input.getDataChildByName(QName.create(testModule.getQNameModule(), "source"));
         assertNotNull(container);
-        AnyXmlSchemaNode anyXml = (AnyXmlSchemaNode) input.getDataChildByName("filter");
+        AnyXmlSchemaNode anyXml = (AnyXmlSchemaNode) input.getDataChildByName(QName.create(testModule.getQNameModule(), "filter"));
         assertNotNull(anyXml);
 
-        ContainerSchemaNode output = rpc.getOutput();
+        final ContainerSchemaNode output = rpc.getOutput();
         assertNotNull(output);
         assertEquals(1, output.getChildNodes().size());
 
-        anyXml = (AnyXmlSchemaNode) output.getDataChildByName("data");
+        anyXml = (AnyXmlSchemaNode) output.getDataChildByName(QName.create(testModule.getQNameModule(), "data"));
         assertNotNull(anyXml);
     }
 }

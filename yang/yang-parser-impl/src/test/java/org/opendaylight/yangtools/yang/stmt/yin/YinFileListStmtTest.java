@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.stmt.yin;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Iterator;
@@ -41,22 +42,24 @@ public class YinFileListStmtTest {
 
     @Test
     public void testListAndLeaves() throws URISyntaxException {
-        Module testModule = TestUtils.findModule(modules, "config");
+        final Module testModule = TestUtils.findModule(modules, "config");
         assertNotNull(testModule);
 
-        ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName("modules");
+        final ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "modules"));
         assertNotNull(container);
 
-        ListSchemaNode list = (ListSchemaNode) container.getDataChildByName("module");
+        final ListSchemaNode list = (ListSchemaNode) container.getDataChildByName(QName.create(testModule.getQNameModule(),
+                "module"));
         assertNotNull(list);
-        List<QName> keys = list.getKeyDefinition();
+        final List<QName> keys = list.getKeyDefinition();
         assertEquals(1, keys.size());
         assertEquals("name", keys.get(0).getLocalName());
 
-        Collection<DataSchemaNode> children = list.getChildNodes();
+        final Collection<DataSchemaNode> children = list.getChildNodes();
         assertEquals(4, children.size());
 
-        Iterator<DataSchemaNode> childrenIterator = children.iterator();
+        final Iterator<DataSchemaNode> childrenIterator = children.iterator();
         LeafSchemaNode leaf = (LeafSchemaNode) childrenIterator.next();
         assertEquals("name", leaf.getQName().getLocalName());
         assertEquals("Unique module instance name", leaf.getDescription());
