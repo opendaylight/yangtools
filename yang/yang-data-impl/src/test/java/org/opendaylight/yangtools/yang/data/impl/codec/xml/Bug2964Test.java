@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -59,7 +60,7 @@ public class Bug2964Test {
 
     @Before
     public void setUp() throws Exception {
-        File leafRefTestYang = new File(getClass().getResource("/leafref-test.yang").toURI());
+        final File leafRefTestYang = new File(getClass().getResource("/leafref-test.yang").toURI());
         schema = TestUtils.parseYangSources(leafRefTestYang);
     }
 
@@ -75,8 +76,10 @@ public class Bug2964Test {
         final Element identityLeafRefElement = (Element) document.getDocumentElement().getFirstChild().getNextSibling();
 
         final Module leafrefModule = schema.findModuleByNamespaceAndRevision(namespaceUri, null);
-        final ContainerSchemaNode cont2 = (ContainerSchemaNode) leafrefModule.getDataChildByName(CONT_2);
-        final DataSchemaNode identityLeafRefSchema = cont2.getDataChildByName(IDENTITY_LEAFREF);
+        final ContainerSchemaNode cont2 = (ContainerSchemaNode) leafrefModule.getDataChildByName(QName.create(
+                leafrefModule.getQNameModule(), CONT_2));
+        final DataSchemaNode identityLeafRefSchema = cont2.getDataChildByName(QName.create(
+                leafrefModule.getQNameModule(), IDENTITY_LEAFREF));
         final Object parsedValue = DomUtils.parseXmlValue(identityLeafRefElement, DomUtils.defaultValueCodecProvider(),
                 identityLeafRefSchema, ((LeafSchemaNode) identityLeafRefSchema).getType(), schema);
 

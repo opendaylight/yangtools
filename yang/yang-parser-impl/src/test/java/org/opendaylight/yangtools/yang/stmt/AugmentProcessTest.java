@@ -14,23 +14,23 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.net.URISyntaxException;
-
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import java.io.FileNotFoundException;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import com.google.common.collect.ImmutableList;
+import java.io.FileNotFoundException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.ModelStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
@@ -40,7 +40,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 
 public class AugmentProcessTest {
 
@@ -103,7 +102,7 @@ public class AugmentProcessTest {
     @Test
     public void multipleAugmentsAndMultipleModulesTest()
             throws SourceException, ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
         addSources(reactor, MULTIPLE_AUGMENT_ROOT, MULTIPLE_AUGMENT_IMPORTED,
                 MULTIPLE_AUGMENT_SUBMODULE);
@@ -115,7 +114,7 @@ public class AugmentProcessTest {
 
     @Test
     public void multipleAugmentTest() throws SourceException, ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
         addSources(reactor, MULTIPLE_AUGMENT);
 
@@ -127,7 +126,7 @@ public class AugmentProcessTest {
     @Test(expected=SomeModifiersUnresolvedException.class)
     public void multipleAugmentIncorrectPathTest() throws SourceException,
             ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
         addSources(reactor, MULTIPLE_AUGMENT_INCORRECT);
 
@@ -139,7 +138,7 @@ public class AugmentProcessTest {
     @Test(expected=SomeModifiersUnresolvedException.class)
     public void multipleAugmentIncorrectPathAndGrpTest()
             throws SourceException, ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
         addSources(reactor, MULTIPLE_AUGMENT_INCORRECT2);
         EffectiveSchemaContext result = null;
@@ -153,61 +152,61 @@ public class AugmentProcessTest {
     public void readAndParseYangFileTest() throws SourceException,
             ReactorException {
 
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
         addSources(reactor, AUGMENTED, ROOT);
 
         final EffectiveSchemaContext root = reactor.buildEffective();
         assertNotNull(root);
 
-        Module augmentedModule = root.findModuleByName("augmented", null);
+        final Module augmentedModule = root.findModuleByName("augmented", null);
         assertNotNull(augmentedModule);
 
-        ContainerSchemaNode augParent1Node = (ContainerSchemaNode) root
+        final ContainerSchemaNode augParent1Node = (ContainerSchemaNode) root
                 .getDataChildByName(augParent1);
-        ContainerSchemaNode augParent2Node = (ContainerSchemaNode) augParent1Node
+        final ContainerSchemaNode augParent2Node = (ContainerSchemaNode) augParent1Node
                 .getDataChildByName(augParent2);
-        ContainerSchemaNode targetContNode = (ContainerSchemaNode) augParent2Node
+        final ContainerSchemaNode targetContNode = (ContainerSchemaNode) augParent2Node
                 .getDataChildByName(contTarget);
         assertNotNull(targetContNode);
 
         assertNotNull(targetContNode.getChildNodes());
         assertEquals(3, targetContNode.getChildNodes().size());
 
-        ContainerSchemaNode contAdded1Node = (ContainerSchemaNode) targetContNode
+        final ContainerSchemaNode contAdded1Node = (ContainerSchemaNode) targetContNode
                 .getDataChildByName(contAdded1);
         assertNotNull(contAdded1Node);
-        ListSchemaNode list1Node = (ListSchemaNode) contAdded1Node
+        final ListSchemaNode list1Node = (ListSchemaNode) contAdded1Node
                 .getDataChildByName(list1);
         assertNotNull(list1Node);
 
-        ContainerSchemaNode contAdded2Node = (ContainerSchemaNode) targetContNode
+        final ContainerSchemaNode contAdded2Node = (ContainerSchemaNode) targetContNode
                 .getDataChildByName(contAdded2);
         assertNotNull(contAdded2Node);
-        AnyXmlSchemaNode axmlNode = (AnyXmlSchemaNode) contAdded2Node
+        final AnyXmlSchemaNode axmlNode = (AnyXmlSchemaNode) contAdded2Node
                 .getDataChildByName(axml);
         assertNotNull(axmlNode);
 
-        ContainerSchemaNode contGrpNode = (ContainerSchemaNode) targetContNode
+        final ContainerSchemaNode contGrpNode = (ContainerSchemaNode) targetContNode
                 .getDataChildByName(contGrp);
         assertNotNull(contGrpNode);
-        AnyXmlSchemaNode axmlGrpNode = (AnyXmlSchemaNode) contGrpNode
+        final AnyXmlSchemaNode axmlGrpNode = (AnyXmlSchemaNode) contGrpNode
                 .getDataChildByName(axmlGrp);
         assertNotNull(axmlGrpNode);
 
-        ContainerSchemaNode augCont1Node = (ContainerSchemaNode) root
+        final ContainerSchemaNode augCont1Node = (ContainerSchemaNode) root
                 .getDataChildByName(augCont1);
-        ContainerSchemaNode augCont2Node = (ContainerSchemaNode) augCont1Node
+        final ContainerSchemaNode augCont2Node = (ContainerSchemaNode) augCont1Node
                 .getDataChildByName(augCont2);
         assertNotNull(augCont2Node);
 
-        ContainerSchemaNode grpCont2Node = (ContainerSchemaNode) augCont2Node
+        final ContainerSchemaNode grpCont2Node = (ContainerSchemaNode) augCont2Node
                 .getDataChildByName(grpCont2);
-        ContainerSchemaNode grpCont22Node = (ContainerSchemaNode) grpCont2Node
+        final ContainerSchemaNode grpCont22Node = (ContainerSchemaNode) grpCont2Node
                 .getDataChildByName(grpCont22);
         assertNotNull(grpCont22Node);
 
-        ContainerSchemaNode grpAddNode = (ContainerSchemaNode) grpCont22Node
+        final ContainerSchemaNode grpAddNode = (ContainerSchemaNode) grpCont22Node
                 .getDataChildByName(grpAdd);
         assertNotNull(grpAddNode);
     }
@@ -227,27 +226,37 @@ public class AugmentProcessTest {
 
     private static void addSources(final CrossSourceStatementReactor.BuildAction reactor,
             final StatementStreamSource... sources) {
-        for (StatementStreamSource source : sources) {
+        for (final StatementStreamSource source : sources) {
             reactor.addSource(source);
         }
     }
 
     @Test
-    public void caseShortHandAugmentingTest() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void caseShortHandAugmentingTest() throws SourceException, FileNotFoundException, ReactorException,
+            URISyntaxException {
 
-        SchemaContext context = StmtTestUtils.parseYangSources("/choice-case-type-test-models");
+        final SchemaContext context = StmtTestUtils.parseYangSources("/choice-case-type-test-models");
 
         assertNotNull(context);
 
-        ContainerSchemaNode netconf =  (ContainerSchemaNode) context.getDataChildByName("netconf-state");
-        ContainerSchemaNode datastores =  (ContainerSchemaNode) netconf.getDataChildByName("datastores");
-        ListSchemaNode datastore =  (ListSchemaNode) datastores.getDataChildByName("datastore");
-        ContainerSchemaNode locks =  (ContainerSchemaNode) datastore.getDataChildByName("locks");
-        ChoiceSchemaNode lockType =  (ChoiceSchemaNode)locks.getDataChildByName("lock-type");
+        final String rev = "2013-07-01";
+        final String ns = "urn:ietf:params:xml:ns:yang:choice-monitoring";
+        final String nsAug = "urn:ietf:params:xml:ns:yang:augment-monitoring";
 
-        ChoiceCaseNode leafAugCase = lockType.getCaseNodeByName("leaf-aug-case");
+        final ContainerSchemaNode netconf = (ContainerSchemaNode) context.getDataChildByName(QName.create(ns, rev,
+                "netconf-state"));
+        final ContainerSchemaNode datastores = (ContainerSchemaNode) netconf.getDataChildByName(QName.create(ns, rev,
+                "datastores"));
+        final ListSchemaNode datastore = (ListSchemaNode) datastores.getDataChildByName(QName.create(ns, rev,
+                "datastore"));
+        final ContainerSchemaNode locks = (ContainerSchemaNode) datastore.getDataChildByName(QName.create(ns, rev,
+                "locks"));
+        final ChoiceSchemaNode lockType = (ChoiceSchemaNode) locks.getDataChildByName(QName
+                .create(ns, rev, "lock-type"));
+
+        final ChoiceCaseNode leafAugCase = lockType.getCaseNodeByName("leaf-aug-case");
         assertTrue(leafAugCase.isAugmenting());
-        DataSchemaNode leafAug = leafAugCase.getDataChildByName("leaf-aug-case");
+        final DataSchemaNode leafAug = leafAugCase.getDataChildByName(QName.create(nsAug, rev, "leaf-aug-case"));
         assertFalse(leafAug.isAugmenting());
     }
 

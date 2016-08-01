@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -46,32 +47,32 @@ public class GroupingAndUsesStmtTest {
 
     @Test
     public void groupingTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         StmtTestUtils.addSources(reactor, MODULE, GROUPING_MODULE);
 
-        EffectiveSchemaContext result = reactor.buildEffective();
+        final EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        Module testModule = result.findModuleByName("baz", null);
+        final Module testModule = result.findModuleByName("baz", null);
         assertNotNull(testModule);
 
-        Set<GroupingDefinition> groupings = testModule.getGroupings();
+        final Set<GroupingDefinition> groupings = testModule.getGroupings();
         assertEquals(1, groupings.size());
 
-        Iterator<GroupingDefinition> groupingsIterator = groupings.iterator();
-        GroupingDefinition grouping = groupingsIterator.next();
+        final Iterator<GroupingDefinition> groupingsIterator = groupings.iterator();
+        final GroupingDefinition grouping = groupingsIterator.next();
         assertEquals("target", grouping.getQName().getLocalName());
         assertEquals(5, grouping.getChildNodes().size());
 
-        AnyXmlSchemaNode anyXmlNode = (AnyXmlSchemaNode) grouping.getDataChildByName("data");
+        final AnyXmlSchemaNode anyXmlNode = (AnyXmlSchemaNode) grouping.getDataChildByName(QName.create(testModule.getQNameModule(), "data"));
         assertNotNull(anyXmlNode);
-        ChoiceSchemaNode choiceNode = (ChoiceSchemaNode) grouping.getDataChildByName("how");
+        final ChoiceSchemaNode choiceNode = (ChoiceSchemaNode) grouping.getDataChildByName(QName.create(testModule.getQNameModule(), "how"));
         assertNotNull(choiceNode);
-        LeafSchemaNode leafNode = (LeafSchemaNode) grouping.getDataChildByName("address");
+        final LeafSchemaNode leafNode = (LeafSchemaNode) grouping.getDataChildByName(QName.create(testModule.getQNameModule(), "address"));
         assertNotNull(leafNode);
-        ContainerSchemaNode containerNode = (ContainerSchemaNode) grouping.getDataChildByName("port");
+        final ContainerSchemaNode containerNode = (ContainerSchemaNode) grouping.getDataChildByName(QName.create(testModule.getQNameModule(), "port"));
         assertNotNull(containerNode);
-        ListSchemaNode listNode = (ListSchemaNode) grouping.getDataChildByName("addresses");
+        final ListSchemaNode listNode = (ListSchemaNode) grouping.getDataChildByName(QName.create(testModule.getQNameModule(), "addresses"));
         assertNotNull(listNode);
 
         assertEquals(1, grouping.getGroupings().size());
@@ -80,42 +81,42 @@ public class GroupingAndUsesStmtTest {
         assertEquals(1, grouping.getTypeDefinitions().size());
         assertEquals("group-type", grouping.getTypeDefinitions().iterator().next().getQName().getLocalName());
 
-        List<UnknownSchemaNode> unknownSchemaNodes = grouping.getUnknownSchemaNodes();
+        final List<UnknownSchemaNode> unknownSchemaNodes = grouping.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
-        UnknownSchemaNode extensionUse = unknownSchemaNodes.get(0);
+        final UnknownSchemaNode extensionUse = unknownSchemaNodes.get(0);
         assertEquals("opendaylight", extensionUse.getExtensionDefinition().getQName().getLocalName());
     }
 
     @Test
     public void usesAndRefinesTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         StmtTestUtils.addSources(reactor, MODULE, SUBMODULE, GROUPING_MODULE, USES_MODULE);
 
-        EffectiveSchemaContext result = reactor.buildEffective();
+        final EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        Module testModule = result.findModuleByName("foo", null);
+        final Module testModule = result.findModuleByName("foo", null);
         assertNotNull(testModule);
 
-        Set<UsesNode> usesNodes = testModule.getUses();
+        final Set<UsesNode> usesNodes = testModule.getUses();
         assertEquals(1, usesNodes.size());
 
         UsesNode usesNode = usesNodes.iterator().next();
         assertEquals("target", usesNode.getGroupingPath().getLastComponent().getLocalName());
         assertEquals(1, usesNode.getAugmentations().size());
 
-        ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName("peer");
+        ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "peer"));
         assertNotNull(container);
-        container = (ContainerSchemaNode) container.getDataChildByName("destination");
+        container = (ContainerSchemaNode) container.getDataChildByName(QName.create(testModule.getQNameModule(), "destination"));
         assertEquals(1, container.getUses().size());
 
         usesNode = container.getUses().iterator().next();
         assertEquals("target", usesNode.getGroupingPath().getLastComponent().getLocalName());
 
-        Map<SchemaPath, SchemaNode> refines = usesNode.getRefines();
+        final Map<SchemaPath, SchemaNode> refines = usesNode.getRefines();
         assertEquals(4, refines.size());
 
-        Iterator<SchemaPath> refinesKeysIterator = refines.keySet().iterator();
+        final Iterator<SchemaPath> refinesKeysIterator = refines.keySet().iterator();
         SchemaPath path = refinesKeysIterator.next();
         assertThat(path.getLastComponent().getLocalName(), anyOf(is("port"), is("address"), is("addresses"), is("id")));
         path = refinesKeysIterator.next();

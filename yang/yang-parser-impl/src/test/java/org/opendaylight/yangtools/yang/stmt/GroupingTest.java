@@ -12,6 +12,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
@@ -24,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -54,22 +56,24 @@ public class GroupingTest {
 
     @Test
     public void testRefine() {
-        Module testModule = TestUtils.findModule(modules, "foo");
-        ContainerSchemaNode peer = (ContainerSchemaNode) testModule.getDataChildByName("peer");
-        ContainerSchemaNode destination = (ContainerSchemaNode) peer.getDataChildByName("destination");
+        final Module testModule = TestUtils.findModule(modules, "foo");
+        final ContainerSchemaNode peer = (ContainerSchemaNode) testModule.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "peer"));
+        final ContainerSchemaNode destination = (ContainerSchemaNode) peer.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "destination"));
 
-        Set<UsesNode> usesNodes = destination.getUses();
+        final Set<UsesNode> usesNodes = destination.getUses();
         assertEquals(1, usesNodes.size());
-        UsesNode usesNode = usesNodes.iterator().next();
-        Map<SchemaPath, SchemaNode> refines = usesNode.getRefines();
+        final UsesNode usesNode = usesNodes.iterator().next();
+        final Map<SchemaPath, SchemaNode> refines = usesNode.getRefines();
         assertEquals(4, refines.size());
 
         LeafSchemaNode refineLeaf = null;
         ContainerSchemaNode refineContainer = null;
         ListSchemaNode refineList = null;
         LeafSchemaNode refineInnerLeaf = null;
-        for (Map.Entry<SchemaPath, SchemaNode> entry : refines.entrySet()) {
-            SchemaNode value = entry.getValue();
+        for (final Map.Entry<SchemaPath, SchemaNode> entry : refines.entrySet()) {
+            final SchemaNode value = entry.getValue();
             if ("address".equals(value.getQName().getLocalName())) {
                 refineLeaf = (LeafSchemaNode) destination.getDataChildByName(value.getQName());
             } else if ("port".equals(value.getQName().getLocalName())) {
@@ -80,8 +84,8 @@ public class GroupingTest {
         }
 
         assertNotNull(refineList);
-        for (Map.Entry<SchemaPath, SchemaNode> entry : refines.entrySet()) {
-            SchemaNode value = entry.getValue();
+        for (final Map.Entry<SchemaPath, SchemaNode> entry : refines.entrySet()) {
+            final SchemaNode value = entry.getValue();
             if ("id".equals(value.getQName().getLocalName())) {
                 refineInnerLeaf = (LeafSchemaNode) refineList.getDataChildByName(value.getQName());
             }
@@ -93,15 +97,15 @@ public class GroupingTest {
         assertEquals("address reference added by refine", refineLeaf.getReference());
         assertFalse(refineLeaf.isConfiguration());
         assertFalse(refineLeaf.getConstraints().isMandatory());
-        Set<MustDefinition> leafMustConstraints = refineLeaf.getConstraints().getMustConstraints();
+        final Set<MustDefinition> leafMustConstraints = refineLeaf.getConstraints().getMustConstraints();
         assertEquals(1, leafMustConstraints.size());
-        MustDefinition leafMust = leafMustConstraints.iterator().next();
+        final MustDefinition leafMust = leafMustConstraints.iterator().next();
         assertEquals("ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)", leafMust.toString());
         assertEquals(1, refineLeaf.getUnknownSchemaNodes().size());
 
         // container port
         assertNotNull(refineContainer);
-        Set<MustDefinition> mustConstraints = refineContainer.getConstraints().getMustConstraints();
+        final Set<MustDefinition> mustConstraints = refineContainer.getConstraints().getMustConstraints();
         assertTrue(mustConstraints.isEmpty());
         assertEquals("description of port defined by refine", refineContainer.getDescription());
         assertEquals("port reference added by refine", refineContainer.getReference());
@@ -122,11 +126,11 @@ public class GroupingTest {
 
     @Test
     public void testGrouping() {
-        Module testModule = TestUtils.findModule(modules, "baz");
-        Set<GroupingDefinition> groupings = testModule.getGroupings();
+        final Module testModule = TestUtils.findModule(modules, "baz");
+        final Set<GroupingDefinition> groupings = testModule.getGroupings();
         assertEquals(1, groupings.size());
-        GroupingDefinition grouping = groupings.iterator().next();
-        Collection<DataSchemaNode> children = grouping.getChildNodes();
+        final GroupingDefinition grouping = groupings.iterator().next();
+        final Collection<DataSchemaNode> children = grouping.getChildNodes();
         assertEquals(5, children.size());
     }
 
@@ -135,47 +139,54 @@ public class GroupingTest {
         // suffix _u = added by uses
         // suffix _g = defined in grouping
 
-        Module testModule = TestUtils.findModule(modules, "baz");
+        final Module baz = TestUtils.findModule(modules, "baz");
 
         // get grouping
-        Set<GroupingDefinition> groupings = testModule.getGroupings();
+        final Set<GroupingDefinition> groupings = baz.getGroupings();
         assertEquals(1, groupings.size());
-        GroupingDefinition grouping = groupings.iterator().next();
+        final GroupingDefinition grouping = groupings.iterator().next();
 
-        testModule = TestUtils.findModule(modules, "foo");
+        final Module foo = TestUtils.findModule(modules, "foo");
 
         // get node containing uses
-        ContainerSchemaNode peer = (ContainerSchemaNode) testModule.getDataChildByName("peer");
-        ContainerSchemaNode destination = (ContainerSchemaNode) peer.getDataChildByName("destination");
+        final ContainerSchemaNode peer = (ContainerSchemaNode) foo.getDataChildByName(QName.create(
+                foo.getQNameModule(), "peer"));
+        final ContainerSchemaNode destination = (ContainerSchemaNode) peer.getDataChildByName(QName.create(
+                foo.getQNameModule(), "destination"));
 
         // check uses
-        Set<UsesNode> uses = destination.getUses();
+        final Set<UsesNode> uses = destination.getUses();
         assertEquals(1, uses.size());
 
         // check uses process
-        AnyXmlSchemaNode data_u = (AnyXmlSchemaNode) destination.getDataChildByName("data");
+        final AnyXmlSchemaNode data_u = (AnyXmlSchemaNode) destination.getDataChildByName(QName.create(
+                foo.getQNameModule(), "data"));
         assertNotNull(data_u);
         assertTrue(data_u.isAddedByUses());
 
-        AnyXmlSchemaNode data_g = (AnyXmlSchemaNode) grouping.getDataChildByName("data");
+        final AnyXmlSchemaNode data_g = (AnyXmlSchemaNode) grouping.getDataChildByName(QName.create(
+                baz.getQNameModule(), "data"));
         assertNotNull(data_g);
         assertFalse(data_g.isAddedByUses());
         assertFalse(data_u.equals(data_g));
         assertEquals(data_g, SchemaNodeUtils.getRootOriginalIfPossible(data_u));
 
-        ChoiceSchemaNode how_u = (ChoiceSchemaNode) destination.getDataChildByName("how");
+        final ChoiceSchemaNode how_u = (ChoiceSchemaNode) destination.getDataChildByName(QName.create(
+                foo.getQNameModule(), "how"));
         assertNotNull(how_u);
         TestUtils.checkIsAddedByUses(how_u, true);
         assertEquals(2, how_u.getCases().size());
 
-        ChoiceSchemaNode how_g = (ChoiceSchemaNode) grouping.getDataChildByName("how");
+        final ChoiceSchemaNode how_g = (ChoiceSchemaNode) grouping.getDataChildByName(QName.create(
+                baz.getQNameModule(), "how"));
         assertNotNull(how_g);
         TestUtils.checkIsAddedByUses(how_g, false);
         assertEquals(2, how_g.getCases().size());
         assertFalse(how_u.equals(how_g));
         assertEquals(how_g, SchemaNodeUtils.getRootOriginalIfPossible(how_u));
 
-        LeafSchemaNode address_u = (LeafSchemaNode) destination.getDataChildByName("address");
+        final LeafSchemaNode address_u = (LeafSchemaNode) destination.getDataChildByName(QName.create(
+                foo.getQNameModule(), "address"));
         assertNotNull(address_u);
         assertEquals("1.2.3.4", address_u.getDefault());
         assertEquals("IP address of target node", address_u.getDescription());
@@ -184,7 +195,8 @@ public class GroupingTest {
         assertTrue(address_u.isAddedByUses());
         assertFalse(address_u.getConstraints().isMandatory());
 
-        LeafSchemaNode address_g = (LeafSchemaNode) grouping.getDataChildByName("address");
+        final LeafSchemaNode address_g = (LeafSchemaNode) grouping.getDataChildByName(QName.create(
+                baz.getQNameModule(), "address"));
         assertNotNull(address_g);
         assertFalse(address_g.isAddedByUses());
         assertNull(address_g.getDefault());
@@ -195,47 +207,51 @@ public class GroupingTest {
         assertTrue(address_g.getConstraints().isMandatory());
         assertEquals(address_g, SchemaNodeUtils.getRootOriginalIfPossible(address_u));
 
-        ContainerSchemaNode port_u = (ContainerSchemaNode) destination.getDataChildByName("port");
+        final ContainerSchemaNode port_u = (ContainerSchemaNode) destination.getDataChildByName(QName.create(
+                foo.getQNameModule(), "port"));
         assertNotNull(port_u);
         TestUtils.checkIsAddedByUses(port_u, true);
 
-        ContainerSchemaNode port_g = (ContainerSchemaNode) grouping.getDataChildByName("port");
+        final ContainerSchemaNode port_g = (ContainerSchemaNode) grouping.getDataChildByName(QName.create(
+                baz.getQNameModule(), "port"));
         assertNotNull(port_g);
         TestUtils.checkIsAddedByUses(port_g, false);
         assertFalse(port_u.equals(port_g));
         assertEquals(port_g, SchemaNodeUtils.getRootOriginalIfPossible(port_u));
 
-        ListSchemaNode addresses_u = (ListSchemaNode) destination.getDataChildByName("addresses");
+        final ListSchemaNode addresses_u = (ListSchemaNode) destination.getDataChildByName(QName.create(
+                foo.getQNameModule(), "addresses"));
         assertNotNull(addresses_u);
         TestUtils.checkIsAddedByUses(addresses_u, true);
 
-        ListSchemaNode addresses_g = (ListSchemaNode) grouping.getDataChildByName("addresses");
+        final ListSchemaNode addresses_g = (ListSchemaNode) grouping.getDataChildByName(QName.create(
+                baz.getQNameModule(), "addresses"));
         assertNotNull(addresses_g);
         TestUtils.checkIsAddedByUses(addresses_g, false);
         assertFalse(addresses_u.equals(addresses_g));
         assertEquals(addresses_g, SchemaNodeUtils.getRootOriginalIfPossible(addresses_u));
 
         // grouping defined by 'uses'
-        Set<GroupingDefinition> groupings_u = destination.getGroupings();
+        final Set<GroupingDefinition> groupings_u = destination.getGroupings();
         assertEquals(1, groupings_u.size());
-        GroupingDefinition grouping_u = groupings_u.iterator().next();
+        final GroupingDefinition grouping_u = groupings_u.iterator().next();
         TestUtils.checkIsAddedByUses(grouping_u, true);
 
         // grouping defined in 'grouping' node
-        Set<GroupingDefinition> groupings_g = grouping.getGroupings();
+        final Set<GroupingDefinition> groupings_g = grouping.getGroupings();
         assertEquals(1, groupings_g.size());
-        GroupingDefinition grouping_g = groupings_g.iterator().next();
+        final GroupingDefinition grouping_g = groupings_g.iterator().next();
         TestUtils.checkIsAddedByUses(grouping_g, false);
         assertFalse(grouping_u.equals(grouping_g));
 
-        List<UnknownSchemaNode> nodes_u = destination.getUnknownSchemaNodes();
+        final List<UnknownSchemaNode> nodes_u = destination.getUnknownSchemaNodes();
         assertEquals(1, nodes_u.size());
-        UnknownSchemaNode node_u = nodes_u.get(0);
+        final UnknownSchemaNode node_u = nodes_u.get(0);
         assertTrue(node_u.isAddedByUses());
 
-        List<UnknownSchemaNode> nodes_g = grouping.getUnknownSchemaNodes();
+        final List<UnknownSchemaNode> nodes_g = grouping.getUnknownSchemaNodes();
         assertEquals(1, nodes_g.size());
-        UnknownSchemaNode node_g = nodes_g.get(0);
+        final UnknownSchemaNode node_g = nodes_g.get(0);
         assertFalse(node_g.isAddedByUses());
         assertFalse(node_u.equals(node_g));
     }
@@ -245,51 +261,58 @@ public class GroupingTest {
         // suffix _u = added by uses
         // suffix _g = defined in grouping
 
-        Module testModule = TestUtils.findModule(modules, "baz");
+        final Module testModule = TestUtils.findModule(modules, "baz");
 
         // get grouping
-        Set<GroupingDefinition> groupings = testModule.getGroupings();
+        final Set<GroupingDefinition> groupings = testModule.getGroupings();
         assertEquals(1, groupings.size());
-        GroupingDefinition grouping = groupings.iterator().next();
+        final GroupingDefinition grouping = groupings.iterator().next();
 
         // get node containing uses
-        Module foo = TestUtils.findModule(modules, "foo");
+        final Module foo = TestUtils.findModule(modules, "foo");
 
         // check uses
-        Set<UsesNode> uses = foo.getUses();
+        final Set<UsesNode> uses = foo.getUses();
         assertEquals(1, uses.size());
 
         // check uses process
-        AnyXmlSchemaNode data_u = (AnyXmlSchemaNode) foo.getDataChildByName("data");
+        final AnyXmlSchemaNode data_u = (AnyXmlSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
+                "data"));
         assertNotNull(data_u);
         assertTrue(data_u.isAddedByUses());
 
-        AnyXmlSchemaNode data_g = (AnyXmlSchemaNode) grouping.getDataChildByName("data");
+        final AnyXmlSchemaNode data_g = (AnyXmlSchemaNode) grouping.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "data"));
         assertNotNull(data_g);
         assertFalse(data_g.isAddedByUses());
         assertFalse(data_u.equals(data_g));
         assertEquals(data_g, SchemaNodeUtils.getRootOriginalIfPossible(data_u));
 
-        ChoiceSchemaNode how_u = (ChoiceSchemaNode) foo.getDataChildByName("how");
+        final ChoiceSchemaNode how_u = (ChoiceSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
+                "how"));
         assertNotNull(how_u);
         TestUtils.checkIsAddedByUses(how_u, true);
         assertFalse(how_u.isAugmenting());
-        Set<ChoiceCaseNode> cases_u = how_u.getCases();
+        final Set<ChoiceCaseNode> cases_u = how_u.getCases();
         assertEquals(2, cases_u.size());
-        ChoiceCaseNode interval = how_u.getCaseNodeByName("interval");
+        final ChoiceCaseNode interval = how_u.getCaseNodeByName("interval");
         assertFalse(interval.isAugmenting());
-        LeafSchemaNode name = (LeafSchemaNode) interval.getDataChildByName("name");
+        final LeafSchemaNode name = (LeafSchemaNode) interval.getDataChildByName(QName.create(foo.getQNameModule(),
+                "name"));
         assertTrue(name.isAugmenting());
-        LeafSchemaNode intervalLeaf = (LeafSchemaNode) interval.getDataChildByName("interval");
+        final LeafSchemaNode intervalLeaf = (LeafSchemaNode) interval.getDataChildByName(QName.create(
+                foo.getQNameModule(), "interval"));
         assertFalse(intervalLeaf.isAugmenting());
 
-        ChoiceSchemaNode how_g = (ChoiceSchemaNode) grouping.getDataChildByName("how");
+        final ChoiceSchemaNode how_g = (ChoiceSchemaNode) grouping.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "how"));
         assertNotNull(how_g);
         TestUtils.checkIsAddedByUses(how_g, false);
         assertFalse(how_u.equals(how_g));
         assertEquals(how_g, SchemaNodeUtils.getRootOriginalIfPossible(how_u));
 
-        LeafSchemaNode address_u = (LeafSchemaNode) foo.getDataChildByName("address");
+        final LeafSchemaNode address_u = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
+                "address"));
         assertNotNull(address_u);
         assertNull(address_u.getDefault());
         assertEquals("Target IP address", address_u.getDescription());
@@ -297,7 +320,8 @@ public class GroupingTest {
         assertTrue(address_u.isConfiguration());
         assertTrue(address_u.isAddedByUses());
 
-        LeafSchemaNode address_g = (LeafSchemaNode) grouping.getDataChildByName("address");
+        final LeafSchemaNode address_g = (LeafSchemaNode) grouping.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "address"));
         assertNotNull(address_g);
         assertFalse(address_g.isAddedByUses());
         assertNull(address_g.getDefault());
@@ -307,58 +331,62 @@ public class GroupingTest {
         assertFalse(address_u.equals(address_g));
         assertEquals(address_g, SchemaNodeUtils.getRootOriginalIfPossible(address_u));
 
-        ContainerSchemaNode port_u = (ContainerSchemaNode) foo.getDataChildByName("port");
+        final ContainerSchemaNode port_u = (ContainerSchemaNode) foo.getDataChildByName(QName.create(
+                foo.getQNameModule(), "port"));
         assertNotNull(port_u);
         TestUtils.checkIsAddedByUses(port_u, true);
 
-        ContainerSchemaNode port_g = (ContainerSchemaNode) grouping.getDataChildByName("port");
+        final ContainerSchemaNode port_g = (ContainerSchemaNode) grouping.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "port"));
         assertNotNull(port_g);
         TestUtils.checkIsAddedByUses(port_g, false);
         assertFalse(port_u.equals(port_g));
         assertEquals(port_g, SchemaNodeUtils.getRootOriginalIfPossible(port_u));
 
-        ListSchemaNode addresses_u = (ListSchemaNode) foo.getDataChildByName("addresses");
+        final ListSchemaNode addresses_u = (ListSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
+                "addresses"));
         assertNotNull(addresses_u);
         TestUtils.checkIsAddedByUses(addresses_u, true);
 
-        ListSchemaNode addresses_g = (ListSchemaNode) grouping.getDataChildByName("addresses");
+        final ListSchemaNode addresses_g = (ListSchemaNode) grouping.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "addresses"));
         assertNotNull(addresses_g);
         TestUtils.checkIsAddedByUses(addresses_g, false);
         assertFalse(addresses_u.equals(addresses_g));
         assertEquals(addresses_g, SchemaNodeUtils.getRootOriginalIfPossible(addresses_u));
 
         // grouping defined by 'uses'
-        Set<GroupingDefinition> groupings_u = foo.getGroupings();
+        final Set<GroupingDefinition> groupings_u = foo.getGroupings();
         assertEquals(1, groupings_u.size());
-        GroupingDefinition grouping_u = groupings_u.iterator().next();
+        final GroupingDefinition grouping_u = groupings_u.iterator().next();
         TestUtils.checkIsAddedByUses(grouping_u, true);
 
         // grouping defined in 'grouping' node
-        Set<GroupingDefinition> groupings_g = grouping.getGroupings();
+        final Set<GroupingDefinition> groupings_g = grouping.getGroupings();
         assertEquals(1, groupings_g.size());
-        GroupingDefinition grouping_g = groupings_g.iterator().next();
+        final GroupingDefinition grouping_g = groupings_g.iterator().next();
         TestUtils.checkIsAddedByUses(grouping_g, false);
         assertFalse(grouping_u.equals(grouping_g));
 
-        List<UnknownSchemaNode> nodes_u = foo.getUnknownSchemaNodes();
+        final List<UnknownSchemaNode> nodes_u = foo.getUnknownSchemaNodes();
         assertEquals(1, nodes_u.size());
-        UnknownSchemaNode node_u = nodes_u.get(0);
+        final UnknownSchemaNode node_u = nodes_u.get(0);
         assertTrue(node_u.isAddedByUses());
 
-        List<UnknownSchemaNode> nodes_g = grouping.getUnknownSchemaNodes();
+        final List<UnknownSchemaNode> nodes_g = grouping.getUnknownSchemaNodes();
         assertEquals(1, nodes_g.size());
-        UnknownSchemaNode node_g = nodes_g.get(0);
+        final UnknownSchemaNode node_g = nodes_g.get(0);
         assertFalse(node_g.isAddedByUses());
         assertFalse(node_u.equals(node_g));
 
-        UsesNode un = uses.iterator().next();
-        Set<AugmentationSchema> usesAugments = un.getAugmentations();
+        final UsesNode un = uses.iterator().next();
+        final Set<AugmentationSchema> usesAugments = un.getAugmentations();
         assertEquals(1, usesAugments.size());
-        AugmentationSchema augment = usesAugments.iterator().next();
+        final AugmentationSchema augment = usesAugments.iterator().next();
         assertEquals("inner augment", augment.getDescription());
-        Collection<DataSchemaNode> children = augment.getChildNodes();
+        final Collection<DataSchemaNode> children = augment.getChildNodes();
         assertEquals(1, children.size());
-        DataSchemaNode leaf = children.iterator().next();
+        final DataSchemaNode leaf = children.iterator().next();
         assertTrue(leaf instanceof LeafSchemaNode);
         assertEquals("name", leaf.getQName().getLocalName());
     }
@@ -369,8 +397,8 @@ public class GroupingTest {
                 "/grouping-test/cascade-uses.yang")));
         assertEquals(1, modules.size());
 
-        Module testModule = TestUtils.findModule(modules, "cascade-uses");
-        Set<GroupingDefinition> groupings = testModule.getGroupings();
+        final Module testModule = TestUtils.findModule(modules, "cascade-uses");
+        final Set<GroupingDefinition> groupings = testModule.getGroupings();
 
         GroupingDefinition gu = null;
         GroupingDefinition gv = null;
@@ -378,8 +406,8 @@ public class GroupingTest {
         GroupingDefinition gy = null;
         GroupingDefinition gz = null;
         GroupingDefinition gzz = null;
-        for (GroupingDefinition gd : groupings) {
-            String name = gd.getQName().getLocalName();
+        for (final GroupingDefinition gd : groupings) {
+            final String name = gd.getQName().getLocalName();
             switch (name) {
             case "grouping-U":
                 gu = gd;
@@ -408,21 +436,22 @@ public class GroupingTest {
         assertNotNull(gz);
         assertNotNull(gzz);
 
-        URI expectedNS = URI.create("urn:grouping:cascade-uses");
-        Date expectedRev = new SimpleDateFormat("yyyy-MM-dd").parse("2013-07-18");
-        String expectedPref = "cu";
+        final URI expectedNS = URI.create("urn:grouping:cascade-uses");
+        final Date expectedRev = new SimpleDateFormat("yyyy-MM-dd").parse("2013-07-18");
+        final String expectedPref = "cu";
         SchemaPath expectedPath;
 
         // grouping-U
         Collection<DataSchemaNode> childNodes = gu.getChildNodes();
         assertEquals(7, childNodes.size());
 
-        LeafSchemaNode leafGroupingU = (LeafSchemaNode) gu.getDataChildByName("leaf-grouping-U");
+        final LeafSchemaNode leafGroupingU = (LeafSchemaNode) gu.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "leaf-grouping-U"));
         assertNotNull(leafGroupingU);
         assertFalse(leafGroupingU.isAddedByUses());
         assertFalse(SchemaNodeUtils.getOriginalIfPossible(leafGroupingU).isPresent());
 
-        for (DataSchemaNode childNode : childNodes) {
+        for (final DataSchemaNode childNode : childNodes) {
             if (!(childNode.getQName().equals(leafGroupingU.getQName()))) {
                 TestUtils.checkIsAddedByUses(childNode, true);
             }
@@ -433,7 +462,7 @@ public class GroupingTest {
         assertEquals(4, childNodes.size());
         LeafSchemaNode leafGroupingV = null;
         ContainerSchemaNode containerGroupingV = null;
-        for (DataSchemaNode childNode : childNodes) {
+        for (final DataSchemaNode childNode : childNodes) {
             if ("leaf-grouping-V".equals(childNode.getQName().getLocalName())) {
                 leafGroupingV = (LeafSchemaNode) childNode;
             } else if ("container-grouping-V".equals(childNode.getQName().getLocalName())) {
@@ -453,18 +482,20 @@ public class GroupingTest {
         assertEquals(expectedPath, containerGroupingV.getPath());
         childNodes = containerGroupingV.getChildNodes();
         assertEquals(2, childNodes.size());
-        for (DataSchemaNode childNode : childNodes) {
+        for (final DataSchemaNode childNode : childNodes) {
             TestUtils.checkIsAddedByUses(childNode, true);
         }
 
         // grouping-V/container-grouping-V/leaf-grouping-X
-        LeafSchemaNode leafXinContainerV = (LeafSchemaNode) containerGroupingV.getDataChildByName("leaf-grouping-X");
+        final LeafSchemaNode leafXinContainerV = (LeafSchemaNode) containerGroupingV.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "leaf-grouping-X"));
         assertNotNull(leafXinContainerV);
         expectedPath = TestUtils.createPath(true, expectedNS, expectedRev, expectedPref, "grouping-V",
                 "container-grouping-V", "leaf-grouping-X");
         assertEquals(expectedPath, leafXinContainerV.getPath());
         // grouping-V/container-grouping-V/leaf-grouping-Y
-        LeafSchemaNode leafYinContainerV = (LeafSchemaNode) containerGroupingV.getDataChildByName("leaf-grouping-Y");
+        final LeafSchemaNode leafYinContainerV = (LeafSchemaNode) containerGroupingV.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "leaf-grouping-Y"));
         assertNotNull(leafYinContainerV);
         expectedPath = TestUtils.createPath(true, expectedNS, expectedRev, expectedPref, "grouping-V",
                 "container-grouping-V", "leaf-grouping-Y");
@@ -475,7 +506,8 @@ public class GroupingTest {
         assertEquals(2, childNodes.size());
 
         // grouping-X/leaf-grouping-X
-        LeafSchemaNode leafXinGX = (LeafSchemaNode) gx.getDataChildByName("leaf-grouping-X");
+        final LeafSchemaNode leafXinGX = (LeafSchemaNode) gx.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "leaf-grouping-X"));
         assertNotNull(leafXinGX);
         assertFalse(leafXinGX.isAddedByUses());
         expectedPath = TestUtils.createPath(true, expectedNS, expectedRev, expectedPref, "grouping-X",
@@ -483,7 +515,8 @@ public class GroupingTest {
         assertEquals(expectedPath, leafXinGX.getPath());
 
         // grouping-X/leaf-grouping-Y
-        LeafSchemaNode leafYinGX = (LeafSchemaNode) gx.getDataChildByName("leaf-grouping-Y");
+        final LeafSchemaNode leafYinGX = (LeafSchemaNode) gx.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "leaf-grouping-Y"));
         assertNotNull(leafYinGX);
         assertTrue(leafYinGX.isAddedByUses());
         expectedPath = TestUtils.createPath(true, expectedNS, expectedRev, expectedPref, "grouping-X",
@@ -495,7 +528,8 @@ public class GroupingTest {
         assertEquals(1, childNodes.size());
 
         // grouping-Y/leaf-grouping-Y
-        LeafSchemaNode leafYinGY = (LeafSchemaNode) gy.getDataChildByName("leaf-grouping-Y");
+        final LeafSchemaNode leafYinGY = (LeafSchemaNode) gy.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "leaf-grouping-Y"));
         assertNotNull(leafYinGY);
         assertFalse(leafYinGY.isAddedByUses());
         expectedPath = TestUtils.createPath(true, expectedNS, expectedRev, expectedPref, "grouping-Y",
@@ -507,7 +541,8 @@ public class GroupingTest {
         assertEquals(1, childNodes.size());
 
         // grouping-Z/leaf-grouping-Z
-        LeafSchemaNode leafZinGZ = (LeafSchemaNode) gz.getDataChildByName("leaf-grouping-Z");
+        final LeafSchemaNode leafZinGZ = (LeafSchemaNode) gz.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "leaf-grouping-Z"));
         assertNotNull(leafZinGZ);
         assertFalse(leafZinGZ.isAddedByUses());
         expectedPath = TestUtils.createPath(true, expectedNS, expectedRev, expectedPref, "grouping-Z",
@@ -519,7 +554,8 @@ public class GroupingTest {
         assertEquals(1, childNodes.size());
 
         // grouping-ZZ/leaf-grouping-ZZ
-        LeafSchemaNode leafZZinGZZ = (LeafSchemaNode) gzz.getDataChildByName("leaf-grouping-ZZ");
+        final LeafSchemaNode leafZZinGZZ = (LeafSchemaNode) gzz.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "leaf-grouping-ZZ"));
         assertNotNull(leafZZinGZZ);
         assertFalse(leafZZinGZZ.isAddedByUses());
         expectedPath = TestUtils.createPath(true, expectedNS, expectedRev, expectedPref, "grouping-ZZ",
@@ -527,42 +563,60 @@ public class GroupingTest {
         assertEquals(expectedPath, leafZZinGZZ.getPath());
 
         // TEST getOriginal from grouping-U
-        assertEquals(gv.getDataChildByName("leaf-grouping-V"),
-                SchemaNodeUtils.getRootOriginalIfPossible(gu.getDataChildByName("leaf-grouping-V")));
-        containerGroupingV = (ContainerSchemaNode) gu.getDataChildByName("container-grouping-V");
-        assertEquals(gv.getDataChildByName("container-grouping-V"),
+        assertEquals(
+                gv.getDataChildByName(QName.create(testModule.getQNameModule(), "leaf-grouping-V")),
+                SchemaNodeUtils.getRootOriginalIfPossible(gu.getDataChildByName(QName.create(
+                        testModule.getQNameModule(), "leaf-grouping-V"))));
+        containerGroupingV = (ContainerSchemaNode) gu.getDataChildByName(QName.create(testModule.getQNameModule(),
+                "container-grouping-V"));
+        assertEquals(gv.getDataChildByName(QName.create(testModule.getQNameModule(), "container-grouping-V")),
                 SchemaNodeUtils.getRootOriginalIfPossible(containerGroupingV));
-        assertEquals(gx.getDataChildByName("leaf-grouping-X"),
-                SchemaNodeUtils.getRootOriginalIfPossible(containerGroupingV.getDataChildByName("leaf-grouping-X")));
-        assertEquals(gy.getDataChildByName("leaf-grouping-Y"),
-                SchemaNodeUtils.getRootOriginalIfPossible(containerGroupingV.getDataChildByName("leaf-grouping-Y")));
+        assertEquals(
+                gx.getDataChildByName(QName.create(testModule.getQNameModule(), "leaf-grouping-X")),
+                SchemaNodeUtils.getRootOriginalIfPossible(containerGroupingV.getDataChildByName(QName.create(
+                        testModule.getQNameModule(), "leaf-grouping-X"))));
+        assertEquals(
+                gy.getDataChildByName(QName.create(testModule.getQNameModule(), "leaf-grouping-Y")),
+                SchemaNodeUtils.getRootOriginalIfPossible(containerGroupingV.getDataChildByName(QName.create(
+                        testModule.getQNameModule(), "leaf-grouping-Y"))));
 
-        assertEquals(gz.getDataChildByName("leaf-grouping-Z"),
-                SchemaNodeUtils.getRootOriginalIfPossible(gu.getDataChildByName("leaf-grouping-Z")));
-        assertEquals(gzz.getDataChildByName("leaf-grouping-ZZ"),
-                SchemaNodeUtils.getRootOriginalIfPossible(gu.getDataChildByName("leaf-grouping-ZZ")));
+        assertEquals(
+                gz.getDataChildByName(QName.create(testModule.getQNameModule(), "leaf-grouping-Z")),
+                SchemaNodeUtils.getRootOriginalIfPossible(gu.getDataChildByName(QName.create(
+                        testModule.getQNameModule(), "leaf-grouping-Z"))));
+        assertEquals(
+                gzz.getDataChildByName(QName.create(testModule.getQNameModule(), "leaf-grouping-ZZ")),
+                SchemaNodeUtils.getRootOriginalIfPossible(gu.getDataChildByName(QName.create(
+                        testModule.getQNameModule(), "leaf-grouping-ZZ"))));
 
         // TEST getOriginal from grouping-V
-        assertEquals(gz.getDataChildByName("leaf-grouping-Z"),
-                SchemaNodeUtils.getRootOriginalIfPossible(gv.getDataChildByName("leaf-grouping-Z")));
-        assertEquals(gzz.getDataChildByName("leaf-grouping-ZZ"),
-                SchemaNodeUtils.getRootOriginalIfPossible(gv.getDataChildByName("leaf-grouping-ZZ")));
+        assertEquals(
+                gz.getDataChildByName(QName.create(testModule.getQNameModule(), "leaf-grouping-Z")),
+                SchemaNodeUtils.getRootOriginalIfPossible(gv.getDataChildByName(QName.create(
+                        testModule.getQNameModule(), "leaf-grouping-Z"))));
+        assertEquals(
+                gzz.getDataChildByName(QName.create(testModule.getQNameModule(), "leaf-grouping-ZZ")),
+                SchemaNodeUtils.getRootOriginalIfPossible(gv.getDataChildByName(QName.create(
+                        testModule.getQNameModule(), "leaf-grouping-ZZ"))));
 
         // TEST getOriginal from grouping-X
-        assertEquals(gy.getDataChildByName("leaf-grouping-Y"),
-                SchemaNodeUtils.getRootOriginalIfPossible(gx.getDataChildByName("leaf-grouping-Y")));
+        assertEquals(
+                gy.getDataChildByName(QName.create(testModule.getQNameModule(), "leaf-grouping-Y")),
+                SchemaNodeUtils.getRootOriginalIfPossible(gx.getDataChildByName(QName.create(
+                        testModule.getQNameModule(), "leaf-grouping-Y"))));
     }
 
     @Test
     public void testAddedByUsesLeafTypeQName() throws URISyntaxException, ReactorException {
 
-        Set<Module> loadModules = TestUtils.loadModules(getClass().getResource("/added-by-uses-leaf-test").toURI());
+        final Set<Module> loadModules = TestUtils.loadModules(getClass().getResource("/added-by-uses-leaf-test")
+                .toURI());
 
         assertEquals(2, loadModules.size());
 
         Module foo = null;
         Module imp = null;
-        for (Module module : loadModules) {
+        for (final Module module : loadModules) {
             if (module.getName().equals("foo")) {
                 foo = module;
             }
@@ -571,12 +625,13 @@ public class GroupingTest {
             }
         }
 
-        LeafSchemaNode leaf = (LeafSchemaNode) ((ContainerSchemaNode) foo.getDataChildByName("my-container"))
-                .getDataChildByName("my-leaf");
+        final LeafSchemaNode leaf = (LeafSchemaNode) ((ContainerSchemaNode) foo.getDataChildByName(QName.create(
+                foo.getQNameModule(), "my-container")))
+                .getDataChildByName(QName.create(foo.getQNameModule(), "my-leaf"));
 
         TypeDefinition<?> impType = null;
-        Set<TypeDefinition<?>> typeDefinitions = imp.getTypeDefinitions();
-        for (TypeDefinition<?> typeDefinition : typeDefinitions) {
+        final Set<TypeDefinition<?>> typeDefinitions = imp.getTypeDefinitions();
+        for (final TypeDefinition<?> typeDefinition : typeDefinitions) {
             if (typeDefinition.getQName().getLocalName().equals("imp-type")) {
                 impType = typeDefinition;
                 break;

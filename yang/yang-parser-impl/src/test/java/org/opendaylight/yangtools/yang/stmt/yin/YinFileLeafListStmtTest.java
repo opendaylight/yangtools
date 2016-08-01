@@ -15,6 +15,7 @@ import java.net.URISyntaxException;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -27,23 +28,25 @@ public class YinFileLeafListStmtTest {
 
     @Before
     public void init() throws URISyntaxException, ReactorException {
-        modules = TestUtils.loadYinModules(getClass().getResource
-                ("/semantic-statement-parser/yin/modules").toURI());
+        modules = TestUtils.loadYinModules(getClass().getResource("/semantic-statement-parser/yin/modules").toURI());
         assertEquals(9, modules.size());
     }
 
     @Test
     public void testLeafList() {
-        Module testModule = TestUtils.findModule(modules, "ietf-netconf-monitoring");
+        final Module testModule = TestUtils.findModule(modules, "ietf-netconf-monitoring");
         assertNotNull(testModule);
 
-        ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName("netconf-state");
+        ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "netconf-state"));
         assertNotNull(container);
 
-        container = (ContainerSchemaNode) container.getDataChildByName("capabilities");
+        container = (ContainerSchemaNode) container.getDataChildByName(QName.create(testModule.getQNameModule(),
+                "capabilities"));
         assertNotNull(container);
 
-        LeafListSchemaNode leafList = (LeafListSchemaNode) container.getDataChildByName("capability");
+        final LeafListSchemaNode leafList = (LeafListSchemaNode) container.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "capability"));
         assertNotNull(leafList);
         assertEquals("uri", leafList.getType().getQName().getLocalName());
         assertEquals("List of NETCONF capabilities supported by the server.", leafList.getDescription());

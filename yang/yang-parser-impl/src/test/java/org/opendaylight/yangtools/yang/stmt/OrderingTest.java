@@ -15,6 +15,7 @@ import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Set;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -29,18 +30,18 @@ public class OrderingTest {
     @Test
     public void testOrderingTypedef() throws URISyntaxException,
             SourceException, ReactorException {
-        Set<Module> modules = TestUtils.loadModules(getClass().getResource(
+        final Set<Module> modules = TestUtils.loadModules(getClass().getResource(
                 "/model").toURI());
-        Module bar = TestUtils.findModule(modules, "bar");
-        Set<TypeDefinition<?>> typedefs = bar.getTypeDefinitions();
-        String[] expectedOrder = new String[] { "int32-ext1", "int32-ext2",
+        final Module bar = TestUtils.findModule(modules, "bar");
+        final Set<TypeDefinition<?>> typedefs = bar.getTypeDefinitions();
+        final String[] expectedOrder = new String[] { "int32-ext1", "int32-ext2",
                 "string-ext1", "string-ext2", "string-ext3", "string-ext4",
                 "invalid-string-pattern", "multiple-pattern-string",
                 "my-decimal-type", "my-union", "my-union-ext", "nested-union2" };
-        String[] actualOrder = new String[typedefs.size()];
+        final String[] actualOrder = new String[typedefs.size()];
 
         int i = 0;
-        for (TypeDefinition<?> type : typedefs) {
+        for (final TypeDefinition<?> type : typedefs) {
             actualOrder[i] = type.getQName().getLocalName();
             i++;
         }
@@ -50,11 +51,11 @@ public class OrderingTest {
     @Test
     public void testOrderingChildNodes() throws URISyntaxException,
             SourceException, ReactorException {
-        Set<Module> modules = TestUtils.loadModules(getClass().getResource(
+        final Set<Module> modules = TestUtils.loadModules(getClass().getResource(
                 "/model").toURI());
-        Module foo = TestUtils.findModule(modules, "foo");
+        final Module foo = TestUtils.findModule(modules, "foo");
         AugmentationSchema augment1 = null;
-        for (AugmentationSchema as : foo.getAugmentations()) {
+        for (final AugmentationSchema as : foo.getAugmentations()) {
             if (as.getChildNodes().size() == 5) {
                 augment1 = as;
                 break;
@@ -62,12 +63,12 @@ public class OrderingTest {
         }
         assertNotNull(augment1);
 
-        String[] expectedOrder = new String[] { "ds0ChannelNumber",
+        final String[] expectedOrder = new String[] { "ds0ChannelNumber",
                 "interface-id", "my-type", "schemas", "odl" };
-        String[] actualOrder = new String[expectedOrder.length];
+        final String[] actualOrder = new String[expectedOrder.length];
 
         int i = 0;
-        for (DataSchemaNode augmentChild : augment1.getChildNodes()) {
+        for (final DataSchemaNode augmentChild : augment1.getChildNodes()) {
             actualOrder[i] = augmentChild.getQName().getLocalName();
             i++;
         }
@@ -78,12 +79,12 @@ public class OrderingTest {
     @Test
     public void testOrderingNestedChildNodes1() throws URISyntaxException,
             SourceException, ReactorException {
-        Set<Module> modules = TestUtils.loadModules(getClass().getResource(
+        final Set<Module> modules = TestUtils.loadModules(getClass().getResource(
                 "/model").toURI());
-        Module foo = TestUtils.findModule(modules, "foo");
+        final Module foo = TestUtils.findModule(modules, "foo");
 
-        Collection<DataSchemaNode> childNodes = foo.getChildNodes();
-        String[] expectedOrder = new String[] { "int32-leaf", "string-leaf",
+        final Collection<DataSchemaNode> childNodes = foo.getChildNodes();
+        final String[] expectedOrder = new String[] { "int32-leaf", "string-leaf",
                 "invalid-pattern-string-leaf",
                 "invalid-direct-string-pattern-def-leaf",
                 "multiple-pattern-string-leaf",
@@ -92,10 +93,10 @@ public class OrderingTest {
                 "custom-union-leaf", "transfer", "datas", "mycont", "data",
                 "how", "address", "port", "addresses", "peer", "id", "foo-id",
                 "sub-ext", "sub-transfer", "sub-datas" };
-        String[] actualOrder = new String[childNodes.size()];
+        final String[] actualOrder = new String[childNodes.size()];
 
         int i = 0;
-        for (DataSchemaNode child : childNodes) {
+        for (final DataSchemaNode child : childNodes) {
             actualOrder[i] = child.getQName().getLocalName();
             i++;
         }
@@ -105,20 +106,20 @@ public class OrderingTest {
     @Test
     public void testOrderingNestedChildNodes2() throws URISyntaxException,
             SourceException, ReactorException {
-        Set<Module> modules = TestUtils.loadModules(getClass().getResource(
+        final Set<Module> modules = TestUtils.loadModules(getClass().getResource(
                 "/model").toURI());
-        Module baz = TestUtils.findModule(modules, "baz");
-        Set<GroupingDefinition> groupings = baz.getGroupings();
+        final Module baz = TestUtils.findModule(modules, "baz");
+        final Set<GroupingDefinition> groupings = baz.getGroupings();
         assertEquals(1, groupings.size());
-        GroupingDefinition target = groupings.iterator().next();
+        final GroupingDefinition target = groupings.iterator().next();
 
-        Collection<DataSchemaNode> childNodes = target.getChildNodes();
-        String[] expectedOrder = new String[] { "data", "how", "address",
+        final Collection<DataSchemaNode> childNodes = target.getChildNodes();
+        final String[] expectedOrder = new String[] { "data", "how", "address",
                 "port", "addresses" };
-        String[] actualOrder = new String[childNodes.size()];
+        final String[] actualOrder = new String[childNodes.size()];
 
         int i = 0;
-        for (DataSchemaNode child : childNodes) {
+        for (final DataSchemaNode child : childNodes) {
             actualOrder[i] = child.getQName().getLocalName();
             i++;
         }
@@ -127,18 +128,18 @@ public class OrderingTest {
 
     @Test
     public void testOrderingNestedChildNodes3() throws Exception {
-        Module baz = TestUtils.loadModule(getClass().getResourceAsStream(
+        final Module baz = TestUtils.loadModule(getClass().getResourceAsStream(
                 "/ordering/foo.yang"));
-        ContainerSchemaNode x = (ContainerSchemaNode) baz
-                .getDataChildByName("x");
-        Collection<DataSchemaNode> childNodes = x.getChildNodes();
+        final ContainerSchemaNode x = (ContainerSchemaNode) baz
+                .getDataChildByName(QName.create(baz.getQNameModule(), "x"));
+        final Collection<DataSchemaNode> childNodes = x.getChildNodes();
 
-        String[] expectedOrder = new String[] { "x15", "x10", "x5", "x1", "a5",
+        final String[] expectedOrder = new String[] { "x15", "x10", "x5", "x1", "a5",
                 "a1", "x2", "b5", "b1", "x3", "ax15", "ax5" };
-        String[] actualOrder = new String[childNodes.size()];
+        final String[] actualOrder = new String[childNodes.size()];
 
         int i = 0;
-        for (DataSchemaNode child : childNodes) {
+        for (final DataSchemaNode child : childNodes) {
             actualOrder[i] = child.getQName().getLocalName();
             i++;
         }
