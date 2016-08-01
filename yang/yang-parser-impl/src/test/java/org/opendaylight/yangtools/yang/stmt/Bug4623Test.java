@@ -12,6 +12,7 @@ import java.io.File;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -25,15 +26,14 @@ public class Bug4623Test {
     @Test
     public void testStringTypeWithUnknownSchemaNodeAtTheEndOfTypeDefinition() throws Exception {
         // given
-        File extdef = new File(getClass().getResource("/bugs/bug4623/extension-def.yang").toURI());
-        File stringWithExt = new File(getClass().getResource("/bugs/bug4623/string-with-ext.yang").toURI());
+        final File extdef = new File(getClass().getResource("/bugs/bug4623/extension-def.yang").toURI());
+        final File stringWithExt = new File(getClass().getResource("/bugs/bug4623/string-with-ext.yang").toURI());
 
         // when
-        SchemaContext schemaContext = TestUtils.parseYangSources(extdef, stringWithExt);
+        final SchemaContext schemaContext = TestUtils.parseYangSources(extdef, stringWithExt);
 
-        LeafSchemaNode leaf = (LeafSchemaNode) schemaContext
-                .findModuleByName("types", null)
-                .getDataChildByName("leaf-length-pattern-unknown");
+        final LeafSchemaNode leaf = (LeafSchemaNode) schemaContext.findModuleByName("types", null).getDataChildByName(
+                QName.create("urn:custom.types.demo", "1970-01-01", "leaf-length-pattern-unknown"));
 
         // then
         Assert.assertNotNull(leaf);
@@ -67,15 +67,14 @@ public class Bug4623Test {
     @Test
     public void testStringTypeWithUnknownSchemaNodeBetweenStringRestrictionStatements() throws Exception {
         // given
-        File extdef = new File(getClass().getResource("/bugs/bug4623/extension-def.yang").toURI());
-        File stringWithExt = new File(getClass().getResource("/bugs/bug4623/string-with-ext.yang").toURI());
+        final File extdef = new File(getClass().getResource("/bugs/bug4623/extension-def.yang").toURI());
+        final File stringWithExt = new File(getClass().getResource("/bugs/bug4623/string-with-ext.yang").toURI());
 
         // when
-        SchemaContext schemaContext = TestUtils.parseYangSources(extdef, stringWithExt);
+        final SchemaContext schemaContext = TestUtils.parseYangSources(extdef, stringWithExt);
 
-        LeafSchemaNode leaf = (LeafSchemaNode) schemaContext
-                .findModuleByName("types", null)
-                .getDataChildByName("leaf-length-unknown-pattern");
+        final LeafSchemaNode leaf = (LeafSchemaNode) schemaContext.findModuleByName("types", null).getDataChildByName(
+                QName.create("urn:custom.types.demo", "1970-01-01", "leaf-length-unknown-pattern"));
 
         // then
         Assert.assertNotNull(leaf);
@@ -109,15 +108,14 @@ public class Bug4623Test {
     @Test
     public void testStringTypeWithUnknownSchemaNodeOnTheStartOfTypeDefinition() throws Exception {
         // given
-        File extdef = new File(getClass().getResource("/bugs/bug4623/extension-def.yang").toURI());
-        File stringWithExt = new File(getClass().getResource("/bugs/bug4623/string-with-ext.yang").toURI());
+        final File extdef = new File(getClass().getResource("/bugs/bug4623/extension-def.yang").toURI());
+        final File stringWithExt = new File(getClass().getResource("/bugs/bug4623/string-with-ext.yang").toURI());
 
         // when
-        SchemaContext schemaContext = TestUtils.parseYangSources(extdef, stringWithExt);
+        final SchemaContext schemaContext = TestUtils.parseYangSources(extdef, stringWithExt);
 
-        LeafSchemaNode leaf = (LeafSchemaNode) schemaContext
-                .findModuleByName("types", null)
-                .getDataChildByName("leaf-unknown-length-pattern");
+        final LeafSchemaNode leaf = (LeafSchemaNode) schemaContext.findModuleByName("types", null).getDataChildByName(
+                QName.create("urn:custom.types.demo", "1970-01-01", "leaf-unknown-length-pattern"));
 
         // then
         Assert.assertNotNull(leaf);

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -50,17 +51,17 @@ public class SchemaContextUtilTest {
     public void testFindDummyData() {
         MockitoAnnotations.initMocks(this);
 
-        QName qName = QName.create("TestQName");
-        SchemaPath schemaPath = SchemaPath.create(Collections.singletonList(qName), true);
+        final QName qName = QName.create("TestQName");
+        final SchemaPath schemaPath = SchemaPath.create(Collections.singletonList(qName), true);
         assertEquals("Should be null. Module TestQName not found", null,
                 SchemaContextUtil.findDataSchemaNode(mockSchemaContext, schemaPath));
 
-        RevisionAwareXPath xPath = new RevisionAwareXPathImpl("/bookstore/book/title", true);
+        final RevisionAwareXPath xPath = new RevisionAwareXPathImpl("/bookstore/book/title", true);
         assertEquals("Should be null. Module bookstore not found", null,
                 SchemaContextUtil.findDataSchemaNode(mockSchemaContext, mockModule, xPath));
 
-        SchemaNode schemaNode = BaseTypes.int32Type();
-        RevisionAwareXPath xPathRelative = new RevisionAwareXPathImpl("../prefix", false);
+        final SchemaNode schemaNode = BaseTypes.int32Type();
+        final RevisionAwareXPath xPathRelative = new RevisionAwareXPathImpl("../prefix", false);
         assertEquals("Should be null, Module prefix not found", null,
                 SchemaContextUtil.findDataSchemaNodeForRelativeXPath(mockSchemaContext, mockModule, schemaNode,
                         xPathRelative));
@@ -75,13 +76,14 @@ public class SchemaContextUtilTest {
     public void findNodeInSchemaContextTest() throws URISyntaxException, IOException, YangSyntaxErrorException,
             ParseException, ReactorException {
 
-        SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
+        final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
-        Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
+        final Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
                 QName.parseRevision("2014-10-07"));
 
-        SchemaNode testNode = ((ContainerSchemaNode) myModule.getDataChildByName("my-container"))
-                .getDataChildByName("my-leaf-in-container");
+        SchemaNode testNode = ((ContainerSchemaNode) myModule.getDataChildByName(QName.create(
+                myModule.getQNameModule(), "my-container"))).getDataChildByName(QName.create(myModule.getQNameModule(),
+                "my-leaf-in-container"));
 
         SchemaPath path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
                 QName.create(myModule.getQNameModule(), "my-leaf-in-container"));
@@ -91,8 +93,8 @@ public class SchemaContextUtilTest {
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
-        RpcDefinition rpc = getRpcByName(myModule,"my-rpc");
-        testNode = rpc.getInput().getDataChildByName("my-input-leaf");
+        RpcDefinition rpc = getRpcByName(myModule, "my-rpc");
+        testNode = rpc.getInput().getDataChildByName(QName.create(myModule.getQNameModule(), "my-input-leaf"));
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-rpc"),
                 QName.create(myModule.getQNameModule(), "input"),
@@ -104,8 +106,8 @@ public class SchemaContextUtilTest {
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
-        rpc = getRpcByName(myModule,"my-rpc");
-        testNode = rpc.getOutput().getDataChildByName("my-output-leaf");
+        rpc = getRpcByName(myModule, "my-rpc");
+        testNode = rpc.getOutput().getDataChildByName(QName.create(myModule.getQNameModule(), "my-output-leaf"));
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-rpc"),
                 QName.create(myModule.getQNameModule(), "output"),
@@ -117,8 +119,8 @@ public class SchemaContextUtilTest {
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
-        NotificationDefinition notification = myModule.getNotifications().iterator().next();
-        testNode = notification.getDataChildByName("my-notification-leaf");
+        final NotificationDefinition notification = myModule.getNotifications().iterator().next();
+        testNode = notification.getDataChildByName(QName.create(myModule.getQNameModule(), "my-notification-leaf"));
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-notification"),
                 QName.create(myModule.getQNameModule(), "my-notification-leaf"));
@@ -129,9 +131,10 @@ public class SchemaContextUtilTest {
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
-        GroupingDefinition grouping = getGroupingByName(myModule,"my-grouping");
-        testNode = ((ContainerSchemaNode) grouping.getDataChildByName("my-container-in-grouping"))
-                .getDataChildByName("my-leaf-in-grouping");
+        final GroupingDefinition grouping = getGroupingByName(myModule, "my-grouping");
+        testNode = ((ContainerSchemaNode) grouping.getDataChildByName(QName.create(myModule.getQNameModule(),
+                "my-container-in-grouping"))).getDataChildByName(QName.create(myModule.getQNameModule(),
+                "my-leaf-in-grouping"));
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-grouping"),
                 QName.create(myModule.getQNameModule(), "my-container-in-grouping"),
@@ -143,8 +146,9 @@ public class SchemaContextUtilTest {
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
-        testNode = ((ChoiceSchemaNode) myModule.getDataChildByName("my-choice")).getCaseNodeByName("one").getDataChildByName(
-                "my-choice-leaf-one");
+        testNode = ((ChoiceSchemaNode) myModule
+                .getDataChildByName(QName.create(myModule.getQNameModule(), "my-choice"))).getCaseNodeByName("one")
+                .getDataChildByName(QName.create(myModule.getQNameModule(), "my-choice-leaf-one"));
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-choice"),
                 QName.create(myModule.getQNameModule(), "one"),
@@ -155,10 +159,11 @@ public class SchemaContextUtilTest {
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
-        ListSchemaNode listNode = (ListSchemaNode) ((ContainerSchemaNode) myModule.getDataChildByName("my-container"))
-                .getDataChildByName("my-list");
+        ListSchemaNode listNode = (ListSchemaNode) ((ContainerSchemaNode) myModule.getDataChildByName(QName.create(
+                myModule.getQNameModule(), "my-container"))).getDataChildByName(QName.create(myModule.getQNameModule(),
+                "my-list"));
 
-        testNode = listNode.getDataChildByName("my-leaf-in-list");
+        testNode = listNode.getDataChildByName(QName.create(myModule.getQNameModule(), "my-leaf-in-list"));
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
                 QName.create(myModule.getQNameModule(), "my-list"),
@@ -169,10 +174,11 @@ public class SchemaContextUtilTest {
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
-        listNode = (ListSchemaNode) ((ContainerSchemaNode) myModule.getDataChildByName("my-container"))
-                .getDataChildByName("my-list");
+        listNode = (ListSchemaNode) ((ContainerSchemaNode) myModule.getDataChildByName(QName.create(
+                myModule.getQNameModule(), "my-container"))).getDataChildByName(QName.create(myModule.getQNameModule(),
+                "my-list"));
 
-        testNode = listNode.getDataChildByName("my-leaf-list-in-list");
+        testNode = listNode.getDataChildByName(QName.create(myModule.getQNameModule(), "my-leaf-list-in-list"));
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
                 QName.create(myModule.getQNameModule(), "my-list"),
@@ -189,13 +195,14 @@ public class SchemaContextUtilTest {
     public void findNodeInSchemaContextTest2() throws URISyntaxException, IOException, YangSyntaxErrorException,
             ParseException, ReactorException {
 
-        SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test") ;
+        final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
-        Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
+        final Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
                 QName.parseRevision("2014-10-07"));
 
-        SchemaNode testNode = ((ContainerSchemaNode) myModule.getDataChildByName("my-container"))
-                .getDataChildByName("my-leaf-not-in-container");
+        SchemaNode testNode = ((ContainerSchemaNode) myModule.getDataChildByName(QName.create(
+                myModule.getQNameModule(), "my-container"))).getDataChildByName(QName.create(myModule.getQNameModule(),
+                "my-leaf-not-in-container"));
 
         SchemaPath path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
                 QName.create(myModule.getQNameModule(), "my-leaf-not-in-container"));
@@ -204,8 +211,8 @@ public class SchemaContextUtilTest {
         assertNull(testNode);
         assertNull(foundNode);
 
-        RpcDefinition rpc = getRpcByName(myModule,"my-rpc");
-        testNode = rpc.getInput().getDataChildByName("no-input-leaf");
+        final RpcDefinition rpc = getRpcByName(myModule, "my-rpc");
+        testNode = rpc.getInput().getDataChildByName(QName.create(myModule.getQNameModule(), "no-input-leaf"));
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-rpc"),
                 QName.create(myModule.getQNameModule(), "input"),
@@ -216,8 +223,8 @@ public class SchemaContextUtilTest {
         assertNull(testNode);
         assertNull(foundNode);
 
-        NotificationDefinition notification = myModule.getNotifications().iterator().next();
-        testNode = notification.getDataChildByName("no-notification-leaf");
+        final NotificationDefinition notification = myModule.getNotifications().iterator().next();
+        testNode = notification.getDataChildByName(QName.create(myModule.getQNameModule(), "no-notification-leaf"));
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-notification"),
                 QName.create(myModule.getQNameModule(), "no-notification-leaf"));
@@ -227,9 +234,10 @@ public class SchemaContextUtilTest {
         assertNull(testNode);
         assertNull(foundNode);
 
-        GroupingDefinition grouping = getGroupingByName(myModule,"my-grouping");
-        testNode = ((ContainerSchemaNode) grouping.getDataChildByName("my-container-in-grouping"))
-                .getDataChildByName("no-leaf-in-grouping");
+        final GroupingDefinition grouping = getGroupingByName(myModule, "my-grouping");
+        testNode = ((ContainerSchemaNode) grouping.getDataChildByName(QName.create(myModule.getQNameModule(),
+                "my-container-in-grouping"))).getDataChildByName(QName.create(myModule.getQNameModule(),
+                "no-leaf-in-grouping"));
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-grouping"),
                 QName.create(myModule.getQNameModule(), "my-container-in-grouping"),
@@ -240,8 +248,9 @@ public class SchemaContextUtilTest {
         assertNull(testNode);
         assertNull(foundNode);
 
-        testNode = ((ChoiceSchemaNode) myModule.getDataChildByName("my-choice")).getCaseNodeByName("one").getDataChildByName(
-                "no-choice-leaf");
+        testNode = ((ChoiceSchemaNode) myModule
+                .getDataChildByName(QName.create(myModule.getQNameModule(), "my-choice"))).getCaseNodeByName("one")
+                .getDataChildByName(QName.create(myModule.getQNameModule(), "no-choice-leaf"));
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-choice"),
                 QName.create(myModule.getQNameModule(), "one"),
@@ -251,10 +260,11 @@ public class SchemaContextUtilTest {
         assertNull(testNode);
         assertNull(foundNode);
 
-        ListSchemaNode listNode = (ListSchemaNode) ((ContainerSchemaNode) myModule.getDataChildByName("my-container"))
-                .getDataChildByName("my-list");
+        ListSchemaNode listNode = (ListSchemaNode) ((ContainerSchemaNode) myModule.getDataChildByName(QName.create(
+                myModule.getQNameModule(), "my-container"))).getDataChildByName(QName.create(myModule.getQNameModule(),
+                "my-list"));
 
-        testNode = listNode.getDataChildByName("no-leaf-in-list");
+        testNode = listNode.getDataChildByName(QName.create(myModule.getQNameModule(), "no-leaf-in-list"));
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
                 QName.create(myModule.getQNameModule(), "my-list"),
@@ -264,10 +274,11 @@ public class SchemaContextUtilTest {
         assertNull(testNode);
         assertNull(foundNode);
 
-        listNode = (ListSchemaNode) ((ContainerSchemaNode) myModule.getDataChildByName("my-container"))
-                .getDataChildByName("my-list");
+        listNode = (ListSchemaNode) ((ContainerSchemaNode) myModule.getDataChildByName(QName.create(
+                myModule.getQNameModule(), "my-container"))).getDataChildByName(QName.create(myModule.getQNameModule(),
+                "my-list"));
 
-        testNode = listNode.getDataChildByName("no-leaf-list-in-list");
+        testNode = listNode.getDataChildByName(QName.create(myModule.getQNameModule(), "no-leaf-list-in-list"));
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
                 QName.create(myModule.getQNameModule(), "my-list"),
@@ -283,12 +294,12 @@ public class SchemaContextUtilTest {
     public void findNodeInSchemaContextTest3() throws URISyntaxException, IOException, YangSyntaxErrorException,
             ParseException, ReactorException {
 
-        SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
+        final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
-        Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
+        final Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
                 QName.parseRevision("2014-10-07"));
 
-        SchemaNode testNode = myModule.getDataChildByName("my-container");
+        SchemaNode testNode = myModule.getDataChildByName(QName.create(myModule.getQNameModule(), "my-container"));
 
         SchemaPath path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"));
         SchemaNode foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
@@ -297,7 +308,7 @@ public class SchemaContextUtilTest {
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
-        testNode = getRpcByName(myModule,"my-rpc");
+        testNode = getRpcByName(myModule, "my-rpc");
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-rpc"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
@@ -315,7 +326,7 @@ public class SchemaContextUtilTest {
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
-        testNode = getGroupingByName(myModule,"my-grouping");
+        testNode = getGroupingByName(myModule, "my-grouping");
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-grouping"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
@@ -324,7 +335,7 @@ public class SchemaContextUtilTest {
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
-        testNode = myModule.getDataChildByName("my-choice");
+        testNode = myModule.getDataChildByName(QName.create(myModule.getQNameModule(), "my-choice"));
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-choice"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
@@ -333,7 +344,8 @@ public class SchemaContextUtilTest {
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
-        testNode = ((ContainerSchemaNode) myModule.getDataChildByName("my-container")).getDataChildByName("my-list");
+        testNode = ((ContainerSchemaNode) myModule.getDataChildByName(QName.create(myModule.getQNameModule(),
+                "my-container"))).getDataChildByName(QName.create(myModule.getQNameModule(), "my-list"));
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
                 QName.create(myModule.getQNameModule(), "my-list"));
@@ -346,17 +358,18 @@ public class SchemaContextUtilTest {
     }
 
     @Test
-    public void findParentModuleTest() throws URISyntaxException, IOException, YangSyntaxErrorException, ParseException,
-            ReactorException {
+    public void findParentModuleTest() throws URISyntaxException, IOException, YangSyntaxErrorException,
+            ParseException, ReactorException {
 
-        SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
+        final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
-        Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
+        final Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
                 QName.parseRevision("2014-10-07"));
 
-        DataSchemaNode node = myModule.getDataChildByName("my-container");
+        final DataSchemaNode node = myModule
+                .getDataChildByName(QName.create(myModule.getQNameModule(), "my-container"));
 
-        Module foundModule = SchemaContextUtil.findParentModule(context, node);
+        final Module foundModule = SchemaContextUtil.findParentModule(context, node);
 
         assertEquals(myModule, foundModule);
     }
@@ -364,7 +377,7 @@ public class SchemaContextUtilTest {
     @Test(expected = IllegalArgumentException.class)
     public void findParentModuleIllegalArgumentTest() {
 
-        SchemaContext mockContext = Mockito.mock(SchemaContext.class);
+        final SchemaContext mockContext = Mockito.mock(SchemaContext.class);
         SchemaContextUtil.findParentModule(mockContext, null);
 
     }
@@ -372,7 +385,7 @@ public class SchemaContextUtilTest {
     @Test(expected = IllegalArgumentException.class)
     public void findParentModuleIllegalArgumentTest2() {
 
-        SchemaNode mockSchemaNode = Mockito.mock(SchemaNode.class);
+        final SchemaNode mockSchemaNode = Mockito.mock(SchemaNode.class);
         SchemaContextUtil.findParentModule(null, mockSchemaNode);
 
     }
@@ -380,8 +393,8 @@ public class SchemaContextUtilTest {
     @Test(expected = IllegalStateException.class)
     public void findParentModuleIllegalStateTest() {
 
-        SchemaContext mockContext = Mockito.mock(SchemaContext.class);
-        SchemaNode mockSchemaNode = Mockito.mock(SchemaNode.class);
+        final SchemaContext mockContext = Mockito.mock(SchemaContext.class);
+        final SchemaNode mockSchemaNode = Mockito.mock(SchemaNode.class);
         Mockito.when(mockSchemaNode.getPath()).thenReturn(null);
         SchemaContextUtil.findParentModule(mockContext, mockSchemaNode);
 
@@ -390,7 +403,7 @@ public class SchemaContextUtilTest {
     @Test(expected = IllegalArgumentException.class)
     public void findDataSchemaNodeIllegalArgumentTest() {
 
-        SchemaContext mockContext = Mockito.mock(SchemaContext.class);
+        final SchemaContext mockContext = Mockito.mock(SchemaContext.class);
         SchemaContextUtil.findDataSchemaNode(mockContext, null);
 
     }
@@ -398,7 +411,7 @@ public class SchemaContextUtilTest {
     @Test(expected = IllegalArgumentException.class)
     public void findDataSchemaNodeIllegalArgumentTest2() {
 
-        SchemaPath mockSchemaPath = Mockito.mock(SchemaPath.class);
+        final SchemaPath mockSchemaPath = Mockito.mock(SchemaPath.class);
         SchemaContextUtil.findDataSchemaNode(null, mockSchemaPath);
 
     }
@@ -407,42 +420,45 @@ public class SchemaContextUtilTest {
     public void findDataSchemaNodeTest() throws URISyntaxException, IOException, YangSyntaxErrorException,
             ReactorException {
 
-        SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
+        final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
-        Module module = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
+        final Module module = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
                 QName.parseRevision("2014-10-07"));
-        Module importedModule = context.findModuleByNamespaceAndRevision(new URI("uri:imported-module"),
+        final Module importedModule = context.findModuleByNamespaceAndRevision(new URI("uri:imported-module"),
                 QName.parseRevision("2014-10-07"));
 
-        SchemaNode testNode = ((ContainerSchemaNode) importedModule.getDataChildByName("my-imported-container"))
-                .getDataChildByName("my-imported-leaf");
+        final SchemaNode testNode = ((ContainerSchemaNode) importedModule.getDataChildByName(QName.create(
+                importedModule.getQNameModule(), "my-imported-container"))).getDataChildByName(QName.create(
+                importedModule.getQNameModule(), "my-imported-leaf"));
 
-        RevisionAwareXPath xpath = new RevisionAwareXPathImpl("imp:my-imported-container/imp:my-imported-leaf", true);
+        final RevisionAwareXPath xpath = new RevisionAwareXPathImpl("imp:my-imported-container/imp:my-imported-leaf",
+                true);
 
-        SchemaNode foundNode = SchemaContextUtil.findDataSchemaNode(context, module, xpath);
+        final SchemaNode foundNode = SchemaContextUtil.findDataSchemaNode(context, module, xpath);
 
         assertNotNull(foundNode);
         assertNotNull(testNode);
         assertEquals(testNode, foundNode);
-
     }
 
     @Test
-    public void findDataSchemaNodeTest2() throws URISyntaxException, IOException, YangSyntaxErrorException, ReactorException {
+    public void findDataSchemaNodeTest2() throws URISyntaxException, IOException, YangSyntaxErrorException,
+            ReactorException {
         // findDataSchemaNode(final SchemaContext context, final Module module,
         // final RevisionAwareXPath nonCondXPath) {
 
-        SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
+        final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
-        Module module = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
+        final Module module = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
                 QName.parseRevision("2014-10-07"));
 
-        GroupingDefinition grouping = getGroupingByName(module,"my-grouping");
-        SchemaNode testNode = grouping.getDataChildByName("my-leaf-in-gouping2");
+        final GroupingDefinition grouping = getGroupingByName(module, "my-grouping");
+        final SchemaNode testNode = grouping.getDataChildByName(QName.create(module.getQNameModule(),
+                "my-leaf-in-gouping2"));
 
-        RevisionAwareXPath xpath = new RevisionAwareXPathImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
+        final RevisionAwareXPath xpath = new RevisionAwareXPathImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
 
-        SchemaNode foundNode = SchemaContextUtil.findDataSchemaNode(context, module, xpath);
+        final SchemaNode foundNode = SchemaContextUtil.findDataSchemaNode(context, module, xpath);
 
         assertNotNull(foundNode);
         assertNotNull(testNode);
@@ -453,8 +469,8 @@ public class SchemaContextUtilTest {
     @Test(expected = IllegalArgumentException.class)
     public void findDataSchemaNodeFromXPathIllegalArgumentTest() {
 
-        SchemaContext mockContext = Mockito.mock(SchemaContext.class);
-        Module module = Mockito.mock(Module.class);
+        final SchemaContext mockContext = Mockito.mock(SchemaContext.class);
+        final Module module = Mockito.mock(Module.class);
 
         SchemaContextUtil.findDataSchemaNode(mockContext, module, null);
 
@@ -463,8 +479,8 @@ public class SchemaContextUtilTest {
     @Test(expected = IllegalArgumentException.class)
     public void findDataSchemaNodeFromXPathIllegalArgumentTest2() {
 
-        SchemaContext mockContext = Mockito.mock(SchemaContext.class);
-        RevisionAwareXPath xpath = new RevisionAwareXPathImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
+        final SchemaContext mockContext = Mockito.mock(SchemaContext.class);
+        final RevisionAwareXPath xpath = new RevisionAwareXPathImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
 
         SchemaContextUtil.findDataSchemaNode(mockContext, null, xpath);
 
@@ -473,8 +489,8 @@ public class SchemaContextUtilTest {
     @Test(expected = IllegalArgumentException.class)
     public void findDataSchemaNodeFromXPathIllegalArgumentTest3() {
 
-        Module module = Mockito.mock(Module.class);
-        RevisionAwareXPath xpath = new RevisionAwareXPathImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
+        final Module module = Mockito.mock(Module.class);
+        final RevisionAwareXPath xpath = new RevisionAwareXPathImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
 
         SchemaContextUtil.findDataSchemaNode(null, module, xpath);
 
@@ -483,10 +499,10 @@ public class SchemaContextUtilTest {
     @Test(expected = IllegalArgumentException.class)
     public void findDataSchemaNodeFromXPathIllegalArgumentTest4() {
 
-        SchemaContext mockContext = Mockito.mock(SchemaContext.class);
-        Module module = Mockito.mock(Module.class);
-        RevisionAwareXPath xpath = new RevisionAwareXPathImpl("my:my-grouping[@con='NULL']/my:my-leaf-in-gouping2",
-                true);
+        final SchemaContext mockContext = Mockito.mock(SchemaContext.class);
+        final Module module = Mockito.mock(Module.class);
+        final RevisionAwareXPath xpath = new RevisionAwareXPathImpl(
+                "my:my-grouping[@con='NULL']/my:my-leaf-in-gouping2", true);
 
         SchemaContextUtil.findDataSchemaNode(mockContext, module, xpath);
 
@@ -495,9 +511,9 @@ public class SchemaContextUtilTest {
     @Test
     public void findDataSchemaNodeFromXPathNullTest() {
 
-        SchemaContext mockContext = Mockito.mock(SchemaContext.class);
-        Module module = Mockito.mock(Module.class);
-        RevisionAwareXPath xpath = Mockito.mock(RevisionAwareXPath.class);
+        final SchemaContext mockContext = Mockito.mock(SchemaContext.class);
+        final Module module = Mockito.mock(Module.class);
+        final RevisionAwareXPath xpath = Mockito.mock(RevisionAwareXPath.class);
 
         Mockito.when(xpath.toString()).thenReturn(null);
         assertNull(SchemaContextUtil.findDataSchemaNode(mockContext, module, xpath));
@@ -507,9 +523,9 @@ public class SchemaContextUtilTest {
     @Test
     public void findDataSchemaNodeFromXPathNullTest2() {
 
-        SchemaContext mockContext = Mockito.mock(SchemaContext.class);
-        Module module = Mockito.mock(Module.class);
-        RevisionAwareXPath xpath = new RevisionAwareXPathImpl("my:my-grouping/my:my-leaf-in-gouping2", false);
+        final SchemaContext mockContext = Mockito.mock(SchemaContext.class);
+        final Module module = Mockito.mock(Module.class);
+        final RevisionAwareXPath xpath = new RevisionAwareXPathImpl("my:my-grouping/my:my-leaf-in-gouping2", false);
 
         assertNull(SchemaContextUtil.findDataSchemaNode(mockContext, module, xpath));
 
@@ -519,13 +535,14 @@ public class SchemaContextUtilTest {
     public void findNodeInSchemaContextGroupingsTest() throws URISyntaxException, IOException,
             YangSyntaxErrorException, ParseException, ReactorException {
 
-        SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
+        final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
-        Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
+        final Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
                 QName.parseRevision("2014-10-07"));
 
         // find grouping in container
-        DataNodeContainer dataContainer = (DataNodeContainer) myModule.getDataChildByName("my-container");
+        DataNodeContainer dataContainer = (DataNodeContainer) myModule.getDataChildByName(QName.create(
+                myModule.getQNameModule(), "my-container"));
         SchemaNode testNode = getGroupingByName(dataContainer, "my-grouping-in-container");
 
         SchemaPath path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
@@ -536,7 +553,8 @@ public class SchemaContextUtilTest {
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
-        testNode = ((GroupingDefinition) testNode).getDataChildByName("my-leaf-in-grouping-in-container");
+        testNode = ((GroupingDefinition) testNode).getDataChildByName(QName.create(myModule.getQNameModule(),
+                "my-leaf-in-grouping-in-container"));
         path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-container"));
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
@@ -546,8 +564,9 @@ public class SchemaContextUtilTest {
         assertEquals(testNode, foundNode);
 
         // find grouping in list
-        dataContainer = (DataNodeContainer) ((DataNodeContainer) myModule.getDataChildByName("my-container"))
-                .getDataChildByName("my-list");
+        dataContainer = (DataNodeContainer) ((DataNodeContainer) myModule.getDataChildByName(QName.create(
+                myModule.getQNameModule(), "my-container"))).getDataChildByName(QName.create(myModule.getQNameModule(),
+                "my-list"));
         testNode = getGroupingByName(dataContainer, "my-grouping-in-list");
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
@@ -559,7 +578,8 @@ public class SchemaContextUtilTest {
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
-        testNode = ((GroupingDefinition) testNode).getDataChildByName("my-leaf-in-grouping-in-list");
+        testNode = ((GroupingDefinition) testNode).getDataChildByName(QName.create(myModule.getQNameModule(),
+                "my-leaf-in-grouping-in-list"));
         path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-list"));
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
@@ -580,7 +600,8 @@ public class SchemaContextUtilTest {
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
-        testNode = ((GroupingDefinition) testNode).getDataChildByName("my-leaf-in-grouping-in-grouping");
+        testNode = ((GroupingDefinition) testNode).getDataChildByName(QName.create(myModule.getQNameModule(),
+                "my-leaf-in-grouping-in-grouping"));
         path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-grouping"));
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
@@ -590,8 +611,8 @@ public class SchemaContextUtilTest {
         assertEquals(testNode, foundNode);
 
         // find grouping in rpc
-        RpcDefinition rpc = getRpcByName(myModule, "my-rpc");
-        for (GroupingDefinition grouping : rpc.getGroupings()) {
+        final RpcDefinition rpc = getRpcByName(myModule, "my-rpc");
+        for (final GroupingDefinition grouping : rpc.getGroupings()) {
             if (grouping.getQName().getLocalName().equals("my-grouping-in-rpc")) {
                 testNode = grouping;
             }
@@ -605,7 +626,8 @@ public class SchemaContextUtilTest {
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
-        testNode = ((GroupingDefinition) testNode).getDataChildByName("my-leaf-in-grouping-in-rpc");
+        testNode = ((GroupingDefinition) testNode).getDataChildByName(QName.create(myModule.getQNameModule(),
+                "my-leaf-in-grouping-in-rpc"));
         path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-rpc"));
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
@@ -627,7 +649,8 @@ public class SchemaContextUtilTest {
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
-        testNode = ((GroupingDefinition) testNode).getDataChildByName("my-leaf-in-grouping-in-output");
+        testNode = ((GroupingDefinition) testNode).getDataChildByName(QName.create(myModule.getQNameModule(),
+                "my-leaf-in-grouping-in-output"));
         path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-output"));
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
@@ -649,7 +672,8 @@ public class SchemaContextUtilTest {
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
-        testNode = ((GroupingDefinition) testNode).getDataChildByName("my-leaf-in-grouping-in-input");
+        testNode = ((GroupingDefinition) testNode).getDataChildByName(QName.create(myModule.getQNameModule(),
+                "my-leaf-in-grouping-in-input"));
         path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-input"));
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
@@ -670,7 +694,8 @@ public class SchemaContextUtilTest {
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
-        testNode = ((GroupingDefinition) testNode).getDataChildByName("my-leaf-in-grouping-in-notification");
+        testNode = ((GroupingDefinition) testNode).getDataChildByName(QName.create(myModule.getQNameModule(),
+                "my-leaf-in-grouping-in-notification"));
         path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-notification"));
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
@@ -680,8 +705,9 @@ public class SchemaContextUtilTest {
         assertEquals(testNode, foundNode);
 
         // find grouping in case
-        dataContainer = (DataNodeContainer) ((ChoiceSchemaNode) myModule.getDataChildByName("my-choice")).getCaseNodeByName(
-                "one").getDataChildByName("my-container-in-case");
+        dataContainer = (DataNodeContainer) ((ChoiceSchemaNode) myModule.getDataChildByName(QName.create(
+                myModule.getQNameModule(), "my-choice"))).getCaseNodeByName("one").getDataChildByName(
+                QName.create(myModule.getQNameModule(), "my-container-in-case"));
         testNode = getGroupingByName(dataContainer, "my-grouping-in-case");
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-choice"),
@@ -694,7 +720,8 @@ public class SchemaContextUtilTest {
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
-        testNode = ((GroupingDefinition) testNode).getDataChildByName("my-leaf-in-grouping-in-case");
+        testNode = ((GroupingDefinition) testNode).getDataChildByName(QName.create(myModule.getQNameModule(),
+                "my-leaf-in-grouping-in-case"));
         path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-case"));
 
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
@@ -709,13 +736,14 @@ public class SchemaContextUtilTest {
     public void findNodeInSchemaContextGroupingsTest2() throws URISyntaxException, IOException,
             YangSyntaxErrorException, ParseException, ReactorException {
 
-        SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
+        final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
-        Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
+        final Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
                 QName.parseRevision("2014-10-07"));
 
         // find grouping in container
-        DataNodeContainer dataContainer = (DataNodeContainer) myModule.getDataChildByName("my-container");
+        DataNodeContainer dataContainer = (DataNodeContainer) myModule.getDataChildByName(QName.create(
+                myModule.getQNameModule(), "my-container"));
         SchemaNode testNode = getGroupingByName(dataContainer, "my-grouping-in-container2");
 
         SchemaPath path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
@@ -726,8 +754,9 @@ public class SchemaContextUtilTest {
         assertNull(foundNode);
 
         // find grouping in list
-        dataContainer = (DataNodeContainer) ((DataNodeContainer) myModule.getDataChildByName("my-container"))
-                .getDataChildByName("my-list");
+        dataContainer = (DataNodeContainer) ((DataNodeContainer) myModule.getDataChildByName(QName.create(
+                myModule.getQNameModule(), "my-container"))).getDataChildByName(QName.create(myModule.getQNameModule(),
+                "my-list"));
         testNode = getGroupingByName(dataContainer, "my-grouping-in-list2");
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
@@ -750,8 +779,8 @@ public class SchemaContextUtilTest {
         assertNull(foundNode);
 
         // find grouping in rpc
-        RpcDefinition rpc = getRpcByName(myModule, "my-rpc");
-        for (GroupingDefinition grouping : rpc.getGroupings()) {
+        final RpcDefinition rpc = getRpcByName(myModule, "my-rpc");
+        for (final GroupingDefinition grouping : rpc.getGroupings()) {
             if (grouping.getQName().getLocalName().equals("my-grouping-in-rpc2")) {
                 testNode = grouping;
             }
@@ -800,8 +829,9 @@ public class SchemaContextUtilTest {
         assertNull(foundNode);
 
         // find grouping in case
-        dataContainer = (DataNodeContainer) ((ChoiceSchemaNode) myModule.getDataChildByName("my-choice")).getCaseNodeByName(
-                "one").getDataChildByName("my-container-in-case");
+        dataContainer = (DataNodeContainer) ((ChoiceSchemaNode) myModule.getDataChildByName(QName.create(
+                myModule.getQNameModule(), "my-choice"))).getCaseNodeByName("one").getDataChildByName(
+                QName.create(myModule.getQNameModule(), "my-container-in-case"));
         testNode = getGroupingByName(dataContainer, "my-grouping-in-case2");
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-choice"),
@@ -816,7 +846,7 @@ public class SchemaContextUtilTest {
     }
 
     private static GroupingDefinition getGroupingByName(final DataNodeContainer dataNodeContainer, final String name) {
-        for (GroupingDefinition grouping : dataNodeContainer.getGroupings()) {
+        for (final GroupingDefinition grouping : dataNodeContainer.getGroupings()) {
             if (grouping.getQName().getLocalName().equals(name)) {
                 return grouping;
             }
@@ -825,7 +855,7 @@ public class SchemaContextUtilTest {
     }
 
     private static RpcDefinition getRpcByName(final Module module, final String name) {
-        for (RpcDefinition rpc : module.getRpcs()) {
+        for (final RpcDefinition rpc : module.getRpcs()) {
             if (rpc.getQName().getLocalName().equals(name)) {
                 return rpc;
             }
@@ -834,7 +864,7 @@ public class SchemaContextUtilTest {
     }
 
     private static NotificationDefinition getNotificationByName(final Module module, final String name) {
-        for (NotificationDefinition notification : module.getNotifications()) {
+        for (final NotificationDefinition notification : module.getNotifications()) {
             if (notification.getQName().getLocalName().equals(name)) {
                 return notification;
             }
@@ -846,20 +876,20 @@ public class SchemaContextUtilTest {
     public void findNodeInSchemaContextTheSameNameOfSiblingsTest() throws URISyntaxException, IOException,
             YangSyntaxErrorException, ParseException, ReactorException {
 
-        SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
+        final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
-        Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
+        final Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
                 QName.parseRevision("2014-10-07"));
 
-        ChoiceSchemaNode choice = (ChoiceSchemaNode)getRpcByName(myModule,"my-name").getInput().getDataChildByName("my-choice");
-        SchemaNode testNode = choice.getCaseNodeByName("case-two").getDataChildByName("two");
-
-        SchemaPath path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-name"),
-                QName.create(myModule.getQNameModule(), "input"),
-                QName.create(myModule.getQNameModule(), "my-choice"),
-                QName.create(myModule.getQNameModule(), "case-two"),
+        final ChoiceSchemaNode choice = (ChoiceSchemaNode) getRpcByName(myModule, "my-name").getInput()
+                .getDataChildByName(QName.create(myModule.getQNameModule(), "my-choice"));
+        final SchemaNode testNode = choice.getCaseNodeByName("case-two").getDataChildByName(
                 QName.create(myModule.getQNameModule(), "two"));
-        SchemaNode foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        final SchemaPath path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-name"),
+                QName.create(myModule.getQNameModule(), "input"), QName.create(myModule.getQNameModule(), "my-choice"),
+                QName.create(myModule.getQNameModule(), "case-two"), QName.create(myModule.getQNameModule(), "two"));
+        final SchemaNode foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
 
         assertNotNull(testNode);
         assertNotNull(foundNode);

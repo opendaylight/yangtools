@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -38,16 +39,19 @@ public class YinFileChoiceStmtTest {
 
     @Test
     public void testChoiceAndCases() {
-        Module testModule = TestUtils.findModule(modules, "config");
+        final Module testModule = TestUtils.findModule(modules, "config");
         assertNotNull(testModule);
 
-        ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName("modules");
+        final ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "modules"));
         assertNotNull(container);
 
-        ListSchemaNode list = (ListSchemaNode) container.getDataChildByName("module");
+        final ListSchemaNode list = (ListSchemaNode) container.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "module"));
         assertNotNull(list);
 
-        ChoiceSchemaNode choice = (ChoiceSchemaNode) list.getDataChildByName("configuration");
+        ChoiceSchemaNode choice = (ChoiceSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(),
+                "configuration"));
         assertNotNull(choice);
 
         assertEquals("configuration", choice.getQName().getLocalName());
@@ -56,15 +60,15 @@ public class YinFileChoiceStmtTest {
         assertEquals(1, choice.getCases().size());
 
         // this choice is augmented (see main-impl.yang.xml)
-        Iterator<ChoiceCaseNode> casesIterator = choice.getCases().iterator();
-        ChoiceCaseNode caseNode = casesIterator.next();
+        final Iterator<ChoiceCaseNode> casesIterator = choice.getCases().iterator();
+        final ChoiceCaseNode caseNode = casesIterator.next();
         assertEquals("main-impl", caseNode.getQName().getLocalName());
         assertEquals(13, caseNode.getChildNodes().size());
 
-        RevisionAwareXPath whenCondition = caseNode.getConstraints().getWhenCondition();
+        final RevisionAwareXPath whenCondition = caseNode.getConstraints().getWhenCondition();
         assertNotNull(whenCondition);
 
-        choice = (ChoiceSchemaNode) list.getDataChildByName("state");
+        choice = (ChoiceSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(), "state"));
         assertNotNull(choice);
 
         assertEquals("state", choice.getQName().getLocalName());

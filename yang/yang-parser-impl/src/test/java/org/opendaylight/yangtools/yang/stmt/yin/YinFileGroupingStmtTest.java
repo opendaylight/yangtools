@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -36,14 +37,14 @@ public class YinFileGroupingStmtTest {
 
     @Test
     public void testGrouping() throws URISyntaxException {
-        Module testModule = TestUtils.findModule(modules, "config");
+        final Module testModule = TestUtils.findModule(modules, "config");
         assertNotNull(testModule);
 
-        Set<GroupingDefinition> groupings = testModule.getGroupings();
+        final Set<GroupingDefinition> groupings = testModule.getGroupings();
         assertEquals(1, groupings.size());
 
-        Iterator<GroupingDefinition> groupingsIterator = groupings.iterator();
-        GroupingDefinition grouping = groupingsIterator.next();
+        final Iterator<GroupingDefinition> groupingsIterator = groupings.iterator();
+        final GroupingDefinition grouping = groupingsIterator.next();
         assertEquals("service-ref", grouping.getQName().getLocalName());
         assertEquals("Type of references to a particular service instance. This type\n" +
                 "can be used when defining module configuration to refer to a\n" +
@@ -52,14 +53,16 @@ public class YinFileGroupingStmtTest {
                 "is expected to inject a reference to the service as the value\n" +
                 "of the container.", grouping.getDescription());
 
-        Collection<DataSchemaNode> children = grouping.getChildNodes();
+        final Collection<DataSchemaNode> children = grouping.getChildNodes();
         assertEquals(2, children.size());
 
-        LeafSchemaNode leaf1 = (LeafSchemaNode) grouping.getDataChildByName("type");
+        final LeafSchemaNode leaf1 = (LeafSchemaNode) grouping.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "type"));
         assertNotNull(leaf1);
         assertTrue(leaf1.getConstraints().isMandatory());
 
-        LeafSchemaNode leaf2 = (LeafSchemaNode) grouping.getDataChildByName("name");
+        final LeafSchemaNode leaf2 = (LeafSchemaNode) grouping.getDataChildByName(QName.create(
+                testModule.getQNameModule(), "name"));
         assertNotNull(leaf2);
         assertTrue(leaf2.getConstraints().isMandatory());
     }

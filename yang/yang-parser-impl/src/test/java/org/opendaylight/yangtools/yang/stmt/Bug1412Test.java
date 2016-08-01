@@ -38,20 +38,21 @@ public class Bug1412Test {
         modules = TestUtils.loadModules(getClass().getResource("/bugs/bug1412").toURI());
 
 
-        Module bug1412 = TestUtils.findModule(modules, "bug1412");
+        final Module bug1412 = TestUtils.findModule(modules, "bug1412");
         assertNotNull(bug1412);
 
-        ContainerSchemaNode node = (ContainerSchemaNode) bug1412.getDataChildByName("node");
+        final ContainerSchemaNode node = (ContainerSchemaNode) bug1412.getDataChildByName(QName.create(
+                bug1412.getQNameModule(), "node"));
         List<UnknownSchemaNode> unknownNodes = node.getUnknownSchemaNodes();
         assertEquals(1, unknownNodes.size());
-        UnknownSchemaNode action = unknownNodes.get(0);
+        final UnknownSchemaNode action = unknownNodes.get(0);
 
-        Date revision = new SimpleDateFormat("yyyy-MM-dd").parse("2014-07-25");
-        QNameModule qm = QNameModule.create(URI.create("urn:test:bug1412"), revision);
+        final Date revision = new SimpleDateFormat("yyyy-MM-dd").parse("2014-07-25");
+        final QNameModule qm = QNameModule.create(URI.create("urn:test:bug1412"), revision);
         QName expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "action");
         assertEquals(expectedNodeType, action.getNodeType());
         assertEquals("hello", action.getNodeParameter());
-        QName expectedQName = QName.create(qm, "hello");
+        final QName expectedQName = QName.create(qm, "hello");
         assertEquals(expectedQName, action.getQName());
 
         unknownNodes = action.getUnknownSchemaNodes();
@@ -60,7 +61,7 @@ public class Bug1412Test {
         UnknownSchemaNode description = null;
         UnknownSchemaNode actionPoint = null;
         UnknownSchemaNode output = null;
-        for (UnknownSchemaNode un : unknownNodes) {
+        for (final UnknownSchemaNode un : unknownNodes) {
             if ("info".equals(un.getNodeType().getLocalName())) {
                 info = un;
             } else if ("description".equals(un.getNodeType().getLocalName())) {

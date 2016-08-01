@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -37,19 +38,19 @@ public class ExtensionStmtTest {
 
     @Test
     public void testExtensionDefinition() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         StmtTestUtils.addSources(reactor, EXT_DEF_MODULE);
 
-        EffectiveSchemaContext result = reactor.buildEffective();
+        final EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        Module testModule = result.findModuleByName("bar", null);
+        final Module testModule = result.findModuleByName("bar", null);
         assertNotNull(testModule);
 
         assertEquals(1, testModule.getExtensionSchemaNodes().size());
 
-        List<ExtensionDefinition> extensions = testModule.getExtensionSchemaNodes();
-        ExtensionDefinition extension = extensions.get(0);
+        final List<ExtensionDefinition> extensions = testModule.getExtensionSchemaNodes();
+        final ExtensionDefinition extension = extensions.get(0);
         assertEquals("opendaylight", extension.getQName().getLocalName());
         assertEquals("name", extension.getArgument());
         assertTrue(extension.isYinElement());
@@ -57,29 +58,29 @@ public class ExtensionStmtTest {
 
     @Test
     public void testExtensionUsage() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         StmtTestUtils.addSources(reactor, EXT_DEF_MODULE2, EXT_USE_MODULE);
 
-        EffectiveSchemaContext result = reactor.buildEffective();
+        final EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        Module testModule1 = result.findModuleByName("ext-typedef", null);
+        final Module testModule1 = result.findModuleByName("ext-typedef", null);
         assertNotNull(testModule1);
 
         assertEquals(1, testModule1.getExtensionSchemaNodes().size());
 
-        List<ExtensionDefinition> extensions = testModule1.getExtensionSchemaNodes();
-        ExtensionDefinition extensionDefinition = extensions.get(0);
+        final List<ExtensionDefinition> extensions = testModule1.getExtensionSchemaNodes();
+        final ExtensionDefinition extensionDefinition = extensions.get(0);
 
-        Module testModule2 = result.findModuleByName("ext-use", null);
+        final Module testModule2 = result.findModuleByName("ext-use", null);
         assertNotNull(testModule2);
 
-        LeafSchemaNode leaf = (LeafSchemaNode) testModule2.getDataChildByName("value");
+        final LeafSchemaNode leaf = (LeafSchemaNode) testModule2.getDataChildByName(QName.create(testModule2.getQNameModule(), "value"));
         assertNotNull(leaf);
 
         assertEquals(1, leaf.getUnknownSchemaNodes().size());
-        List<UnknownSchemaNode> unknownNodes = leaf.getUnknownSchemaNodes();
-        UnknownSchemaNode extensionUse = unknownNodes.get(0);
+        final List<UnknownSchemaNode> unknownNodes = leaf.getUnknownSchemaNodes();
+        final UnknownSchemaNode extensionUse = unknownNodes.get(0);
         assertEquals(extensionDefinition.getQName().getLocalName(), extensionUse.getExtensionDefinition().getQName()
                 .getLocalName());
         assertEquals(extensionDefinition.getArgument(), extensionUse.getExtensionDefinition().getArgument());
