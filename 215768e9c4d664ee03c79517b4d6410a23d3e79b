@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_62badbe2",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/AbstractMapModificationStrategy.java",
+        "patchSetId": 36
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-08-03T11:55:13Z",
+      "side": 1,
+      "message": "copy\u0026pasted duplication from AbstractNodeContainerModificationStrategy, which is a superclass of this one.",
+      "range": {
+        "startLine": 45,
+        "startChar": 0,
+        "endLine": 61,
+        "endChar": 13
+      },
+      "revId": "215768e9c4d664ee03c79517b4d6410a23d3e79b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_0273274e",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/AbstractMapModificationStrategy.java",
+        "patchSetId": 36
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-08-03T11:55:13Z",
+      "side": 1,
+      "message": "same as above",
+      "range": {
+        "startLine": 73,
+        "startChar": 0,
+        "endLine": 96,
+        "endChar": 11
+      },
+      "revId": "215768e9c4d664ee03c79517b4d6410a23d3e79b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_02aa0770",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/AbstractMapModificationStrategy.java",
+        "patchSetId": 36
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-08-03T11:55:13Z",
+      "side": 1,
+      "message": "this leads to a very bad pattern... indexes map should be maintained inside TreeNode and their lifecycle should be part of TreeNode.mutable() and MutableTreeNode.seal(), because...",
+      "range": {
+        "startLine": 123,
+        "startChar": 0,
+        "endLine": 123,
+        "endChar": 101
+      },
+      "revId": "215768e9c4d664ee03c79517b4d6410a23d3e79b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_e2c9cb5b",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/AbstractMapModificationStrategy.java",
+        "patchSetId": 36
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-08-03T11:55:13Z",
+      "side": 1,
+      "message": ".. here we are maintaining TreeNode-private map in an external class and furthermore ...",
+      "range": {
+        "startLine": 124,
+        "startChar": 0,
+        "endLine": 126,
+        "endChar": 9
+      },
+      "revId": "215768e9c4d664ee03c79517b4d6410a23d3e79b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_22c4633f",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/AbstractMapModificationStrategy.java",
+        "patchSetId": 36
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-08-03T11:55:13Z",
+      "side": 1,
+      "message": "... these calls end up always copying the entire index map for each modification.\n\nPlease update the test suite: add a test case which will create a list of million entries and then overwrite them with batches of a 1000 entries each.",
+      "range": {
+        "startLine": 136,
+        "startChar": 0,
+        "endLine": 136,
+        "endChar": 94
+      },
+      "revId": "215768e9c4d664ee03c79517b4d6410a23d3e79b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_0217a7ee",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/UniqueIndexKey.java",
+        "patchSetId": 36
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-08-03T11:55:13Z",
+      "side": 1,
+      "message": "value is guaranteed to be non-null, hence value.equals(other.value) is sufficient",
+      "range": {
+        "startLine": 39,
+        "startChar": 15,
+        "endLine": 39,
+        "endChar": 55
+      },
+      "revId": "215768e9c4d664ee03c79517b4d6410a23d3e79b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
