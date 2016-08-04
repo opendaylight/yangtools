@@ -82,8 +82,8 @@ public class Bug5946Test {
         try {
             StmtTestUtils.parseYangSources(new File(getClass().getResource("/bugs/bug5946/foo-invalid.yang").toURI()));
             fail("Should fail due to invalid argument of unique constraint");
-        } catch (SourceException e) {
-            assertTrue(e.getMessage().startsWith(
+        } catch (ReactorException e) {
+            assertTrue(e.getCause().getMessage().startsWith(
                     "Unique statement argument '/simple-unique/l1' contains schema node identifier '/simple-unique/l1'"
                             + " which is not in the descendant node identifier form."));
         }

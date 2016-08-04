@@ -13,8 +13,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
-
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -26,8 +24,8 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
@@ -115,8 +113,8 @@ public class SemanticVersionTest {
         try {
             StmtTestUtils.parseYangSources("/semantic-version/basic-import-invalid-1", StatementParserMode.SEMVER_MODE);
             fail("Test should fail due to invalid semantic version");
-        } catch (InferenceException e) {
-            assertTrue(e.getMessage()
+        } catch (ReactorException e) {
+            assertTrue(e.getCause().getMessage()
                     .startsWith("Unable to find module compatible with requested import [bar(0.1.2)]."));
         }
     }
@@ -127,8 +125,8 @@ public class SemanticVersionTest {
         try {
             StmtTestUtils.parseYangSources("/semantic-version/basic-import-invalid-2", StatementParserMode.SEMVER_MODE);
             fail("Test should fail due to invalid semantic version");
-        } catch (InferenceException e) {
-            assertTrue(e.getMessage()
+        } catch (ReactorException e) {
+            assertTrue(e.getCause().getMessage()
                     .startsWith("Unable to find module compatible with requested import [bar(0.1.2)]."));
         }
     }

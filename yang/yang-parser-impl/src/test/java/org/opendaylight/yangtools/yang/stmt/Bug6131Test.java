@@ -8,7 +8,8 @@
 
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
@@ -21,8 +22,9 @@ public class Bug6131Test {
     public void test() throws ReactorException, SourceException, FileNotFoundException, URISyntaxException {
         try {
             StmtTestUtils.parseYangSources("/bugs/bug6131");
+            fail("A NullPointerException should have been thrown.");
         } catch (final Exception e) {
-            assertEquals("Malformed source. Valid root element is missing.", e.getMessage());
+            assertTrue(e instanceof NullPointerException);
         }
     }
 }

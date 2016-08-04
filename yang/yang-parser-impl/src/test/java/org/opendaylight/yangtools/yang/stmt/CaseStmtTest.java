@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ChoiceEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ContainerEffectiveStatementImpl;
@@ -535,13 +534,13 @@ public class CaseStmtTest {
 
     @Test
     public void InferenceExceptionChoiceTest() throws ReactorException, FileNotFoundException, URISyntaxException {
-        expectedEx.expect(InferenceException.class);
+        expectedEx.expect(ReactorException.class);
         schema = StmtTestUtils.parseYangSources("/case-test/case-test-exceptions/choice");
     }
 
     @Test
     public void InferenceExceptionCaseTest() throws ReactorException, FileNotFoundException, URISyntaxException {
-        expectedEx.expect(InferenceException.class);
+        expectedEx.expect(ReactorException.class);
         schema = StmtTestUtils.parseYangSources("/case-test/case-test-exceptions/case");
     }
 }

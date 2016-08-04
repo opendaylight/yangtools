@@ -13,8 +13,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
-
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -22,7 +20,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
+import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
@@ -67,8 +65,8 @@ public class YinSemanticVersionTest {
         try {
             StmtTestUtils.parseYinSources("/semantic-version/yin-input/basic-import-invalid", StatementParserMode.SEMVER_MODE);
             fail("Test should fail due to invalid semantic version");
-        } catch (InferenceException e) {
-            assertTrue(e.getMessage()
+        } catch (ReactorException e) {
+            assertTrue(e.getCause().getMessage()
                     .startsWith("Unable to find module compatible with requested import [bar(0.1.2)]."));
         }
     }

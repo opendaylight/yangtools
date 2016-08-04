@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Throwables;
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -28,6 +27,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -46,6 +46,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamesp
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceSpecificContext.PhaseCompletionProgress;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -190,7 +191,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         return new EffectiveModelContext(rootStatements);
     }
 
-    public EffectiveSchemaContext buildEffective() throws SourceException, ReactorException {
+    public EffectiveSchemaContext buildEffective() throws ReactorException {
         for (ModelProcessingPhase phase : PHASE_EXECUTION_ORDER) {
             startPhase(phase);
             loadPhaseStatements();
@@ -200,15 +201,21 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         return transformEffective();
     }
 
-    private EffectiveSchemaContext transformEffective() {
+    private EffectiveSchemaContext transformEffective() throws ReactorException {
         Preconditions.checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         List<DeclaredStatement<?>> rootStatements = new ArrayList<>(sources.size());
         List<EffectiveStatement<?, ?>> rootEffectiveStatements = new ArrayList<>(sources.size());
+        SourceIdentifier sourceId = null;
 
-        for (SourceSpecificContext source : sources) {
-            final RootStatementContext<?, ?, ?> root = source.getRoot();
-            rootStatements.add(root.buildDeclared());
-            rootEffectiveStatements.add(root.buildEffective());
+        try {
+            for (SourceSpecificContext source : sources) {
+                final RootStatementContext<?, ?, ?> root = source.getRoot();
+                sourceId = Utils.createSourceIdentifier(root);
+                rootStatements.add(root.buildDeclared());
+                rootEffectiveStatements.add(root.buildEffective());
+            }
+        } catch (SourceException ex) {
+            throw new SomeModifiersUnresolvedException(currentPhase, sourceId, ex);
         }
 
         return new EffectiveSchemaContext(rootStatements, rootEffectiveStatements);
@@ -222,16 +229,21 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         currentPhase = phase;
     }
 
-    private void loadPhaseStatements() throws SourceException {
+    private void loadPhaseStatements() throws ReactorException {
         Preconditions.checkState(currentPhase != null);
         for (SourceSpecificContext source : sources) {
-            source.loadStatements();
+            try {
+                source.loadStatements();
+            } catch (SourceException ex) {
+                final SourceIdentifier sourceId = Utils.createSourceIdentifier(source.getRoot());
+                throw new SomeModifiersUnresolvedException(currentPhase, sourceId, ex);
+            }
         }
     }
 
-    private SomeModifiersUnresolvedException addSourceExceptions(final SomeModifiersUnresolvedException buildFailure,
-            final List<SourceSpecificContext> sourcesToProgress) {
+    private SomeModifiersUnresolvedException addSourceExceptions(final List<SourceSpecificContext> sourcesToProgress) {
         boolean addedCause = false;
+        SomeModifiersUnresolvedException buildFailure = null;
         for (SourceSpecificContext failedSource : sourcesToProgress) {
             final SourceException sourceEx = failedSource.failModifiers(currentPhase);
 
@@ -263,7 +275,8 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
             if (!addedCause) {
                 addedCause = true;
-                buildFailure.initCause(sourceEx);
+                final SourceIdentifier sourceId = Utils.createSourceIdentifier(failedSource.getRoot());
+                buildFailure = new SomeModifiersUnresolvedException(currentPhase, sourceId, sourceEx);
             } else {
                 buildFailure.addSuppressed(sourceEx);
             }
@@ -274,6 +287,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     private void completePhaseActions() throws ReactorException {
         Preconditions.checkState(currentPhase != null);
         List<SourceSpecificContext> sourcesToProgress = Lists.newArrayList(sources);
+        SourceIdentifier sourceId = null;
         try {
             boolean progressing = true;
             while (progressing) {
@@ -282,6 +296,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
                 Iterator<SourceSpecificContext> currentSource = sourcesToProgress.iterator();
                 while (currentSource.hasNext()) {
                     SourceSpecificContext nextSourceCtx = currentSource.next();
+                    sourceId = Utils.createSourceIdentifier(nextSourceCtx.getRoot());
                     PhaseCompletionProgress sourceProgress = nextSourceCtx.tryToCompletePhase(currentPhase);
                     switch (sourceProgress) {
                     case FINISHED:
@@ -300,11 +315,10 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
                 }
             }
         } catch (SourceException e) {
-            throw Throwables.propagate(e);
+            throw new SomeModifiersUnresolvedException(currentPhase, sourceId, e);
         }
         if (!sourcesToProgress.isEmpty()) {
-            SomeModifiersUnresolvedException buildFailure = new SomeModifiersUnresolvedException(currentPhase);
-            buildFailure = addSourceExceptions(buildFailure, sourcesToProgress);
+            final SomeModifiersUnresolvedException buildFailure = addSourceExceptions(sourcesToProgress);
             throw buildFailure;
         }
     }

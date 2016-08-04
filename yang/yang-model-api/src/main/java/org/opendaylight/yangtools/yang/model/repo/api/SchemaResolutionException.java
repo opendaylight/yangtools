@@ -24,9 +24,8 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 @Beta
 public class SchemaResolutionException extends SchemaSourceException {
 
-    private static final String MESSAGE_BLUEPRINT = "%s, resolved sources: %s, unsatisfied imports: %s";
-
     private static final long serialVersionUID = 1L;
+    private final SourceIdentifier failedSource;
     private final Multimap<SourceIdentifier, ModuleImport> unsatisfiedImports;
     private final Collection<SourceIdentifier> resolvedSources;
 
@@ -35,24 +34,42 @@ public class SchemaResolutionException extends SchemaSourceException {
     }
 
     public SchemaResolutionException(@Nonnull final String message, final Throwable cause) {
-        this(message, cause, Collections.emptySet(), ImmutableMultimap.of());
+        this(message, null, cause, Collections.emptySet(), ImmutableMultimap.of());
+    }
+
+    public SchemaResolutionException(@Nonnull final String message, final SourceIdentifier failedSource,
+            final Throwable cause) {
+        this(message, failedSource, cause, Collections.emptySet(), ImmutableMultimap.of());
     }
 
     public SchemaResolutionException(@Nonnull final String message, final Collection<SourceIdentifier> resolvedSources,
             final @Nonnull Multimap<SourceIdentifier, ModuleImport> unsatisfiedImports) {
-        this(message, null, resolvedSources, unsatisfiedImports);
+        this(message, null, null, resolvedSources, unsatisfiedImports);
     }
 
-    public SchemaResolutionException(@Nonnull final String message, final Throwable cause,
-            @Nonnull final Collection<SourceIdentifier> resolvedSources,
+    public SchemaResolutionException(@Nonnull final String message, final SourceIdentifier failedSource,
+            final Throwable cause, @Nonnull final Collection<SourceIdentifier> resolvedSources,
             @Nonnull final Multimap<SourceIdentifier, ModuleImport> unsatisfiedImports) {
-        super(formatMessage(message, resolvedSources, unsatisfiedImports), cause);
+        super(formatMessage(message, failedSource, resolvedSources, unsatisfiedImports), cause);
+        this.failedSource = failedSource;
         this.unsatisfiedImports = ImmutableMultimap.copyOf(unsatisfiedImports);
         this.resolvedSources = ImmutableList.copyOf(resolvedSources);
     }
 
-    private static String formatMessage(final String message, final Collection<SourceIdentifier> resolvedSources, final Multimap<SourceIdentifier, ModuleImport> unsatisfiedImports) {
-        return String.format(MESSAGE_BLUEPRINT, message, resolvedSources, unsatisfiedImports);
+    private static String formatMessage(final String message, final SourceIdentifier failedSource,
+            final Collection<SourceIdentifier> resolvedSources,
+            final Multimap<SourceIdentifier, ModuleImport> unsatisfiedImports) {
+        return String.format("%s, failed source: %s, resolved sources: %s, unsatisfied imports: %s", message,
+                failedSource, resolvedSources, unsatisfiedImports);
+    }
+
+    /**
+     * Return YANG schema source identifier consisting of name and revision of the module which caused this exception
+     *
+     * @return YANG schema source identifier
+     */
+    public final SourceIdentifier getFailedSource() {
+        return this.failedSource;
     }
 
     /**

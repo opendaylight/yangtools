@@ -117,6 +117,16 @@ public class ModuleStatementSupport extends
         stmt.addToNs(ImpPrefixToNamespace.class, modulePrefix, moduleNs);
 
         stmt.addContext(PreLinkageModuleNamespace.class, moduleName, stmt);
+
+        Optional<Date> revisionDate = Optional.fromNullable(Utils.getLatestRevision(stmt.declaredSubstatements
+                ()));
+        if (!revisionDate.isPresent()) {
+            revisionDate = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
+        }
+
+        QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate.orNull()).intern();
+
+        stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule);
     };
 
     @Override
@@ -146,7 +156,7 @@ public class ModuleStatementSupport extends
 
         stmt.addToNs(PrefixToModule.class, modulePrefix, qNameModule);
         stmt.addToNs(ModuleNameToModuleQName.class, stmt.getStatementArgument(), qNameModule);
-        stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule);
+        stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule); // tu
         stmt.addToNs(ModuleCtxToModuleIdentifier.class, stmt, moduleIdentifier);
         stmt.addToNs(ModuleQNameToModuleName.class, qNameModule, stmt.getStatementArgument());
         stmt.addToNs(ModuleIdentifierToModuleQName.class, moduleIdentifier, qNameModule);
