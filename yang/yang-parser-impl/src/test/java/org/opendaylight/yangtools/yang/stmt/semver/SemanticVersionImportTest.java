@@ -12,8 +12,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
-
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -21,7 +19,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
+import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
@@ -47,8 +45,8 @@ public class SemanticVersionImportTest {
             StmtTestUtils.parseYangSources("/semantic-version/import/import-invalid-deprecated-1",
                     StatementParserMode.SEMVER_MODE);
             fail("Test should fail due to invalid import of semantic-version module");
-        } catch (InferenceException e) {
-            assertTrue(e.getMessage().startsWith(
+        } catch (ReactorException e) {
+            assertTrue(e.getCause().getMessage().startsWith(
                     "Unable to find module compatible with requested import " + "[semantic-version(1.0.0)]."));
         }
     }
@@ -60,8 +58,8 @@ public class SemanticVersionImportTest {
             StmtTestUtils.parseYangSources("/semantic-version/import/import-invalid-deprecated-2",
                     StatementParserMode.SEMVER_MODE);
             fail("Test should fail due to invalid import of semantic-version module");
-        } catch (InferenceException e) {
-            assertTrue(e.getMessage().startsWith(
+        } catch (ReactorException e) {
+            assertTrue(e.getCause().getMessage().startsWith(
                     "Unable to find module compatible with requested import " + "[semantic-version(0.9.9)]."));
         }
     }
@@ -73,8 +71,8 @@ public class SemanticVersionImportTest {
             StmtTestUtils.parseYangSources("/semantic-version/import/import-invalid-notsufficient-1",
                     StatementParserMode.SEMVER_MODE);
             fail("Test should fail due to invalid import of semantic-version module");
-        } catch (InferenceException e) {
-            assertTrue(e.getMessage().startsWith(
+        } catch (ReactorException e) {
+            assertTrue(e.getCause().getMessage().startsWith(
                     "Unable to find module compatible with requested import " + "[semantic-version(2.0.0)]."));
         }
     }
@@ -86,8 +84,8 @@ public class SemanticVersionImportTest {
             StmtTestUtils.parseYangSources("/semantic-version/import/import-invalid-notsufficient-2",
                     StatementParserMode.SEMVER_MODE);
             fail("Test should fail due to invalid import of semantic-version module");
-        } catch (InferenceException e) {
-            assertTrue(e.getMessage().startsWith(
+        } catch (ReactorException e) {
+            assertTrue(e.getCause().getMessage().startsWith(
                     "Unable to find module compatible with requested import " + "[semantic-version(2.0.5)]."));
         }
     }

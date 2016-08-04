@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import com.google.common.base.CharMatcher;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -50,6 +51,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -62,6 +65,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.RootStatementContext;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -691,5 +695,21 @@ public final class Utils {
         }
 
         return false;
+    }
+
+    public static SourceIdentifier createSourceIdentifier(RootStatementContext<?, ?, ?> root) {
+        final QNameModule qNameModule = root.getFromNamespace(ModuleCtxToModuleQName.class, root);
+        if (qNameModule != null) {
+            // creates SourceIdentifier for a module
+            return RevisionSourceIdentifier.create((String) root.getStatementArgument(),
+                qNameModule.getFormattedRevision());
+        } else {
+            // creates SourceIdentifier for a submodule
+            final Date revision = Optional.fromNullable(Utils.getLatestRevision(root.declaredSubstatements()))
+                    .or(SimpleDateFormatUtil.DEFAULT_DATE_REV);
+            final String formattedRevision = SimpleDateFormatUtil.getRevisionFormat().format(revision);
+            return RevisionSourceIdentifier.create((String) root.getStatementArgument(),
+                    formattedRevision);
+        }
     }
 }

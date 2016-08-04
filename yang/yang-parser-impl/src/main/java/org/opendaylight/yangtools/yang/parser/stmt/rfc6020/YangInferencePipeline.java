@@ -67,15 +67,16 @@ public final class YangInferencePipeline {
             .addSupport(new IncludeStatementImpl.Definition())
             .addSupport(new PrefixStatementImpl.Definition())
             .addSupport(new YangVersionStatementImpl.Definition())
+            .addSupport(new RevisionStatementImpl.Definition())
             .addSupport(global(ModuleNameToNamespace.class))
             .addSupport(global(PreLinkageModuleNamespace.class))
             .addSupport(sourceLocal(ImpPrefixToNamespace.class))
+            .addSupport(global(ModuleCtxToModuleQName.class))
             .build();
 
     public static final StatementSupportBundle LINKAGE_BUNDLE = StatementSupportBundle
             .derivedFrom(PRE_LINKAGE_BUNDLE)
             .addSupport(new DescriptionStatementImpl.Definition())
-            .addSupport(new RevisionStatementImpl.Definition())
             .addSupport(new RevisionDateStatementImpl.Definition())
             .addSupport(new ReferenceStatementImpl.Definition())
             .addSupport(new ContactStatementImpl.Definition())
@@ -86,7 +87,6 @@ public final class YangInferencePipeline {
             .addSupport(global(SubmoduleNamespace.class))
             .addSupport(global(NamespaceToModule.class))
             .addSupport(global(ModuleNameToModuleQName.class))
-            .addSupport(global(ModuleCtxToModuleQName.class))
             .addSupport(global(ModuleCtxToModuleIdentifier.class))
             .addSupport(global(ModuleQNameToModuleName.class))
             .addSupport(global(PrefixToModule.class))

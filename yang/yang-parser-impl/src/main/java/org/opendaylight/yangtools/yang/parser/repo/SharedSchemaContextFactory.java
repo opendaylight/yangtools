@@ -219,7 +219,12 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
                 reactor.addSource(new YangStatementSourceImpl(e.getKey(), (StatementContext) parserRuleCtx));
             }
 
-            final SchemaContext schemaContext = reactor.buildEffective();
+            final SchemaContext schemaContext;
+            try {
+                schemaContext = reactor.buildEffective();
+            } catch (ReactorException ex) {
+                throw new SchemaResolutionException("Failed to resolve required models", ex.getSourceIdentifier(), ex);
+            }
 
             return Futures.immediateCheckedFuture(schemaContext);
         }

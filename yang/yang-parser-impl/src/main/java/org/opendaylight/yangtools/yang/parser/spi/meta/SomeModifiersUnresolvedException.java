@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+
 public class SomeModifiersUnresolvedException extends ReactorException {
 
     private static final long serialVersionUID = 1L;
 
-    public SomeModifiersUnresolvedException(ModelProcessingPhase phase) {
-        super(phase,"Some of " + phase + " modifiers for statements were not resolved.");
+    public SomeModifiersUnresolvedException(ModelProcessingPhase phase, SourceIdentifier sourceId, Throwable cause) {
+        super(phase, "Some of " + phase + " modifiers for statements were not resolved.", sourceId, cause);
     }
 
 }

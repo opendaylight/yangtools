@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
 import com.google.common.base.Throwables;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -23,8 +24,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 
 public class YangParserNegativeTest {
@@ -106,9 +107,9 @@ public class YangParserNegativeTest {
                 TestUtils.loadModule(stream);
                 fail("SourceException should be thrown");
             }
-        } catch (SourceException e) {
-            assertTrue(e.getMessage().contains("Error in module 'test4' in the refine of uses 'Relative{path=[" +
-                    "(urn:simple.container.demo?revision=1970-01-01)node]}': can not perform refine of 'PRESENCE' for" +
+        } catch (ReactorException e) {
+            assertTrue(e.getCause().getMessage().contains("Error in module 'test4' in the refine of uses " +
+                    "'Relative{path=[(urn:simple.container.demo?revision=1970-01-01)node]}': can not perform refine of 'PRESENCE' for" +
                     " the target 'LEAF_LIST'."));
         }
     }
@@ -121,8 +122,8 @@ public class YangParserNegativeTest {
                 TestUtils.loadModule(stream);
                 fail("YangParseException should be thrown");
             }
-        } catch (SourceException e) {
-            assertTrue(e.getMessage().contains("Invalid length constraint: <4, 10>"));
+        } catch (ReactorException e) {
+            assertTrue(e.getCause().getMessage().contains("Invalid length constraint: <4, 10>"));
         }
     }
 
@@ -134,8 +135,8 @@ public class YangParserNegativeTest {
                 TestUtils.loadModule(stream);
                 fail("Exception should be thrown");
             }
-        } catch (SourceException e) {
-            assertTrue(e.getMessage().contains("Invalid range constraint: <5, 20>"));
+        } catch (ReactorException e) {
+            assertTrue(e.getCause().getMessage().contains("Invalid range constraint: <5, 20>"));
         }
     }
 
@@ -147,11 +148,11 @@ public class YangParserNegativeTest {
                 TestUtils.loadModule(stream);
                 fail("SourceException should be thrown");
             }
-        } catch (SourceException e) {
+        } catch (ReactorException e) {
             String expected = "Error in module 'container': cannot add '(urn:simple.container" +
                     ".demo?revision=1970-01-01)foo'. Node name collision: '(urn:simple.container" +
                     ".demo?revision=1970-01-01)foo' already declared.";
-            assertTrue(e.getMessage().contains(expected));
+            assertTrue(e.getCause().getMessage().contains(expected));
         }
     }
 
@@ -163,11 +164,11 @@ public class YangParserNegativeTest {
                 TestUtils.loadModule(stream);
                 fail("SourceException should be thrown");
             }
-        } catch (SourceException e) {
+        } catch (ReactorException e) {
             String expected = "Error in module 'container-list': cannot add '(urn:simple.container" +
                     ".demo?revision=1970-01-01)foo'. Node name collision: '(urn:simple.container" +
                     ".demo?revision=1970-01-01)foo' already declared.";
-            assertTrue(e.getMessage().contains(expected));
+            assertTrue(e.getCause().getMessage().contains(expected));
         }
     }
 
@@ -179,11 +180,11 @@ public class YangParserNegativeTest {
                 TestUtils.loadModule(stream);
                 fail("SourceException should be thrown");
             }
-        } catch (SourceException e) {
+        } catch (ReactorException e) {
             String expected = "Error in module 'container-leaf': cannot add '(urn:simple.container" +
                     ".demo?revision=1970-01-01)foo'. Node name collision: '(urn:simple.container" +
                     ".demo?revision=1970-01-01)foo' already declared.";
-            assertTrue(e.getMessage().contains(expected));
+            assertTrue(e.getCause().getMessage().contains(expected));
         }
     }
 
@@ -195,11 +196,11 @@ public class YangParserNegativeTest {
                 TestUtils.loadModule(stream);
                 fail("SourceException should be thrown");
             }
-        } catch (SourceException e) {
+        } catch (ReactorException e) {
             String expected = "Error in module 'typedef': cannot add '(urn:simple.container" +
                     ".demo?revision=1970-01-01)int-ext'. Node name collision: '(urn:simple.container" +
                     ".demo?revision=1970-01-01)int-ext' already declared.";
-            assertTrue(e.getMessage().startsWith(expected));
+            assertTrue(e.getCause().getMessage().startsWith(expected));
         }
     }
 
@@ -248,10 +249,10 @@ public class YangParserNegativeTest {
                 TestUtils.loadModule(stream1);
                 fail("InferenceException should be thrown");
             }
-        } catch (InferenceException e) {
+        } catch (ReactorException e) {
             String expected = "Key 'rib-id' misses node 'rib-id' in list '(invalid:list:key:def?revision=1970-01-01)" +
                     "application-map'";
-            assertTrue(e.getMessage().startsWith(expected));
+            assertTrue(e.getCause().getMessage().startsWith(expected));
         }
     }
 
