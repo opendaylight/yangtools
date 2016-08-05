@@ -44,6 +44,12 @@ final class UnorderedMapModificationStrategy extends AbstractNodeContainerModifi
     public Optional<ModificationApplyOperation> getChild(final YangInstanceIdentifier.PathArgument identifier) {
         if (identifier instanceof YangInstanceIdentifier.NodeIdentifierWithPredicates) {
             return entryStrategy;
+        } else if (entryStrategy.isPresent()) {
+            // In case we already are in a MapEntry node(for example DataTree rooted at MapEntry)
+            // try to retrieve the child that the identifier should be pointing to from our entryStrategy
+            // if we have one. If the entryStrategy cannot find this child we just return the absent
+            // we get from it.
+            return entryStrategy.get().getChild(identifier);
         }
         return Optional.absent();
     }
