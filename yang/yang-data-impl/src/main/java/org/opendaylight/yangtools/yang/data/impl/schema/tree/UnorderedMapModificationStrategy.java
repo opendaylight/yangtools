@@ -44,6 +44,8 @@ final class UnorderedMapModificationStrategy extends AbstractNodeContainerModifi
     public Optional<ModificationApplyOperation> getChild(final YangInstanceIdentifier.PathArgument identifier) {
         if (identifier instanceof YangInstanceIdentifier.NodeIdentifierWithPredicates) {
             return entryStrategy;
+        } else if (entryStrategy.isPresent()) {
+            return entryStrategy.get().getChild(identifier);
         }
         return Optional.absent();
     }
