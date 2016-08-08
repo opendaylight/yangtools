@@ -15,7 +15,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 import java.util.List;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.ErrorSeverity;
 import org.opendaylight.yangtools.yang.common.ErrorTag;
@@ -38,7 +37,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.UniqueConstraintException;
 import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
-public class UniqueConstraintTest {
+public class UniqueConstraintTest extends AbstractUniqueConstraintTest {
     private static final String NS = "foo";
     private static final String REV = "2016-05-17";
     private static final QName TASK_CONTAINER = QName.create(NS, REV, "task-container");
@@ -48,13 +47,6 @@ public class UniqueConstraintTest {
     private static final QName MY_LEAF_2 = QName.create(NS, REV, "my-leaf-2");
     private static final QName MY_LEAF_3 = QName.create(NS, REV, "my-leaf-3");
     private static final QName MY_CONTAINER = QName.create(NS, REV, "my-container");
-
-    private static EffectiveModelContext TEST_MODEL;
-
-    @BeforeClass
-    public static void beforeClass() {
-        TEST_MODEL = TestModel.createTestContext("/yt570.yang");
-    }
 
     @Test
     public void switchEntriesTest() throws DataValidationFailedException {
