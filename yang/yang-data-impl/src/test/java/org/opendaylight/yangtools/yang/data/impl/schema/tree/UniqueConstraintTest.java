@@ -12,7 +12,6 @@ import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertThrows;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -30,7 +29,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
-public class UniqueConstraintTest {
+public class UniqueConstraintTest extends AbstractUniqueConstraintTest {
     private static final String NS = "foo";
     private static final String REV = "2016-05-17";
     private static final QName TASK_CONTAINER = QName.create(NS, REV, "task-container");
@@ -40,13 +39,6 @@ public class UniqueConstraintTest {
     private static final QName MY_LEAF_2 = QName.create(NS, REV, "my-leaf-2");
     private static final QName MY_LEAF_3 = QName.create(NS, REV, "my-leaf-3");
     private static final QName MY_CONTAINER = QName.create(NS, REV, "my-container");
-
-    private static EffectiveModelContext TEST_MODEL;
-
-    @BeforeClass
-    public static void beforeClass() {
-        TEST_MODEL = TestModel.createTestContext("/yt570.yang");
-    }
 
     @Test
     public void switchEntriesTest() throws ReactorException, DataValidationFailedException {
