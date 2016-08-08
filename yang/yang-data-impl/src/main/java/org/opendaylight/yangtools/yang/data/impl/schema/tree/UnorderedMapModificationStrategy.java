@@ -8,14 +8,14 @@
 
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
@@ -30,14 +30,24 @@ final class UnorderedMapModificationStrategy extends AbstractNodeContainerModifi
     @SuppressWarnings("rawtypes")
     @Override
     protected NormalizedNodeContainerBuilder createBuilder(final NormalizedNode<?, ?> original) {
-        checkArgument(original instanceof MapNode);
-        return ImmutableMapNodeBuilder.create((MapNode) original);
+        // If the DataTree is rooted at a MapEntryNode the original value will be MapEntryNode
+        // so make sure we can handle this aswell
+        if (original instanceof MapNode) {
+            return ImmutableMapNodeBuilder.create((MapNode) original);
+        } else if (original instanceof MapEntryNode) {
+            return ImmutableMapEntryNodeBuilder.create((MapEntryNode) original);
+        }
+        throw new IllegalArgumentException("MapModification strategy can only handle MapNode or MapEntryNode's");
     }
 
     @Override
     protected NormalizedNode<?, ?> createEmptyValue(final NormalizedNode<?, ?> original) {
-        checkArgument(original instanceof MapNode);
-        return ImmutableMapNodeBuilder.create().withNodeIdentifier(((MapNode) original).getIdentifier()).build();
+        if (original instanceof MapNode) {
+            return ImmutableMapNodeBuilder.create().withNodeIdentifier(((MapNode) original).getIdentifier()).build();
+        } else if (original instanceof MapEntryNode) {
+            return ImmutableMapEntryNodeBuilder.create().withNodeIdentifier(((MapEntryNode) original).getIdentifier()).build();
+        }
+        throw new IllegalArgumentException("MapModification strategy can only handle MapNode or MapEntryNode's");
     }
 
     @Override
