@@ -228,9 +228,7 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
     }
 
     public static YangInstanceIdentifier.AugmentationIdentifier getNodeIdentifierForAugmentation(final AugmentationSchema schema) {
-        final Collection<QName> qnames = Collections2.transform(schema.getChildNodes(), QNAME_FUNCTION);
+        final Collection<QName> qnames = Collections2.transform(schema.getChildNodes(), DataSchemaNode::getQName);
         return new YangInstanceIdentifier.AugmentationIdentifier(ImmutableSet.copyOf(qnames));
     }
-
-    private static final Function<DataSchemaNode, QName> QNAME_FUNCTION = input -> input.getQName();
 }
