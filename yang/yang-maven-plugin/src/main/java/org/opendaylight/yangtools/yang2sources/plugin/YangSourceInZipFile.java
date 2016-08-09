@@ -32,4 +32,9 @@ class YangSourceInZipFile extends YangSourceFromDependency {
     public InputStream openStream() throws IOException {
         return file.getInputStream(entry);
     }
+
+    @Override
+    String getDescription() {
+        return file.getName() + "::" + entry.getName();
+    }
 }
