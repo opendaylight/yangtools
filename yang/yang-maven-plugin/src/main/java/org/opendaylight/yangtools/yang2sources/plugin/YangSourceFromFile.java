@@ -33,4 +33,8 @@ class YangSourceFromFile extends YangSourceFromDependency {
         return source.length();
     }
 
+    @Override
+    String getDescription() {
+        return source.getAbsolutePath();
+    }
 }
