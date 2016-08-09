@@ -24,7 +24,7 @@
 
     <properties>
         <!-- Model versions -->
-        <ietf.topology.version>2013.10.21.7-SNAPSHOT</ietf.topology.version>
+        <ietf.topology.version>2013.10.21.10-SNAPSHOT</ietf.topology.version>
     </properties>
 
     <dependencyManagement>
