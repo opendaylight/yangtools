@@ -230,6 +230,8 @@ class YangToSourcesProcessor {
             try (InputStream dataStream = yangFromDependency.openStream()) {
                 String contents = IOUtils.toString(dataStream);
                 byContent.putIfAbsent(contents, yangFromDependency);
+            } catch (IOException e) {
+                throw new IOException("Exception when reading from: " + yangFromDependency.getDescription(), e);
             }
 
         }

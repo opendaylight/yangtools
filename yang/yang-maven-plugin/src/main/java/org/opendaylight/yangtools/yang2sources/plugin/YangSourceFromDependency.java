@@ -10,4 +10,16 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 import com.google.common.io.ByteSource;
 
 abstract class YangSourceFromDependency extends ByteSource {
+
+    /**
+     * Return a description for this dependency, to be used for error output when
+     * working with the dependency.
+     */
+    abstract String getDescription();
+
+    @Override
+    public final String toString() {
+        return getDescription();
+    }
+
 }
