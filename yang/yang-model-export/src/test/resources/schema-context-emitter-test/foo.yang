@@ -1,0 +1,206 @@
+module foo {
+    namespace foo-namespace;
+    prefix foo-prefix;
+
+    revision 2016-08-05;
+
+    feature test-feature {
+        status current;
+        description "test-feature description";
+        reference "test-feature reference";
+    }
+
+    typedef test-uint32-typedef {
+        type uint32 {
+            range "50..100";
+        }
+        units seconds;
+    }
+
+    typedef test-int32-typedef {
+        type int32 {
+            range "50..100";
+        }
+    }
+
+    typedef test-leafref-typedef {
+        type leafref {
+            path "../leafref-target-leaf";
+        }
+    }
+
+    typedef test-iid-typedef {
+        type instance-identifier {
+            require-instance false;
+        }
+    }
+
+    identity test-base-identity;
+
+    identity test-identity {
+        base test-base-identity;
+        status current;
+        description "test-identity description";
+        reference "test-identity reference";
+    }
+
+    extension test-extension;
+
+    rpc test-rpc {
+        input {
+            leaf input-leaf {
+                type string;
+            }
+        }
+        output {
+            leaf output-leaf {
+                type string;
+            }
+        }
+
+        grouping rpc-grouping {
+            leaf rpc-grouping-leaf {
+                type string;
+            }
+        }
+    }
+
+    notification test-notification {
+        uses test-grouping-2 {
+            refine test-anyxml-2 {
+                config false;
+            }
+            refine test-choice-2 {
+                config false;
+            }
+        }
+    }
+
+    anyxml test-anyxml {
+        when "foo != 'bar'";
+        must "bar != 'foo'";
+
+        foo-prefix:test-extension;
+    }
+
+    leaf leafref-target-leaf {
+        type string;
+    }
+
+    container test-container-1 {
+        must "bar != 'foo'";
+    }
+
+    container test-container-3 {
+        choice test-choice {
+            case a {
+                leaf case-a-leaf {
+                    type int32;
+                }
+            }
+            case b {
+                leaf case-b-leaf {
+                    type decimal64 {
+                        fraction-digits 3;
+                    }
+                }
+            }
+        }
+        leaf bits-leaf {
+            type bits {
+                bit one {
+                    position 1;
+                }
+                bit two {
+                    position 2;
+                }
+            }
+        }
+        leaf identityref-leaf {
+            type identityref {
+                base test-base-identity;
+            }
+        }
+    }
+
+    augment "/test-container-3/test-choice" {
+        case c {
+            leaf case-c-leaf {
+                type string;
+            }
+        }
+    }
+
+    augment "/test-container-1" {
+        uses test-grouping-1 {
+            refine test-leaf-1 {
+                default "def-val";
+            }
+            refine test-leaf-list {
+                config false;
+            }
+            refine test-list {
+                min-elements 5;
+            }
+            refine test-container-2 {
+                config false;
+            }
+            augment test-container-2 {
+                leaf test-leaf-2 {
+                    type string;
+                }
+            }
+        }
+    }
+
+    grouping test-grouping-1 {
+        leaf test-leaf-1 {
+            type string;
+            default "def-val";
+        }
+        leaf-list test-leaf-list {
+            type string;
+            config false;
+            ordered-by user;
+        }
+        list test-list {
+            key "key-leaf-1 key-leaf-2";
+            min-elements 5;
+
+            leaf key-leaf-1 {
+                type string;
+            }
+
+            leaf key-leaf-2 {
+                type string;
+            }
+        }
+        container test-container-2 {
+            config false;
+        }
+    }
+
+    grouping test-grouping-2 {
+        anyxml test-anyxml-2 {
+            config false;
+        }
+        choice test-choice-2 {
+            config false;
+
+            case first {
+                leaf first-case-leaf {
+                    type string {
+                        length "10..10 | 15";
+                    }
+                }
+            }
+            case second {
+                leaf second-case-leaf {
+                    type int32 {
+                        range "10..10 | 15";
+                    }
+                }
+            }
+        }
+    }
+}
