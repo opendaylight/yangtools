@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_eb14eaf6",
+        "filename": "yang/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/YangToSourcesProcessor.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-08-09T08:24:44Z",
+      "side": 1,
+      "message": "Is it necessary to add all available sources in each iteration of loop ? Can not we add them all at once after the loop end ?",
+      "range": {
+        "startLine": 173,
+        "startChar": 16,
+        "endLine": 173,
+        "endChar": 76
+      },
+      "revId": "2aa9b1f4a68f45e53334ce5046b6303626ba3f73",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
