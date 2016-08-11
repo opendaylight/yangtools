@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_7e89a925",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/stmt/UsesAugmentTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-08-11T12:37:21Z",
+      "side": 1,
+      "message": "please don\u0027t",
+      "range": {
+        "startLine": 60,
+        "startChar": 7,
+        "endLine": 85,
+        "endChar": 22
+      },
+      "revId": "a3d9bd51f75179f535e4d81d9860dd33afe6392f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_7e908943",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/stmt/yin/YinFileAugmentStmtTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-08-11T12:37:21Z",
+      "side": 1,
+      "message": "I wouldn\u0027t change initial formatting...",
+      "range": {
+        "startLine": 47,
+        "startChar": 6,
+        "endLine": 53,
+        "endChar": 127
+      },
+      "revId": "a3d9bd51f75179f535e4d81d9860dd33afe6392f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
