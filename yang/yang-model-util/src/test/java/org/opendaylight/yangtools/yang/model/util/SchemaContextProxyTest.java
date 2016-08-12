@@ -9,9 +9,11 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -19,15 +21,25 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.FilteringSchemaContextProxy.ModuleId;
 
 public class SchemaContextProxyTest {
@@ -413,6 +425,142 @@ public class SchemaContextProxyTest {
 
         FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext, Sets.newHashSet(module3), moduleConfig);
         assertProxyContext(filteringSchemaContextProxy, moduleConfig, module2, module3, module4);
+    }
+
+    @Test
+    public void testGetDataDefinitions() {
+        final Module moduleConfig = mockModule(CONFIG_NAME);
+        final SchemaContext schemaContext = mockSchema(moduleConfig);
+        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext,
+                Sets.newHashSet(), moduleConfig);
+
+        final ContainerSchemaNode mockedContainer = mock(ContainerSchemaNode.class);
+        final Set<DataSchemaNode> childNodes = Sets.newHashSet(mockedContainer);
+        doReturn(childNodes).when(moduleConfig).getChildNodes();
+
+        final Set<DataSchemaNode> dataDefinitions = filteringSchemaContextProxy.getDataDefinitions();
+        assertTrue(dataDefinitions.contains(mockedContainer));
+    }
+
+    @Test
+    public void testGetNotifications() {
+        final Module moduleConfig = mockModule(CONFIG_NAME);
+        final SchemaContext schemaContext = mockSchema(moduleConfig);
+        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext,
+                Sets.newHashSet(), moduleConfig);
+
+        final NotificationDefinition mockedNotification = mock(NotificationDefinition.class);
+        final Set<NotificationDefinition> notifications = Sets.newHashSet(mockedNotification);
+        doReturn(notifications).when(moduleConfig).getNotifications();
+
+        final Set<NotificationDefinition> schemaContextProxyNotifications = filteringSchemaContextProxy.getNotifications();
+        assertTrue(schemaContextProxyNotifications.contains(mockedNotification));
+    }
+
+    @Test
+    public void testGetOperations() {
+        final Module moduleConfig = mockModule(CONFIG_NAME);
+        final SchemaContext schemaContext = mockSchema(moduleConfig);
+        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext,
+                Sets.newHashSet(), moduleConfig);
+
+        final RpcDefinition mockedRpc = mock(RpcDefinition.class);
+        final Set<RpcDefinition> rpcs = Sets.newHashSet(mockedRpc);
+        doReturn(rpcs).when(moduleConfig).getRpcs();
+
+        final Set<RpcDefinition> operations = filteringSchemaContextProxy.getOperations();
+        assertTrue(operations.contains(mockedRpc));
+    }
+
+    @Test
+    public void testGetExtensions() {
+        final Module moduleConfig = mockModule(CONFIG_NAME);
+        final SchemaContext schemaContext = mockSchema(moduleConfig);
+        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext,
+                Sets.newHashSet(), moduleConfig);
+
+        final ExtensionDefinition mockedExtension = mock(ExtensionDefinition.class);
+        final List<ExtensionDefinition> extensions = Lists.newArrayList(mockedExtension);
+        doReturn(extensions).when(moduleConfig).getExtensionSchemaNodes();
+
+        final Set<ExtensionDefinition> schemaContextProxyExtensions = filteringSchemaContextProxy.getExtensions();
+        assertTrue(schemaContextProxyExtensions.contains(mockedExtension));
+    }
+
+    @Test
+    public void testGetUnknownSchemaNodes() {
+        final Module moduleConfig = mockModule(CONFIG_NAME);
+        final SchemaContext schemaContext = mockSchema(moduleConfig);
+        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext,
+                Sets.newHashSet(), moduleConfig);
+
+        final UnknownSchemaNode mockedUnknownSchemaNode = mock(UnknownSchemaNode.class);
+        final List<UnknownSchemaNode> unknownSchemaNodes = Lists.newArrayList(mockedUnknownSchemaNode);
+        doReturn(unknownSchemaNodes).when(moduleConfig).getUnknownSchemaNodes();
+
+        final List<UnknownSchemaNode> schemaContextProxyUnknownSchemaNodes =
+                filteringSchemaContextProxy.getUnknownSchemaNodes();
+        assertTrue(schemaContextProxyUnknownSchemaNodes.contains(mockedUnknownSchemaNode));
+    }
+
+    @Test
+    public void testGetTypeDefinitions() {
+        final Module moduleConfig = mockModule(CONFIG_NAME);
+        final SchemaContext schemaContext = mockSchema(moduleConfig);
+        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext,
+                Sets.newHashSet(), moduleConfig);
+
+        final TypeDefinition<?> mockedTypeDefinition = mock(TypeDefinition.class);
+        final Set<TypeDefinition<?>> typeDefinitions = Sets.newHashSet(mockedTypeDefinition);
+        doReturn(typeDefinitions).when(moduleConfig).getTypeDefinitions();
+
+        final Set<TypeDefinition<?>> schemaContextProxyTypeDefinitions = filteringSchemaContextProxy.getTypeDefinitions();
+        assertTrue(schemaContextProxyTypeDefinitions.contains(mockedTypeDefinition));
+    }
+
+    @Test
+    public void testGetChildNodes() {
+        final Module moduleConfig = mockModule(CONFIG_NAME);
+        final SchemaContext schemaContext = mockSchema(moduleConfig);
+        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext,
+                Sets.newHashSet(), moduleConfig);
+
+        final ContainerSchemaNode mockedContainer = mock(ContainerSchemaNode.class);
+        final Set<DataSchemaNode> childNodes = Sets.newHashSet(mockedContainer);
+        doReturn(childNodes).when(moduleConfig).getChildNodes();
+
+        final Set<DataSchemaNode> schemaContextProxyChildNodes = filteringSchemaContextProxy.getChildNodes();
+        assertTrue(schemaContextProxyChildNodes.contains(mockedContainer));
+    }
+
+    @Test
+    public void testGetGroupings() {
+        final Module moduleConfig = mockModule(CONFIG_NAME);
+        final SchemaContext schemaContext = mockSchema(moduleConfig);
+        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext,
+                Sets.newHashSet(), moduleConfig);
+
+        final GroupingDefinition mockedGrouping = mock(GroupingDefinition.class);
+        final Set<GroupingDefinition> groupings = Sets.newHashSet(mockedGrouping);
+        doReturn(groupings).when(moduleConfig).getGroupings();
+
+        final Set<GroupingDefinition> schemaContextProxyGroupings = filteringSchemaContextProxy.getGroupings();
+        assertTrue(schemaContextProxyGroupings.contains(mockedGrouping));
+    }
+
+    @Test
+    public void testGetDataChildByName() {
+        final Module moduleConfig = mockModule(CONFIG_NAME);
+        final SchemaContext schemaContext = mockSchema(moduleConfig);
+        final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext,
+                Sets.newHashSet(), moduleConfig);
+
+        final QName qName = QName.create("config-namespace", "2016-08-11", "cont");
+        final ContainerSchemaNode mockedContainer = mock(ContainerSchemaNode.class);
+        doReturn(mockedContainer).when(moduleConfig).getDataChildByName(any(QName.class));
+
+        final DataSchemaNode dataSchemaNode = filteringSchemaContextProxy.getDataChildByName(qName);
+        assertTrue(dataSchemaNode instanceof ContainerSchemaNode);
     }
 
     private static void assertProxyContext(final FilteringSchemaContextProxy filteringSchemaContextProxy, final Module... expected) {
