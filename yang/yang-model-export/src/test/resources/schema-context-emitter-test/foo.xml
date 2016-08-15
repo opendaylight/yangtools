@@ -173,7 +173,6 @@
     </leaf>
     <container name="test-container-1">
         <must condition="bar != 'foo'"></must>
-        <must condition="bar != 'foo'"></must>
         <presence value="false"></presence>
         <config value="true"></config>
         <status value="current"></status>
