@@ -163,8 +163,8 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
             if (input != null) {
                 traverse(input);
             }
-            ContainerSchemaNode output = rpcDefinition.getInput();
-            if (input != null) {
+            ContainerSchemaNode output = rpcDefinition.getOutput();
+            if (output != null) {
                 traverse(output);
             }
         }
