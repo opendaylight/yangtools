@@ -623,7 +623,7 @@ class SchemaContextEmitter {
     }
 
     private void emitIdentityrefSpecification(final IdentityrefTypeDefinition typeDefinition) {
-        emitBase(typeDefinition.getQName());
+        emitBase(typeDefinition.getIdentity().getQName());
     }
 
     private void emitUnionSpecification(final UnionTypeDefinition typeDefinition) {
