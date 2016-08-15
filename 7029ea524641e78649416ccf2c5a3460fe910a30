@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_d2209e4b",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/DataNodeIterator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-08-15T15:19:19Z",
+      "side": 1,
+      "message": "should this read \u0027output\u0027 ?",
+      "range": {
+        "startLine": 167,
+        "startChar": 16,
+        "endLine": 167,
+        "endChar": 21
+      },
+      "revId": "7029ea524641e78649416ccf2c5a3460fe910a30",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
