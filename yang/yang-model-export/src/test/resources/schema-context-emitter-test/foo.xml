@@ -233,7 +233,7 @@
         </leaf>
         <leaf name="identityref-leaf">
             <type name="identityref">
-                <base name="identityref"></base>
+                <base name="test-base-identity"></base>
             </type>
             <config value="true"></config>
             <mandatory value="false"></mandatory>
