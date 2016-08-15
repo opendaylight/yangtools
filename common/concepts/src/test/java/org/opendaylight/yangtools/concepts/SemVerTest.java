@@ -40,6 +40,13 @@ public class SemVerTest {
         assertEquals(0, semVer3.getMinor());
         assertEquals(0, semVer3.getPatch());
 
+        final SemVer semVer4 = SemVer.valueOf("1.2");
+        assertNotNull(semVer4);
+
+        assertEquals(1, semVer4.getMajor());
+        assertEquals(2, semVer4.getMinor());
+        assertEquals(0, semVer4.getPatch());
+
         assertEquals(1, semVer2.compareTo(semVer3));
         assertEquals(-1, semVer3.compareTo(semVer2));
         assertEquals(0, semVer2.compareTo(semVer2));
