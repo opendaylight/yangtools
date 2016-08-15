@@ -54,6 +54,7 @@ public final class SemVer implements Comparable<SemVer>, Serializable {
         final int patchIdx = str.indexOf('.', minorIdx + 1);
         if (patchIdx == -1) {
             minorStr = str.substring(minorIdx + 1);
+            return create(Integer.parseInt(str.substring(0, minorIdx), 10), Integer.parseInt(minorStr, 10));
         } else {
             minorStr = str.substring(minorIdx + 1, patchIdx);
         }
