@@ -757,7 +757,6 @@ class SchemaContextEmitter {
         emitConstraints(child.getConstraints());
         // FIXME: BUG-2444: whenNode //:Optional
         // FIXME: BUG-2444: *(ifFeatureNode )
-        emitMustNodes(child.getConstraints().getMustConstraints());
         emitPresenceNode(child.isPresenceContainer());
         emitConfigNode(child.isConfiguration());
         emitDocumentedNode(child);
