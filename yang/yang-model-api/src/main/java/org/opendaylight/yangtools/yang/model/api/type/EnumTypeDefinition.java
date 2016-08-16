@@ -13,10 +13,8 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
- *
  * Makes is possible to access to the individual enumeration values of this
  * type.
- *
  */
 public interface EnumTypeDefinition extends TypeDefinition<EnumTypeDefinition> {
     /**
@@ -44,11 +42,10 @@ public interface EnumTypeDefinition extends TypeDefinition<EnumTypeDefinition> {
         /**
          * The "value" statement, which is optional, is used to associate an
          * integer value with the assigned name for the enum. This integer value
-         * MUST be in the range -2147483648 to 2147483647, and it MUST be unique
-         * within the enumeration type.
+         * MUST be unique within the enumeration type.
          *
          * @return integer value assigned to enumeration
          */
-        Integer getValue();
+        int getValue();
     }
 }

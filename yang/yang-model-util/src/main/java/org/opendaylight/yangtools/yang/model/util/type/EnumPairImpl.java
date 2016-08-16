@@ -21,13 +21,13 @@ final class EnumPairImpl implements EnumPair, Immutable {
     private final String description;
     private final String reference;
     private final Status status;
-    private final Integer value;
     private final String name;
+    private final int value;
 
-    EnumPairImpl(final String name, final Integer value, final String description, final String reference,
+    EnumPairImpl(final String name, final int value, final String description, final String reference,
             final Status status, final List<UnknownSchemaNode> unknownSchemaNodes) {
-        this.value = Preconditions.checkNotNull(value);
         this.name = Preconditions.checkNotNull(name);
+        this.value = value;
         this.description = description;
         this.reference = reference;
         this.status = Preconditions.checkNotNull(status);
@@ -60,7 +60,7 @@ final class EnumPairImpl implements EnumPair, Immutable {
     }
 
     @Override
-    public Integer getValue() {
+    public int getValue() {
         return value;
     }
 
@@ -70,7 +70,7 @@ final class EnumPairImpl implements EnumPair, Immutable {
         int result = 1;
         result = prime * result + unknownSchemaNodes.hashCode();
         result = prime * result + name.hashCode();
-        result = prime * result + value.hashCode();
+        result = prime * result + Integer.hashCode(value);
         return result;
     }
 
@@ -87,8 +87,7 @@ final class EnumPairImpl implements EnumPair, Immutable {
             return false;
         }
 
-        return Objects.equals(value, other.getValue()) &&
-                Objects.equals(unknownSchemaNodes, other.getUnknownSchemaNodes());
+        return value == other.getValue() && Objects.equals(unknownSchemaNodes, other.getUnknownSchemaNodes());
     }
 
     @Override
