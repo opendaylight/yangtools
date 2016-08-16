@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -35,19 +36,24 @@ public class RpcEffectiveStatementImpl extends AbstractEffectiveSchemaNode<RpcSt
         // initSubstatements
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
         Set<GroupingDefinition> groupingsInit = new HashSet<>();
-        Set<TypeDefinition<?>> typeDefinitionsInit = new HashSet<>();
+        Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof GroupingDefinition) {
                 GroupingDefinition groupingDefinition = (GroupingDefinition) effectiveStatement;
                 groupingsInit.add(groupingDefinition);
             }
-            if (effectiveStatement instanceof TypeDefinition) {
-                TypeDefinition<?> typeDefinition = (TypeDefinition<?>) effectiveStatement;
-                typeDefinitionsInit.add(typeDefinition);
+            if (effectiveStatement instanceof TypeDefEffectiveStatementImpl) {
+                TypeDefEffectiveStatementImpl typeDef = (TypeDefEffectiveStatementImpl) effectiveStatement;
+                TypeDefinition<?> type = typeDef.getTypeDefinition();
+                if (!mutableTypeDefinitions.contains(type)) {
+                    mutableTypeDefinitions.add(type);
+                } else {
+                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
+                }
             }
         }
         this.groupings = ImmutableSet.copyOf(groupingsInit);
-        this.typeDefinitions = ImmutableSet.copyOf(typeDefinitionsInit);
+        this.typeDefinitions = ImmutableSet.copyOf(mutableTypeDefinitions);
     }
 
     @Override
