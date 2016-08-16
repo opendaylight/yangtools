@@ -23,10 +23,12 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
@@ -39,10 +41,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.LeafEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitsSpecificationEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Decimal64SpecificationEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EnumEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EnumSpecificationEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.IdentityRefSpecificationEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LeafrefSpecificationEffectiveStatementImpl;
@@ -92,8 +92,8 @@ public class EffectiveStatementTypeTest {
         assertNotNull(currentLeaf.getType());
 
         final List<BitsTypeDefinition.Bit> bitsEffIter = ((BitsTypeDefinition) currentLeaf.getType()).getBits();
-        final BitEffectiveStatementImpl bitEff = (BitEffectiveStatementImpl) bitsEffIter.get(0);
-        final BitEffectiveStatementImpl bitEffSecond = (BitEffectiveStatementImpl) bitsEffIter.get(1);
+        final Bit bitEff = bitsEffIter.get(0);
+        final Bit bitEffSecond = bitsEffIter.get(1);
 
         final BitsTypeDefinition bitsEff = ((BitsSpecificationEffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
                 .effectiveSubstatements().iterator().next()).getTypeDefinition();
@@ -127,8 +127,7 @@ public class EffectiveStatementTypeTest {
         assertNotNull(bitEff.toString());
         assertEquals("one", bitEff.getName());
         assertNotNull(bitEff.getQName());
-        assertEquals("0", bitEff.getPosition().toString());
-        assertEquals(0, bitEff.getPosition().longValue());
+        assertEquals(0, bitEff.getPosition());
     }
 
     @Test
@@ -163,7 +162,7 @@ public class EffectiveStatementTypeTest {
         assertEquals("decimal64", decimal64Eff.getQName().getLocalName());
         assertNotNull(decimal64Eff.getUnknownSchemaNodes());
 
-        // FIXME: The model is wrong: description/reference/status are not
+        // FIXME: The yang model api is wrong: description/reference/status are not allowed under 'type', how come we parse it?
         // allowed under 'type', how come we parse it?
         assertNull(decimal64Eff.getDescription());
         assertNull(decimal64Eff.getReference());
@@ -203,7 +202,7 @@ public class EffectiveStatementTypeTest {
         currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-enum"));
         assertNotNull(currentLeaf.getType());
         final List<EnumTypeDefinition.EnumPair> enumEffIter = ((EnumTypeDefinition) currentLeaf.getType()).getValues();
-        final EnumEffectiveStatementImpl enumEff = (EnumEffectiveStatementImpl) enumEffIter.iterator().next();
+        final EnumPair enumEff = enumEffIter.iterator().next();
 
         final EnumTypeDefinition enumSpecEff = ((EnumSpecificationEffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
                 .effectiveSubstatements().iterator().next()).getTypeDefinition();
@@ -229,7 +228,7 @@ public class EffectiveStatementTypeTest {
         assertEquals("test enum", enumEff.getDescription());
         assertEquals("test enum ref", enumEff.getReference());
         assertEquals("CURRENT", enumEff.getStatus().toString());
-        assertEquals("0", enumEff.getValue().toString());
+        assertEquals(0, enumEff.getValue());
     }
 
     @Test
