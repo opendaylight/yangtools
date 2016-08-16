@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_c6e73c11",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/YangStatementSourceImpl.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-08-16T09:48:27Z",
+      "side": 0,
+      "message": "we seem to have lost this one for not reason at all",
+      "range": {
+        "startLine": 101,
+        "startChar": 65,
+        "endLine": 101,
+        "endChar": 70
+      },
+      "revId": "387ea1eaaf1ac2482cf3bd761a6caea0f8b92be9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
