@@ -1,0 +1,21 @@
+module bar {
+    namespace bar-namespace;
+    prefix bar-prefix;
+
+    revision 2016-08-16;
+
+    rpc test-rpc {
+        typedef test-string-typedef {
+            type string {
+                length "5..15";
+            }
+            default "def-val";
+        }
+        typedef test-string-typedef {
+            type string {
+                range "5..15";
+            }
+            default "def-val";
+        }
+    }
+}
