@@ -17,14 +17,18 @@ import static org.junit.Assert.assertTrue;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
@@ -37,10 +41,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.LeafEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitsSpecificationEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Decimal64SpecificationEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EnumEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EnumSpecificationEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.IdentityRefSpecificationEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LeafrefSpecificationEffectiveStatementImpl;
@@ -53,22 +55,24 @@ public class EffectiveStatementTypeTest {
             "/type-tests/types.yang", false);
     private static EffectiveSchemaContext effectiveSchemaContext;
     private static LeafSchemaNode currentLeaf;
+    private static Module types;
 
     @Before
     public void setup() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSource(IMPORTED_MODULE);
         effectiveSchemaContext = reactor.buildEffective();
+        types = effectiveSchemaContext.findModuleByName("types", null);
+        assertNotNull(types);
     }
 
     @Test
     public void testBinary() {
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-binary");
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-binary"));
         assertNotNull(currentLeaf.getType());
 
-        BinaryTypeDefinition binaryEff = (BinaryTypeDefinition) ((TypeEffectiveStatement<?>)
-                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next()).getTypeDefinition();
+        final BinaryTypeDefinition binaryEff = (BinaryTypeDefinition) ((TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl) currentLeaf)
+                .effectiveSubstatements().iterator().next()).getTypeDefinition();
 
         assertNull(binaryEff.getBaseType());
         assertNull(binaryEff.getUnits());
@@ -84,16 +88,15 @@ public class EffectiveStatementTypeTest {
 
     @Test
     public void testBits() {
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-bits");
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-bits"));
         assertNotNull(currentLeaf.getType());
 
-        List<BitsTypeDefinition.Bit> bitsEffIter = ((BitsTypeDefinition) currentLeaf.getType()).getBits();
-        BitEffectiveStatementImpl bitEff = (BitEffectiveStatementImpl) bitsEffIter.get(0);
-        BitEffectiveStatementImpl bitEffSecond = (BitEffectiveStatementImpl) bitsEffIter.get(1);
+        final List<BitsTypeDefinition.Bit> bitsEffIter = ((BitsTypeDefinition) currentLeaf.getType()).getBits();
+        final Bit bitEff = bitsEffIter.get(0);
+        final Bit bitEffSecond = bitsEffIter.get(1);
 
-        BitsTypeDefinition bitsEff = ((BitsSpecificationEffectiveStatementImpl)
-                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next()).getTypeDefinition();
+        final BitsTypeDefinition bitsEff = ((BitsSpecificationEffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
+                .effectiveSubstatements().iterator().next()).getTypeDefinition();
 
         assertNull(bitsEff.getBaseType());
         assertNotNull(bitsEff.getQName());
@@ -124,17 +127,15 @@ public class EffectiveStatementTypeTest {
         assertNotNull(bitEff.toString());
         assertEquals("one", bitEff.getName());
         assertNotNull(bitEff.getQName());
-        assertEquals("0", bitEff.getPosition().toString());
-        assertEquals(0, bitEff.getPosition().longValue());
+        assertEquals(0, bitEff.getPosition());
     }
 
     @Test
     public void testBoolean() {
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-boolean");
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-boolean"));
         assertNotNull(currentLeaf.getType());
-        BooleanTypeDefinition booleanEff = (BooleanTypeDefinition) ((TypeEffectiveStatement<?>)
-                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next()).getTypeDefinition();
+        final BooleanTypeDefinition booleanEff = (BooleanTypeDefinition) ((TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl) currentLeaf)
+                .effectiveSubstatements().iterator().next()).getTypeDefinition();
 
         assertNull(booleanEff.getBaseType());
         assertNull(booleanEff.getUnits());
@@ -150,11 +151,10 @@ public class EffectiveStatementTypeTest {
 
     @Test
     public void testDecimal64() {
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-decimal64");
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-decimal64"));
         assertNotNull(currentLeaf.getType());
-        DecimalTypeDefinition decimal64Eff = ((Decimal64SpecificationEffectiveStatementImpl)
-                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next()).getTypeDefinition();
+        final DecimalTypeDefinition decimal64Eff = ((Decimal64SpecificationEffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
+                .effectiveSubstatements().iterator().next()).getTypeDefinition();
 
         assertNull(decimal64Eff.getBaseType());
         assertNull(decimal64Eff.getUnits());
@@ -162,7 +162,8 @@ public class EffectiveStatementTypeTest {
         assertEquals("decimal64", decimal64Eff.getQName().getLocalName());
         assertNotNull(decimal64Eff.getUnknownSchemaNodes());
 
-        // FIXME: The model is wrong: description/reference/status are not allowed under 'type', how come we parse it?
+        // FIXME: The yang model api is wrong: description/reference/status are not allowed under 'type', how come we parse it?
+        // allowed under 'type', how come we parse it?
         assertNull(decimal64Eff.getDescription());
         assertNull(decimal64Eff.getReference());
         assertEquals("CURRENT", decimal64Eff.getStatus().toString());
@@ -179,11 +180,10 @@ public class EffectiveStatementTypeTest {
 
     @Test
     public void testEmpty() {
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-empty");
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-empty"));
         assertNotNull(currentLeaf.getType());
-        EmptyTypeDefinition emptyEff = (EmptyTypeDefinition) ((TypeEffectiveStatement<?>)
-                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next()).getTypeDefinition();
+        final EmptyTypeDefinition emptyEff = (EmptyTypeDefinition) ((TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl) currentLeaf)
+                .effectiveSubstatements().iterator().next()).getTypeDefinition();
 
         assertNull(emptyEff.getUnits());
         assertNull(emptyEff.getDefaultValue());
@@ -199,14 +199,13 @@ public class EffectiveStatementTypeTest {
 
     @Test
     public void testEnum() {
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-enum");
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-enum"));
         assertNotNull(currentLeaf.getType());
-        List<EnumTypeDefinition.EnumPair> enumEffIter = ((EnumTypeDefinition) currentLeaf.getType()).getValues();
-        EnumEffectiveStatementImpl enumEff = (EnumEffectiveStatementImpl) enumEffIter.iterator().next();
+        final List<EnumTypeDefinition.EnumPair> enumEffIter = ((EnumTypeDefinition) currentLeaf.getType()).getValues();
+        final EnumPair enumEff = enumEffIter.iterator().next();
 
-        EnumTypeDefinition enumSpecEff = ((EnumSpecificationEffectiveStatementImpl)
-                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next()).getTypeDefinition();
+        final EnumTypeDefinition enumSpecEff = ((EnumSpecificationEffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
+                .effectiveSubstatements().iterator().next()).getTypeDefinition();
 
         assertEquals("enumeration", enumSpecEff.getQName().getLocalName());
         assertEquals("enumeration", enumSpecEff.getPath().getLastComponent().getLocalName());
@@ -229,16 +228,16 @@ public class EffectiveStatementTypeTest {
         assertEquals("test enum", enumEff.getDescription());
         assertEquals("test enum ref", enumEff.getReference());
         assertEquals("CURRENT", enumEff.getStatus().toString());
-        assertEquals("0", enumEff.getValue().toString());
+        assertEquals(0, enumEff.getValue());
     }
 
     @Test
     public void testIdentityRef() {
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-identityref");
+        currentLeaf = (LeafSchemaNode) types
+                .getDataChildByName(QName.create(types.getQNameModule(), "leaf-identityref"));
         assertNotNull(currentLeaf.getType());
-        IdentityrefTypeDefinition identityRefEff = ((IdentityRefSpecificationEffectiveStatementImpl)
-                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next()).getTypeDefinition();
+        final IdentityrefTypeDefinition identityRefEff = ((IdentityRefSpecificationEffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
+                .effectiveSubstatements().iterator().next()).getTypeDefinition();
 
         assertNull(identityRefEff.getDefaultValue());
         assertEquals("identityref", identityRefEff.getQName().getLocalName());
@@ -257,12 +256,11 @@ public class EffectiveStatementTypeTest {
 
     @Test
     public void testInstanceIdentifier() {
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-instance-identifier");
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(),
+                "leaf-instance-identifier"));
         assertNotNull(currentLeaf.getType());
-        InstanceIdentifierTypeDefinition instanceIdentEff = (InstanceIdentifierTypeDefinition)
-                ((TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl) currentLeaf)
-                        .effectiveSubstatements().iterator().next()).getTypeDefinition();
+        final InstanceIdentifierTypeDefinition instanceIdentEff = (InstanceIdentifierTypeDefinition) ((TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl) currentLeaf)
+                .effectiveSubstatements().iterator().next()).getTypeDefinition();
         assertNotNull(instanceIdentEff.toString());
 
         assertFalse(instanceIdentEff.requireInstance());
@@ -283,12 +281,11 @@ public class EffectiveStatementTypeTest {
 
     @Test
     public void testLeafref() {
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-leafref");
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-leafref"));
         assertNotNull(currentLeaf.getType());
 
-        LeafrefTypeDefinition leafrefEff = ((LeafrefSpecificationEffectiveStatementImpl)
-                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next()).getTypeDefinition();
+        final LeafrefTypeDefinition leafrefEff = ((LeafrefSpecificationEffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
+                .effectiveSubstatements().iterator().next()).getTypeDefinition();
 
         assertEquals("/container-test/leaf-test", leafrefEff.getPathStatement().toString());
         assertNull(leafrefEff.getBaseType());
@@ -309,73 +306,61 @@ public class EffectiveStatementTypeTest {
 
     @Test
     public void testIntAll() {
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-int8");
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-int8"));
         assertNotNull(currentLeaf.getType());
-        TypeEffectiveStatement<?> int8Eff = (TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl) currentLeaf)
+        final TypeEffectiveStatement<?> int8Eff = (TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl) currentLeaf)
                 .effectiveSubstatements().iterator().next();
         assertNotNull(int8Eff.toString());
 
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-int16");
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-int16"));
         assertNotNull(currentLeaf.getType());
-        TypeEffectiveStatement<?> int16Eff = (TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl) currentLeaf)
+        final TypeEffectiveStatement<?> int16Eff = (TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl) currentLeaf)
                 .effectiveSubstatements().iterator().next();
         assertNotNull(int16Eff.toString());
 
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-int32");
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-int32"));
         assertNotNull(currentLeaf.getType());
-        TypeEffectiveStatement<?> int32Eff = (TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl) currentLeaf)
+        final TypeEffectiveStatement<?> int32Eff = (TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl) currentLeaf)
                 .effectiveSubstatements().iterator().next();
         assertNotNull(int32Eff.toString());
 
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-int64");
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-int64"));
         assertNotNull(currentLeaf.getType());
-        TypeEffectiveStatement<?> int64Eff = (TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl) currentLeaf)
+        final TypeEffectiveStatement<?> int64Eff = (TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl) currentLeaf)
                 .effectiveSubstatements().iterator().next();
         assertNotNull(int64Eff.toString());
 
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-uint8");
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-uint8"));
         assertNotNull(currentLeaf.getType());
-        TypeEffectiveStatement<?> uint8Eff = (TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl) currentLeaf)
+        final TypeEffectiveStatement<?> uint8Eff = (TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl) currentLeaf)
                 .effectiveSubstatements().iterator().next();
         assertNotNull(uint8Eff.toString());
 
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-uint16");
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-uint16"));
         assertNotNull(currentLeaf.getType());
-        TypeEffectiveStatement<?> uint16Eff = (TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl)
-                currentLeaf)
+        final TypeEffectiveStatement<?> uint16Eff = (TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl) currentLeaf)
                 .effectiveSubstatements().iterator().next();
         assertNotNull(uint16Eff.toString());
 
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-uint32");
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-uint32"));
         assertNotNull(currentLeaf.getType());
-        TypeEffectiveStatement<?> uint32Eff = (TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl)
-                currentLeaf)
+        final TypeEffectiveStatement<?> uint32Eff = (TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl) currentLeaf)
                 .effectiveSubstatements().iterator().next();
         assertNotNull(uint32Eff.toString());
 
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-uint64");
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-uint64"));
         assertNotNull(currentLeaf.getType());
-        TypeEffectiveStatement<?> uint64Eff = (TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl)
-                currentLeaf)
+        final TypeEffectiveStatement<?> uint64Eff = (TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl) currentLeaf)
                 .effectiveSubstatements().iterator().next();
         assertNotNull(uint64Eff.toString());
     }
 
     @Test
     public void testUnion() {
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-union");
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-union"));
         assertNotNull(currentLeaf.getType());
-        UnionTypeDefinition unionEff = ((UnionSpecificationEffectiveStatementImpl)
-                ((LeafEffectiveStatementImpl)currentLeaf).effectiveSubstatements().iterator().next()).getTypeDefinition();
+        final UnionTypeDefinition unionEff = ((UnionSpecificationEffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
+                .effectiveSubstatements().iterator().next()).getTypeDefinition();
 
         assertEquals(2, unionEff.getTypes().size());
         assertEquals("union", unionEff.getQName().getLocalName());
@@ -396,15 +381,18 @@ public class EffectiveStatementTypeTest {
 
     @Test
     public void testLengthConstraint() {
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-length-pattern");
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(),
+                "leaf-length-pattern"));
         assertNotNull(currentLeaf.getType());
-        LengthConstraint lengthConstraint = ((StringTypeDefinition) (currentLeaf.getType())).getLengthConstraints().get(0);
-        LengthConstraint lengthConstraintThird = ((StringTypeDefinition) (currentLeaf.getType())).getLengthConstraints().get(0);
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-length-pattern-second");
+        final LengthConstraint lengthConstraint = ((StringTypeDefinition) (currentLeaf.getType()))
+                .getLengthConstraints().get(0);
+        final LengthConstraint lengthConstraintThird = ((StringTypeDefinition) (currentLeaf.getType()))
+                .getLengthConstraints().get(0);
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(),
+                "leaf-length-pattern-second"));
         assertNotNull(currentLeaf.getType());
-        LengthConstraint lengthConstraintSecond = ((StringTypeDefinition) (currentLeaf.getType())).getLengthConstraints().get(0);
+        final LengthConstraint lengthConstraintSecond = ((StringTypeDefinition) (currentLeaf.getType()))
+                .getLengthConstraints().get(0);
 
         assertEquals(1, lengthConstraint.getMin().intValue());
         assertEquals(255, lengthConstraint.getMax().intValue());
@@ -422,18 +410,18 @@ public class EffectiveStatementTypeTest {
 
     @Test
     public void testPatternConstraint() {
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-length-pattern");
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(),
+                "leaf-length-pattern"));
         assertNotNull(currentLeaf.getType());
-        PatternConstraintEffectiveImpl lengthConstraint = (PatternConstraintEffectiveImpl)
-                ((StringTypeDefinition) (currentLeaf.getType())).getPatternConstraints().get(0);
-        PatternConstraintEffectiveImpl lengthConstraintThird = (PatternConstraintEffectiveImpl)
-                ((StringTypeDefinition) (currentLeaf.getType())).getPatternConstraints().get(0);
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-length-pattern-second");
+        final PatternConstraintEffectiveImpl lengthConstraint = (PatternConstraintEffectiveImpl) ((StringTypeDefinition) (currentLeaf
+                .getType())).getPatternConstraints().get(0);
+        final PatternConstraintEffectiveImpl lengthConstraintThird = (PatternConstraintEffectiveImpl) ((StringTypeDefinition) (currentLeaf
+                .getType())).getPatternConstraints().get(0);
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(),
+                "leaf-length-pattern-second"));
         assertNotNull(currentLeaf.getType());
-        PatternConstraintEffectiveImpl lengthConstraintSecond = (PatternConstraintEffectiveImpl)
-                ((StringTypeDefinition) (currentLeaf.getType())).getPatternConstraints().get(0);
+        final PatternConstraintEffectiveImpl lengthConstraintSecond = (PatternConstraintEffectiveImpl) ((StringTypeDefinition) (currentLeaf
+                .getType())).getPatternConstraints().get(0);
 
         assertEquals("^[0-9a-fA-F]*$", lengthConstraint.getRegularExpression());
         assertNull(lengthConstraint.getReference());
@@ -450,11 +438,10 @@ public class EffectiveStatementTypeTest {
 
     @Test
     public void testString() {
-        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
-                .getDataChildByName("leaf-string");
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-string"));
         assertNotNull(currentLeaf.getType());
-        StringTypeDefinition stringEff = (StringTypeDefinition) ((TypeEffectiveStatement<?>)
-                ((LeafEffectiveStatementImpl)currentLeaf).effectiveSubstatements().iterator().next()).getTypeDefinition();
+        final StringTypeDefinition stringEff = (StringTypeDefinition) ((TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl) currentLeaf)
+                .effectiveSubstatements().iterator().next()).getTypeDefinition();
 
         assertEquals("string", stringEff.getQName().getLocalName());
         assertEquals("CURRENT", stringEff.getStatus().toString());
