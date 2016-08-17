@@ -279,8 +279,10 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
                 if (children.isEmpty()) {
                     updateOperationType(LogicalOperation.NONE);
                 }
+
                 break;
             case WRITE:
+            case MERGE:
                 // A WRITE can collapse all of its children
                 if (!children.isEmpty()) {
                     value = schema.apply(this, getOriginal(), version).get().getData();

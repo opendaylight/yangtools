@@ -26,11 +26,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguratio
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
-public class Bug5968Test {
+public class Bug5968MergeTest {
     private static final String NS = "foo";
     private static final String REV = "2016-07-28";
     private static final QName ROOT = QName.create(NS, REV, "root");
@@ -55,7 +56,7 @@ public class Bug5968Test {
         final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> root = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT));
         final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
-        modificationTree.write(
+        modificationTree.merge(
                 YangInstanceIdentifier.of(ROOT),
                 withMapNode ? root.withChild(
                         Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST)).build()).build() : root
@@ -79,7 +80,7 @@ public class Bug5968Test {
     }
 
     @Test
-    public void writeInvalidContainerTest() throws ReactorException, DataValidationFailedException {
+    public void mergeInvalidContainerTest() throws ReactorException, DataValidationFailedException {
         final InMemoryDataTree inMemoryDataTree = emptyDataTree(schemaContext);
 
         final MapNode myList = createMap(true);
@@ -87,7 +88,7 @@ public class Bug5968Test {
                 .withNodeIdentifier(new NodeIdentifier(ROOT)).withChild(myList);
 
         final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
-        modificationTree.write(YangInstanceIdentifier.of(ROOT), root.build());
+        modificationTree.merge(YangInstanceIdentifier.of(ROOT), root.build());
 
         try {
             modificationTree.ready();
@@ -103,10 +104,10 @@ public class Bug5968Test {
     }
 
     @Test
-    public void writeInvalidMapTest() throws ReactorException, DataValidationFailedException {
+    public void mergeInvalidMapTest() throws ReactorException, DataValidationFailedException {
         final InMemoryDataTree inMemoryDataTree = emptyDataTree(schemaContext);
         final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
-        writeMap(modificationTree, true);
+        mergeMap(modificationTree, true);
 
         try {
             modificationTree.ready();
@@ -122,11 +123,11 @@ public class Bug5968Test {
     }
 
     @Test
-    public void writeInvalidMapEntryTest() throws ReactorException, DataValidationFailedException {
+    public void mergeInvalidMapEntryTest() throws ReactorException, DataValidationFailedException {
         final InMemoryDataTree inMemoryDataTree = initDataTree(schemaContext, true);
         final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
-        writeMapEntry(modificationTree, "1", null, "common-value");
+        mergeMapEntry(modificationTree, "1", null, "common-value");
 
         try {
             modificationTree.ready();
@@ -141,10 +142,10 @@ public class Bug5968Test {
         }
     }
 
-    private static void writeMap(final InMemoryDataTreeModification modificationTree, final boolean mandatoryDataMissing)
+    private static void mergeMap(final InMemoryDataTreeModification modificationTree, final boolean mandatoryDataMissing)
             throws DataValidationFailedException {
         final MapNode myList = createMap(mandatoryDataMissing);
-        modificationTree.write(YangInstanceIdentifier.of(ROOT).node(MY_LIST), myList);
+        modificationTree.merge(YangInstanceIdentifier.of(ROOT).node(MY_LIST), myList);
     }
 
     private static MapNode createMap(final boolean mandatoryDataMissing) throws DataValidationFailedException {
@@ -156,12 +157,12 @@ public class Bug5968Test {
                                 "mandatory-value", "common-value")).build();
     }
 
-    private static void writeMapEntry(final InMemoryDataTreeModification modificationTree, final Object listIdValue,
+    private static void mergeMapEntry(final InMemoryDataTreeModification modificationTree, final Object listIdValue,
             final Object mandatoryLeafValue, final Object commonLeafValue) throws DataValidationFailedException {
         final MapEntryNode taskEntryNode = mandatoryLeafValue == null ? createMapEntry(listIdValue, commonLeafValue)
                 : createMapEntry(listIdValue, mandatoryLeafValue, commonLeafValue);
 
-        modificationTree.write(
+        modificationTree.merge(
                 YangInstanceIdentifier.of(ROOT).node(MY_LIST)
                         .node(new NodeIdentifierWithPredicates(MY_LIST, ImmutableMap.of(LIST_ID, listIdValue))),
                 taskEntryNode);
@@ -185,7 +186,7 @@ public class Bug5968Test {
     }
 
     @Test
-    public void writeValidContainerTest() throws ReactorException, DataValidationFailedException {
+    public void mergeValidContainerTest() throws ReactorException, DataValidationFailedException {
         final InMemoryDataTree inMemoryDataTree = emptyDataTree(schemaContext);
 
         final MapNode myList = createMap(false);
@@ -193,7 +194,7 @@ public class Bug5968Test {
                 .withNodeIdentifier(new NodeIdentifier(ROOT)).withChild(myList);
 
         final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
-        modificationTree.write(YangInstanceIdentifier.of(ROOT), root.build());
+        modificationTree.merge(YangInstanceIdentifier.of(ROOT), root.build());
         modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
         final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
@@ -201,10 +202,10 @@ public class Bug5968Test {
     }
 
     @Test
-    public void writeValidMapTest() throws ReactorException, DataValidationFailedException {
+    public void mergeValidMapTest() throws ReactorException, DataValidationFailedException {
         final InMemoryDataTree inMemoryDataTree = emptyDataTree(schemaContext);
         final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
-        writeMap(modificationTree, false);
+        mergeMap(modificationTree, false);
 
         modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
@@ -213,15 +214,84 @@ public class Bug5968Test {
     }
 
     @Test
-    public void writeValidMapEntryTest() throws ReactorException, DataValidationFailedException {
+    public void mergeValidMapEntryTest() throws ReactorException, DataValidationFailedException {
         final InMemoryDataTree inMemoryDataTree = initDataTree(schemaContext, true);
         final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
-        writeMapEntry(modificationTree, "1", "mandatory-value", "common-value");
+        mergeMapEntry(modificationTree, "1", "mandatory-value", "common-value");
 
         modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
         final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);
+    }
+
+    @Test
+    public void validMultiStepsWriteAndMergeTest() throws ReactorException, DataValidationFailedException {
+        final InMemoryDataTree inMemoryDataTree = emptyDataTree(schemaContext);
+        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+
+        modificationTree.merge(YangInstanceIdentifier.of(ROOT), createContainerBuilder().build());
+        modificationTree.merge(YangInstanceIdentifier.of(ROOT).node(MY_LIST), createMapBuilder().build());
+        modificationTree.merge(
+                YangInstanceIdentifier.of(ROOT).node(MY_LIST)
+                        .node(new NodeIdentifierWithPredicates(MY_LIST, ImmutableMap.of(LIST_ID, "1"))),
+                createEmptyMapEntryBuilder("1").build());
+        modificationTree.merge(
+                YangInstanceIdentifier.of(ROOT).node(MY_LIST)
+                        .node(new NodeIdentifierWithPredicates(MY_LIST, ImmutableMap.of(LIST_ID, "1"))),
+                createMapEntry("1", "mandatory-value", "common-value"));
+
+        System.out.println(modificationTree);
+
+        modificationTree.ready();
+        inMemoryDataTree.validate(modificationTree);
+        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
+        inMemoryDataTree.commit(prepare);
+    }
+
+    @Test
+    public void invalidMultiStepsWriteAndMergeTest() throws ReactorException, DataValidationFailedException {
+        final InMemoryDataTree inMemoryDataTree = emptyDataTree(schemaContext);
+        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+
+        modificationTree.merge(YangInstanceIdentifier.of(ROOT), createContainerBuilder().build());
+        modificationTree.merge(YangInstanceIdentifier.of(ROOT).node(MY_LIST), createMapBuilder().build());
+        modificationTree.merge(
+                YangInstanceIdentifier.of(ROOT).node(MY_LIST)
+                        .node(new NodeIdentifierWithPredicates(MY_LIST, ImmutableMap.of(LIST_ID, "1"))),
+                createEmptyMapEntryBuilder("1").build());
+        modificationTree.merge(
+                YangInstanceIdentifier.of(ROOT).node(MY_LIST)
+                        .node(new NodeIdentifierWithPredicates(MY_LIST, ImmutableMap.of(LIST_ID, "1"))),
+                createMapEntry("1", "common-value"));
+
+        try {
+            modificationTree.ready();
+            inMemoryDataTree.validate(modificationTree);
+            final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
+            inMemoryDataTree.commit(prepare);
+            fail("Should fail due to missing mandatory leaf.");
+        } catch (final IllegalArgumentException e) {
+            assertEquals(
+                    "Node (foo?revision=2016-07-28)my-list[{(foo?revision=2016-07-28)list-id=1}] is missing mandatory "
+                            + "descendant /(foo?revision=2016-07-28)mandatory-leaf", e.getMessage());
+        }
+    }
+
+    private static DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> createEmptyMapEntryBuilder(
+            final Object listIdValue) throws DataValidationFailedException {
+        return Builders.mapEntryBuilder()
+                .withNodeIdentifier(new NodeIdentifierWithPredicates(MY_LIST, ImmutableMap.of(LIST_ID, listIdValue)))
+                .withChild(ImmutableNodes.leafNode(LIST_ID, listIdValue));
+    }
+
+    private static CollectionNodeBuilder<MapEntryNode, MapNode> createMapBuilder() throws DataValidationFailedException {
+        return Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST));
+    }
+
+    private static DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> createContainerBuilder()
+            throws DataValidationFailedException {
+        return Builders.containerBuilder().withNodeIdentifier(new NodeIdentifier(ROOT));
     }
 }
