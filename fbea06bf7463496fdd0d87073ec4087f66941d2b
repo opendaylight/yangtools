@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_1ddcde11",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/AutoCloseables.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-08-17T15:29:00Z",
+      "side": 1,
+      "message": "orWarn?",
+      "range": {
+        "startLine": 39,
+        "startChar": 28,
+        "endLine": 39,
+        "endChar": 34
+      },
+      "revId": "fbea06bf7463496fdd0d87073ec4087f66941d2b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_9de8eeb5",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/AutoCloseables.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-08-17T15:29:00Z",
+      "side": 1,
+      "message": "do not call toString() here",
+      "range": {
+        "startLine": 46,
+        "startChar": 59,
+        "endLine": 46,
+        "endChar": 79
+      },
+      "revId": "fbea06bf7463496fdd0d87073ec4087f66941d2b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_7d023270",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/AutoCloseables.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-08-17T15:29:00Z",
+      "side": 1,
+      "message": "this should go to debug. because a failed close means we are heading towards a leak and/or undefined behavior. Proliferating users of this code will effectively do the same as swallowing exceptions.",
+      "range": {
+        "startLine": 67,
+        "startChar": 0,
+        "endLine": 67,
+        "endChar": 30
+      },
+      "revId": "fbea06bf7463496fdd0d87073ec4087f66941d2b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
