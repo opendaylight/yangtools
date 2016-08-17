@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7a6b29fe_382a887e",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/AutoCloseables.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2016-08-17T16:26:10Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a6b29fe_1ddcde11",
+      "range": {
+        "startLine": 39,
+        "startChar": 28,
+        "endLine": 39,
+        "endChar": 34
+      },
+      "revId": "fbea06bf7463496fdd0d87073ec4087f66941d2b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a6b29fe_9de8eeb5",
         "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/AutoCloseables.java",
         "patchSetId": 1
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "7a6b29fe_98211ca2",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/AutoCloseables.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2016-08-17T16:26:10Z",
+      "side": 1,
+      "message": "sure? seemed useful to me, to get \"context\" of \"what\" cannot be closed.. are you worried that it may blow up? Then how about safely wrapping it? I\u0027ve made a second proposal.  If still NOK for you, then happy to remove it completely.",
+      "parentUuid": "7a6b29fe_9de8eeb5",
+      "range": {
+        "startLine": 46,
+        "startChar": 59,
+        "endLine": 46,
+        "endChar": 79
+      },
+      "revId": "fbea06bf7463496fdd0d87073ec4087f66941d2b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a6b29fe_7d023270",
         "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/AutoCloseables.java",
         "patchSetId": 1
@@ -59,6 +107,30 @@
       "writtenOn": "2016-08-17T15:29:00Z",
       "side": 1,
       "message": "this should go to debug. because a failed close means we are heading towards a leak and/or undefined behavior. Proliferating users of this code will effectively do the same as swallowing exceptions.",
+      "range": {
+        "startLine": 67,
+        "startChar": 0,
+        "endLine": 67,
+        "endChar": 30
+      },
+      "revId": "fbea06bf7463496fdd0d87073ec4087f66941d2b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_b83cd8c0",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/AutoCloseables.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2016-08-17T16:26:10Z",
+      "side": 1,
+      "message": "done. But I doubt anyone will keep debug level on for yangtools.util ... The JavaDoc is meant to clarify what this is for. But I\u0027m actually quite happy to even completely remove this method, if you think it to be too \"dangerous\" ?  It just occurred to me that there may be valid cases.",
+      "parentUuid": "7a6b29fe_7d023270",
       "range": {
         "startLine": 67,
         "startChar": 0,
