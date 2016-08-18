@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_ebbaf521",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/ListEntryModificationStrategy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-08-18T09:33:55Z",
+      "side": 1,
+      "message": "missing space",
+      "range": {
+        "startLine": 32,
+        "startChar": 10,
+        "endLine": 32,
+        "endChar": 11
+      },
+      "revId": "a2bb83dc34013fb389d8f4a3436e5bbdc3ab75eb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_0ba011f3",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/ModifiedNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-08-18T09:33:55Z",
+      "side": 1,
+      "message": "This does not look right, MERGE and WRITE have different conflict guards (and have different guarantees) -- most notably I do not believe it is okay to apply and clear children.",
+      "range": {
+        "startLine": 285,
+        "startChar": 12,
+        "endLine": 285,
+        "endChar": 23
+      },
+      "revId": "a2bb83dc34013fb389d8f4a3436e5bbdc3ab75eb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
