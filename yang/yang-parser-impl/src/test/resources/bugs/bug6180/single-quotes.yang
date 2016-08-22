@@ -1,0 +1,18 @@
+module single-quotes {
+    namespace "foo";
+    prefix "foo";
+    revision 2016-07-11;
+
+    typedef double-quoted {
+        type string {
+            pattern '".*"';
+        }
+    }
+
+    leaf foo {
+        type string;
+    }
+    container bar {
+        when '/foo != "bar"';
+    }
+}
