@@ -7,14 +7,18 @@
  */
 package org.opendaylight.yangtools.util;
 
+import java.util.Objects;
 import org.opendaylight.yangtools.concepts.Builder;
 
 /**
  * Utility class for incrementally building object hashCode by hashing together
  * component objects, one by one.
  *
- * @param <T> Component objec type
+ * @deprecated Consider using JDK's {@link Objects#hash(Object...)} utility instead of this class.
+ *
+ * @param <T> Component object type
  */
+@Deprecated
 public final class HashCodeBuilder<T> implements Builder<Integer> {
     /**
      * The value 31 was chosen because it is an odd prime. If it were even and the multiplication
