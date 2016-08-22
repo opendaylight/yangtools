@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_902ba293",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/AutoCloseables.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2016-08-22T09:26:19Z",
+      "side": 1,
+      "message": "Please use form (\"Failed to close() an AutoCloseable {}\",  closeableToString, e);",
+      "range": {
+        "startLine": 52,
+        "startChar": 21,
+        "endLine": 52,
+        "endChar": 82
+      },
+      "revId": "8974e0c818c826f822627da8d4224767b85d78c5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_303d6edf",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/AutoCloseables.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2016-08-22T09:26:19Z",
+      "side": 1,
+      "message": ":D",
+      "range": {
+        "startLine": 58,
+        "startChar": 38,
+        "endLine": 58,
+        "endChar": 75
+      },
+      "revId": "8974e0c818c826f822627da8d4224767b85d78c5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_50210ab3",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/AutoCloseables.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2016-08-22T09:26:19Z",
+      "side": 1,
+      "message": "Please log object which was tried to close quietly()",
+      "range": {
+        "startLine": 73,
+        "startChar": 51,
+        "endLine": 73,
+        "endChar": 70
+      },
+      "revId": "8974e0c818c826f822627da8d4224767b85d78c5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
