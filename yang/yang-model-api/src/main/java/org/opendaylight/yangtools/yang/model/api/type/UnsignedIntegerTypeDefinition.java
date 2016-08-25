@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.List;
 import javax.annotation.Nonnull;
+import org.immutables.value.Value;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -16,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  *
  * Specifically it is the method for getting the range value.
  */
+@Value.Immutable
 public interface UnsignedIntegerTypeDefinition extends TypeDefinition<UnsignedIntegerTypeDefinition> {
     /**
      * Returns range data of the instance of the type

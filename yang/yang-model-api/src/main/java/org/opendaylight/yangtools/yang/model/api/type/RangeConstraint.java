@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
+import org.immutables.value.Value;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 
 /**
@@ -27,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
  * href="https://tools.ietf.org/html/rfc6020#section-9.2.4">[RFC-6020] The
  * range Statement</a>.
  */
+@Value.Immutable
 public interface RangeConstraint extends ConstraintMetaDefinition {
 
     /**

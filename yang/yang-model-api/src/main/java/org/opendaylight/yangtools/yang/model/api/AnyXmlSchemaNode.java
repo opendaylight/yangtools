@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import org.immutables.value.Value;
+
 /**
  * The "anyxml" interface defines an interior node in the schema tree. It takes
  * one argument, which is an identifier represented by QName inherited from
@@ -16,9 +18,8 @@ package org.opendaylight.yangtools.yang.model.api;
  * This interface was modeled according to definition in <a
  * href="https://tools.ietf.org/html/rfc6020#section-7.10">[RFC-6020] The anyxml
  * Statement</a>
- *
- *
  */
+@Value.Immutable
 public interface AnyXmlSchemaNode extends DataSchemaNode {
 
 }

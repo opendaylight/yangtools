@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import org.immutables.value.Value;
+
 /**
  * Interface describing YANG <code>leaf</code> statement. The interface contains
  * the methods for getting the following data (substatements of
@@ -20,6 +22,7 @@ package org.opendaylight.yangtools.yang.model.api;
  * The 'leaf' statement is used to define a leaf node in the schema tree.
  * </p>
  */
+@Value.Immutable
 public interface LeafSchemaNode extends TypedSchemaNode {
     /**
      * Returns the default value of YANG <code>leaf</code>.

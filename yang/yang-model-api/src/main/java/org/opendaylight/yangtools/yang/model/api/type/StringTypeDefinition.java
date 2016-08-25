@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.List;
+import org.immutables.value.Value;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -15,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * Contains method for getting data from the <code>string</code> YANG built-in
  * type.
  */
+@Value.Immutable
 public interface StringTypeDefinition extends TypeDefinition<StringTypeDefinition> {
 
     /**

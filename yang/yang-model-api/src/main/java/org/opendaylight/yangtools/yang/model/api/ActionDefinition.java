@@ -9,7 +9,7 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
-import java.util.Set;
+import org.immutables.value.Value;
 
 /**
  * Represents YANG action statement
@@ -20,6 +20,7 @@ import java.util.Set;
  * detailed action information.  The argument is the name of the action.
  */
 @Beta
+@Value.Immutable
 public interface ActionDefinition extends OperationDefinition {
 
 }

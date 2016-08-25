@@ -10,16 +10,18 @@ package org.opendaylight.yangtools.yang.model.api;
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import org.immutables.value.Value;
 
 /**
  * Interface describing YANG 'identity' statement.
+ * 
  * <p>
  * The 'identity' statement is used to define a new globally unique, abstract,
  * and untyped identity. Its only purpose is to denote its name, semantics, and
  * existence. The built-in datatype "identityref" can be used to reference
  * identities within a data model.
- * </p>
  */
+@Value.Immutable
 public interface IdentitySchemaNode extends SchemaNode {
 
     /**

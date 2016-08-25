@@ -9,13 +9,14 @@ package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.List;
 import javax.annotation.Nonnull;
+import org.immutables.value.Value;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
  * Contains methods for getting data from the YANG <code>type</code>
  * substatement for <code>decimal64</code> built-in type.
- *
  */
+@Value.Immutable
 public interface DecimalTypeDefinition extends TypeDefinition<DecimalTypeDefinition> {
 
     /**

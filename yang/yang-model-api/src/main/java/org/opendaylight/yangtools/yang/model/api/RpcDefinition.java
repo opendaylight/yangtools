@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import org.immutables.value.Value;
+
 /**
  * Interface describing YANG 'rpc' statement.
  * <p>
@@ -15,6 +17,7 @@ package org.opendaylight.yangtools.yang.model.api;
  * are also defined.
  * </p>
  */
+@Value.Immutable
 public interface RpcDefinition extends OperationDefinition {
 
 }
