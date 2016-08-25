@@ -36,7 +36,6 @@
  * <dt>argument
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ExtensionDefinition#getArgument()}
  *
- *
  * <dt>augment
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.AugmentationSchema}
  *
@@ -44,7 +43,7 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition#getIdentity()}
  *
  * <dt>belongs-to
- *   <dd>
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement#getBelongsTo()}
  *
  * <dt>bit
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit}
@@ -66,7 +65,7 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode}
  *
  * <dt>default
- *   <dd>
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.LeafSchemaNode#getDefault()}
  *
  * <dt>description
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.SchemaNode#getDescription()}
@@ -89,7 +88,7 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.Deviation}
  *
  * <dt>deviate
- *   <dd>
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.DeviateKind}
  *
  * <dt>feature
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.FeatureDefinition}
@@ -101,16 +100,16 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.GroupingDefinition}
  *
  * <dt>identity
- *   <dd>
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode}
  *
  * <dt>if-feature
- *   <dd>
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement}
  *
  * <dt>import
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ModuleImport}
  *
  * <dt>include
- *   <dd>
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement}
  *
  * <dt>input
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.RpcDefinition#getInput()}
@@ -189,7 +188,7 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.SchemaNode#getReference()}
  *
  * <dt>refine
- *   <dd>
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement}
  *
  * <dt>require-instance
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition#requireInstance()}
@@ -207,7 +206,7 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.SchemaNode#getStatus()}
  *
  * <dt>submodule
- *   <dd>
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement}
  *
  * <dt>type
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.TypeDefinition}
@@ -218,7 +217,7 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.TypeDefinition}
  *
  * <dt>unique
- *   <dd>
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.UniqueConstraint}
  *
  * <dt>units
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.TypeDefinition#getUnits()}
@@ -234,54 +233,52 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ConstraintDefinition#getWhenCondition()}
  *
  * <dt>yang-version
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.Module#getYangVersion()}
  *
  * <dt>yin-element
- *   <dd>
- *
- *
- *
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ExtensionDefinition#isYinElement()}
  *
  * <dt>add
- *   <dd>
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.DeviateKind#ADD}
  *
  * <dt>current
- *   <dd>
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.Status#CURRENT}
  *
  * <dt>delete
- *   <dd>
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.DeviateKind#DELETE}
  *
  * <dt>deprecated
- *   <dd>
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.Status#DEPRECATED}
  *
  * <dt>false
- *   <dd>
+ *   <dd>{@link java.lang.Boolean#FALSE}
  *
  * <dt>max
- *   <dd>
+ *   <dd>Not exposed
  *
  * <dt>min
- *   <dd>
+ *   <dd>Not exposed
  *
  * <dt>not-supported
- *   <dd>
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.DeviateKind#NOT_SUPPORTED}
  *
  * <dt>obsolete
- *   <dd>
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.Status#OBSOLETE}
  *
  * <dt>replace
- *   <dd>
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.DeviateKind#REPLACE}
  *
  * <dt>system
- *   <dd>
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ListSchemaNode#isUserOrdered()}
  *
  * <dt>true
- *   <dd>
+ *   <dd>{@link java.lang.Boolean#TRUE}
  *
  * <dt>unbounded
- *   <dd>
+ *   <dd>Not exposed
  *
  * <dt>user
- *   <dd>
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ListSchemaNode#isUserOrdered()}
  * </dl>
  *
  *

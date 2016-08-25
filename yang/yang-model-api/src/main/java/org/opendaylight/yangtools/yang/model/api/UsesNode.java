@@ -15,7 +15,6 @@ import javax.annotation.Nonnull;
 /**
  * Contains the methods for getting data and checking properties of the YANG
  * <code>uses</code> substatement.
- *
  */
 public interface UsesNode extends DocumentedNode.WithStatus {
 

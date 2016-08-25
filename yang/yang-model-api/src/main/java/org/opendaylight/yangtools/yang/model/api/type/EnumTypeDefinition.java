@@ -27,7 +27,6 @@ public interface EnumTypeDefinition extends TypeDefinition<EnumTypeDefinition> {
     @Nonnull List<EnumPair> getValues();
 
     /**
-     *
      * Contains the methods for accessing the data about the concrete
      * enumeration item which represents <code>enum</code> YANG type.
      */
