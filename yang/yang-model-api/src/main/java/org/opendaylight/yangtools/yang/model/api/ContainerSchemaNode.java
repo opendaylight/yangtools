@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-
 /**
  * The ContainerSchemaNode is used to define an interior data node in the schema
  * tree. There are two styles of containers, those that exist only for

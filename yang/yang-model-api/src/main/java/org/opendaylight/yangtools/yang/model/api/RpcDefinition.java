@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.model.api;
 
 /**
  * Interface describing YANG 'rpc' statement.
+ *
  * <p>
  * The rpc statement defines an rpc node in the schema tree. Under the rpc node,
  * a schema node with the name 'input', and a schema node with the name 'output'
  * are also defined.
- * </p>
  */
 public interface RpcDefinition extends OperationDefinition {
 
