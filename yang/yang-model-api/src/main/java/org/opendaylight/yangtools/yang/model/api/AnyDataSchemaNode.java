@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
 import javax.annotation.Nullable;
+import org.immutables.value.Value;
 
 /**
  * The "anydata" statement defines an interior node in the schema tree.
@@ -24,6 +25,7 @@ import javax.annotation.Nullable;
  * of this document.
  */
 @Beta
+@Value.Immutable
 public interface AnyDataSchemaNode extends DataSchemaNode {
 
     /**

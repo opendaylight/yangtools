@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
+import org.immutables.value.Value;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 
 /**
@@ -30,6 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
  *
  * @see ConstraintMetaDefinition
  */
+@Value.Immutable
 public interface LengthConstraint extends ConstraintMetaDefinition {
 
     /**

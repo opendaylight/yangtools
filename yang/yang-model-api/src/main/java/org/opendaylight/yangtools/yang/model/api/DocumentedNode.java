@@ -11,11 +11,10 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.immutables.value.Value;
 
 /**
- *
  * Node which can have documentation assigned.
- *
  */
 public interface DocumentedNode {
 

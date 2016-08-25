@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
+import org.immutables.value.Value;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -16,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * type.
  *
  */
+@Value.Immutable
 public interface IdentityrefTypeDefinition extends TypeDefinition<IdentityrefTypeDefinition> {
 
     /**

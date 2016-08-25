@@ -10,10 +10,12 @@ package org.opendaylight.yangtools.yang.model.api;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import javax.annotation.Nonnull;
+import org.immutables.value.Value;
 
 /**
  * Interface describing YANG 'leaf-list' statement.
  */
+@Value.Immutable
 public interface LeafListSchemaNode extends TypedSchemaNode {
     /**
      * YANG 'ordered-by' statement. It defines whether the order of entries

@@ -8,13 +8,14 @@
 package org.opendaylight.yangtools.yang.model.api.type;
 
 import javax.annotation.Nullable;
+import org.immutables.value.Value;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 
 /**
  * Contains the method for getting the data from the YANG <code>pattern</code>
  * which is substatement of <code>type</code> statement.
- *
  */
+@Value.Immutable
 public interface PatternConstraint extends ConstraintMetaDefinition {
 
     /**

@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
+import org.immutables.value.Value;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
  * Contains methods for getting data from the <code>instance-identifier</code>
  * YANG built-in type.
  */
+@Value.Immutable
 public interface InstanceIdentifierTypeDefinition extends TypeDefinition<InstanceIdentifierTypeDefinition> {
     /**
      * Returns true|false which represents argument of <code>require-instance</code> statement. This statement is the

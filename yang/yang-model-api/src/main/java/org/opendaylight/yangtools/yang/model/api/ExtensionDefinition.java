@@ -7,12 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import org.immutables.value.Value;
+
 /**
- *
  * Contains the methods for getting the data which are part of the YANG
  * <code>extensoion</code> statement.
- *
  */
+@Value.Immutable
 public interface ExtensionDefinition extends SchemaNode {
 
     /**

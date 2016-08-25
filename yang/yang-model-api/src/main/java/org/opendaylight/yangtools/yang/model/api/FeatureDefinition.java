@@ -7,14 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import org.immutables.value.Value;
+
 /**
  * Interface describing YANG 'feature' statement.
+ * 
  * <p>
  * The feature statement is used to define a mechanism by which portions of the
  * schema are marked as conditional. A feature name can later be referenced
  * using the 'if-feature' statement.
- * </p>
  */
+@Value.Immutable
 public interface FeatureDefinition extends SchemaNode {
 
 }

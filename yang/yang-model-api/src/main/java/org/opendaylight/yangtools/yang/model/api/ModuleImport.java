@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Date;
+import org.immutables.value.Value;
 import org.opendaylight.yangtools.concepts.SemVer;
 
 /**
@@ -17,6 +18,7 @@ import org.opendaylight.yangtools.concepts.SemVer;
  * another module or submodule.
  * </p>
  */
+@Value.Immutable
 public interface ModuleImport extends DocumentedNode {
 
     /**

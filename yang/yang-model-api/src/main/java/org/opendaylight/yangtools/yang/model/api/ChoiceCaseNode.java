@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import org.immutables.value.Value;
+
 /**
  * The ChoiceCaseNode interface is used to define branches of the ChoiceNode.
  */
-public interface ChoiceCaseNode extends DataSchemaNode, DataNodeContainer,
-        AugmentationTarget {
+@Value.Immutable
+public interface ChoiceCaseNode extends DataSchemaNode, DataNodeContainer, AugmentationTarget {
 
 }

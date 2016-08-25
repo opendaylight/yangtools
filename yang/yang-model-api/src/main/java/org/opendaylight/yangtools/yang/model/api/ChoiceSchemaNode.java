@@ -8,12 +8,14 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Set;
+import org.immutables.value.Value;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  * A ChoiceSchemaNode defines a set of alternatives. It consists of a number of
  * branches defined as ChoiceCaseSchemaNode objects.
  */
+@Value.Immutable
 public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget {
     /**
      * Returns cases of choice.

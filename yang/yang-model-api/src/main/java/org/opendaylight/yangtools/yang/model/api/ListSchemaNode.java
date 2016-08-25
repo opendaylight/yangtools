@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
 import javax.annotation.Nonnull;
+import org.immutables.value.Value;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -21,8 +22,9 @@ import org.opendaylight.yangtools.yang.common.QName;
  * if defined.
  * </p>
  */
-public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, DataSchemaNode, NotificationNodeContainer,
-        ActionNodeContainer {
+@Value.Immutable
+public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, DataSchemaNode,
+        NotificationNodeContainer, ActionNodeContainer {
 
     /**
      * @return List of QNames of leaf identifiers of this list

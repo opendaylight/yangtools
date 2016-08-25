@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.List;
+import org.immutables.value.Value;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -26,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * href="https://tools.ietf.org/html/rfc6020#section-9.8">[RFC-6020] The binary
  * Built-In Type</a>
  */
+@Value.Immutable
 public interface BinaryTypeDefinition extends TypeDefinition<BinaryTypeDefinition> {
 
     /**

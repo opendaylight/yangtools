@@ -8,11 +8,13 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import javax.annotation.Nullable;
+import org.immutables.value.Value;
 
 /**
  * Interface describing YANG 'notification' statement. The notification
  * statement is used to define a NETCONF notification.
  */
+@Value.Immutable
 public interface NotificationDefinition extends SchemaNode, DataNodeContainer, AugmentationTarget {
 
     /**

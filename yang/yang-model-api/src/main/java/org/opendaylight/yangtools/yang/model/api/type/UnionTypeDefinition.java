@@ -8,13 +8,13 @@
 package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.List;
-
+import org.immutables.value.Value;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
  * Contains the method which access union item in the union type.
- *
  */
+@Value.Immutable
 public interface UnionTypeDefinition extends TypeDefinition<UnionTypeDefinition> {
 
     /**

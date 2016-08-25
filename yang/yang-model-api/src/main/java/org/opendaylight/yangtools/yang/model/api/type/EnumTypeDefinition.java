@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.List;
 import javax.annotation.Nonnull;
+import org.immutables.value.Value;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -16,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * Makes is possible to access to the individual enumeration values of this
  * type.
  */
+@Value.Immutable
 public interface EnumTypeDefinition extends TypeDefinition<EnumTypeDefinition> {
     /**
      * Returns all enumeration values.
@@ -31,6 +33,7 @@ public interface EnumTypeDefinition extends TypeDefinition<EnumTypeDefinition> {
      * Contains the methods for accessing the data about the concrete
      * enumeration item which represents <code>enum</code> YANG type.
      */
+    @Value.Immutable
     interface EnumPair extends DocumentedNode.WithStatus {
         /**
          * The name to specify each assigned name of an enumeration type.

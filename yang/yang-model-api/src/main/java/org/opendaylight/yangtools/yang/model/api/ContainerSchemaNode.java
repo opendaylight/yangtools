@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import org.immutables.value.Value;
 
 /**
  * The ContainerSchemaNode is used to define an interior data node in the schema
@@ -14,6 +15,7 @@ package org.opendaylight.yangtools.yang.model.api;
  * organizing the hierarchy of data nodes, and those whose presence in the
  * configuration has an explicit meaning.
  */
+@Value.Immutable
 public interface ContainerSchemaNode extends DataNodeContainer,
         AugmentationTarget, DataSchemaNode, NotificationNodeContainer, ActionNodeContainer {
 
