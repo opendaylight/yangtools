@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Sets;
 import java.net.URI;
 import java.util.Date;
 import java.util.Set;
@@ -88,7 +89,9 @@ public interface SchemaContext extends ContainerSchemaNode {
      * @return module instance which has namespace equal to the
      *         <code>namespace</code> or <code>null</code> in other cases
      */
-    Set<Module> findModuleByNamespace(final URI namespace);
+    default Set<Module> findModuleByNamespace(final URI namespace) {
+        return Sets.filter(getModules(), m -> namespace.equals(m.getNamespace()));
+    }
 
     /**
      * Returns module instance based on given namespace and revision. If
@@ -96,10 +99,19 @@ public interface SchemaContext extends ContainerSchemaNode {
      *
      * @param namespace
      * @param revision
-     * @return
+     * @return Matching module or null if a match is not found
      */
-    Module findModuleByNamespaceAndRevision(final URI namespace, final Date revision);
-
+    default Module findModuleByNamespaceAndRevision(final URI namespace, final Date revision) {
+        if (namespace == null) {
+            return null;
+        }
+        for (Module module : findModuleByNamespace(namespace)) {
+            if (revision == null || revision.equals(module.getRevision())) {
+                return module;
+            }
+        }
+        return null;
+    }
 
     /**
      * Get yang source code represented as string for matching
