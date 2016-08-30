@@ -13,7 +13,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +62,7 @@ public final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumente
         // initSubstatementCollections
         final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
         final List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
-        final Set<AugmentationSchema> augmentationsInit = new HashSet<>();
+        final Set<AugmentationSchema> augmentationsInit = new LinkedHashSet<>();
         final Map<SchemaPath, SchemaNode> refinesInit = new HashMap<>();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
