@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -182,16 +181,15 @@ public abstract class YangModelDependencyInfo {
     public static YangModelDependencyInfo fromAST(final String name,
             final ParserRuleContext tree) throws YangSyntaxErrorException {
 
-        if (tree instanceof YangStatementParser.StatementContext) {
-            final YangStatementParser.StatementContext rootStatement = (YangStatementParser.StatementContext) tree;
+        if (tree instanceof StatementContext) {
+            final StatementContext rootStatement = (StatementContext) tree;
             return parseAST(rootStatement);
         }
 
         throw new YangSyntaxErrorException(name, 0, 0, "Unknown YANG text type");
     }
 
-    private static YangModelDependencyInfo parseAST(
-            final YangStatementParser.StatementContext rootStatement) {
+    private static YangModelDependencyInfo parseAST(final StatementContext rootStatement) {
         if (rootStatement
                 .keyword()
                 .getText()
@@ -229,8 +227,7 @@ public abstract class YangModelDependencyInfo {
         return parseAST(yangAST);
     }
 
-    private static YangModelDependencyInfo parseModuleContext(
-            final YangStatementParser.StatementContext module) {
+    private static YangModelDependencyInfo parseModuleContext(final StatementContext module) {
         final String name = Utils.stringFromStringContext(module.argument());
         final String latestRevision = getLatestRevision(module);
         final Optional<SemVer> semVer = Optional.fromNullable(getSemanticVersion(module));
@@ -240,8 +237,7 @@ public abstract class YangModelDependencyInfo {
         return new ModuleDependencyInfo(name, latestRevision, imports, includes, semVer);
     }
 
-    private static ImmutableSet<ModuleImport> parseImports(
-            final YangStatementParser.StatementContext module) {
+    private static ImmutableSet<ModuleImport> parseImports(final StatementContext module) {
         final Set<ModuleImport> result = new HashSet<>();
         final List<StatementContext> subStatements = module.statement();
         for (final StatementContext subStatementContext : subStatements) {
@@ -282,8 +278,7 @@ public abstract class YangModelDependencyInfo {
         return SemVer.valueOf(semVerString);
     }
 
-    private static ImmutableSet<ModuleImport> parseIncludes(
-            final YangStatementParser.StatementContext module) {
+    private static ImmutableSet<ModuleImport> parseIncludes(final StatementContext module) {
         final Set<ModuleImport> result = new HashSet<>();
         final List<StatementContext> subStatements = module.statement();
         for (final StatementContext subStatementContext : subStatements) {
@@ -319,8 +314,7 @@ public abstract class YangModelDependencyInfo {
         return revisionDateStr;
     }
 
-    public static String getLatestRevision(
-            final YangStatementParser.StatementContext module) {
+    public static String getLatestRevision(final StatementContext module) {
         final List<StatementContext> subStatements = module.statement();
         String latestRevision = null;
         for (final StatementContext subStatementContext : subStatements) {
@@ -340,8 +334,7 @@ public abstract class YangModelDependencyInfo {
         return latestRevision;
     }
 
-    private static YangModelDependencyInfo parseSubmoduleContext(
-            final YangStatementParser.StatementContext submodule) {
+    private static YangModelDependencyInfo parseSubmoduleContext(final StatementContext submodule) {
         final String name = Utils.stringFromStringContext(submodule.argument());
         final String belongsTo = parseBelongsTo(submodule);
 
