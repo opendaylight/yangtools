@@ -12,7 +12,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
@@ -59,7 +59,7 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
 
         // initSubstatementCollectionsAndFields
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-        Set<AugmentationSchema> augmentationsInit = new HashSet<>();
+        Set<AugmentationSchema> augmentationsInit = new LinkedHashSet<>();
         SortedSet<ChoiceCaseNode> casesInit = new TreeSet<>(SCHEMA_NODE_COMP);
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
