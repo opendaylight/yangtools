@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -51,7 +51,7 @@ abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatem
         // initSubstatementCollectionsAndFields
 
         List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
-        Set<AugmentationSchema> augmentationsInit = new HashSet<>();
+        Set<AugmentationSchema> augmentationsInit = new LinkedHashSet<>();
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 unknownNodesInit.add((UnknownSchemaNode) effectiveStatement);

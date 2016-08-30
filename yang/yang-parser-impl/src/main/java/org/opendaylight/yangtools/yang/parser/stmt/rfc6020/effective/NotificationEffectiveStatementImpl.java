@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -40,7 +40,7 @@ public class NotificationEffectiveStatementImpl extends
         // initSubstatementCollections
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
-        Set<AugmentationSchema> augmentationsInit = new HashSet<>();
+        Set<AugmentationSchema> augmentationsInit = new LinkedHashSet<>();
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
