@@ -165,6 +165,107 @@ ChoiceSchemaNode choiceSchemaNode = (ChoiceSchemaNode) exampleModule.getDataChil
 ContainerSchemaNode containerSchemaNode = (ContainerSchemaNode) exampleModule.getDataChildByName(QName.create(exampleModule.getQNameModule(), "example-container"));
 ----
 
+The YANG statement parser can work in three modes:
+
+* default mode
+* mode with active resolution of if-feature statements
+* mode with active semantic version processing
+
+The default mode is active when you initialize the parsing cycle as usual by calling the method newBuild() without passing any arguments to it. The second and third mode can be activated by invoking the newBuild() with a special argument. You can either activate just one of them or both by passing proper arguments. Let us explain how these modes work.
+
+Mode with active resolution of if-features makes yang statements containing an if-feature statement conditional based on the supported features. These features are provided in the form of a QName-based java.util.function.Predicate object. In the example below, only two features are supported: example-feature-1 and example-feature-2. The Predicate which contains this information is passed to the method newBuild() and the mode is activated.
+
+[source, java]
+----
+Predicate<QName> isFeatureSupported = qName -> {
+    Set<QName> supportedFeatures = new HashSet<>();
+    supportedFeatures.add(QName.create("example-namespace", "2016-08-31", "example-feature-1"));
+    supportedFeatures.add(QName.create("example-namespace", "2016-08-31", "example-feature-2"));
+    return supportedFeatures.contains(qName);
+}
+
+CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(isFeatureSupported);
+----
+
+In case when no features should be supported, you should provide a Predicate<QName> object whose test() method just returns false.
+
+[source, java]
+----
+Predicate<QName> isFeatureSupported = qName -> false;
+
+CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(isFeatureSupported);
+----
+
+When this mode is not activated, all features in the processed YANG sources are supported.
+
+Mode with active semantic version processing changes the way how YANG import statements work - each module import is processed based on the specified semantic version statement and the revision-date statement is ignored. In order to activate this mode, you have to provide StatementParserMode.SEMVER_MODE enum constant as argument to the method newBuild().
+
+[source, java]
+----
+CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(StatementParserMode.SEMVER_MODE);
+----
+
+Before you use a semantic version statement in a YANG module, you need to define an extension for it so that the YANG statement parser can recognize it.
+
+[source, yang]
+----
+module semantic-version {
+    namespace "urn:opendaylight:yang:extension:semantic-version";
+    prefix sv;
+    yang-version 1;
+
+    revision 2016-02-02 {
+        description "Initial version";
+    }
+    sv:semantic-version "0.0.1";
+
+    extension semantic-version {
+        argument "semantic-version" {
+            yin-element false;
+        }
+----
+
+In the example above, you see a YANG module which defines semantic version as an extension. This extension can be imported to other modules in which we want to utilize the semantic versioning concept.
+
+Below is a simple example of the semantic versioning usage. With semantic version processing mode being active, the foo module imports the bar module based on its semantic version. Notice how both modules import the module with the semantic-version extension.
+
+[source, yang]
+----
+module foo {
+    namespace foo;
+    prefix foo;
+    yang-version 1;
+
+    import semantic-version { prefix sv; revision-date 2016-02-02; sv:semantic-version "0.0.1"; }
+    import bar { prefix bar; sv:semantic-version "0.1.2";}
+
+    revision "2016-02-01" {
+        description "Initial version";
+    }
+    sv:semantic-version "0.1.1";
+
+    ...
+}
+----
+
+[source, yang]
+----
+module bar {
+    namespace bar;
+    prefix bar;
+    yang-version 1;
+
+    import semantic-version { prefix sv; revision-date 2016-02-02; sv:semantic-version "0.0.1"; }
+
+    revision "2016-01-01" {
+        description "Initial version";
+    }
+    sv:semantic-version "0.1.2";
+
+    ...
+}
+----
+
 === Working with YANG Data
 If you want to work with YANG Data you are going to need NormalizedNode objects that are specified in the YANG Data API. NormalizedNode is an interface at the top of the YANG Data hierarchy. It is extended through sub-interfaces which define the behaviour of specific NormalizedNode types like AnyXmlNode, ChoiceNode, LeafNode, ContainerNode, etc. Concrete implemenations of these interfaces are defined in yang-data-impl module. Once you have one or more NormalizedNode instances, you can perform CRUD operations on YANG data tree which is an in-memory database designed to store normalized nodes in a tree-like structure.
 
