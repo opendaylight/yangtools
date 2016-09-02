@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
@@ -25,13 +24,11 @@ import com.google.common.collect.TreeMultimap;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
@@ -102,40 +99,23 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
     }
 
     private static TreeMultimap<String, Module> getStringModuleTreeMultimap() {
-        return TreeMultimap.create(new Comparator<String>() {
-                @Override
-                public int compare(final String o1, final String o2) {
-                    return o1.compareTo(o2);
-                }
-            }, REVISION_COMPARATOR);
+        return TreeMultimap.create((o1, o2) -> o1.compareTo(o2), REVISION_COMPARATOR);
     }
 
     private static void processForAdditionalModules(final SchemaContext delegate,
             final Set<ModuleId> additionalModuleIds, final Builder<Module> filteredModulesBuilder) {
-        filteredModulesBuilder.addAll(Collections2.filter(delegate.getModules(), new Predicate<Module>() {
-            @Override
-            public boolean apply(@Nullable final Module module) {
-                return selectAdditionalModules(module, additionalModuleIds);
-            }
-        }));
+        filteredModulesBuilder.addAll(Collections2.filter(delegate.getModules(),
+            module -> selectAdditionalModules(module, additionalModuleIds)));
     }
 
-    private void processForRootModules(final SchemaContext delegate, final Collection<ModuleId> rootModules, final Builder<Module> filteredModulesBuilder) {
-        filteredModulesBuilder.addAll(Collections2.filter(delegate.getModules(), new Predicate<Module>() {
-            @Override
-            public boolean apply(@Nullable final Module module) {
-                return checkModuleDependency(module, rootModules);
-            }
-        }));
+    private void processForRootModules(final SchemaContext delegate, final Collection<ModuleId> rootModules,
+            final Builder<Module> filteredModulesBuilder) {
+        filteredModulesBuilder.addAll(Collections2.filter(delegate.getModules(),
+            module -> checkModuleDependency(module, rootModules)));
     }
 
     private static Multimap<String, Module> getStringModuleMap(final SchemaContext delegate) {
-        return Multimaps.index(delegate.getModules(), new Function<Module, String>() {
-            @Override
-            public String apply(final Module input) {
-                return input.getName();
-            }
-        });
+        return Multimaps.index(delegate.getModules(), Module::getName);
     }
 
     //dealing with imported module other than root and directly importing root
@@ -242,12 +222,8 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
             return rev;
         }
 
-        public static final Function<Module, ModuleId> MODULE_TO_MODULE_ID = new Function<Module, ModuleId>() {
-            @Override
-            public ModuleId apply(final Module input) {
-                return new ModuleId(input.getName(), input.getRevision());
-            }
-        };
+        public static final Function<Module, ModuleId> MODULE_TO_MODULE_ID = input -> new ModuleId(input.getName(),
+            input.getRevision());
 
         @Override
         public boolean equals(final Object o) {

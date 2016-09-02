@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.repo;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Collections2;
@@ -28,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import javax.annotation.Nullable;
+import java.util.function.Predicate;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.util.concurrent.ExceptionMapper;
@@ -54,12 +53,6 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
     private static final ExceptionMapper<SchemaResolutionException> MAPPER = ReflectiveExceptionMapper.create("resolve sources", SchemaResolutionException.class);
     private static final Logger LOG = LoggerFactory.getLogger(SharedSchemaContextFactory.class);
 
-    private final Function<SourceIdentifier, ListenableFuture<ASTSchemaSource>> requestSources = new Function<SourceIdentifier, ListenableFuture<ASTSchemaSource>>() {
-        @Override
-        public ListenableFuture<ASTSchemaSource> apply(final SourceIdentifier input) {
-            return repository.getSchemaSource(input, ASTSchemaSource.class);
-        }
-    };
     private final Cache<Collection<SourceIdentifier>, SchemaContext> cache = CacheBuilder.newBuilder().weakValues().build();
     private final Cache<Collection<SourceIdentifier>, SchemaContext> semVerCache = CacheBuilder.newBuilder().weakValues().build();
     private final SharedSchemaRepository repository;
@@ -75,13 +68,20 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
     @Override
     public CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
             final Collection<SourceIdentifier> requiredSources, final StatementParserMode statementParserMode,
-            final java.util.function.Predicate<QName> isFeatureSupported) {
+            final Predicate<QName> isFeatureSupported) {
         return createSchemaContext(requiredSources,
                 statementParserMode == StatementParserMode.SEMVER_MODE ? this.semVerCache : this.cache,
                 new AssembleSources(isFeatureSupported, statementParserMode));
     }
 
-    private CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(final Collection<SourceIdentifier> requiredSources, final Cache<Collection<SourceIdentifier>, SchemaContext> cache, final AsyncFunction<List<ASTSchemaSource>, SchemaContext> assembleSources) {
+    private ListenableFuture<ASTSchemaSource> requestSource(final SourceIdentifier identifier) {
+        return repository.getSchemaSource(identifier, ASTSchemaSource.class);
+    }
+
+    private CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
+            final Collection<SourceIdentifier> requiredSources,
+            final Cache<Collection<SourceIdentifier>, SchemaContext> cache,
+            final AsyncFunction<List<ASTSchemaSource>, SchemaContext> assembleSources) {
         // Make sources unique
         final List<SourceIdentifier> uniqueSourceIdentifiers = deDuplicateSources(requiredSources);
 
@@ -92,7 +92,8 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         }
 
         // Request all sources be loaded
-        ListenableFuture<List<ASTSchemaSource>> sf = Futures.allAsList(Collections2.transform(uniqueSourceIdentifiers, requestSources));
+        ListenableFuture<List<ASTSchemaSource>> sf = Futures.allAsList(Collections2.transform(uniqueSourceIdentifiers,
+            this::requestSource));
 
         // Detect mismatch between requested Source IDs and IDs that are extracted from parsed source
         // Also remove duplicates if present
@@ -129,12 +130,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         }
 
         LOG.warn("Duplicate sources requested for schema context, removed duplicate sources: {}",
-            Collections2.filter(uniqueSourceIdentifiers, new Predicate<SourceIdentifier>() {
-                @Override
-                public boolean apply(@Nullable final SourceIdentifier input) {
-                    return Iterables.frequency(requiredSources, input) > 1;
-                }
-            }));
+            Collections2.filter(uniqueSourceIdentifiers, input -> Iterables.frequency(requiredSources, input) > 1));
         return ImmutableList.copyOf(uniqueSourceIdentifiers);
     }
 
@@ -173,20 +169,20 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
 
     private static final class AssembleSources implements AsyncFunction<List<ASTSchemaSource>, SchemaContext> {
 
-        private final java.util.function.Predicate<QName> isFeatureSupported;
+        private final Predicate<QName> isFeatureSupported;
         private final StatementParserMode statementParserMode;
         private final Function<ASTSchemaSource, SourceIdentifier> getIdentifier;
 
-        private AssembleSources(final java.util.function.Predicate<QName> isFeatureSupported,
+        private AssembleSources(final Predicate<QName> isFeatureSupported,
                 final StatementParserMode statementParserMode) {
             this.isFeatureSupported = Preconditions.checkNotNull(isFeatureSupported);
             this.statementParserMode = Preconditions.checkNotNull(statementParserMode);
             switch (statementParserMode) {
             case SEMVER_MODE:
-                this.getIdentifier = ASTSchemaSource.GET_SEMVER_IDENTIFIER;
+                this.getIdentifier = ASTSchemaSource::getSemVerIdentifier;
                 break;
             default:
-                this.getIdentifier = ASTSchemaSource.GET_IDENTIFIER;
+                this.getIdentifier = ASTSchemaSource::getIdentifier;
             }
         }
 
@@ -195,7 +191,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
                 SourceException, ReactorException {
             final Map<SourceIdentifier, ASTSchemaSource> srcs = Maps.uniqueIndex(sources, getIdentifier);
             final Map<SourceIdentifier, YangModelDependencyInfo> deps =
-                    Maps.transformValues(srcs, ASTSchemaSource.GET_DEPINFO);
+                    Maps.transformValues(srcs, ASTSchemaSource::getDependencyInformation);
 
             LOG.debug("Resolving dependency reactor {}", deps);
 
@@ -207,7 +203,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
                         res.getResolvedSources(), res.getUnsatisfiedImports());
             }
 
-            final Map<SourceIdentifier, ParserRuleContext> asts = Maps.transformValues(srcs, ASTSchemaSource.GET_AST);
+            final Map<SourceIdentifier, ParserRuleContext> asts = Maps.transformValues(srcs, ASTSchemaSource::getAST);
             final CrossSourceStatementReactor.BuildAction reactor =
                     YangInferencePipeline.RFC6020_REACTOR.newBuild(statementParserMode, isFeatureSupported);
 

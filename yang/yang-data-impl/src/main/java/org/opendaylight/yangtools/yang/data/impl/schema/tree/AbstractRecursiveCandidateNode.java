@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Collections2;
 import java.util.Collection;
@@ -70,12 +69,7 @@ abstract class AbstractRecursiveCandidateNode extends AbstractDataTreeCandidateN
 
     @Override
     public final Collection<DataTreeCandidateNode> getChildNodes() {
-        return Collections2.transform(getData().getValue(), new Function<NormalizedNode<?,?>, DataTreeCandidateNode>() {
-            @Override
-            public DataTreeCandidateNode apply(final NormalizedNode<?, ?> input) {
-                return createChild(input);
-            }
-        });
+        return Collections2.transform(getData().getValue(), this::createChild);
     }
 
     @SuppressWarnings("unchecked")

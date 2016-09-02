@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import java.util.Collection;
@@ -32,16 +31,13 @@ public abstract class ListNodeBaseSerializer<E, N extends DataContainerChild<Nod
 
     @Override
     public final Iterable<E> serialize(final ListSchemaNode schema, final N node) {
-        return Iterables.concat(Iterables.transform(node.getValue(), new Function<O, Iterable<E>>() {
-            @Override
-            public Iterable<E> apply(final O input) {
-                final Iterable<E> serializedChild = getListEntryNodeSerializer().serialize(schema, input);
-                final int size = Iterables.size(serializedChild);
+        return Iterables.concat(Iterables.transform(node.getValue(), input -> {
+            final Iterable<E> serializedChild = getListEntryNodeSerializer().serialize(schema, input);
+            final int size = Iterables.size(serializedChild);
 
-                Preconditions.checkState(size == 1,
-                        "Unexpected count of entries  for list serialized from: %s, should be 1, was: %s", input, size);
-                return serializedChild;
-            }
+            Preconditions.checkState(size == 1,
+                    "Unexpected count of entries  for list serialized from: %s, should be 1, was: %s", input, size);
+            return serializedChild;
         }));
     }
 

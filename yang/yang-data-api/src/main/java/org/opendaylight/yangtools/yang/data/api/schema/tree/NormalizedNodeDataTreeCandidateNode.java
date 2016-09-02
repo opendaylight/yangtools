@@ -27,12 +27,8 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
      * Convenience function for functional transformation of {@link NormalizedNode} into
      * a {@link DataTreeCandidateNode}.
      */
-    private static final Function<NormalizedNode<?, ?>, DataTreeCandidateNode> FACTORY_FUNCTION = new Function<NormalizedNode<?, ?>, DataTreeCandidateNode>() {
-        @Override
-        public DataTreeCandidateNode apply(final NormalizedNode<?, ?> input) {
-            return input == null ? null : new NormalizedNodeDataTreeCandidateNode(input);
-        }
-    };
+    private static final Function<NormalizedNode<?, ?>, DataTreeCandidateNode> FACTORY_FUNCTION =
+        input -> input == null ? null : new NormalizedNodeDataTreeCandidateNode(input);
     private final NormalizedNode<?, ?> data;
 
     /**

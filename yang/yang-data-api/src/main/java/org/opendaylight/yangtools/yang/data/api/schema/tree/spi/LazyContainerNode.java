@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import java.util.Map;
 import org.opendaylight.yangtools.util.MapAdaptor;
@@ -50,11 +49,6 @@ final class LazyContainerNode extends AbstractModifiedContainerNode {
     protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
         // Modified children add added by superclass. Here we filter the other children.
         return super.addToStringAttributes(helper).add("untouched", Collections2.filter(castData().getValue(),
-            new Predicate<NormalizedNode<?, ?>>() {
-                @Override
-                public boolean apply(final NormalizedNode<?, ?> input) {
-                    return getModifiedChild(input.getIdentifier()) == null;
-                }
-        }));
+            input -> getModifiedChild(input.getIdentifier()) == null));
     }
 }
