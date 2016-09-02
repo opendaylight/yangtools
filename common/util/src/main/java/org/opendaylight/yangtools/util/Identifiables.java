@@ -8,21 +8,10 @@
 package org.opendaylight.yangtools.util;
 
 import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 
+@Deprecated
 public final class Identifiables {
-
-    private static final Function<Identifiable<Object>, Object> EXTRACT_IDENTIFIER =
-            new Function<Identifiable<Object>, Object>() {
-        @Override
-        public Object apply(@Nonnull final Identifiable<Object> input) {
-            Preconditions.checkNotNull(input);
-            return input.getIdentifier();
-        }
-    };
-
     private Identifiables() {
         throw new UnsupportedOperationException("Utility class");
     }
@@ -31,16 +20,13 @@ public final class Identifiables {
      * Return the {@link Function} to extract the identifier from a particular
      * object implementing the {@link Identifiable} contract.
      *
-     * @return Identificator associated with the object
+     * @return Identifier associated with the object
+     *
+     * @deprecated Use Identifiable::getIdentifier instead
      */
-    /*
-     * Suppressing warnings here allows us to fool the compiler enough
-     * such that we can reuse a single function for all applicable types
-     * and present it in a type-safe manner to our users.
-     */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Deprecated
     public static <V> Function<Identifiable<V>, V> identifierExtractor() {
-        return (Function) EXTRACT_IDENTIFIER;
+        return Identifiable::getIdentifier;
     }
 }
 

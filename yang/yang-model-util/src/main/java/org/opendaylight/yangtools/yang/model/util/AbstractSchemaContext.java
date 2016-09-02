@@ -41,24 +41,15 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 
 public abstract class AbstractSchemaContext implements SchemaContext {
-
-    protected static final Supplier<TreeSet<Module>> MODULE_SET_SUPPLIER = new Supplier<TreeSet<Module>>() {
-        @Override
-        public TreeSet<Module> get() {
-            return new TreeSet<>(REVISION_COMPARATOR);
+    protected static final Comparator<Module> REVISION_COMPARATOR = (o1, o2) -> {
+        if (o2.getRevision() == null) {
+            return -1;
         }
+
+        return o2.getRevision().compareTo(o1.getRevision());
     };
 
-    protected static final Comparator<Module> REVISION_COMPARATOR = new Comparator<Module>() {
-        @Override
-        public int compare(final Module o1, final Module o2) {
-            if (o2.getRevision() == null) {
-                return -1;
-            }
-
-            return o2.getRevision().compareTo(o1.getRevision());
-        }
-    };
+    protected static final Supplier<TreeSet<Module>> MODULE_SET_SUPPLIER = () -> new TreeSet<>(REVISION_COMPARATOR);
 
     /**
      * @return yang sources where key is ModuleIdentifier

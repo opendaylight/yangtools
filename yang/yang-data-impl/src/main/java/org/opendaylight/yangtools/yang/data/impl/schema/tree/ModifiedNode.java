@@ -13,7 +13,6 @@ import com.google.common.base.Predicate;
 import java.util.Collection;
 import java.util.Map;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -38,11 +37,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
  */
 @NotThreadSafe
 final class ModifiedNode extends NodeModification implements StoreTreeNode<ModifiedNode> {
-    static final Predicate<ModifiedNode> IS_TERMINAL_PREDICATE = new Predicate<ModifiedNode>() {
-        @Override
-        public boolean apply(@Nullable final ModifiedNode input) {
-            Preconditions.checkNotNull(input);
-            switch (input.getOperation()) {
+    static final Predicate<ModifiedNode> IS_TERMINAL_PREDICATE = input -> {
+        Preconditions.checkNotNull(input);
+        switch (input.getOperation()) {
             case DELETE:
             case MERGE:
             case WRITE:
@@ -50,10 +47,9 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             case TOUCH:
             case NONE:
                 return false;
-            }
-
-            throw new IllegalArgumentException(String.format("Unhandled modification type %s", input.getOperation()));
         }
+
+        throw new IllegalArgumentException(String.format("Unhandled modification type %s", input.getOperation()));
     };
 
     private final Map<PathArgument, ModifiedNode> children;

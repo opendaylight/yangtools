@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
@@ -21,20 +20,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNode;
 
 abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
-    private static final Function<NormalizedNode<?, ?>, DataTreeCandidateNode> TO_DELETED_NODE = new Function<NormalizedNode<?, ?>, DataTreeCandidateNode>() {
-        @Override
-        public DataTreeCandidateNode apply(final NormalizedNode<?, ?> input) {
-            return AbstractRecursiveCandidateNode.deleteNode(input);
-        }
-    };
-    private static final Function<NormalizedNode<?, ?>, DataTreeCandidateNode> TO_WRITTEN_NODE = new Function<NormalizedNode<?, ?>, DataTreeCandidateNode>() {
-        @Override
-        public DataTreeCandidateNode apply(final NormalizedNode<?, ?> input) {
-            return AbstractRecursiveCandidateNode.writeNode(input);
-        }
-    };
-
-    private static Optional<NormalizedNode<?, ?>> getChild(final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> container, final PathArgument identifier) {
+    private static Optional<NormalizedNode<?, ?>> getChild(
+            final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> container,
+                    final PathArgument identifier) {
         if (container != null) {
             return container.getChild(identifier);
         } else {
@@ -53,11 +41,11 @@ abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
             if (maybeNewChild.isPresent()) {
                 return AbstractRecursiveCandidateNode.replaceNode(oldChild, maybeNewChild.get());
             } else {
-                return TO_DELETED_NODE.apply(oldChild);
+                return AbstractRecursiveCandidateNode.deleteNode(oldChild);
             }
         } else {
             if (maybeNewChild.isPresent()) {
-                return TO_WRITTEN_NODE.apply(maybeNewChild.get());
+                return AbstractRecursiveCandidateNode.writeNode(maybeNewChild.get());
             } else {
                 return null;
             }
@@ -69,10 +57,10 @@ abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
         Preconditions.checkArgument(newData != null || oldData != null,
                 "No old or new data, modification type should be NONE and deltaChildren() mustn't be called.");
         if (newData == null) {
-            return Collections2.transform(oldData.getValue(), TO_DELETED_NODE);
+            return Collections2.transform(oldData.getValue(), AbstractRecursiveCandidateNode::deleteNode);
         }
         if (oldData == null) {
-            return Collections2.transform(newData.getValue(), TO_WRITTEN_NODE);
+            return Collections2.transform(newData.getValue(), AbstractRecursiveCandidateNode::writeNode);
         }
 
         /*

@@ -28,27 +28,10 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> implements EffectiveStatement<A, D> {
 
-    private static final Predicate<StmtContext<?, ?, ?>> IS_SUPPORTED_TO_BUILD_EFFECTIVE = new Predicate<StmtContext<?, ?, ?>>() {
-        @Override
-        public boolean apply(final StmtContext<?, ?, ?> input) {
-            return input.isSupportedToBuildEffective();
-        }
-    };
-
-    private static final Predicate<StmtContext<?, ?, ?>> IS_UNKNOWN_STATEMENT_CONTEXT = new Predicate<StmtContext<?, ?, ?>>() {
-        @Override
-        public boolean apply(final StmtContext<?, ?, ?> input) {
-            return StmtContextUtils.isUnknownStatement(input);
-        }
-    };
-
-    private static final Predicate<StatementContextBase<?, ?, ?>> ARE_FEATURES_SUPPORTED = new Predicate<StatementContextBase<?, ?, ?>>() {
-
-        @Override
-        public boolean apply(final StatementContextBase<?, ?, ?> input) {
-            return StmtContextUtils.areFeaturesSupported(input);
-        }
-    };
+    private static final Predicate<StmtContext<?, ?, ?>> IS_UNKNOWN_STATEMENT_CONTEXT =
+            StmtContextUtils::isUnknownStatement;
+    private static final Predicate<StmtContext<?, ?, ?>> IS_NOT_UNKNOWN_STATEMENT_CONTEXT =
+            Predicates.not(IS_UNKNOWN_STATEMENT_CONTEXT);
 
     private final List<? extends EffectiveStatement<?, ?>> substatements;
     private final List<StatementContextBase<?, ?, ?>> unknownSubstatementsToBuild;
@@ -75,7 +58,7 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
         final Collection<StatementContextBase<?, ?, ?>> substatementsInit = new ArrayList<>();
 
         final Collection<StatementContextBase<?, ?, ?>> supportedDeclaredSubStmts = Collections2.filter(
-                ctx.declaredSubstatements(), ARE_FEATURES_SUPPORTED);
+                ctx.declaredSubstatements(), StmtContextUtils::areFeaturesSupported);
         for (final StatementContextBase<?, ?, ?> declaredSubstatement : supportedDeclaredSubStmts) {
             if (declaredSubstatement.getPublicDefinition().equals(Rfc6020Mapping.USES)) {
                 substatementsInit.add(declaredSubstatement);
@@ -89,12 +72,11 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
         substatementsInit.addAll(effectiveSubstatements);
 
         Collection<StatementContextBase<?, ?, ?>> substatementsToBuild = Collections2.filter(substatementsInit,
-                IS_SUPPORTED_TO_BUILD_EFFECTIVE);
+            StmtContext::isSupportedToBuildEffective);
         if (!buildUnknownSubstatements) {
             this.unknownSubstatementsToBuild = ImmutableList.copyOf(Collections2.filter(substatementsToBuild,
                     IS_UNKNOWN_STATEMENT_CONTEXT));
-            substatementsToBuild = Collections2.filter(substatementsToBuild,
-                    Predicates.not(IS_UNKNOWN_STATEMENT_CONTEXT));
+            substatementsToBuild = Collections2.filter(substatementsToBuild, IS_NOT_UNKNOWN_STATEMENT_CONTEXT);
         } else {
             this.unknownSubstatementsToBuild = ImmutableList.of();
         }

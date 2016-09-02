@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -16,19 +15,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 
 final class OperationWithModification {
-    private static final Function<TreeNode, NormalizedNode<?, ?>> READ_DATA = new Function<TreeNode, NormalizedNode<?, ?>>() {
-        @Override
-        public NormalizedNode<?, ?> apply(final TreeNode input) {
-            return input.getData();
-        }
-    };
-
-    private final ModifiedNode modification;
     private final ModificationApplyOperation applyOperation;
+    private final ModifiedNode modification;
 
     private OperationWithModification(final ModificationApplyOperation op, final ModifiedNode mod) {
-        this.modification = Preconditions.checkNotNull(mod);
         this.applyOperation = Preconditions.checkNotNull(op);
+        this.modification = Preconditions.checkNotNull(mod);
     }
 
     void write(final NormalizedNode<?, ?> value) {
@@ -74,7 +66,7 @@ final class OperationWithModification {
                 snapshot = applyOperation.getChild(child).get().apply(childNode, childNode.getOriginal(), version);
             }
 
-            return snapshot.transform(READ_DATA);
+            return snapshot.transform(TreeNode::getData);
         }
 
         Optional<TreeNode> snapshot = modification.getSnapshot();
@@ -83,7 +75,7 @@ final class OperationWithModification {
         }
 
         if (snapshot.isPresent()) {
-            return snapshot.get().getChild(child).transform(READ_DATA);
+            return snapshot.get().getChild(child).transform(TreeNode::getData);
         }
 
         return Optional.absent();
