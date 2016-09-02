@@ -8,8 +8,6 @@
 package org.opendaylight.yangtools.yang.data.jaxen;
 
 import com.google.common.base.Verify;
-import java.util.List;
-import org.jaxen.Context;
 import org.jaxen.Function;
 import org.jaxen.FunctionCallException;
 import org.jaxen.FunctionContext;
@@ -23,17 +21,13 @@ final class YangFunctionContext implements FunctionContext {
     // Core XPath functions, as per http://tools.ietf.org/html/rfc6020#section-6.4.1
     private static final FunctionContext XPATH_FUNCTION_CONTEXT = new XPathFunctionContext(false);
     // current() function, as per http://tools.ietf.org/html/rfc6020#section-6.4.1
-    private static final Function CURRENT_FUNCTION = new Function() {
-        @Override
-        public NormalizedNodeContext call(final Context context, @SuppressWarnings("rawtypes") final List args)
-                throws FunctionCallException {
-            if (!args.isEmpty()) {
-                throw new FunctionCallException("current() takes no arguments.");
-            }
-
-            Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
-            return ((NormalizedNodeContext) context);
+    private static final Function CURRENT_FUNCTION = (context, args) -> {
+        if (!args.isEmpty()) {
+            throw new FunctionCallException("current() takes no arguments.");
         }
+
+        Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
+        return ((NormalizedNodeContext) context);
     };
 
     // Singleton instance of reuse

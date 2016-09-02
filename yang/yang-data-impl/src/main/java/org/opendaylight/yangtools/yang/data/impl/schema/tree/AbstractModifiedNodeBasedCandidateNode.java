@@ -6,7 +6,6 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
@@ -23,20 +22,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 
 abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandidateNode {
-
-    private static final Function<NormalizedNode<?, ?>, DataTreeCandidateNode> TO_UNMODIFIED_NODE = new Function<NormalizedNode<?, ?>, DataTreeCandidateNode>() {
-        @Override
-        public DataTreeCandidateNode apply(final NormalizedNode<?, ?> input) {
-            return AbstractRecursiveCandidateNode.unmodifiedNode(input);
-        }
-    };
-
     private final ModifiedNode mod;
     private final TreeNode newMeta;
     private final TreeNode oldMeta;
 
-    protected AbstractModifiedNodeBasedCandidateNode(final ModifiedNode mod,
-            final TreeNode oldMeta, final TreeNode newMeta) {
+    protected AbstractModifiedNodeBasedCandidateNode(final ModifiedNode mod, final TreeNode oldMeta,
+            final TreeNode newMeta) {
         this.newMeta = newMeta;
         this.oldMeta = oldMeta;
         this.mod = Preconditions.checkNotNull(mod);
@@ -89,17 +80,13 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
         case APPEARED:
         case DISAPPEARED:
         case SUBTREE_MODIFIED:
-            return Collections2.transform(mod.getChildren(), new Function<ModifiedNode, DataTreeCandidateNode>() {
-                @Override
-                public DataTreeCandidateNode apply(final ModifiedNode input) {
-                    return childNode(input);
-                }
-            });
+            return Collections2.transform(mod.getChildren(), this::childNode);
         case UNMODIFIED:
             // Unmodified node, but we still need to resolve potential children. canHaveChildren returns
             // false if both arguments are null.
             if (canHaveChildren(oldMeta, newMeta)) {
-                return Collections2.transform(getContainer(newMeta != null ? newMeta : oldMeta).getValue(), TO_UNMODIFIED_NODE);
+                return Collections2.transform(getContainer(newMeta != null ? newMeta : oldMeta).getValue(),
+                    AbstractRecursiveCandidateNode::unmodifiedNode);
             } else {
                 return Collections.emptyList();
             }
@@ -158,7 +145,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
             if (canHaveChildren(oldMeta, newMeta)) {
                 final Optional<NormalizedNode<?, ?>> maybeChild = getContainer(newMeta != null ? newMeta : oldMeta).getChild(identifier);
                 if (maybeChild.isPresent()) {
-                    return TO_UNMODIFIED_NODE.apply(maybeChild.get());
+                    return AbstractRecursiveCandidateNode.unmodifiedNode(maybeChild.get());
                 } else {
                     return null;
                 }

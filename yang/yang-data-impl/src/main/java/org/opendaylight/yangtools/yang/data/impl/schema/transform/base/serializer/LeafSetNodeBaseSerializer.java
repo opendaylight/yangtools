@@ -7,14 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.FromNormalizedNodeSerializer;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
 
 /**
  * Abstract(base) serializer for LeafSetNodes, serializes elements of type E.
@@ -26,16 +24,13 @@ public abstract class LeafSetNodeBaseSerializer<E> implements
 
     @Override
     public final Iterable<E> serialize(final LeafListSchemaNode schema, final LeafSetNode<?> node) {
-        return Iterables.concat(Iterables.transform(node.getValue(), new Function<LeafSetEntryNode<?>, Iterable<E>>() {
-            @Override
-            public Iterable<E> apply(final LeafSetEntryNode<?> input) {
-                final Iterable<E> serializedChild = getLeafSetEntryNodeSerializer().serialize(schema, input);
-                final int size = Iterables.size(serializedChild);
-                Preconditions.checkState(size == 1,
-                        "Unexpected count of elements for leaf-list entry serialized from: %s, should be 1, was: %s",
-                        input, size);
-                return serializedChild;
-            }
+        return Iterables.concat(Iterables.transform(node.getValue(), input -> {
+            final Iterable<E> serializedChild = getLeafSetEntryNodeSerializer().serialize(schema, input);
+            final int size = Iterables.size(serializedChild);
+            Preconditions.checkState(size == 1,
+                    "Unexpected count of elements for leaf-list entry serialized from: %s, should be 1, was: %s",
+                    input, size);
+            return serializedChild;
         }));
     }
 
