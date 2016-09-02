@@ -28,12 +28,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> {
-    private static final Comparator<QName> KEYARG_COMPARATOR = new Comparator<QName>() {
-        @Override
-        public int compare(final QName q1, final QName q2) {
-            return q1.getLocalName().compareToIgnoreCase(q2.getLocalName());
-        }
-    };
     private final Map<QName, ValueContext> keyValueContexts;
     private final List<QName> keysInBindingOrder;
     private final ListSchemaNode schema;
@@ -82,7 +76,7 @@ final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates,
         final List<QName> sortedKeys;
         if (unsortedKeys.size() > 1) {
             final List<QName> tmp = new ArrayList<>(unsortedKeys);
-            Collections.sort(tmp, KEYARG_COMPARATOR);
+            Collections.sort(tmp, (q1, q2) -> q1.getLocalName().compareToIgnoreCase(q2.getLocalName()));
             sortedKeys = tmp;
         } else {
             sortedKeys = unsortedKeys;
