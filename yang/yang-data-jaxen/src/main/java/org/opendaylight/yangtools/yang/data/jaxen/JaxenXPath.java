@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.jaxen;
 
 import com.google.common.base.Converter;
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
@@ -35,13 +34,7 @@ import org.slf4j.LoggerFactory;
 
 final class JaxenXPath implements XPathExpression {
     private static final Logger LOG = LoggerFactory.getLogger(JaxenXPath.class);
-    protected static final Function<NormalizedNodeContext, NormalizedNode<?, ?>> EXTRACT_NODE =
-            new Function<NormalizedNodeContext, NormalizedNode<?, ?>>() {
-        @Override
-        public NormalizedNode<?, ?> apply(final NormalizedNodeContext input) {
-            return input.getNode();
-        }
-    };
+
     private final Converter<String, QNameModule> converter;
     private final SchemaPath schemaPath;
     private final BaseXPath xpath;
@@ -114,7 +107,7 @@ final class JaxenXPath implements XPathExpression {
                 @Override
                 public Collection<NormalizedNode<?, ?>> getValue() {
                     // XXX: Will this really work, or do we need to perform deep transformation?
-                    return Lists.transform((List<NormalizedNodeContext>) result, EXTRACT_NODE);
+                    return Lists.transform((List<NormalizedNodeContext>) result, NormalizedNodeContext::getNode);
                 }
             });
         } else {

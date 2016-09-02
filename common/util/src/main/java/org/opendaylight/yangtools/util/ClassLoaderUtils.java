@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -143,22 +142,18 @@ public final class ClassLoaderUtils {
     }
 
     public static <S,G,P> Class<P> findFirstGenericArgument(final Class<S> scannedClass, final Class<G> genericType) {
-        return withClassLoader(scannedClass.getClassLoader(),
-                ClassLoaderUtils.findFirstGenericArgumentTask(scannedClass, genericType));
+        return withClassLoader(scannedClass.getClassLoader(), findFirstGenericArgumentTask(scannedClass, genericType));
     }
 
+    @SuppressWarnings("unchecked")
     private static <S, G, P> Supplier<Class<P>> findFirstGenericArgumentTask(final Class<S> scannedClass,
             final Class<G> genericType) {
-        return new Supplier<Class<P>>() {
-            @Override
-            @SuppressWarnings("unchecked")
-            public Class<P> get() {
-                final ParameterizedType augmentationGeneric = findParameterizedType(scannedClass, genericType);
-                if (augmentationGeneric != null) {
-                    return (Class<P>) augmentationGeneric.getActualTypeArguments()[0];
-                }
-                return null;
+        return () -> {
+            final ParameterizedType augmentationGeneric = findParameterizedType(scannedClass, genericType);
+            if (augmentationGeneric != null) {
+                return (Class<P>) augmentationGeneric.getActualTypeArguments()[0];
             }
+            return null;
         };
     }
 
