@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -600,20 +599,12 @@ public final class SchemaContextUtil {
 
         if (Iterables.size(schemaNodePath) - colCount >= 0) {
             return Iterables.concat(Iterables.limit(schemaNodePath, Iterables.size(schemaNodePath) - colCount),
-                    Iterables.transform(Iterables.skip(xpaths, colCount), new Function<String, QName>() {
-                        @Override
-                        public QName apply(final String input) {
-                            return stringPathPartToQName(context, module, input);
-                        }
-                    }));
+                Iterables.transform(Iterables.skip(xpaths, colCount),
+                    input -> stringPathPartToQName(context, module, input)));
         }
         return Iterables.concat(schemaNodePath,
-                Iterables.transform(Iterables.skip(xpaths, colCount), new Function<String, QName>() {
-                    @Override
-                    public QName apply(final String input) {
-                        return stringPathPartToQName(context, module, input);
-                    }
-                }));
+                Iterables.transform(Iterables.skip(xpaths, colCount),
+                    input -> stringPathPartToQName(context, module, input)));
     }
 
     /**

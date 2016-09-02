@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -21,7 +20,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -39,14 +37,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public final class SchemaUtils {
-
-    private static final Function<DataSchemaNode, QName> QNAME_FUNCTION = new Function<DataSchemaNode, QName>() {
-        @Override
-        public QName apply(@Nonnull final DataSchemaNode input) {
-            return input.getQName();
-        }
-    };
-
     private SchemaUtils() {
         throw new UnsupportedOperationException();
     }
@@ -141,14 +131,8 @@ public final class SchemaUtils {
 
     private static Optional<AugmentationSchema> findAugment(final AugmentationTarget schema, final Set<QName> qNames) {
         for (AugmentationSchema augment : schema.getAvailableAugmentations()) {
-
-            HashSet<QName> qNamesFromAugment = Sets.newHashSet(Collections2.transform(augment.getChildNodes(), new Function<DataSchemaNode, QName>() {
-                @Override
-                public QName apply(@Nonnull final DataSchemaNode input) {
-                    Preconditions.checkNotNull(input);
-                    return input.getQName();
-                }
-            }));
+            HashSet<QName> qNamesFromAugment = Sets.newHashSet(Collections2.transform(augment.getChildNodes(),
+                DataSchemaNode::getQName));
 
             if (qNamesFromAugment.equals(qNames)) {
                 return Optional.of(augment);
@@ -399,7 +383,7 @@ public final class SchemaUtils {
     }
 
     public static AugmentationIdentifier getNodeIdentifierForAugmentation(final AugmentationSchema schema) {
-        final Collection<QName> qnames = Collections2.transform(schema.getChildNodes(), QNAME_FUNCTION);
+        final Collection<QName> qnames = Collections2.transform(schema.getChildNodes(), DataSchemaNode::getQName);
         return new AugmentationIdentifier(ImmutableSet.copyOf(qnames));
     }
 

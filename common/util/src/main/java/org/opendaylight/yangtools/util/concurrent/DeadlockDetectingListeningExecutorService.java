@@ -121,29 +121,23 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
     }
 
     private Runnable wrapRunnable(final Runnable task) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                final SettableBoolean b = primeDetector();
-                try {
-                    task.run();
-                } finally {
-                    b.reset();
-                }
+        return () -> {
+            final SettableBoolean b = primeDetector();
+            try {
+                task.run();
+            } finally {
+                b.reset();
             }
         };
     }
 
     private <T> Callable<T> wrapCallable(final Callable<T> delagate) {
-        return new Callable<T>() {
-            @Override
-            public T call() throws Exception {
-                final SettableBoolean b = primeDetector();
-                try {
-                    return delagate.call();
-                } finally {
-                    b.reset();
-                }
+        return () -> {
+            final SettableBoolean b = primeDetector();
+            try {
+                return delagate.call();
+            } finally {
+                b.reset();
             }
         };
     }

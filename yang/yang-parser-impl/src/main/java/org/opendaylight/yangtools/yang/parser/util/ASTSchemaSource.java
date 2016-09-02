@@ -32,34 +32,10 @@ import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
  */
 @Beta
 public final class ASTSchemaSource implements SchemaSourceRepresentation {
-    public static final Function<ASTSchemaSource, SourceIdentifier> GET_IDENTIFIER = new Function<ASTSchemaSource, SourceIdentifier>() {
-        @Override
-        public SourceIdentifier apply(@Nonnull final ASTSchemaSource input) {
-            Preconditions.checkNotNull(input);
-            return input.getIdentifier();
-        }
-    };
-    public static final Function<ASTSchemaSource, SourceIdentifier> GET_SEMVER_IDENTIFIER = new Function<ASTSchemaSource, SourceIdentifier>() {
-        @Override
-        public SemVerSourceIdentifier apply(@Nonnull final ASTSchemaSource input) {
-            Preconditions.checkNotNull(input);
-            return input.getSemVerIdentifier();
-        }
-    };
-    public static final Function<ASTSchemaSource, YangModelDependencyInfo> GET_DEPINFO = new Function<ASTSchemaSource, YangModelDependencyInfo>() {
-        @Override
-        public YangModelDependencyInfo apply(@Nonnull final ASTSchemaSource input) {
-            Preconditions.checkNotNull(input);
-            return input.getDependencyInformation();
-        }
-    };
-    public static final Function<ASTSchemaSource, ParserRuleContext> GET_AST = new Function<ASTSchemaSource, ParserRuleContext>() {
-        @Override
-        public ParserRuleContext apply(@Nonnull final ASTSchemaSource input) {
-            Preconditions.checkNotNull(input);
-            return input.getAST();
-        }
-    };
+    public static final Function<ASTSchemaSource, SourceIdentifier> GET_IDENTIFIER = ASTSchemaSource::getIdentifier;
+    public static final Function<ASTSchemaSource, SourceIdentifier> GET_SEMVER_IDENTIFIER = ASTSchemaSource::getSemVerIdentifier;
+    public static final Function<ASTSchemaSource, YangModelDependencyInfo> GET_DEPINFO = ASTSchemaSource::getDependencyInformation;
+    public static final Function<ASTSchemaSource, ParserRuleContext> GET_AST = ASTSchemaSource::getAST;
 
     private final YangModelDependencyInfo depInfo;
     private final ParserRuleContext tree;

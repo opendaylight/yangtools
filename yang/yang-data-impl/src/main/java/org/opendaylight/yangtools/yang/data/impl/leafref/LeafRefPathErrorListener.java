@@ -17,9 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class LeafRefPathErrorListener extends BaseErrorListener {
-    private static final Logger LOG = LoggerFactory
-            .getLogger(LeafRefPathErrorListener.class);
-    private final List<LeafRefPathSyntaxErrorException> exceptions = new ArrayList<>();
+    private static final Logger LOG = LoggerFactory.getLogger(LeafRefPathErrorListener.class);
+
+    private final List<LeafRefPathSyntaxErrorException> exceptions = new ArrayList<>(1);
     private final Module module;
 
     public LeafRefPathErrorListener(final Module module) {
@@ -27,14 +27,11 @@ class LeafRefPathErrorListener extends BaseErrorListener {
     }
 
     @Override
-    public void syntaxError(final Recognizer<?, ?> recognizer,
-            final Object offendingSymbol, final int line,
-            final int charPositionInLine, final String msg,
-            final RecognitionException e) {
+    public void syntaxError(final Recognizer<?, ?> recognizer, final Object offendingSymbol, final int line,
+            final int charPositionInLine, final String msg, final RecognitionException e) {
         LOG.debug("Syntax error in module {} at {}:{}: {}", module.getName(), line, charPositionInLine, msg, e);
 
-        exceptions.add(new LeafRefPathSyntaxErrorException(module.getName(), line,
-                charPositionInLine, msg, e));
+        exceptions.add(new LeafRefPathSyntaxErrorException(module.getName(), line, charPositionInLine, msg, e));
     }
 
     public void validate() throws LeafRefPathSyntaxErrorException {
