@@ -2369,11 +2369,21 @@ public class RegularExpression implements java.io.Serializable {
     }
 
     /**
-     * Represents this instence in String.
+     * Represents this instance in String.
      */
     @Override
     public String toString() {
-        return this.tokentree.toString(this.options);
+        return this.tokentree.toString(this.options & ~XMLSCHEMA_MODE);
+    }
+
+    /**
+     * Returns a {@link java.util.regex.Pattern}-compatible string representation of this expression.
+     *
+     * @return A Pattern-compatible String representation
+     */
+    public String toPatternString() {
+        final String str = this.tokentree.toString(this.options);
+        return isSet(options, XMLSCHEMA_MODE) ? "^" + str + "$" : str;
     }
 
     /**
