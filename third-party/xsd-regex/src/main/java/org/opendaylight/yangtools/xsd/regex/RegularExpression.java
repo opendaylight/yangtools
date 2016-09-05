@@ -18,8 +18,9 @@
 package org.opendaylight.yangtools.xsd.regex;
 
 import java.text.CharacterIterator;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Locale;
-import java.util.Stack;
 
 /**
  * A regular expression matching engine using Non-deterministic Finite Automaton (NFA).
@@ -1049,7 +1050,7 @@ public class RegularExpression implements java.io.Serializable {
      */
     private int match(Context con, Op op, int offset, int dx, int opts) {
         final ExpressionTarget target = con.target;
-        final Stack<Op> opStack = new Stack<>();
+        final Deque<Op> opStack = new ArrayDeque<>();
         final IntStack dataStack = new IntStack();
         final boolean isSetIgnoreCase = isSet(opts, IGNORE_CASE);
         int retValue = -1;
