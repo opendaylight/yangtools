@@ -250,19 +250,24 @@ public class TypesResolutionTest {
         assertEquals(5, bits.size());
 
         Bit bit0 = bits.get(0);
+        assertEquals("create", bit0.getName());
         assertEquals(0L, (long) bit0.getPosition());
 
         Bit bit1 = bits.get(1);
-        assertEquals(500L, (long) bit1.getPosition());
+        assertEquals("delete", bit1.getName());
+        assertEquals(365L, (long) bit1.getPosition());
 
         Bit bit2 = bits.get(2);
-        assertEquals(501L, (long) bit2.getPosition());
+        assertEquals("read", bit2.getName());
+        assertEquals(500L, (long) bit2.getPosition());
 
         Bit bit3 = bits.get(3);
-        assertEquals(502L, (long) bit3.getPosition());
+        assertEquals("update", bit3.getName());
+        assertEquals(501L, (long) bit3.getPosition());
 
         Bit bit4 = bits.get(4);
-        assertEquals(365L, (long) bit4.getPosition());
+        assertEquals("exec", bit4.getName());
+        assertEquals(502L, (long) bit4.getPosition());
     }
 
     @Test

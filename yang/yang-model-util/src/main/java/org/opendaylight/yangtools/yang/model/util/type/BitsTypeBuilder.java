@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -31,7 +31,7 @@ public final class BitsTypeBuilder extends TypeBuilder<BitsTypeDefinition> {
     @Override
     public BitsTypeDefinition build() {
         final Map<String, Bit> map = builder.build();
-        final Map<Long, Bit> positionMap = new HashMap<>();
+        final Map<Long, Bit> positionMap = new TreeMap<>();
 
         for (Bit b : map.values()) {
             final Bit conflict = positionMap.put(b.getPosition(), b);
