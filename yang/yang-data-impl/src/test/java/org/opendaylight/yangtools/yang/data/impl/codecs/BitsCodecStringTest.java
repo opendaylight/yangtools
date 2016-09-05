@@ -54,10 +54,7 @@ public class BitsCodecStringTest {
 
         ImmutableSet<String> toSerialize = ImmutableSet.of("foo", "bar");
 
-        String serialized = codec.serialize(toSerialize);
-        assertNotNull(serialized);
-        assertTrue(serialized.contains("foo"));
-        assertTrue(serialized.contains("bar"));
+        assertEquals("serialize", "bar foo", codec.serialize(toSerialize));
 
         assertEquals("serialize", "",
                 codec.serialize(ImmutableSet.of()));
