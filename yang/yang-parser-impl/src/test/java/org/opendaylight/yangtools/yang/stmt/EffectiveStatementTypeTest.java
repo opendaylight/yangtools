@@ -423,10 +423,10 @@ public class EffectiveStatementTypeTest {
         final PatternConstraintEffectiveImpl lengthConstraintSecond = (PatternConstraintEffectiveImpl) ((StringTypeDefinition) (currentLeaf
                 .getType())).getPatternConstraints().get(0);
 
-        assertEquals("^[0-9a-fA-F]*$", lengthConstraint.getRegularExpression());
+        assertEquals("^[0-9A-Fa-f]*$", lengthConstraint.getRegularExpression());
         assertNull(lengthConstraint.getReference());
         assertNull(lengthConstraint.getDescription());
-        assertEquals("String ^[0-9a-fA-F]*$ is not valid regular expression.", lengthConstraint.getErrorMessage());
+        assertEquals("String ^[0-9A-Fa-f]*$ is not valid regular expression.", lengthConstraint.getErrorMessage());
         assertEquals("invalid-regular-expression", lengthConstraint.getErrorAppTag());
         assertNotNull(lengthConstraint.toString());
         assertNotNull(lengthConstraint.hashCode());

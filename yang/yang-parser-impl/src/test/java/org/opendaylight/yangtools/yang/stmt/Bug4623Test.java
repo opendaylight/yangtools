@@ -61,7 +61,7 @@ public class Bug4623Test {
         Assert.assertEquals(lengthConstraint.getMax(), Integer.valueOf(10));
 
         final PatternConstraint patternConstraint = patternConstraints.get(0);
-        Assert.assertEquals(patternConstraint.getRegularExpression(), "^[0-9a-fA-F]$");
+        Assert.assertEquals(patternConstraint.getRegularExpression(), "^[0-9A-Fa-f]$");
     }
 
     @Test
@@ -102,7 +102,7 @@ public class Bug4623Test {
         Assert.assertEquals(lengthConstraint.getMax(), Integer.valueOf(10));
 
         final PatternConstraint patternConstraint = patternConstraints.get(0);
-        Assert.assertEquals(patternConstraint.getRegularExpression(), "^[0-9a-fA-F]$");
+        Assert.assertEquals(patternConstraint.getRegularExpression(), "^[0-9A-Fa-f]$");
     }
 
     @Test
@@ -143,6 +143,6 @@ public class Bug4623Test {
         Assert.assertEquals(lengthConstraint.getMax(), Integer.valueOf(10));
 
         final PatternConstraint patternConstraint = patternConstraints.get(0);
-        Assert.assertEquals(patternConstraint.getRegularExpression(), "^[0-9a-fA-F]$");
+        Assert.assertEquals(patternConstraint.getRegularExpression(), "^[0-9A-Fa-f]$");
     }
 }
