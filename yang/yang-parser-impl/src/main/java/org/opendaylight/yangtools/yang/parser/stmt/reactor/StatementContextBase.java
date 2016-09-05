@@ -278,12 +278,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     /**
      * adds effective statement to collection of substatements
      *
+     * @param substatement substatement
      * @throws IllegalStateException
      *             if added in declared phase
      * @throws NullPointerException
      *             if statement parameter is null
-     *
-     * @param substatement substatement
      */
     public void addEffectiveSubstatement(final StatementContextBase<?, ?, ?> substatement) {
 
@@ -299,12 +298,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     /**
      * adds declared statement to collection of substatements
      *
+     * @param substatement substatement
      * @throws IllegalStateException
      *             if added in effective phase
      * @throws NullPointerException
      *             if statement parameter is null
-     *
-     * @param substatement substatement
      */
     public void addDeclaredSubstatement(final StatementContextBase<?, ?, ?> substatement) {
 

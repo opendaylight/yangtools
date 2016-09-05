@@ -76,17 +76,17 @@ public class TypesResolutionTest {
 
         EnumPair value0 = values.get(0);
         assertEquals("unknown", value0.getName());
-        assertEquals(0, (int) value0.getValue());
+        assertEquals(0, value0.getValue());
         assertEquals("An unknown or unspecified version of the Internet protocol.", value0.getDescription());
 
         EnumPair value1 = values.get(1);
         assertEquals("ipv4", value1.getName());
-        assertEquals(1, (int) value1.getValue());
+        assertEquals(1, value1.getValue());
         assertEquals("The IPv4 protocol as defined in RFC 791.", value1.getDescription());
 
         EnumPair value2 = values.get(2);
         assertEquals("ipv6", value2.getName());
-        assertEquals(2, (int) value2.getValue());
+        assertEquals(2, value2.getValue());
         assertEquals("The IPv6 protocol as defined in RFC 2460.", value2.getDescription());
     }
 
@@ -102,22 +102,22 @@ public class TypesResolutionTest {
 
         EnumPair value0 = values.get(0);
         assertEquals("unknown", value0.getName());
-        assertEquals(0, (int) value0.getValue());
+        assertEquals(0, value0.getValue());
         assertEquals("An unknown or unspecified version of the Internet protocol.", value0.getDescription());
 
         EnumPair value1 = values.get(1);
         assertEquals("ipv4", value1.getName());
-        assertEquals(19, (int) value1.getValue());
+        assertEquals(19, value1.getValue());
         assertEquals("The IPv4 protocol as defined in RFC 791.", value1.getDescription());
 
         EnumPair value2 = values.get(2);
         assertEquals("ipv6", value2.getName());
-        assertEquals(7, (int) value2.getValue());
+        assertEquals(7, value2.getValue());
         assertEquals("The IPv6 protocol as defined in RFC 2460.", value2.getDescription());
 
         EnumPair value3 = values.get(3);
         assertEquals("default", value3.getName());
-        assertEquals(20, (int) value3.getValue());
+        assertEquals(20, value3.getValue());
         assertEquals("default ip", value3.getDescription());
     }
 
@@ -228,15 +228,15 @@ public class TypesResolutionTest {
 
         Bit bit1 = bits.get(0);
         assertEquals("disable-nagle", bit1.getName());
-        assertEquals(0L, (long) bit1.getPosition());
+        assertEquals(0L, bit1.getPosition());
 
         Bit bit2 = bits.get(1);
         assertEquals("auto-sense-speed", bit2.getName());
-        assertEquals(1L, (long) bit2.getPosition());
+        assertEquals(1L, bit2.getPosition());
 
         Bit bit3 = bits.get(2);
         assertEquals("10-Mb-only", bit3.getName());
-        assertEquals(2L, (long) bit3.getPosition());
+        assertEquals(2L, bit3.getPosition());
     }
 
     @Test
@@ -250,19 +250,19 @@ public class TypesResolutionTest {
         assertEquals(5, bits.size());
 
         Bit bit0 = bits.get(0);
-        assertEquals(0L, (long) bit0.getPosition());
+        assertEquals(0L, bit0.getPosition());
 
         Bit bit1 = bits.get(1);
-        assertEquals(500L, (long) bit1.getPosition());
+        assertEquals(500L, bit1.getPosition());
 
         Bit bit2 = bits.get(2);
-        assertEquals(501L, (long) bit2.getPosition());
+        assertEquals(501L, bit2.getPosition());
 
         Bit bit3 = bits.get(3);
-        assertEquals(502L, (long) bit3.getPosition());
+        assertEquals(502L, bit3.getPosition());
 
         Bit bit4 = bits.get(4);
-        assertEquals(365L, (long) bit4.getPosition());
+        assertEquals(365L, bit4.getPosition());
     }
 
     @Test
@@ -287,12 +287,12 @@ public class TypesResolutionTest {
 
         EnumPair enum168 = values.get(168);
         assertEquals("America/Danmarkshavn", enum168.getName());
-        assertEquals(168, (int) enum168.getValue());
+        assertEquals(168, enum168.getValue());
         assertEquals("east coast, north of Scoresbysund", enum168.getDescription());
 
         EnumPair enum374 = values.get(374);
         assertEquals("America/Indiana/Winamac", enum374.getName());
-        assertEquals(374, (int) enum374.getValue());
+        assertEquals(374, enum374.getValue());
         assertEquals("Eastern Time - Indiana - Pulaski County", enum374.getDescription());
     }
 
