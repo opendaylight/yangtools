@@ -91,10 +91,10 @@ class RegexParser {
     public void setLocale(Locale locale) {
         try {
             if (locale != null) {
-                this.resources = ResourceBundle.getBundle("org.apache.xerces.impl.xpath.regex.message", locale);
+                this.resources = ResourceBundle.getBundle("org.opendaylight.yangtools.xsd.regex.message", locale);
             }
             else {
-                this.resources = ResourceBundle.getBundle("org.apache.xerces.impl.xpath.regex.message");
+                this.resources = ResourceBundle.getBundle("org.opendaylight.yangtools.xsd.regex.message");
             }
         }
         catch (MissingResourceException mre) {
