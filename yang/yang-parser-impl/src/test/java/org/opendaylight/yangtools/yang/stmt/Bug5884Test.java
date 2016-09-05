@@ -55,10 +55,9 @@ public class Bug5884Test {
         testIterator(availableIterator);
     }
 
-    private void testIterator(final Iterator<AugmentationSchema> iterator) {
-        AugmentationSchema allAugments;
+    private static void testIterator(final Iterator<AugmentationSchema> iterator) {
         while (iterator.hasNext()) {
-            allAugments = iterator.next();
+            AugmentationSchema allAugments = iterator.next();
             final DataSchemaNode currentChoice = allAugments.getChildNodes().iterator().next();
             assertTrue(currentChoice instanceof ChoiceCaseNode);
         }

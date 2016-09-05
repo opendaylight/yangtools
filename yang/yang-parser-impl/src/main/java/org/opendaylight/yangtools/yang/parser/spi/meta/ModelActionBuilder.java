@@ -126,11 +126,10 @@ public interface ModelActionBuilder {
          * List of failed prerequisites should be used to select right message / error
          * type to debug problem in YANG sources.
          *
+         * @param failed collection of prerequisites which were not met
          * @throws InferenceException If inference action can not be processed.
          *      Note that this exception be used for user to debug YANG sources,
          *      so should provide helpful context to fix issue in sources.
-         *
-         * @param failed collection of prerequisites which were not met
          */
         void prerequisiteFailed(Collection<? extends Prerequisite<?>> failed) throws InferenceException;
     }

@@ -37,7 +37,7 @@ public class Bug6316 {
         verifyBitsTypedefinition(context);
     }
 
-    private void verifyEnumTypedefinition(final SchemaContext context) {
+    private static void verifyEnumTypedefinition(final SchemaContext context) {
         final DataSchemaNode dataChildByName = context.getDataChildByName(QName
                 .create("foo", "1970-01-01", "enum-leaf"));
         assertTrue(dataChildByName instanceof LeafSchemaNode);
@@ -70,7 +70,7 @@ public class Bug6316 {
         }
     }
 
-    private void verifyBitsTypedefinition(final SchemaContext context) {
+    private static void verifyBitsTypedefinition(final SchemaContext context) {
         final DataSchemaNode dataChildByName = context.getDataChildByName(QName
                 .create("foo", "1970-01-01", "bits-leaf"));
         assertTrue(dataChildByName instanceof LeafSchemaNode);
