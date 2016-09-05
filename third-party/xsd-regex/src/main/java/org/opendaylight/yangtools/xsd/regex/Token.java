@@ -421,7 +421,7 @@ class Token implements java.io.Serializable {
     static final int FC_CONTINUE = 0;
     static final int FC_TERMINAL = 1;
     static final int FC_ANY = 2;
-    private static final boolean isSet(int options, int flag) {
+    static final boolean isSet(int options, int flag) {
         return (options & flag) == flag;
     }
     final int analyzeFirstCharacter(RangeToken result, int options) {
@@ -1269,6 +1269,16 @@ class Token implements java.io.Serializable {
               default:
                 ret = null;
             }
+
+            if (isSet(options, RegularExpression.XMLSCHEMA_MODE)) {
+                if ("$".equals(ret)) {
+                    return "\\$";
+                }
+                if ("^".equals(ret)) {
+                    return "\\^";
+                }
+            }
+
             return ret;
         }
 
