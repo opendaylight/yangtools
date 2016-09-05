@@ -594,11 +594,11 @@ final class RangeToken extends Token implements java.io.Serializable {
                         sb.append(',');
                     }
                     if (this.ranges[i] == this.ranges[i+1]) {
-                        sb.append(escapeCharInCharClass(this.ranges[i]));
+                        sb.append(escapeCharInCharClass(this.ranges[i], options));
                     } else {
-                        sb.append(escapeCharInCharClass(this.ranges[i]));
+                        sb.append(escapeCharInCharClass(this.ranges[i], options));
                         sb.append('-');
-                        sb.append(escapeCharInCharClass(this.ranges[i+1]));
+                        sb.append(escapeCharInCharClass(this.ranges[i+1], options));
                     }
                 }
                 sb.append(']');
@@ -619,11 +619,11 @@ final class RangeToken extends Token implements java.io.Serializable {
                         sb.append(',');
                     }
                     if (this.ranges[i] == this.ranges[i+1]) {
-                        sb.append(escapeCharInCharClass(this.ranges[i]));
+                        sb.append(escapeCharInCharClass(this.ranges[i], options));
                     } else {
-                        sb.append(escapeCharInCharClass(this.ranges[i]));
+                        sb.append(escapeCharInCharClass(this.ranges[i], options));
                         sb.append('-');
-                        sb.append(escapeCharInCharClass(this.ranges[i+1]));
+                        sb.append(escapeCharInCharClass(this.ranges[i+1], options));
                     }
                 }
                 sb.append(']');
@@ -633,7 +633,7 @@ final class RangeToken extends Token implements java.io.Serializable {
         return ret;
     }
 
-    private static String escapeCharInCharClass(int ch) {
+    private static String escapeCharInCharClass(int ch, int options) {
         String ret;
         switch (ch) {
           case '[':  case ']':  case '-':  case '^':
@@ -645,6 +645,11 @@ final class RangeToken extends Token implements java.io.Serializable {
           case '\r':  ret = "\\r";  break;
           case '\t':  ret = "\\t";  break;
           case 0x1b:  ret = "\\e";  break;
+          case '$':
+              if (isSet(options, RegularExpression.XMLSCHEMA_MODE)) {
+                  ret = "\\$";
+                  break;
+              }
           //case 0x0b:  ret = "\\v";  break;
           default:
             if (ch < 0x20) {
