@@ -8,19 +8,21 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSortedMap;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import org.opendaylight.yangtools.binding.data.codec.impl.ValueTypeCodec.SchemaUnawareCodec;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
@@ -29,22 +31,30 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
 final class BitsCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
     private static final MethodType CONSTRUCTOR_INVOKE_TYPE = MethodType.methodType(Object.class, Boolean[].class);
-    private final Map<String, Method> valueGetters;
-    private final MethodHandle constructor;
 
-    private BitsCodec(final Class<?> typeClass, final SortedMap<String, Method> valueGetters,
-            final MethodHandle constructor) {
+    // Ordered by position
+    private final Map<String, Method> getters;
+    // Ordered by lexical name
+    private final Set<String> ctorArgs;
+    private final MethodHandle ctor;
+
+    private BitsCodec(final Class<?> typeClass, final MethodHandle ctor, final Set<String> ctorArgs,
+            final Map<String, Method> getters) {
         super(typeClass);
-        this.valueGetters = ImmutableSortedMap.copyOf(valueGetters);
-        this.constructor = Preconditions.checkNotNull(constructor);
+        this.ctor = Preconditions.checkNotNull(ctor);
+        this.ctorArgs = ImmutableSet.copyOf(ctorArgs);
+        this.getters = ImmutableMap.copyOf(getters);
     }
 
     static Callable<BitsCodec> loader(final Class<?> returnType, final BitsTypeDefinition rootType) {
         return () -> {
-            final SortedMap<String, Method> valueGetters = new TreeMap<>();
+            final Map<String, Method> getters = new LinkedHashMap<>();
+            final Set<String> ctorArgs = new TreeSet<>();
+
             for (Bit bit : rootType.getBits()) {
                 final Method valueGetter = returnType.getMethod("is" + BindingMapping.getClassName(bit.getName()));
-                valueGetters.put(bit.getName(), valueGetter);
+                ctorArgs.add(bit.getName());
+                getters.put(bit.getName(), valueGetter);
             }
             Constructor<?> constructor = null;
             for (Constructor<?> cst : returnType.getConstructors()) {
@@ -54,8 +64,8 @@ final class BitsCodec extends ReflectionBasedCodec implements SchemaUnawareCodec
             }
 
             final MethodHandle ctor = MethodHandles.publicLookup().unreflectConstructor(constructor)
-                    .asSpreader(Boolean[].class, valueGetters.size()).asType(CONSTRUCTOR_INVOKE_TYPE);
-            return new BitsCodec(returnType, valueGetters, ctor);
+                    .asSpreader(Boolean[].class, ctorArgs.size()).asType(CONSTRUCTOR_INVOKE_TYPE);
+            return new BitsCodec(returnType, ctor, ctorArgs, getters);
         };
     }
 
@@ -63,42 +73,43 @@ final class BitsCodec extends ReflectionBasedCodec implements SchemaUnawareCodec
     public Object deserialize(final Object input) {
         Preconditions.checkArgument(input instanceof Set);
         @SuppressWarnings("unchecked")
-        Set<String> casted = (Set<String>) input;
+        final Set<String> casted = (Set<String>) input;
 
-        final Boolean args[] = new Boolean[valueGetters.size()];
-        int currentArg = 0;
         /*
-         * We can do this walk based on field set
-         * sorted by name, since constructor arguments in
-         * Java Binding are sorted by name.
+         * We can do this walk based on field set sorted by name,
+         * since constructor arguments in Java Binding are sorted by name.
          *
-         * This means we will construct correct array
-         * for construction of bits object.
+         * This means we will construct correct array for construction
+         * of bits object.
          */
-        for (String value : valueGetters.keySet()) {
+        final Boolean args[] = new Boolean[ctorArgs.size()];
+        int currentArg = 0;
+        for (String value : ctorArgs) {
             args[currentArg++] = casted.contains(value);
         }
 
         try {
-            return constructor.invokeExact(args);
+            return ctor.invokeExact(args);
         } catch (Throwable e) {
             throw new IllegalStateException("Failed to instantiate object for " + input, e);
         }
     }
 
     @Override
-    public Object serialize(final Object input) {
-        Set<String> result = new HashSet<>();
-        for (Entry<String, Method> valueGet : valueGetters.entrySet()) {
+    public Set<String> serialize(final Object input) {
+        final Collection<String> result = new ArrayList<>(getters.size());
+        for (Entry<String, Method> valueGet : getters.entrySet()) {
+            final Boolean value;
             try {
-                Boolean value = (Boolean) valueGet.getValue().invoke(input);
-                if (value) {
-                    result.add(valueGet.getKey());
-                }
+                 value = (Boolean) valueGet.getValue().invoke(input);
             } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new IllegalArgumentException(e);
+                throw new IllegalArgumentException("Failed to get bit " + valueGet.getKey(), e);
+            }
+
+            if (value) {
+                result.add(valueGet.getKey());
             }
         }
-        return result;
+        return result.size() == getters.size() ? getters.keySet() : ImmutableSet.copyOf(result);
     }
 }
