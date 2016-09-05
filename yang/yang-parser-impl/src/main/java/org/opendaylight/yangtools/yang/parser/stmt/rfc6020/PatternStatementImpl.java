@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import com.google.common.base.Optional;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import org.opendaylight.yangtools.xsd.regex.ParseException;
+import org.opendaylight.yangtools.xsd.regex.RegularExpression;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -51,8 +53,16 @@ public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConst
 
         @Override
         public PatternConstraint parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-            final String pattern = "^" + Utils.fixUnicodeScriptPattern(value) + '$';
+            final RegularExpression expr;
 
+            try {
+                expr = new RegularExpression(value, "Xu");
+            } catch (ParseException e) {
+                LOG.debug("Pattern \"{}\" failed to parse at {}", value, ctx.getStatementSourceReference(), e);
+                return null;
+            }
+
+            final String pattern = expr.toPatternString();
             try {
                 Pattern.compile(pattern);
             } catch (PatternSyntaxException e) {
