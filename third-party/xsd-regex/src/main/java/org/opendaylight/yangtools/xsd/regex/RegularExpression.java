@@ -2290,7 +2290,7 @@ public class RegularExpression implements java.io.Serializable {
      * Creates a new RegularExpression instance.
      *
      * @param regex A regular expression
-     * @exception org.apache.xerces.utils.regex.ParseException <VAR>regex</VAR> is not conforming to the syntax.
+     * @exception ParseException <VAR>regex</VAR> is not conforming to the syntax.
      */
     public RegularExpression(String regex) throws ParseException {
         this(regex, null);
@@ -2301,7 +2301,7 @@ public class RegularExpression implements java.io.Serializable {
      *
      * @param regex A regular expression
      * @param options A String consisted of "i" "m" "s" "u" "w" "," "X"
-     * @exception org.apache.xerces.utils.regex.ParseException <VAR>regex</VAR> is not conforming to the syntax.
+     * @exception ParseException <VAR>regex</VAR> is not conforming to the syntax.
      */
     public RegularExpression(String regex, String options) throws ParseException {
         this.setPattern(regex, options);
@@ -2312,7 +2312,7 @@ public class RegularExpression implements java.io.Serializable {
      *
      * @param regex A regular expression
      * @param options A String consisted of "i" "m" "s" "u" "w" "," "X"
-     * @exception org.apache.xerces.utils.regex.ParseException <VAR>regex</VAR> is not conforming to the syntax.
+     * @exception ParseException <VAR>regex</VAR> is not conforming to the syntax.
      */
     public RegularExpression(String regex, String options, Locale locale) throws ParseException {
         this.setPattern(regex, options, locale);
