@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_47b91578",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/thirdparty/plugin/ThirdPartyExtensionEffectiveStatementImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-09-06T16:54:52Z",
+      "side": 1,
+      "message": "how about using\n\nreturn Objects.hash(path, getNodeType(), getNodeParameter()); \n\nIt\u0027s ready for sequence of objects as you need...",
+      "range": {
+        "startLine": 47,
+        "startChar": 6,
+        "endLine": 52,
+        "endChar": 22
+      },
+      "revId": "42851e707eb554711913fca5115f4cad91e6437f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
