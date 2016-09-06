@@ -21,24 +21,24 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
-class SchemaNodeIdentifierBuildNamespace extends
+public class SchemaNodeIdentifierBuildNamespace extends
         DerivedNamespaceBehaviour<SchemaNodeIdentifier, StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>, QName, SchemaNodeIdentifierBuildNamespace, ChildSchemaNodes<?, ?>>
         implements IdentifierNamespace<SchemaNodeIdentifier, StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>> {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected SchemaNodeIdentifierBuildNamespace() {
+    public SchemaNodeIdentifierBuildNamespace() {
         super(SchemaNodeIdentifierBuildNamespace.class, (Class) ChildSchemaNodes.class);
     }
 
     @Override
     public StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> get(
-            SchemaNodeIdentifier key) {
+            final SchemaNodeIdentifier key) {
         throw new UnsupportedOperationException("Direct access to namespace is not supported");
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> getFrom(NamespaceStorageNode storage, SchemaNodeIdentifier key) {
+    public StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> getFrom(final NamespaceStorageNode storage, final SchemaNodeIdentifier key) {
 
         final NamespaceStorageNode lookupStartStorage;
         if (key.isAbsolute() || storage.getStorageNodeType() == StorageNodeType.ROOT_STATEMENT_LOCAL) {
@@ -46,7 +46,7 @@ class SchemaNodeIdentifierBuildNamespace extends
         } else {
             lookupStartStorage = storage;
         }
-        Iterator<QName> iterator = key.getPathFromRoot().iterator();
+        final Iterator<QName> iterator = key.getPathFromRoot().iterator();
         if (!iterator.hasNext()) {
             if (lookupStartStorage instanceof StmtContext<?, ?, ?>) {
                 return (StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>) lookupStartStorage;
@@ -62,7 +62,7 @@ class SchemaNodeIdentifierBuildNamespace extends
         }
         while (current != null && iterator.hasNext()) {
             nextPath = iterator.next();
-            StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> nextNodeCtx = (StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>) current
+            final StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> nextNodeCtx = (StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>) current
                     .getFromNamespace(ChildSchemaNodes.class, nextPath);
             if (nextNodeCtx == null) {
                 return tryToFindUnknownStatement(nextPath.getLocalName(), current);
@@ -76,9 +76,9 @@ class SchemaNodeIdentifierBuildNamespace extends
     @SuppressWarnings({"unchecked", "rawtypes"})
     private Mutable<?, ?, EffectiveStatement<?, ?>> tryToFindUnknownStatement(final String localName,
             final Mutable<?, ?, EffectiveStatement<?, ?>> current) {
-        Collection<StmtContext<?, ?, ?>> unknownSubstatements = (Collection)StmtContextUtils.findAllSubstatements(current,
+        final Collection<StmtContext<?, ?, ?>> unknownSubstatements = (Collection)StmtContextUtils.findAllSubstatements(current,
                 UnknownStatement.class);
-        for (StmtContext<?, ?, ?> unknownSubstatement : unknownSubstatements) {
+        for (final StmtContext<?, ?, ?> unknownSubstatement : unknownSubstatements) {
             if (localName.equals(unknownSubstatement.rawStatementArgument())) {
                 return (Mutable<?, ?, EffectiveStatement<?, ?>>) unknownSubstatement;
             }
@@ -87,7 +87,7 @@ class SchemaNodeIdentifierBuildNamespace extends
     }
 
     @Override
-    public QName getSignificantKey(SchemaNodeIdentifier key) {
+    public QName getSignificantKey(final SchemaNodeIdentifier key) {
         return key.getLastComponent();
     }
 

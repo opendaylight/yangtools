@@ -1,0 +1,15 @@
+module foo {
+    namespace "urn:opendaylight:yang:extension:third-party";
+    prefix foo;
+    yang-version 1;
+
+    revision 2016-06-09;
+
+    container root {
+        foo:third-party-extension "plugin test";
+    }
+
+    extension third-party-extension {
+        argument argument-name;
+    }
+}

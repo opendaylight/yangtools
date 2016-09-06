@@ -23,9 +23,9 @@ public final class StatementSupportBundle implements Immutable,NamespaceBehaviou
     private final ImmutableMap<QName, StatementSupport<?,?,?>> definitions;
     private final ImmutableMap<Class<?>, NamespaceBehaviour<?, ?, ?>> namespaceDefinitions;
 
-    private StatementSupportBundle(StatementSupportBundle parent,
-                                   ImmutableMap<QName, StatementSupport<?, ?, ?>> statements,
-                                   ImmutableMap<Class<?>, NamespaceBehaviour<?, ?, ?>> namespaces) {
+    private StatementSupportBundle(final StatementSupportBundle parent,
+                                   final ImmutableMap<QName, StatementSupport<?, ?, ?>> statements,
+                                   final ImmutableMap<Class<?>, NamespaceBehaviour<?, ?, ?>> namespaces) {
         this.parent = parent;
         this.definitions = statements;
         this.namespaceDefinitions = namespaces;
@@ -35,18 +35,22 @@ public final class StatementSupportBundle implements Immutable,NamespaceBehaviou
         return definitions;
     }
 
+    public ImmutableMap<Class<?>, NamespaceBehaviour<?, ?, ?>> getNamespaceDefinitions() {
+        return namespaceDefinitions;
+    }
+
     public static Builder builder() {
         return new Builder(EMPTY);
     }
 
-    public static Builder derivedFrom(StatementSupportBundle parent) {
+    public static Builder derivedFrom(final StatementSupportBundle parent) {
         return new Builder(parent);
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(Class<N> namespace)
+    public <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(final Class<N> namespace)
             throws NamespaceNotAvailableException {
-        NamespaceBehaviour<?, ?, ?> potential = namespaceDefinitions.get(namespace);
+        final NamespaceBehaviour<?, ?, ?> potential = namespaceDefinitions.get(namespace);
         if (potential != null) {
             Preconditions.checkState(namespace.equals(potential.getIdentifier()));
 
@@ -62,7 +66,7 @@ public final class StatementSupportBundle implements Immutable,NamespaceBehaviou
         return null;
     }
 
-    public <K, V, N extends IdentifierNamespace<K, V>> boolean hasNamespaceBehaviour(Class<N> namespace) {
+    public <K, V, N extends IdentifierNamespace<K, V>> boolean hasNamespaceBehaviour(final Class<N> namespace) {
         if (namespaceDefinitions.containsKey(namespace)) {
             return true;
         }
@@ -72,8 +76,8 @@ public final class StatementSupportBundle implements Immutable,NamespaceBehaviou
         return false;
     }
 
-    public StatementSupport<?, ?,?> getStatementDefinition(QName stmtName) {
-        StatementSupport<?,?, ?> potential = definitions.get(stmtName);
+    public StatementSupport<?, ?,?> getStatementDefinition(final QName stmtName) {
+        final StatementSupport<?,?, ?> potential = definitions.get(stmtName);
         if (potential != null) {
             return potential;
         }
@@ -85,31 +89,38 @@ public final class StatementSupportBundle implements Immutable,NamespaceBehaviou
 
     public static class Builder implements org.opendaylight.yangtools.concepts.Builder<StatementSupportBundle> {
 
-        private final StatementSupportBundle parent;
-        private final Map<QName, StatementSupport<?,?,?>> statements = new HashMap<>();
+        private StatementSupportBundle parent;
+        private final Map<QName, StatementSupport<?, ?, ?>> statements = new HashMap<>();
         private final Map<Class<?>, NamespaceBehaviour<?, ?, ?>> namespaces = new HashMap<>();
 
-        Builder(StatementSupportBundle parent) {
+        Builder(final StatementSupportBundle parent) {
             this.parent = parent;
         }
 
-        public Builder addSupport(StatementSupport<?, ?,?> definition) {
-            QName identifier = definition.getStatementName();
-            Preconditions.checkState(!statements.containsKey(identifier), "Statement %s already defined.",identifier);
-            Preconditions.checkState(parent.getStatementDefinition(identifier) == null, "Statement %s already defined.",identifier);
+        public Builder addSupport(final StatementSupport<?, ?, ?> definition) {
+            final QName identifier = definition.getStatementName();
+            Preconditions.checkState(!statements.containsKey(identifier), "Statement %s already defined.", identifier);
+            Preconditions.checkState(parent.getStatementDefinition(identifier) == null,
+                    "Statement %s already defined.", identifier);
             statements.put(identifier, definition);
             return this;
         }
 
-       public <K, V, N extends IdentifierNamespace<K, V>> Builder addSupport(NamespaceBehaviour<K, V, N> namespaceSupport) {
-            Class<N> identifier = namespaceSupport.getIdentifier();
+        public <K, V, N extends IdentifierNamespace<K, V>> Builder addSupport(
+                final NamespaceBehaviour<K, V, N> namespaceSupport) {
+            final Class<N> identifier = namespaceSupport.getIdentifier();
             Preconditions.checkState(!namespaces.containsKey(identifier));
             Preconditions.checkState(!parent.hasNamespaceBehaviour(identifier));
             namespaces.put(identifier, namespaceSupport);
             return this;
         }
 
-       @Override
+        public Builder setParent(final StatementSupportBundle parent) {
+            this.parent = parent;
+            return this;
+        }
+
+        @Override
         public StatementSupportBundle build() {
             return new StatementSupportBundle(parent, ImmutableMap.copyOf(statements), ImmutableMap.copyOf(namespaces));
         }
