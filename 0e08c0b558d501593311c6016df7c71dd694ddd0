@@ -22,6 +22,30 @@
       "revId": "0e08c0b558d501593311c6016df7c71dd694ddd0",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_51b397e8",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodec.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-09-06T11:20:23Z",
+      "side": 1,
+      "message": "yes, and actually we could forgo sorted.addAll() and use that list -- we end up copying anyway.\n\nNot sure what the performance implications would be -- we really need a microbenchmark to compare the two, as pre-sizing and the capturing lambda may ruin the day ...",
+      "parentUuid": "7a6b29fe_3107fbcb",
+      "range": {
+        "startLine": 64,
+        "startChar": 8,
+        "endLine": 68,
+        "endChar": 9
+      },
+      "revId": "0e08c0b558d501593311c6016df7c71dd694ddd0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
