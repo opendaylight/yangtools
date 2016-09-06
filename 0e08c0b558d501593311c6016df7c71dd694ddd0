@@ -46,6 +46,30 @@
       "revId": "0e08c0b558d501593311c6016df7c71dd694ddd0",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_a7558951",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodec.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-09-06T16:46:57Z",
+      "side": 1,
+      "message": "based on benchmark results and quick discussion with Robert, this code stays as it is",
+      "parentUuid": "7a6b29fe_51b397e8",
+      "range": {
+        "startLine": 64,
+        "startChar": 8,
+        "endLine": 68,
+        "endChar": 9
+      },
+      "revId": "0e08c0b558d501593311c6016df7c71dd694ddd0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
