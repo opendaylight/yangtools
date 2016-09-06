@@ -12,7 +12,9 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.treeScoped;
 
 import com.google.common.collect.ImmutableMap;
+import java.util.Collection;
 import java.util.Map;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
@@ -107,7 +109,7 @@ public final class YangInferencePipeline {
             .addSupport(sourceLocal(ImpPrefixToSemVerModuleIdentifier.class))
             .build();
 
-    private static final StatementSupportBundle STMT_DEF_BUNDLE = StatementSupportBundle
+    public static final StatementSupportBundle STMT_DEF_BUNDLE = StatementSupportBundle
             .derivedFrom(LINKAGE_BUNDLE)
             .addSupport(new YinElementStatementImpl.Definition())
             .addSupport(new ArgumentStatementImpl.Definition())
@@ -143,7 +145,7 @@ public final class YangInferencePipeline {
             .addSupport(global(DerivedIdentitiesNamespace.class))
             .build();
 
-    private static final StatementSupportBundle FULL_DECL_BUNDLE = StatementSupportBundle
+    public static final StatementSupportBundle FULL_DECL_BUNDLE = StatementSupportBundle
             .derivedFrom(STMT_DEF_BUNDLE)
             .addSupport(new LeafStatementImpl.Definition())
             .addSupport(new ConfigStatementImpl.Definition())
@@ -179,11 +181,20 @@ public final class YangInferencePipeline {
 
     public static final Map<ModelProcessingPhase, StatementSupportBundle> RFC6020_BUNDLES = ImmutableMap
             .<ModelProcessingPhase, StatementSupportBundle> builder()
+            .put(ModelProcessingPhase.INIT, INIT_BUNDLE)
             .put(ModelProcessingPhase.SOURCE_PRE_LINKAGE, PRE_LINKAGE_BUNDLE)
             .put(ModelProcessingPhase.SOURCE_LINKAGE, LINKAGE_BUNDLE)
             .put(ModelProcessingPhase.STATEMENT_DEFINITION, STMT_DEF_BUNDLE)
             .put(ModelProcessingPhase.FULL_DECLARATION, FULL_DECL_BUNDLE)
             .put(ModelProcessingPhase.EFFECTIVE_MODEL, FULL_DECL_BUNDLE)
+            .build();
+
+    public static final Map<ValidationBundleType, Collection<StatementDefinition>> RFC6020_VALIDATION_BUNDLE = ImmutableMap
+            .<ValidationBundleType, Collection<StatementDefinition>> builder()
+            .put(ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS, YangValidationBundles.SUPPORTED_REFINE_SUBSTATEMENTS)
+            .put(ValidationBundleType.SUPPORTED_AUGMENT_TARGETS, YangValidationBundles.SUPPORTED_AUGMENT_TARGETS)
+            .put(ValidationBundleType.SUPPORTED_CASE_SHORTHANDS, YangValidationBundles.SUPPORTED_CASE_SHORTHANDS)
+            .put(ValidationBundleType.SUPPORTED_DATA_NODES, YangValidationBundles.SUPPORTED_DATA_NODES)
             .build();
 
     public static final CrossSourceStatementReactor RFC6020_REACTOR = CrossSourceStatementReactor
