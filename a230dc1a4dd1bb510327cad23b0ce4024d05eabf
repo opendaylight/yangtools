@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_1fb76b3b",
+        "filename": "docs/src/main/asciidoc/developer/introduction.adoc",
+        "patchSetId": 1
+      },
+      "lineNbr": 285,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-09-06T08:17:36Z",
+      "side": 1,
+      "message": "These versions are compatible with 1.5.2., but they are older... So please try to reformulate this sentence.",
+      "range": {
+        "startLine": 285,
+        "startChar": 200,
+        "endLine": 285,
+        "endChar": 242
+      },
+      "revId": "a230dc1a4dd1bb510327cad23b0ce4024d05eabf",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
