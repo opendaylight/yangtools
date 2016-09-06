@@ -25,7 +25,7 @@ public class ChildSchemaNodes<D extends DeclaredStatement<QName>,E extends Effec
     extends NamespaceBehaviour<QName, StmtContext<?, D, E>, ChildSchemaNodes<D, E>>
     implements StatementNamespace<QName, D, E>{
 
-    protected ChildSchemaNodes() {
+    public ChildSchemaNodes() {
         super((Class) ChildSchemaNodes.class);
     }
 
