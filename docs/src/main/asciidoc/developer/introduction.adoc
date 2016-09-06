@@ -223,6 +223,8 @@ module semantic-version {
         argument "semantic-version" {
             yin-element false;
         }
+    }
+}
 ----
 
 In the example above, you see a YANG module which defines semantic version as an extension. This extension can be imported to other modules in which we want to utilize the semantic versioning concept.
@@ -265,6 +267,24 @@ module bar {
     ...
 }
 ----
+
+Every semantic version must have the following form: x.y.z. The x corresponds to a major version, the y corresponds to a minor version and the z corresponds to a patch version. If no semantic version is specified in a module or an import statement, then the default one is used - 0.0.0.
+
+A major version number of 0 indicates that the model is still in development and is subject to change.
+
+Following a release of major version 1, all modules will increment major version number when backwards incompatible changes to the model are made.
+
+The minor version is changed when features are added to the model that do not impact current clients use of the model.
+
+The patch version is incremented when non-feature changes (such as bugfixes or clarifications of human-readable descriptions that do not impact model functionality) are made that maintain backwards compatibility.
+
+When importing a module with activated semantic version processing mode, only the module with the newest (highest) compatible semantic version is imported. Two semantic versions are compatible when all of the following conditions are met:
+
+* the major version in the import statement and major version in the imported module are the same. For instance, 1.5.3 is compatible with 1.5.3, 1.5.4, 1.7.2, etc., but it is not compatible with 0.5.2 or 2.4.8, etc.
+
+* the combination of minor version and patch version in the import statement is not higher than the one in the imported module. For instance, 1.5.2 is compatible with 1.5.2, 1.5.4, 1.6.8 etc., but it is not compatible with 1.5.1, 1.4.9, 1.3.7, etc.
+
+If the import statement does not specify a semantic version, then the default one is chosen - 0.0.0. Thus, the module is imported only if it has a semantic version compatible with the default one, for example 0.0.0, 0.1.3, 0.3.5 and so on.
 
 === Working with YANG Data
 If you want to work with YANG Data you are going to need NormalizedNode objects that are specified in the YANG Data API. NormalizedNode is an interface at the top of the YANG Data hierarchy. It is extended through sub-interfaces which define the behaviour of specific NormalizedNode types like AnyXmlNode, ChoiceNode, LeafNode, ContainerNode, etc. Concrete implemenations of these interfaces are defined in yang-data-impl module. Once you have one or more NormalizedNode instances, you can perform CRUD operations on YANG data tree which is an in-memory database designed to store normalized nodes in a tree-like structure.
