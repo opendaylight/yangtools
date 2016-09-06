@@ -28,7 +28,8 @@ public abstract class AbstractNodeDataWithSchema {
 
     /**
      * Return the associated schema node.
-     * @return
+     *
+     * @return Associated schema node.
      */
     public final DataSchemaNode getSchema() {
         return schema;

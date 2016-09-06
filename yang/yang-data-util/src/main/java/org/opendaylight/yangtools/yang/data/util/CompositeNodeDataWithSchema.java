@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Collections2;
