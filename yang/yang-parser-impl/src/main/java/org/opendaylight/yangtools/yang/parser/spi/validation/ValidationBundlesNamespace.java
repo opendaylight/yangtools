@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 public interface ValidationBundlesNamespace extends
         IdentifierNamespace<ValidationBundlesNamespace.ValidationBundleType, Collection<?>> {
 
-    enum ValidationBundleType {
+    public enum ValidationBundleType {
         /**
          * whether a node is suitable refine substatement
          */
