@@ -18,6 +18,9 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.IfFeaturePredicates;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
@@ -251,5 +254,71 @@ public final class StmtContextUtils {
         }
 
         return !containsIfFeature || isSupported;
+    }
+
+    /**
+     * Checks whether statement context is a presence container or not.
+     *
+     * @param stmtCtx
+     *            statement context
+     * @return true if it is a presence container
+     */
+    public static boolean isPresenceContainer(final StatementContextBase<?, ?, ?> stmtCtx) {
+        return stmtCtx.getPublicDefinition() == Rfc6020Mapping.CONTAINER && containsPresenceSubStmt(stmtCtx);
+    }
+
+    /**
+     * Checks whether statement context is a non-presence container or not.
+     *
+     * @param stmtCtx
+     *            statement context
+     * @return true if it is a non-presence container
+     */
+    public static boolean isNonPresenceContainer(final StatementContextBase<?, ?, ?> stmtCtx) {
+        return stmtCtx.getPublicDefinition() == Rfc6020Mapping.CONTAINER && !containsPresenceSubStmt(stmtCtx);
+    }
+
+    private static boolean containsPresenceSubStmt(final StatementContextBase<?, ?, ?> stmtCtx) {
+        return findFirstSubstatement(stmtCtx, PresenceStatement.class) != null;
+    }
+
+    /**
+     * Checks whether statement context is a mandatory node according to RFC6020
+     * or not.
+     *
+     * @param stmtCtx
+     *            statement context
+     * @return true if it is a mandatory node according to RFC6020
+     */
+    public static boolean isMandatoryNode(final StatementContextBase<?, ?, ?> stmtCtx) {
+        return isMandatoryListOrLeafList(stmtCtx) || isMandatoryLeafChoiceOrAnyXML(stmtCtx);
+    }
+
+    private static boolean isMandatoryLeafChoiceOrAnyXML(final StatementContextBase<?, ?, ?> stmtCtx) {
+        if (!(stmtCtx.getPublicDefinition() instanceof Rfc6020Mapping)) {
+            return false;
+        }
+        switch ((Rfc6020Mapping) stmtCtx.getPublicDefinition()) {
+        case LEAF:
+        case CHOICE:
+        case ANYXML:
+            return Boolean.TRUE.equals(firstSubstatementAttributeOf(stmtCtx, MandatoryStatement.class));
+        default:
+            return false;
+        }
+    }
+
+    private static boolean isMandatoryListOrLeafList(final StatementContextBase<?, ?, ?> stmtCtx) {
+        if (!(stmtCtx.getPublicDefinition() instanceof Rfc6020Mapping)) {
+            return false;
+        }
+        switch ((Rfc6020Mapping) stmtCtx.getPublicDefinition()) {
+        case LIST:
+        case LEAF_LIST:
+            final Integer minElements = firstSubstatementAttributeOf(stmtCtx, MinElementsStatement.class);
+            return minElements != null && minElements > 0;
+        default:
+            return false;
+        }
     }
 }
