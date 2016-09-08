@@ -697,7 +697,23 @@ public final class Utils {
         return false;
     }
 
-    public static SourceIdentifier createSourceIdentifier(RootStatementContext<?, ?, ?> root) {
+    public static boolean isNonPresenceContainer(final StatementContextBase<?, ?, ?> targetCtx) {
+        if (!targetCtx.getPublicDefinition().equals(Rfc6020Mapping.CONTAINER)) {
+            return false;
+        }
+
+        final List<StatementContextBase<?, ?, ?>> targetSubStatements = new ImmutableList.Builder<StatementContextBase<?, ?, ?>>()
+                .addAll(targetCtx.declaredSubstatements()).addAll(targetCtx.effectiveSubstatements()).build();
+        for (final StatementContextBase<?, ?, ?> subStatement : targetSubStatements) {
+            if (subStatement.getPublicDefinition().equals(Rfc6020Mapping.PRESENCE)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static SourceIdentifier createSourceIdentifier(final RootStatementContext<?, ?, ?> root) {
         final QNameModule qNameModule = root.getFromNamespace(ModuleCtxToModuleQName.class, root);
         if (qNameModule != null) {
             // creates SourceIdentifier for a module
@@ -711,5 +727,9 @@ public final class Utils {
             return RevisionSourceIdentifier.create((String) root.getStatementArgument(),
                     formattedRevision);
         }
+    }
+
+    public static boolean isMandatoryNode(final StatementContextBase<?, ?, ?> sourceCtx) {
+        return is
     }
 }
