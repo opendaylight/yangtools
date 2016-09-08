@@ -18,6 +18,9 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.IfFeaturePredicates;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
@@ -251,5 +254,41 @@ public final class StmtContextUtils {
         }
 
         return !containsIfFeature || isSupported;
+    }
+
+    public static boolean isPresenceContainer(final StatementContextBase<?, ?, ?> stmtCtx) {
+        return stmtCtx.getPublicDefinition().equals(Rfc6020Mapping.CONTAINER) && containsPresenceSubStmt(stmtCtx);
+    }
+
+    public static boolean isNonPresenceContainer(final StatementContextBase<?, ?, ?> stmtCtx) {
+        return stmtCtx.getPublicDefinition().equals(Rfc6020Mapping.CONTAINER) && !containsPresenceSubStmt(stmtCtx);
+    }
+
+    private static boolean containsPresenceSubStmt(final StatementContextBase<?, ?, ?> stmtCtx) {
+        return findFirstSubstatement(stmtCtx, PresenceStatement.class) != null ? true : false;
+    }
+
+    public static boolean isMandatoryNode(final StatementContextBase<?, ?, ?> stmtCtx) {
+        return isMandatoryListOrLeafList(stmtCtx) || isMandatoryLeafChoiceOrAnyXML(stmtCtx);
+    }
+
+    private static boolean isMandatoryLeafChoiceOrAnyXML(final StatementContextBase<?, ?, ?> stmtCtx) {
+        if (stmtCtx.getPublicDefinition().equals(Rfc6020Mapping.LEAF)
+                || stmtCtx.getPublicDefinition().equals(Rfc6020Mapping.CHOICE)
+                || stmtCtx.getPublicDefinition().equals(Rfc6020Mapping.ANYXML)) {
+            return Boolean.TRUE.equals(firstSubstatementAttributeOf(stmtCtx, MandatoryStatement.class)) ? true : false;
+        }
+
+        return false;
+    }
+
+    private static boolean isMandatoryListOrLeafList(final StatementContextBase<?, ?, ?> stmtCtx) {
+        if (stmtCtx.getPublicDefinition().equals(Rfc6020Mapping.LIST)
+                || stmtCtx.getPublicDefinition().equals(Rfc6020Mapping.LEAF_LIST)) {
+            final Integer minElements = firstSubstatementAttributeOf(stmtCtx, MinElementsStatement.class);
+            return minElements != null && minElements > 0 ? true : false;
+        }
+
+        return false;
     }
 }
