@@ -14,7 +14,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
@@ -41,7 +40,6 @@ import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
@@ -678,22 +676,6 @@ public final class Utils {
         if (targetStmtQName.getModule().equals(sourceStmtQName.getModule())) {
             return true;
         }
-        return false;
-    }
-
-    public static boolean isPresenceContainer(final StatementContextBase<?, ?, ?> targetCtx) {
-        if (!targetCtx.getPublicDefinition().equals(Rfc6020Mapping.CONTAINER)) {
-            return false;
-        }
-
-        final List<StatementContextBase<?, ?, ?>> targetSubStatements = new ImmutableList.Builder<StatementContextBase<?, ?, ?>>()
-                .addAll(targetCtx.declaredSubstatements()).addAll(targetCtx.effectiveSubstatements()).build();
-        for (final StatementContextBase<?, ?, ?> subStatement : targetSubStatements) {
-            if (subStatement.getPublicDefinition().equals(Rfc6020Mapping.PRESENCE)) {
-                return true;
-            }
-        }
-
         return false;
     }
 
