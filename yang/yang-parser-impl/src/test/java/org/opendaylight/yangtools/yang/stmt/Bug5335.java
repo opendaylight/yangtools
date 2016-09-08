@@ -56,86 +56,86 @@ public class Bug5335 {
 
     @Test
     public void incorrectTest1() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
-        SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/incorrect/case-1");
+        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/incorrect/case-1");
         assertNotNull(context);
 
-        SchemaPath schemaPath = SchemaPath.create(true, ROOT, NON_PRESENCE_CONTAINER_B, MANDATORY_LEAF_B);
-        SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
+        final SchemaPath schemaPath = SchemaPath.create(true, ROOT, NON_PRESENCE_CONTAINER_B, MANDATORY_LEAF_B);
+        final SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
         assertNull(mandatoryLeaf);
 
-        String testLog = output.toString();
+        final String testLog = output.toString();
         assertTrue(testLog
-                .contains("An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different from target"));
+                .contains("An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target"));
     }
 
     @Test
     public void incorrectTest2() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
-        SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/incorrect/case-2");
+        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/incorrect/case-2");
         assertNotNull(context);
 
-        SchemaPath schemaPath = SchemaPath.create(true, ROOT, PRESENCE_CONTAINER_F, MANDATORY_LEAF_B);
-        SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
+        final SchemaPath schemaPath = SchemaPath.create(true, ROOT, PRESENCE_CONTAINER_F, MANDATORY_LEAF_B);
+        final SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
         assertNull(mandatoryLeaf);
 
-        String testLog = output.toString();
+        final String testLog = output.toString();
         assertTrue(testLog
-                .contains("An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different from target"));
+                .contains("An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target"));
     }
 
     @Test
     public void incorrectTest3() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
-        SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/incorrect/case-2");
+        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/incorrect/case-2");
         assertNotNull(context);
 
-        SchemaPath schemaPath = SchemaPath.create(true, ROOT, PRESENCE_CONTAINER_F, NON_PRESENCE_CONTAINER_B,
+        final SchemaPath schemaPath = SchemaPath.create(true, ROOT, PRESENCE_CONTAINER_F, NON_PRESENCE_CONTAINER_B,
                 MANDATORY_LEAF_B);
-        SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
+        final SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
         assertNull(mandatoryLeaf);
 
-        String testLog = output.toString();
+        final String testLog = output.toString();
         assertTrue(testLog
-                .contains("An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different from target"));
+                .contains("An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target"));
     }
 
     @Test
     public void correctTest1() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
-        SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-1");
+        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-1");
         assertNotNull(context);
 
-        SchemaPath schemaPath = SchemaPath.create(true, ROOT, PRESENCE_CONTAINER_B, MANDATORY_LEAF_B);
-        SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
+        final SchemaPath schemaPath = SchemaPath.create(true, ROOT, PRESENCE_CONTAINER_B, MANDATORY_LEAF_B);
+        final SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
         assertTrue(mandatoryLeaf instanceof LeafSchemaNode);
     }
 
     @Test
     public void correctTest2() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
-        SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-2");
+        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-2");
         assertNotNull(context);
 
-        SchemaPath schemaPath = SchemaPath.create(true, ROOT, PRESENCE_CONTAINER_B, NON_PRESENCE_CONTAINER_B,
+        final SchemaPath schemaPath = SchemaPath.create(true, ROOT, PRESENCE_CONTAINER_B, NON_PRESENCE_CONTAINER_B,
                 MANDATORY_LEAF_B);
-        SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
+        final SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
         assertTrue(mandatoryLeaf instanceof LeafSchemaNode);
     }
 
     @Test
     public void correctTest3() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
-        SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-3");
+        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-3");
         assertNotNull(context);
 
-        SchemaPath schemaPath = SchemaPath.create(true, ROOT, PRESENCE_CONTAINER_B, NON_PRESENCE_CONTAINER_B,
+        final SchemaPath schemaPath = SchemaPath.create(true, ROOT, PRESENCE_CONTAINER_B, NON_PRESENCE_CONTAINER_B,
                 MANDATORY_LEAF_B);
-        SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
+        final SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
         assertTrue(mandatoryLeaf instanceof LeafSchemaNode);
     }
 
     @Test
     public void correctTest4() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
-        SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-4");
+        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-4");
         assertNotNull(context);
 
-        SchemaPath schemaPath = SchemaPath.create(true, ROOT, NON_PRESENCE_CONTAINER_F, MANDATORY_LEAF_F);
-        SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
+        final SchemaPath schemaPath = SchemaPath.create(true, ROOT, NON_PRESENCE_CONTAINER_F, MANDATORY_LEAF_F);
+        final SchemaNode mandatoryLeaf = SchemaContextUtil.findDataSchemaNode(context, schemaPath);
         assertTrue(mandatoryLeaf instanceof LeafSchemaNode);
     }
 }
