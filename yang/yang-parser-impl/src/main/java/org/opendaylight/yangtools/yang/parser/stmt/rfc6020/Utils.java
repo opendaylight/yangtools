@@ -681,13 +681,13 @@ public final class Utils {
         return false;
     }
 
-    public static boolean isPresenceContainer(final StatementContextBase<?, ?, ?> targetCtx) {
-        if (!targetCtx.getPublicDefinition().equals(Rfc6020Mapping.CONTAINER)) {
+    public static boolean isPresenceContainer(final StatementContextBase<?, ?, ?> stmtCtx) {
+        if (!stmtCtx.getPublicDefinition().equals(Rfc6020Mapping.CONTAINER)) {
             return false;
         }
 
         final List<StatementContextBase<?, ?, ?>> targetSubStatements = new ImmutableList.Builder<StatementContextBase<?, ?, ?>>()
-                .addAll(targetCtx.declaredSubstatements()).addAll(targetCtx.effectiveSubstatements()).build();
+                .addAll(stmtCtx.declaredSubstatements()).addAll(stmtCtx.effectiveSubstatements()).build();
         for (final StatementContextBase<?, ?, ?> subStatement : targetSubStatements) {
             if (subStatement.getPublicDefinition().equals(Rfc6020Mapping.PRESENCE)) {
                 return true;
@@ -697,7 +697,23 @@ public final class Utils {
         return false;
     }
 
-    public static SourceIdentifier createSourceIdentifier(RootStatementContext<?, ?, ?> root) {
+    public static boolean isNonPresenceContainer(final StatementContextBase<?, ?, ?> stmtCtx) {
+        if (!stmtCtx.getPublicDefinition().equals(Rfc6020Mapping.CONTAINER)) {
+            return false;
+        }
+
+        final List<StatementContextBase<?, ?, ?>> targetSubStatements = new ImmutableList.Builder<StatementContextBase<?, ?, ?>>()
+                .addAll(stmtCtx.declaredSubstatements()).addAll(stmtCtx.effectiveSubstatements()).build();
+        for (final StatementContextBase<?, ?, ?> subStatement : targetSubStatements) {
+            if (subStatement.getPublicDefinition().equals(Rfc6020Mapping.PRESENCE)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public static SourceIdentifier createSourceIdentifier(final RootStatementContext<?, ?, ?> root) {
         final QNameModule qNameModule = root.getFromNamespace(ModuleCtxToModuleQName.class, root);
         if (qNameModule != null) {
             // creates SourceIdentifier for a module
@@ -711,5 +727,43 @@ public final class Utils {
             return RevisionSourceIdentifier.create((String) root.getStatementArgument(),
                     formattedRevision);
         }
+    }
+
+    public static boolean isMandatoryNode(final StatementContextBase<?, ?, ?> stmtCtx) {
+        return isMandatoryListOrLeafList(stmtCtx) || isMandatoryLeafChoiceOrAnyXML(stmtCtx);
+    }
+
+    private static boolean isMandatoryLeafChoiceOrAnyXML(final StatementContextBase<?, ?, ?> stmtCtx) {
+        if (stmtCtx.getPublicDefinition().equals(Rfc6020Mapping.LEAF)
+                || stmtCtx.getPublicDefinition().equals(Rfc6020Mapping.CHOICE)
+                || stmtCtx.getPublicDefinition().equals(Rfc6020Mapping.ANYXML)) {
+            final List<StatementContextBase<?, ?, ?>> allSubStatements = new ImmutableList.Builder<StatementContextBase<?, ?, ?>>()
+                    .addAll(stmtCtx.declaredSubstatements()).addAll(stmtCtx.effectiveSubstatements()).build();
+            for (final StatementContextBase<?, ?, ?> subStatement : allSubStatements) {
+                if (subStatement.getPublicDefinition().equals(Rfc6020Mapping.MANDATORY)) {
+                    return (Boolean) subStatement.getStatementArgument();
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean isMandatoryListOrLeafList(final StatementContextBase<?, ?, ?> stmtCtx) {
+        if (stmtCtx.getPublicDefinition().equals(Rfc6020Mapping.LIST)
+                || stmtCtx.getPublicDefinition().equals(Rfc6020Mapping.LEAF_LIST)) {
+            final List<StatementContextBase<?, ?, ?>> allSubStatements = new ImmutableList.Builder<StatementContextBase<?, ?, ?>>()
+                    .addAll(stmtCtx.declaredSubstatements()).addAll(stmtCtx.effectiveSubstatements()).build();
+            for (final StatementContextBase<?, ?, ?> subStatement : allSubStatements) {
+                if (subStatement.getPublicDefinition().equals(Rfc6020Mapping.MIN_ELEMENTS)) {
+                    final Integer minElements = (Integer) subStatement.getStatementArgument();
+                    if (minElements > 0) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 }
