@@ -17,7 +17,6 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -89,15 +88,7 @@ public final class AugmentUtils {
         }
 
         if (typeOfCopy == TypeOfCopy.ADDED_BY_AUGMENTATION && reguiredCheckOfMandatoryNodes(sourceCtx, targetCtx)) {
-            final List<StatementContextBase<?, ?, ?>> sourceSubStatements = new Builder<StatementContextBase<?, ?, ?>>()
-                    .addAll(sourceCtx.declaredSubstatements()).addAll(sourceCtx.effectiveSubstatements()).build();
-
-            for (final StatementContextBase<?, ?, ?> sourceSubStatement : sourceSubStatements) {
-                InferenceException.throwIf(MandatoryStatement.class.equals(sourceSubStatement.getPublicDefinition()
-                        .getDeclaredRepresentationClass()), sourceCtx.getStatementSourceReference(),
-                        "An augment cannot add node '%s' because it is mandatory and in module different from target",
-                        sourceCtx.rawStatementArgument());
-            }
+            checkForMandatoryNodes(sourceCtx);
         }
 
         final List<StatementContextBase<?, ?, ?>> targetSubStatements = new Builder<StatementContextBase<?, ?, ?>>()
@@ -116,6 +107,20 @@ public final class AugmentUtils {
                     "An augment cannot add node named '%s' because this name is already used in target",
                     sourceCtx.rawStatementArgument());
         }
+    }
+
+    private static void checkForMandatoryNodes(final StatementContextBase<?, ?, ?> sourceCtx) {
+        if (StmtContextUtils.isNonPresenceContainer(sourceCtx)) {
+            final List<StatementContextBase<?, ?, ?>> sourceSubStatements = new Builder<StatementContextBase<?, ?, ?>>()
+                    .addAll(sourceCtx.declaredSubstatements()).addAll(sourceCtx.effectiveSubstatements()).build();
+            for (final StatementContextBase<?, ?, ?> sourceSubStatement : sourceSubStatements) {
+                checkForMandatoryNodes(sourceSubStatement);
+            }
+        }
+
+        InferenceException.throwIf(StmtContextUtils.isMandatoryNode(sourceCtx), sourceCtx.getStatementSourceReference(),
+                "An augment cannot add node '%s' because it is mandatory and in module different from target",
+                sourceCtx.rawStatementArgument());
     }
 
     private static boolean reguiredCheckOfMandatoryNodes(final StatementContextBase<?, ?, ?> sourceCtx,
@@ -146,7 +151,7 @@ public final class AugmentUtils {
                  * the same module, return false and skip mandatory nodes
                  * validation
                  */
-                if (Utils.isPresenceContainer(targetCtx)) {
+                if (StmtContextUtils.isPresenceContainer(targetCtx)) {
                     return false;
                 }
             }
