@@ -22,6 +22,29 @@
       "revId": "b3315a133684c91930b8e2f4004a327e50d48954",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_8cbea963",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodec.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-09-08T14:01:28Z",
+      "side": 1,
+      "message": "This also can be done if strings.size() \u003d\u003d 0.",
+      "range": {
+        "startLine": 59,
+        "startChar": 12,
+        "endLine": 59,
+        "endChar": 26
+      },
+      "revId": "b3315a133684c91930b8e2f4004a327e50d48954",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
