@@ -1,0 +1,31 @@
+module bar {
+    namespace "bar";
+    prefix bar;
+
+    import foo { prefix foo; revision-date 2016-09-08; }
+
+    revision 2016-09-08;
+
+    augment /foo:root {
+        container bar {
+        }
+    }
+
+    augment /foo:root/bar:bar {
+        container bar1 {
+            presence "presence container";
+        }
+    }
+
+    augment /foo:root/bar:bar/bar:bar1 {
+        container bar2 {
+        }
+    }
+
+    augment /foo:root/bar:bar/bar:bar1/bar:bar2 {
+        leaf m {
+            mandatory true;
+            type empty;
+        }
+    }
+}
