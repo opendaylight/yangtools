@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_04c38557",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 11
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-09-13T13:42:49Z",
+      "side": 1,
+      "message": "Perhaps improvements on test dependencies should be mentioned as well?",
+      "range": {
+        "startLine": 10,
+        "startChar": 40,
+        "endLine": 10,
+        "endChar": 41
+      },
+      "revId": "e38c00135ac89443c94419ea0d03d20fb3870913",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_64bcf9dc",
+        "filename": "common/features/features-yangtools/pom.xml",
+        "patchSetId": 11
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-09-13T13:42:49Z",
+      "side": 1,
+      "message": "Update parent names according to https://git.opendaylight.org/gerrit/#/c/39539/7",
+      "range": {
+        "startLine": 9,
+        "startChar": 20,
+        "endLine": 9,
+        "endChar": 34
+      },
+      "revId": "e38c00135ac89443c94419ea0d03d20fb3870913",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_24c68168",
+        "filename": "yang-validation-tool/pom.xml",
+        "patchSetId": 11
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-09-13T13:42:49Z",
+      "side": 1,
+      "message": "Is this just to make the jar smaller? Why not this:\n\n\u003cexclude\u003eorg.opendaylight.*:*:xml:*\u003c/exclude\u003e",
+      "range": {
+        "startLine": 80,
+        "startChar": 33,
+        "endLine": 80,
+        "endChar": 41
+      },
+      "revId": "e38c00135ac89443c94419ea0d03d20fb3870913",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
