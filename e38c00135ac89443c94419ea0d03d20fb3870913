@@ -140,6 +140,30 @@
       "revId": "e38c00135ac89443c94419ea0d03d20fb3870913",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_0e5ba3f6",
+        "filename": "yang-validation-tool/pom.xml",
+        "patchSetId": 11
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-09-13T17:01:39Z",
+      "side": 1,
+      "message": "\u003e doesn\u0027t cope with non-JAR dependencies\n\nNone of them?\nThen we need a more general pattern, in case upstream starts to package their bundles into nice features as we do.\n\n\u003cexclude\u003e*:*:xml:*\u003c/exclude\u003e\n\n... and hope nobody in upstream is sophisticated enough to depend on configfiles.",
+      "parentUuid": "7a6b29fe_a49d710c",
+      "range": {
+        "startLine": 80,
+        "startChar": 33,
+        "endLine": 80,
+        "endChar": 41
+      },
+      "revId": "e38c00135ac89443c94419ea0d03d20fb3870913",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
