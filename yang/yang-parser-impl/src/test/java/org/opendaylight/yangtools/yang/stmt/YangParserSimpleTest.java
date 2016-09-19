@@ -96,13 +96,13 @@ public class YangParserSimpleTest {
         assertTrue(found2);
 
         assertTrue(constraints.isMandatory());
-        assertTrue(0 == constraints.getMinElements());
-        assertTrue(Integer.MAX_VALUE == constraints.getMaxElements());
+        assertNull(constraints.getMinElements());
+        assertNull(constraints.getMaxElements());
     }
 
     @Test
-    public void testParseContainer() {
-        Module test = TestUtils.findModule(modules, "simple-nodes");
+    public void testParseContainer() throws ParseException {
+        final Module test = TestUtils.findModule(modules, "simple-nodes");
 
         ContainerSchemaNode nodes = (ContainerSchemaNode) test.getDataChildByName("nodes");
         // test SchemaNode args
@@ -146,8 +146,8 @@ public class YangParserSimpleTest {
         assertTrue(found2);
 
         assertFalse(constraints.isMandatory());
-        assertTrue(0 == constraints.getMinElements());
-        assertTrue(Integer.MAX_VALUE == constraints.getMaxElements());
+        assertNull(constraints.getMinElements());
+        assertNull(constraints.getMaxElements());
         assertTrue(nodes.isPresenceContainer());
 
         // typedef
@@ -188,20 +188,14 @@ public class YangParserSimpleTest {
     }
 
 
-    private final URI ns = URI.create("urn:opendaylight:simple-nodes");
-    private Date rev;
-    private final String prefix = "sn";
+    private static final URI NS = URI.create("urn:opendaylight:simple-nodes");
 
-    private SchemaPath createPath(final String... names) {
-        try {
-            rev = new SimpleDateFormat("yyyy-MM-dd").parse("2013-07-30");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+    private static SchemaPath createPath(final String... names) throws ParseException {
+        final Date rev = new SimpleDateFormat("yyyy-MM-dd").parse("2013-07-30");
 
-        List<QName> path = new ArrayList<>();
-        for (String name : names) {
-            path.add(QName.create(ns, rev, name));
+        final List<QName> path = new ArrayList<>();
+        for (final String name : names) {
+            path.add(QName.create(NS, rev, name));
         }
         return SchemaPath.create(path, true);
     }

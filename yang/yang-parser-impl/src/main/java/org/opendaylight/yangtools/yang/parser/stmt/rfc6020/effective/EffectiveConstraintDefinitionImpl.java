@@ -15,8 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 
 final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
-    private static final Integer UNBOUNDED_INT = Integer.MAX_VALUE;
     private static final String UNBOUNDED_STR = "unbounded";
+
     private final RevisionAwareXPath whenCondition;
     private final Set<MustDefinition> mustConstraints;
     private final Integer minElements;
@@ -27,8 +27,8 @@ final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
             final Integer maxElements, final RevisionAwareXPath whenCondition,
             final Set<MustDefinition> mustConstraints) {
         this.mandatory = mandatory;
-        this.minElements = Preconditions.checkNotNull(minElements);
-        this.maxElements = Preconditions.checkNotNull(maxElements);
+        this.minElements = minElements;
+        this.maxElements = maxElements;
         this.whenCondition = whenCondition;
         this.mustConstraints = Preconditions.checkNotNull(mustConstraints);
     }
@@ -36,27 +36,34 @@ final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
     static ConstraintDefinition forParent(final EffectiveStatementBase<?, ?> parent) {
         final MinElementsEffectiveStatementImpl firstMinElementsStmt = parent
                 .firstEffective(MinElementsEffectiveStatementImpl.class);
-        final Integer minElements = (firstMinElementsStmt == null) ? 0 : firstMinElementsStmt.argument();
+        final Integer minElements;
+        if (firstMinElementsStmt != null) {
+            final Integer m = firstMinElementsStmt.argument();
+            minElements = m > 0 ? m : null;
+        } else {
+            minElements = null;
+        }
 
         final MaxElementsEffectiveStatementImpl firstMaxElementsStmt = parent
                 .firstEffective(MaxElementsEffectiveStatementImpl.class);
         final String maxElementsArg = (firstMaxElementsStmt == null) ? UNBOUNDED_STR : firstMaxElementsStmt.argument();
         final Integer maxElements;
-        if (UNBOUNDED_STR.equals(maxElementsArg)) {
-            maxElements = UNBOUNDED_INT;
+        if (!UNBOUNDED_STR.equals(maxElementsArg)) {
+            final Integer m = Integer.valueOf(maxElementsArg);
+            maxElements = m < Integer.MAX_VALUE ? m : null;
         } else {
-            maxElements = Integer.valueOf(maxElementsArg);
+            maxElements = null;
         }
 
         final MandatoryEffectiveStatement firstMandatoryStmt = parent.firstEffective(MandatoryEffectiveStatement.class);
-        final boolean mandatory = (firstMandatoryStmt == null) ? minElements > 0 : firstMandatoryStmt.argument();
+        final boolean mandatory = (firstMandatoryStmt == null) ? minElements != null : firstMandatoryStmt.argument();
 
         final Set<MustDefinition> mustSubstatements = ImmutableSet.copyOf(parent.allSubstatementsOfType(
             MustDefinition.class));
         final WhenEffectiveStatementImpl firstWhenStmt = parent.firstEffective(WhenEffectiveStatementImpl.class);
 
         // Check for singleton instances
-        if (minElements == 0 && maxElements == UNBOUNDED_INT && mustSubstatements.isEmpty() && firstWhenStmt == null) {
+        if (minElements == null && maxElements == null && mustSubstatements.isEmpty() && firstWhenStmt == null) {
             return EmptyConstraintDefinition.create(mandatory);
         }
 
