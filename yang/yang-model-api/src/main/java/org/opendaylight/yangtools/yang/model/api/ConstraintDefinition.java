@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * Contains method which returns various data constraints for some YANG element
@@ -63,9 +64,9 @@ public interface ConstraintDefinition {
      *
      * It is used with YANG statements leaf-list, list, deviate.
      *
-     * @return integer with minimal number of elements
+     * @return integer with minimal number of elements, or null if no minimum is defined
      */
-    Integer getMinElements();
+    @Nullable Integer getMinElements();
 
     /**
      * Returns the maximum admissible number of data elements for node where
@@ -76,7 +77,7 @@ public interface ConstraintDefinition {
      *
      * It is used with YANG statements leaf-list, list, deviate.
      *
-     * @return integer with maximum number of elements
+     * @return integer with maximum number of elements, or null if no maximum is defined
      */
-    Integer getMaxElements();
+    @Nullable Integer getMaxElements();
 }

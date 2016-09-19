@@ -117,7 +117,7 @@ public class GroupingTest {
         assertEquals("addresses reference added by refine", refineList.getReference());
         assertFalse(refineList.isConfiguration());
         assertEquals(2, (int) refineList.getConstraints().getMinElements());
-        assertEquals(Integer.MAX_VALUE, (int) refineList.getConstraints().getMaxElements());
+        assertNull(refineList.getConstraints().getMaxElements());
 
         // leaf id
         assertNotNull(refineInnerLeaf);
@@ -625,6 +625,9 @@ public class GroupingTest {
             }
         }
 
+        assertNotNull(foo);
+        assertNotNull(imp);
+
         final LeafSchemaNode leaf = (LeafSchemaNode) ((ContainerSchemaNode) foo.getDataChildByName(QName.create(
                 foo.getQNameModule(), "my-container")))
                 .getDataChildByName(QName.create(foo.getQNameModule(), "my-leaf"));
@@ -638,6 +641,7 @@ public class GroupingTest {
             }
         }
 
+        assertNotNull(impType);
         assertEquals(leaf.getType().getQName(), impType.getQName());
     }
 }
