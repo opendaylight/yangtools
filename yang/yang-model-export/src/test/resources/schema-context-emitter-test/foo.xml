@@ -81,8 +81,6 @@
         <leaf-list name="test-leaf-list">
             <type name="string"></type>
             <config value="false"></config>
-            <min-elements value="0"></min-elements>
-            <max-elements value="2147483647"></max-elements>
             <ordered-by value="user"></ordered-by>
             <status value="current"></status>
         </leaf-list>
@@ -90,7 +88,6 @@
             <key value="key-leaf-1 key-leaf-2"></key>
             <config value="true"></config>
             <min-elements value="5"></min-elements>
-            <max-elements value="2147483647"></max-elements>
             <ordered-by value="system"></ordered-by>
             <status value="current"></status>
             <leaf name="key-leaf-1">
@@ -257,12 +254,9 @@
             <refine target-node="test-list">
                 <config value="true"></config>
                 <min-elements value="5"></min-elements>
-                <max-elements value="2147483647"></max-elements>
             </refine>
             <refine target-node="test-leaf-list">
                 <config value="false"></config>
-                <min-elements value="0"></min-elements>
-                <max-elements value="2147483647"></max-elements>
             </refine>
             <refine target-node="test-leaf-1">
                 <default value="def-val"></default>
