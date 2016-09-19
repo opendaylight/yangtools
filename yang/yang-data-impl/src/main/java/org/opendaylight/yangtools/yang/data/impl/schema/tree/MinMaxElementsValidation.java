@@ -40,11 +40,19 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
 
     static SchemaAwareApplyOperation from(final SchemaAwareApplyOperation delegate, final DataSchemaNode schema) {
         final ConstraintDefinition constraints = schema.getConstraints();
-        if (constraints == null || (constraints.getMinElements() == null && constraints.getMaxElements() == null)) {
+        if (constraints == null) {
             return delegate;
         }
-        return new MinMaxElementsValidation(delegate, constraints.getMinElements(), constraints.getMaxElements());
 
+        final Integer min = constraints.getMinElements();
+        final Integer max = constraints.getMaxElements();
+        final boolean haveMin = min != null && min != 0;
+        final boolean haveMax = max != null && max != Integer.MAX_VALUE;
+        if (haveMin || haveMax) {
+            return new MinMaxElementsValidation(delegate, haveMin ? min : null, haveMax ? max : null);
+        } else {
+            return delegate;
+        }
     }
 
     private void validateMinMaxElements(final YangInstanceIdentifier path, final PathArgument id,
@@ -176,7 +184,7 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
     }
 
     @Override
-    void recursivelyVerifyStructure(NormalizedNode<?, ?> value) {
+    void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
         delegate.recursivelyVerifyStructure(value);
     }
 }
