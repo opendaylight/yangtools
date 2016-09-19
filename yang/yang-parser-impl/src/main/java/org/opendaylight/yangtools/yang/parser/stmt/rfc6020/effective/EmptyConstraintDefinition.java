@@ -50,12 +50,12 @@ abstract class EmptyConstraintDefinition implements ConstraintDefinition {
 
     @Override
     public final Integer getMinElements() {
-        return 0;
+        return null;
     }
 
     @Override
     public final Integer getMaxElements() {
-        return Integer.MAX_VALUE;
+        return null;
     }
 
     @Override
