@@ -29,7 +29,7 @@ public interface NotificationManager<L, N> {
      * @param notification the notification to dispatch
      * @throws RejectedExecutionException if the notification can't be queued for dispatching
      */
-    void submitNotification( L listener, N notification );
+    void submitNotification(L listener, N notification);
 
     /**
      * Submits notifications to be queued and dispatched to the given listener.
@@ -40,6 +40,6 @@ public interface NotificationManager<L, N> {
      * @param notifications the notifications to dispatch
      * @throws RejectedExecutionException if a notification can't be queued for dispatching
      */
-    void submitNotifications( final L listener, Iterable<N> notifications);
+    void submitNotifications(L listener, Iterable<N> notifications);
 
 }
