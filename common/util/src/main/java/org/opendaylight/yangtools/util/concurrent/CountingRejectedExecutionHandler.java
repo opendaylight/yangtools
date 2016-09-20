@@ -11,7 +11,7 @@ package org.opendaylight.yangtools.util.concurrent;
 import com.google.common.base.Preconditions;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.atomic.AtomicLongFieldUpdater;
+import java.util.concurrent.atomic.LongAdder;
 import org.opendaylight.yangtools.util.ExecutorServiceUtil;
 
 /**
@@ -21,10 +21,8 @@ import org.opendaylight.yangtools.util.ExecutorServiceUtil;
  * @author Thomas Pantelis
  */
 public class CountingRejectedExecutionHandler implements RejectedExecutionHandler {
-    private static final AtomicLongFieldUpdater<CountingRejectedExecutionHandler> COUNTER_UPDATER =
-            AtomicLongFieldUpdater.newUpdater(CountingRejectedExecutionHandler.class, "rejectedTaskCounter");
+    private final LongAdder rejectedTaskCounter = new LongAdder();
     private final RejectedExecutionHandler delegate;
-    private volatile long rejectedTaskCounter;
 
     /**
      * Constructor.
@@ -37,15 +35,15 @@ public class CountingRejectedExecutionHandler implements RejectedExecutionHandle
 
     @Override
     public void rejectedExecution( final Runnable task, final ThreadPoolExecutor executor ) {
-        COUNTER_UPDATER.incrementAndGet(this);
-        delegate.rejectedExecution( task, executor );
+        rejectedTaskCounter.increment();
+        delegate.rejectedExecution(task, executor);
     }
 
     /**
      * Returns the rejected task count.
      */
     public long getRejectedTaskCount() {
-        return rejectedTaskCounter;
+        return rejectedTaskCounter.sum();
     }
 
     /**
@@ -54,14 +52,14 @@ public class CountingRejectedExecutionHandler implements RejectedExecutionHandle
      * the task is discarded.
      */
     public static CountingRejectedExecutionHandler newCallerRunsPolicy() {
-        return new CountingRejectedExecutionHandler( new ThreadPoolExecutor.CallerRunsPolicy() );
+        return new CountingRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
     }
 
     /**
      * Returns a counting handler for rejected tasks that throws a RejectedExecutionException.
      */
     public static CountingRejectedExecutionHandler newAbortPolicy() {
-        return new CountingRejectedExecutionHandler( new ThreadPoolExecutor.AbortPolicy() );
+        return new CountingRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
     }
 
     /**
@@ -69,6 +67,6 @@ public class CountingRejectedExecutionHandler implements RejectedExecutionHandle
      * {@link ThreadPoolExecutor}'s backing queue until it can add the task to the queue.
      */
     public static CountingRejectedExecutionHandler newCallerWaitsPolicy() {
-        return new CountingRejectedExecutionHandler( ExecutorServiceUtil.waitInQueueExecutionHandler() );
+        return new CountingRejectedExecutionHandler(ExecutorServiceUtil.waitInQueueExecutionHandler());
     }
 }
