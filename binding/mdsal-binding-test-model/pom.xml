@@ -16,8 +16,10 @@
         <version>0.10.0-SNAPSHOT</version>
         <relativePath>../binding-parent</relativePath>
     </parent>
+
     <modelVersion>4.0.0</modelVersion>
     <artifactId>mdsal-binding-test-model</artifactId>
+    <packaging>bundle</packaging>
 
     <dependencies>
         <dependency>
@@ -28,15 +30,13 @@
             <groupId>org.opendaylight.mdsal.model</groupId>
             <artifactId>yang-ext</artifactId>
             <exclusions>
-            <exclusion>
-                <groupId>org.opendaylight.mdsal</groupId>
-                <artifactId>yang-binding</artifactId>
-            </exclusion>
+                <exclusion>
+                    <groupId>org.opendaylight.mdsal</groupId>
+                    <artifactId>yang-binding</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
     </dependencies>
-
-
 
   <!--
       Maven Site Configuration
