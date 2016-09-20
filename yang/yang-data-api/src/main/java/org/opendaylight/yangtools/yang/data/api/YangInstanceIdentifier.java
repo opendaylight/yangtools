@@ -233,6 +233,13 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      *         the specified parent is not in fact an ancestor of this object.
      */
     public Optional<YangInstanceIdentifier> relativeTo(final YangInstanceIdentifier ancestor) {
+        if (this == ancestor) {
+            return Optional.of(EMPTY);
+        }
+        if (ancestor.isEmpty()) {
+            return Optional.of(this);
+        }
+
         final Iterator<?> lit = getPathArguments().iterator();
         final Iterator<?> oit = ancestor.getPathArguments().iterator();
         int common = 0;
@@ -258,8 +265,11 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
     @Override
     public final boolean contains(final YangInstanceIdentifier other) {
-        Preconditions.checkArgument(other != null, "other should not be null");
+        if (this == other) {
+            return true;
+        }
 
+        Preconditions.checkArgument(other != null, "other should not be null");
         final Iterator<?> lit = getPathArguments().iterator();
         final Iterator<?> oit = other.getPathArguments().iterator();
 
