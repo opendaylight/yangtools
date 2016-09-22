@@ -11,7 +11,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URISyntaxException;
 import java.util.Set;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -36,7 +35,6 @@ public class AugmentToExtensionTest {
      *
      */
     @Test
-    @Ignore
     public void testCorrectPathIntoUnsupportedTarget() throws URISyntaxException, SourceException, ReactorException {
 
         try {
