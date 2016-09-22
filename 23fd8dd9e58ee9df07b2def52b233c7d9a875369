@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_8ccdd733",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 189,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2016-09-22T19:23:21Z",
+      "side": 1,
+      "message": "Since we didn\u0027t submit the task for execution it\u0027s safe to access the iterator on the current thread although technically we\u0027re violating the GuardedBy annotation in NotificationTask.",
+      "revId": "23fd8dd9e58ee9df07b2def52b233c7d9a875369",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_ec0bab7a",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2016-09-22T19:23:21Z",
+      "side": 1,
+      "message": "What\u0027s the reason for checking the time here? In case it took greater than GIVE_UP_NANOS to acquire the lock above? If so why not just proceed to the loop below since we were able to acquire the lock?",
+      "revId": "23fd8dd9e58ee9df07b2def52b233c7d9a875369",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_8c0af787",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2016-09-22T19:23:21Z",
+      "side": 1,
+      "message": "Can you add @GuardedBy(\"lock\") here?",
+      "revId": "23fd8dd9e58ee9df07b2def52b233c7d9a875369",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_4cec5fbb",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 369,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2016-09-22T19:23:21Z",
+      "side": 1,
+      "message": "Should be timeout \u003c\u003d 0?",
+      "revId": "23fd8dd9e58ee9df07b2def52b233c7d9a875369",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
