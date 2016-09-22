@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -290,7 +291,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 + finishedPhase + "]";
     }
 
-    SourceException failModifiers(final ModelProcessingPhase identifier) {
+    Optional<SourceException> failModifiers(final ModelProcessingPhase identifier) {
         final List<SourceException> exceptions = new ArrayList<>();
         for (final ModifierImpl mod : modifiers.get(identifier)) {
             try {
@@ -300,11 +301,11 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             }
         }
 
-        final String message = String.format("Yang model processing phase %s failed", identifier);
         if (exceptions.isEmpty()) {
-            return new InferenceException(message, root.getStatementSourceReference());
+            return Optional.empty();
         }
 
+        final String message = String.format("Yang model processing phase %s failed", identifier);
         final InferenceException e = new InferenceException(message, root.getStatementSourceReference(),
             exceptions.get(0));
         final Iterator<SourceException> it = exceptions.listIterator(1);
@@ -312,7 +313,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             e.addSuppressed(it.next());
         }
 
-        return e;
+        return Optional.of(e);
     }
 
     void loadStatements() throws SourceException {
