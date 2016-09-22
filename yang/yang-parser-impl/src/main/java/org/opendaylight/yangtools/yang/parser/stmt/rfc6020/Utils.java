@@ -579,7 +579,7 @@ public final class Utils {
     }
 
     public static boolean isUnknownNode(final StmtContext<?, ?, ?> stmtCtx) {
-        return stmtCtx.getPublicDefinition().getDeclaredRepresentationClass()
+        return stmtCtx != null && stmtCtx.getPublicDefinition().getDeclaredRepresentationClass()
                 .isAssignableFrom(UnknownStatementImpl.class);
     }
 
@@ -697,7 +697,7 @@ public final class Utils {
         return false;
     }
 
-    public static SourceIdentifier createSourceIdentifier(RootStatementContext<?, ?, ?> root) {
+    public static SourceIdentifier createSourceIdentifier(final RootStatementContext<?, ?, ?> root) {
         final QNameModule qNameModule = root.getFromNamespace(ModuleCtxToModuleQName.class, root);
         if (qNameModule != null) {
             // creates SourceIdentifier for a module
