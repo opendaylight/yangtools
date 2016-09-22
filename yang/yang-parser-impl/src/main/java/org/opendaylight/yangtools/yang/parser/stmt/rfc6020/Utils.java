@@ -579,7 +579,7 @@ public final class Utils {
     }
 
     public static boolean isUnknownNode(final StmtContext<?, ?, ?> stmtCtx) {
-        return stmtCtx.getPublicDefinition().getDeclaredRepresentationClass()
+        return stmtCtx != null && stmtCtx.getPublicDefinition().getDeclaredRepresentationClass()
                 .isAssignableFrom(UnknownStatementImpl.class);
     }
 
