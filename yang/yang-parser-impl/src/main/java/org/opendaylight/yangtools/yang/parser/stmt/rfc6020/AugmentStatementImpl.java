@@ -132,7 +132,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                         AugmentUtils.copyFromSourceToTarget(augmentSourceCtx, augmentTargetCtx);
                         augmentTargetCtx.addEffectiveSubstatement(augmentSourceCtx);
                         updateAugmentOrder(augmentSourceCtx);
-                    } catch (SourceException e) {
+                    } catch (final SourceException e) {
                         LOG.debug("Failed to add augmentation {} defined at {}",
                             augmentTargetCtx.getStatementSourceReference(),
                                 augmentSourceCtx.getStatementSourceReference(), e);
@@ -154,14 +154,29 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
 
                 @Override
                 public void prerequisiteFailed(final Collection<? extends ModelActionBuilder.Prerequisite<?>> failed) {
+                    /*
+                     * Do not fail, if it is an uses-augment to an unknown node.
+                     */
+                    if (Rfc6020Mapping.USES.equals(augmentNode.getParentContext().getPublicDefinition())) {
+                        final StatementContextBase<?, ?, ?> targetNode = Utils.findNode(getSearchRoot(augmentNode),
+                                augmentNode.getStatementArgument());
+                        if (Utils.isUnknownNode(targetNode)) {
+                            augmentNode.setIsSupportedToBuildEffective(false);
+                            LOG.warn(
+                                    "Uses-augment to unknown node {}. Augmentation has not been performed. At line: {}",
+                                    augmentNode.getStatementArgument(), augmentNode.getStatementSourceReference());
+                            return;
+                        }
+                    }
+
                     throw new InferenceException(augmentNode.getStatementSourceReference(),
-                        "Augment target '%s' not found", augmentNode.getStatementArgument());
+                            "Augment target '%s' not found", augmentNode.getStatementArgument());
                 }
             });
         }
 
         private static Mutable<?, ?, ?> getSearchRoot(final Mutable<?, ?, ?> augmentContext) {
-            Mutable<?, ?, ?> parent = augmentContext.getParentContext();
+            final Mutable<?, ?, ?> parent = augmentContext.getParentContext();
             // Augment is in uses - we need to augment instantiated nodes in parent.
             if (Rfc6020Mapping.USES.equals(parent.getPublicDefinition())) {
                 return parent.getParentContext();

@@ -28,7 +28,7 @@ module augment-module {
 
     container my-container {
         uses my-grouping {
-            augment "my-extension-name/input/a" {
+            augment "my-extension-name-a/input" {
                 leaf-list my-leaf-list {
                     type string;
                 }

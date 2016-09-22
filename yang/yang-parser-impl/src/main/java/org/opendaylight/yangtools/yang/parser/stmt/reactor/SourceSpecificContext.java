@@ -300,11 +300,11 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             }
         }
 
-        final String message = String.format("Yang model processing phase %s failed", identifier);
         if (exceptions.isEmpty()) {
-            return new InferenceException(message, root.getStatementSourceReference());
+            return null;
         }
 
+        final String message = String.format("Yang model processing phase %s failed", identifier);
         final InferenceException e = new InferenceException(message, root.getStatementSourceReference(),
             exceptions.get(0));
         final Iterator<SourceException> it = exceptions.listIterator(1);
