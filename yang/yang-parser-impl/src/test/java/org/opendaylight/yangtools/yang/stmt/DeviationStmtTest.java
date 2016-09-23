@@ -35,21 +35,23 @@ public class DeviationStmtTest {
 
     private static final StatementStreamSource FOO_MODULE =
             new YangStatementSourceImpl("/deviation-stmt-test/foo.yang", false);
+    private static final StatementStreamSource BAR_MODULE =
+            new YangStatementSourceImpl("/deviation-stmt-test/bar.yang", false);
 
     @Test
     public void testDeviationAndDeviate() throws ReactorException, ParseException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(FOO_MODULE);
+        reactor.addSources(FOO_MODULE, BAR_MODULE);
 
         final SchemaContext schemaContext = reactor.buildEffective();
         assertNotNull(schemaContext);
 
-        final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2016-06-23");
+        Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2016-06-23");
 
-        final Module testModule = schemaContext.findModuleByName("foo", revision);
+        Module testModule = schemaContext.findModuleByName("foo", revision);
         assertNotNull(testModule);
 
-        final Set<Deviation> deviations = testModule.getDeviations();
+        Set<Deviation> deviations = testModule.getDeviations();
         assertEquals(4, deviations.size());
 
         for (Deviation deviation : deviations) {
@@ -84,5 +86,69 @@ public class DeviationStmtTest {
                 assertEquals(2, deviates.iterator().next().getDeviatedUniques().size());
             }
         }
+
+        revision = SimpleDateFormatUtil.getRevisionFormat().parse("2016-09-22");
+        testModule = schemaContext.findModuleByName("bar", revision);
+        assertNotNull(testModule);
+
+        deviations = testModule.getDeviations();
+        assertEquals(7, deviations.size());
+
+        Deviation deviation1 = null;
+        Deviation deviation2 = null;
+        Deviation deviation3 = null;
+        Deviation deviation4 = null;
+        Deviation deviation5 = null;
+        Deviation deviation6 = null;
+        Deviation deviation7 = null;
+
+        for (Deviation deviation : deviations) {
+            final List<DeviateDefinition> deviates = deviation.getDeviates();
+            final String targetLocalName = deviation.getTargetPath().getLastComponent().getLocalName();
+
+            if ("bar-container-1".equals(targetLocalName)) {
+                deviation1 = deviation;
+            }
+
+            if ("bar-container-2".equals(targetLocalName)) {
+                DeviateKind deviateKind = deviates.iterator().next().getDeviateType();
+                if (deviateKind.equals(DeviateKind.NOT_SUPPORTED)) {
+                    deviation2 = deviation;
+                } else if (deviateKind.equals(DeviateKind.ADD)) {
+                    deviation3 = deviation;
+                }
+            }
+
+            if ("bar-leaf-1".equals(targetLocalName)) {
+                if ("desc".equals(deviation.getDescription())) {
+                    deviation4 = deviation;
+                } else {
+                    deviation5 = deviation;
+                }
+            }
+
+            if ("bar-leaf-2".equals(targetLocalName)) {
+                if ("ref".equals(deviation.getReference())) {
+                    deviation6 = deviation;
+                } else {
+                    deviation7 = deviation;
+                }
+            }
+        }
+
+        assertEquals(1, deviation1.getUnknownSchemaNodes().size());
+        assertTrue(deviation1.equals(deviation1));
+        assertFalse(deviation1.equals(null));
+        assertFalse(deviation1.equals("str"));
+
+        DeviateDefinition deviate = deviation1.getDeviates().iterator().next();
+        assertTrue(deviate.equals(deviate));
+        assertFalse(deviate.equals(null));
+        assertFalse(deviate.equals("str"));
+
+        assertFalse(deviation1.equals(deviation2));
+        assertFalse(deviation2.equals(deviation3));
+        assertFalse(deviation4.equals(deviation5));
+        assertFalse(deviation6.equals(deviation7));
     }
 }

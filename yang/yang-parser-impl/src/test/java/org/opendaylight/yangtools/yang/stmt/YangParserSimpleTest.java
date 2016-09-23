@@ -56,6 +56,9 @@ public class YangParserSimpleTest {
         final Module testModule = TestUtils.findModule(modules, "simple-nodes");
         final AnyXmlSchemaNode data = (AnyXmlSchemaNode) testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "data"));
         assertNotNull("'anyxml data not found'", data);
+        assertFalse(data.equals(null));
+        assertEquals("AnyXmlEffectiveStatementImpl[qname=(urn:opendaylight:simple-nodes?revision=2013-07-30)data, " +
+                "path=AbsoluteSchemaPath{path=[(urn:opendaylight:simple-nodes?revision=2013-07-30)data]}]", data.toString());
 
         // test SchemaNode args
         final QName qname = data.getQName();
