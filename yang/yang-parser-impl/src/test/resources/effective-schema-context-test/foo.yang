@@ -1,0 +1,16 @@
+module foo {
+    namespace foo-namespace;
+    prefix foo-prefix;
+
+    revision 2016-09-21;
+
+    container foo-container {}
+
+    notification foo-notification {}
+
+    rpc foo-rpc {}
+
+    extension foo-extension {}
+
+    foo-prefix:foo-extension;
+}

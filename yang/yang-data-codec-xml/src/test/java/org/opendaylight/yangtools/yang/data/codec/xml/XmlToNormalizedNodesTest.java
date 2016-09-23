@@ -127,6 +127,9 @@ public class XmlToNormalizedNodesTest {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
         xmlParser.parse(reader);
 
+        xmlParser.flush();
+        xmlParser.close();
+
         final NormalizedNode<?, ?> transformedInput = result.getResult();
         assertNotNull(transformedInput);
 

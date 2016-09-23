@@ -1,0 +1,16 @@
+module baz {
+    namespace baz-namespace;
+    prefix baz-prefix;
+
+    revision 2016-09-21;
+
+    container baz-container {}
+
+    notification baz-notification {}
+
+    rpc baz-rpc {}
+
+    extension baz-extension {}
+
+    baz-prefix:baz-extension;
+}

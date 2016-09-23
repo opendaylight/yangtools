@@ -1,0 +1,16 @@
+module bar {
+    namespace bar-namespace;
+    prefix bar-prefix;
+
+    revision 2016-09-21;
+
+    container bar-container {}
+
+    notification bar-notification {}
+
+    rpc bar-rpc {}
+
+    extension bar-extension {}
+
+    bar-prefix:bar-extension;
+}

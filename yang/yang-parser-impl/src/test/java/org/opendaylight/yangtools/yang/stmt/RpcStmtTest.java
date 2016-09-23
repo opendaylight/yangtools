@@ -9,10 +9,16 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.text.ParseException;
+import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -28,11 +34,13 @@ public class RpcStmtTest {
     private static final YangStatementSourceImpl RPC_MODULE = new YangStatementSourceImpl("/model/baz.yang", false);
     private static final YangStatementSourceImpl IMPORTED_MODULE = new YangStatementSourceImpl("/model/bar.yang",
             false);
+    private static final YangStatementSourceImpl FOO_MODULE = new YangStatementSourceImpl("/rpc-stmt-test/foo.yang",
+            false);
 
     @Test
-    public void rpcTest() throws ReactorException {
+    public void rpcTest() throws ReactorException, ParseException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        StmtTestUtils.addSources(reactor, RPC_MODULE, IMPORTED_MODULE);
+        StmtTestUtils.addSources(reactor, RPC_MODULE, IMPORTED_MODULE, FOO_MODULE);
 
         final EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);
@@ -60,5 +68,39 @@ public class RpcStmtTest {
 
         anyXml = (AnyXmlSchemaNode) output.getDataChildByName(QName.create(testModule.getQNameModule(), "data"));
         assertNotNull(anyXml);
+
+        final Module fooModule = result.findModuleByName("foo", SimpleDateFormatUtil.getRevisionFormat().parse("2016-09-23"));
+        assertNotNull(fooModule);
+
+        final Set<RpcDefinition> rpcs = fooModule.getRpcs();
+        assertEquals(2, rpcs.size());
+
+        RpcDefinition fooRpc1 = null;
+        RpcDefinition fooRpc2 = null;
+
+        for (RpcDefinition rpcDefinition : rpcs) {
+            if ("foo-rpc-1".equals(rpcDefinition.getQName().getLocalName())) {
+                fooRpc1 = rpcDefinition;
+            } else if ("foo-rpc-2".equals(rpcDefinition.getQName().getLocalName())) {
+                fooRpc2 = rpcDefinition;
+            }
+        }
+
+        assertFalse(fooRpc1.equals(null));
+        assertFalse(fooRpc1.equals("str"));
+        assertFalse(fooRpc1.equals(fooRpc2));
+
+        assertNotEquals(fooRpc1.getInput().hashCode(), fooRpc2.getInput().hashCode());
+        assertNotEquals(fooRpc1.getOutput().hashCode(), fooRpc2.getOutput().hashCode());
+
+        assertTrue(fooRpc1.getInput().equals(fooRpc1.getInput()));
+        assertFalse(fooRpc1.getInput().equals(null));
+        assertFalse(fooRpc1.getInput().equals("str"));
+        assertFalse(fooRpc1.getInput().equals(fooRpc2.getInput()));
+
+        assertTrue(fooRpc1.getOutput().equals(fooRpc1.getOutput()));
+        assertFalse(fooRpc1.getOutput().equals(null));
+        assertFalse(fooRpc1.getOutput().equals("str"));
+        assertFalse(fooRpc1.getOutput().equals(fooRpc2.getOutput()));
     }
 }

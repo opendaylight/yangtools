@@ -1,0 +1,73 @@
+module foo {
+    namespace foo-namespace;
+    prefix foo-prefix;
+
+    revision 2016-09-20;
+
+    leaf mandatory-leaf-1 {
+        type int32;
+        mandatory true;
+        when "foo = 'bar'";
+        must "bar != 'foo'";
+    }
+
+    leaf mandatory-leaf-2 {
+        type int32;
+        mandatory true;
+        when "foo = 'bar'";
+        must "bar != 'foo'";
+    }
+
+    leaf mandatory-leaf-3 {
+        type int32;
+        mandatory false;
+        when "foo = 'bar'";
+        must "bar != 'foo'";
+    }
+
+    leaf mandatory-leaf-4 {
+        type int32;
+        mandatory false;
+        when "foo = 'baz'";
+        must "bar != 'foo'";
+    }
+
+    leaf mandatory-leaf-5 {
+        type int32;
+        mandatory false;
+        when "foo = 'baz'";
+        must "baz != 'foo'";
+    }
+
+    leaf-list constrained-leaf-list-1 {
+        type int32;
+        when "foo = 'bar'";
+        must "bar != 'foo'";
+        min-elements 10;
+        max-elements 100;
+    }
+
+    leaf-list constrained-leaf-list-2 {
+        type int32;
+        when "foo = 'bar'";
+        must "bar != 'foo'";
+        min-elements 10;
+        max-elements 100;
+    }
+
+    leaf-list constrained-leaf-list-3 {
+        type int32;
+        when "foo = 'bar'";
+        must "bar != 'foo'";
+        min-elements 50;
+        max-elements 500;
+    }
+
+    leaf-list constrained-leaf-list-4 {
+        type int32;
+        when "foo = 'bar'";
+        must "bar != 'foo'";
+        min-elements 50;
+        max-elements 100;
+    }
+}

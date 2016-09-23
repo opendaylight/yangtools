@@ -1,0 +1,63 @@
+module bar {
+    namespace bar-namespace;
+    prefix bar-prefix;
+
+    revision "2016-09-22";
+
+    deviation "/bar-container-1" {
+        deviate not-supported;
+        bar-prefix:bar-extension;
+    }
+
+    deviation "/bar-container-2" {
+        deviate not-supported;
+    }
+
+    deviation "/bar-container-2" {
+        deviate add {
+            config false;
+        }
+    }
+
+    deviation "/bar-container-1/bar-leaf-1" {
+        deviate add {
+            default "def-val";
+        }
+        description "desc";
+    }
+
+    deviation "/bar-container-1/bar-leaf-1" {
+        deviate add {
+            default "def-val";
+        }
+        description "another desc";
+    }
+
+    deviation "/bar-container-1/bar-leaf-2" {
+        deviate add {
+            default "def-val";
+        }
+        reference "ref";
+    }
+
+    deviation "/bar-container-1/bar-leaf-2" {
+        deviate add {
+            default "def-val";
+        }
+        reference "another ref";
+    }
+
+    container bar-container-1 {
+        leaf bar-leaf-1 {
+            type string;
+        }
+    }
+
+    container bar-container-2 {
+        leaf bar-leaf-2 {
+            type string;
+        }
+    }
+
+    extension bar-extension {}
+}
