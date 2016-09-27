@@ -143,6 +143,7 @@ public final class YangInferencePipeline {
             .addSupport(new FractionDigitsStatementImpl.Definition())
             .addSupport(new BaseStatementImpl.Definition())
             .addSupport(global(DerivedIdentitiesNamespace.class))
+            .addSupport(new AugmentStatementImpl.Definition())
             .build();
 
     public static final StatementSupportBundle FULL_DECL_BUNDLE = StatementSupportBundle
@@ -168,7 +169,6 @@ public final class YangInferencePipeline {
             .addSupport(new MinElementsStatementImpl.Definition())
             .addSupport(new OrderedByStatementImpl.Definition())
             .addSupport(new WhenStatementImpl.Definition())
-            .addSupport(new AugmentStatementImpl.Definition())
             .addSupport(treeScoped(AugmentToChoiceNamespace.class))
             .addSupport(new RefineStatementImpl.Definition())
             .addSupport(new FeatureStatementImpl.Definition())
