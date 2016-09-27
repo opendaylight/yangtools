@@ -65,23 +65,18 @@ public class TypedefStatementImpl extends AbstractDeclaredStatement<QName> imple
         }
 
         @Override
-        public void onStatementDefinitionDeclared(
-                final StmtContext.Mutable<QName, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> stmt) {
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<QName, TypedefStatement,
+                EffectiveStatement<QName, TypedefStatement>> stmt) {
+            super.onFullDefinitionDeclared(stmt);
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
             if (stmt != null && stmt.getParentContext() != null) {
-                final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> existing =
-                        stmt.getParentContext().getFromNamespace(TypeNamespace.class, stmt.getStatementArgument());
+                final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> existing = stmt.getParentContext()
+                        .getFromNamespace(TypeNamespace.class, stmt.getStatementArgument());
                 SourceException.throwIf(existing != null, stmt.getStatementSourceReference(),
                         "Duplicate name for typedef %s", stmt.getStatementArgument());
 
                 stmt.getParentContext().addContext(TypeNamespace.class, stmt.getStatementArgument(), stmt);
             }
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(final StmtContext.Mutable<QName, TypedefStatement,
-                EffectiveStatement<QName, TypedefStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
     }
 

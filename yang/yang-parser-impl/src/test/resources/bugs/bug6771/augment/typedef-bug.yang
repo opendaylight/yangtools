@@ -1,0 +1,26 @@
+module typedef-bug {
+    namespace "http://www.example.com/typedef-bug";
+    prefix tdb;
+
+    container root {
+    }
+
+    augment "/root" {
+        container container-b {
+
+            leaf leaf-container-b {
+                type type-container-b;
+            }
+
+            typedef type-container-b {
+                type uint32;
+            }
+
+            container inner-container {
+                leaf leaf-container-b {
+                    type type-container-b;
+                }
+            }
+        }
+    }
+}
