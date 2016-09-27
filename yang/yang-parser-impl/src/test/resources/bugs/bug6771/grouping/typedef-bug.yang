@@ -1,0 +1,21 @@
+module typedef-bug {
+    namespace "http://www.example.com/typedef-bug";
+    prefix tdb;
+
+    container root {
+        uses grp;
+    }
+
+    grouping grp {
+        container container-b {
+
+            typedef type-container-b {
+                type uint32;
+            }
+
+            leaf leaf-container-b {
+                type type-container-b;
+            }
+        }
+    }
+}
