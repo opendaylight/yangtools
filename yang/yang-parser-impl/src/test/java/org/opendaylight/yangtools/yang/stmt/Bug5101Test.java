@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public class Bug5101 {
+public class Bug5101Test {
     private static final String NS = "foo";
     private static final String REV = "2016-01-29";
 

@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public class Bug5335 {
+public class Bug5335Test {
     private static final String FOO = "foo";
     private static final String BAR = "bar";
     private static final String REV = "2016-03-04";
