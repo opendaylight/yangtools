@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public class Bug5481 {
+public class Bug5481Test {
     @Test
     public void test() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
         SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5481");

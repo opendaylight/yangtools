@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public class Bug5396 {
+public class Bug5396Test {
     @Test
     public void test() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
         SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5396");

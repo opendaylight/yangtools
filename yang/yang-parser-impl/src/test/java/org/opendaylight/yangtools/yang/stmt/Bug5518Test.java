@@ -7,36 +7,34 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
+import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public class Bug5550 {
-    private static final String NS = "foo";
-    private static final String REV = "2016-03-18";
-
+public class Bug5518Test {
     @Test
     public void test() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
-        SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5550");
+        final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5518");
         assertNotNull(context);
 
-        QName root = QName.create(NS, REV, "root");
-        QName containerInGrouping = QName.create(NS, REV, "container-in-grouping");
-        QName leaf1 = QName.create(NS, REV, "leaf-1");
-
-        SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, root, containerInGrouping, leaf1));
-        assertTrue(findDataSchemaNode instanceof LeafSchemaNode);
+        final DataSchemaNode dataChildByName = context.getDataChildByName(QName.create("foo", "1970-01-01", "root"));
+        assertTrue(dataChildByName instanceof ContainerSchemaNode);
+        final ContainerSchemaNode root = (ContainerSchemaNode) dataChildByName;
+        final Set<MustDefinition> mustConstraints = root.getConstraints().getMustConstraints();
+        assertEquals(1, mustConstraints.size());
+        final MustDefinition must = mustConstraints.iterator().next();
+        assertEquals("not(deref(.)/../same-pass)", must.getXpath().toString());
     }
 }
