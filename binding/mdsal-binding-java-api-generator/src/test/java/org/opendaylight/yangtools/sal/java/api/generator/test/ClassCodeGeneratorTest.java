@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -35,7 +36,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class ClassCodeGeneratorTest {
 
-    private final static List<File> testModels = new ArrayList<File>();
+    private final static List<File> testModels = new ArrayList<>();
 
     @BeforeClass
     public static void loadTestResources() throws URISyntaxException {
@@ -141,6 +142,7 @@ public class ClassCodeGeneratorTest {
         toBuilder.addToStringProperty(propBuilder);
         final GeneratedTransferObject genTO = toBuilder.toInstance();
         final TOGenerator clsGen = new TOGenerator();
+        assertEquals("", clsGen.generate(Types.typeForClass(String.class)));
         assertNotNull(clsGen.generate(genTO));
     }
 }
