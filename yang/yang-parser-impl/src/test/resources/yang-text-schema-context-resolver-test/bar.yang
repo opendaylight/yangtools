@@ -1,0 +1,12 @@
+module bar {
+    namespace bar-namespace;
+    prefix bar-prefix;
+
+    revision 2016-09-26;
+
+    container bar-container {
+        leaf bar-leaf {
+            type string;
+        }
+    }
+}

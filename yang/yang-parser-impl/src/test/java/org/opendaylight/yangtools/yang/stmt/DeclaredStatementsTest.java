@@ -11,11 +11,15 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import java.text.ParseException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -25,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
@@ -36,8 +41,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
@@ -45,6 +55,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
@@ -257,6 +268,10 @@ public class DeclaredStatementsTest {
         assertNotNull(moduleStatementPrefix);
         assertNotNull(moduleStatementPrefix.getValue());
 
+        assertEquals(1, moduleStatement.getIncludes().size());
+        IncludeStatement includeStatement = moduleStatement.getIncludes().iterator().next();
+        assertEquals("child-module-declared-test", includeStatement.getModule());
+
         Set<Module> submodules = testModule.getSubmodules();
         assertNotNull(submodules);
         assertEquals(1, submodules.size());
@@ -274,6 +289,82 @@ public class DeclaredStatementsTest {
         assertNotNull(belongsToStatement);
         assertNotNull(belongsToStatement.getModule());
         assertNotNull(belongsToStatement.getPrefix());
+    }
+
+    @Test
+    public void testDeclaredModule() throws ReactorException, ParseException {
+        YangStatementSourceImpl rootModule =
+                new YangStatementSourceImpl("/declared-statements-test/root-module-declared-test.yang", false);
+
+        YangStatementSourceImpl importedModule =
+                new YangStatementSourceImpl("/declared-statements-test/imported-module-declared-test.yang", false);
+
+        SchemaContext schemaContext = StmtTestUtils.parseYangSources(rootModule, importedModule);
+        assertNotNull(schemaContext);
+
+        Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2016-09-28");
+
+        Module testModule = schemaContext.findModuleByName("root-module-declared-test", revision);
+        assertNotNull(testModule);
+
+        ModuleStatement moduleStatement = ((ModuleEffectiveStatementImpl) testModule).getDeclared();
+
+        assertEquals(1, moduleStatement.getImports().size());
+        ImportStatement importStatement = moduleStatement.getImports().iterator().next();
+        assertEquals("imported-module-declared-test", importStatement.getModule());
+        assertEquals("imdt", importStatement.getPrefix().getValue());
+        assertEquals(revision, importStatement.getRevisionDate().getDate());
+
+        assertEquals("test description", moduleStatement.getDescription().getText());
+        assertEquals("test reference", moduleStatement.getReference().getText());
+        assertEquals("test organization", moduleStatement.getOrganization().getText());
+        assertEquals("test contact", moduleStatement.getContact().getText());
+
+        assertEquals(1, moduleStatement.getRevisions().size());
+        RevisionStatement revisionStatement = moduleStatement.getRevisions().iterator().next();
+        assertEquals(revision, revisionStatement.getDate());
+        assertEquals("test description", revisionStatement.getDescription().getText());
+        assertEquals("test reference", revisionStatement.getReference().getText());
+
+        assertEquals(1, moduleStatement.getExtensions().size());
+        ExtensionStatement extensionStatement = moduleStatement.getExtensions().iterator().next();
+        assertEquals(Status.CURRENT, extensionStatement.getStatus().getValue());
+        assertEquals("test description", extensionStatement.getDescription().getText());
+        assertEquals("test reference", extensionStatement.getReference().getText());
+        ArgumentStatement argumentStatement = extensionStatement.getArgument();
+        assertEquals("ext-argument", argumentStatement.getName().getLocalName());
+        assertTrue(argumentStatement.getYinElement().getValue());
+
+        assertEquals(1, moduleStatement.getFeatures().size());
+        FeatureStatement featureStatement = moduleStatement.getFeatures().iterator().next();
+        assertEquals(Status.CURRENT, featureStatement.getStatus().getValue());
+        assertEquals("test description", featureStatement.getDescription().getText());
+        assertEquals("test reference", featureStatement.getReference().getText());
+        assertEquals("test-feature", featureStatement.getName().getLocalName());
+        assertEquals(1, featureStatement.getIfFeatures().size());
+
+        assertEquals(2, moduleStatement.getIdentities().size());
+        IdentityStatement identityStatement = null;
+        for (IdentityStatement identity : moduleStatement.getIdentities()) {
+            if (identity.getName().getLocalName().equals("test-id")) {
+                identityStatement = identity;
+            }
+        }
+
+        assertEquals("test-base-id", identityStatement.getBase().getName().getLocalName());
+        assertEquals(Status.CURRENT, identityStatement.getStatus().getValue());
+        assertEquals("test description", identityStatement.getDescription().getText());
+        assertEquals("test reference", identityStatement.getReference().getText());
+        assertEquals("test-id", identityStatement.getName().getLocalName());
+
+        assertEquals(1, moduleStatement.getTypedefs().size());
+        TypedefStatement typedefStatement = moduleStatement.getTypedefs().iterator().next();
+        assertEquals(Status.CURRENT, typedefStatement.getStatus().getValue());
+        assertEquals("test description", typedefStatement.getDescription().getText());
+        assertEquals("test reference", typedefStatement.getReference().getText());
+        assertEquals("test-typedef", typedefStatement.getName().getLocalName());
+        assertEquals("int32", typedefStatement.getType().getName());
+        assertEquals("meter", typedefStatement.getUnits().getName());
     }
 
     @Test
