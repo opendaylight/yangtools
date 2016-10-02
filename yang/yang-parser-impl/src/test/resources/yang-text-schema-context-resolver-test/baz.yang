@@ -1,0 +1,12 @@
+module baz {
+    namespace baz-namespace;
+    prefix baz-prefix;
+
+    revision 2016-09-26;
+
+    container baz-container {
+        leaf baz-leaf {
+            type string;
+        }
+    }
+}

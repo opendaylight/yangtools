@@ -1,0 +1,55 @@
+module root-module-declared-test {
+    namespace root-module-declared-test;
+    prefix rmdt;
+
+    import imported-module-declared-test {
+        prefix imdt;
+        revision-date 2016-09-28;
+    }
+
+    description "test description";
+    reference "test reference";
+    organization "test organization";
+    contact "test contact";
+
+    revision 2016-09-28 {
+        description "test description";
+        reference "test reference";
+    }
+
+    extension test-extension {
+        argument ext-argument {
+            yin-element true;
+        }
+        status current;
+        description "test description";
+        reference "test reference";
+    }
+
+    feature test-feature {
+        if-feature required-feature;
+        status current;
+        description "test description";
+        reference "test reference";
+    }
+
+    identity test-base-id;
+
+    identity test-id {
+        base test-base-id;
+        status current;
+        description "test description";
+        reference "test reference";
+    }
+
+    typedef test-typedef {
+        type int32 {
+            range "5..10";
+        }
+
+        status current;
+        description "test description";
+        reference "test reference";
+        units "meter";
+    }
+}

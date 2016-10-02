@@ -1,0 +1,6 @@
+module imported-module-declared-test {
+    namespace imported-module-declared-test;
+    prefix imdt;
+
+    revision 2016-09-28;
+}
