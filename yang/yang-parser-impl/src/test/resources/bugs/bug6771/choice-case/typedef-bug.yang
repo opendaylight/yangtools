@@ -1,0 +1,45 @@
+module typedef-bug {
+    namespace "http://www.example.com/typedef-bug";
+    prefix tdb;
+
+    container root {
+        choice my-choice {
+            case one {
+                container container-one {
+
+                    typedef type-container-b {
+                        type uint32;
+                    }
+
+                    leaf leaf-container-b {
+                        type type-container-b;
+                    }
+                }
+            }
+            case two {
+                container container-two {
+
+                    leaf leaf-container-b {
+                        type type-container-b;
+                    }
+
+                    typedef type-container-b {
+                        type uint32;
+                    }
+                }
+            }
+            case three {
+                container container-three {
+                    container inner-container {
+                        leaf leaf-container-b {
+                            type type-container-b;
+                        }
+                    }
+                    typedef type-container-b {
+                        type uint32;
+                    }
+                }
+            }
+        }
+    }
+}
