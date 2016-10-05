@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.sal.java.api.generator;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.opendaylight.yangtools.sal.java.api.generator.Constants.COMMA;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -46,7 +47,7 @@ public final class GeneratorUtil {
      * @throws IllegalArgumentException
      *             if <code>genType</code> equals <code>null</code>
      */
-    public static Map<String, String> createImports(final GeneratedType genType) {
+    static Map<String, String> createImports(final GeneratedType genType) {
         if (genType == null) {
             throw new IllegalArgumentException("Generated Type cannot be NULL!");
         }
@@ -93,7 +94,6 @@ public final class GeneratorUtil {
                 }
             }
         }
-
         return imports;
     }
 
@@ -125,8 +125,8 @@ public final class GeneratorUtil {
      *             <code>null</code></li>
      *             </ul>
      */
-    public static void putTypeIntoImports(final GeneratedType parentGenType, final Type type,
-            final Map<String, String> imports) {
+    static void putTypeIntoImports(final GeneratedType parentGenType, final Type type,
+                                   final Map<String, String> imports) {
         checkArgument(parentGenType != null, "Parent Generated Type parameter MUST be specified and cannot be "
                 + "NULL!");
         checkArgument(parentGenType.getName() != null, "Parent Generated Type name cannot be NULL!");
@@ -178,7 +178,7 @@ public final class GeneratorUtil {
      *             <li>if <code>genTO</code> equals <code>null</code></li>
      *             </ul>
      */
-    public static boolean isConstantInTO(final String constName, final GeneratedTransferObject genTO) {
+    static boolean isConstantInTO(final String constName, final GeneratedTransferObject genTO) {
         if (constName == null || genTO == null) {
             throw new IllegalArgumentException();
         }
@@ -201,7 +201,7 @@ public final class GeneratorUtil {
      * @return map of the package names for all the enclosed types and
      *         recursivelly their enclosed types
      */
-    public static Map<String, String> createChildImports(final GeneratedType genType) {
+    static Map<String, String> createChildImports(final GeneratedType genType) {
         Map<String, String> childImports = new LinkedHashMap<>();
         List<GeneratedType> childGeneratedTypes = genType.getEnclosedTypes();
         if (!childGeneratedTypes.isEmpty()) {
@@ -237,8 +237,8 @@ public final class GeneratorUtil {
      *             <li>if the <code>imports</code> equals <code>null</code></li>
      *             </ul>
      */
-    public static String getExplicitType(final GeneratedType parentGenType, final Type type,
-            final Map<String, String> imports) {
+    static String getExplicitType(final GeneratedType parentGenType, final Type type,
+                                  final Map<String, String> imports) {
 
         checkArgument(type != null, "Type parameter MUST be specified and cannot be NULL!");
         checkArgument(type.getName() != null, "Type name cannot be NULL!");
@@ -249,6 +249,7 @@ public final class GeneratorUtil {
         final String typeName = type.getName();
         final String importedPackageName = imports.get(typeName);
         final StringBuilder builder;
+
         if (typePackageName.equals(importedPackageName)) {
             builder = new StringBuilder(type.getName());
             addActualTypeParameters(builder, type, parentGenType, imports);
@@ -257,18 +258,17 @@ public final class GeneratorUtil {
             }
         } else {
             builder = new StringBuilder();
-                if (!typePackageName.isEmpty()) {
-                    builder.append(typePackageName + Constants.DOT + type.getName());
-                } else {
-                    builder.append(type.getName());
-                }
+            if (!typePackageName.isEmpty()) {
+                builder.append(typePackageName).append(Constants.DOT).append(type.getName());
+            } else {
+                builder.append(type.getName());
+            }
             if (type.equals(Types.voidType())) {
                 return "void";
             }
             addActualTypeParameters(builder, type, parentGenType, imports);
         }
         return builder.toString();
-
     }
 
     /**
@@ -290,7 +290,7 @@ public final class GeneratorUtil {
      *         parameters</li> <li>else only <code>builder</code></li>
      */
     private static StringBuilder addActualTypeParameters(final StringBuilder builder, final Type type,
-            final GeneratedType parentGenType, final Map<String, String> imports) {
+                                                         final GeneratedType parentGenType, final Map<String, String> imports) {
         if (type instanceof ParameterizedType) {
             final ParameterizedType pType = (ParameterizedType) type;
             final Type[] pTypes = pType.getActualTypeArguments();
@@ -314,7 +314,8 @@ public final class GeneratorUtil {
      * @return string with all actual type parameters from <code>pTypes</code>
      */
     private static String getParameters(final GeneratedType parentGenType, final Type[] pTypes,
-            final Map<String, String> availableImports) {
+                                        final Map<String, String> availableImports) {
+
         if (pTypes == null || pTypes.length == 0) {
             return "?";
         }
@@ -327,17 +328,13 @@ public final class GeneratorUtil {
                 separator = "";
             }
 
-            String wildcardParam = "";
-            if (t.equals(Types.voidType())) {
-                builder.append("java.lang.Void" + separator);
-                continue;
+            if (Types.voidType().equals(t)) {
+                builder.append("java.lang.Void").append(separator);
             } else {
-
                 if (t instanceof WildcardType) {
-                    wildcardParam = "? extends ";
+                    builder.append("? extends ");
                 }
-
-                builder.append(wildcardParam + getExplicitType(parentGenType, t, availableImports) + separator);
+                builder.append(getExplicitType(parentGenType, t, availableImports)).append(separator);
             }
         }
         return builder.toString();
@@ -355,14 +352,14 @@ public final class GeneratorUtil {
      * @throws IllegalArgumentException
      *             if <code>childTransportObject</code> equals <code>null</code>
      */
-    public static GeneratedTransferObject getTopParrentTransportObject(final GeneratedTransferObject childTransportObject) {
+    static GeneratedTransferObject getTopParentTransportObject(final GeneratedTransferObject childTransportObject) {
         if (childTransportObject == null) {
             throw new IllegalArgumentException("Parameter childTransportObject can't be null.");
         }
         if (childTransportObject.getSuperType() == null) {
             return childTransportObject;
         } else {
-            return getTopParrentTransportObject(childTransportObject.getSuperType());
+            return getTopParentTransportObject(childTransportObject.getSuperType());
         }
     }
 
@@ -375,8 +372,8 @@ public final class GeneratorUtil {
      * @return subset of <code>properties</code> which have read only attribute
      *         set to true
      */
-    public static List<GeneratedProperty> resolveReadOnlyPropertiesFromTO(final List<GeneratedProperty> properties) {
-        List<GeneratedProperty> readOnlyProperties = new ArrayList<GeneratedProperty>();
+    static List<GeneratedProperty> resolveReadOnlyPropertiesFromTO(final List<GeneratedProperty> properties) {
+        List<GeneratedProperty> readOnlyProperties = new ArrayList<>();
         if (properties != null) {
             for (final GeneratedProperty property : properties) {
                 if (property.isReadOnly()) {
@@ -399,8 +396,8 @@ public final class GeneratorUtil {
      *         generated transfer object. In case when extension exists the
      *         method is recursive called.
      */
-    public static List<GeneratedProperty> getPropertiesOfAllParents(final GeneratedTransferObject genTO) {
-        List<GeneratedProperty> propertiesOfAllParents = new ArrayList<GeneratedProperty>();
+    static List<GeneratedProperty> getPropertiesOfAllParents(final GeneratedTransferObject genTO) {
+        List<GeneratedProperty> propertiesOfAllParents = new ArrayList<>();
         if (genTO.getSuperType() != null) {
             final List<GeneratedProperty> allPropertiesOfTO = genTO.getSuperType().getProperties();
             List<GeneratedProperty> readOnlyPropertiesOfTO = resolveReadOnlyPropertiesFromTO(allPropertiesOfTO);
@@ -409,5 +406,4 @@ public final class GeneratorUtil {
         }
         return propertiesOfAllParents;
     }
-
 }
