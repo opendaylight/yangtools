@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_ad7223ab",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/EvenMoreObjects.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-06T23:40:26Z",
+      "side": 1,
+      "message": "Faster when both are null, also more readable:\n\nif (other \u003d\u003d self) {\n    return true;\n}\nif (other \u003d\u003d null) {\n    return false;\n}",
+      "range": {
+        "startLine": 37,
+        "startChar": 0,
+        "endLine": 42,
+        "endChar": 9
+      },
+      "revId": "4c5dfadaad2080ead91a66b29d391328147ae84f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
