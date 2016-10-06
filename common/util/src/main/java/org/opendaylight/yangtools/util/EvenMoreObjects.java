@@ -34,11 +34,11 @@ public final class EvenMoreObjects {
 
     @SuppressWarnings("unchecked")
     public static <T> boolean equalsHelper(T self, Object other, BooleanEqualsFunction<T> equals) {
-        if (other == null) {
-            return false;
-        }
         if (other == self) {
             return true;
+        }
+        if (other == null) {
+            return false;
         }
         if (self.getClass() != other.getClass()) {
             return false;
