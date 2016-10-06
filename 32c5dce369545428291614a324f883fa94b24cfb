@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_87d2a632",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2016-10-06T15:40:37Z",
+      "side": 1,
+      "message": "Yeah this helper was only supposed to ever be called with \"this\" as first arg.. ;-) but sure, I have no objection to this hardening it, just in case.",
+      "revId": "32c5dce369545428291614a324f883fa94b24cfb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_271632f2",
+        "filename": "common/util/src/test/java/org/opendaylight/yangtools/util/EvenMoreObjectsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2016-10-06T15:40:37Z",
+      "side": 1,
+      "message": "maybe rename this from test() to thingEquals() ?",
+      "revId": "32c5dce369545428291614a324f883fa94b24cfb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_4719ae21",
+        "filename": "common/util/src/test/java/org/opendaylight/yangtools/util/EvenMoreObjectsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2016-10-06T15:40:37Z",
+      "side": 1,
+      "message": "How about putting this into a separate new @Test public void nullnull() method? Just to keep separate test cases clear.",
+      "revId": "32c5dce369545428291614a324f883fa94b24cfb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
