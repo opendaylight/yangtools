@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "7a6b29fe_a7afe293",
+        "filename": "common/util/src/test/java/org/opendaylight/yangtools/util/EvenMoreObjectsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 4540
+      },
+      "writtenOn": "2016-10-06T15:57:37Z",
+      "side": 1,
+      "message": "Done, following the \"@Test that\" paradigm (so thingPassesEqualsTester()).",
+      "parentUuid": "7a6b29fe_271632f2",
+      "revId": "32c5dce369545428291614a324f883fa94b24cfb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a6b29fe_4719ae21",
         "filename": "common/util/src/test/java/org/opendaylight/yangtools/util/EvenMoreObjectsTest.java",
         "patchSetId": 2
@@ -47,6 +65,24 @@
       "writtenOn": "2016-10-06T15:40:37Z",
       "side": 1,
       "message": "How about putting this into a separate new @Test public void nullnull() method? Just to keep separate test cases clear.",
+      "revId": "32c5dce369545428291614a324f883fa94b24cfb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_0794d642",
+        "filename": "common/util/src/test/java/org/opendaylight/yangtools/util/EvenMoreObjectsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 4540
+      },
+      "writtenOn": "2016-10-06T15:57:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a6b29fe_4719ae21",
       "revId": "32c5dce369545428291614a324f883fa94b24cfb",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
