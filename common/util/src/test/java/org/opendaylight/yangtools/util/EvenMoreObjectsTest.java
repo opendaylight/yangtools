@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.util;
 
+import static org.junit.Assert.assertTrue;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.testing.EqualsTester;
 import java.util.Objects;
@@ -22,6 +24,7 @@ public class EvenMoreObjectsTest {
                 .addEqualityGroup(new Thing("hoi", null))
                 .addEqualityGroup(new Thing(null, null))
                 .testEquals();
+        assertTrue(EvenMoreObjects.equalsHelper(null, null, (one, another) -> true));
     }
 
     static class Thing {
