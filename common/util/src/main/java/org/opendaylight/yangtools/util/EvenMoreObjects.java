@@ -35,7 +35,7 @@ public final class EvenMoreObjects {
     @SuppressWarnings("unchecked")
     public static <T> boolean equalsHelper(T self, Object other, BooleanEqualsFunction<T> equals) {
         if (other == null) {
-            return false;
+            return self == null;
         }
         if (other == self) {
             return true;
