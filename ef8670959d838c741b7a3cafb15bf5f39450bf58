@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_3a5e4013",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/EvenMoreObjects.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 3635
+      },
+      "writtenOn": "2016-10-11T15:52:27Z",
+      "side": 1,
+      "message": "Is there meant to be an accompanying -\u0026lt ?",
+      "range": {
+        "startLine": 22,
+        "startChar": 25,
+        "endLine": 22,
+        "endChar": 29
+      },
+      "revId": "ef8670959d838c741b7a3cafb15bf5f39450bf58",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
