@@ -123,7 +123,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void leafNode(String localName, Object value) throws IOException, IllegalArgumentException;
+    void leafNode(String localName, Object value) throws IOException;
 
     /**
      *
@@ -149,7 +149,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void startLeafSet(String localName, int childSizeHint) throws IOException, IllegalArgumentException;
+    void startLeafSet(String localName, int childSizeHint) throws IOException;
 
     /**
      *
@@ -175,7 +175,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void startOrderedLeafSet(String localName, int childSizeHint) throws IOException, IllegalArgumentException;
+    void startOrderedLeafSet(String localName, int childSizeHint) throws IOException;
 
     /**
      * Emits a leaf set entry node
@@ -188,7 +188,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *             If node was emitted outside <code>leaf set</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void leafSetEntryNode(Object value) throws IOException, IllegalArgumentException;
+    void leafSetEntryNode(Object value) throws IOException;
 
     /**
      *
@@ -225,7 +225,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void startContainerNode(Class<? extends DataObject> container, int childSizeHint) throws IOException, IllegalArgumentException;
+    void startContainerNode(Class<? extends DataObject> container, int childSizeHint) throws IOException;
 
     /**
      *
@@ -252,7 +252,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void startUnkeyedList(Class<? extends DataObject> localName, int childSizeHint) throws IOException, IllegalArgumentException;
+    void startUnkeyedList(Class<? extends DataObject> localName, int childSizeHint) throws IOException;
 
     /**
      * Emits start of new unkeyed list item.
@@ -283,7 +283,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *             If node was emitted outside <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void startUnkeyedListItem(int childSizeHint) throws IOException, IllegalStateException;
+    void startUnkeyedListItem(int childSizeHint) throws IOException;
 
     /**
      *
@@ -308,7 +308,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      * @throws IOException if an underlying IO error occurs
      */
     <T extends DataObject & Identifiable<?>> void startMapNode(Class<T> mapEntryType, int childSizeHint)
-            throws IOException, IllegalArgumentException;
+            throws IOException;
 
     /**
      *
@@ -333,7 +333,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      * @throws IOException if an underlying IO error occurs
      */
     <T extends DataObject & Identifiable<?>> void startOrderedMapNode(Class<T> mapEntryType, int childSizeHint)
-           throws IOException, IllegalArgumentException;
+            throws IOException;
 
     /**
      *
@@ -367,7 +367,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *             If node was emitted outside <code>map entry</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void startMapEntryNode(Identifier<?> keyValues, int childSizeHint) throws IOException, IllegalArgumentException;
+    void startMapEntryNode(Identifier<?> keyValues, int childSizeHint) throws IOException;
 
     /**
      * Emits start of choice node.
@@ -389,7 +389,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *             <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void startChoiceNode(Class<? extends DataContainer> choice, int childSizeHint) throws IOException, IllegalArgumentException;
+    void startChoiceNode(Class<? extends DataContainer> choice, int childSizeHint) throws IOException;
 
     /**
      *
@@ -411,7 +411,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      * @throws IllegalArgumentException
      * @throws IOException if an underlying IO error occurs
      */
-    void startCase(Class<? extends DataObject> caze, int childSizeHint) throws IOException, IllegalArgumentException;
+    void startCase(Class<? extends DataObject> caze, int childSizeHint) throws IOException;
 
     /**
      * Emits start of augmentation node.
@@ -440,7 +440,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *             If augmentation is invalid in current context.
      * @throws IOException if an underlying IO error occurs
      */
-    void startAugmentationNode(Class<? extends Augmentation<?>> augmentationType) throws IOException, IllegalArgumentException;
+    void startAugmentationNode(Class<? extends Augmentation<?>> augmentationType) throws IOException;
 
     /**
      * Emits anyxml node event.
@@ -453,7 +453,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void anyxmlNode(String name, Object value) throws IOException, IllegalArgumentException;
+    void anyxmlNode(String name, Object value) throws IOException;
 
     /**
      * Emits end event for node.
@@ -461,8 +461,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      * @throws IllegalStateException If there is no open node.
      * @throws IOException if an underlying IO error occurs
      */
-    void endNode() throws IOException, IllegalStateException;
-
+    void endNode() throws IOException;
     @Override
     void flush() throws IOException;
 

@@ -41,6 +41,32 @@ public final class NotificationListenerInvoker {
             .newBuilder().weakKeys()
             .build(new CacheLoader<Class<? extends NotificationListener>, NotificationListenerInvoker>() {
 
+                private NotificationListenerInvoker createInvoker(
+                        final Class<? extends NotificationListener> key) {
+                    return new NotificationListenerInvoker(createInvokerMap(key));
+                }
+
+                private Map<QName, MethodHandle> createInvokerMap(final Class<? extends NotificationListener> key) {
+                    final Builder<QName, MethodHandle> ret = ImmutableMap.<QName, MethodHandle> builder();
+                    for (final Method method : key.getMethods()) {
+                        if (BindingReflections.isNotificationCallback(method)) {
+
+                            final Class<?> notification = method.getParameterTypes()[0];
+                            final QName name = BindingReflections.findQName(notification);
+                            MethodHandle handle;
+                            try {
+                                handle = LOOKUP.unreflect(method).asType(MethodType.methodType(void.class,
+                                        NotificationListener.class, DataContainer.class));
+                                ret.put(name, handle);
+                            } catch (final IllegalAccessException e) {
+                                throw new IllegalStateException("Can not access public method.", e);
+                            }
+                        }
+
+                    }
+                    return ret.build();
+                }
+
                 @Override
                 public NotificationListenerInvoker load(final Class<? extends NotificationListener> key) throws Exception {
                     return createInvoker(key);
@@ -92,31 +118,6 @@ public final class NotificationListenerInvoker {
         } catch (final Throwable e) {
             throw Throwables.propagate(e);
         }
-    }
-
-    private static NotificationListenerInvoker createInvoker(final Class<? extends NotificationListener> key) {
-        return new NotificationListenerInvoker(createInvokerMap(key));
-    }
-
-    private static Map<QName, MethodHandle> createInvokerMap(final Class<? extends NotificationListener> key) {
-        final Builder<QName, MethodHandle> ret = ImmutableMap.<QName, MethodHandle>builder();
-        for (final Method method : key.getMethods()) {
-            if (BindingReflections.isNotificationCallback(method)) {
-
-                final Class<?> notification = method.getParameterTypes()[0];
-                final QName name = BindingReflections.findQName(notification);
-                MethodHandle handle;
-                try {
-                    handle = LOOKUP.unreflect(method).asType(
-                            MethodType.methodType(void.class, NotificationListener.class, DataContainer.class));
-                    ret.put(name, handle);
-                } catch (final IllegalAccessException e) {
-                    throw new IllegalStateException("Can not access public method.", e);
-                }
-            }
-
-        }
-        return ret.build();
     }
 
 }

@@ -209,7 +209,8 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
         for (final PathArgument a : pathArguments) {
             if (type.equals(a.getType())) {
                 @SuppressWarnings("unchecked")
-                final InstanceIdentifier<I> ret = (InstanceIdentifier<I>) internalCreate(Iterables.limit(pathArguments, i));
+                final InstanceIdentifier<I> ret = (InstanceIdentifier<I>) internalCreate(
+                        Iterables.limit(pathArguments, i));
                 return ret;
             }
 
@@ -334,7 +335,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      * @return A builder instance
      */
     public InstanceIdentifierBuilder<T> builder() {
-        return new InstanceIdentifierBuilderImpl<T>(new Item<T>(targetType), pathArguments, hash, isWildcarded());
+        return new InstanceIdentifierBuilderImpl<>(new Item<T>(targetType), pathArguments, hash, isWildcarded());
     }
 
     private InstanceIdentifier<?> childIdentifier(final PathArgument arg) {
@@ -532,7 +533,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
         Class<? extends DataObject> getType();
     }
 
-    private static abstract class AbstractPathArgument<T extends DataObject> implements PathArgument, Serializable {
+    private abstract static class AbstractPathArgument<T extends DataObject> implements PathArgument, Serializable {
         private static final long serialVersionUID = 1L;
         private final Class<T> type;
 

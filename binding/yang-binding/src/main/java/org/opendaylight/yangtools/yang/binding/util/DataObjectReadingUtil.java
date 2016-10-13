@@ -33,6 +33,8 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 
 public class DataObjectReadingUtil {
 
+    private static final DataObjectReadingStrategy REAUSABLE_AUGMENTATION_READING_STRATEGY = new AugmentationReadingStrategy();
+
     private DataObjectReadingUtil() {
         throw new UnsupportedOperationException("Utility class. Instantion is not allowed.");
     }
@@ -103,9 +105,8 @@ public class DataObjectReadingUtil {
     private static DataObjectReadingStrategy resolveReadStrategy(final Class<? extends DataContainer> parentClass,
             final Class<? extends DataContainer> type) {
 
-        DataObjectReadingStrategy strategy = createReadStrategy(parentClass, type);
         // FIXME: Add caching of strategies
-        return strategy;
+        return createReadStrategy(parentClass, type);
     }
 
     private static DataObjectReadingStrategy createReadStrategy(final Class<? extends DataContainer> parent,
@@ -128,19 +129,8 @@ public class DataObjectReadingUtil {
         return new ContainerReadingStrategy(parent, child);
     }
 
-    private static Method resolveGetterMethod(final Class<? extends DataContainer> parent, final Class<?> child) {
-        String methodName = "get" + child.getSimpleName();
-        try {
-            return parent.getMethod(methodName);
-        } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException(e);
-        } catch (SecurityException e) {
-            throw new IllegalStateException(e);
-        }
-    }
-
     @SuppressWarnings("rawtypes")
-    private static abstract class DataObjectReadingStrategy {
+    private abstract static class DataObjectReadingStrategy {
 
         private final Class<? extends DataContainer> parentType;
         private final Class<? extends DataContainer> childType;
@@ -180,6 +170,17 @@ public class DataObjectReadingUtil {
                 PathArgument childArgument, InstanceIdentifier targetBuilder);
 
         public abstract DataContainer read(DataContainer parent, Class<?> childType);
+
+        private static Method resolveGetterMethod(final Class<? extends DataContainer> parent, final Class<?> child) {
+            String methodName = "get" + child.getSimpleName();
+            try {
+                return parent.getMethod(methodName);
+            } catch (NoSuchMethodException e) {
+                throw new IllegalArgumentException(e);
+            } catch (SecurityException e) {
+                throw new IllegalStateException(e);
+            }
+        }
 
     }
 
@@ -245,11 +246,7 @@ public class DataObjectReadingUtil {
                         return readAll(dataList, builder);
                     }
                 }
-            } catch (InvocationTargetException e) {
-                throw new IllegalStateException(e);
-            } catch (IllegalAccessException e) {
-                throw new IllegalStateException(e);
-            } catch (IllegalArgumentException e) {
+            } catch (InvocationTargetException | IllegalArgumentException | IllegalAccessException e) {
                 throw new IllegalStateException(e);
             }
             return Collections.emptyMap();
@@ -284,8 +281,6 @@ public class DataObjectReadingUtil {
         }
 
     }
-
-    private static final DataObjectReadingStrategy REAUSABLE_AUGMENTATION_READING_STRATEGY = new AugmentationReadingStrategy();
 
     private static final class AugmentationReadingStrategy extends DataObjectReadingStrategy {
 

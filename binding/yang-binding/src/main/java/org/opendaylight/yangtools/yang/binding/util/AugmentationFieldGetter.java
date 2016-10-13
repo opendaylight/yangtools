@@ -44,6 +44,9 @@ abstract class AugmentationFieldGetter {
         }
     };
 
+    private static final LoadingCache<Class<?>, AugmentationFieldGetter> AUGMENTATION_GETTERS = CacheBuilder.newBuilder().weakKeys().build(
+            new AugmentationGetterLoader());
+
     /**
      *
      * Retrieves augmentations from supplied object
@@ -52,9 +55,6 @@ abstract class AugmentationFieldGetter {
      * @return Map of Augmentation class to augmentation
      */
     protected abstract Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object input);
-
-    private static final LoadingCache<Class<?>, AugmentationFieldGetter> AUGMENTATION_GETTERS = CacheBuilder
-            .newBuilder().weakKeys().build(new AugmentationGetterLoader());
 
     public static AugmentationFieldGetter getGetter(final Class<? extends Object> clz) {
         if(AugmentationHolder.class.isAssignableFrom(clz)) {
