@@ -33,10 +33,11 @@
 
     <modules>
         <module>common</module>
-        <module>yang</module>
-        <module>websocket</module>
-        <module>yang-validation-tool</module>
         <module>third-party</module>
+        <module>websocket</module>
+        <module>xsd-regex</module>
+        <module>yang</module>
+        <module>yang-validation-tool</module>
     </modules>
 
     <profiles>
