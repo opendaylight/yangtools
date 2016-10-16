@@ -36,7 +36,7 @@
         <module>yang</module>
         <module>websocket</module>
         <module>yang-validation-tool</module>
-        <module>third-party</module>
+        <module>xsd-regex</module>
     </modules>
 
     <profiles>
