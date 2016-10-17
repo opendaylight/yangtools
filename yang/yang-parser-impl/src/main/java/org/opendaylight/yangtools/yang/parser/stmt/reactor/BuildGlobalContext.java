@@ -46,6 +46,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamesp
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceSpecificContext.PhaseCompletionProgress;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.RecursiveExtensionResolver;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 import org.slf4j.Logger;
@@ -71,7 +72,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     private final boolean enabledSemanticVersions;
 
     public BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports,
-            StatementParserMode statementParserMode, final Predicate<QName> isFeatureSupported) {
+            final StatementParserMode statementParserMode, final Predicate<QName> isFeatureSupported) {
         super();
         this.supports = Preconditions.checkNotNull(supports, "BuildGlobalContext#supports cannot be null");
         Preconditions.checkNotNull(statementParserMode, "Statement parser mode must not be null.");
@@ -83,7 +84,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     public BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports,
             final Map<ValidationBundleType, Collection<?>> supportedValidation,
-            StatementParserMode statementParserMode, final Predicate<QName> isFeatureSupported) {
+            final StatementParserMode statementParserMode, final Predicate<QName> isFeatureSupported) {
         super();
         this.supports = Preconditions.checkNotNull(supports, "BuildGlobalContext#supports cannot be null");
         Preconditions.checkNotNull(statementParserMode, "Statement parser mode must not be null.");
@@ -212,10 +213,11 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
                 final RootStatementContext<?, ?, ?> root = source.getRoot();
                 sourceId = Utils.createSourceIdentifier(root);
                 rootStatements.add(root.buildDeclared());
-                rootEffectiveStatements.add(root.buildEffective());
             }
         } catch (SourceException ex) {
             throw new SomeModifiersUnresolvedException(currentPhase, sourceId, ex);
+        } finally {
+            RecursiveExtensionResolver.cleanup();
         }
 
         return new EffectiveSchemaContext(rootStatements, rootEffectiveStatements);
