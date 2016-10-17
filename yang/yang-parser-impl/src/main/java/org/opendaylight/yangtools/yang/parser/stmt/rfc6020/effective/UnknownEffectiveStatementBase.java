@@ -43,7 +43,7 @@ public abstract class UnknownEffectiveStatementBase<A> extends AbstractEffective
             nodeType = ctx.getPublicDefinition().getArgumentName();
         } else {
             extension = (ExtensionEffectiveStatementImpl) extensionInit.buildEffective();
-            nodeType = extension.getQName();
+            nodeType = null;
         }
 
         // initCopyType
@@ -74,7 +74,7 @@ public abstract class UnknownEffectiveStatementBase<A> extends AbstractEffective
 
     @Override
     public QName getNodeType() {
-        return nodeType;
+        return extension == null ? nodeType : extension.getQName();
     }
 
     @Override
@@ -99,11 +99,9 @@ public abstract class UnknownEffectiveStatementBase<A> extends AbstractEffective
 
     @Override
     public String toString() {
-        return String.valueOf(nodeType.getNamespace()) +
-                ":" +
-                nodeType.getLocalName() +
-                " " +
-                nodeParameter;
-    }
+        final QName type = getNodeType();
 
+        return String.valueOf(type.getNamespace()) +
+                ":" + type.getLocalName() + " " + nodeParameter;
+    }
 }
