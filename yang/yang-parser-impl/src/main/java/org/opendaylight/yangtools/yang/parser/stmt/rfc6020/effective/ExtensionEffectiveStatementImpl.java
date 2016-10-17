@@ -8,7 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.collect.ImmutableList;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -21,6 +23,40 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, ExtensionStatement>
         implements ExtensionDefinition {
+    private static final class RecursionDetector extends ThreadLocal<Deque<ExtensionEffectiveStatementImpl>> {
+        boolean check(final ExtensionEffectiveStatementImpl current) {
+            final Deque<ExtensionEffectiveStatementImpl> stack = get();
+            if (stack != null) {
+                for (ExtensionEffectiveStatementImpl s : stack) {
+                    if (s == current) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        void push(final ExtensionEffectiveStatementImpl current) {
+            Deque<ExtensionEffectiveStatementImpl> stack = get();
+            if (stack == null) {
+                stack = new ArrayDeque<>(1);
+                set(stack);
+            }
+
+            stack.push(current);
+        }
+
+        void pop() {
+            Deque<ExtensionEffectiveStatementImpl> stack = get();
+            stack.pop();
+            if (stack.isEmpty()) {
+                remove();
+            }
+        }
+    }
+
+    private static final RecursionDetector TOSTRING_DETECTOR = new RecursionDetector();
+
     private final QName qname;
     private final String argument;
     private final SchemaPath schemaPath;
@@ -111,14 +147,32 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(ExtensionEffectiveStatementImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("argument=").append(argument);
-        sb.append(", qname=").append(qname);
-        sb.append(", schemaPath=").append(schemaPath);
-        sb.append(", extensionSchemaNodes=").append(unknownNodes);
-        sb.append(", yin=").append(yin);
-        sb.append("]");
-        return sb.toString();
+        if (TOSTRING_DETECTOR.check(this)) {
+            return recursedToString();
+        }
+
+        TOSTRING_DETECTOR.push(this);
+        try {
+            StringBuilder sb = new StringBuilder(ExtensionEffectiveStatementImpl.class.getSimpleName());
+            sb.append("[");
+            sb.append("argument=").append(argument);
+            sb.append(", qname=").append(qname);
+            sb.append(", schemaPath=").append(schemaPath);
+            sb.append(", extensionSchemaNodes=").append(unknownNodes);
+            sb.append(", yin=").append(yin);
+            sb.append("]");
+            return sb.toString();
+        } finally {
+            TOSTRING_DETECTOR.pop();
+        }
+    }
+
+    private String recursedToString() {
+        return ExtensionEffectiveStatementImpl.class.getSimpleName() + "[" +
+                "argument=" + argument +
+                ", qname=" + qname +
+                ", schemaPath=" + schemaPath +
+                ", yin=" + yin +
+                " <RECURSIVE> ]";
     }
 }
