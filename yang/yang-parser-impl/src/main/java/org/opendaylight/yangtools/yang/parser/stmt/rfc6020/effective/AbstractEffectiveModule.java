@@ -176,10 +176,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
                 featuresInit.add((FeatureDefinition) effectiveStatement);
             }
             if (effectiveStatement instanceof ExtensionEffectiveStatementImpl) {
-                ExtensionEffectiveStatementImpl extensionDefinition = (ExtensionEffectiveStatementImpl) effectiveStatement;
-                extensionDefinition.initUnknownSchemaNodes();
-                extensionNodesInit
-                        .add(extensionDefinition);
+                extensionNodesInit.add((ExtensionEffectiveStatementImpl) effectiveStatement);
             }
             if (effectiveStatement instanceof DataSchemaNode) {
                 DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;

@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ExtensionEffectiveStatementImpl;
 
@@ -31,29 +32,38 @@ public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> imp
             .add(Rfc6020Mapping.STATUS, 0, 1)
             .build();
 
-    protected ExtensionStatementImpl(StmtContext<QName, ExtensionStatement,?> context) {
+    protected ExtensionStatementImpl(final StmtContext<QName, ExtensionStatement,?> context) {
         super(context);
     }
 
     public static class Definition extends AbstractStatementSupport<QName,ExtensionStatement,EffectiveStatement<QName,ExtensionStatement>> {
+        private boolean beingBuilt;
 
         public Definition() {
             super(Rfc6020Mapping.EXTENSION);
         }
 
         @Override
-        public QName parseArgumentValue(StmtContext<?,?,?> ctx, String value) {
+        public QName parseArgumentValue(final StmtContext<?,?,?> ctx, final String value) {
             return Utils.qNameFromArgument(ctx, value);
         }
 
         @Override
-        public ExtensionStatement createDeclared(StmtContext<QName, ExtensionStatement,?> ctx) {
+        public ExtensionStatement createDeclared(final StmtContext<QName, ExtensionStatement,?> ctx) {
             return new ExtensionStatementImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<QName,ExtensionStatement> createEffective(StmtContext<QName,ExtensionStatement,EffectiveStatement<QName,ExtensionStatement>> ctx) {
-           return new ExtensionEffectiveStatementImpl(ctx);
+        public EffectiveStatement<QName,ExtensionStatement> createEffective(
+                final StmtContext<QName,ExtensionStatement ,EffectiveStatement<QName,ExtensionStatement>> ctx) {
+            InferenceException.throwIf(beingBuilt, ctx.getStatementSourceReference(), "Extension %s references itself",
+                ctx.getStatementArgument());
+            beingBuilt = true;
+            try {
+                return new ExtensionEffectiveStatementImpl(ctx);
+            } finally {
+                beingBuilt = false;
+            }
         }
 
         @Override
@@ -62,7 +72,7 @@ public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> imp
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<QName, ExtensionStatement,
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<QName, ExtensionStatement,
                 EffectiveStatement<QName, ExtensionStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
