@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -26,14 +25,22 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
     private final String argument;
     private final SchemaPath schemaPath;
 
-    private List<UnknownSchemaNode> unknownNodes;
+    private final List<UnknownSchemaNode> unknownNodes;
     private final boolean yin;
 
     public ExtensionEffectiveStatementImpl(
             final StmtContext<QName, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> ctx) {
-        super(ctx, false);
+        super(ctx);
         this.qname = ctx.getStatementArgument();
         this.schemaPath = ctx.getSchemaPath().get();
+
+        final List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
+        for (EffectiveStatement<?, ?> unknownNode : effectiveSubstatements()) {
+            if (unknownNode instanceof UnknownSchemaNode) {
+                unknownNodesInit.add((UnknownSchemaNode) unknownNode);
+            }
+        }
+        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
 
         // initFields
         ArgumentEffectiveStatementImpl argumentSubstatement = firstEffective(ArgumentEffectiveStatementImpl.class);
@@ -53,21 +60,6 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
         }
     }
 
-    void initUnknownSchemaNodes() {
-        if (unknownNodes != null) {
-            return;
-        }
-
-        Collection<EffectiveStatement<?, ?>> buildedUnknownNodes = getOmittedUnknownSubstatements();
-        List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
-        for (EffectiveStatement<?, ?> unknownNode : buildedUnknownNodes) {
-            if (unknownNode instanceof UnknownSchemaNode) {
-                unknownNodesInit.add((UnknownSchemaNode) unknownNode);
-            }
-        }
-        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
-    }
-
     @Override
     public QName getQName() {
         return qname;
@@ -80,9 +72,6 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
 
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        if (unknownNodes == null) {
-            initUnknownSchemaNodes();
-        }
         return unknownNodes;
     }
 
