@@ -111,6 +111,7 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
 
     @Override
     public String toString() {
+        // FIXME: unknownNodes may refer recursively to self, make sure to filter that (using a ThreadLocal variable)
         return ExtensionEffectiveStatementImpl.class.getSimpleName() + "[" +
                 "argument=" + argument +
                 ", qname=" + qname +
