@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
@@ -45,26 +44,14 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
     };
 
     private final List<? extends EffectiveStatement<?, ?>> substatements;
-    private final List<StatementContextBase<?, ?, ?>> unknownSubstatementsToBuild;
-
-    protected EffectiveStatementBase(final StmtContext<A, D, ?> ctx) {
-        this(ctx, true);
-    }
 
     /**
      * Constructor.
      *
      * @param ctx
      *            context of statement.
-     * @param buildUnknownSubstatements
-     *            if it is false, the unknown substatements are omitted from
-     *            build of effective substatements till the call of either
-     *            effectiveSubstatements or getOmittedUnknownSubstatements
-     *            method. The main purpose of this is to allow the build of
-     *            recursive extension definitions.
      */
-    protected EffectiveStatementBase(final StmtContext<A, D, ?> ctx, boolean buildUnknownSubstatements) {
-
+    protected EffectiveStatementBase(final StmtContext<A, D, ?> ctx) {
         final Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements = ctx.effectiveSubstatements();
         final Collection<StatementContextBase<?, ?, ?>> substatementsInit = new ArrayList<>();
 
@@ -80,24 +67,8 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
         }
         substatementsInit.addAll(effectiveSubstatements);
 
-        Collection<StatementContextBase<?, ?, ?>> substatementsToBuild = Collections2.filter(substatementsInit,
-                IS_SUPPORTED_TO_BUILD_EFFECTIVE);
-        if (!buildUnknownSubstatements) {
-            this.unknownSubstatementsToBuild = ImmutableList.copyOf(Collections2.filter(substatementsToBuild,
-                    IS_UNKNOWN_STATEMENT_CONTEXT));
-            substatementsToBuild = Collections2.filter(substatementsToBuild,
-                    Predicates.not(IS_UNKNOWN_STATEMENT_CONTEXT));
-        } else {
-            this.unknownSubstatementsToBuild = ImmutableList.of();
-        }
-
-        this.substatements = ImmutableList.copyOf(Collections2.transform(substatementsToBuild,
-                StmtContextUtils.buildEffective()));
-    }
-
-    Collection<EffectiveStatement<?, ?>> getOmittedUnknownSubstatements() {
-        return Collections2.transform(unknownSubstatementsToBuild,
-                StmtContextUtils.buildEffective());
+        this.substatements = ImmutableList.copyOf(Collections2.transform(Collections2.filter(substatementsInit,
+            IS_SUPPORTED_TO_BUILD_EFFECTIVE), StmtContextUtils.buildEffective()));
     }
 
     @Override
@@ -112,11 +83,7 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
 
     @Override
     public final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-        if (unknownSubstatementsToBuild.isEmpty()) {
-            return substatements;
-        } else {
-            return ImmutableList.copyOf(Iterables.concat(substatements, getOmittedUnknownSubstatements()));
-        }
+        return substatements;
     }
 
     protected final <S extends EffectiveStatement<?, ?>> S firstEffective(final Class<S> type) {

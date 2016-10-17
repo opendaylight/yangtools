@@ -22,10 +22,11 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class Bug4456Test {
-    @Test
+    @Test(expected=SomeModifiersUnresolvedException.class)
     public void test() throws IOException, URISyntaxException, SourceException, ReactorException {
         SchemaContext schema = StmtTestUtils.parseYangSources("/bugs/bug4456");
         assertNotNull(schema);
