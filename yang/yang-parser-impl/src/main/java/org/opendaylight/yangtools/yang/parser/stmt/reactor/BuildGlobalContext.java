@@ -42,6 +42,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceSpecificContext.PhaseCompletionProgress;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.RecursiveObjectLeaker;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -183,10 +184,14 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         List<DeclaredStatement<?>> rootStatements = new ArrayList<>(sources.size());
         List<EffectiveStatement<?,?>> rootEffectiveStatements = new ArrayList<>(sources.size());
 
-        for (SourceSpecificContext source : sources) {
-            final RootStatementContext<?, ?, ?> root = source.getRoot();
-            rootStatements.add(root.buildDeclared());
-            rootEffectiveStatements.add(root.buildEffective());
+        try {
+            for (SourceSpecificContext source : sources) {
+                final RootStatementContext<?, ?, ?> root = source.getRoot();
+                rootStatements.add(root.buildDeclared());
+                rootEffectiveStatements.add(root.buildEffective());
+            }
+        } finally {
+            RecursiveObjectLeaker.cleanup();
         }
 
         return new EffectiveSchemaContext(rootStatements, rootEffectiveStatements);

@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.RecursiveObjectLeaker;
 
 public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> implements EffectiveStatement<A, D> {
 
@@ -66,6 +67,9 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
             }
         }
         substatementsInit.addAll(effectiveSubstatements);
+
+        // WARNING: this leaks an incompletely-initialized pbject
+        RecursiveObjectLeaker.inConstructor(this);
 
         this.substatements = ImmutableList.copyOf(Collections2.transform(Collections2.filter(substatementsInit,
             IS_SUPPORTED_TO_BUILD_EFFECTIVE), StmtContextUtils.buildEffective()));
