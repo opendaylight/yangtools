@@ -39,8 +39,6 @@ public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> imp
     }
 
     public static class Definition extends AbstractStatementSupport<QName,ExtensionStatement,EffectiveStatement<QName,ExtensionStatement>> {
-        private static final ThreadLocal<Set<StmtContext<?, ?, ?>>> BUILDING = new ThreadLocal<>();
-
         public Definition() {
             super(Rfc6020Mapping.EXTENSION);
         }
@@ -57,24 +55,18 @@ public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> imp
 
         @Override
         public EffectiveStatement<QName,ExtensionStatement> createEffective(
-                final StmtContext<QName,ExtensionStatement, EffectiveStatement<QName,ExtensionStatement>> ctx) {
-            Set<StmtContext<?, ?, ?>> building = BUILDING.get();
-            if (building == null) {
-                building = new HashSet<>();
-                BUILDING.set(building);
+                final StmtContext<QName,ExtensionStatement ,EffectiveStatement<QName,ExtensionStatement>> ctx) {
+            final ExtensionEffectiveStatementImpl existing = RecursiveExtensionResolver.lookupInstance(ctx,
+                ExtensionEffectiveStatementImpl.class);
+            if (existing != null) {
+                return existing;
             }
 
-            SourceException.throwIf(building.contains(ctx), ctx.getStatementSourceReference(),
-                "Extension %s references itself", ctx.getStatementArgument());
-
-            building.add(ctx);
+            RecursiveExtensionResolver.beforeConstructor(ctx);
             try {
                 return new ExtensionEffectiveStatementImpl(ctx);
             } finally {
-                building.remove(ctx);
-                if (building.isEmpty()) {
-                    BUILDING.remove();
-                }
+                RecursiveExtensionResolver.afterConstructor(ctx);
             }
         }
 
