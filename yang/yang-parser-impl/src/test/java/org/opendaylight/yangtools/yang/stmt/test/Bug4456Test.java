@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class Bug4456Test {
-    @Test
+    @Test(expected=SourceException.class)
     public void test() throws IOException, URISyntaxException, SourceException, ReactorException {
         SchemaContext schema = StmtTestUtils.parseYangSources("/bugs/bug4456");
         assertNotNull(schema);

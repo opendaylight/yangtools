@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import java.util.HashSet;
+import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -32,29 +34,48 @@ public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> imp
             .add(Rfc6020Mapping.STATUS, 0, 1)
             .build();
 
-    protected ExtensionStatementImpl(StmtContext<QName, ExtensionStatement,?> context) {
+    protected ExtensionStatementImpl(final StmtContext<QName, ExtensionStatement,?> context) {
         super(context);
     }
 
     public static class Definition extends AbstractStatementSupport<QName,ExtensionStatement,EffectiveStatement<QName,ExtensionStatement>> {
+        private static final ThreadLocal<Set<StmtContext<?, ?, ?>>> BUILDING = new ThreadLocal<>();
 
         public Definition() {
             super(Rfc6020Mapping.EXTENSION);
         }
 
         @Override
-        public QName parseArgumentValue(StmtContext<?,?,?> ctx, String value) {
+        public QName parseArgumentValue(final StmtContext<?,?,?> ctx, final String value) {
             return Utils.qNameFromArgument(ctx, value);
         }
 
         @Override
-        public ExtensionStatement createDeclared(StmtContext<QName, ExtensionStatement,?> ctx) {
+        public ExtensionStatement createDeclared(final StmtContext<QName, ExtensionStatement,?> ctx) {
             return new ExtensionStatementImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<QName,ExtensionStatement> createEffective(StmtContext<QName,ExtensionStatement,EffectiveStatement<QName,ExtensionStatement>> ctx) {
-           return new ExtensionEffectiveStatementImpl(ctx);
+        public EffectiveStatement<QName,ExtensionStatement> createEffective(
+                final StmtContext<QName,ExtensionStatement, EffectiveStatement<QName,ExtensionStatement>> ctx) {
+            Set<StmtContext<?, ?, ?>> building = BUILDING.get();
+            if (building == null) {
+                building = new HashSet<>();
+                BUILDING.set(building);
+            }
+
+            SourceException.throwIf(building.contains(ctx), ctx.getStatementSourceReference(),
+                "Extension %s references itself", ctx.getStatementArgument());
+
+            building.add(ctx);
+            try {
+                return new ExtensionEffectiveStatementImpl(ctx);
+            } finally {
+                building.remove(ctx);
+                if (building.isEmpty()) {
+                    BUILDING.remove();
+                }
+            }
         }
 
         @Override
@@ -63,8 +84,8 @@ public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> imp
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<QName, ExtensionStatement,
-                EffectiveStatement<QName, ExtensionStatement>> stmt) throws SourceException {
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<QName, ExtensionStatement,
+                EffectiveStatement<QName, ExtensionStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
