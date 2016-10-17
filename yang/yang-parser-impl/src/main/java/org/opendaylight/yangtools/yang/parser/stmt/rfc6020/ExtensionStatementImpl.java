@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import java.util.HashSet;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -39,8 +37,6 @@ public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> imp
     }
 
     public static class Definition extends AbstractStatementSupport<QName,ExtensionStatement,EffectiveStatement<QName,ExtensionStatement>> {
-        private static final ThreadLocal<Set<StmtContext<?, ?, ?>>> BUILDING = new ThreadLocal<>();
-
         public Definition() {
             super(Rfc6020Mapping.EXTENSION);
         }
@@ -57,24 +53,22 @@ public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> imp
 
         @Override
         public EffectiveStatement<QName,ExtensionStatement> createEffective(
-                final StmtContext<QName,ExtensionStatement, EffectiveStatement<QName,ExtensionStatement>> ctx) {
-            Set<StmtContext<?, ?, ?>> building = BUILDING.get();
-            if (building == null) {
-                building = new HashSet<>();
-                BUILDING.set(building);
+                final StmtContext<QName,ExtensionStatement ,EffectiveStatement<QName,ExtensionStatement>> ctx) {
+
+            // Look at the thread-local leak in case we are invoked recursively
+            final ExtensionEffectiveStatementImpl existing = RecursiveObjectLeaker.lookup(ctx,
+                ExtensionEffectiveStatementImpl.class);
+            if (existing != null) {
+                // Careful! this not fully initialized!
+                return existing;
             }
 
-            SourceException.throwIf(building.contains(ctx), ctx.getStatementSourceReference(),
-                "Extension %s references itself", ctx.getStatementArgument());
-
-            building.add(ctx);
+            RecursiveObjectLeaker.beforeConstructor(ctx);
             try {
+                // This result is fine, we know it has been completely initialized
                 return new ExtensionEffectiveStatementImpl(ctx);
             } finally {
-                building.remove(ctx);
-                if (building.isEmpty()) {
-                    BUILDING.remove();
-                }
+                RecursiveObjectLeaker.afterConstructor(ctx);
             }
         }
 
