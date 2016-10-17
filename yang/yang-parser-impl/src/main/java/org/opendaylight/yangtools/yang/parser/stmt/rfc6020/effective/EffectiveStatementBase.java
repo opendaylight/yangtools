@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.RecursiveExtensionResolver;
 
 public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> implements EffectiveStatement<A, D> {
     private final List<? extends EffectiveStatement<?, ?>> substatements;
@@ -35,6 +36,7 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
      *            context of statement.
      */
     protected EffectiveStatementBase(final StmtContext<A, D, ?> ctx) {
+        RecursiveExtensionResolver.inConstructor(this);
 
         final Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements = ctx.effectiveSubstatements();
         final Collection<StatementContextBase<?, ?, ?>> substatementsInit = new ArrayList<>();

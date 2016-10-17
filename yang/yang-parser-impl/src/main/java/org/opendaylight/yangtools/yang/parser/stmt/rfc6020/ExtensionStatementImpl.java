@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ExtensionEffectiveStatementImpl;
 
@@ -37,8 +36,6 @@ public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> imp
     }
 
     public static class Definition extends AbstractStatementSupport<QName,ExtensionStatement,EffectiveStatement<QName,ExtensionStatement>> {
-        private boolean beingBuilt;
-
         public Definition() {
             super(Rfc6020Mapping.EXTENSION);
         }
@@ -56,13 +53,17 @@ public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> imp
         @Override
         public EffectiveStatement<QName,ExtensionStatement> createEffective(
                 final StmtContext<QName,ExtensionStatement ,EffectiveStatement<QName,ExtensionStatement>> ctx) {
-            InferenceException.throwIf(beingBuilt, ctx.getStatementSourceReference(), "Extension %s references itself",
-                ctx.getStatementArgument());
-            beingBuilt = true;
+            final ExtensionEffectiveStatementImpl existing = RecursiveExtensionResolver.lookupInstance(ctx,
+                ExtensionEffectiveStatementImpl.class);
+            if (existing != null) {
+                return existing;
+            }
+
+            RecursiveExtensionResolver.beforeConstructor(ctx);
             try {
                 return new ExtensionEffectiveStatementImpl(ctx);
             } finally {
-                beingBuilt = false;
+                RecursiveExtensionResolver.afterConstructor(ctx);
             }
         }
 
