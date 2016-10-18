@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
+package org.opendaylight.yangtools.yang.data.util;
 
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
@@ -14,12 +14,12 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 /**
  * Utility methods for ConstraintDefinition implementations.
  */
-final class ConstraintDefinitions {
+public final class ConstraintDefinitions {
     private ConstraintDefinitions() {
         throw new UnsupportedOperationException();
     }
 
-    static int hashCode(final ConstraintDefinition def) {
+    public static int hashCode(final ConstraintDefinition def) {
         final int prime = 31;
         int result = 1;
         result = prime * result + Objects.hashCode(def.getWhenCondition());
@@ -30,14 +30,14 @@ final class ConstraintDefinitions {
         return result;
     }
 
-    static boolean equals(final ConstraintDefinition def, final Object obj) {
+    public static boolean equals(final ConstraintDefinition def, final Object obj) {
         if (def == obj) {
             return true;
         }
         if (!(obj instanceof ConstraintDefinition)) {
             return false;
         }
-        final ConstraintDefinition other = (EffectiveConstraintDefinitionImpl) obj;
+        final ConstraintDefinition other = (ConstraintDefinition) obj;
         if (def.isMandatory() != other.isMandatory()) {
             return false;
         }
@@ -56,7 +56,7 @@ final class ConstraintDefinitions {
         return true;
     }
 
-    static String toString(final ConstraintDefinition def) {
+    public static String toString(final ConstraintDefinition def) {
         return MoreObjects.toStringHelper(def).omitNullValues()
                 .add("whenCondition", def.getWhenCondition())
                 .add("mustConstraints", def.getMustConstraints())
