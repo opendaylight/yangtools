@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_9dc9355d",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceSpecificContext.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 304,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-18T21:39:43Z",
+      "side": 1,
+      "message": "let\u0027s make this java.util.Optional\u003cSourceException\u003e, which will be more explicit, so we do not end up doing \u0027throw null\u0027.\n\nThis means callers must change \u0027!\u003d null\u0027 to \u0027isPresent()\u0027.",
+      "range": {
+        "startLine": 304,
+        "startChar": 12,
+        "endLine": 304,
+        "endChar": 24
+      },
+      "revId": "c3bb2a8df8c61d9b627c14ed150667eeab2e25ae",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_ddac4d8f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/AugmentStatementImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-18T21:39:43Z",
+      "side": 1,
+      "message": "use simple \u003d\u003d",
+      "range": {
+        "startLine": 160,
+        "startChar": 24,
+        "endLine": 160,
+        "endChar": 50
+      },
+      "revId": "c3bb2a8df8c61d9b627c14ed150667eeab2e25ae",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
