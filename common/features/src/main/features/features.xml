@@ -26,7 +26,6 @@
     </feature>
 
     <feature name='odl-yangtools-common' version='${project.version}' description='OpenDaylight :: Yangtools :: Common'>
-        <bundle>mvn:com.google.guava/guava/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/concepts/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-common/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/util/{{VERSION}}</bundle>
