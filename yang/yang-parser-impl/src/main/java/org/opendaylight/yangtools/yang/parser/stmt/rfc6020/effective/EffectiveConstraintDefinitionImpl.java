@@ -10,9 +10,11 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
+import org.opendaylight.yangtools.yang.data.util.ConstraintDefinitions;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.data.util.EmptyConstraintDefinition;
 
 final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
     private static final String UNBOUNDED_STR = "unbounded";

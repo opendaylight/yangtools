@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
+package org.opendaylight.yangtools.yang.data.util;
 
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 /**
  * Utility holder for constraint definitions which do not really constrain anything.
  */
-abstract class EmptyConstraintDefinition implements ConstraintDefinition {
+public abstract class EmptyConstraintDefinition implements ConstraintDefinition {
     private static final EmptyConstraintDefinition MANDATORY = new EmptyConstraintDefinition() {
         @Override
         public boolean isMandatory() {
@@ -34,7 +34,7 @@ abstract class EmptyConstraintDefinition implements ConstraintDefinition {
         // Hidden on purpose
     }
 
-    static EmptyConstraintDefinition create(final boolean mandatory) {
+    public static EmptyConstraintDefinition create(final boolean mandatory) {
         return mandatory ? MANDATORY : OPTIONAL;
     }
 
