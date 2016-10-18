@@ -8,8 +8,8 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import java.util.Collection;
-import java.util.LinkedList;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -43,15 +43,14 @@ public class GroupingEffectiveStatementImpl extends
             addedByUses = false;
         }
 
-        // initSubstatementCollections
-        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-        unknownNodes = new LinkedList<>();
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+        final Builder<UnknownSchemaNode> b = ImmutableList.builder();
+        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
-                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
-                unknownNodes.add(unknownNode);
+                b.add((UnknownSchemaNode) effectiveStatement);
             }
         }
+
+        unknownNodes = b.build();
     }
 
     @Override
