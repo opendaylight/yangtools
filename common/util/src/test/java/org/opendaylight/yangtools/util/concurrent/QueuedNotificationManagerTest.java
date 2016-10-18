@@ -10,10 +10,13 @@ package org.opendaylight.yangtools.util.concurrent;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.util.concurrent.Uninterruptibles;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -250,7 +253,9 @@ public class QueuedNotificationManagerTest {
 
 
         TestListener<Integer> listener = new TestListener<>(2, 1);
-        listener.runtimeEx = mock(RuntimeException.class);
+        final RuntimeException mockedRuntimeException = mock(RuntimeException.class);
+        doNothing().when(mockedRuntimeException).printStackTrace(any(PrintStream.class));
+        listener.runtimeEx = mockedRuntimeException;
 
         manager.submitNotification(listener, 1);
         manager.submitNotification(listener, 2);
