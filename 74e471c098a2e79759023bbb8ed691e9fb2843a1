@@ -1,0 +1,211 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_5ddddd41",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 259,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-18T21:32:42Z",
+      "side": 1,
+      "message": "public method in SPI: need javadoc",
+      "range": {
+        "startLine": 259,
+        "startChar": 26,
+        "endLine": 259,
+        "endChar": 45
+      },
+      "revId": "74e471c098a2e79759023bbb8ed691e9fb2843a1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_bded11f2",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-18T21:32:42Z",
+      "side": 1,
+      "message": "this is an enum. \u003d\u003d is enough, no need to .equals()",
+      "range": {
+        "startLine": 260,
+        "startChar": 44,
+        "endLine": 260,
+        "endChar": 77
+      },
+      "revId": "74e471c098a2e79759023bbb8ed691e9fb2843a1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_1dd36539",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 268,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-18T21:32:42Z",
+      "side": 1,
+      "message": "expression evaluates to boolean, no need for ?:",
+      "range": {
+        "startLine": 268,
+        "startChar": 78,
+        "endLine": 268,
+        "endChar": 93
+      },
+      "revId": "74e471c098a2e79759023bbb8ed691e9fb2843a1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_9dcdb589",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-18T21:32:42Z",
+      "side": 1,
+      "message": "switch (stmtCtx.getPublicDefinition()) {\ncase ANYXML:\ncase CHOICE:\ncase LEAF:\n    return ...;\ndefault:\n    return false;\n}",
+      "range": {
+        "startLine": 276,
+        "startChar": 0,
+        "endLine": 278,
+        "endChar": 81
+      },
+      "revId": "74e471c098a2e79759023bbb8ed691e9fb2843a1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_9de65515",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-18T21:32:42Z",
+      "side": 1,
+      "message": "not needed",
+      "range": {
+        "startLine": 279,
+        "startChar": 103,
+        "endLine": 279,
+        "endChar": 118
+      },
+      "revId": "74e471c098a2e79759023bbb8ed691e9fb2843a1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_3db0e1f3",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-18T21:32:42Z",
+      "side": 1,
+      "message": "switch() will be more readable",
+      "range": {
+        "startLine": 286,
+        "startChar": 8,
+        "endLine": 286,
+        "endChar": 41
+      },
+      "revId": "74e471c098a2e79759023bbb8ed691e9fb2843a1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_1da1a5a9",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 289,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-18T21:32:42Z",
+      "side": 1,
+      "message": "unneeded",
+      "range": {
+        "startLine": 289,
+        "startChar": 57,
+        "endLine": 289,
+        "endChar": 72
+      },
+      "revId": "74e471c098a2e79759023bbb8ed691e9fb2843a1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_bd723147",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/AugmentUtils.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 116,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-18T21:32:42Z",
+      "side": 1,
+      "message": "for (... : Iterables.concat(sourceCtx.declaredSubstatements(), .declaredSubstatements()) {\n...\n}\n\nbut the question is: why do we have to iterate over both declared and effective statements?\n\nIf we really do, please add a comment as to why.",
+      "range": {
+        "startLine": 114,
+        "startChar": 0,
+        "endLine": 116,
+        "endChar": 96
+      },
+      "revId": "74e471c098a2e79759023bbb8ed691e9fb2843a1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_5d995d6d",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/AugmentUtils.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-18T21:32:42Z",
+      "side": 1,
+      "message": "than",
+      "range": {
+        "startLine": 122,
+        "startChar": 97,
+        "endLine": 122,
+        "endChar": 101
+      },
+      "revId": "74e471c098a2e79759023bbb8ed691e9fb2843a1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
