@@ -27,7 +27,9 @@ public class RevisionStatementImpl extends AbstractDeclaredStatement<Date>
         implements RevisionStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         Rfc6020Mapping.REVISION)
-            .add(Rfc6020Mapping.DESCRIPTION, 0, 1).add(Rfc6020Mapping.REFERENCE, 0, 1).build();
+            .addOptional(Rfc6020Mapping.DESCRIPTION)
+            .addOptional(Rfc6020Mapping.REFERENCE)
+            .build();
 
     protected RevisionStatementImpl(final StmtContext<Date, RevisionStatement, ?> context) {
         super(context);

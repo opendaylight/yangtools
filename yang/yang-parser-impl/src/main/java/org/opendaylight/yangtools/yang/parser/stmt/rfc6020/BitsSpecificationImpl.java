@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
-
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -23,7 +21,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitsSp
 public class BitsSpecificationImpl extends AbstractDeclaredStatement<String> implements TypeStatement.BitsSpecification {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .TYPE)
-            .add(Rfc6020Mapping.BIT, 1, MAX)
+            .addAtLeast(Rfc6020Mapping.BIT, 1)
             .build();
 
     protected BitsSpecificationImpl(final StmtContext<String, TypeStatement.BitsSpecification, ?> context) {
@@ -56,7 +54,7 @@ public class BitsSpecificationImpl extends AbstractDeclaredStatement<String> imp
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, BitsSpecification,
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<String, BitsSpecification,
                 EffectiveStatement<String, BitsSpecification>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);

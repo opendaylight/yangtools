@@ -24,7 +24,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public final class SubstatementValidator {
-    public final static int MAX = Integer.MAX_VALUE;
+    private static final Cardinality ANY = new Cardinality(0, Integer.MAX_VALUE);
+    private static final Cardinality ONE = new Cardinality(1, 1);
+    private static final Cardinality ZERO_ONE = new Cardinality(0, 1);
+
     private final Map<StatementDefinition, Cardinality> cardinalityMap;
     private final StatementDefinition currentStatement;
     private final SpecialCase specialCase;
@@ -47,9 +50,37 @@ public final class SubstatementValidator {
             this.currentStatement = currentStatement;
         }
 
-        public Builder add(final StatementDefinition d, final int min, final int max) {
-            this.cardinalityMap.put(d, new Cardinality(min, max));
+        private Builder add(final StatementDefinition d, final Cardinality c) {
+            cardinalityMap.put(d, c);
             return this;
+        }
+
+        public Builder add(final StatementDefinition d, final int min, final int max) {
+            return max == Integer.MAX_VALUE ? addAtLeast(d, min) : add(d, new Cardinality(min, max));
+        }
+
+        // Equivalent to min .. Integer.MAX_VALUE
+        public Builder addAtLeast(final StatementDefinition d, final int min) {
+            if (min == 0) {
+                return addAny(d);
+            }
+
+            return add(d, new Cardinality(min, Integer.MAX_VALUE));
+        }
+
+        // Equivalent to 0 .. Integer.MAX_VALUE
+        public Builder addAny(final StatementDefinition d) {
+            return add(d, ANY);
+        }
+
+        // Equivalent to 1 .. 1
+        public Builder addMandatory(final StatementDefinition d) {
+            return add(d, ONE);
+        }
+
+        // Equivalent to 0 .. 1
+        public Builder addOptional(final StatementDefinition d) {
+            return add(d, ZERO_ONE);
         }
 
         public SubstatementValidator build() {

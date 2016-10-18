@@ -21,12 +21,12 @@ public class LeafrefSpecificationImpl extends AbstractDeclaredStatement<String>
         implements TypeStatement.LeafrefSpecification {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .TYPE)
-            .add(Rfc6020Mapping.PATH, 1, 1)
-            .add(Rfc6020Mapping.REQUIRE_INSTANCE, 0, 1)
+            .addMandatory(Rfc6020Mapping.PATH)
+            .addOptional(Rfc6020Mapping.REQUIRE_INSTANCE)
             .build();
 
     protected LeafrefSpecificationImpl(
-            StmtContext<String, TypeStatement.LeafrefSpecification, ?> context) {
+            final StmtContext<String, TypeStatement.LeafrefSpecification, ?> context) {
         super(context);
     }
 
@@ -39,24 +39,24 @@ public class LeafrefSpecificationImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
         @Override
         public TypeStatement.LeafrefSpecification createDeclared(
-                StmtContext<String, TypeStatement.LeafrefSpecification, ?> ctx) {
+                final StmtContext<String, TypeStatement.LeafrefSpecification, ?> ctx) {
             return new LeafrefSpecificationImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<String, TypeStatement.LeafrefSpecification> createEffective(
-                StmtContext<String, TypeStatement.LeafrefSpecification, EffectiveStatement<String, TypeStatement.LeafrefSpecification>> ctx) {
+                final StmtContext<String, TypeStatement.LeafrefSpecification, EffectiveStatement<String, TypeStatement.LeafrefSpecification>> ctx) {
             return new LeafrefSpecificationEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, LeafrefSpecification,
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<String, LeafrefSpecification,
                 EffectiveStatement<String, LeafrefSpecification>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);

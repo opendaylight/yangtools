@@ -26,10 +26,10 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeE
 public class RangeStatementImpl extends AbstractDeclaredStatement<List<RangeConstraint>> implements RangeStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .RANGE)
-            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
-            .add(Rfc6020Mapping.ERROR_APP_TAG, 0, 1)
-            .add(Rfc6020Mapping.ERROR_MESSAGE, 0, 1)
-            .add(Rfc6020Mapping.REFERENCE, 0, 1)
+            .addOptional(Rfc6020Mapping.DESCRIPTION)
+            .addOptional(Rfc6020Mapping.ERROR_APP_TAG)
+            .addOptional(Rfc6020Mapping.ERROR_MESSAGE)
+            .addOptional(Rfc6020Mapping.REFERENCE)
             .build();
 
     // these objects are to compare whether range has MAX or MIN value
@@ -37,7 +37,7 @@ public class RangeStatementImpl extends AbstractDeclaredStatement<List<RangeCons
     public static final BigDecimal YANG_MIN_NUM = BigDecimal.valueOf(-Double.MAX_VALUE);
     public static final BigDecimal YANG_MAX_NUM = BigDecimal.valueOf(Double.MAX_VALUE);
 
-    protected RangeStatementImpl(StmtContext<List<RangeConstraint>, RangeStatement, ?> context) {
+    protected RangeStatementImpl(final StmtContext<List<RangeConstraint>, RangeStatement, ?> context) {
         super(context);
     }
 
@@ -49,24 +49,24 @@ public class RangeStatementImpl extends AbstractDeclaredStatement<List<RangeCons
         }
 
         @Override
-        public List<RangeConstraint> parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public List<RangeConstraint> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return TypeUtils.parseRangeListFromString(ctx, value);
         }
 
         @Override
-        public RangeStatement createDeclared(StmtContext<List<RangeConstraint>, RangeStatement, ?> ctx) {
+        public RangeStatement createDeclared(final StmtContext<List<RangeConstraint>, RangeStatement, ?> ctx) {
             return new RangeStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<List<RangeConstraint>, RangeStatement> createEffective(
-                StmtContext<List<RangeConstraint>, RangeStatement, EffectiveStatement<List<RangeConstraint>,
+                final StmtContext<List<RangeConstraint>, RangeStatement, EffectiveStatement<List<RangeConstraint>,
                         RangeStatement>> ctx) {
             return new RangeEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<List<RangeConstraint>, RangeStatement,
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<List<RangeConstraint>, RangeStatement,
                 EffectiveStatement<List<RangeConstraint>, RangeStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);

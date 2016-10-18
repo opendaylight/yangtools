@@ -24,13 +24,13 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitEff
 public class BitStatementImpl extends AbstractDeclaredStatement<QName> implements BitStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .BIT)
-            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
-            .add(Rfc6020Mapping.REFERENCE, 0, 1)
-            .add(Rfc6020Mapping.STATUS, 0, 1)
-            .add(Rfc6020Mapping.POSITION, 0, 1)
+            .addOptional(Rfc6020Mapping.DESCRIPTION)
+            .addOptional(Rfc6020Mapping.REFERENCE)
+            .addOptional(Rfc6020Mapping.STATUS)
+            .addOptional(Rfc6020Mapping.POSITION)
             .build();
 
-    protected BitStatementImpl(StmtContext<QName, BitStatement, ?> context) {
+    protected BitStatementImpl(final StmtContext<QName, BitStatement, ?> context) {
         super(context);
     }
 
@@ -42,23 +42,23 @@ public class BitStatementImpl extends AbstractDeclaredStatement<QName> implement
         }
 
         @Override
-        public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return Utils.qNameFromArgument(ctx, value);
         }
 
         @Override
-        public BitStatement createDeclared(StmtContext<QName, BitStatement, ?> ctx) {
+        public BitStatement createDeclared(final StmtContext<QName, BitStatement, ?> ctx) {
             return new BitStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<QName, BitStatement> createEffective(
-                StmtContext<QName, BitStatement, EffectiveStatement<QName, BitStatement>> ctx) {
+                final StmtContext<QName, BitStatement, EffectiveStatement<QName, BitStatement>> ctx) {
             return new BitEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<QName, BitStatement,
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<QName, BitStatement,
                 EffectiveStatement<QName, BitStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);

@@ -30,10 +30,10 @@ import org.slf4j.LoggerFactory;
 public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConstraint> implements PatternStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .PATTERN)
-            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
-            .add(Rfc6020Mapping.ERROR_APP_TAG, 0, 1)
-            .add(Rfc6020Mapping.ERROR_MESSAGE, 0, 1)
-            .add(Rfc6020Mapping.REFERENCE, 0, 1)
+            .addOptional(Rfc6020Mapping.DESCRIPTION)
+            .addOptional(Rfc6020Mapping.ERROR_APP_TAG)
+            .addOptional(Rfc6020Mapping.ERROR_MESSAGE)
+            .addOptional(Rfc6020Mapping.REFERENCE)
             .build();
     private static final Logger LOG = LoggerFactory.getLogger(PatternStatementImpl.class);
 
@@ -75,7 +75,7 @@ public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConst
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<PatternConstraint, PatternStatement,
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<PatternConstraint, PatternStatement,
                 EffectiveStatement<PatternConstraint, PatternStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);

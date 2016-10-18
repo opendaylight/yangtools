@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
-
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -39,22 +37,22 @@ public class LeafListStatementImpl extends AbstractDeclaredStatement<QName>
         implements LeafListStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .LEAF_LIST)
-            .add(Rfc6020Mapping.CONFIG, 0, 1)
-            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
-            .add(Rfc6020Mapping.IF_FEATURE, 0, MAX)
-            .add(Rfc6020Mapping.MIN_ELEMENTS, 0, 1)
-            .add(Rfc6020Mapping.MAX_ELEMENTS, 0, 1)
-            .add(Rfc6020Mapping.MUST, 0, MAX)
-            .add(Rfc6020Mapping.ORDERED_BY, 0, 1)
-            .add(Rfc6020Mapping.REFERENCE, 0, 1)
-            .add(Rfc6020Mapping.STATUS, 0, 1)
-            .add(Rfc6020Mapping.TYPE, 1, 1)
-            .add(Rfc6020Mapping.UNITS, 0, 1)
-            .add(Rfc6020Mapping.WHEN, 0, 1)
+            .addOptional(Rfc6020Mapping.CONFIG)
+            .addOptional(Rfc6020Mapping.DESCRIPTION)
+            .addAny(Rfc6020Mapping.IF_FEATURE)
+            .addOptional(Rfc6020Mapping.MIN_ELEMENTS)
+            .addOptional(Rfc6020Mapping.MAX_ELEMENTS)
+            .addAny(Rfc6020Mapping.MUST)
+            .addOptional(Rfc6020Mapping.ORDERED_BY)
+            .addOptional(Rfc6020Mapping.REFERENCE)
+            .addOptional(Rfc6020Mapping.STATUS)
+            .addMandatory(Rfc6020Mapping.TYPE)
+            .addOptional(Rfc6020Mapping.UNITS)
+            .addOptional(Rfc6020Mapping.WHEN)
             .build();
 
     protected LeafListStatementImpl(
-            StmtContext<QName, LeafListStatement, ?> context) {
+            final StmtContext<QName, LeafListStatement, ?> context) {
         super(context);
     }
 
@@ -68,30 +66,30 @@ public class LeafListStatementImpl extends AbstractDeclaredStatement<QName>
 
         @Override
         public void onStatementAdded(
-                Mutable<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> stmt) {
+                final Mutable<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> stmt) {
             stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
         }
 
         @Override
-        public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value)
+        public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value)
                 {
             return Utils.qNameFromArgument(ctx, value);
         }
 
         @Override
         public LeafListStatement createDeclared(
-                StmtContext<QName, LeafListStatement, ?> ctx) {
+                final StmtContext<QName, LeafListStatement, ?> ctx) {
             return new LeafListStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<QName, LeafListStatement> createEffective(
-                StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
+                final StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
             return new LeafListEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(Mutable<QName, LeafListStatement,
+        public void onFullDefinitionDeclared(final Mutable<QName, LeafListStatement,
                 EffectiveStatement<QName, LeafListStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);

@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
-
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -23,11 +21,11 @@ public class UnionSpecificationImpl extends AbstractDeclaredStatement<String>
         implements TypeStatement.UnionSpecification {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .TYPE)
-            .add(Rfc6020Mapping.TYPE, 1, MAX)
+            .addAtLeast(Rfc6020Mapping.TYPE, 1)
             .build();
 
     protected UnionSpecificationImpl(
-            StmtContext<String, TypeStatement.UnionSpecification, ?> context) {
+            final StmtContext<String, TypeStatement.UnionSpecification, ?> context) {
         super(context);
     }
 
@@ -38,24 +36,24 @@ public class UnionSpecificationImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
         @Override
         public TypeStatement.UnionSpecification createDeclared(
-                StmtContext<String, TypeStatement.UnionSpecification, ?> ctx) {
+                final StmtContext<String, TypeStatement.UnionSpecification, ?> ctx) {
             return new UnionSpecificationImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<String, TypeStatement.UnionSpecification> createEffective(
-                StmtContext<String, TypeStatement.UnionSpecification, EffectiveStatement<String, TypeStatement.UnionSpecification>> ctx) {
+                final StmtContext<String, TypeStatement.UnionSpecification, EffectiveStatement<String, TypeStatement.UnionSpecification>> ctx) {
             return new UnionSpecificationEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, UnionSpecification, EffectiveStatement<String, UnionSpecification>> stmt) {
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<String, UnionSpecification, EffectiveStatement<String, UnionSpecification>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

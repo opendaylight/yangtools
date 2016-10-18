@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
 import com.google.common.base.Verify;
 import java.util.Collection;
 import javax.annotation.Nonnull;
@@ -64,16 +63,16 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
         implements TypeStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .TYPE)
-            .add(Rfc6020Mapping.BASE, 0, 1)
-            .add(Rfc6020Mapping.BIT, 0, MAX)
-            .add(Rfc6020Mapping.ENUM, 0, MAX)
-            .add(Rfc6020Mapping.FRACTION_DIGITS, 0, 1)
-            .add(Rfc6020Mapping.LENGTH, 0, 1)
-            .add(Rfc6020Mapping.PATH, 0, 1)
-            .add(Rfc6020Mapping.PATTERN, 0, MAX)
-            .add(Rfc6020Mapping.RANGE, 0, 1)
-            .add(Rfc6020Mapping.REQUIRE_INSTANCE, 0, 1)
-            .add(Rfc6020Mapping.TYPE, 0, MAX)
+            .addOptional(Rfc6020Mapping.BASE)
+            .addAny(Rfc6020Mapping.BIT)
+            .addAny(Rfc6020Mapping.ENUM)
+            .addOptional(Rfc6020Mapping.FRACTION_DIGITS)
+            .addOptional(Rfc6020Mapping.LENGTH)
+            .addOptional(Rfc6020Mapping.PATH)
+            .addAny(Rfc6020Mapping.PATTERN)
+            .addOptional(Rfc6020Mapping.RANGE)
+            .addOptional(Rfc6020Mapping.REQUIRE_INSTANCE)
+            .addAny(Rfc6020Mapping.TYPE)
             .build();
 
     protected TypeStatementImpl(final StmtContext<String, TypeStatement, ?> context) {
