@@ -41,6 +41,7 @@
         <bundle>mvn:org.antlr/antlr4-runtime/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-model-api/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-model-util/{{VERSION}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-data-util/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-parser-api/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-parser-impl/{{VERSION}}</bundle>
     </feature>
