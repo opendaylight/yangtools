@@ -97,11 +97,11 @@ abstract class ListConstraintFactory<A> extends ConstraintFactory<List<A>> {
             return ImmutableList.copyOf(argument);
         }
 
-        List<A> customizedConstraints = new ArrayList<>();
+        final List<A> customizedConstraints = new ArrayList<>(argument.size());
         for (A constraint : argument) {
             customizedConstraints.add(createCustomizedConstraint(constraint, stmt));
         }
-        return customizedConstraints;
+        return ImmutableList.copyOf(customizedConstraints);
     }
 
     abstract protected A createCustomizedConstraint(A constraint, AbstractConstraintEffectiveStatement<List<A>, ?> stmt);
@@ -130,9 +130,9 @@ final class PatternConstraintFactory extends ConstraintFactory<PatternConstraint
     protected PatternConstraint createConstraints(final AbstractConstraintEffectiveStatement<PatternConstraint, ?> stmt, final PatternConstraint argument) {
         if (!stmt.isCustomizedStatement()) {
             return argument;
-        } else {
-            return createCustomizedConstraint(argument, stmt);
         }
+
+        return createCustomizedConstraint(argument, stmt);
     }
 
     private static PatternConstraint createCustomizedConstraint(final PatternConstraint patternConstraint,
