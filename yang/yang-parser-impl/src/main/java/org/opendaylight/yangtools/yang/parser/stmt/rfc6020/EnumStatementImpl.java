@@ -23,10 +23,10 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EnumEf
 public class EnumStatementImpl extends AbstractDeclaredStatement<String> implements EnumStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .ENUM)
-            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
-            .add(Rfc6020Mapping.REFERENCE, 0, 1)
-            .add(Rfc6020Mapping.STATUS, 0, 1)
-            .add(Rfc6020Mapping.VALUE, 0, 1)
+            .addOptional(Rfc6020Mapping.DESCRIPTION)
+            .addOptional(Rfc6020Mapping.REFERENCE)
+            .addOptional(Rfc6020Mapping.STATUS)
+            .addOptional(Rfc6020Mapping.VALUE)
             .build();
 
     protected EnumStatementImpl(final StmtContext<String, EnumStatement, ?> context) {
@@ -58,7 +58,7 @@ public class EnumStatementImpl extends AbstractDeclaredStatement<String> impleme
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, EnumStatement,
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<String, EnumStatement,
                 EffectiveStatement<String, EnumStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);

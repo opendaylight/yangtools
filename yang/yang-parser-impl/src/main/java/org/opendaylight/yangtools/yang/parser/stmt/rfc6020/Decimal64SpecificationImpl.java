@@ -21,8 +21,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Decima
 public class Decimal64SpecificationImpl extends AbstractDeclaredStatement<String> implements Decimal64Specification {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .TYPE)
-            .add(Rfc6020Mapping.FRACTION_DIGITS, 1, 1)
-            .add(Rfc6020Mapping.RANGE, 0, 1)
+            .addMandatory(Rfc6020Mapping.FRACTION_DIGITS)
+            .addOptional(Rfc6020Mapping.RANGE)
             .build();
 
     protected Decimal64SpecificationImpl(final StmtContext<String, Decimal64Specification, ?> context) {
@@ -53,7 +53,7 @@ public class Decimal64SpecificationImpl extends AbstractDeclaredStatement<String
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, Decimal64Specification,
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<String, Decimal64Specification,
                 EffectiveStatement<String, Decimal64Specification>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);

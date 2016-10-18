@@ -24,7 +24,15 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public final class SubstatementValidator {
+    /**
+     * @deprecated Deprecated since version 1.1.0. Use {@link Builder#addAny(StatementDefinition)},
+     *             {@link Builder#addAtLeast(StatementDefinition, int)},
+     *             {@link Builder#addMandatory(StatementDefinition)}, or
+     *             {@link Builder#addMultiple(StatementDefinition)} instead.
+     */
+    @Deprecated
     public final static int MAX = Integer.MAX_VALUE;
+
     private final Map<StatementDefinition, Cardinality> cardinalityMap;
     private final StatementDefinition currentStatement;
     private final SpecialCase specialCase;
@@ -40,6 +48,11 @@ public final class SubstatementValidator {
     }
 
     public static class Builder {
+        private static final Cardinality ONE_MAX = new Cardinality(1, Integer.MAX_VALUE);
+        private static final Cardinality ONE_ONE = new Cardinality(1, 1);
+        private static final Cardinality ZERO_MAX = new Cardinality(0, Integer.MAX_VALUE);
+        private static final Cardinality ZERO_ONE = new Cardinality(0, 1);
+
         private final ImmutableMap.Builder<StatementDefinition, Cardinality> cardinalityMap = ImmutableMap.builder();
         private final StatementDefinition currentStatement;
 
@@ -47,9 +60,57 @@ public final class SubstatementValidator {
             this.currentStatement = currentStatement;
         }
 
-        public Builder add(final StatementDefinition d, final int min, final int max) {
-            this.cardinalityMap.put(d, new Cardinality(min, max));
+        private Builder add(final StatementDefinition d, final Cardinality c) {
+            cardinalityMap.put(d, c);
             return this;
+        }
+
+        public Builder add(final StatementDefinition d, final int min, final int max) {
+            if (max == Integer.MAX_VALUE) {
+                return addAtLeast(d, min);
+            } else if (min == 0) {
+                return addAtMost(d, max);
+            } else {
+                return add(d, new Cardinality(min, max));
+            }
+        }
+
+        // Equivalent to min .. Integer.MAX_VALUE
+        public Builder addAtLeast(final StatementDefinition d, final int min) {
+            switch (min) {
+                case 0:
+                    return addAny(d);
+                case 1:
+                    return addMultiple(d);
+                default:
+                    return add(d, new Cardinality(min, Integer.MAX_VALUE));
+            }
+        }
+
+        // Equivalent to 0 .. max
+        public Builder addAtMost(final StatementDefinition d, final int max) {
+            return max == Integer.MAX_VALUE ? addAny(d) : add(d, new Cardinality(0, max));
+        }
+
+
+        // Equivalent to 0 .. Integer.MAX_VALUE
+        public Builder addAny(final StatementDefinition d) {
+            return add(d, ZERO_MAX);
+        }
+
+        // Equivalent to 1 .. 1
+        public Builder addMandatory(final StatementDefinition d) {
+            return add(d, ONE_ONE);
+        }
+
+        // Equivalent to 1 .. MAX
+        public Builder addMultiple(final StatementDefinition d) {
+            return add(d, ONE_MAX);
+        }
+
+        // Equivalent to 0 .. 1
+        public Builder addOptional(final StatementDefinition d) {
+            return add(d, ZERO_ONE);
         }
 
         public SubstatementValidator build() {
@@ -122,7 +183,7 @@ public final class SubstatementValidator {
         }
     }
 
-    private static class Cardinality {
+    private static final class Cardinality {
         private final int min;
         private final int max;
 
