@@ -25,13 +25,13 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Length
 public class LengthStatementImpl extends AbstractDeclaredStatement<List<LengthConstraint>> implements LengthStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .LENGTH)
-            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
-            .add(Rfc6020Mapping.ERROR_APP_TAG, 0, 1)
-            .add(Rfc6020Mapping.ERROR_MESSAGE, 0, 1)
-            .add(Rfc6020Mapping.REFERENCE, 0, 1)
+            .addOptional(Rfc6020Mapping.DESCRIPTION)
+            .addOptional(Rfc6020Mapping.ERROR_APP_TAG)
+            .addOptional(Rfc6020Mapping.ERROR_MESSAGE)
+            .addOptional(Rfc6020Mapping.REFERENCE)
             .build();
 
-    protected LengthStatementImpl(StmtContext<List<LengthConstraint>, LengthStatement, ?> context) {
+    protected LengthStatementImpl(final StmtContext<List<LengthConstraint>, LengthStatement, ?> context) {
         super(context);
     }
 
@@ -43,24 +43,24 @@ public class LengthStatementImpl extends AbstractDeclaredStatement<List<LengthCo
         }
 
         @Override
-        public List<LengthConstraint> parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public List<LengthConstraint> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return TypeUtils.parseLengthListFromString(ctx, value);
         }
 
         @Override
-        public LengthStatement createDeclared(StmtContext<List<LengthConstraint>, LengthStatement, ?> ctx) {
+        public LengthStatement createDeclared(final StmtContext<List<LengthConstraint>, LengthStatement, ?> ctx) {
             return new LengthStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<List<LengthConstraint>, LengthStatement> createEffective(
-                StmtContext<List<LengthConstraint>, LengthStatement, EffectiveStatement<List<LengthConstraint>,
+                final StmtContext<List<LengthConstraint>, LengthStatement, EffectiveStatement<List<LengthConstraint>,
                         LengthStatement>> ctx) {
             return new LengthEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<List<LengthConstraint>,
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<List<LengthConstraint>,
                 LengthStatement, EffectiveStatement<List<LengthConstraint>, LengthStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);

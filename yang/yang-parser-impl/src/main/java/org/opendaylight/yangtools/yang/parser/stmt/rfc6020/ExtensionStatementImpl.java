@@ -25,10 +25,10 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ExtensionEf
 public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> implements ExtensionStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .EXTENSION)
-            .add(Rfc6020Mapping.ARGUMENT, 0, 1)
-            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
-            .add(Rfc6020Mapping.REFERENCE, 0, 1)
-            .add(Rfc6020Mapping.STATUS, 0, 1)
+            .addOptional(Rfc6020Mapping.ARGUMENT)
+            .addOptional(Rfc6020Mapping.DESCRIPTION)
+            .addOptional(Rfc6020Mapping.REFERENCE)
+            .addOptional(Rfc6020Mapping.STATUS)
             .build();
 
     protected ExtensionStatementImpl(StmtContext<QName, ExtensionStatement,?> context) {

@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
-
 import com.google.common.base.Preconditions;
 import java.util.Collection;
 import java.util.regex.Pattern;
@@ -42,19 +40,19 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
     private static final Pattern PATH_REL_PATTERN2 = Pattern.compile("//.*");
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator
             .builder(Rfc6020Mapping.AUGMENT)
-            .add(Rfc6020Mapping.ANYXML, 0, MAX)
-            .add(Rfc6020Mapping.CASE, 0, MAX)
-            .add(Rfc6020Mapping.CHOICE, 0, MAX)
-            .add(Rfc6020Mapping.CONTAINER, 0, MAX)
-            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
-            .add(Rfc6020Mapping.IF_FEATURE, 0, MAX)
-            .add(Rfc6020Mapping.LEAF, 0, MAX)
-            .add(Rfc6020Mapping.LEAF_LIST, 0, MAX)
-            .add(Rfc6020Mapping.LIST, 0, MAX)
-            .add(Rfc6020Mapping.REFERENCE, 0, 1)
-            .add(Rfc6020Mapping.STATUS, 0, 1)
-            .add(Rfc6020Mapping.USES, 0, MAX)
-            .add(Rfc6020Mapping.WHEN, 0, 1)
+            .addAny(Rfc6020Mapping.ANYXML)
+            .addAny(Rfc6020Mapping.CASE)
+            .addAny(Rfc6020Mapping.CHOICE)
+            .addAny(Rfc6020Mapping.CONTAINER)
+            .addOptional(Rfc6020Mapping.DESCRIPTION)
+            .addAny(Rfc6020Mapping.IF_FEATURE)
+            .addAny(Rfc6020Mapping.LEAF)
+            .addAny(Rfc6020Mapping.LEAF_LIST)
+            .addAny(Rfc6020Mapping.LIST)
+            .addOptional(Rfc6020Mapping.REFERENCE)
+            .addOptional(Rfc6020Mapping.STATUS)
+            .addAny(Rfc6020Mapping.USES)
+            .addOptional(Rfc6020Mapping.WHEN)
             .build();
 
     protected AugmentStatementImpl(final StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> context) {

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
+
 import com.google.common.base.Optional;
 import java.util.Collection;
 import java.util.Date;
@@ -35,7 +36,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IncludeEffe
 
 public class IncludeStatementImpl extends AbstractDeclaredStatement<String> implements IncludeStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        Rfc6020Mapping.INCLUDE).add(Rfc6020Mapping.REVISION_DATE, 0, 1).build();
+        Rfc6020Mapping.INCLUDE).addOptional(Rfc6020Mapping.REVISION_DATE).build();
 
     protected IncludeStatementImpl(final StmtContext<String, IncludeStatement, ?> context) {
         super(context);

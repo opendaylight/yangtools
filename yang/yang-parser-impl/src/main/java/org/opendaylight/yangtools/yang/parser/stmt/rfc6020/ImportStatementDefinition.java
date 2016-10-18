@@ -53,8 +53,11 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ImportEffec
 public class ImportStatementDefinition extends
         AbstractStatementSupport<String, ImportStatement, EffectiveStatement<String, ImportStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator
-            .builder(Rfc6020Mapping.IMPORT).add(Rfc6020Mapping.PREFIX, 1, 1).add(Rfc6020Mapping.REVISION_DATE, 0, 1)
-            .add(SupportedExtensionsMapping.SEMANTIC_VERSION, 0, 1).build();
+            .builder(Rfc6020Mapping.IMPORT)
+            .addMandatory(Rfc6020Mapping.PREFIX)
+            .addOptional(Rfc6020Mapping.REVISION_DATE)
+            .addOptional(SupportedExtensionsMapping.SEMANTIC_VERSION)
+            .build();
 
     public ImportStatementDefinition() {
         super(Rfc6020Mapping.IMPORT);
@@ -84,7 +87,7 @@ public class ImportStatementDefinition extends
     }
 
     @Override
-    public void onPreLinkageDeclared(Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt) {
+    public void onPreLinkageDeclared(final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt) {
         final String moduleName = stmt.getStatementArgument();
         final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_PRE_LINKAGE);
         final Prerequisite<StmtContext<?, ?, ?>> imported = importAction.requiresCtx(stmt,
@@ -261,7 +264,7 @@ public class ImportStatementDefinition extends
             });
         }
 
-        private static SemVer getRequestedImportVersion(Mutable<?, ?, ?> impStmt) {
+        private static SemVer getRequestedImportVersion(final Mutable<?, ?, ?> impStmt) {
             SemVer requestedImportVersion = impStmt.getFromNamespace(SemanticVersionNamespace.class, impStmt);
             if (requestedImportVersion == null) {
                 requestedImportVersion = Module.DEFAULT_SEMANTIC_VERSION;
