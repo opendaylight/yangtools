@@ -29,12 +29,12 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.TypeDefEffe
 public class TypedefStatementImpl extends AbstractDeclaredStatement<QName> implements TypedefStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .TYPEDEF)
-            .add(Rfc6020Mapping.DEFAULT, 0, 1)
-            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
-            .add(Rfc6020Mapping.REFERENCE, 0, 1)
-            .add(Rfc6020Mapping.STATUS, 0, 1)
-            .add(Rfc6020Mapping.TYPE, 1, 1)
-            .add(Rfc6020Mapping.UNITS, 0, 1)
+            .addOptional(Rfc6020Mapping.DEFAULT)
+            .addOptional(Rfc6020Mapping.DESCRIPTION)
+            .addOptional(Rfc6020Mapping.REFERENCE)
+            .addOptional(Rfc6020Mapping.STATUS)
+            .addMandatory(Rfc6020Mapping.TYPE)
+            .addOptional(Rfc6020Mapping.UNITS)
             .build();
 
     protected TypedefStatementImpl(final StmtContext<QName, TypedefStatement, ?> context) {

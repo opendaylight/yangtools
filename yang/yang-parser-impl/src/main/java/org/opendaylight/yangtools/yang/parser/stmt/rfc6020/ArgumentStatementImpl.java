@@ -22,11 +22,11 @@ public class ArgumentStatementImpl extends AbstractDeclaredStatement<QName>
         implements ArgumentStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .ARGUMENT)
-            .add(Rfc6020Mapping.YIN_ELEMENT, 0, 1)
+            .addOptional(Rfc6020Mapping.YIN_ELEMENT)
             .build();
 
     protected ArgumentStatementImpl(
-            StmtContext<QName, ArgumentStatement, ?> context) {
+            final StmtContext<QName, ArgumentStatement, ?> context) {
         super(context);
     }
 
@@ -39,24 +39,24 @@ public class ArgumentStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return Utils.qNameFromArgument(ctx, value);
         }
 
         @Override
         public ArgumentStatement createDeclared(
-                StmtContext<QName, ArgumentStatement, ?> ctx) {
+                final StmtContext<QName, ArgumentStatement, ?> ctx) {
             return new ArgumentStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<QName, ArgumentStatement> createEffective(
-                StmtContext<QName, ArgumentStatement, EffectiveStatement<QName, ArgumentStatement>> ctx) {
+                final StmtContext<QName, ArgumentStatement, EffectiveStatement<QName, ArgumentStatement>> ctx) {
             return new ArgumentEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<QName, ArgumentStatement,
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<QName, ArgumentStatement,
                 EffectiveStatement<QName, ArgumentStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);

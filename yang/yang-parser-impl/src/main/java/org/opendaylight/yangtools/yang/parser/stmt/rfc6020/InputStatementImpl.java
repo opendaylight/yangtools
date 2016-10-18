@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
-
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -28,18 +26,18 @@ public class InputStatementImpl extends AbstractDeclaredStatement<QName>
         implements InputStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .INPUT)
-            .add(Rfc6020Mapping.ANYXML, 0, MAX)
-            .add(Rfc6020Mapping.CHOICE, 0, MAX)
-            .add(Rfc6020Mapping.CONTAINER, 0, MAX)
-            .add(Rfc6020Mapping.GROUPING, 0, MAX)
-            .add(Rfc6020Mapping.LEAF, 0, MAX)
-            .add(Rfc6020Mapping.LEAF_LIST, 0, MAX)
-            .add(Rfc6020Mapping.LIST, 0, MAX)
-            .add(Rfc6020Mapping.TYPEDEF, 0, MAX)
-            .add(Rfc6020Mapping.USES, 0, MAX)
+            .addAny(Rfc6020Mapping.ANYXML)
+            .addAny(Rfc6020Mapping.CHOICE)
+            .addAny(Rfc6020Mapping.CONTAINER)
+            .addAny(Rfc6020Mapping.GROUPING)
+            .addAny(Rfc6020Mapping.LEAF)
+            .addAny(Rfc6020Mapping.LEAF_LIST)
+            .addAny(Rfc6020Mapping.LIST)
+            .addAny(Rfc6020Mapping.TYPEDEF)
+            .addAny(Rfc6020Mapping.USES)
             .build();
 
-    protected InputStatementImpl(StmtContext<QName, InputStatement, ?> context) {
+    protected InputStatementImpl(final StmtContext<QName, InputStatement, ?> context) {
         super(context);
     }
 
@@ -52,29 +50,29 @@ public class InputStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return Utils.qNameFromArgument(ctx, "input");
         }
 
         @Override
-        public void onStatementAdded(Mutable<QName, InputStatement, EffectiveStatement<QName, InputStatement>> stmt) {
+        public void onStatementAdded(final Mutable<QName, InputStatement, EffectiveStatement<QName, InputStatement>> stmt) {
             stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
         }
 
         @Override
         public InputStatement createDeclared(
-                StmtContext<QName, InputStatement, ?> ctx) {
+                final StmtContext<QName, InputStatement, ?> ctx) {
             return new InputStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<QName, InputStatement> createEffective(
-                StmtContext<QName, InputStatement, EffectiveStatement<QName, InputStatement>> ctx) {
+                final StmtContext<QName, InputStatement, EffectiveStatement<QName, InputStatement>> ctx) {
             return new InputEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(Mutable<QName, InputStatement,
+        public void onFullDefinitionDeclared(final Mutable<QName, InputStatement,
                 EffectiveStatement<QName, InputStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);

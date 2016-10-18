@@ -26,11 +26,11 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Identi
 public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<String> implements TypeStatement.IdentityRefSpecification {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .TYPE)
-            .add(Rfc6020Mapping.BASE, 1, 1)
+            .addMandatory(Rfc6020Mapping.BASE)
             .build();
 
     protected IdentityRefSpecificationImpl(
-            StmtContext<String, TypeStatement.IdentityRefSpecification, ?> context) {
+            final StmtContext<String, TypeStatement.IdentityRefSpecification, ?> context) {
         super(context);
     }
 
@@ -43,25 +43,25 @@ public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<Stri
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
         @Override
         public TypeStatement.IdentityRefSpecification createDeclared(
-                StmtContext<String, TypeStatement.IdentityRefSpecification, ?> ctx) {
+                final StmtContext<String, TypeStatement.IdentityRefSpecification, ?> ctx) {
             return new IdentityRefSpecificationImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<String, TypeStatement.IdentityRefSpecification> createEffective(
-                StmtContext<String, TypeStatement.IdentityRefSpecification, EffectiveStatement<String, TypeStatement
+                final StmtContext<String, TypeStatement.IdentityRefSpecification, EffectiveStatement<String, TypeStatement
                         .IdentityRefSpecification>> ctx) {
             return new IdentityRefSpecificationEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, IdentityRefSpecification,
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<String, IdentityRefSpecification,
                 EffectiveStatement<String, IdentityRefSpecification>> stmt) {
             final StmtContext<QName, ?, ?> baseStmt = StmtContextUtils.findFirstDeclaredSubstatement(stmt,
                     BaseStatement.class);
@@ -77,7 +77,7 @@ public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<Stri
         }
 
         @Override
-        public void onStatementDefinitionDeclared(StmtContext.Mutable<String, IdentityRefSpecification,
+        public void onStatementDefinitionDeclared(final StmtContext.Mutable<String, IdentityRefSpecification,
                 EffectiveStatement<String, IdentityRefSpecification>> stmt) {
             super.onStatementDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
