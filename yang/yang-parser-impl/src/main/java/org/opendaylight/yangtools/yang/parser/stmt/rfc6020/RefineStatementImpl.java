@@ -8,8 +8,6 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
-
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -26,15 +24,15 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RefineEffec
 public class RefineStatementImpl extends AbstractDeclaredStatement<SchemaNodeIdentifier> implements RefineStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .REFINE)
-            .add(Rfc6020Mapping.DEFAULT, 0, 1)
-            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
-            .add(Rfc6020Mapping.REFERENCE, 0, 1)
-            .add(Rfc6020Mapping.CONFIG, 0, 1)
-            .add(Rfc6020Mapping.MANDATORY, 0, 1)
-            .add(Rfc6020Mapping.PRESENCE, 0, 1)
-            .add(Rfc6020Mapping.MUST, 0, MAX)
-            .add(Rfc6020Mapping.MIN_ELEMENTS, 0, 1)
-            .add(Rfc6020Mapping.MAX_ELEMENTS, 0, 1)
+            .addOptional(Rfc6020Mapping.DEFAULT)
+            .addOptional(Rfc6020Mapping.DESCRIPTION)
+            .addOptional(Rfc6020Mapping.REFERENCE)
+            .addOptional(Rfc6020Mapping.CONFIG)
+            .addOptional(Rfc6020Mapping.MANDATORY)
+            .addOptional(Rfc6020Mapping.PRESENCE)
+            .addAny(Rfc6020Mapping.MUST)
+            .addOptional(Rfc6020Mapping.MIN_ELEMENTS)
+            .addOptional(Rfc6020Mapping.MAX_ELEMENTS)
             .build();
 
     protected RefineStatementImpl(final StmtContext<SchemaNodeIdentifier, RefineStatement, ?> context) {
@@ -65,7 +63,7 @@ public class RefineStatementImpl extends AbstractDeclaredStatement<SchemaNodeIde
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<SchemaNodeIdentifier, RefineStatement,
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<SchemaNodeIdentifier, RefineStatement,
                 EffectiveStatement<SchemaNodeIdentifier, RefineStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);

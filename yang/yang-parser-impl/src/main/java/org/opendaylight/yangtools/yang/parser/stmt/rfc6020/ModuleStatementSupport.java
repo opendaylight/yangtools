@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import com.google.common.base.Optional;
@@ -52,33 +51,33 @@ public class ModuleStatementSupport extends
         AbstractStatementSupport<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .MODULE)
-            .add(Rfc6020Mapping.ANYXML, 0, MAX)
-            .add(Rfc6020Mapping.AUGMENT, 0, MAX)
-            .add(Rfc6020Mapping.CHOICE, 0, MAX)
-            .add(Rfc6020Mapping.CONTACT, 0, 1)
-            .add(Rfc6020Mapping.CONTAINER, 0, MAX)
-            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
-            .add(Rfc6020Mapping.DEVIATION, 0, MAX)
-            .add(Rfc6020Mapping.EXTENSION, 0, MAX)
-            .add(Rfc6020Mapping.FEATURE, 0, MAX)
-            .add(Rfc6020Mapping.GROUPING, 0, MAX)
-            .add(Rfc6020Mapping.IDENTITY, 0, MAX)
-            .add(Rfc6020Mapping.IMPORT, 0, MAX)
-            .add(Rfc6020Mapping.INCLUDE, 0, MAX)
-            .add(Rfc6020Mapping.LEAF, 0, MAX)
-            .add(Rfc6020Mapping.LEAF_LIST, 0, MAX)
-            .add(Rfc6020Mapping.LIST, 0, MAX)
-            .add(Rfc6020Mapping.NAMESPACE, 1, 1)
-            .add(Rfc6020Mapping.NOTIFICATION, 0, MAX)
-            .add(Rfc6020Mapping.ORGANIZATION, 0, 1)
-            .add(Rfc6020Mapping.PREFIX, 1, 1)
-            .add(Rfc6020Mapping.REFERENCE, 0, 1)
-            .add(Rfc6020Mapping.REVISION, 0, MAX)
-            .add(Rfc6020Mapping.RPC, 0, MAX)
-            .add(Rfc6020Mapping.TYPEDEF, 0, MAX)
-            .add(Rfc6020Mapping.USES, 0, MAX)
-            .add(Rfc6020Mapping.YANG_VERSION, 0, 1)
-            .add(SupportedExtensionsMapping.SEMANTIC_VERSION, 0, 1)
+            .addAny(Rfc6020Mapping.ANYXML)
+            .addAny(Rfc6020Mapping.AUGMENT)
+            .addAny(Rfc6020Mapping.CHOICE)
+            .addOptional(Rfc6020Mapping.CONTACT)
+            .addAny(Rfc6020Mapping.CONTAINER)
+            .addOptional(Rfc6020Mapping.DESCRIPTION)
+            .addAny(Rfc6020Mapping.DEVIATION)
+            .addAny(Rfc6020Mapping.EXTENSION)
+            .addAny(Rfc6020Mapping.FEATURE)
+            .addAny(Rfc6020Mapping.GROUPING)
+            .addAny(Rfc6020Mapping.IDENTITY)
+            .addAny(Rfc6020Mapping.IMPORT)
+            .addAny(Rfc6020Mapping.INCLUDE)
+            .addAny(Rfc6020Mapping.LEAF)
+            .addAny(Rfc6020Mapping.LEAF_LIST)
+            .addAny(Rfc6020Mapping.LIST)
+            .addMandatory(Rfc6020Mapping.NAMESPACE)
+            .addAny(Rfc6020Mapping.NOTIFICATION)
+            .addOptional(Rfc6020Mapping.ORGANIZATION)
+            .addMandatory(Rfc6020Mapping.PREFIX)
+            .addOptional(Rfc6020Mapping.REFERENCE)
+            .addAny(Rfc6020Mapping.REVISION)
+            .addAny(Rfc6020Mapping.RPC)
+            .addAny(Rfc6020Mapping.TYPEDEF)
+            .addAny(Rfc6020Mapping.USES)
+            .addOptional(Rfc6020Mapping.YANG_VERSION)
+            .addOptional(SupportedExtensionsMapping.SEMANTIC_VERSION)
             .build();
 
     public ModuleStatementSupport() {
@@ -102,7 +101,7 @@ public class ModuleStatementSupport extends
     }
 
     @Override
-    public void onPreLinkageDeclared(Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt) {
+    public void onPreLinkageDeclared(final Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt) {
         final String moduleName = stmt.getStatementArgument();
 
         final URI moduleNs = firstAttributeOf(stmt.declaredSubstatements(),
@@ -173,7 +172,7 @@ public class ModuleStatementSupport extends
         NavigableMap<SemVer, StmtContext<?, ?, ?>> modulesMap = stmt.getFromNamespace(
                 SemanticVersionModuleNamespace.class, moduleName);
         if (modulesMap == null) {
-            modulesMap = new TreeMap<SemVer, StmtContext<?, ?, ?>>();
+            modulesMap = new TreeMap<>();
         }
         SemVer moduleSemVer = stmt.getFromNamespace(SemanticVersionNamespace.class, stmt);
         if(moduleSemVer == null) {

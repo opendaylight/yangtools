@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
-
 import java.util.Collection;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -32,23 +30,23 @@ public class NotificationStatementImpl extends AbstractDeclaredStatement<QName>
         implements NotificationStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .NOTIFICATION)
-            .add(Rfc6020Mapping.ANYXML, 0, MAX)
-            .add(Rfc6020Mapping.CHOICE, 0, MAX)
-            .add(Rfc6020Mapping.CONTAINER, 0, MAX)
-            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
-            .add(Rfc6020Mapping.GROUPING, 0, MAX)
-            .add(Rfc6020Mapping.IF_FEATURE, 0, MAX)
-            .add(Rfc6020Mapping.LEAF, 0, MAX)
-            .add(Rfc6020Mapping.LEAF_LIST, 0, MAX)
-            .add(Rfc6020Mapping.LIST, 0, MAX)
-            .add(Rfc6020Mapping.REFERENCE, 0, 1)
-            .add(Rfc6020Mapping.STATUS, 0, 1)
-            .add(Rfc6020Mapping.TYPEDEF, 0, MAX)
-            .add(Rfc6020Mapping.USES, 0, MAX)
+            .addAny(Rfc6020Mapping.ANYXML)
+            .addAny(Rfc6020Mapping.CHOICE)
+            .addAny(Rfc6020Mapping.CONTAINER)
+            .addOptional(Rfc6020Mapping.DESCRIPTION)
+            .addAny(Rfc6020Mapping.GROUPING)
+            .addAny(Rfc6020Mapping.IF_FEATURE)
+            .addAny(Rfc6020Mapping.LEAF)
+            .addAny(Rfc6020Mapping.LEAF_LIST)
+            .addAny(Rfc6020Mapping.LIST)
+            .addOptional(Rfc6020Mapping.REFERENCE)
+            .addOptional(Rfc6020Mapping.STATUS)
+            .addAny(Rfc6020Mapping.TYPEDEF)
+            .addAny(Rfc6020Mapping.USES)
             .build();
 
     protected NotificationStatementImpl(
-            StmtContext<QName, NotificationStatement, ?> context) {
+            final StmtContext<QName, NotificationStatement, ?> context) {
         super(context);
     }
 
@@ -61,30 +59,30 @@ public class NotificationStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return Utils.qNameFromArgument(ctx, value);
         }
 
         @Override
         public void onStatementAdded(
-                Mutable<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> stmt) {
+                final Mutable<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> stmt) {
             stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
         }
 
         @Override
         public NotificationStatement createDeclared(
-                StmtContext<QName, NotificationStatement, ?> ctx) {
+                final StmtContext<QName, NotificationStatement, ?> ctx) {
             return new NotificationStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<QName, NotificationStatement> createEffective(
-                StmtContext<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> ctx) {
+                final StmtContext<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> ctx) {
             return new NotificationEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(Mutable<QName, NotificationStatement,
+        public void onFullDefinitionDeclared(final Mutable<QName, NotificationStatement,
                 EffectiveStatement<QName, NotificationStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);

@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
-
 import java.util.Collection;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -34,17 +32,17 @@ public class RpcStatementImpl extends AbstractDeclaredStatement<QName>
         implements RpcStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .RPC)
-            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
-            .add(Rfc6020Mapping.GROUPING, 0, MAX)
-            .add(Rfc6020Mapping.IF_FEATURE, 0, MAX)
-            .add(Rfc6020Mapping.INPUT, 0, 1)
-            .add(Rfc6020Mapping.OUTPUT, 0, 1)
-            .add(Rfc6020Mapping.REFERENCE, 0, 1)
-            .add(Rfc6020Mapping.STATUS, 0, 1)
-            .add(Rfc6020Mapping.TYPEDEF, 0, MAX)
+            .addOptional(Rfc6020Mapping.DESCRIPTION)
+            .addAny(Rfc6020Mapping.GROUPING)
+            .addAny(Rfc6020Mapping.IF_FEATURE)
+            .addOptional(Rfc6020Mapping.INPUT)
+            .addOptional(Rfc6020Mapping.OUTPUT)
+            .addOptional(Rfc6020Mapping.REFERENCE)
+            .addOptional(Rfc6020Mapping.STATUS)
+            .addAny(Rfc6020Mapping.TYPEDEF)
             .build();
 
-    protected RpcStatementImpl(StmtContext<QName, RpcStatement, ?> context) {
+    protected RpcStatementImpl(final StmtContext<QName, RpcStatement, ?> context) {
         super(context);
     }
 
@@ -57,29 +55,29 @@ public class RpcStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return Utils.qNameFromArgument(ctx, value);
         }
 
         @Override
-        public void onStatementAdded(Mutable<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> stmt) {
+        public void onStatementAdded(final Mutable<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> stmt) {
             stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
         }
 
         @Override
         public RpcStatement createDeclared(
-                StmtContext<QName, RpcStatement, ?> ctx) {
+                final StmtContext<QName, RpcStatement, ?> ctx) {
             return new RpcStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<QName, RpcStatement> createEffective(
-                StmtContext<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> ctx) {
+                final StmtContext<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> ctx) {
             return new RpcEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(Mutable<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> stmt) {
+        public void onFullDefinitionDeclared(final Mutable<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

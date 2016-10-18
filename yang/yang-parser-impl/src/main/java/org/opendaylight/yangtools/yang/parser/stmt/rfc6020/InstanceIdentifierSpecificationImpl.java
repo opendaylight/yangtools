@@ -22,11 +22,11 @@ public class InstanceIdentifierSpecificationImpl extends
         TypeStatement.InstanceIdentifierSpecification {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .TYPE)
-            .add(Rfc6020Mapping.REQUIRE_INSTANCE, 0, 1)
+            .addOptional(Rfc6020Mapping.REQUIRE_INSTANCE)
             .build();
 
     protected InstanceIdentifierSpecificationImpl(
-            StmtContext<String, TypeStatement.InstanceIdentifierSpecification, ?> ctx) {
+            final StmtContext<String, TypeStatement.InstanceIdentifierSpecification, ?> ctx) {
         super(ctx);
     }
 
@@ -39,24 +39,24 @@ public class InstanceIdentifierSpecificationImpl extends
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
         @Override
         public TypeStatement.InstanceIdentifierSpecification createDeclared(
-                StmtContext<String, TypeStatement.InstanceIdentifierSpecification, ?> ctx) {
+                final StmtContext<String, TypeStatement.InstanceIdentifierSpecification, ?> ctx) {
             return new InstanceIdentifierSpecificationImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<String, TypeStatement.InstanceIdentifierSpecification> createEffective(
-                StmtContext<String, TypeStatement.InstanceIdentifierSpecification, EffectiveStatement<String, TypeStatement.InstanceIdentifierSpecification>> ctx) {
+                final StmtContext<String, TypeStatement.InstanceIdentifierSpecification, EffectiveStatement<String, TypeStatement.InstanceIdentifierSpecification>> ctx) {
             return new InstanceIdentifierSpecificationEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, InstanceIdentifierSpecification,
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<String, InstanceIdentifierSpecification,
                 EffectiveStatement<String, InstanceIdentifierSpecification>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
