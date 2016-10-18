@@ -1,0 +1,211 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_bdd7d1ec",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/NotificationAsContainer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-18T21:53:46Z",
+      "side": 1,
+      "message": "public class: needs javadoc\nnew public class: needs @Beta annotation",
+      "range": {
+        "startLine": 30,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 73
+      },
+      "revId": "0d1d6a6da95d5603bc9c85c0ee3193e8243dc3d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_bd1cf1c2",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/NotificationAsContainer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-18T21:53:46Z",
+      "side": 1,
+      "message": "this is not modified anywhere after it was initialized, hence we want to use a fixed map ...",
+      "range": {
+        "startLine": 32,
+        "startChar": 60,
+        "endLine": 32,
+        "endChar": 77
+      },
+      "revId": "0d1d6a6da95d5603bc9c85c0ee3193e8243dc3d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_1d2b65ec",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/NotificationAsContainer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-18T21:53:46Z",
+      "side": 1,
+      "message": "this is not really a delegate... having a delegate would really mean that we want to \u0027extends ForwardingObject\u0027 -- but since the implemented and backing interfaces differ, that really is not appropriate.",
+      "range": {
+        "startLine": 33,
+        "startChar": 41,
+        "endLine": 33,
+        "endChar": 49
+      },
+      "revId": "0d1d6a6da95d5603bc9c85c0ee3193e8243dc3d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_3d03c174",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/NotificationAsContainer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-18T21:53:46Z",
+      "side": 1,
+      "message": "this.notification \u003d Preconditions.checkNotNull(notification);",
+      "range": {
+        "startLine": 36,
+        "startChar": 8,
+        "endLine": 36,
+        "endChar": 31
+      },
+      "revId": "0d1d6a6da95d5603bc9c85c0ee3193e8243dc3d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_fd7dc9e8",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/NotificationAsContainer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-18T21:53:46Z",
+      "side": 1,
+      "message": "this.mapNodes \u003d com.google.common.collect.Maps.uniqueIndex(notification.getChildNodes(), DataSchemaNode::getQName);\n\nResults in a space-efficient and fast constant map.",
+      "range": {
+        "startLine": 37,
+        "startChar": 8,
+        "endLine": 37,
+        "endChar": 96
+      },
+      "revId": "0d1d6a6da95d5603bc9c85c0ee3193e8243dc3d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_fd082993",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/NotificationAsContainer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-18T21:53:46Z",
+      "side": 1,
+      "message": "ImmutableSet.of() is better",
+      "range": {
+        "startLine": 77,
+        "startChar": 15,
+        "endLine": 77,
+        "endChar": 38
+      },
+      "revId": "0d1d6a6da95d5603bc9c85c0ee3193e8243dc3d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_3d3aa136",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/NotificationAsContainer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-18T21:53:46Z",
+      "side": 1,
+      "message": "This is not really true with YANG 1.1, as notifications can be defined in groupings.\n\nPlease add a FIXME: comment with a reference to https://bugs.opendaylight.org/show_bug.cgi?id\u003d6897",
+      "range": {
+        "startLine": 97,
+        "startChar": 15,
+        "endLine": 97,
+        "endChar": 20
+      },
+      "revId": "0d1d6a6da95d5603bc9c85c0ee3193e8243dc3d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_5d0cbd94",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/NotificationAsContainer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-18T21:53:46Z",
+      "side": 1,
+      "message": "return EmptyConstraintDefinition.OPTIONAL;",
+      "range": {
+        "startLine": 107,
+        "startChar": 8,
+        "endLine": 107,
+        "endChar": 50
+      },
+      "revId": "0d1d6a6da95d5603bc9c85c0ee3193e8243dc3d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_9d25b50c",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/NotificationAsContainer.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-18T21:53:46Z",
+      "side": 1,
+      "message": "ImmutableList.of() is better.",
+      "range": {
+        "startLine": 122,
+        "startChar": 15,
+        "endLine": 122,
+        "endChar": 39
+      },
+      "revId": "0d1d6a6da95d5603bc9c85c0ee3193e8243dc3d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
