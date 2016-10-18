@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
-
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -23,10 +21,10 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EnumSp
 public class EnumSpecificationImpl extends AbstractDeclaredStatement<String> implements TypeStatement.EnumSpecification {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .TYPE)
-            .add(Rfc6020Mapping.ENUM, 1, MAX)
+            .addMultiple(Rfc6020Mapping.ENUM)
             .build();
 
-    protected EnumSpecificationImpl(StmtContext<String, TypeStatement.EnumSpecification, ?> context) {
+    protected EnumSpecificationImpl(final StmtContext<String, TypeStatement.EnumSpecification, ?> context) {
         super(context);
     }
 
@@ -39,24 +37,24 @@ public class EnumSpecificationImpl extends AbstractDeclaredStatement<String> imp
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
         @Override
         public TypeStatement.EnumSpecification createDeclared(
-                StmtContext<String, TypeStatement.EnumSpecification, ?> ctx) {
+                final StmtContext<String, TypeStatement.EnumSpecification, ?> ctx) {
             return new EnumSpecificationImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<String, TypeStatement.EnumSpecification> createEffective(
-                StmtContext<String, TypeStatement.EnumSpecification, EffectiveStatement<String, TypeStatement.EnumSpecification>> ctx) {
+                final StmtContext<String, TypeStatement.EnumSpecification, EffectiveStatement<String, TypeStatement.EnumSpecification>> ctx) {
             return new EnumSpecificationEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, EnumSpecification,
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<String, EnumSpecification,
                 EffectiveStatement<String, EnumSpecification>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);

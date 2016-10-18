@@ -26,10 +26,10 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.MustEffecti
 public class MustStatementImpl extends AbstractDeclaredStatement<RevisionAwareXPath> implements MustStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .MUST)
-            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
-            .add(Rfc6020Mapping.ERROR_APP_TAG, 0, 1)
-            .add(Rfc6020Mapping.ERROR_MESSAGE, 0, 1)
-            .add(Rfc6020Mapping.REFERENCE, 0, 1)
+            .addOptional(Rfc6020Mapping.DESCRIPTION)
+            .addOptional(Rfc6020Mapping.ERROR_APP_TAG)
+            .addOptional(Rfc6020Mapping.ERROR_MESSAGE)
+            .addOptional(Rfc6020Mapping.REFERENCE)
             .build();
 
     protected MustStatementImpl(final StmtContext<RevisionAwareXPath, MustStatement, ?> context) {
@@ -60,7 +60,7 @@ public class MustStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<RevisionAwareXPath, MustStatement,
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<RevisionAwareXPath, MustStatement,
                 EffectiveStatement<RevisionAwareXPath, MustStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);

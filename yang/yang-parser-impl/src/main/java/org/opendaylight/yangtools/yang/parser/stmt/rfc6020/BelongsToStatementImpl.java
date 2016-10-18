@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.BelongsEffe
 public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
         implements BelongsToStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-            SubstatementValidator.builder(Rfc6020Mapping.BELONGS_TO).add(Rfc6020Mapping.PREFIX, 1, 1).build();
+            SubstatementValidator.builder(Rfc6020Mapping.BELONGS_TO).addMandatory(Rfc6020Mapping.PREFIX).build();
 
     protected BelongsToStatementImpl(final StmtContext<String, BelongsToStatement, ?> context) {
         super(context);

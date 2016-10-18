@@ -24,8 +24,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.WhenEffecti
 public class WhenStatementImpl extends AbstractDeclaredStatement<RevisionAwareXPath> implements WhenStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .WHEN)
-            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
-            .add(Rfc6020Mapping.REFERENCE, 0, 1)
+            .addOptional(Rfc6020Mapping.DESCRIPTION)
+            .addOptional(Rfc6020Mapping.REFERENCE)
             .build();
 
     protected WhenStatementImpl(final StmtContext<RevisionAwareXPath, WhenStatement, ?> context) {
@@ -56,7 +56,7 @@ public class WhenStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<RevisionAwareXPath, WhenStatement,
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<RevisionAwareXPath, WhenStatement,
                 EffectiveStatement<RevisionAwareXPath, WhenStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);

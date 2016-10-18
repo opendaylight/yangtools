@@ -26,10 +26,10 @@ public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
         implements IdentityStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .IDENTITY)
-            .add(Rfc6020Mapping.BASE, 0, 1)
-            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
-            .add(Rfc6020Mapping.REFERENCE, 0, 1)
-            .add(Rfc6020Mapping.STATUS, 0, 1)
+            .addOptional(Rfc6020Mapping.BASE)
+            .addOptional(Rfc6020Mapping.DESCRIPTION)
+            .addOptional(Rfc6020Mapping.REFERENCE)
+            .addOptional(Rfc6020Mapping.STATUS)
             .build();
 
     protected IdentityStatementImpl(
@@ -66,7 +66,7 @@ public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<QName, IdentityStatement,
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<QName, IdentityStatement,
                 EffectiveStatement<QName, IdentityStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);

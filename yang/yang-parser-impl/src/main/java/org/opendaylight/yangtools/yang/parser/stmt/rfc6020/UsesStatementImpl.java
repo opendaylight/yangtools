@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -41,13 +40,13 @@ import org.slf4j.LoggerFactory;
 public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implements UsesStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .USES)
-            .add(Rfc6020Mapping.AUGMENT, 0, MAX)
-            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
-            .add(Rfc6020Mapping.IF_FEATURE, 0, MAX)
-            .add(Rfc6020Mapping.REFINE, 0, MAX)
-            .add(Rfc6020Mapping.REFERENCE, 0, 1)
-            .add(Rfc6020Mapping.STATUS, 0, 1)
-            .add(Rfc6020Mapping.WHEN, 0, 1)
+            .addAny(Rfc6020Mapping.AUGMENT)
+            .addOptional(Rfc6020Mapping.DESCRIPTION)
+            .addAny(Rfc6020Mapping.IF_FEATURE)
+            .addAny(Rfc6020Mapping.REFINE)
+            .addOptional(Rfc6020Mapping.REFERENCE)
+            .addOptional(Rfc6020Mapping.STATUS)
+            .addOptional(Rfc6020Mapping.WHEN)
             .build();
 
     private static final Logger LOG = LoggerFactory.getLogger(UsesStatementImpl.class);
