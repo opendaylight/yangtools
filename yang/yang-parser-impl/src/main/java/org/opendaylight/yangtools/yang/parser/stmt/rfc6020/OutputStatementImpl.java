@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
-
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -27,15 +25,15 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.OutputEffec
 public class OutputStatementImpl extends AbstractDeclaredStatement<QName> implements OutputStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .OUTPUT)
-            .add(Rfc6020Mapping.ANYXML, 0, MAX)
-            .add(Rfc6020Mapping.CHOICE, 0, MAX)
-            .add(Rfc6020Mapping.CONTAINER, 0, MAX)
-            .add(Rfc6020Mapping.GROUPING, 0, MAX)
-            .add(Rfc6020Mapping.LEAF, 0, MAX)
-            .add(Rfc6020Mapping.LEAF_LIST, 0, MAX)
-            .add(Rfc6020Mapping.LIST, 0, MAX)
-            .add(Rfc6020Mapping.TYPEDEF, 0, MAX)
-            .add(Rfc6020Mapping.USES, 0, MAX)
+            .addAny(Rfc6020Mapping.ANYXML)
+            .addAny(Rfc6020Mapping.CHOICE)
+            .addAny(Rfc6020Mapping.CONTAINER)
+            .addAny(Rfc6020Mapping.GROUPING)
+            .addAny(Rfc6020Mapping.LEAF)
+            .addAny(Rfc6020Mapping.LEAF_LIST)
+            .addAny(Rfc6020Mapping.LIST)
+            .addAny(Rfc6020Mapping.TYPEDEF)
+            .addAny(Rfc6020Mapping.USES)
             .build();
 
     protected OutputStatementImpl(final StmtContext<QName, OutputStatement, ?> context) {
@@ -71,7 +69,7 @@ public class OutputStatementImpl extends AbstractDeclaredStatement<QName> implem
         }
 
         @Override
-        public void onFullDefinitionDeclared(Mutable<QName, OutputStatement,
+        public void onFullDefinitionDeclared(final Mutable<QName, OutputStatement,
                 EffectiveStatement<QName, OutputStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);

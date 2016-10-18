@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
+
 import com.google.common.base.Optional;
 import java.util.Date;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
@@ -33,31 +33,31 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.SubmoduleEf
 public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleStatement> implements SubmoduleStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .SUBMODULE)
-            .add(Rfc6020Mapping.ANYXML, 0, MAX)
-            .add(Rfc6020Mapping.AUGMENT, 0, MAX)
-            .add(Rfc6020Mapping.BELONGS_TO, 1, 1)
-            .add(Rfc6020Mapping.CHOICE, 0, MAX)
-            .add(Rfc6020Mapping.CONTACT, 0, 1)
-            .add(Rfc6020Mapping.CONTAINER, 0, MAX)
-            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
-            .add(Rfc6020Mapping.DEVIATION, 0, MAX)
-            .add(Rfc6020Mapping.EXTENSION, 0, MAX)
-            .add(Rfc6020Mapping.FEATURE, 0, MAX)
-            .add(Rfc6020Mapping.GROUPING, 0, MAX)
-            .add(Rfc6020Mapping.IDENTITY, 0, MAX)
-            .add(Rfc6020Mapping.IMPORT, 0, MAX)
-            .add(Rfc6020Mapping.INCLUDE, 0, MAX)
-            .add(Rfc6020Mapping.LEAF, 0, MAX)
-            .add(Rfc6020Mapping.LEAF_LIST, 0, MAX)
-            .add(Rfc6020Mapping.LIST, 0, MAX)
-            .add(Rfc6020Mapping.NOTIFICATION, 0, MAX)
-            .add(Rfc6020Mapping.ORGANIZATION, 0, 1)
-            .add(Rfc6020Mapping.REFERENCE, 0, 1)
-            .add(Rfc6020Mapping.REVISION, 0, MAX)
-            .add(Rfc6020Mapping.RPC, 0, MAX)
-            .add(Rfc6020Mapping.TYPEDEF, 0, MAX)
-            .add(Rfc6020Mapping.USES, 0, MAX)
-            .add(Rfc6020Mapping.YANG_VERSION, 0, 1)
+            .addAny(Rfc6020Mapping.ANYXML)
+            .addAny(Rfc6020Mapping.AUGMENT)
+            .addMandatory(Rfc6020Mapping.BELONGS_TO)
+            .addAny(Rfc6020Mapping.CHOICE)
+            .addOptional(Rfc6020Mapping.CONTACT)
+            .addAny(Rfc6020Mapping.CONTAINER)
+            .addOptional(Rfc6020Mapping.DESCRIPTION)
+            .addAny(Rfc6020Mapping.DEVIATION)
+            .addAny(Rfc6020Mapping.EXTENSION)
+            .addAny(Rfc6020Mapping.FEATURE)
+            .addAny(Rfc6020Mapping.GROUPING)
+            .addAny(Rfc6020Mapping.IDENTITY)
+            .addAny(Rfc6020Mapping.IMPORT)
+            .addAny(Rfc6020Mapping.INCLUDE)
+            .addAny(Rfc6020Mapping.LEAF)
+            .addAny(Rfc6020Mapping.LEAF_LIST)
+            .addAny(Rfc6020Mapping.LIST)
+            .addAny(Rfc6020Mapping.NOTIFICATION)
+            .addOptional(Rfc6020Mapping.ORGANIZATION)
+            .addOptional(Rfc6020Mapping.REFERENCE)
+            .addAny(Rfc6020Mapping.REVISION)
+            .addAny(Rfc6020Mapping.RPC)
+            .addAny(Rfc6020Mapping.TYPEDEF)
+            .addAny(Rfc6020Mapping.USES)
+            .addOptional(Rfc6020Mapping.YANG_VERSION)
             .build();
     private static final Optional<Date> DEFAULT_REVISION = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
 

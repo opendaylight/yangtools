@@ -21,7 +21,7 @@ public class NumericalRestrictionsImpl extends AbstractDeclaredStatement<String>
         TypeStatement.NumericalRestrictions {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .TYPE)
-            .add(Rfc6020Mapping.RANGE, 1, 1)
+            .addMandatory(Rfc6020Mapping.RANGE)
             .build();
 
     protected NumericalRestrictionsImpl(final StmtContext<String, TypeStatement.NumericalRestrictions, ?> context) {
@@ -53,7 +53,7 @@ public class NumericalRestrictionsImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, NumericalRestrictions,
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<String, NumericalRestrictions,
                 EffectiveStatement<String, NumericalRestrictions>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);

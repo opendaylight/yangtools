@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
-
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -35,26 +33,26 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ContainerEf
 public class ContainerStatementImpl extends AbstractDeclaredStatement<QName> implements ContainerStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .CONTAINER)
-            .add(Rfc6020Mapping.ANYXML, 0, MAX)
-            .add(Rfc6020Mapping.CHOICE, 0, MAX)
-            .add(Rfc6020Mapping.CONFIG, 0, 1)
-            .add(Rfc6020Mapping.CONTAINER, 0, MAX)
-            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
-            .add(Rfc6020Mapping.GROUPING, 0, MAX)
-            .add(Rfc6020Mapping.IF_FEATURE, 0, MAX)
-            .add(Rfc6020Mapping.LEAF, 0, MAX)
-            .add(Rfc6020Mapping.LEAF_LIST, 0, MAX)
-            .add(Rfc6020Mapping.LIST, 0, MAX)
-            .add(Rfc6020Mapping.MUST, 0, MAX)
-            .add(Rfc6020Mapping.PRESENCE, 0, 1)
-            .add(Rfc6020Mapping.REFERENCE, 0, 1)
-            .add(Rfc6020Mapping.STATUS, 0, 1)
-            .add(Rfc6020Mapping.TYPEDEF, 0, MAX)
-            .add(Rfc6020Mapping.USES, 0, MAX)
-            .add(Rfc6020Mapping.WHEN, 0, 1)
+            .addAny(Rfc6020Mapping.ANYXML)
+            .addAny(Rfc6020Mapping.CHOICE)
+            .addOptional(Rfc6020Mapping.CONFIG)
+            .addAny(Rfc6020Mapping.CONTAINER)
+            .addOptional(Rfc6020Mapping.DESCRIPTION)
+            .addAny(Rfc6020Mapping.GROUPING)
+            .addAny(Rfc6020Mapping.IF_FEATURE)
+            .addAny(Rfc6020Mapping.LEAF)
+            .addAny(Rfc6020Mapping.LEAF_LIST)
+            .addAny(Rfc6020Mapping.LIST)
+            .addAny(Rfc6020Mapping.MUST)
+            .addOptional(Rfc6020Mapping.PRESENCE)
+            .addOptional(Rfc6020Mapping.REFERENCE)
+            .addOptional(Rfc6020Mapping.STATUS)
+            .addAny(Rfc6020Mapping.TYPEDEF)
+            .addAny(Rfc6020Mapping.USES)
+            .addOptional(Rfc6020Mapping.WHEN)
             .build();
 
-    protected ContainerStatementImpl(StmtContext<QName, ContainerStatement,?> context) {
+    protected ContainerStatementImpl(final StmtContext<QName, ContainerStatement,?> context) {
         super(context);
     }
 
@@ -65,28 +63,28 @@ public class ContainerStatementImpl extends AbstractDeclaredStatement<QName> imp
         }
 
         @Override
-        public QName parseArgumentValue(StmtContext<?,?,?> ctx, String value) {
+        public QName parseArgumentValue(final StmtContext<?,?,?> ctx, final String value) {
             return Utils.qNameFromArgument(ctx,value);
         }
 
         @Override
         public void onStatementAdded(
-                Mutable<QName, ContainerStatement, EffectiveStatement<QName, ContainerStatement>> stmt) {
+                final Mutable<QName, ContainerStatement, EffectiveStatement<QName, ContainerStatement>> stmt) {
             stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
         }
 
         @Override
-        public ContainerStatement createDeclared(StmtContext<QName, ContainerStatement,?> ctx) {
+        public ContainerStatement createDeclared(final StmtContext<QName, ContainerStatement,?> ctx) {
             return new ContainerStatementImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<QName,ContainerStatement> createEffective(StmtContext<QName,ContainerStatement,EffectiveStatement<QName,ContainerStatement>> ctx) {
+        public EffectiveStatement<QName,ContainerStatement> createEffective(final StmtContext<QName,ContainerStatement,EffectiveStatement<QName,ContainerStatement>> ctx) {
            return new ContainerEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(Mutable<QName, ContainerStatement,
+        public void onFullDefinitionDeclared(final Mutable<QName, ContainerStatement,
                 EffectiveStatement<QName, ContainerStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
