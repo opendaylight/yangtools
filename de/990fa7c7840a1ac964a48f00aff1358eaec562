@@ -1,0 +1,8 @@
+Verified+1: jenkins-releng <jenkins-releng@opendaylight.org>
+Code-Review+2: Robert Varga <nite@hq.sk>
+Code-Review+1: A H <an.ho@huawei.com>
+Submitted-by: Anil Belur <abelur@linuxfoundation.org>
+Submitted-at: Tue, 18 Oct 2016 21:27:50 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/47091
+Project: yangtools
+Branch: refs/heads/stable/beryllium
