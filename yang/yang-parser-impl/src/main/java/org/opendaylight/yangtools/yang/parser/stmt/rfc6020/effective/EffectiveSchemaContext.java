@@ -64,6 +64,7 @@ public final class EffectiveSchemaContext extends AbstractEffectiveSchemaContext
             nameMap.put(m.getName(), m);
             nsMap.put(m.getNamespace(), m);
             modIdBuilder.add(new ModuleIdentifierImpl(m.getName(), Optional.of(m.getNamespace()), Optional.of(m.getRevision())));
+            resolveSubmoduleIdentifiers(m.getSubmodules(), modIdBuilder);
         }
 
         namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
@@ -97,6 +98,7 @@ public final class EffectiveSchemaContext extends AbstractEffectiveSchemaContext
             nameMap.put(m.getName(), m);
             nsMap.put(m.getNamespace(), m);
             modIdBuilder.add(new ModuleIdentifierImpl(m.getName(), Optional.of(m.getNamespace()), Optional.of(m.getRevision())));
+            resolveSubmoduleIdentifiers(m.getSubmodules(), modIdBuilder);
         }
 
         namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
@@ -109,6 +111,13 @@ public final class EffectiveSchemaContext extends AbstractEffectiveSchemaContext
 
     public static SchemaContext resolveSchemaContext(final Set<Module> modules) {
        return new EffectiveSchemaContext(modules);
+    }
+
+    private void resolveSubmoduleIdentifiers(final Set<Module> submodules, Set<ModuleIdentifier> modIdBuilder) {
+        for (Module submodule : submodules) {
+            modIdBuilder.add(new ModuleIdentifierImpl(submodule.getName(), Optional.of(
+                    submodule.getNamespace()), Optional.of(submodule.getRevision())));
+        }
     }
 
     public List<DeclaredStatement<?>> getRootDeclaredStatements() {
