@@ -1,0 +1,12 @@
+module bar {
+    namespace "bar";
+    prefix bar;
+
+    import foo {
+        prefix foo;
+    }
+
+    leaf bar-leaf {
+        type string;
+    }
+}
