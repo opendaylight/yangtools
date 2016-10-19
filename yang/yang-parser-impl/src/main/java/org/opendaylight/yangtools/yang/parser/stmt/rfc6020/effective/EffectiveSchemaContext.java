@@ -64,6 +64,11 @@ public final class EffectiveSchemaContext extends AbstractEffectiveSchemaContext
             nameMap.put(m.getName(), m);
             nsMap.put(m.getNamespace(), m);
             modIdBuilder.add(new ModuleIdentifierImpl(m.getName(), Optional.of(m.getNamespace()), Optional.of(m.getRevision())));
+            final Set<Module> submodules = m.getSubmodules();
+            for (Module submodule : submodules) {
+                modIdBuilder.add(new ModuleIdentifierImpl(submodule.getName(), Optional.of(submodule
+                        .getNamespace()), Optional.of(submodule.getRevision())));
+            }
         }
 
         namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
@@ -97,6 +102,11 @@ public final class EffectiveSchemaContext extends AbstractEffectiveSchemaContext
             nameMap.put(m.getName(), m);
             nsMap.put(m.getNamespace(), m);
             modIdBuilder.add(new ModuleIdentifierImpl(m.getName(), Optional.of(m.getNamespace()), Optional.of(m.getRevision())));
+            final Set<Module> submodules = m.getSubmodules();
+            for (Module submodule : submodules) {
+                modIdBuilder.add(new ModuleIdentifierImpl(submodule.getName(), Optional.of(submodule
+                        .getNamespace()), Optional.of(submodule.getRevision())));
+            }
         }
 
         namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
