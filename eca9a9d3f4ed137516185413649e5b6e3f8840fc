@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_79126659",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/NotificationAsContainer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-19T22:00:48Z",
+      "side": 1,
+      "message": "Thinking about this a bit more, this may be useful for RPCs, too.\n\nSo, can we make this class non-public and create a \u0027ContainerSchemaNodes\u0027 utility class, which will have a \u0027public static ContainerSchemaNode forNotification(...)\u0027 method?\n\nThat way we can add \u0027forRPC\u0027 in the future and the actual implementation class will remain hidden.",
+      "range": {
+        "startLine": 37,
+        "startChar": 61,
+        "endLine": 37,
+        "endChar": 80
+      },
+      "revId": "eca9a9d3f4ed137516185413649e5b6e3f8840fc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_39090e2d",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/NotificationAsContainer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-19T22:00:48Z",
+      "side": 1,
+      "message": "I missed that. Can you move EmptyConstraintDefinition to this package and make it public in this patch?",
+      "range": {
+        "startLine": 119,
+        "startChar": 8,
+        "endLine": 119,
+        "endChar": 100
+      },
+      "revId": "eca9a9d3f4ed137516185413649e5b6e3f8840fc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
