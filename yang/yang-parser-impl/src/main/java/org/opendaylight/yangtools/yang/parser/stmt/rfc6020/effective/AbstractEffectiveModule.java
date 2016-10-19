@@ -238,13 +238,17 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
 
     private static Set<ModuleImport> resolveModuleImports(final Set<ModuleImport> importsInit,
             final StmtContext<String, ? extends DeclaredStatement<String>, ? extends EffectiveStatement<String, ?>> ctx) {
-        Set<ModuleImport> resolvedModuleImports = new LinkedHashSet<>();
+        final Set<ModuleImport> resolvedModuleImports = new LinkedHashSet<>();
         for (ModuleImport moduleImport : importsInit) {
             if (moduleImport.getRevision().equals(SimpleDateFormatUtil.DEFAULT_DATE_IMP)) {
-                QNameModule impModuleQName = Utils.getModuleQNameByPrefix(ctx, moduleImport.getPrefix());
+                final QNameModule impModuleQName = Utils.getModuleQNameByPrefix(ctx, moduleImport.getPrefix());
                 if (!impModuleQName.getRevision().equals(SimpleDateFormatUtil.DEFAULT_DATE_REV)) {
-                    ModuleImport resolvedModuleImport = new ModuleImportImpl(moduleImport.getModuleName(),
+                    final ModuleImport resolvedModuleImport = new ModuleImportImpl(moduleImport.getModuleName(),
                             impModuleQName.getRevision(), moduleImport.getPrefix());
+                    resolvedModuleImports.add(resolvedModuleImport);
+                } else {
+                    final ModuleImport resolvedModuleImport = new ModuleImportImpl(moduleImport.getModuleName(),
+                            SimpleDateFormatUtil.DEFAULT_DATE_REV, moduleImport.getPrefix());
                     resolvedModuleImports.add(resolvedModuleImport);
                 }
             } else {
