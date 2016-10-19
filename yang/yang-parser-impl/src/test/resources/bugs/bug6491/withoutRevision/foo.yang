@@ -1,0 +1,8 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+
+    leaf foo-leaf {
+        type string;
+    }
+}
