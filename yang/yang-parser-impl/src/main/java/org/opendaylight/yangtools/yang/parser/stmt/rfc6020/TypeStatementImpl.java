@@ -93,9 +93,8 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public TypeStatement createDeclared(
-                final StmtContext<String, TypeStatement, ?> ctx) {
-            return new TypeStatementImpl(ctx);
+        public TypeStatement createDeclared(final StmtContext<String, TypeStatement, ?> ctx) {
+            return BuiltinDeclaredStatements.replaceIfBuiltin(new TypeStatementImpl(ctx));
         }
 
         @Override
