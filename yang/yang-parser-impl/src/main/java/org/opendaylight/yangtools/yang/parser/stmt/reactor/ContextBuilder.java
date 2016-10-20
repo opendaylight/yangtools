@@ -10,49 +10,50 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
-abstract class ContextBuilder<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
+abstract class ContextBuilder<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+    implements Builder<StatementContextBase<A, D, E>> {
 
     private final StatementDefinitionContext<A, D, E> definition;
     private final StatementSourceReference stmtRef;
-    private String rawArg;
-    private StatementSourceReference argRef;
 
-    public ContextBuilder(StatementDefinitionContext<A, D, E> def, StatementSourceReference sourceRef) {
-        this.definition = def;
-        this.stmtRef = sourceRef;
+    private StatementSourceReference argRef;
+    private String rawArg;
+
+    ContextBuilder(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference sourceRef) {
+        this.definition = Preconditions.checkNotNull(def);
+        this.stmtRef = Preconditions.checkNotNull(sourceRef);
     }
 
-    public void setArgument(@Nonnull String argument, @Nonnull StatementSourceReference argumentSource) {
-        Preconditions.checkArgument(definition.hasArgument(), "Statement does not take argument.");
+    void setArgument(@Nonnull final String argument, @Nonnull final StatementSourceReference argumentSource) {
+        SourceException.throwIf(!definition.hasArgument(), argumentSource, "Statement %s does not take argument",
+            definition.getStatementName());
         this.rawArg = Preconditions.checkNotNull(argument);
         this.argRef = Preconditions.checkNotNull(argumentSource);
     }
 
-    public String getRawArgument() {
+    String getRawArgument() {
         return rawArg;
     }
 
-    public StatementSourceReference getStamementSource() {
+    StatementSourceReference getStamementSource() {
         return stmtRef;
     }
 
-    public StatementSourceReference getArgumentSource() {
+    StatementSourceReference getArgumentSource() {
         return argRef;
     }
 
-    public StatementDefinitionContext<A, D, E> getDefinition() {
+    StatementDefinitionContext<A, D, E> getDefinition() {
         return definition;
     }
 
-    public StatementIdentifier createIdentifier() {
+    StatementIdentifier createIdentifier() {
         return new StatementIdentifier(definition.getStatementName(), rawArg);
     }
-
-    public abstract StatementContextBase<A, D, E> build() throws SourceException;
-
 }
