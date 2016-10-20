@@ -8,6 +8,10 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import com.google.common.base.Preconditions;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -19,16 +23,27 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffe
 
 // FIXME: Provide real argument name
 final class ModelDefinedStatementDefinition implements StatementDefinition {
+    private static final LoadingCache<QName, ModelDefinedStatementDefinition> CACHE = CacheBuilder.newBuilder()
+            .weakValues().build(new CacheLoader<QName, ModelDefinedStatementDefinition>() {
+                @Override
+                public ModelDefinedStatementDefinition load(final QName key) throws Exception {
+                    return new ModelDefinedStatementDefinition(key);
+                }
+            });
     private final QName qName;
     private final boolean yinElement;
 
-    ModelDefinedStatementDefinition(QName qName) {
+    ModelDefinedStatementDefinition(final QName qName) {
         this(qName, false);
     }
 
-    ModelDefinedStatementDefinition(QName qName, final boolean yinElement) {
-        this.qName = qName;
+    ModelDefinedStatementDefinition(final QName qName, final boolean yinElement) {
+        this.qName = Preconditions.checkNotNull(qName);
         this.yinElement = yinElement;
+    }
+
+    static ModelDefinedStatementDefinition forQName(final QName key) {
+        return CACHE.getUnchecked(key);
     }
 
     @Nonnull

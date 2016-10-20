@@ -107,8 +107,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         if (def == null) {
             // unknown-stmts (from import, include or local-scope)
             if (qNameToStmtDefMap.get(name) != null) {
-                final StatementContextBase<?, ?, ?> extension =
-                        (StatementContextBase<?, ?, ?>) currentContext.getAllFromNamespace(ExtensionNamespace.class).get(name);
+                final StatementContextBase<?, ?, ?> extension = (StatementContextBase<?, ?, ?>) currentContext
+                        .getAllFromNamespace(ExtensionNamespace.class).get(name);
 
                 SourceException.throwIfNull(extension, current.getStatementSourceReference(), "Extension %s not found",
                     name);
@@ -117,8 +117,9 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 final QName qName = current.getFromNamespace(QNameCacheNamespace.class,
                     QName.create(arg, extension.getIdentifier().getArgument()));
 
+                // FIXME: this refers to an extension, but it ignores its yin-element statement
                 def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition(
-                    getNewStatementDefinition(qName)));
+                    ModelDefinedStatementDefinition.forQName(qName)));
             } else {
                 // type-body-stmts
                 def = resolveTypeBodyStmts(name.getLocalName());
@@ -127,7 +128,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             final QName qName = Utils.qNameFromArgument(current, name.getLocalName());
 
             def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition(
-                getNewStatementDefinition(qName)));
+                ModelDefinedStatementDefinition.forQName(qName)));
         }
 
         Preconditions.checkArgument(def != null, "Statement %s does not have type mapping defined.", name);
@@ -135,11 +136,6 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             return createDeclaredRoot(def, ref);
         }
         return current.substatementBuilder(def, ref);
-    }
-
-    // FIXME: This should be populated differently
-    StatementDefinition getNewStatementDefinition(final QName qName) {
-        return new ModelDefinedStatementDefinition(qName);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
