@@ -15,11 +15,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ExtensionEffectiveStatementImpl;
 
 public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> implements ExtensionStatement {
@@ -74,6 +77,16 @@ public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> imp
         @Override
         public void onStatementDefinitionDeclared(final StmtContext.Mutable<QName, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> stmt) {
             stmt.addContext(ExtensionNamespace.class, stmt.getStatementArgument(), stmt);
+
+            final StmtContext<QName, ?, ?> argument = StmtContextUtils.findFirstDeclaredSubstatement(stmt,
+                ArgumentStatement.class);
+            final StmtContext<Boolean, ?, ?> yinElement = StmtContextUtils.findFirstDeclaredSubstatement(stmt,
+                YinElementStatement.class);
+
+            stmt.addToNs(StatementDefinitionNamespace.class, stmt.getStatementArgument(),
+                new ModelDefinedStatementDefinition(stmt.getStatementArgument(),
+                    argument != null ? argument.getStatementArgument() : null,
+                    yinElement != null ? yinElement.getStatementArgument() : false));
         }
 
         @Override
