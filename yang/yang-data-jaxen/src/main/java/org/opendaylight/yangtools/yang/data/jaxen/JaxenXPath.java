@@ -60,7 +60,9 @@ final class JaxenXPath implements XPathExpression {
         final Expr expr = compiled.getRootExpr();
         LOG.debug("Compiled {} to expression {}", xpath, expr);
 
-        // FIXME: perform expression introspection to understand things like apex, etc.
+        new ExprWalker(new ExprListener() {
+            // FIXME: perform expression introspection to understand things like apex, etc.
+        }).walk(expr);
 
         return new JaxenXPath(converter, schemaPath, compiled);
     }
