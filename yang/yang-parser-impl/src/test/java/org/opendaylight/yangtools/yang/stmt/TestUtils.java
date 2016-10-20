@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -69,23 +70,23 @@ public final class TestUtils {
         return ctx.getModules();
     }
 
-    public static Set<Module> loadYinModules(final URI resourceDirectory) throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-
-        for (File file : new File(resourceDirectory).listFiles()) {
-            addYinSources(reactor, new YinStatementSourceImpl(file.getPath(), true));
-        }
-
-        EffectiveSchemaContext ctx = reactor.buildEffective();
-        return ctx.getModules();
-    }
-
     public static Set<Module> loadModules(final List<InputStream> streams)
         throws SourceException, ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
             .newBuild();
         for (InputStream inputStream : streams) {
             addSources(reactor, new YangStatementSourceImpl(inputStream));
+        }
+
+        EffectiveSchemaContext ctx = reactor.buildEffective();
+        return ctx.getModules();
+    }
+
+    public static Set<Module> loadYinModules(final URI resourceDirectory) throws ReactorException {
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+
+        for (File file : new File(resourceDirectory).listFiles()) {
+            addYinSources(reactor, new YinStatementSourceImpl(file.getPath(), true));
         }
 
         EffectiveSchemaContext ctx = reactor.buildEffective();
