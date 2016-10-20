@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.AnyxmlSchemaLocationNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
@@ -143,6 +144,7 @@ public final class YangInferencePipeline {
             .addSupport(new FractionDigitsStatementImpl.Definition())
             .addSupport(new BaseStatementImpl.Definition())
             .addSupport(global(DerivedIdentitiesNamespace.class))
+            .addSupport(global(StatementDefinitionNamespace.class))
             .build();
 
     public static final StatementSupportBundle FULL_DECL_BUNDLE = StatementSupportBundle
