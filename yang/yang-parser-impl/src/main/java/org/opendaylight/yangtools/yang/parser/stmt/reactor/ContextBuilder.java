@@ -22,13 +22,14 @@ abstract class ContextBuilder<A, D extends DeclaredStatement<A>, E extends Effec
     private String rawArg;
     private StatementSourceReference argRef;
 
-    public ContextBuilder(StatementDefinitionContext<A, D, E> def, StatementSourceReference sourceRef) {
-        this.definition = def;
-        this.stmtRef = sourceRef;
+    public ContextBuilder(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference sourceRef) {
+        this.definition = Preconditions.checkNotNull(def);
+        this.stmtRef = Preconditions.checkNotNull(sourceRef);
     }
 
-    public void setArgument(@Nonnull String argument, @Nonnull StatementSourceReference argumentSource) {
-        Preconditions.checkArgument(definition.hasArgument(), "Statement does not take argument.");
+    public void setArgument(@Nonnull final String argument, @Nonnull final StatementSourceReference argumentSource) {
+        SourceException.throwIf(!definition.hasArgument(), argumentSource, "Statement %s does not take argument",
+            definition.getStatementName());
         this.rawArg = Preconditions.checkNotNull(argument);
         this.argRef = Preconditions.checkNotNull(argumentSource);
     }
