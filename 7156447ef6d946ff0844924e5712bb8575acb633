@@ -22,6 +22,29 @@
       "revId": "7156447ef6d946ff0844924e5712bb8575acb633",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_cda5ad05",
+        "filename": "yang/yang-data-api/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-20T21:40:10Z",
+      "side": 1,
+      "message": "Okay, I do not like this one bit. This is a normal bundle, it should not ever depend on anything karaf-specific (like features)",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 28
+      },
+      "revId": "7156447ef6d946ff0844924e5712bb8575acb633",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
