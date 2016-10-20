@@ -22,6 +22,30 @@
       "revId": "8e22dde84a559a7f0fe28bf8f09871fbb0c4cec8",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_276720b9",
+        "filename": "common/features/features-yangtools/src/main/feature/feature.xml",
+        "patchSetId": 14
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 4540
+      },
+      "writtenOn": "2016-10-20T16:16:03Z",
+      "side": 1,
+      "message": "The repo is still built, but its XML file needs to be in the Maven repository used at runtime; so it needs to be listed in the POM. Actually listing it in the POM with a \"provided\" scope allows the Karaf plugin to add the appropriate repository entry, so we no longer need the template feature.xml file just for repositories.",
+      "parentUuid": "7a6b29fe_61caa81b",
+      "range": {
+        "startLine": 3,
+        "startChar": 47,
+        "endLine": 3,
+        "endChar": 65
+      },
+      "revId": "8e22dde84a559a7f0fe28bf8f09871fbb0c4cec8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
