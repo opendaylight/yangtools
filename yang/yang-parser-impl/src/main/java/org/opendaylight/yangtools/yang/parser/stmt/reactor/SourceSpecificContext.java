@@ -37,7 +37,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
-import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleIdentifier;
@@ -57,6 +57,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.EnumSpecificationImpl
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.IdentityRefSpecificationImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.InstanceIdentifierSpecificationImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.LeafrefSpecificationImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ModelDefinedStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnionSpecificationImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
@@ -107,27 +108,22 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         if (def == null) {
             // unknown-stmts (from import, include or local-scope)
             if (qNameToStmtDefMap.get(name) != null) {
-                final StatementContextBase<?, ?, ?> extension =
-                        (StatementContextBase<?, ?, ?>) currentContext.getAllFromNamespace(ExtensionNamespace.class).get(name);
-
+                final StatementDefinition extension = currentContext.getFromNamespace(
+                    StatementDefinitionNamespace.class, name);
                 SourceException.throwIfNull(extension, current.getStatementSourceReference(), "Extension %s not found",
                     name);
 
-                final QName arg = (QName) extension.getStatementArgument();
-                final QName qName = current.getFromNamespace(QNameCacheNamespace.class,
-                    QName.create(arg, extension.getIdentifier().getArgument()));
-
-                def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition(
-                    getNewStatementDefinition(qName)));
+                def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition(extension));
             } else {
                 // type-body-stmts
                 def = resolveTypeBodyStmts(name.getLocalName());
             }
         } else if (current != null && current.definition().getRepresentingClass().equals(UnknownStatementImpl.class)) {
+            // FIXME: What's going on here?
             final QName qName = Utils.qNameFromArgument(current, name.getLocalName());
 
             def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition(
-                getNewStatementDefinition(qName)));
+                new ModelDefinedStatementDefinition(qName)));
         }
 
         Preconditions.checkArgument(def != null, "Statement %s does not have type mapping defined.", name);
@@ -135,11 +131,6 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             return createDeclaredRoot(def, ref);
         }
         return current.substatementBuilder(def, ref);
-    }
-
-    // FIXME: This should be populated differently
-    StatementDefinition getNewStatementDefinition(final QName qName) {
-        return new ModelDefinedStatementDefinition(qName);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
