@@ -262,9 +262,9 @@ final class NormalizedNodeNavigator extends DefaultNavigator implements NamedAcc
         final NormalizedNode<?, ?> node = ctx.getNode();
         if (node instanceof DataContainerNode) {
             return Iterators.transform(((DataContainerNode<?>) node).getValue().iterator(), ctx);
-        } else {
-            return null;
         }
+
+        return null;
     }
 
     @Override
