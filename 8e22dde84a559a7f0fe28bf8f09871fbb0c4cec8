@@ -46,6 +46,30 @@
       "revId": "8e22dde84a559a7f0fe28bf8f09871fbb0c4cec8",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_c7abcc87",
+        "filename": "common/features/features-yangtools/src/main/feature/feature.xml",
+        "patchSetId": 14
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 4540
+      },
+      "writtenOn": "2016-10-20T16:58:21Z",
+      "side": 1,
+      "message": "The last part is wrong, we still need the template feature.xml.",
+      "parentUuid": "7a6b29fe_276720b9",
+      "range": {
+        "startLine": 3,
+        "startChar": 47,
+        "endLine": 3,
+        "endChar": 65
+      },
+      "revId": "8e22dde84a559a7f0fe28bf8f09871fbb0c4cec8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
