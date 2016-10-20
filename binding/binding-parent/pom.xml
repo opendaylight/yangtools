@@ -26,7 +26,7 @@
         <yangtools.version>1.1.0-SNAPSHOT</yangtools.version>
         <mdsal.version>2.2.0-SNAPSHOT</mdsal.version>
         <mdsalmodel.version>0.10.0-SNAPSHOT</mdsalmodel.version>
-        <salGeneratorPath>target/generated-sources/mdsal-binding</salGeneratorPath>
+        <salGeneratorPath>${project.build.directory}/generated-sources/mdsal-binding</salGeneratorPath>
     </properties>
 
     <build>
@@ -36,10 +36,10 @@
                 <directory>src/main/resources</directory>
             </resource>
             <resource>
-                <directory>target/generated-sources/spi</directory>
+                <directory>${project.build.directory}/generated-sources/spi</directory>
             </resource>
             <resource>
-                <directory>target/generated-sources/yang</directory>
+                <directory>${project.build.directory}/generated-sources/yang</directory>
             </resource>
         </resources>
     </build>
