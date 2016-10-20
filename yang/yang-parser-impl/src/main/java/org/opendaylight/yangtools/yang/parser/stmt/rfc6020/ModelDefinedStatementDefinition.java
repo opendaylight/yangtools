@@ -6,29 +6,31 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.yangtools.yang.parser.stmt.reactor;
+package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import com.google.common.annotations.Beta;
+import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
-// FIXME: Provide real argument name
-final class ModelDefinedStatementDefinition implements StatementDefinition {
+@Beta
+public final class ModelDefinedStatementDefinition implements StatementDefinition {
     private final QName qName;
     private final boolean yinElement;
 
-    ModelDefinedStatementDefinition(QName qName) {
-        this(qName, false);
+    ModelDefinedStatementDefinition(final QName qName, final boolean yinElement) {
+        this.qName = Preconditions.checkNotNull(qName);
+        this.yinElement = yinElement;
     }
 
-    ModelDefinedStatementDefinition(QName qName, final boolean yinElement) {
-        this.qName = qName;
-        this.yinElement = yinElement;
+    @Deprecated
+    public ModelDefinedStatementDefinition(final QName qName) {
+        this(qName, false);
     }
 
     @Nonnull
@@ -40,6 +42,7 @@ final class ModelDefinedStatementDefinition implements StatementDefinition {
     @Nullable
     @Override
     public QName getArgumentName() {
+        // FIXME: Provide real argument name
         return qName;
     }
 
