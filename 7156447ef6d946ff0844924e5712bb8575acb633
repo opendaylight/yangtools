@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a6b29fe_5262dcd8",
+        "filename": "common/features/features-yangtools/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-10-20T18:59:50Z",
+      "side": 1,
+      "message": "This should be mentioned probably both in single-feature-parent and feature-repo-parent comments.",
+      "range": {
+        "startLine": 33,
+        "startChar": 12,
+        "endLine": 33,
+        "endChar": 35
+      },
+      "revId": "7156447ef6d946ff0844924e5712bb8575acb633",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
