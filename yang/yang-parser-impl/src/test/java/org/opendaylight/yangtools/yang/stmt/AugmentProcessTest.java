@@ -100,8 +100,7 @@ public class AugmentProcessTest {
             "/stmt-test/augments/multiple-augment-incorrect2.yang",false);
 
     @Test
-    public void multipleAugmentsAndMultipleModulesTest()
-            throws SourceException, ReactorException {
+    public void multipleAugmentsAndMultipleModulesTest() throws SourceException, ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
         addSources(reactor, MULTIPLE_AUGMENT_ROOT, MULTIPLE_AUGMENT_IMPORTED,
@@ -123,9 +122,8 @@ public class AugmentProcessTest {
         assertNotNull(result);
     }
 
-    @Test(expected=SomeModifiersUnresolvedException.class)
-    public void multipleAugmentIncorrectPathTest() throws SourceException,
-            ReactorException {
+    @Test(expected = SomeModifiersUnresolvedException.class)
+    public void multipleAugmentIncorrectPathTest() throws SourceException, ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
         addSources(reactor, MULTIPLE_AUGMENT_INCORRECT);
@@ -135,9 +133,8 @@ public class AugmentProcessTest {
         assertNull(result);
     }
 
-    @Test(expected=SomeModifiersUnresolvedException.class)
-    public void multipleAugmentIncorrectPathAndGrpTest()
-            throws SourceException, ReactorException {
+    @Test(expected = SomeModifiersUnresolvedException.class)
+    public void multipleAugmentIncorrectPathAndGrpTest() throws SourceException, ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
         addSources(reactor, MULTIPLE_AUGMENT_INCORRECT2);
@@ -146,12 +143,8 @@ public class AugmentProcessTest {
         assertNull(result);
     }
 
-
-
     @Test
-    public void readAndParseYangFileTest() throws SourceException,
-            ReactorException {
-
+    public void readAndParseYangFileTest() throws SourceException, ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
         addSources(reactor, AUGMENTED, ROOT);
