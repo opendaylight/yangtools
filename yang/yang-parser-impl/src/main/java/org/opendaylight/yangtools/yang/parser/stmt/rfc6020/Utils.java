@@ -18,7 +18,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -515,7 +514,7 @@ public final class Utils {
                 qNameModule = getRootModuleQName(ctx);
             }
             if (qNameModule == null
-                    && Iterables.getLast(ctx.getCopyHistory()) == StmtContext.TypeOfCopy.ADDED_BY_AUGMENTATION) {
+                    && ctx.getCopyHistory().getLastOperation() == StmtContext.TypeOfCopy.ADDED_BY_AUGMENTATION) {
                 ctx = ctx.getOriginalCtx();
                 qNameModule = getModuleQNameByPrefix(ctx, prefix);
             }
@@ -697,7 +696,7 @@ public final class Utils {
         return false;
     }
 
-    public static SourceIdentifier createSourceIdentifier(RootStatementContext<?, ?, ?> root) {
+    public static SourceIdentifier createSourceIdentifier(final RootStatementContext<?, ?, ?> root) {
         final QNameModule qNameModule = root.getFromNamespace(ModuleCtxToModuleQName.class, root);
         if (qNameModule != null) {
             // creates SourceIdentifier for a module

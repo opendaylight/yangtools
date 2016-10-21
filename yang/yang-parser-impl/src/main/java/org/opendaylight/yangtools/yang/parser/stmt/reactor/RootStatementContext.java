@@ -152,8 +152,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
             final StatementContextBase<?, ?, ?> newParent, final TypeOfCopy typeOfCopy) {
         final RootStatementContext<A, D, E> copy = new RootStatementContext<>(this, newQNameModule, typeOfCopy);
 
-        copy.addAllToCopyHistory(this.getCopyHistory());
-        copy.addToCopyHistory(typeOfCopy);
+        copy.appendCopyHistory(typeOfCopy, this.getCopyHistory());
 
         if (this.getOriginalCtx() != null) {
             copy.setOriginalCtx(this.getOriginalCtx());

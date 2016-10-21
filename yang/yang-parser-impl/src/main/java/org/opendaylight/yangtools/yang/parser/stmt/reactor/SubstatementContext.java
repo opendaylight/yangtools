@@ -137,8 +137,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
             final StatementContextBase<?, ?, ?> newParent, final TypeOfCopy typeOfCopy) {
         final SubstatementContext<A, D, E> copy = new SubstatementContext<>(this, newQNameModule, newParent, typeOfCopy);
 
-        copy.addAllToCopyHistory(this.getCopyHistory());
-        copy.addToCopyHistory(typeOfCopy);
+        copy.appendCopyHistory(typeOfCopy, this.getCopyHistory());
 
         if (this.getOriginalCtx() != null) {
             copy.setOriginalCtx(this.getOriginalCtx());

@@ -35,13 +35,7 @@ public class GroupingEffectiveStatementImpl extends
         qname = ctx.getStatementArgument();
         path = ctx.getSchemaPath().get();
 
-        // initCopyType
-        List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
-        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
-            addedByUses = true;
-        } else {
-            addedByUses = false;
-        }
+        addedByUses = ctx.getCopyHistory().contains(TypeOfCopy.ADDED_BY_USES);
 
         final Builder<UnknownSchemaNode> b = ImmutableList.builder();
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {

@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 
@@ -64,7 +65,7 @@ abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatem
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
 
         // initCopyType
-        List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
+        final CopyHistory copyTypesFromOriginal = ctx.getCopyHistory();
         if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
             this.addedByUses = this.augmenting = true;
         } else {
