@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import java.util.ArrayList;
@@ -70,6 +71,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         boolean isFinished();
     }
 
+    private final static List<TypeOfCopy> ORIGINAL_COPY = ImmutableList.of(TypeOfCopy.ORIGINAL);
+
     private final StatementDefinitionContext<A, D, E> definition;
     private final StatementIdentifier identifier;
     private final StatementSourceReference statementDeclSource;
@@ -82,15 +85,15 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private final Map<StatementIdentifier, StatementContextBase<?, ?, ?>> substatements = new LinkedHashMap<>(1);
 
-    private final List<TypeOfCopy> copyHistory = new ArrayList<>(1);
     private final Collection<StatementContextBase<?, ?, ?>> declared = new ArrayList<>(1);
     private final Collection<StatementContextBase<?, ?, ?>> effective = new ArrayList<>(1);
     private final Collection<StatementContextBase<?, ?, ?>> effectOfStatement = new ArrayList<>(1);
 
     private SupportedByFeatures supportedByFeatures = SupportedByFeatures.UNDEFINED;
+    private List<TypeOfCopy> copyHistory = ORIGINAL_COPY;
     private boolean isSupportedToBuildEffective = true;
+    private ModelProcessingPhase completedPhase = null;
     private StatementContextBase<?, ?, ?> originalCtx;
-    private ModelProcessingPhase completedPhase;
     private D declaredInstance;
     private E effectiveInstance;
     private int order = 0;
@@ -99,8 +102,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.definition = builder.getDefinition();
         this.identifier = builder.createIdentifier();
         this.statementDeclSource = builder.getStamementSource();
-        this.completedPhase = null;
-        this.copyHistory.add(TypeOfCopy.ORIGINAL);
     }
 
     StatementContextBase(final StatementContextBase<A, D, E> original) {
@@ -111,8 +112,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.statementDeclSource = Preconditions.checkNotNull(original.statementDeclSource,
                 "Statement context statementDeclSource cannot be null copying from: %s",
                 original.getStatementSourceReference());
-        this.completedPhase = null;
-        this.copyHistory.add(TypeOfCopy.ORIGINAL);
     }
 
     @Override
@@ -149,13 +148,23 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return copyHistory;
     }
 
+    private void growCopyHistory(final int growBy) {
+        if (copyHistory == ORIGINAL_COPY) {
+            final List<TypeOfCopy> newCopyHistory = new ArrayList<>(growBy + 1);
+            newCopyHistory.add(TypeOfCopy.ORIGINAL);
+            copyHistory = newCopyHistory;
+        }
+    }
+
     @Override
     public void addToCopyHistory(final TypeOfCopy typeOfCopy) {
+        growCopyHistory(1);
         this.copyHistory.add(typeOfCopy);
     }
 
     @Override
     public void addAllToCopyHistory(final List<TypeOfCopy> typeOfCopyList) {
+        growCopyHistory(typeOfCopyList.size());
         this.copyHistory.addAll(typeOfCopyList);
     }
 
