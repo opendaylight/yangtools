@@ -82,28 +82,20 @@ public final class GroupingUtils {
 
     public static QNameModule getNewQNameModule(final StatementContextBase<?, ?, ?> targetCtx,
             final StmtContext<?, ?, ?> stmtContext) {
-        if (needToCreateNewQName(stmtContext.getPublicDefinition())) {
-            if (targetCtx.isRootContext()) {
-                return targetCtx.getFromNamespace(ModuleCtxToModuleQName.class, targetCtx);
-            }
-            if (targetCtx.getPublicDefinition() == Rfc6020Mapping.AUGMENT) {
-                return targetCtx.getFromNamespace(ModuleCtxToModuleQName.class, targetCtx.getRoot());
-            }
-
-            final Object targetStmtArgument = targetCtx.getStatementArgument();
-            final Object sourceStmtArgument = stmtContext.getStatementArgument();
-            if (targetStmtArgument instanceof QName && sourceStmtArgument instanceof QName) {
-                return ((QName) targetStmtArgument).getModule();
-            } else {
-                return null;
-            }
-        } else {
-            return null;
+        if (targetCtx.isRootContext()) {
+            return targetCtx.getFromNamespace(ModuleCtxToModuleQName.class, targetCtx);
         }
-    }
+        if (targetCtx.getPublicDefinition() == Rfc6020Mapping.AUGMENT) {
+            return targetCtx.getFromNamespace(ModuleCtxToModuleQName.class, targetCtx.getRoot());
+        }
 
-    public static boolean needToCreateNewQName(final StatementDefinition publicDefinition) {
-        return true;
+        final Object targetStmtArgument = targetCtx.getStatementArgument();
+        final Object sourceStmtArgument = stmtContext.getStatementArgument();
+        if (targetStmtArgument instanceof QName && sourceStmtArgument instanceof QName) {
+            return ((QName) targetStmtArgument).getModule();
+        }
+
+        return null;
     }
 
     private static final Set<Rfc6020Mapping> NOCOPY_DEF_SET = ImmutableSet.of(Rfc6020Mapping.USES,
