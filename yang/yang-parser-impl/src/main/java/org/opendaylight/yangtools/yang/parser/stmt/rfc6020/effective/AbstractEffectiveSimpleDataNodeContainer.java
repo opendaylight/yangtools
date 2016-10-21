@@ -23,8 +23,9 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 
 abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatement<QName>> extends
         AbstractEffectiveDocumentedDataNodeContainer<QName, D> implements DataNodeContainer, AugmentationTarget,
@@ -64,12 +65,12 @@ abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatem
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
 
         // initCopyType
-        List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
-        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
+        final CopyHistory copyTypesFromOriginal = ctx.getCopyHistory();
+        if (copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES_AUGMENTATION)) {
             this.addedByUses = this.augmenting = true;
         } else {
-            this.augmenting = copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION);
-            this.addedByUses = copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES);
+            this.augmenting = copyTypesFromOriginal.contains(CopyType.ADDED_BY_AUGMENTATION);
+            this.addedByUses = copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES);
         }
     }
 

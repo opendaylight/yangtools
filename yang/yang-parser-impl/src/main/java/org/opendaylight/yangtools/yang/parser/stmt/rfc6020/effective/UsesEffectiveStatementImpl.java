@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 
 public final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, UsesStatement> implements UsesNode {
     private final SchemaPath groupingPath;
@@ -52,12 +52,7 @@ public final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumente
         this.groupingPath = grpCtx.getSchemaPath().get();
 
         // initCopyType
-        final List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
-        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
-            addedByUses = true;
-        } else {
-            addedByUses = false;
-        }
+        addedByUses = ctx.getCopyHistory().contains(CopyType.ADDED_BY_USES);
 
         // initSubstatementCollections
         final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
