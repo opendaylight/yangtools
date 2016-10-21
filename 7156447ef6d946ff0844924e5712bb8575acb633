@@ -45,6 +45,30 @@
       "revId": "7156447ef6d946ff0844924e5712bb8575acb633",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a6b29fe_7e7cfeeb",
+        "filename": "yang/yang-data-api/pom.xml",
+        "patchSetId": 17
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 4540
+      },
+      "writtenOn": "2016-10-21T12:58:57Z",
+      "side": 1,
+      "message": "Just so I\u0027m clear on what the issue is — are you objecting to the whole odl-guava-18 idea, or just the classifier and type? If the whole process was changed so that we produced standard POMs with attached features, would that be OK? The resulting dependencies would be\n\n        \u003cdependency\u003e\n           \u003cgroupId\u003eorg.opendaylight.yangtools\u003c/groupId\u003e\n            \u003cartifactId\u003eodl-yangtools-yang-parser\u003c/artifactId\u003e\n        \u003c/dependency\u003e\n        \u003cdependency\u003e\n            \u003cgroupId\u003eorg.opendaylight.odlparent\u003c/groupId\u003e\n            \u003cartifactId\u003eodl-guava-18\u003c/artifactId\u003e\n        \u003c/dependency\u003e\n\n(I\u0027m not sure that would work, but I can try...)",
+      "parentUuid": "7a6b29fe_cda5ad05",
+      "range": {
+        "startLine": 48,
+        "startChar": 0,
+        "endLine": 57,
+        "endChar": 28
+      },
+      "revId": "7156447ef6d946ff0844924e5712bb8575acb633",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
