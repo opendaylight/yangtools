@@ -88,10 +88,10 @@ public final class StatementSupportBundle implements Immutable,NamespaceBehaviou
     }
 
     public static class Builder implements org.opendaylight.yangtools.concepts.Builder<StatementSupportBundle> {
-
-        private StatementSupportBundle parent;
         private final Map<QName, StatementSupport<?, ?, ?>> statements = new HashMap<>();
         private final Map<Class<?>, NamespaceBehaviour<?, ?, ?>> namespaces = new HashMap<>();
+
+        private StatementSupportBundle parent;
 
         Builder(final StatementSupportBundle parent) {
             this.parent = parent;
@@ -124,7 +124,6 @@ public final class StatementSupportBundle implements Immutable,NamespaceBehaviou
         public StatementSupportBundle build() {
             return new StatementSupportBundle(parent, ImmutableMap.copyOf(statements), ImmutableMap.copyOf(namespaces));
         }
-
     }
 
 }
