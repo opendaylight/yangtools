@@ -85,9 +85,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private final Map<StatementIdentifier, StatementContextBase<?, ?, ?>> substatements = new LinkedHashMap<>(1);
 
-    private final Collection<StatementContextBase<?, ?, ?>> declared = new ArrayList<>(1);
+    private Collection<StatementContextBase<?, ?, ?>> declared = ImmutableList.of();
     private final Collection<StatementContextBase<?, ?, ?>> effective = new ArrayList<>(1);
-    private final Collection<StatementContextBase<?, ?, ?>> effectOfStatement = new ArrayList<>(1);
+    private Collection<StatementContextBase<?, ?, ?>> effectOfStatement = ImmutableList.of();
 
     private SupportedByFeatures supportedByFeatures = SupportedByFeatures.UNDEFINED;
     private List<TypeOfCopy> copyHistory = ORIGINAL_COPY;
@@ -114,6 +114,14 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                 original.getStatementSourceReference());
     }
 
+    private void growCopyHistory(final int growBy) {
+        if (copyHistory == ORIGINAL_COPY) {
+            final List<TypeOfCopy> newCopyHistory = new ArrayList<>(growBy + 1);
+            newCopyHistory.add(TypeOfCopy.ORIGINAL);
+            copyHistory = newCopyHistory;
+        }
+    }
+
     @Override
     public Collection<StatementContextBase<?, ?, ?>> getEffectOfStatement() {
         return effectOfStatement;
@@ -121,8 +129,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public void addAsEffectOfStatement(final StatementContextBase<?, ?, ?> ctx) {
+        if (effectOfStatement.isEmpty()) {
+            effectOfStatement = new ArrayList<>(1);
+        }
         effectOfStatement.add(ctx);
     }
+
     @Override
     public SupportedByFeatures getSupportedByFeatures() {
         return supportedByFeatures;
@@ -146,14 +158,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     @Override
     public List<TypeOfCopy> getCopyHistory() {
         return copyHistory;
-    }
-
-    private void growCopyHistory(final int growBy) {
-        if (copyHistory == ORIGINAL_COPY) {
-            final List<TypeOfCopy> newCopyHistory = new ArrayList<>(growBy + 1);
-            newCopyHistory.add(TypeOfCopy.ORIGINAL);
-            copyHistory = newCopyHistory;
-        }
     }
 
     @Override
@@ -242,12 +246,20 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return identifier.getArgument();
     }
 
+    private static final <T> Collection<T> maybeWrap(final Collection<T> input) {
+        if (input instanceof ImmutableList) {
+            return input;
+        }
+
+        return Collections.unmodifiableCollection(input);
+    }
+
     /**
      * @return collection of declared substatements
      */
     @Override
     public Collection<StatementContextBase<?, ?, ?>> declaredSubstatements() {
-        return Collections.unmodifiableCollection(declared);
+        return maybeWrap(declared);
     }
 
     /**
@@ -263,7 +275,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      */
     @Override
     public Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements() {
-        return Collections.unmodifiableCollection(effective);
+        return maybeWrap(effective);
     }
 
     public void removeStatementsFromEffectiveSubstatements(final Collection<StatementContextBase<?, ?, ?>> substatements) {
@@ -315,6 +327,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         Preconditions.checkState(inProgressPhase != ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Declared statement cannot be added in effective phase at: %s", getStatementSourceReference());
 
+        if (declared.isEmpty()) {
+            declared = new ArrayList<>(1);
+        }
         declared.add(Preconditions.checkNotNull(substatement,
                 "StatementContextBase declared substatement cannot be null at: %s", getStatementSourceReference()));
     }
@@ -404,7 +419,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         Preconditions.checkState(sourceContext.getInProgressPhase() != ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Declared statements list cannot be cleared in effective phase at: %s", getStatementSourceReference());
 
-        declared.clear();
+        declared = ImmutableList.of();
     }
 
     /**
