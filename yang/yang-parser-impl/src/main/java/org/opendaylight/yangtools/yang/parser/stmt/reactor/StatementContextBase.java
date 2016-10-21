@@ -73,13 +73,47 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private final StatementDefinitionContext<A, D, E> definition;
     private final StatementIdentifier identifier;
     private final StatementSourceReference statementDeclSource;
+
+    private final Multimap<ModelProcessingPhase, OnPhaseFinished> phaseListeners =
+            Multimaps.newListMultimap(new EnumMap<>(ModelProcessingPhase.class), () -> new ArrayList<>(1));
+
+    private final Multimap<ModelProcessingPhase, ContextMutation> phaseMutation =
+            Multimaps.newListMultimap(new EnumMap<>(ModelProcessingPhase.class), () -> new ArrayList<>(1));
+
+    private final Map<StatementIdentifier, StatementContextBase<?, ?, ?>> substatements = new LinkedHashMap<>(1);
+
+    private final List<TypeOfCopy> copyHistory = new ArrayList<>(1);
+    private final Collection<StatementContextBase<?, ?, ?>> declared = new ArrayList<>(1);
+    private final Collection<StatementContextBase<?, ?, ?>> effective = new ArrayList<>(1);
+    private final Collection<StatementContextBase<?, ?, ?>> effectOfStatement = new ArrayList<>(1);
+
+    private SupportedByFeatures supportedByFeatures = SupportedByFeatures.UNDEFINED;
+    private boolean isSupportedToBuildEffective = true;
+    private StatementContextBase<?, ?, ?> originalCtx;
+    private ModelProcessingPhase completedPhase;
+    private D declaredInstance;
+    private E effectiveInstance;
     private int order = 0;
 
-    private final Map<StatementIdentifier, StatementContextBase<?, ?, ?>> substatements = new LinkedHashMap<>();
+    StatementContextBase(@Nonnull final ContextBuilder<A, D, E> builder) {
+        this.definition = builder.getDefinition();
+        this.identifier = builder.createIdentifier();
+        this.statementDeclSource = builder.getStamementSource();
+        this.completedPhase = null;
+        this.copyHistory.add(TypeOfCopy.ORIGINAL);
+    }
 
-    private final Collection<StatementContextBase<?, ?, ?>> declared = new ArrayList<>();
-    private final Collection<StatementContextBase<?, ?, ?>> effective = new ArrayList<>();
-    private final Collection<StatementContextBase<?, ?, ?>> effectOfStatement = new ArrayList<>();
+    StatementContextBase(final StatementContextBase<A, D, E> original) {
+        this.definition = Preconditions.checkNotNull(original.definition,
+                "Statement context definition cannot be null copying from: %s", original.getStatementSourceReference());
+        this.identifier = Preconditions.checkNotNull(original.identifier,
+                "Statement context identifier cannot be null copying from: %s", original.getStatementSourceReference());
+        this.statementDeclSource = Preconditions.checkNotNull(original.statementDeclSource,
+                "Statement context statementDeclSource cannot be null copying from: %s",
+                original.getStatementSourceReference());
+        this.completedPhase = null;
+        this.copyHistory.add(TypeOfCopy.ORIGINAL);
+    }
 
     @Override
     public Collection<StatementContextBase<?, ?, ?>> getEffectOfStatement() {
@@ -90,24 +124,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     public void addAsEffectOfStatement(final StatementContextBase<?, ?, ?> ctx) {
         effectOfStatement.add(ctx);
     }
-
-    private ModelProcessingPhase completedPhase;
-
-    private final Multimap<ModelProcessingPhase, OnPhaseFinished> phaseListeners =
-            Multimaps.newListMultimap(new EnumMap<>(ModelProcessingPhase.class), () -> new ArrayList<>());
-
-    private final Multimap<ModelProcessingPhase, ContextMutation> phaseMutation =
-            Multimaps.newListMultimap(new EnumMap<>(ModelProcessingPhase.class), () -> new ArrayList<>());
-
-    private D declaredInstance;
-    private E effectiveInstance;
-
-    private StatementContextBase<?, ?, ?> originalCtx;
-    private final List<TypeOfCopy> copyHistory = new ArrayList<>(1);
-
-    private boolean isSupportedToBuildEffective = true;
-    private SupportedByFeatures supportedByFeatures = SupportedByFeatures.UNDEFINED;
-
     @Override
     public SupportedByFeatures getSupportedByFeatures() {
         return supportedByFeatures;
@@ -171,26 +187,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     @Override
     public void setCompletedPhase(final ModelProcessingPhase completedPhase) {
         this.completedPhase = completedPhase;
-    }
-
-    StatementContextBase(@Nonnull final ContextBuilder<A, D, E> builder) {
-        this.definition = builder.getDefinition();
-        this.identifier = builder.createIdentifier();
-        this.statementDeclSource = builder.getStamementSource();
-        this.completedPhase = null;
-        this.copyHistory.add(TypeOfCopy.ORIGINAL);
-    }
-
-    StatementContextBase(final StatementContextBase<A, D, E> original) {
-        this.definition = Preconditions.checkNotNull(original.definition,
-                "Statement context definition cannot be null copying from: %s", original.getStatementSourceReference());
-        this.identifier = Preconditions.checkNotNull(original.identifier,
-                "Statement context identifier cannot be null copying from: %s", original.getStatementSourceReference());
-        this.statementDeclSource = Preconditions.checkNotNull(original.statementDeclSource,
-                "Statement context statementDeclSource cannot be null copying from: %s",
-                original.getStatementSourceReference());
-        this.completedPhase = null;
-        this.copyHistory.add(TypeOfCopy.ORIGINAL);
     }
 
     /**
