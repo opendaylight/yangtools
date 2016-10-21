@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 
 public class GroupingEffectiveStatementImpl extends
         AbstractEffectiveDocumentedDataNodeContainer<QName, GroupingStatement> implements GroupingDefinition {
@@ -35,13 +35,7 @@ public class GroupingEffectiveStatementImpl extends
         qname = ctx.getStatementArgument();
         path = ctx.getSchemaPath().get();
 
-        // initCopyType
-        List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
-        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
-            addedByUses = true;
-        } else {
-            addedByUses = false;
-        }
+        addedByUses = ctx.getCopyHistory().contains(CopyType.ADDED_BY_USES);
 
         final Builder<UnknownSchemaNode> b = ImmutableList.builder();
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
