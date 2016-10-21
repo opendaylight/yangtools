@@ -98,20 +98,30 @@ public final class GroupingUtils {
         return null;
     }
 
-    private static final Set<Rfc6020Mapping> NOCOPY_DEF_SET = ImmutableSet.of(Rfc6020Mapping.USES,
-            Rfc6020Mapping.TYPEDEF, Rfc6020Mapping.TYPE);
-    private static final Set<Rfc6020Mapping> NOCOPY_FROM_GROUPING_SET = ImmutableSet.of(Rfc6020Mapping.DESCRIPTION,
-            Rfc6020Mapping.REFERENCE, Rfc6020Mapping.STATUS);
-    private static final Set<Rfc6020Mapping> REUSED_DEF_SET = ImmutableSet.of(Rfc6020Mapping.TYPEDEF,
-            Rfc6020Mapping.TYPE, Rfc6020Mapping.USES);
-    private static final Set<Rfc6020Mapping> TOP_REUSED_DEF_SET = ImmutableSet.of(Rfc6020Mapping.TYPEDEF,
-            Rfc6020Mapping.TYPE);
+    private static final Set<Rfc6020Mapping> NOCOPY_FROM_GROUPING_SET = ImmutableSet.of(
+        Rfc6020Mapping.DESCRIPTION,
+        Rfc6020Mapping.REFERENCE,
+        Rfc6020Mapping.STATUS);
+    private static final Set<Rfc6020Mapping> REUSED_DEF_SET = ImmutableSet.of(
+        Rfc6020Mapping.TYPE,
+        Rfc6020Mapping.TYPEDEF,
+        Rfc6020Mapping.USES);
+    private static final Set<Rfc6020Mapping> TOP_REUSED_DEF_SET = ImmutableSet.of(
+        Rfc6020Mapping.TYPE,
+        Rfc6020Mapping.TYPEDEF);
 
     public static boolean needToCopyByUses(final StmtContext<?, ?, ?> stmtContext) {
         final StatementDefinition def = stmtContext.getPublicDefinition();
+        if (REUSED_DEF_SET.contains(def)) {
+            LOG.debug("Will reuse {} statement {}", def, stmtContext);
+            return false;
+        }
+        if (NOCOPY_FROM_GROUPING_SET.contains(def)) {
+            return !Rfc6020Mapping.GROUPING.equals(stmtContext.getParentContext().getPublicDefinition());
+        }
 
-        return !(NOCOPY_DEF_SET.contains(def) || (NOCOPY_FROM_GROUPING_SET.contains(def) && Rfc6020Mapping.GROUPING
-                .equals(stmtContext.getParentContext().getPublicDefinition())));
+        LOG.debug("Will copy {} statement {}", def, stmtContext);
+        return true;
     }
 
     public static boolean isReusedByUses(final StmtContext<?, ?, ?> stmtContext) {
