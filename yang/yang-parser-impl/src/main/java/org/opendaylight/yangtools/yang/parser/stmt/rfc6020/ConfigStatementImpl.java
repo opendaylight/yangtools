@@ -39,13 +39,26 @@ public class ConfigStatementImpl extends AbstractDeclaredStatement<Boolean> impl
 
         @Override
         public ConfigStatement createDeclared(final StmtContext<Boolean, ConfigStatement, ?> ctx) {
-            return new ConfigStatementImpl(ctx);
+            final ConfigStatement ret = new ConfigStatementImpl(ctx);
+
+            if (EmptyConfigStatement.FALSE.equals(ret)) {
+                return EmptyConfigStatement.FALSE;
+            } else if (EmptyConfigStatement.TRUE.equals(ret)) {
+                return EmptyConfigStatement.TRUE;
+            } else {
+                return ret;
+            }
         }
 
         @Override
         public EffectiveStatement<Boolean, ConfigStatement> createEffective(
                 final StmtContext<Boolean, ConfigStatement, EffectiveStatement<Boolean, ConfigStatement>> ctx) {
-            return new ConfigEffectiveStatementImpl(ctx);
+            final EffectiveStatement<Boolean, ConfigStatement> ret = new ConfigEffectiveStatementImpl(ctx);
+            final ConfigStatement declared = ret.getDeclared();
+            if (declared instanceof EmptyConfigStatement && ret.effectiveSubstatements().isEmpty()) {
+                return ((EmptyConfigStatement)declared).toEffective();
+            }
+            return ret;
         }
 
         @Override
