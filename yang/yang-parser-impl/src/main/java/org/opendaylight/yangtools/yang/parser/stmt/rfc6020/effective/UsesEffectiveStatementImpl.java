@@ -52,12 +52,7 @@ public final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumente
         this.groupingPath = grpCtx.getSchemaPath().get();
 
         // initCopyType
-        final List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
-        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
-            addedByUses = true;
-        } else {
-            addedByUses = false;
-        }
+        addedByUses = ctx.getCopyHistory().contains(TypeOfCopy.ADDED_BY_USES);
 
         // initSubstatementCollections
         final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();

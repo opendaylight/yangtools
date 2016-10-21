@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 
@@ -47,7 +48,7 @@ public abstract class UnknownEffectiveStatementBase<A> extends AbstractEffective
         }
 
         // initCopyType
-        List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
+        final CopyHistory copyTypesFromOriginal = ctx.getCopyHistory();
         if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
             this.addedByUses = this.addedByAugmentation = true;
         } else {
