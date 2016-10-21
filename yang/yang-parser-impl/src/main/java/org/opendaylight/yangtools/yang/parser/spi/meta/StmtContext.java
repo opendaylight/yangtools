@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.base.Optional;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -88,18 +87,14 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     void addAsEffectOfStatement(StatementContextBase<?, ?, ?> ctx);
 
     StatementContextBase<?, ?, ?> createCopy(
-            StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
+            StatementContextBase<?, ?, ?> newParent, CopyType typeOfCopy)
             throws SourceException;
 
     StatementContextBase<?, ?, ?> createCopy(QNameModule newQNameModule,
-            StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
+            StatementContextBase<?, ?, ?> newParent, CopyType typeOfCopy)
             throws SourceException;
 
-    enum TypeOfCopy {
-        ORIGINAL, ADDED_BY_USES, ADDED_BY_AUGMENTATION, ADDED_BY_USES_AUGMENTATION
-    }
-
-    List<TypeOfCopy> getCopyHistory();
+    CopyHistory getCopyHistory();
 
     enum SupportedByFeatures {
         UNDEFINED, SUPPORTED, NOT_SUPPORTED
@@ -107,9 +102,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     SupportedByFeatures getSupportedByFeatures();
 
-    void addAllToCopyHistory(List<TypeOfCopy> typeOfCopyList);
-
-    void addToCopyHistory(TypeOfCopy typeOfCopy);
+    void appendCopyHistory(CopyType typeOfCopy, CopyHistory toAppend);
 
     StatementContextBase<?, ?, ?> getOriginalCtx();
 
