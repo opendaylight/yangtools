@@ -13,18 +13,18 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>odlparent</artifactId>
-        <version>1.6.4-SNAPSHOT</version>
+        <version>1.6.4-Beryllium-SR4</version>
         <relativePath></relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>yangtools-parent</artifactId>
     <groupId>org.opendaylight.yangtools</groupId>
-    <version>0.8.4-SNAPSHOT</version>
+    <version>0.8.4-Beryllium-SR4</version>
     <packaging>pom</packaging>
 
     <properties>
-        <yangtools.version>0.8.4-SNAPSHOT</yangtools.version>
+        <yangtools.version>0.8.4-Beryllium-SR4</yangtools.version>
 
         <!-- FIXME: these will be upstreamed -->
         <maven.depends.version>1.2</maven.depends.version>
@@ -277,7 +277,7 @@
                 <plugin>
                     <groupId>org.opendaylight.yangtools</groupId>
                     <artifactId>yang-maven-plugin</artifactId>
-                    <version>0.8.4-SNAPSHOT</version>
+                    <version>0.8.4-Beryllium-SR4</version>
                     <executions>
                         <execution>
                             <goals>
