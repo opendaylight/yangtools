@@ -10,7 +10,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class ConfigEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Boolean, ConfigStatement> {
+public final class ConfigEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Boolean, ConfigStatement>
+        implements ConfigEffectiveStatement {
     public ConfigEffectiveStatementImpl(final StmtContext<Boolean, ConfigStatement, ?> ctx) {
         super(ctx);
     }

@@ -42,7 +42,7 @@ public final class DeviateEffectiveStatementImpl
 
         this.deviateType = argument();
 
-        final ConfigEffectiveStatementImpl configStmt = firstEffective(ConfigEffectiveStatementImpl.class);
+        final ConfigEffectiveStatement configStmt = firstEffective(ConfigEffectiveStatement.class);
         this.deviatedConfig = configStmt == null ? null : configStmt.argument();
         final DefaultEffectiveStatementImpl defaultStmt = firstEffective(DefaultEffectiveStatementImpl.class);
         this.deviatedDefault = defaultStmt == null ? null : defaultStmt.argument();
@@ -112,7 +112,7 @@ public final class DeviateEffectiveStatementImpl
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
