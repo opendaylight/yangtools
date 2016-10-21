@@ -12,6 +12,7 @@ import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -198,55 +199,43 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
 
         public static void copyFromSourceToTarget(final StatementContextBase<?, ?, ?> sourceCtx,
                 final StatementContextBase<?, ?, ?> targetCtx) {
-            copyDeclaredStmts(sourceCtx, targetCtx);
-            copyEffectiveStmts(sourceCtx, targetCtx);
-        }
-
-        // FIXME: Declared statements should not be copied.
-        private static void copyDeclaredStmts(final StatementContextBase<?, ?, ?> sourceCtx,
-                final StatementContextBase<?, ?, ?> targetCtx) {
-
-            final CopyType typeOfCopy = sourceCtx.getParentContext().getPublicDefinition()
-                    .getDeclaredRepresentationClass().equals(UsesStatement.class) ? CopyType.ADDED_BY_USES_AUGMENTATION
+            final CopyType typeOfCopy = UsesStatement.class.equals(sourceCtx.getParentContext().getPublicDefinition()
+                    .getDeclaredRepresentationClass()) ? CopyType.ADDED_BY_USES_AUGMENTATION
                     : CopyType.ADDED_BY_AUGMENTATION;
 
-            for (final StatementContextBase<?, ?, ?> originalStmtCtx : sourceCtx.declaredSubstatements()) {
-                if (!StmtContextUtils.areFeaturesSupported(originalStmtCtx)) {
-                    continue;
-                }
-                if (needToCopyByAugment(originalStmtCtx)) {
-                    validateNodeCanBeCopiedByAugment(originalStmtCtx, targetCtx, typeOfCopy);
+            final Collection<StatementContextBase<?, ?, ?>> declared = sourceCtx.declaredSubstatements();
+            final Collection<StatementContextBase<?, ?, ?>> effective = sourceCtx.effectiveSubstatements();
+            final Collection<StatementContextBase<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
 
-                    final StatementContextBase<?, ?, ?> copy = originalStmtCtx.createCopy(targetCtx, typeOfCopy);
-                    targetCtx.addEffectiveSubstatement(copy);
-                } else if (isReusedByAugment(originalStmtCtx)) {
-                    targetCtx.addEffectiveSubstatement(originalStmtCtx);
+            for (final StatementContextBase<?, ?, ?> originalStmtCtx : declared) {
+                if (StmtContextUtils.areFeaturesSupported(originalStmtCtx)) {
+                    copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer);
                 }
             }
+            for (final StatementContextBase<?, ?, ?> originalStmtCtx : effective) {
+                copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer);
+            }
+
+            targetCtx.addEffectiveSubstatements(buffer);
         }
 
-        private static void copyEffectiveStmts(final StatementContextBase<?, ?, ?> sourceCtx,
-                final StatementContextBase<?, ?, ?> targetCtx) {
-            final CopyType typeOfCopy = sourceCtx.getParentContext().getPublicDefinition()
-                    .getDeclaredRepresentationClass().equals(UsesStatement.class) ? CopyType.ADDED_BY_USES_AUGMENTATION
-                    : CopyType.ADDED_BY_AUGMENTATION;
+        private static void copyStatement(final StatementContextBase<?, ?, ?> original,
+                final StatementContextBase<?, ?, ?> target, final CopyType typeOfCopy,
+                final Collection<StatementContextBase<?, ?, ?>> buffer) {
+            if (needToCopyByAugment(original)) {
+                validateNodeCanBeCopiedByAugment(original, target, typeOfCopy);
 
-            for (final StatementContextBase<?, ?, ?> originalStmtCtx : sourceCtx.effectiveSubstatements()) {
-                if (needToCopyByAugment(originalStmtCtx)) {
-                    validateNodeCanBeCopiedByAugment(originalStmtCtx, targetCtx, typeOfCopy);
-
-                    final StatementContextBase<?, ?, ?> copy = originalStmtCtx.createCopy(targetCtx, typeOfCopy);
-                    targetCtx.addEffectiveSubstatement(copy);
-                } else if (isReusedByAugment(originalStmtCtx)) {
-                    targetCtx.addEffectiveSubstatement(originalStmtCtx);
-                }
+                final StatementContextBase<?, ?, ?> copy = original.createCopy(target, typeOfCopy);
+                buffer.add(copy);
+            } else if (isReusedByAugment(original)) {
+                buffer.add(original);
             }
         }
 
         private static void validateNodeCanBeCopiedByAugment(final StatementContextBase<?, ?, ?> sourceCtx,
                 final StatementContextBase<?, ?, ?> targetCtx, final CopyType typeOfCopy) {
 
-            if (sourceCtx.getPublicDefinition().getDeclaredRepresentationClass().equals(WhenStatement.class)) {
+            if (WhenStatement.class.equals(sourceCtx.getPublicDefinition().getDeclaredRepresentationClass())) {
                 return;
             }
 

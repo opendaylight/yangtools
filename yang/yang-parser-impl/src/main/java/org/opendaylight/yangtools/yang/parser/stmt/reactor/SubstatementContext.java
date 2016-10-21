@@ -11,6 +11,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableSet;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -123,39 +124,41 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
         definition().onStatementAdded(copy);
 
-        // FIXME: why are we copying both declared and effective statements?
-        copy.copyDeclaredStmts(this, newQNameModule, typeOfCopy);
-        copy.copyEffectiveStmts(this, newQNameModule, typeOfCopy);
+        copy.copyStatements(this, newQNameModule, typeOfCopy);
         return copy;
     }
 
+    private void copyStatements(final SubstatementContext<A, D, E> original, final QNameModule newQNameModule,
+            final CopyType typeOfCopy) {
+        final Collection<StatementContextBase<?, ?, ?>> declared = original.declaredSubstatements();
+        final Collection<StatementContextBase<?, ?, ?>> effective = original.effectiveSubstatements();
+        final Collection<StatementContextBase<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
+
+        for (final StatementContextBase<?, ?, ?> stmtContext : declared) {
+            if (StmtContextUtils.areFeaturesSupported(stmtContext)) {
+                copySubstatement(stmtContext, newQNameModule, typeOfCopy, buffer);
+            }
+        }
+
+        for (final StatementContextBase<?, ?, ?> stmtContext : effective) {
+            copySubstatement(stmtContext, newQNameModule, typeOfCopy, buffer);
+        }
+
+        addEffectiveSubstatements(buffer);
+    }
+
     private void copySubstatement(final StatementContextBase<?, ?, ?> stmtContext,
-            final QNameModule newQNameModule, final CopyType typeOfCopy) {
+            final QNameModule newQNameModule, final CopyType typeOfCopy,
+            final Collection<StatementContextBase<?, ?, ?>> buffer) {
         if (needToCopyByUses(stmtContext)) {
             final StatementContextBase<?, ?, ?> copy = stmtContext.createCopy(newQNameModule, this, typeOfCopy);
             LOG.debug("Copying substatement {} for {} as", stmtContext, this, copy);
-            this.addEffectiveSubstatement(copy);
+            buffer.add(copy);
         } else if (isReusedByUses(stmtContext)) {
             LOG.debug("Reusing substatement {} for {}", stmtContext, this);
-            this.addEffectiveSubstatement(stmtContext);
+            buffer.add(stmtContext);
         } else {
             LOG.debug("Skipping statement {}", stmtContext);
-        }
-    }
-
-    private void copyDeclaredStmts(final SubstatementContext<A, D, E> original, final QNameModule newQNameModule,
-            final CopyType typeOfCopy) {
-        for (final StatementContextBase<?, ?, ?> stmtContext : original.declaredSubstatements()) {
-            if (StmtContextUtils.areFeaturesSupported(stmtContext)) {
-                copySubstatement(stmtContext, newQNameModule, typeOfCopy);
-            }
-        }
-    }
-
-    private void copyEffectiveStmts(final SubstatementContext<A, D, E> original, final QNameModule newQNameModule,
-            final CopyType typeOfCopy) {
-        for (final StatementContextBase<?, ?, ?> stmtContext : original.effectiveSubstatements()) {
-            copySubstatement(stmtContext, newQNameModule, typeOfCopy);
         }
     }
 
