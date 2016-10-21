@@ -1,0 +1,18 @@
+module baz {
+     namespace baz-ns;
+     prefix baz-prefix;
+
+     import foo {
+         prefix foo;
+         revision-date 2016-10-20;
+     }
+
+     revision 2016-10-20;
+
+     container baz-export {
+         uses foo:export;
+     }
+     container baz-foo {
+         uses foo:foo;
+     }
+}
