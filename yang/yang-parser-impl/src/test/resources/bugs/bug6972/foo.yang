@@ -1,0 +1,17 @@
+module foo {
+    namespace foo-ns;
+    prefix foo-prefix;
+
+    revision 2016-10-20;
+
+    grouping foo {
+        leaf foo {
+            type string;
+            units foo;
+        }
+    }
+
+    grouping export {
+        uses foo;
+    }
+}
