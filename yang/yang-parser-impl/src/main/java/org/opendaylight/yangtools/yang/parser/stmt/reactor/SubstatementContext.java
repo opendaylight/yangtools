@@ -35,9 +35,12 @@ import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNa
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.GroupingUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> extends
         StatementContextBase<A, D, E> {
+    private static final Logger LOG = LoggerFactory.getLogger(SubstatementContext.class);
 
     private final StatementContextBase<?, ?, ?> parent;
     private final A argument;
@@ -68,37 +71,6 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
             }
         } else {
             this.argument = original.argument;
-        }
-    }
-
-    private void copyDeclaredStmts(final SubstatementContext<A, D, E> original, final QNameModule newQNameModule,
-            final CopyType typeOfCopy) {
-        final Collection<? extends StatementContextBase<?, ?, ?>> originalDeclaredSubstatements = original
-                .declaredSubstatements();
-        for (final StatementContextBase<?, ?, ?> stmtContext : originalDeclaredSubstatements) {
-            if (!StmtContextUtils.areFeaturesSupported(stmtContext)) {
-                continue;
-            }
-            if (GroupingUtils.needToCopyByUses(stmtContext)) {
-                final StatementContextBase<?, ?, ?> copy = stmtContext.createCopy(newQNameModule, this, typeOfCopy);
-                this.addEffectiveSubstatement(copy);
-            } else if (GroupingUtils.isReusedByUses(stmtContext)) {
-                this.addEffectiveSubstatement(stmtContext);
-            }
-        }
-    }
-
-    private void copyEffectiveStmts(final SubstatementContext<A, D, E> original, final QNameModule newQNameModule,
-            final CopyType typeOfCopy) {
-        final Collection<? extends StatementContextBase<?, ?, ?>> originalEffectiveSubstatements = original
-                .effectiveSubstatements();
-        for (final StatementContextBase<?, ?, ?> stmtContext : originalEffectiveSubstatements) {
-            if (GroupingUtils.needToCopyByUses(stmtContext)) {
-                final StatementContextBase<?, ?, ?> copy = stmtContext.createCopy(newQNameModule, this, typeOfCopy);
-                this.addEffectiveSubstatement(copy);
-            } else if (GroupingUtils.isReusedByUses(stmtContext)) {
-                this.addEffectiveSubstatement(stmtContext);
-            }
         }
     }
 
@@ -151,6 +123,36 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         copy.copyDeclaredStmts(this, newQNameModule, typeOfCopy);
         copy.copyEffectiveStmts(this, newQNameModule, typeOfCopy);
         return copy;
+    }
+
+    private void copySubstatement(final StatementContextBase<?, ?, ?> stmtContext,
+            final QNameModule newQNameModule, final CopyType typeOfCopy) {
+        if (GroupingUtils.needToCopyByUses(stmtContext)) {
+            final StatementContextBase<?, ?, ?> copy = stmtContext.createCopy(newQNameModule, this, typeOfCopy);
+            LOG.debug("Copying substatement {} for {} as", stmtContext, this, copy);
+            this.addEffectiveSubstatement(copy);
+        } else if (GroupingUtils.isReusedByUses(stmtContext)) {
+            LOG.debug("Reusing substatement {} for {}", stmtContext, this);
+            this.addEffectiveSubstatement(stmtContext);
+        } else {
+            LOG.debug("Skipping statement {}", stmtContext);
+        }
+    }
+
+    private void copyDeclaredStmts(final SubstatementContext<A, D, E> original, final QNameModule newQNameModule,
+            final CopyType typeOfCopy) {
+        for (final StatementContextBase<?, ?, ?> stmtContext : original.declaredSubstatements()) {
+            if (StmtContextUtils.areFeaturesSupported(stmtContext)) {
+                copySubstatement(stmtContext, newQNameModule, typeOfCopy);
+            }
+        }
+    }
+
+    private void copyEffectiveStmts(final SubstatementContext<A, D, E> original, final QNameModule newQNameModule,
+            final CopyType typeOfCopy) {
+        for (final StatementContextBase<?, ?, ?> stmtContext : original.effectiveSubstatements()) {
+            copySubstatement(stmtContext, newQNameModule, typeOfCopy);
+        }
     }
 
     private boolean isSupportedAsShorthandCase() {
