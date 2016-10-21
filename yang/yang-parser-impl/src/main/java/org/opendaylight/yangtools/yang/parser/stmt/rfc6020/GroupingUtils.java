@@ -54,44 +54,29 @@ public final class GroupingUtils {
             final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode) {
 
         final QNameModule newQNameModule = getNewQNameModule(targetCtx, sourceGrpStmtCtx);
-        copyDeclaredStmts(sourceGrpStmtCtx, targetCtx, usesNode, newQNameModule);
-        copyEffectiveStmts(sourceGrpStmtCtx, targetCtx, usesNode, newQNameModule);
-    }
+        for (final StatementContextBase<?, ?, ?> original : sourceGrpStmtCtx.declaredSubstatements()) {
+            if (StmtContextUtils.areFeaturesSupported(original)) {
+                copyStatement(original, targetCtx, usesNode, newQNameModule);
+            }
+        }
 
-    public static void copyDeclaredStmts(final StatementContextBase<?, ?, ?> sourceGrpStmtCtx,
-            final StatementContextBase<?, ?, ?> targetCtx,
-            final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode,
-            final QNameModule newQNameModule) {
-        for (final StatementContextBase<?, ?, ?> originalStmtCtx : sourceGrpStmtCtx.declaredSubstatements()) {
-            if (!StmtContextUtils.areFeaturesSupported(originalStmtCtx)) {
-                continue;
-            }
-            if (needToCopyByUses(originalStmtCtx)) {
-                final StatementContextBase<?, ?, ?> copy = originalStmtCtx.createCopy(newQNameModule, targetCtx,
-                        CopyType.ADDED_BY_USES);
-                targetCtx.addEffectiveSubstatement(copy);
-                usesNode.addAsEffectOfStatement(copy);
-            } else if (isReusedByUsesOnTop(originalStmtCtx)) {
-                targetCtx.addEffectiveSubstatement(originalStmtCtx);
-                usesNode.addAsEffectOfStatement(originalStmtCtx);
-            }
+        for (final StatementContextBase<?, ?, ?> original : sourceGrpStmtCtx.effectiveSubstatements()) {
+            copyStatement(original, targetCtx, usesNode, newQNameModule);
         }
     }
 
-    public static void copyEffectiveStmts(final StatementContextBase<?, ?, ?> sourceGrpStmtCtx,
+    private static void copyStatement(final StatementContextBase<?, ?, ?> original,
             final StatementContextBase<?, ?, ?> targetCtx,
-            final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode,
-            final QNameModule newQNameModule) {
-        for (final StatementContextBase<?, ?, ?> originalStmtCtx : sourceGrpStmtCtx.effectiveSubstatements()) {
-            if (needToCopyByUses(originalStmtCtx)) {
-                final StatementContextBase<?, ?, ?> copy = originalStmtCtx.createCopy(newQNameModule, targetCtx,
-                        CopyType.ADDED_BY_USES);
-                targetCtx.addEffectiveSubstatement(copy);
-                usesNode.addAsEffectOfStatement(copy);
-            } else if (isReusedByUsesOnTop(originalStmtCtx)) {
-                targetCtx.addEffectiveSubstatement(originalStmtCtx);
-                usesNode.addAsEffectOfStatement(originalStmtCtx);
-            }
+            final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> targetUses,
+            final QNameModule targetModule) {
+        if (needToCopyByUses(original)) {
+            final StatementContextBase<?, ?, ?> copy = original.createCopy(targetModule, targetCtx,
+                    CopyType.ADDED_BY_USES);
+            targetCtx.addEffectiveSubstatement(copy);
+            targetUses.addAsEffectOfStatement(copy);
+        } else if (isReusedByUsesOnTop(original)) {
+            targetCtx.addEffectiveSubstatement(original);
+            targetUses.addAsEffectOfStatement(original);
         }
     }
 
