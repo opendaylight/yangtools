@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -15,38 +15,38 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
-import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 
-abstract class EmptyMandatoryStatement implements MandatoryStatement {
-    static final MandatoryStatement FALSE = new EmptyMandatoryStatement() {
+abstract class EmptyConfigStatement implements ConfigStatement {
+    static final ConfigStatement FALSE = new EmptyConfigStatement() {
         @Override
-        public Boolean getValue() {
-            return Boolean.FALSE;
+        public boolean getValue() {
+            return false;
         }
 
         @Override
-        EffectiveStatement<Boolean, MandatoryStatement> toEffective() {
-            return EmptyMandatoryEffectiveStatement.FALSE;
-        }
-    };
-
-    static final MandatoryStatement TRUE = new EmptyMandatoryStatement() {
-        @Override
-        public Boolean getValue() {
-            return Boolean.TRUE;
-        }
-
-        @Override
-        EffectiveStatement<Boolean, MandatoryStatement> toEffective() {
-            return EmptyMandatoryEffectiveStatement.TRUE;
+        EffectiveStatement<Boolean, ConfigStatement> toEffective() {
+            return EmptyConfigEffectiveStatement.FALSE;
         }
     };
 
-    private EmptyMandatoryStatement() {
+    static final ConfigStatement TRUE = new EmptyConfigStatement() {
+        @Override
+        public boolean getValue() {
+            return true;
+        }
+
+        @Override
+        EffectiveStatement<Boolean, ConfigStatement> toEffective() {
+            return EmptyConfigEffectiveStatement.TRUE;
+        }
+    };
+
+    private EmptyConfigStatement() {
         // Invisible on purpose
     }
 
-    abstract EffectiveStatement<Boolean, MandatoryStatement> toEffective();
+    abstract EffectiveStatement<Boolean, ConfigStatement> toEffective();
 
     @Override
     public final Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
@@ -55,17 +55,17 @@ abstract class EmptyMandatoryStatement implements MandatoryStatement {
 
     @Override
     public final StatementDefinition statementDefinition() {
-        return Rfc6020Mapping.MANDATORY;
+        return Rfc6020Mapping.CONFIG;
     }
 
     @Override
     public final String rawArgument() {
-        return getValue().toString();
+        return Boolean.toString(getValue());
     }
 
     @Override
     public final Boolean argument() {
-        return getValue();
+        return Boolean.valueOf(getValue());
     }
 
     @Override
@@ -84,15 +84,14 @@ abstract class EmptyMandatoryStatement implements MandatoryStatement {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof MandatoryStatement)) {
+        if (!(obj instanceof ConfigStatement)) {
             return false;
         }
 
-        final MandatoryStatement other = (MandatoryStatement) obj;
+        final ConfigStatement other = (ConfigStatement) obj;
 
-        return  argument().equals(other.argument()) &&
+        return  getValue() == other.getValue() && argument().equals(other.argument()) &&
                 rawArgument().equals(other.rawArgument()) &&
-                getValue().equals(other.getValue()) &&
                 statementDefinition().equals(other.statementDefinition()) &&
                 getStatementSource().equals(other.getStatementSource()) &&
                 declaredSubstatements().equals(other.declaredSubstatements());
