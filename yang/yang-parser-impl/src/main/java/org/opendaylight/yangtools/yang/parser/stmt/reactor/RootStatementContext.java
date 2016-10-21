@@ -17,12 +17,12 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.IncludedModuleContext;
 
 /**
@@ -48,43 +48,20 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
         sourceContext = original.sourceContext;
         this.argument = original.argument;
 
-        copyDeclaredStmts(original, newQNameModule, typeOfCopy);
+        final Collection<StatementContextBase<?, ?, ?>> declared = original.declaredSubstatements();
+        final Collection<StatementContextBase<?, ?, ?>> effective = original.effectiveSubstatements();
+        final Collection<StatementContextBase<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
 
-        copyEffectiveStmts(original, newQNameModule, typeOfCopy);
-
-    }
-
-    /**
-     * copies declared statements from original to this' substatements
-     *
-     * @param typeOfCopy
-     *            determines whether copy is used by augmentation or uses
-     * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException
-     */
-    private void copyDeclaredStmts(final RootStatementContext<A, D, E> original, final QNameModule newQNameModule,
-            final CopyType typeOfCopy) {
-        final Collection<StatementContextBase<?, ?, ?>> originalDeclaredSubstatements = original.declaredSubstatements();
-        for (final StatementContextBase<?, ?, ?> stmtContext : originalDeclaredSubstatements) {
-            if (!StmtContextUtils.areFeaturesSupported(stmtContext)) {
-                continue;
+        for (final StatementContextBase<?, ?, ?> stmtContext : declared) {
+            if (StmtContextUtils.areFeaturesSupported(stmtContext)) {
+                buffer.add(stmtContext.createCopy(newQNameModule, this, typeOfCopy));
             }
-            this.addEffectiveSubstatement(stmtContext.createCopy(newQNameModule, this, typeOfCopy));
         }
-    }
+        for (final StmtContext<?, ?, ?> stmtContext : effective) {
+            buffer.add(stmtContext.createCopy(newQNameModule, this, typeOfCopy));
+        }
 
-    /**
-     * copies effective statements from original to this' substatements
-     *
-     * @param typeOfCopy
-     *            determines whether copy is used by augmentation or uses
-     * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException
-     */
-    private void copyEffectiveStmts(final RootStatementContext<A, D, E> original, final QNameModule newQNameModule,
-            final CopyType typeOfCopy) {
-        final Collection<? extends StmtContext<?, ?, ?>> originalEffectiveSubstatements = original.effectiveSubstatements();
-        for (final StmtContext<?, ?, ?> stmtContext : originalEffectiveSubstatements) {
-            this.addEffectiveSubstatement(stmtContext.createCopy(newQNameModule, this, typeOfCopy));
-        }
+        addEffectiveSubstatements(buffer);
     }
 
     /**
