@@ -22,7 +22,6 @@ import java.util.EnumMap;
 import java.util.EventListener;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Identifiable;
@@ -32,6 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Storag
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.ValueAddedListener;
@@ -74,8 +75,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         boolean isFinished();
     }
 
-    private final static List<TypeOfCopy> ORIGINAL_COPY = ImmutableList.of(TypeOfCopy.ORIGINAL);
-
     private final StatementDefinitionContext<A, D, E> definition;
     private final StatementIdentifier identifier;
     private final StatementSourceReference statementDeclSource;
@@ -88,7 +87,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private Collection<StatementContextBase<?, ?, ?>> effectOfStatement = ImmutableList.of();
 
     private SupportedByFeatures supportedByFeatures = SupportedByFeatures.UNDEFINED;
-    private List<TypeOfCopy> copyHistory = ORIGINAL_COPY;
+    private CopyHistory copyHistory = CopyHistory.original();
     private boolean isSupportedToBuildEffective = true;
     private ModelProcessingPhase completedPhase = null;
     private StatementContextBase<?, ?, ?> originalCtx;
@@ -110,14 +109,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.statementDeclSource = Preconditions.checkNotNull(original.statementDeclSource,
                 "Statement context statementDeclSource cannot be null copying from: %s",
                 original.getStatementSourceReference());
-    }
-
-    private void growCopyHistory(final int growBy) {
-        if (copyHistory == ORIGINAL_COPY) {
-            final List<TypeOfCopy> newCopyHistory = new ArrayList<>(growBy + 1);
-            newCopyHistory.add(TypeOfCopy.ORIGINAL);
-            copyHistory = newCopyHistory;
-        }
     }
 
     @Override
@@ -154,20 +145,13 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public List<TypeOfCopy> getCopyHistory() {
+    public CopyHistory getCopyHistory() {
         return copyHistory;
     }
 
     @Override
-    public void addToCopyHistory(final TypeOfCopy typeOfCopy) {
-        growCopyHistory(1);
-        this.copyHistory.add(typeOfCopy);
-    }
-
-    @Override
-    public void addAllToCopyHistory(final List<TypeOfCopy> typeOfCopyList) {
-        growCopyHistory(typeOfCopyList.size());
-        this.copyHistory.addAll(typeOfCopyList);
+    public void appendCopyHistory(final CopyType typeOfCopy, final CopyHistory toAppend) {
+        copyHistory = copyHistory.append(typeOfCopy, toAppend);
     }
 
     @Override
