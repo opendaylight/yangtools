@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -63,7 +62,7 @@ abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends Declare
                     if (this instanceof AugmentationSchema && !(effectiveStatement instanceof ChoiceCaseNode ||
                             effectiveStatement instanceof ChoiceSchemaNode) &&
                             (YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(effectiveStatement.statementDefinition())) &&
-                            Objects.equals(true, ctx.getFromNamespace(AugmentToChoiceNamespace.class, ctx))) {
+                            Boolean.TRUE.equals(ctx.getFromNamespace(AugmentToChoiceNamespace.class, ctx))) {
                         final CaseShorthandImpl caseShorthand = new CaseShorthandImpl(dataSchemaNode);
                         mutableChildNodes.put(caseShorthand.getQName(), caseShorthand);
                         mutablePublicChildNodes.add(caseShorthand);
