@@ -10,12 +10,16 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
+import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
+import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
@@ -33,7 +37,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.GroupingUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,6 +123,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
         definition().onStatementAdded(copy);
 
+        // FIXME: why are we copying both declared and effective statements?
         copy.copyDeclaredStmts(this, newQNameModule, typeOfCopy);
         copy.copyEffectiveStmts(this, newQNameModule, typeOfCopy);
         return copy;
@@ -127,11 +131,11 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
     private void copySubstatement(final StatementContextBase<?, ?, ?> stmtContext,
             final QNameModule newQNameModule, final CopyType typeOfCopy) {
-        if (GroupingUtils.needToCopyByUses(stmtContext)) {
+        if (needToCopyByUses(stmtContext)) {
             final StatementContextBase<?, ?, ?> copy = stmtContext.createCopy(newQNameModule, this, typeOfCopy);
             LOG.debug("Copying substatement {} for {} as", stmtContext, this, copy);
             this.addEffectiveSubstatement(copy);
-        } else if (GroupingUtils.isReusedByUses(stmtContext)) {
+        } else if (isReusedByUses(stmtContext)) {
             LOG.debug("Reusing substatement {} for {}", stmtContext, this);
             this.addEffectiveSubstatement(stmtContext);
         } else {
@@ -153,6 +157,34 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         for (final StatementContextBase<?, ?, ?> stmtContext : original.effectiveSubstatements()) {
             copySubstatement(stmtContext, newQNameModule, typeOfCopy);
         }
+    }
+
+    // FIXME: revise this, as it seems to be wrong
+    private static final Set<Rfc6020Mapping> NOCOPY_FROM_GROUPING_SET = ImmutableSet.of(
+        Rfc6020Mapping.DESCRIPTION,
+        Rfc6020Mapping.REFERENCE,
+        Rfc6020Mapping.STATUS);
+    private static final Set<Rfc6020Mapping> REUSED_DEF_SET = ImmutableSet.of(
+        Rfc6020Mapping.TYPE,
+        Rfc6020Mapping.TYPEDEF,
+        Rfc6020Mapping.USES);
+
+    private static boolean needToCopyByUses(final StmtContext<?, ?, ?> stmtContext) {
+        final StatementDefinition def = stmtContext.getPublicDefinition();
+        if (REUSED_DEF_SET.contains(def)) {
+            LOG.debug("Will reuse {} statement {}", def, stmtContext);
+            return false;
+        }
+        if (NOCOPY_FROM_GROUPING_SET.contains(def)) {
+            return !Rfc6020Mapping.GROUPING.equals(stmtContext.getParentContext().getPublicDefinition());
+        }
+
+        LOG.debug("Will copy {} statement {}", def, stmtContext);
+        return true;
+    }
+
+    private static boolean isReusedByUses(final StmtContext<?, ?, ?> stmtContext) {
+        return REUSED_DEF_SET.contains(stmtContext.getPublicDefinition());
     }
 
     private boolean isSupportedAsShorthandCase() {
