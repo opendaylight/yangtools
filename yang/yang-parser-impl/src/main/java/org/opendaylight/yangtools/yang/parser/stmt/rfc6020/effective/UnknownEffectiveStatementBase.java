@@ -18,8 +18,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 
 public abstract class UnknownEffectiveStatementBase<A> extends AbstractEffectiveDocumentedNode<A, UnknownStatement<A>>
         implements UnknownSchemaNode {
@@ -47,12 +48,12 @@ public abstract class UnknownEffectiveStatementBase<A> extends AbstractEffective
         }
 
         // initCopyType
-        List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
-        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
+        final CopyHistory copyTypesFromOriginal = ctx.getCopyHistory();
+        if (copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES_AUGMENTATION)) {
             this.addedByUses = this.addedByAugmentation = true;
         } else {
-            this.addedByAugmentation = copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION);
-            this.addedByUses = copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES);
+            this.addedByAugmentation = copyTypesFromOriginal.contains(CopyType.ADDED_BY_AUGMENTATION);
+            this.addedByUses = copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES);
         }
 
         nodeParameter = (ctx.rawStatementArgument() == null) ? "" : ctx.rawStatementArgument();

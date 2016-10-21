@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
@@ -50,7 +51,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
     @SuppressWarnings("unchecked")
     SubstatementContext(final SubstatementContext<A, D, E> original, final QNameModule newQNameModule,
-            final StatementContextBase<?, ?, ?> newParent, final TypeOfCopy typeOfCopy) {
+            final StatementContextBase<?, ?, ?> newParent, final CopyType typeOfCopy) {
         super(original);
         this.parent = newParent;
 
@@ -71,7 +72,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     }
 
     private void copyDeclaredStmts(final SubstatementContext<A, D, E> original, final QNameModule newQNameModule,
-            final TypeOfCopy typeOfCopy) {
+            final CopyType typeOfCopy) {
         final Collection<? extends StatementContextBase<?, ?, ?>> originalDeclaredSubstatements = original
                 .declaredSubstatements();
         for (final StatementContextBase<?, ?, ?> stmtContext : originalDeclaredSubstatements) {
@@ -88,7 +89,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     }
 
     private void copyEffectiveStmts(final SubstatementContext<A, D, E> original, final QNameModule newQNameModule,
-            final TypeOfCopy typeOfCopy) {
+            final CopyType typeOfCopy) {
         final Collection<? extends StatementContextBase<?, ?, ?>> originalEffectiveSubstatements = original
                 .effectiveSubstatements();
         for (final StatementContextBase<?, ?, ?> stmtContext : originalEffectiveSubstatements) {
@@ -128,17 +129,16 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
     @Override
     public StatementContextBase<?, ?, ?> createCopy(final StatementContextBase<?, ?, ?> newParent,
-            final TypeOfCopy typeOfCopy) {
+            final CopyType typeOfCopy) {
         return createCopy(null, newParent, typeOfCopy);
     }
 
     @Override
     public StatementContextBase<A, D, E> createCopy(final QNameModule newQNameModule,
-            final StatementContextBase<?, ?, ?> newParent, final TypeOfCopy typeOfCopy) {
+            final StatementContextBase<?, ?, ?> newParent, final CopyType typeOfCopy) {
         final SubstatementContext<A, D, E> copy = new SubstatementContext<>(this, newQNameModule, newParent, typeOfCopy);
 
-        copy.addAllToCopyHistory(this.getCopyHistory());
-        copy.addToCopyHistory(typeOfCopy);
+        copy.appendCopyHistory(typeOfCopy, this.getCopyHistory());
 
         if (this.getOriginalCtx() != null) {
             copy.setOriginalCtx(this.getOriginalCtx());

@@ -22,8 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.RootStatementContext;
@@ -44,9 +44,9 @@ public final class AugmentUtils {
     private static void copyDeclaredStmts(final StatementContextBase<?, ?, ?> sourceCtx,
             final StatementContextBase<?, ?, ?> targetCtx) {
 
-        final TypeOfCopy typeOfCopy = sourceCtx.getParentContext().getPublicDefinition()
-                .getDeclaredRepresentationClass().equals(UsesStatement.class) ? TypeOfCopy.ADDED_BY_USES_AUGMENTATION
-                : TypeOfCopy.ADDED_BY_AUGMENTATION;
+        final CopyType typeOfCopy = sourceCtx.getParentContext().getPublicDefinition()
+                .getDeclaredRepresentationClass().equals(UsesStatement.class) ? CopyType.ADDED_BY_USES_AUGMENTATION
+                : CopyType.ADDED_BY_AUGMENTATION;
 
         for (final StatementContextBase<?, ?, ?> originalStmtCtx : sourceCtx.declaredSubstatements()) {
             if (!StmtContextUtils.areFeaturesSupported(originalStmtCtx)) {
@@ -65,9 +65,9 @@ public final class AugmentUtils {
 
     private static void copyEffectiveStmts(final StatementContextBase<?, ?, ?> sourceCtx,
             final StatementContextBase<?, ?, ?> targetCtx) {
-        final TypeOfCopy typeOfCopy = sourceCtx.getParentContext().getPublicDefinition()
-                .getDeclaredRepresentationClass().equals(UsesStatement.class) ? TypeOfCopy.ADDED_BY_USES_AUGMENTATION
-                : TypeOfCopy.ADDED_BY_AUGMENTATION;
+        final CopyType typeOfCopy = sourceCtx.getParentContext().getPublicDefinition()
+                .getDeclaredRepresentationClass().equals(UsesStatement.class) ? CopyType.ADDED_BY_USES_AUGMENTATION
+                : CopyType.ADDED_BY_AUGMENTATION;
 
         for (final StatementContextBase<?, ?, ?> originalStmtCtx : sourceCtx.effectiveSubstatements()) {
             if (needToCopyByAugment(originalStmtCtx)) {
@@ -82,13 +82,13 @@ public final class AugmentUtils {
     }
 
     private static void validateNodeCanBeCopiedByAugment(final StatementContextBase<?, ?, ?> sourceCtx,
-            final StatementContextBase<?, ?, ?> targetCtx, final TypeOfCopy typeOfCopy) {
+            final StatementContextBase<?, ?, ?> targetCtx, final CopyType typeOfCopy) {
 
         if (sourceCtx.getPublicDefinition().getDeclaredRepresentationClass().equals(WhenStatement.class)) {
             return;
         }
 
-        if (typeOfCopy == TypeOfCopy.ADDED_BY_AUGMENTATION && reguiredCheckOfMandatoryNodes(sourceCtx, targetCtx)) {
+        if (typeOfCopy == CopyType.ADDED_BY_AUGMENTATION && reguiredCheckOfMandatoryNodes(sourceCtx, targetCtx)) {
             final List<StatementContextBase<?, ?, ?>> sourceSubStatements = new Builder<StatementContextBase<?, ?, ?>>()
                     .addAll(sourceCtx.declaredSubstatements()).addAll(sourceCtx.effectiveSubstatements()).build();
 
