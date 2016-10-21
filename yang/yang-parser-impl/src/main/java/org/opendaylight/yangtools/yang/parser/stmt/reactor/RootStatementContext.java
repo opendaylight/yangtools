@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Regist
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.IncludedModuleContext;
 
 /**
@@ -41,7 +42,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     }
 
     RootStatementContext(final RootStatementContext<A, D, E> original, final QNameModule newQNameModule,
-        final TypeOfCopy typeOfCopy) {
+        final CopyType typeOfCopy) {
         super(original);
 
         sourceContext = original.sourceContext;
@@ -61,7 +62,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
      * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException
      */
     private void copyDeclaredStmts(final RootStatementContext<A, D, E> original, final QNameModule newQNameModule,
-            final TypeOfCopy typeOfCopy) {
+            final CopyType typeOfCopy) {
         final Collection<StatementContextBase<?, ?, ?>> originalDeclaredSubstatements = original.declaredSubstatements();
         for (final StatementContextBase<?, ?, ?> stmtContext : originalDeclaredSubstatements) {
             if (!StmtContextUtils.areFeaturesSupported(stmtContext)) {
@@ -79,7 +80,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
      * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException
      */
     private void copyEffectiveStmts(final RootStatementContext<A, D, E> original, final QNameModule newQNameModule,
-            final TypeOfCopy typeOfCopy) {
+            final CopyType typeOfCopy) {
         final Collection<? extends StmtContext<?, ?, ?>> originalEffectiveSubstatements = original.effectiveSubstatements();
         for (final StmtContext<?, ?, ?> stmtContext : originalEffectiveSubstatements) {
             this.addEffectiveSubstatement(stmtContext.createCopy(newQNameModule, this, typeOfCopy));
@@ -132,28 +133,27 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     }
 
     /**
-     * @return copy of this considering {@link TypeOfCopy} (augment, uses)
+     * @return copy of this considering {@link CopyType} (augment, uses)
      *
      * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
      */
     @Override
     public StatementContextBase<?, ?, ?> createCopy(final StatementContextBase<?, ?, ?> newParent,
-            final TypeOfCopy typeOfCopy) {
+            final CopyType typeOfCopy) {
         return createCopy(null, newParent, typeOfCopy);
     }
 
     /**
-     * @return copy of this considering {@link TypeOfCopy} (augment, uses)
+     * @return copy of this considering {@link CopyType} (augment, uses)
      *
      * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
      */
     @Override
     public StatementContextBase<A, D, E> createCopy(final QNameModule newQNameModule,
-            final StatementContextBase<?, ?, ?> newParent, final TypeOfCopy typeOfCopy) {
+            final StatementContextBase<?, ?, ?> newParent, final CopyType typeOfCopy) {
         final RootStatementContext<A, D, E> copy = new RootStatementContext<>(this, newQNameModule, typeOfCopy);
 
-        copy.addAllToCopyHistory(this.getCopyHistory());
-        copy.addToCopyHistory(typeOfCopy);
+        copy.appendCopyHistory(typeOfCopy, this.getCopyHistory());
 
         if (this.getOriginalCtx() != null) {
             copy.setOriginalCtx(this.getOriginalCtx());

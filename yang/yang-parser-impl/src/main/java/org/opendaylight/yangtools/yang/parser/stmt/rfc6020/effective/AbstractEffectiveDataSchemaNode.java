@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 
 abstract class AbstractEffectiveDataSchemaNode<D extends DeclaredStatement<QName>> extends
         AbstractEffectiveSchemaNode<D> implements DataSchemaNode {
@@ -30,12 +30,12 @@ abstract class AbstractEffectiveDataSchemaNode<D extends DeclaredStatement<QName
         this.configuration = ctx.isConfiguration();
 
         // initCopyType
-        List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
-        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
+        final CopyHistory originalHistory = ctx.getCopyHistory();
+        if (originalHistory.contains(CopyType.ADDED_BY_USES_AUGMENTATION)) {
             this.addedByUses = this.augmenting = true;
         } else {
-            this.augmenting = copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION);
-            this.addedByUses = copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES);
+            this.augmenting = originalHistory.contains(CopyType.ADDED_BY_AUGMENTATION);
+            this.addedByUses = originalHistory.contains(CopyType.ADDED_BY_USES);
         }
     }
 
