@@ -19,9 +19,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -68,7 +68,7 @@ public final class GroupingUtils {
             }
             if (needToCopyByUses(originalStmtCtx)) {
                 final StatementContextBase<?, ?, ?> copy = originalStmtCtx.createCopy(newQNameModule, targetCtx,
-                        TypeOfCopy.ADDED_BY_USES);
+                        CopyType.ADDED_BY_USES);
                 targetCtx.addEffectiveSubstatement(copy);
                 usesNode.addAsEffectOfStatement(copy);
             } else if (isReusedByUsesOnTop(originalStmtCtx)) {
@@ -85,7 +85,7 @@ public final class GroupingUtils {
         for (final StatementContextBase<?, ?, ?> originalStmtCtx : sourceGrpStmtCtx.effectiveSubstatements()) {
             if (needToCopyByUses(originalStmtCtx)) {
                 final StatementContextBase<?, ?, ?> copy = originalStmtCtx.createCopy(newQNameModule, targetCtx,
-                        TypeOfCopy.ADDED_BY_USES);
+                        CopyType.ADDED_BY_USES);
                 targetCtx.addEffectiveSubstatement(copy);
                 usesNode.addAsEffectOfStatement(copy);
             } else if (isReusedByUsesOnTop(originalStmtCtx)) {
