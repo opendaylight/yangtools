@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -190,31 +191,34 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
     private static void copyFromSourceToTarget(final StatementContextBase<?, ?, ?> sourceGrpStmtCtx,
             final StatementContextBase<?, ?, ?> targetCtx,
             final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode) {
-
+        final Collection<StatementContextBase<?, ?, ?>> declared = sourceGrpStmtCtx.declaredSubstatements();
+        final Collection<StatementContextBase<?, ?, ?>> effective = sourceGrpStmtCtx.effectiveSubstatements();
+        final Collection<StatementContextBase<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
         final QNameModule newQNameModule = getNewQNameModule(targetCtx, sourceGrpStmtCtx);
-        for (final StatementContextBase<?, ?, ?> original : sourceGrpStmtCtx.declaredSubstatements()) {
+
+        for (final StatementContextBase<?, ?, ?> original : declared) {
             if (StmtContextUtils.areFeaturesSupported(original)) {
-                copyStatement(original, targetCtx, usesNode, newQNameModule);
+                copyStatement(original, targetCtx, newQNameModule, buffer);
             }
         }
 
-        for (final StatementContextBase<?, ?, ?> original : sourceGrpStmtCtx.effectiveSubstatements()) {
-            copyStatement(original, targetCtx, usesNode, newQNameModule);
+        for (final StatementContextBase<?, ?, ?> original : effective) {
+            copyStatement(original, targetCtx, newQNameModule, buffer);
         }
+
+        targetCtx.addEffectiveSubstatements(buffer);
+        usesNode.addAsEffectOfStatement(buffer);
     }
 
     private static void copyStatement(final StatementContextBase<?, ?, ?> original,
-            final StatementContextBase<?, ?, ?> targetCtx,
-            final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> targetUses,
-            final QNameModule targetModule) {
+            final StatementContextBase<?, ?, ?> targetCtx, final QNameModule targetModule,
+            final Collection<StatementContextBase<?, ?, ?>> buffer) {
         if (needToCopyByUses(original)) {
             final StatementContextBase<?, ?, ?> copy = original.createCopy(targetModule, targetCtx,
                     CopyType.ADDED_BY_USES);
-            targetCtx.addEffectiveSubstatement(copy);
-            targetUses.addAsEffectOfStatement(copy);
+            buffer.add(copy);
         } else if (isReusedByUsesOnTop(original)) {
-            targetCtx.addEffectiveSubstatement(original);
-            targetUses.addAsEffectOfStatement(original);
+            buffer.add(original);
         }
     }
 

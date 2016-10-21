@@ -86,6 +86,8 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     void addAsEffectOfStatement(StatementContextBase<?, ?, ?> ctx);
 
+    void addAsEffectOfStatement(Collection<StatementContextBase<?, ?, ?>> ctxs);
+
     StatementContextBase<?, ?, ?> createCopy(
             StatementContextBase<?, ?, ?> newParent, CopyType typeOfCopy)
             throws SourceException;
