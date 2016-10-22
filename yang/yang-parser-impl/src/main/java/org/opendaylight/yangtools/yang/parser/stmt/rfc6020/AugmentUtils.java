@@ -20,10 +20,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.RootStatementContext;
@@ -140,15 +140,14 @@ public final class AugmentUtils {
              */
             if (!Utils.belongsToTheSameModule(targetStmtQName, sourceStmtQName)) {
                 return true;
-            } else {
-                /*
-                 * If target or one of its parent is a presence container from
-                 * the same module, return false and skip mandatory nodes
-                 * validation
-                 */
-                if (Utils.isPresenceContainer(targetCtx)) {
-                    return false;
-                }
+            }
+            /*
+             * If target or one of its parent is a presence container from
+             * the same module, return false and skip mandatory nodes
+             * validation
+             */
+            if (Utils.isPresenceContainer(targetCtx)) {
+                return false;
             }
         } while ((targetCtx = targetCtx.getParentContext()) != root);
 

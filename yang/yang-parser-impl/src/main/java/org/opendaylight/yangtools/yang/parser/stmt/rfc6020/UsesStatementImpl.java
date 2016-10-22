@@ -91,6 +91,10 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                 return;
             }
 
+            /*
+             * We need to inline target grouping into our parent before parent's effective model is applied.
+             *
+             */
             ModelActionBuilder usesAction = usesNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
             final QName groupingName = usesNode.getStatementArgument();
 
