@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -17,25 +20,23 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class StatementDefinitionContext<A,D extends DeclaredStatement<A>,E extends EffectiveStatement<A,D>> {
     private final StatementSupport<A,D,E> support;
-    public StatementDefinitionContext(StatementSupport<A,D,E> support) {
-        this.support= support;
-    }
 
+    public StatementDefinitionContext(final StatementSupport<A,D,E> support) {
+        this.support = Preconditions.checkNotNull(support);
+    }
 
     public StatementFactory<A,D,E> getFactory() {
         return support;
     }
 
-    public A parseArgumentValue(StmtContext<A,D,E> context, String value) throws SourceException {
+    public A parseArgumentValue(final StmtContext<A,D,E> context, final String value) {
         return support.parseArgumentValue(context,value);
     }
 
-
-    public void checkNamespaceAllowed(Class<? extends IdentifierNamespace<?,?>> namespace) {
+    public void checkNamespaceAllowed(final Class<? extends IdentifierNamespace<?,?>> namespace) {
         // Noop
     }
 
@@ -43,13 +44,13 @@ public class StatementDefinitionContext<A,D extends DeclaredStatement<A>,E exten
         return support.getPublicView();
     }
 
-    public boolean onStatementAdded(Mutable<A,D,E> stmt) {
+    public boolean onStatementAdded(final Mutable<A,D,E> stmt) {
         support.onStatementAdded(stmt);
         return false;
     }
 
 
-    public void onDeclarationFinished(Mutable<A,D,E> statement, ModelProcessingPhase phase) throws SourceException {
+    public void onDeclarationFinished(final Mutable<A,D,E> statement, final ModelProcessingPhase phase) {
         switch (phase) {
         case SOURCE_PRE_LINKAGE:
             support.onPreLinkageDeclared(statement);
@@ -68,20 +69,24 @@ public class StatementDefinitionContext<A,D extends DeclaredStatement<A>,E exten
         }
     }
 
-
-
     public Class<?> getRepresentingClass() {
         return support.getDeclaredRepresentationClass();
     }
-
 
     public boolean hasArgument() {
         return support.getArgumentName() != null;
     }
 
-
     public QName getStatementName() {
         return support.getStatementName();
     }
 
+    @Override
+    public final String toString() {
+        return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()).toString();
+    }
+
+    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+        return toStringHelper.add("statement", getStatementName());
+    }
 }
