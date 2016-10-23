@@ -71,7 +71,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     private final boolean enabledSemanticVersions;
 
-    public BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports,
+    BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports,
             final StatementParserMode statementParserMode, final Predicate<QName> isFeatureSupported) {
         super();
         this.supports = Preconditions.checkNotNull(supports, "BuildGlobalContext#supports cannot be null");
@@ -82,7 +82,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
                 Preconditions.checkNotNull(isFeatureSupported, "Supported feature predicate must not be null."));
     }
 
-    public BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports,
+    BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports,
             final Map<ValidationBundleType, Collection<?>> supportedValidation,
             final StatementParserMode statementParserMode, final Predicate<QName> isFeatureSupported) {
         super();
@@ -98,15 +98,15 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
                 Preconditions.checkNotNull(isFeatureSupported, "Supported feature predicate must not be null."));
     }
 
-    public boolean isEnabledSemanticVersioning() {
+    boolean isEnabledSemanticVersioning() {
         return enabledSemanticVersions;
     }
 
-    public StatementSupportBundle getSupportsForPhase(final ModelProcessingPhase currentPhase) {
+    StatementSupportBundle getSupportsForPhase(final ModelProcessingPhase currentPhase) {
         return supports.get(currentPhase);
     }
 
-    public void addSource(@Nonnull final StatementStreamSource source) {
+    void addSource(@Nonnull final StatementStreamSource source) {
         sources.add(new SourceSpecificContext(this, source));
     }
 
@@ -161,7 +161,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         return new SimpleNamespaceContext<>(potentialRaw);
     }
 
-    public StatementDefinitionContext<?, ?, ?> getStatementDefinition(final QName name) {
+    StatementDefinitionContext<?, ?, ?> getStatementDefinition(final QName name) {
         StatementDefinitionContext<?, ?, ?> potential = definitions.get(name);
         if (potential == null) {
             StatementSupport<?, ?, ?> potentialRaw = supports.get(currentPhase).getStatementDefinition(name);
@@ -173,7 +173,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         return potential;
     }
 
-    public EffectiveModelContext build() throws SourceException, ReactorException {
+    EffectiveModelContext build() throws SourceException, ReactorException {
         for (ModelProcessingPhase phase : PHASE_EXECUTION_ORDER) {
             startPhase(phase);
             loadPhaseStatements();
@@ -192,7 +192,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         return new EffectiveModelContext(rootStatements);
     }
 
-    public EffectiveSchemaContext buildEffective() throws ReactorException {
+    EffectiveSchemaContext buildEffective() throws ReactorException {
         for (ModelProcessingPhase phase : PHASE_EXECUTION_ORDER) {
             startPhase(phase);
             loadPhaseStatements();
@@ -230,6 +230,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
             source.startPhase(phase);
         }
         currentPhase = phase;
+        LOG.debug("Global phase {} started", phase);
     }
 
     private void loadPhaseStatements() throws ReactorException {
@@ -329,9 +330,10 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     private void endPhase(final ModelProcessingPhase phase) {
         Preconditions.checkState(currentPhase == phase);
         finishedPhase = currentPhase;
+        LOG.debug("Global phase {} finished", phase);
     }
 
-    public Set<SourceSpecificContext> getSources() {
+    Set<SourceSpecificContext> getSources() {
         return sources;
     }
 }
