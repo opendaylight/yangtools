@@ -9,13 +9,14 @@ module foo {
     yang-version 1;
     namespace "urn:opendaylight:foo";
     prefix "f";
-    
+
     import bar { prefix "b"; }
 
     revision "2013-10-08" {
     }
 
     extension context-reference {
+        argument "context-type";
     }
 
     container nodes {
