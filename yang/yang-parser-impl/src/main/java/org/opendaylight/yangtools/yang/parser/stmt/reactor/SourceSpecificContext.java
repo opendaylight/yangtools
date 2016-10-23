@@ -63,6 +63,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnionSpecificationImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBehaviour.Registry, Mutable {
 
@@ -72,22 +74,24 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         FINISHED
     }
 
+    private static final Logger LOG = LoggerFactory.getLogger(SourceSpecificContext.class);
+
     private final StatementStreamSource source;
     private final BuildGlobalContext currentContext;
     private final Collection<NamespaceStorageNode> importedNamespaces = new ArrayList<>();
     private final Multimap<ModelProcessingPhase, ModifierImpl> modifiers = HashMultimap.create();
 
-    private RootStatementContext<?, ?, ?> root;
 
-    private ModelProcessingPhase inProgressPhase;
-    private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
     private final QNameToStatementDefinitionMap qNameToStmtDefMap = new QNameToStatementDefinitionMap();
     private final PrefixToModuleMap prefixToModuleMap = new PrefixToModuleMap();
 
+    private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
+    private ModelProcessingPhase inProgressPhase;
+    private RootStatementContext<?, ?, ?> root;
 
     SourceSpecificContext(final BuildGlobalContext currentContext, final StatementStreamSource source) {
-        this.source = source;
         this.currentContext = currentContext;
+        this.source = source;
     }
 
     public boolean isEnabledSemanticVersioning(){
@@ -167,11 +171,11 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     void startPhase(final ModelProcessingPhase phase) {
-        @Nullable
-        final ModelProcessingPhase previousPhase = phase.getPreviousPhase();
+        @Nullable final ModelProcessingPhase previousPhase = phase.getPreviousPhase();
         Preconditions.checkState(Objects.equals(previousPhase, finishedPhase));
         Preconditions.checkState(modifiers.get(previousPhase).isEmpty());
         inProgressPhase = phase;
+        LOG.debug("Source {} started phase {}", source, phase);
     }
 
     @Override
@@ -241,17 +245,16 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         Preconditions.checkNotNull(this.root, "Malformed source. Valid root element is missing.");
         final boolean phaseCompleted = root.tryToCompletePhase(phase);
 
-        hasProgressed = (tryToProgress(currentPhaseModifiers) | hasProgressed);
+        hasProgressed |= tryToProgress(currentPhaseModifiers);
 
-        if (phaseCompleted && (currentPhaseModifiers.isEmpty())) {
+        if (phaseCompleted && currentPhaseModifiers.isEmpty()) {
             finishedPhase = phase;
+            LOG.debug("Source {} finished phase {}", source, phase);
             return PhaseCompletionProgress.FINISHED;
 
         }
-        if (hasProgressed) {
-            return PhaseCompletionProgress.PROGRESS;
-        }
-        return PhaseCompletionProgress.NO_PROGRESS;
+
+        return hasProgressed ? PhaseCompletionProgress.PROGRESS : PhaseCompletionProgress.NO_PROGRESS;
     }
 
 
@@ -308,6 +311,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     void loadStatements() throws SourceException {
+        LOG.trace("Source {} loading statements for phase {}", source, inProgressPhase);
+
         switch (inProgressPhase) {
             case SOURCE_PRE_LINKAGE:
                 source.writePreLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef());
