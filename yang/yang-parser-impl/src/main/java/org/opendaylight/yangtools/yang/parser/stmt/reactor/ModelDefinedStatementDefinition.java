@@ -6,45 +6,41 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
+package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
-@Beta
-public final class ModelDefinedStatementDefinition implements StatementDefinition {
-    private final QName statementName;
-    private final QName argumentName;
+// FIXME: Provide real argument name
+final class ModelDefinedStatementDefinition implements StatementDefinition {
+    private final QName qName;
     private final boolean yinElement;
 
-    ModelDefinedStatementDefinition(final QName statementName, final QName argumentName, final boolean yinElement) {
-        this.statementName = Preconditions.checkNotNull(statementName);
-        this.argumentName = argumentName;
-        this.yinElement = yinElement;
+    ModelDefinedStatementDefinition(QName qName) {
+        this(qName, false);
     }
 
-    @Deprecated
-    public ModelDefinedStatementDefinition(final QName qname) {
-        this(qname, qname, false);
+    ModelDefinedStatementDefinition(QName qName, final boolean yinElement) {
+        this.qName = qName;
+        this.yinElement = yinElement;
     }
 
     @Nonnull
     @Override
     public QName getStatementName() {
-        return statementName;
+        return qName;
     }
 
     @Nullable
     @Override
     public QName getArgumentName() {
-        return argumentName;
+        return qName;
     }
 
     @Nonnull

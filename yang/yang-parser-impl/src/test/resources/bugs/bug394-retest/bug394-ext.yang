@@ -9,9 +9,6 @@ module bug394-ext {
 
     extension info {
         description "Takes string as argument. Provide short info message";
-        argument text {
-            yin-element true;
-        }
     }
 
     extension action {
