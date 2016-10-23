@@ -9,7 +9,10 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.EFFECTIVE_MODEL;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.FULL_DECLARATION;
+
 import com.google.common.base.Function;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -27,12 +30,15 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase.ContextMutation;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase.OnNamespaceItemAdded;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase.OnPhaseFinished;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class ModifierImpl implements ModelActionBuilder {
+    private static final Logger LOG = LoggerFactory.getLogger(ModifierImpl.class);
 
-    private final ModelProcessingPhase phase;
     private final Set<AbstractPrerequisite<?>> unsatisfied = new HashSet<>();
     private final Set<AbstractPrerequisite<?>> mutations = new HashSet<>();
+    private final ModelProcessingPhase phase;
 
     private InferenceAction action;
     private boolean actionApplied = false;
@@ -42,32 +48,34 @@ class ModifierImpl implements ModelActionBuilder {
     }
 
     private <D> AbstractPrerequisite<D> addReq(final AbstractPrerequisite<D> prereq) {
+        LOG.trace("Modifier {} adding prerequisite {}", this, prereq);
         unsatisfied.add(prereq);
         return prereq;
     }
 
     private <T> AbstractPrerequisite<T> addMutation(final AbstractPrerequisite<T> mutation) {
+        LOG.trace("Modifier {} adding mutation {}", this, mutation);
         mutations.add(mutation);
         return mutation;
     }
-
-
 
     private void checkNotRegistered() {
         Preconditions.checkState(action == null, "Action was already registered.");
     }
 
     private static IllegalStateException shouldNotHappenProbablyBug(final SourceException e) {
-        return new IllegalStateException("Source exception during registering prerequisite. This is probably bug.",e);
+        return new IllegalStateException("Source exception during registering prerequisite. This is probably bug.", e);
     }
 
     private boolean removeSatisfied() {
-        Iterator<AbstractPrerequisite<?>> prereq = unsatisfied.iterator();
+        Iterator<AbstractPrerequisite<?>> it = unsatisfied.iterator();
         boolean allSatisfied = true;
-        while (prereq.hasNext()) {
-            if (prereq.next().isDone()) {
+        while (it.hasNext()) {
+            final AbstractPrerequisite<?> prereq = it.next();
+            if (prereq.isDone()) {
                 // We are removing current prerequisite from list.
-                prereq.remove();
+                LOG.trace("Modifier {} prerequisite {} satisfied", this, prereq);
+                it.remove();
             } else {
                 allSatisfied  = false;
             }
@@ -80,7 +88,6 @@ class ModifierImpl implements ModelActionBuilder {
     }
 
     boolean isApplied() {
-
         return actionApplied;
     }
 
@@ -160,7 +167,7 @@ class ModifierImpl implements ModelActionBuilder {
     }
 
     @Override
-    public  <A,D extends DeclaredStatement<A>,E extends EffectiveStatement<A, D>> AbstractPrerequisite<StmtContext<A, D, E>> requiresCtx(final StmtContext<A, D, E> context, final ModelProcessingPhase phase) {
+    public <A,D extends DeclaredStatement<A>,E extends EffectiveStatement<A, D>> AbstractPrerequisite<StmtContext<A, D, E>> requiresCtx(final StmtContext<A, D, E> context, final ModelProcessingPhase phase) {
         return requiresCtxImpl(context, phase);
     }
 
@@ -222,46 +229,42 @@ class ModifierImpl implements ModelActionBuilder {
         return mutatesCtx(stmt, EFFECTIVE_MODEL);
     }
 
-
    @Override
     public <K, E extends EffectiveStatement<?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>> AbstractPrerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(
             final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
         return mutatesCtxImpl(context, namespace, key, EFFECTIVE_MODEL);
     }
 
-
-
     @Override
     public void apply(final InferenceAction action) {
+        Preconditions.checkState(this.action == null, "Action already defined to %s", this.action);
         this.action = Preconditions.checkNotNull(action);
     }
 
     private abstract class AbstractPrerequisite<T> implements Prerequisite<T> {
 
-        private T value;
         private boolean done = false;
+        private T value;
 
         @Override
-        public T get() {
+        public final T get() {
             Preconditions.checkState(isDone());
             return value;
         }
 
         @Override
-        public boolean isDone() {
+        public final boolean isDone() {
             return done;
         }
 
-        protected boolean resolvePrereq(final T value) {
+        final boolean resolvePrereq(final T value) {
             this.value = value;
             this.done = true;
             return isApplied();
         }
 
-        protected <O> Prerequisite<O> transform(final Function<? super T,O> transformation) {
-
+        final <O> Prerequisite<O> transform(final Function<? super T,O> transformation) {
             return new Prerequisite<O>() {
-
                 @Override
                 public O get() {
                     return transformation.apply(AbstractPrerequisite.this.get());
@@ -271,14 +274,20 @@ class ModifierImpl implements ModelActionBuilder {
                 public boolean isDone() {
                     return AbstractPrerequisite.this.isDone();
                 }
-
             };
         }
 
+        @Override
+        public final String toString() {
+            return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()).toString();
+        }
+
+        ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+            return toStringHelper.add("value", value);
+        }
     }
 
     private class PhaseMutation<C> extends AbstractPrerequisite<C> implements ContextMutation {
-
         @SuppressWarnings("unchecked")
         public PhaseMutation(final StatementContextBase<?, ?, ?> context, final ModelProcessingPhase phase) {
             context.addMutation(phase, this);
@@ -289,11 +298,9 @@ class ModifierImpl implements ModelActionBuilder {
         public boolean isFinished() {
             return isApplied();
         }
-
-
     }
-    private class PhaseFinished<C extends StmtContext<?, ?, ?>> extends AbstractPrerequisite<C> implements OnPhaseFinished {
 
+    private class PhaseFinished<C extends StmtContext<?, ?, ?>> extends AbstractPrerequisite<C> implements OnPhaseFinished {
         @SuppressWarnings("unchecked")
         @Override
         public boolean phaseFinished(final StatementContextBase<?, ?, ?> context, final ModelProcessingPhase phase) {
@@ -302,15 +309,12 @@ class ModifierImpl implements ModelActionBuilder {
     }
 
     private class NamespaceMutation<N extends IdentifierNamespace<?,?>> extends  AbstractPrerequisite<StmtContext.Mutable<?, ?, ?>>  {
-
         public NamespaceMutation(final StatementContextBase<?, ?, ?> ctx, final Class<N> namespace) {
             resolvePrereq(ctx);
         }
-
     }
 
     private class AddedToNamespace<C extends StmtContext<?,?,?>> extends  AbstractPrerequisite<C> implements OnNamespaceItemAdded,OnPhaseFinished {
-
         private final ModelProcessingPhase phase;
 
         public <K, N extends StatementNamespace<K, ?, ?>> AddedToNamespace(final ModelProcessingPhase phase) {
@@ -330,10 +334,13 @@ class ModifierImpl implements ModelActionBuilder {
             return resolvePrereq((C) context);
         }
 
+        @Override
+        ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+            return super.addToStringAttributes(toStringHelper).add("phase", phase);
+        }
     }
 
     private class PhaseModificationInNamespace<C extends Mutable<?,?,?>> extends AbstractPrerequisite<C> implements OnNamespaceItemAdded, ContextMutation {
-
         private final ModelProcessingPhase modPhase;
 
         public <K, N extends StatementNamespace<K, ?, ?>> PhaseModificationInNamespace(final ModelProcessingPhase phase) {
@@ -346,7 +353,7 @@ class ModifierImpl implements ModelActionBuilder {
         public void namespaceItemAdded(final StatementContextBase<?, ?, ?> context, final Class<?> namespace, final Object key,
                 final Object value) {
             StatementContextBase<?, ?, ?> targetCtx = contextImpl(value);
-            targetCtx.addMutation(modPhase,this);
+            targetCtx.addMutation(modPhase, this);
             resolvePrereq((C) targetCtx);
         }
 
@@ -355,5 +362,4 @@ class ModifierImpl implements ModelActionBuilder {
             return isApplied();
         }
     }
-
 }

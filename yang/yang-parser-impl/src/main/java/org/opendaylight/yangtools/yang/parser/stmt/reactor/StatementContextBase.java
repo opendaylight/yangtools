@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableCollection;
@@ -668,5 +670,14 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     public <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(final Class<N> namespace, final KT key,
             final StmtContext<?, ?, ?> stmt) {
         addContextToNamespace(namespace, (K) key, stmt);
+    }
+
+    @Override
+    public final String toString() {
+        return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()).toString();
+    }
+
+    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+        return toStringHelper.add("definition", definition).add("id", identifier);
     }
 }
