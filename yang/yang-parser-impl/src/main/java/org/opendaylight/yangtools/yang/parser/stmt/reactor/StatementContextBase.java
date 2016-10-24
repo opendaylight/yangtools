@@ -299,17 +299,36 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *             if statement parameter is null
      */
     public void addEffectiveSubstatement(final StatementContextBase<?, ?, ?> substatement) {
+        Preconditions.checkNotNull(substatement, "StatementContextBase effective substatement cannot be null at: %s",
+            getStatementSourceReference());
+        beforeAddEffectiveStatement(1);
+        effective.add(substatement);
+    }
 
+    /**
+     * adds effective statement to collection of substatements
+     *
+     * @param substatements substatements
+     * @throws IllegalStateException
+     *             if added in declared phase
+     * @throws NullPointerException
+     *             if statement parameter is null
+     */
+    public void addEffectiveSubstatements(final Collection<StatementContextBase<?, ?, ?>> substatements) {
+        substatements.forEach(Preconditions::checkNotNull);
+        beforeAddEffectiveStatement(substatements.size());
+        effective.addAll(substatements);
+    }
+
+    private void beforeAddEffectiveStatement(final int toAdd) {
         final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
         Preconditions.checkState(inProgressPhase == ModelProcessingPhase.FULL_DECLARATION
                 || inProgressPhase == ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Effective statement cannot be added in declared phase at: %s", getStatementSourceReference());
 
         if (effective.isEmpty()) {
-            effective = new ArrayList<>(1);
+            effective = new ArrayList<>(toAdd);
         }
-        effective.add(Preconditions.checkNotNull(substatement,
-                "StatementContextBase effective substatement cannot be null at: %s", getStatementSourceReference()));
     }
 
     /**
