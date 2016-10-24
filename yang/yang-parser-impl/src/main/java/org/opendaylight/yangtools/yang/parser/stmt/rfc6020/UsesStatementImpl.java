@@ -8,8 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -203,50 +205,71 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
         }
     }
 
+    private enum CopyAction {
+        COPY {
+            @Override
+            void apply(final StatementContextBase<?, ?, ?> original, final QNameModule targetModule,
+                    final StatementContextBase<?, ?, ?> targetCtx,
+                    final Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> targetUses) {
+                final StatementContextBase<?, ?, ?> copy = original.createCopy(targetModule, targetCtx,
+                    CopyType.ADDED_BY_USES);
+                targetCtx.addEffectiveSubstatement(copy);
+                targetUses.addAsEffectOfStatement(copy);
+                LOG.debug("Copied {} to {} as {}", original, targetCtx, copy);
+            }
+        },
+        REUSE {
+            @Override
+            void apply(final StatementContextBase<?, ?, ?> original, final QNameModule targetModule,
+                    final StatementContextBase<?, ?, ?> targetCtx,
+                    final Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> targetUses) {
+                targetCtx.addEffectiveSubstatement(original);
+                targetUses.addAsEffectOfStatement(original);
+                LOG.debug("Reused {} in {}", original, targetCtx);
+            }
+        };
+
+        abstract void apply(StatementContextBase<?, ?, ?> original, QNameModule targetModule,
+                StatementContextBase<?, ?, ?> targetCtx,
+                Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> targetUses);
+    }
+
+    /**
+     * Mapping of statements to copy actions. We only define two actions, REUSE and COPY, so the copy call ends up
+     * being bimorphic. Any statement not present in this mapping will be ignored.
+     *
+     * This is inline with https://tools.ietf.org/html/rfc6020#section-7.11, as we cover all statements which are
+     * allowed to appear in a grouping. Extension use is applied to the grouping only, hence it does not need to be
+     * copied. Description and similar are explicitly excluded.
+     */
+    private static final Map<StatementDefinition, CopyAction> COPY_ACTIONS =
+            ImmutableMap.<StatementDefinition, CopyAction>builder()
+            .put(Rfc6020Mapping.ANYXML, CopyAction.COPY)
+            .put(Rfc6020Mapping.CHOICE, CopyAction.COPY)
+            .put(Rfc6020Mapping.CONTAINER, CopyAction.COPY)
+            // Rfc6020Mapping.DESCRIPTION is ignored, as it pertains to the grouping itself
+            // Rfc6020Mapping.GROUPING is ignored, as any uses referencing it have already been resolved
+            .put(Rfc6020Mapping.LEAF, CopyAction.COPY)
+            .put(Rfc6020Mapping.LEAF_LIST, CopyAction.COPY)
+            .put(Rfc6020Mapping.LIST, CopyAction.COPY)
+            // Rfc6020Mapping.REFERENCE is ignored, as it pertains to the grouping itself
+            // Rfc6020Mapping.STATUS is ignored, as it pertains to the grouping itself
+            .put(Rfc6020Mapping.TYPEDEF, CopyAction.REUSE)
+            // Rfc6020Mapping.USES is ignored, as it has already been resolved
+            .build();
+
     private static void copyStatement(final StatementContextBase<?, ?, ?> original,
             final StatementContextBase<?, ?, ?> targetCtx,
             final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> targetUses,
             final QNameModule targetModule) {
-        if (needToCopyByUses(original)) {
-            final StatementContextBase<?, ?, ?> copy = original.createCopy(targetModule, targetCtx,
-                    CopyType.ADDED_BY_USES);
-            targetCtx.addEffectiveSubstatement(copy);
-            targetUses.addAsEffectOfStatement(copy);
-        } else if (isReusedByUsesOnTop(original)) {
-            targetCtx.addEffectiveSubstatement(original);
-            targetUses.addAsEffectOfStatement(original);
-        }
-    }
-
-    private static final Set<Rfc6020Mapping> TOP_REUSED_DEF_SET = ImmutableSet.of(
-        Rfc6020Mapping.TYPE,
-        Rfc6020Mapping.TYPEDEF);
-
-    private static boolean isReusedByUsesOnTop(final StmtContext<?, ?, ?> stmtContext) {
-        return TOP_REUSED_DEF_SET.contains(stmtContext.getPublicDefinition());
-    }
-
-    private static final Set<Rfc6020Mapping> NOCOPY_FROM_GROUPING_SET = ImmutableSet.of(
-        Rfc6020Mapping.DESCRIPTION,
-        Rfc6020Mapping.REFERENCE,
-        Rfc6020Mapping.STATUS);
-    private static final Set<Rfc6020Mapping> REUSED_DEF_SET = ImmutableSet.of(
-        Rfc6020Mapping.TYPE,
-        Rfc6020Mapping.TYPEDEF,
-        Rfc6020Mapping.USES);
-
-    public static boolean needToCopyByUses(final StmtContext<?, ?, ?> stmtContext) {
-        final StatementDefinition def = stmtContext.getPublicDefinition();
-        if (REUSED_DEF_SET.contains(def)) {
-            LOG.debug("Will reuse {} statement {}", def, stmtContext);
-            return false;
-        }
-        if (NOCOPY_FROM_GROUPING_SET.contains(def)) {
-            return !Rfc6020Mapping.GROUPING.equals(stmtContext.getParentContext().getPublicDefinition());
+        final StatementDefinition def = original.getPublicDefinition();
+        final CopyAction action = COPY_ACTIONS.get(def);
+        if (action == null) {
+            LOG.debug("Skipping statement {}", original);
+            return;
         }
 
-        LOG.debug("Will copy {} statement {}", def, stmtContext);
-        return true;
+        action.apply(original, targetModule, targetCtx, targetUses);
     }
 
     public static void resolveUsesNode(
