@@ -50,9 +50,8 @@ public class SchemaNodeIdentifierBuildNamespace extends
         if (!iterator.hasNext()) {
             if (lookupStartStorage instanceof StmtContext<?, ?, ?>) {
                 return (StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>) lookupStartStorage;
-            } else {
-                return null;
             }
+            return null;
         }
         QName nextPath = iterator.next();
         StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> current = (StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>) lookupStartStorage
@@ -66,9 +65,8 @@ public class SchemaNodeIdentifierBuildNamespace extends
                     .getFromNamespace(ChildSchemaNodes.class, nextPath);
             if (nextNodeCtx == null) {
                 return tryToFindUnknownStatement(nextPath.getLocalName(), current);
-            } else {
-                current = nextNodeCtx;
             }
+            current = nextNodeCtx;
         }
         return current;
     }
