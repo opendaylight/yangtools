@@ -50,9 +50,8 @@ public class SchemaNodeIdentifierBuildNamespace extends
         if (!iterator.hasNext()) {
             if (lookupStartStorage instanceof StmtContext<?, ?, ?>) {
                 return (StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>) lookupStartStorage;
-            } else {
-                return null;
             }
+            return null;
         }
         QName nextPath = iterator.next();
         StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> current = (StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>) lookupStartStorage
@@ -66,17 +65,17 @@ public class SchemaNodeIdentifierBuildNamespace extends
                     .getFromNamespace(ChildSchemaNodes.class, nextPath);
             if (nextNodeCtx == null) {
                 return tryToFindUnknownStatement(nextPath.getLocalName(), current);
-            } else {
-                current = nextNodeCtx;
             }
+
+            current = nextNodeCtx;
         }
         return current;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings("unchecked")
     private static Mutable<?, ?, EffectiveStatement<?, ?>> tryToFindUnknownStatement(final String localName,
             final Mutable<?, ?, EffectiveStatement<?, ?>> current) {
-        final Collection<StmtContext<?, ?, ?>> unknownSubstatements = (Collection)StmtContextUtils.findAllSubstatements(current,
+        final Collection<StmtContext<?, ?, ?>> unknownSubstatements = StmtContextUtils.findAllSubstatements(current,
                 UnknownStatement.class);
         for (final StmtContext<?, ?, ?> unknownSubstatement : unknownSubstatements) {
             if (localName.equals(unknownSubstatement.rawStatementArgument())) {
@@ -90,5 +89,4 @@ public class SchemaNodeIdentifierBuildNamespace extends
     public QName getSignificantKey(final SchemaNodeIdentifier key) {
         return key.getLastComponent();
     }
-
 }
