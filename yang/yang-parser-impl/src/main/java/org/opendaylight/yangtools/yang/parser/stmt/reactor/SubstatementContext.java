@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
@@ -111,6 +112,9 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     @Override
     public StatementContextBase<A, D, E> createCopy(final QNameModule newQNameModule,
             final StatementContextBase<?, ?, ?> newParent, final CopyType typeOfCopy) {
+        Preconditions.checkState(getCompletedPhase() == ModelProcessingPhase.EFFECTIVE_MODEL,
+                "Attempted to copy statement {} which has completed phase {}", this, getCompletedPhase());
+
         final SubstatementContext<A, D, E> copy = new SubstatementContext<>(this, newQNameModule, newParent, typeOfCopy);
 
         copy.appendCopyHistory(typeOfCopy, this.getCopyHistory());
@@ -123,7 +127,6 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
         definition().onStatementAdded(copy);
 
-        // FIXME: why are we copying both declared and effective statements?
         copy.copyDeclaredStmts(this, newQNameModule, typeOfCopy);
         copy.copyEffectiveStmts(this, newQNameModule, typeOfCopy);
         return copy;
