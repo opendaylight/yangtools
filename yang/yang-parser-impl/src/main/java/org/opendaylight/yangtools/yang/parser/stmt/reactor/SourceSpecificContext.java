@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import java.net.URI;
@@ -75,23 +76,31 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(SourceSpecificContext.class);
+    private static final Map<String, StatementSupport<?, ?, ?>> BUILTIN_TYPE_SUPPORTS =
+            ImmutableMap.<String, StatementSupport<?, ?, ?>>builder()
+            .put(TypeUtils.DECIMAL64, new Decimal64SpecificationImpl.Definition())
+            .put(TypeUtils.UNION, new UnionSpecificationImpl.Definition())
+            .put(TypeUtils.ENUMERATION, new EnumSpecificationImpl.Definition())
+            .put(TypeUtils.LEAF_REF, new LeafrefSpecificationImpl.Definition())
+            .put(TypeUtils.BITS, new BitsSpecificationImpl.Definition())
+            .put(TypeUtils.IDENTITY_REF, new IdentityRefSpecificationImpl.Definition())
+            .put(TypeUtils.INSTANCE_IDENTIFIER, new InstanceIdentifierSpecificationImpl.Definition())
+            .build();
 
-    private final StatementStreamSource source;
-    private final BuildGlobalContext currentContext;
-    private final Collection<NamespaceStorageNode> importedNamespaces = new ArrayList<>();
     private final Multimap<ModelProcessingPhase, ModifierImpl> modifiers = HashMultimap.create();
-
-
     private final QNameToStatementDefinitionMap qNameToStmtDefMap = new QNameToStatementDefinitionMap();
     private final PrefixToModuleMap prefixToModuleMap = new PrefixToModuleMap();
+    private final BuildGlobalContext currentContext;
+    private final StatementStreamSource source;
 
+    private Collection<NamespaceStorageNode> importedNamespaces = ImmutableList.of();
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
     private ModelProcessingPhase inProgressPhase;
     private RootStatementContext<?, ?, ?> root;
 
     SourceSpecificContext(final BuildGlobalContext currentContext, final StatementStreamSource source) {
-        this.currentContext = currentContext;
-        this.source = source;
+        this.currentContext = Preconditions.checkNotNull(currentContext);
+        this.source = Preconditions.checkNotNull(source);
     }
 
     public boolean isEnabledSemanticVersioning(){
@@ -182,6 +191,9 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     public <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(final Class<N> type, final K key,
            final V value) {
         if (ImportedNamespaceContext.class.isAssignableFrom(type)) {
+            if (importedNamespaces.isEmpty()) {
+                importedNamespaces = new ArrayList<>(1);
+            }
             importedNamespaces.add((NamespaceStorageNode) value);
         }
         getRoot().addToLocalStorage(type, key, value);
@@ -332,24 +344,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     private static StatementDefinitionContext<?, ?, ?> resolveTypeBodyStmts(final String typeArgument) {
-        switch (typeArgument) {
-            case TypeUtils.DECIMAL64:
-                return new StatementDefinitionContext<>(new Decimal64SpecificationImpl.Definition());
-            case TypeUtils.UNION:
-                return new StatementDefinitionContext<>(new UnionSpecificationImpl.Definition());
-            case TypeUtils.ENUMERATION:
-                return new StatementDefinitionContext<>(new EnumSpecificationImpl.Definition());
-            case TypeUtils.LEAF_REF:
-                return new StatementDefinitionContext<>(new LeafrefSpecificationImpl.Definition());
-            case TypeUtils.BITS:
-                return new StatementDefinitionContext<>(new BitsSpecificationImpl.Definition());
-            case TypeUtils.IDENTITY_REF:
-                return new StatementDefinitionContext<>(new IdentityRefSpecificationImpl.Definition());
-            case TypeUtils.INSTANCE_IDENTIFIER:
-                return new StatementDefinitionContext<>(new InstanceIdentifierSpecificationImpl.Definition());
-            default:
-                return null;
-        }
+        final StatementSupport<?, ?, ?> support = BUILTIN_TYPE_SUPPORTS.get(typeArgument);
+        return support == null ? null : new StatementDefinitionContext<>(support);
     }
 
     private PrefixToModule preLinkagePrefixes() {
