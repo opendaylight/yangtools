@@ -18,6 +18,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
+/**
+ * Public definition for statements declared by extensions. This class is instantiated for every extension that is seen
+ * to be declared in a model.
+ */
 @Beta
 public final class ModelDefinedStatementDefinition implements StatementDefinition {
     private final QName statementName;
