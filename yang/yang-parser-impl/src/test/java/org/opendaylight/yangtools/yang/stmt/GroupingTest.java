@@ -245,15 +245,12 @@ public class GroupingTest {
         assertFalse(grouping_u.equals(grouping_g));
 
         final List<UnknownSchemaNode> nodes_u = destination.getUnknownSchemaNodes();
-        assertEquals(1, nodes_u.size());
-        final UnknownSchemaNode node_u = nodes_u.get(0);
-        assertTrue(node_u.isAddedByUses());
+        assertEquals(0, nodes_u.size());
 
         final List<UnknownSchemaNode> nodes_g = grouping.getUnknownSchemaNodes();
         assertEquals(1, nodes_g.size());
         final UnknownSchemaNode node_g = nodes_g.get(0);
         assertFalse(node_g.isAddedByUses());
-        assertFalse(node_u.equals(node_g));
     }
 
     @Test
@@ -369,15 +366,12 @@ public class GroupingTest {
         assertFalse(grouping_u.equals(grouping_g));
 
         final List<UnknownSchemaNode> nodes_u = foo.getUnknownSchemaNodes();
-        assertEquals(1, nodes_u.size());
-        final UnknownSchemaNode node_u = nodes_u.get(0);
-        assertTrue(node_u.isAddedByUses());
+        assertEquals(0, nodes_u.size());
 
         final List<UnknownSchemaNode> nodes_g = grouping.getUnknownSchemaNodes();
         assertEquals(1, nodes_g.size());
         final UnknownSchemaNode node_g = nodes_g.get(0);
         assertFalse(node_g.isAddedByUses());
-        assertFalse(node_u.equals(node_g));
 
         final UsesNode un = uses.iterator().next();
         final Set<AugmentationSchema> usesAugments = un.getAugmentations();
