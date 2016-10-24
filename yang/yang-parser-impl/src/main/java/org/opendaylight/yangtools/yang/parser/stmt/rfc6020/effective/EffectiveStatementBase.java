@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.RecursiveObjectLeaker;
 
 public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> implements EffectiveStatement<A, D> {
     private final List<? extends EffectiveStatement<?, ?>> substatements;
@@ -53,11 +52,20 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
         }
         substatementsInit.addAll(effectiveSubstatements);
 
-        // WARNING: this leaks an incompletely-initialized pbject
-        RecursiveObjectLeaker.inConstructor(this);
+        this.substatements = ImmutableList.copyOf(initSubstatements(substatementsInit));
+    }
 
-        this.substatements = ImmutableList.copyOf(Collections2.transform(Collections2.filter(substatementsInit,
-            StmtContext::isSupportedToBuildEffective), StatementContextBase::buildEffective));
+    /**
+     * Create a set of substatements. This method is split out so it can be overridden in
+     * {@link ExtensionEffectiveStatementImpl} to leak a not-fully-initialized instance.
+     *
+     * @param substatementsInit proposed substatements
+     * @return Filtered substatements
+     */
+    Collection<? extends EffectiveStatement<?, ?>> initSubstatements(
+            final Collection<StatementContextBase<?, ?, ?>> substatementsInit) {
+        return Collections2.transform(Collections2.filter(substatementsInit,
+            StmtContext::isSupportedToBuildEffective), StatementContextBase::buildEffective);
     }
 
     @Override
