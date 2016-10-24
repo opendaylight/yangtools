@@ -236,25 +236,19 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return Collections.unmodifiableCollection(input);
     }
 
-    /**
-     * @return collection of declared substatements
-     */
     @Override
     public Collection<StatementContextBase<?, ?, ?>> declaredSubstatements() {
         return maybeWrap(declared);
     }
 
     /**
-     * @return collection of substatements
+     * @return collection of all substatements
      */
     @Override
     public Collection<StatementContextBase<?, ?, ?>> substatements() {
         return maybeWrap(substatements.values());
     }
 
-    /**
-     * @return collection of effective substatements
-     */
     @Override
     public Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements() {
         return maybeWrap(effective);
