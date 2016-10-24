@@ -120,7 +120,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                      * Marks case short hand in augment
                      */
                     if (augmentTargetCtx.getPublicDefinition() == Rfc6020Mapping.CHOICE) {
-                        augmentNode.addToNs(AugmentToChoiceNamespace.class, augmentNode, true);
+                        augmentNode.addToNs(AugmentToChoiceNamespace.class, augmentNode, Boolean.TRUE);
                     }
 
                     // FIXME: this is a workaround for models which augment a node which is added via an extension
