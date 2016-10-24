@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
@@ -20,6 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.RecursiveObjectLeaker;
 
 public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, ExtensionStatement>
         implements ExtensionDefinition {
@@ -64,7 +67,7 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
     private final List<UnknownSchemaNode> unknownNodes;
     private final boolean yin;
 
-    public ExtensionEffectiveStatementImpl(
+    private ExtensionEffectiveStatementImpl(
             final StmtContext<QName, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> ctx) {
         super(ctx);
         this.qname = ctx.getStatementArgument();
@@ -94,6 +97,40 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
             this.argument = null;
             this.yin = false;
         }
+    }
+
+    /**
+     * Create a new ExtensionEffectiveStatement, dealing with potential recursion
+     *
+     * @param ctx Statement context
+     * @return A potentially under-initialized instance
+     */
+    public static EffectiveStatement<QName, ExtensionStatement> create(
+            final StmtContext<QName, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> ctx) {
+        // Look at the thread-local leak in case we are invoked recursively
+        final ExtensionEffectiveStatementImpl existing = RecursiveObjectLeaker.lookup(ctx,
+            ExtensionEffectiveStatementImpl.class);
+        if (existing != null) {
+            // Careful! this not fully initialized!
+            return existing;
+        }
+
+        RecursiveObjectLeaker.beforeConstructor(ctx);
+        try {
+            // This result is fine, we know it has been completely initialized
+            return new ExtensionEffectiveStatementImpl(ctx);
+        } finally {
+            RecursiveObjectLeaker.afterConstructor(ctx);
+        }
+    }
+
+    @Override
+    Collection<? extends EffectiveStatement<?, ?>> initSubstatements(
+            final Collection<StatementContextBase<?, ?, ?>> substatementsInit) {
+        // WARNING: this leaks an incompletely-initialized object
+        RecursiveObjectLeaker.inConstructor(this);
+
+        return super.initSubstatements(substatementsInit);
     }
 
     @Override
