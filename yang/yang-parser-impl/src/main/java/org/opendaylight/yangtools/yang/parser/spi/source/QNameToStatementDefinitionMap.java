@@ -14,13 +14,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 
 public class QNameToStatementDefinitionMap implements QNameToStatementDefinition {
 
-    private Map<QName, StatementDefinition> qNameToStmtDefMap = new HashMap<>();
-    private Map<QName, StatementDefinition> qNameWithoutRevisionToStmtDefMap = new HashMap<>();
+    private final Map<QName, StatementSupport<?, ?, ?>> qNameToStmtDefMap = new HashMap<>();
+    private final Map<QName, StatementSupport<?, ?, ?>> qNameWithoutRevisionToStmtDefMap = new HashMap<>();
 
-    public void put(QName qName, StatementDefinition stDef) {
+    public void put(final QName qName, final StatementSupport<?, ?, ?> stDef) {
         qNameToStmtDefMap.put(qName, stDef);
 
         final QName norev;
@@ -34,7 +35,7 @@ public class QNameToStatementDefinitionMap implements QNameToStatementDefinition
 
     @Nullable
     @Override
-    public StatementDefinition get(@Nonnull QName identifier) {
+    public StatementSupport<?, ?, ?> get(@Nonnull final QName identifier) {
         return qNameToStmtDefMap.get(identifier);
     }
 

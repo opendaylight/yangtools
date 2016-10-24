@@ -30,8 +30,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
-import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImportedNamespaceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -41,7 +39,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Namesp
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
@@ -103,7 +100,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         this.source = Preconditions.checkNotNull(source);
     }
 
-    public boolean isEnabledSemanticVersioning(){
+    boolean isEnabledSemanticVersioning(){
         return currentContext.isEnabledSemanticVersioning();
     }
 
@@ -111,31 +108,28 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return inProgressPhase;
     }
 
-    StatementDefinitionContext<?, ?, ?> getDefinition(final QName name) {
-        return currentContext.getStatementDefinition(name);
-    }
-
     ContextBuilder<?, ?, ?> createDeclaredChild(final StatementContextBase<?, ?, ?> current, final QName name,
                                                 final StatementSourceReference ref) {
-        StatementDefinitionContext<?, ?, ?> def = getDefinition(name);
+        StatementDefinitionContext<?, ?, ?> def = currentContext.getStatementDefinition(name);
 
         if (def == null) {
-            // unknown-stmts (from import, include or local-scope)
-            if (qNameToStmtDefMap.get(name) != null) {
-                final StatementDefinition extension = currentContext.getFromNamespace(
-                    StatementDefinitionNamespace.class, name);
-                SourceException.throwIfNull(extension, current.getStatementSourceReference(), "Extension %s not found",
-                    name);
-
-                def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition(extension));
+            final StatementSupport<?, ?, ?> extension = qNameToStmtDefMap.get(name);
+            if (extension != null) {
+                def = new StatementDefinitionContext<>(extension);
             } else {
                 // type-body-stmts
                 def = resolveTypeBodyStmts(name.getLocalName());
             }
         } else if (current != null && current.definition().getRepresentingClass().equals(UnknownStatementImpl.class)) {
-            // FIXME: What's going on here?
+            /*
+             * This code wraps statements encountered inside an extension so they do not get confused with regular
+             * statements.
+             *
+             * FIXME: BUG-7037: re-evaluate whether this is really needed, as this is a very expensive way of making
+             *        this work. We really should be peeking into the extension definition to find these nodes,
+             *        as otherwise we are not reusing definitions nor support for these nodes.
+             */
             final QName qName = Utils.qNameFromArgument(current, name.getLocalName());
-
             def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition(
                 new ModelDefinedStatementDefinition(qName)));
         }
@@ -210,6 +204,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         if (potentialLocal != null) {
             return potentialLocal;
         }
+
         for (final NamespaceStorageNode importedSource : importedNamespaces) {
             final V potential = importedSource.getFromLocalStorage(type, key);
             if (potential != null) {
@@ -223,7 +218,6 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromLocalStorage(final Class<N> type) {
         final Map<K, V> potentialLocal = getRoot().getAllFromLocalStorage(type);
-
         if (potentialLocal != null) {
             return potentialLocal;
         }
@@ -269,7 +263,6 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return hasProgressed ? PhaseCompletionProgress.PROGRESS : PhaseCompletionProgress.NO_PROGRESS;
     }
 
-
     private static boolean tryToProgress(final Collection<ModifierImpl> currentPhaseModifiers) {
         boolean hasProgressed = false;
 
@@ -282,7 +275,6 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         }
 
         return hasProgressed;
-
     }
 
     ModelActionBuilder newInferenceAction(final ModelProcessingPhase phase) {
@@ -381,23 +373,28 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     private QNameToStatementDefinition stmtDef() {
         // regular YANG statements and extension supports added
-        final ImmutableMap<QName, StatementSupport<?, ?, ?>> definitions = currentContext.getSupportsForPhase(
-                inProgressPhase).getDefinitions();
+        final Map<QName, StatementSupport<?, ?, ?>> definitions = currentContext.getSupportsForPhase(inProgressPhase)
+                .getDefinitions();
         for (final Entry<QName, StatementSupport<?, ?, ?>> entry : definitions.entrySet()) {
             qNameToStmtDefMap.put(entry.getKey(), entry.getValue());
         }
 
         // extensions added
         if (inProgressPhase.equals(ModelProcessingPhase.FULL_DECLARATION)) {
-            final Map<QName, StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>>> extensions =
-                    currentContext.getAllFromNamespace(ExtensionNamespace.class);
+            final Map<QName, StatementSupport<?, ?, ?>> extensions = currentContext.getAllFromNamespace(
+                StatementDefinitionNamespace.class);
             if (extensions != null) {
-                for (final Entry<QName, StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>>> extension :
-                    extensions.entrySet()) {
-                    if(qNameToStmtDefMap.get(extension.getKey()) == null) {
-                        qNameToStmtDefMap.put((extension.getKey()),
-                        (StatementDefinition) ((StatementContextBase<?, ?, ?>) extension.getValue()).definition()
-                        .getFactory());
+                for (final Entry<QName, StatementSupport<?, ?, ?>> e : extensions.entrySet()) {
+                    final StatementDefinition previous = qNameToStmtDefMap.get(e.getKey());
+                    if (previous != null) {
+                        LOG.debug("Source {} already defines statement {} as {}", source, e.getKey(), previous);
+                        if (!(previous instanceof StatementSupport)) {
+                            LOG.warn("Source {} statement for {} definition {} is not a StatementSupport", source,
+                                e.getKey(), previous);
+                        }
+                    } else {
+                        qNameToStmtDefMap.put(e.getKey(), e.getValue());
+                        LOG.debug("Source {} defined statement {} as {}", source, e.getKey(), e.getValue());
                     }
                 }
             }
