@@ -127,6 +127,14 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
+    public void addAsEffectOfStatement(final Collection<StatementContextBase<?, ?, ?>> ctxs) {
+        if (effectOfStatement.isEmpty()) {
+            effectOfStatement = new ArrayList<>(ctxs.size());
+        }
+        effectOfStatement.addAll(ctxs);
+    }
+
+    @Override
     public SupportedByFeatures getSupportedByFeatures() {
         return supportedByFeatures;
     }
