@@ -86,9 +86,9 @@ public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> imp
                 YinElementStatement.class);
 
             stmt.addToNs(StatementDefinitionNamespace.class, stmt.getStatementArgument(),
-                new ModelDefinedStatementDefinition(stmt.getStatementArgument(),
+                new ModelDefinedStatementSupport(new ModelDefinedStatementDefinition(stmt.getStatementArgument(),
                     argument != null ? argument.getStatementArgument() : null,
-                    yinElement != null ? yinElement.getStatementArgument() : false));
+                            yinElement != null ? yinElement.getStatementArgument() : false)));
         }
 
         @Override
