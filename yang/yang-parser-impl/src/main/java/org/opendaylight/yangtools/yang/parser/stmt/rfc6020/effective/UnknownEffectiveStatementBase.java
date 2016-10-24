@@ -8,6 +8,7 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import java.util.List;
@@ -19,8 +20,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public abstract class UnknownEffectiveStatementBase<A> extends AbstractEffectiveDocumentedNode<A, UnknownStatement<A>>
         implements UnknownSchemaNode {
@@ -33,7 +34,7 @@ public abstract class UnknownEffectiveStatementBase<A> extends AbstractEffective
     private final QName nodeType;
     private final String nodeParameter;
 
-    public UnknownEffectiveStatementBase(final StmtContext<A, UnknownStatement<A>, ?> ctx) {
+    protected UnknownEffectiveStatementBase(final StmtContext<A, UnknownStatement<A>, ?> ctx) {
         super(ctx);
 
         final StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> extensionInit = ctx
@@ -43,7 +44,10 @@ public abstract class UnknownEffectiveStatementBase<A> extends AbstractEffective
             extension = null;
             nodeType = ctx.getPublicDefinition().getArgumentName();
         } else {
-            extension = (ExtensionEffectiveStatementImpl) extensionInit.buildEffective();
+            final EffectiveStatement<QName, ExtensionStatement> effective = extensionInit.buildEffective();
+            Preconditions.checkState(effective instanceof ExtensionDefinition,
+                "Statement %s is not an ExtensionDefinition", effective);
+            extension = (ExtensionDefinition) extensionInit.buildEffective();
             nodeType = null;
         }
 
