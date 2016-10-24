@@ -19,6 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * @author Robert Varga
  */
 @Beta
-public interface StatementDefinitionNamespace extends IdentifierNamespace<QName, StatementDefinition> {
+public interface StatementDefinitionNamespace extends IdentifierNamespace<QName, StatementSupport<?, ?, ?>> {
 
 }
