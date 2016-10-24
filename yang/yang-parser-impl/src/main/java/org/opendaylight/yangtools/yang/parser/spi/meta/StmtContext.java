@@ -67,9 +67,21 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     @Nonnull
     StmtContext<?, ?, ?> getRoot();
 
+    /**
+     * Return declared substatements. These are the statements which are explicitly written in the source model.
+     *
+     * @return Collection of declared substatements
+     */
     @Nonnull
     Collection<StatementContextBase<?, ?, ?>> declaredSubstatements();
 
+    /**
+     * Return effective substatements. These are the statements which are added as this statement's substatements
+     * complete their effective model phase.
+     *
+     * @return Collection of declared substatements
+     */
+    @Nonnull
     Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements();
 
     Collection<StatementContextBase<?, ?, ?>> substatements();
