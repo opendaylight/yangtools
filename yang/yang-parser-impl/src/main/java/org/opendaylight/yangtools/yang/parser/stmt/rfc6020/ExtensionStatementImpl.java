@@ -56,22 +56,7 @@ public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> imp
         @Override
         public EffectiveStatement<QName,ExtensionStatement> createEffective(
                 final StmtContext<QName,ExtensionStatement ,EffectiveStatement<QName,ExtensionStatement>> ctx) {
-
-            // Look at the thread-local leak in case we are invoked recursively
-            final ExtensionEffectiveStatementImpl existing = RecursiveObjectLeaker.lookup(ctx,
-                ExtensionEffectiveStatementImpl.class);
-            if (existing != null) {
-                // Careful! this not fully initialized!
-                return existing;
-            }
-
-            RecursiveObjectLeaker.beforeConstructor(ctx);
-            try {
-                // This result is fine, we know it has been completely initialized
-                return new ExtensionEffectiveStatementImpl(ctx);
-            } finally {
-                RecursiveObjectLeaker.afterConstructor(ctx);
-            }
+            return ExtensionEffectiveStatementImpl.create(ctx);
         }
 
         @Override
