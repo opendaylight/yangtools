@@ -36,17 +36,15 @@ import org.slf4j.LoggerFactory;
  *
  */
 public final class YangStatementSourceImpl implements StatementStreamSource {
+    private static final Logger LOG = LoggerFactory.getLogger(YangStatementSourceImpl.class);
 
     private YangStatementParserListenerImpl yangStatementModelParser;
     private YangStatementParser.StatementContext statementContext;
-    private ParseTreeWalker walker;
     private String sourceName;
-    private static final Logger LOG = LoggerFactory.getLogger(YangStatementSourceImpl.class);
 
     public YangStatementSourceImpl(final String fileName, final boolean isAbsolute) {
         try {
             statementContext = parseYangSource(loadFile(fileName, isAbsolute));
-            walker = new ParseTreeWalker();
             yangStatementModelParser = new YangStatementParserListenerImpl(sourceName);
         } catch (Exception e) {
             logError(e);
@@ -56,7 +54,6 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
     public YangStatementSourceImpl(final InputStream inputStream) {
         try {
             statementContext = parseYangSource(inputStream);
-            walker = new ParseTreeWalker();
             yangStatementModelParser = new YangStatementParserListenerImpl(sourceName);
         } catch (Exception e) {
             logError(e);
@@ -67,7 +64,6 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
         try {
             this.statementContext = statementContext;
             this.sourceName = identifier.getName();
-            walker = new ParseTreeWalker();
             yangStatementModelParser = new YangStatementParserListenerImpl(sourceName);
         } catch (Exception e) {
             logError(e);
@@ -77,25 +73,25 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
     @Override
     public void writePreLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
         yangStatementModelParser.setAttributes(writer, stmtDef);
-        walker.walk(yangStatementModelParser, statementContext);
+        ParseTreeWalker.DEFAULT.walk(yangStatementModelParser, statementContext);
     }
 
     @Override
     public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule preLinkagePrefixes) {
         yangStatementModelParser.setAttributes(writer, stmtDef, preLinkagePrefixes);
-        walker.walk(yangStatementModelParser, statementContext);
+        ParseTreeWalker.DEFAULT.walk(yangStatementModelParser, statementContext);
     }
 
     @Override
     public void writeLinkageAndStatementDefinitions(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) {
         yangStatementModelParser.setAttributes(writer, stmtDef, prefixes);
-        walker.walk(yangStatementModelParser, statementContext);
+        ParseTreeWalker.DEFAULT.walk(yangStatementModelParser, statementContext);
     }
 
     @Override
     public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) {
         yangStatementModelParser.setAttributes(writer, stmtDef, prefixes);
-        walker.walk(yangStatementModelParser, statementContext);
+        ParseTreeWalker.DEFAULT.walk(yangStatementModelParser, statementContext);
     }
 
     private NamedFileInputStream loadFile(final String fileName, final boolean isAbsolute) throws URISyntaxException,
