@@ -7,13 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.ErrorNode;
+import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementLexer;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
@@ -37,6 +42,27 @@ import org.slf4j.LoggerFactory;
  */
 public final class YangStatementSourceImpl implements StatementStreamSource {
     private static final Logger LOG = LoggerFactory.getLogger(YangStatementSourceImpl.class);
+    private static final ParseTreeListener MAKE_IMMUTABLE_LISTENER = new ParseTreeListener() {
+        @Override
+        public void enterEveryRule(final ParserRuleContext ctx) {
+            // No-op
+        }
+
+        @Override
+        public void exitEveryRule(final ParserRuleContext ctx) {
+            ctx.children = ctx.children == null ? ImmutableList.of() : ImmutableList.copyOf(ctx.children);
+        }
+
+        @Override
+        public void visitTerminal(final TerminalNode node) {
+            // No-op
+        }
+
+        @Override
+        public void visitErrorNode(final ErrorNode node) {
+            // No-op
+        }
+    };
 
     private YangStatementParserListenerImpl yangStatementModelParser;
     private YangStatementParser.StatementContext statementContext;
@@ -120,6 +146,11 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
 
         final StatementContext result = parser.statement();
         errorListener.validate();
+
+        // Walk the resulting tree and replace each children with an immutable list, lowering memory requirements
+        // and making sure the resulting tree will not get accidentally modified. An alternative would be to use
+        // org.antlr.v4.runtime.Parser.TrimToSizeListener, but that does not make the tree immutable.
+        ParseTreeWalker.DEFAULT.walk(MAKE_IMMUTABLE_LISTENER, result);
 
         return result;
     }
