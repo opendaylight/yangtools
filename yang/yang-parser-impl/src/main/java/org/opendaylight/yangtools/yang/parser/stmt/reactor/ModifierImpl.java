@@ -36,8 +36,8 @@ import org.slf4j.LoggerFactory;
 class ModifierImpl implements ModelActionBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(ModifierImpl.class);
 
-    private final Set<AbstractPrerequisite<?>> unsatisfied = new HashSet<>();
-    private final Set<AbstractPrerequisite<?>> mutations = new HashSet<>();
+    private final Set<AbstractPrerequisite<?>> unsatisfied = new HashSet<>(1);
+    private final Set<AbstractPrerequisite<?>> mutations = new HashSet<>(1);
     private final ModelProcessingPhase phase;
 
     private InferenceAction action;
