@@ -22,7 +22,14 @@ public class QNameToStatementDefinitionMap implements QNameToStatementDefinition
 
     public void put(QName qName, StatementDefinition stDef) {
         qNameToStmtDefMap.put(qName, stDef);
-        qNameWithoutRevisionToStmtDefMap.put(QName.create(qName.getNamespace(), null, qName.getLocalName()), stDef);
+
+        final QName norev;
+        if (qName.getRevision() != null) {
+            norev = QName.create(qName.getNamespace(), null, qName.getLocalName()).intern();
+        } else {
+            norev = qName;
+        }
+        qNameWithoutRevisionToStmtDefMap.put(norev, stDef);
     }
 
     @Nullable
@@ -33,7 +40,7 @@ public class QNameToStatementDefinitionMap implements QNameToStatementDefinition
 
     @Nullable
     @Override
-    public StatementDefinition getByNamespaceAndLocalName(URI namespace, @Nonnull String localName) {
+    public StatementDefinition getByNamespaceAndLocalName(final URI namespace, @Nonnull final String localName) {
         return qNameWithoutRevisionToStmtDefMap.get(QName.create(namespace, null, localName));
     }
 }
