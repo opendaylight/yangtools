@@ -8,7 +8,9 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,18 +29,17 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 /**
  * Proxy for AugmentationSchema. Child node schemas are replaced with actual schemas from parent.
  *
- * FIXME: Make this class final, once derived deprecated class is removed.
  */
-public class EffectiveAugmentationSchema implements AugmentationSchema {
+public final class EffectiveAugmentationSchema implements AugmentationSchema {
     private final AugmentationSchema delegate;
     private final Set<DataSchemaNode> realChildSchemas;
     private final Map<QName, DataSchemaNode> mappedChildSchemas;
 
     public EffectiveAugmentationSchema(final AugmentationSchema augmentSchema, final Set<DataSchemaNode> realChildSchemas) {
-        this.delegate = augmentSchema;
-        this.realChildSchemas = realChildSchemas;
+        this.delegate = Preconditions.checkNotNull(augmentSchema);
+        this.realChildSchemas = ImmutableSet.copyOf(realChildSchemas);
 
-        final Map<QName, DataSchemaNode> m = new HashMap<>(realChildSchemas.size());
+        final Map<QName, DataSchemaNode> m = new HashMap<>(realChildSchemas.size());;
         for (DataSchemaNode realChildSchema : realChildSchemas) {
             m.put(realChildSchema.getQName(), realChildSchema);
         }
