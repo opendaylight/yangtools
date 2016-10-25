@@ -68,19 +68,16 @@ class ModifierImpl implements ModelActionBuilder {
     }
 
     private boolean removeSatisfied() {
-        Iterator<AbstractPrerequisite<?>> it = unsatisfied.iterator();
-        boolean allSatisfied = true;
+        final Iterator<AbstractPrerequisite<?>> it = unsatisfied.iterator();
         while (it.hasNext()) {
             final AbstractPrerequisite<?> prereq = it.next();
             if (prereq.isDone()) {
                 // We are removing current prerequisite from list.
                 LOG.trace("Modifier {} prerequisite {} satisfied", this, prereq);
                 it.remove();
-            } else {
-                allSatisfied  = false;
             }
         }
-        return allSatisfied;
+        return unsatisfied.isEmpty();
     }
 
     ModelProcessingPhase getPhase() {
