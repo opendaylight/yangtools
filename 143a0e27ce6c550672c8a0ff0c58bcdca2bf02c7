@@ -22,6 +22,30 @@
       "revId": "143a0e27ce6c550672c8a0ff0c58bcdca2bf02c7",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a682502_977c9f74",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 691,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-25T13:45:03Z",
+      "side": 1,
+      "message": "https://google.github.io/guava/releases/snapshot/api/docs/com/google/common/base/Optional.html provides some guidance... with Guava 21 there will be more gentle encouragement , hnece yes, we should use Jaav 8 interfaces if they fit the bit..",
+      "parentUuid": "5a682502_5431650a",
+      "range": {
+        "startLine": 690,
+        "startChar": 9,
+        "endLine": 691,
+        "endChar": 63
+      },
+      "revId": "143a0e27ce6c550672c8a0ff0c58bcdca2bf02c7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
