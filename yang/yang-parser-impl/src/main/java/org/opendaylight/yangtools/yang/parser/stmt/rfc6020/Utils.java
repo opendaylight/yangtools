@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -24,6 +23,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -51,10 +51,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
@@ -407,36 +407,35 @@ public final class Utils {
      */
     public static QName getValidStatementDefinition(final PrefixToModule prefixes,
             final QNameToStatementDefinition stmtDef, final QName identifier) {
-        if (stmtDef.get(identifier) != null) {
-            return stmtDef.get(identifier).getStatementName();
-        } else {
-            final String prefixedLocalName = identifier.getLocalName();
-            final String[] namesParts = prefixedLocalName.split(":");
-
-            if (namesParts.length == 2) {
-                final String prefix = namesParts[0];
-                final String localName = namesParts[1];
-
-                if (prefixes == null) {
-                    return null;
-                }
-
-                final QNameModule qNameModule = prefixes.get(prefix);
-                if (qNameModule == null) {
-                    return null;
-                }
-
-                if (prefixes.isPreLinkageMap()) {
-                    final StatementDefinition foundStmtDef = stmtDef.getByNamespaceAndLocalName(qNameModule.getNamespace(),
-                            localName);
-                    return foundStmtDef != null ? foundStmtDef.getStatementName() : null;
-                } else {
-                    final QName qName = QName.create(qNameModule, localName);
-                    return stmtDef.get(qName) != null ? qName : null;
-                }
-            }
+        final StatementDefinition def = stmtDef.get(identifier);
+        if (def != null) {
+            return def.getStatementName();
         }
-        return null;
+        if (prefixes == null) {
+            return null;
+        }
+
+        final String prefixedLocalName = identifier.getLocalName();
+        final String[] namesParts = prefixedLocalName.split(":");
+        if (namesParts.length != 2) {
+            return null;
+        }
+
+        final String prefix = namesParts[0];
+        final String localName = namesParts[1];
+        final QNameModule qNameModule = prefixes.get(prefix);
+        if (qNameModule == null) {
+            return null;
+        }
+
+        if (prefixes.isPreLinkageMap()) {
+            final StatementDefinition foundStmtDef = stmtDef.getByNamespaceAndLocalName(qNameModule.getNamespace(),
+                localName);
+            return foundStmtDef != null ? foundStmtDef.getStatementName() : null;
+        }
+
+        final QName qName = QName.create(qNameModule, localName);
+        return stmtDef.get(qName) != null ? qName : null;
     }
 
     static SchemaNodeIdentifier nodeIdentifierFromPath(final StmtContext<?, ?, ?> ctx, final String path) {
@@ -685,13 +684,12 @@ public final class Utils {
             // creates SourceIdentifier for a module
             return RevisionSourceIdentifier.create((String) root.getStatementArgument(),
                 qNameModule.getFormattedRevision());
-        } else {
-            // creates SourceIdentifier for a submodule
-            final Date revision = Optional.fromNullable(Utils.getLatestRevision(root.declaredSubstatements()))
-                    .or(SimpleDateFormatUtil.DEFAULT_DATE_REV);
-            final String formattedRevision = SimpleDateFormatUtil.getRevisionFormat().format(revision);
-            return RevisionSourceIdentifier.create((String) root.getStatementArgument(),
-                    formattedRevision);
         }
+
+        // creates SourceIdentifier for a submodule
+        final Date revision = Optional.ofNullable(Utils.getLatestRevision(root.declaredSubstatements()))
+                .orElse(SimpleDateFormatUtil.DEFAULT_DATE_REV);
+        final String formattedRevision = SimpleDateFormatUtil.getRevisionFormat().format(revision);
+        return RevisionSourceIdentifier.create((String) root.getStatementArgument(), formattedRevision);
     }
 }
