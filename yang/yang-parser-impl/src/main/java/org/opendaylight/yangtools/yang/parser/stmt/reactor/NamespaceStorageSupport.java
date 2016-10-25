@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 abstract class NamespaceStorageSupport implements NamespaceStorageNode {
 
-    private final Map<Class<?>, Map<?,?>> namespaces = new HashMap<>();
+    private Map<Class<?>, Map<?,?>> namespaces = new HashMap<>();
 
     @Override
     public abstract NamespaceStorageNode getParentNamespaceStorage();
@@ -111,6 +111,10 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         if (localNamespace == null) {
             checkLocalNamespaceAllowed(type);
             localNamespace = new HashMap<>(1);
+
+            if (namespaces.isEmpty()) {
+                namespaces = new HashMap<>(1);
+            }
             namespaces.put(type, localNamespace);
         }
         localNamespace.put(key,value);
