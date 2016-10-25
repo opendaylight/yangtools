@@ -35,7 +35,7 @@ public abstract class DeclarationInTextSource implements StatementSourceReferenc
 
     private final String sourceName;
 
-    DeclarationInTextSource(String sourceName) {
+    DeclarationInTextSource(final String sourceName) {
         this.sourceName = sourceName;
     }
 
@@ -51,21 +51,20 @@ public abstract class DeclarationInTextSource implements StatementSourceReferenc
     @Override
     public abstract String toString();
 
-    public static DeclarationInTextSource inSource(String sourceName) {
+    public static DeclarationInTextSource inSource(final String sourceName) {
         return new InSource(sourceName);
     }
 
-    public static DeclarationInTextSource atLine(String sourceName, int line) {
+    public static DeclarationInTextSource atLine(final String sourceName, final int line) {
         return new AtLine(sourceName, line);
     }
 
-    public static DeclarationInTextSource atPosition(String sourceName, int line, int position) {
+    public static DeclarationInTextSource atPosition(final String sourceName, final int line, final int position) {
         return new AtPosition(sourceName, line,position);
     }
 
     private static class InSource extends DeclarationInTextSource {
-
-        InSource(String sourceName) {
+        InSource(final String sourceName) {
             super(sourceName);
         }
 
@@ -73,43 +72,39 @@ public abstract class DeclarationInTextSource implements StatementSourceReferenc
         public String toString() {
             return getSourceName();
         }
-
     }
 
     private static class AtLine extends InSource {
 
         private final int line;
 
-        AtLine(String sourceName, int line) {
+        AtLine(final String sourceName, final int line) {
             super(sourceName);
             this.line = line;
         }
 
         @Override
         public String toString() {
-            return String.format("%s:%d", getSourceName(),line);
+            return getSourceName() + ':' + line;
         }
 
         public int getLine() {
             return line;
         }
-
     }
 
     private static class AtPosition extends AtLine {
 
         private final int character;
 
-        AtPosition(String sourceName, int line, int character) {
+        AtPosition(final String sourceName, final int line, final int character) {
             super(sourceName, line);
             this.character = character;
         }
 
         @Override
         public String toString() {
-            return String.format("%s:%d:%d", getSourceName(),getLine(),character);
+            return getSourceName() + ':' + getLine() + ':' + character;
         }
-
     }
-
 }
