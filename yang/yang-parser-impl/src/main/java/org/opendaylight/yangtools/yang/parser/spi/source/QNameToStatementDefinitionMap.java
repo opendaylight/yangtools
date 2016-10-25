@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import com.google.common.base.Preconditions;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,31 +18,66 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 
 public class QNameToStatementDefinitionMap implements QNameToStatementDefinition {
+    private final Map<QName, StatementSupport<?, ?, ?>> noRevQNameToSupport;
+    private final Map<QName, StatementSupport<?, ?, ?>> qnameToSupport;
 
-    private final Map<QName, StatementSupport<?, ?, ?>> qNameToStmtDefMap = new HashMap<>();
-    private final Map<QName, StatementSupport<?, ?, ?>> qNameWithoutRevisionToStmtDefMap = new HashMap<>();
+    public QNameToStatementDefinitionMap() {
+        noRevQNameToSupport = new HashMap<>();
+        qnameToSupport = new HashMap<>();
+    }
 
-    public void put(final QName qName, final StatementSupport<?, ?, ?> stDef) {
-        qNameToStmtDefMap.put(qName, stDef);
+    public QNameToStatementDefinitionMap(final int initialCapacity) {
+        noRevQNameToSupport = new HashMap<>(initialCapacity);
+        qnameToSupport = new HashMap<>(initialCapacity);
+    }
 
-        final QName norev;
-        if (qName.getRevision() != null) {
-            norev = QName.create(qName.getNamespace(), null, qName.getLocalName()).intern();
-        } else {
-            norev = qName;
+    public void put(final QName qname, final StatementSupport<?, ?, ?> stDef) {
+        // HashMap does not guard against nulls
+        Preconditions.checkNotNull(qname);
+        Preconditions.checkNotNull(stDef);
+
+        qnameToSupport.put(qname, stDef);
+        putNoRev(qname, stDef);
+    }
+
+    public void putAll(final Map<QName, StatementSupport<?, ?, ?>> qnameToStmt) {
+        qnameToSupport.putAll(qnameToStmt);
+        qnameToStmt.forEach((this::putNoRev));
+    }
+
+    public StatementSupport<?, ?, ?> putIfAbsent(final QName qname, final StatementSupport<?, ?, ?> support) {
+        final StatementSupport<?, ?, ?> existing = qnameToSupport.putIfAbsent(qname, support);
+        if (existing != null) {
+            return existing;
         }
-        qNameWithoutRevisionToStmtDefMap.put(norev, stDef);
+
+        // XXX: we can (in theory) conflict here if we ever find ourselves needing to have multiple revisions of
+        //      statements. These should be equivalent, so no harm done (?)
+        //      Anyway, this is how it worked before last refactor.
+        putNoRev(qname, support);
+        return null;
+    }
+
+    private void putNoRev(final QName qname, final StatementSupport<?, ?, ?> support) {
+        final QName norev;
+        if (qname.getRevision() != null) {
+            norev = QName.create(qname.getNamespace(), null, qname.getLocalName()).intern();
+        } else {
+            norev = qname;
+        }
+        noRevQNameToSupport.put(norev, support);
     }
 
     @Nullable
     @Override
     public StatementSupport<?, ?, ?> get(@Nonnull final QName identifier) {
-        return qNameToStmtDefMap.get(identifier);
+        return qnameToSupport.get(identifier);
     }
 
     @Nullable
     @Override
     public StatementDefinition getByNamespaceAndLocalName(final URI namespace, @Nonnull final String localName) {
-        return qNameWithoutRevisionToStmtDefMap.get(QName.create(namespace, null, localName));
+        return noRevQNameToSupport.get(QName.create(namespace, null, localName));
     }
+
 }
