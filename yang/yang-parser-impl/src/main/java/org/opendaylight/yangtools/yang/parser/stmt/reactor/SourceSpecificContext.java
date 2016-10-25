@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -29,7 +28,6 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImportedNamespaceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -306,10 +304,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         final String message = String.format("Yang model processing phase %s failed", identifier);
         final InferenceException e = new InferenceException(message, root.getStatementSourceReference(),
             exceptions.get(0));
-        final Iterator<SourceException> it = exceptions.listIterator(1);
-        while (it.hasNext()) {
-            e.addSuppressed(it.next());
-        }
+        exceptions.listIterator(1).forEachRemaining(e::addSuppressed);
 
         return Optional.of(e);
     }
@@ -347,10 +342,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             //:FIXME if it is a submodule without any import, the map is null. Handle also submodules and includes...
             return null;
         }
-        for (final Entry<String, URI> prefixToNamespace : prefixToNamespaceMap.entrySet()) {
-            preLinkagePrefixes.put(prefixToNamespace.getKey(), QNameModule.create(prefixToNamespace.getValue(), null));
-        }
 
+        prefixToNamespaceMap.forEach((key, value) -> preLinkagePrefixes.put(key, QNameModule.create(value, null)));
         return preLinkagePrefixes;
     }
 
@@ -363,41 +356,33 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             allPrefixes.putAll(belongsToPrefixes);
         }
 
-        for (final Entry<String, ModuleIdentifier> stringModuleIdentifierEntry : allPrefixes.entrySet()) {
-            final QNameModule namespace = getRoot().getFromNamespace(ModuleIdentifierToModuleQName.class,
-                stringModuleIdentifierEntry.getValue());
-            prefixToModuleMap.put(stringModuleIdentifierEntry.getKey(), namespace);
-        }
+        allPrefixes.forEach((key, value) ->
+            prefixToModuleMap.put(key, getRoot().getFromNamespace(ModuleIdentifierToModuleQName.class, value)));
+
         return prefixToModuleMap;
     }
 
     private QNameToStatementDefinition stmtDef() {
         // regular YANG statements and extension supports added
-        final Map<QName, StatementSupport<?, ?, ?>> definitions = currentContext.getSupportsForPhase(inProgressPhase)
-                .getDefinitions();
-        for (final Entry<QName, StatementSupport<?, ?, ?>> entry : definitions.entrySet()) {
-            qNameToStmtDefMap.put(entry.getKey(), entry.getValue());
+        qNameToStmtDefMap.putAll(currentContext.getSupportsForPhase(inProgressPhase).getDefinitions());
+
+        // No further actions needed
+        if (inProgressPhase != ModelProcessingPhase.FULL_DECLARATION) {
+            return qNameToStmtDefMap;
         }
 
-        // extensions added
-        if (inProgressPhase.equals(ModelProcessingPhase.FULL_DECLARATION)) {
-            final Map<QName, StatementSupport<?, ?, ?>> extensions = currentContext.getAllFromNamespace(
+        // We need to any and all extension statements which have been declared in the context
+        final Map<QName, StatementSupport<?, ?, ?>> extensions = currentContext.getAllFromNamespace(
                 StatementDefinitionNamespace.class);
-            if (extensions != null) {
-                for (final Entry<QName, StatementSupport<?, ?, ?>> e : extensions.entrySet()) {
-                    final StatementDefinition previous = qNameToStmtDefMap.get(e.getKey());
-                    if (previous != null) {
-                        LOG.debug("Source {} already defines statement {} as {}", source, e.getKey(), previous);
-                        if (!(previous instanceof StatementSupport)) {
-                            LOG.warn("Source {} statement for {} definition {} is not a StatementSupport", source,
-                                e.getKey(), previous);
-                        }
-                    } else {
-                        qNameToStmtDefMap.put(e.getKey(), e.getValue());
-                        LOG.debug("Source {} defined statement {} as {}", source, e.getKey(), e.getValue());
-                    }
+        if (extensions != null) {
+            extensions.forEach((qname, support) -> {
+                final StatementSupport<?, ?, ?> existing = qNameToStmtDefMap.putIfAbsent(qname, support);
+                if (existing != null) {
+                    LOG.debug("Source {} already defines statement {} as {}", source, qname, existing);
+                } else {
+                    LOG.debug("Source {} defined statement {} as {}", source, qname, support);
                 }
-            }
+            });
         }
 
         return qNameToStmtDefMap;
