@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a682502_e1af112a",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SubstatementContext.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 166,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-10-25T11:12:42Z",
+      "side": 1,
+      "message": "this set seems to be OK to me",
+      "range": {
+        "startLine": 164,
+        "startChar": 8,
+        "endLine": 166,
+        "endChar": 31
+      },
+      "revId": "bd00b5b96a53c7fe6a04c26ba2831615a3220635",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a682502_41c1a5e3",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SubstatementContext.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-10-25T11:12:42Z",
+      "side": 1,
+      "message": "please allow one empty line above",
+      "range": {
+        "startLine": 167,
+        "startChar": 4,
+        "endLine": 167,
+        "endChar": 78
+      },
+      "revId": "bd00b5b96a53c7fe6a04c26ba2831615a3220635",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
