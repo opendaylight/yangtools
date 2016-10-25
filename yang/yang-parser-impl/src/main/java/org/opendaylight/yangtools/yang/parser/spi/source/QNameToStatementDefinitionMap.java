@@ -17,23 +17,30 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 public class QNameToStatementDefinitionMap implements QNameToStatementDefinition {
 
-    private Map<QName, StatementDefinition> qNameToStmtDefMap = new HashMap<>();
-    private Map<QName, StatementDefinition> qNameWithoutRevisionToStmtDefMap = new HashMap<>();
+    private final Map<QName, StatementDefinition> qNameToStmtDefMap = new HashMap<>();
+    private final Map<QName, StatementDefinition> qNameWithoutRevisionToStmtDefMap = new HashMap<>();
 
-    public void put(QName qName, StatementDefinition stDef) {
+    public void put(final QName qName, final StatementDefinition stDef) {
         qNameToStmtDefMap.put(qName, stDef);
-        qNameWithoutRevisionToStmtDefMap.put(QName.create(qName.getNamespace(), null, qName.getLocalName()), stDef);
+
+        final QName norev;
+        if (qName.getRevision() != null) {
+            norev = QName.create(qName.getNamespace(), null, qName.getLocalName()).intern();
+        } else {
+            norev = qName;
+        }
+        qNameWithoutRevisionToStmtDefMap.put(norev, stDef);
     }
 
     @Nullable
     @Override
-    public StatementDefinition get(@Nonnull QName identifier) {
+    public StatementDefinition get(@Nonnull final QName identifier) {
         return qNameToStmtDefMap.get(identifier);
     }
 
     @Nullable
     @Override
-    public StatementDefinition getByNamespaceAndLocalName(URI namespace, @Nonnull String localName) {
+    public StatementDefinition getByNamespaceAndLocalName(final URI namespace, @Nonnull final String localName) {
         return qNameWithoutRevisionToStmtDefMap.get(QName.create(namespace, null, localName));
     }
 }
