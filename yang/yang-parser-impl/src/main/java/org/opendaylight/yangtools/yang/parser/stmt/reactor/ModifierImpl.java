@@ -14,6 +14,7 @@ import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -36,12 +37,12 @@ import org.slf4j.LoggerFactory;
 class ModifierImpl implements ModelActionBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(ModifierImpl.class);
 
-    private final Set<AbstractPrerequisite<?>> unsatisfied = new HashSet<>(1);
     private final Set<AbstractPrerequisite<?>> mutations = new HashSet<>(1);
     private final ModelProcessingPhase phase;
 
-    private InferenceAction action;
+    private Set<AbstractPrerequisite<?>> unsatisfied = new HashSet<>(1);
     private boolean actionApplied = false;
+    private InferenceAction action;
 
     ModifierImpl(final ModelProcessingPhase phase) {
         this.phase = Preconditions.checkNotNull(phase);
@@ -69,18 +70,21 @@ class ModifierImpl implements ModelActionBuilder {
 
     private boolean removeSatisfied() {
         Iterator<AbstractPrerequisite<?>> it = unsatisfied.iterator();
-        boolean allSatisfied = true;
         while (it.hasNext()) {
             final AbstractPrerequisite<?> prereq = it.next();
             if (prereq.isDone()) {
                 // We are removing current prerequisite from list.
                 LOG.trace("Modifier {} prerequisite {} satisfied", this, prereq);
                 it.remove();
-            } else {
-                allSatisfied  = false;
             }
         }
-        return allSatisfied;
+
+        if (unsatisfied.isEmpty()) {
+            unsatisfied = ImmutableSet.of();
+            return true;
+        }
+
+        return false;
     }
 
     ModelProcessingPhase getPhase() {
