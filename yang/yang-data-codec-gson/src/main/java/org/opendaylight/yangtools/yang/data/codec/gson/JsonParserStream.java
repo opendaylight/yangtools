@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Set;
+import javax.xml.transform.dom.DOMSource;
+import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
@@ -36,7 +38,6 @@ import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.RpcAsContainer;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -46,6 +47,9 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Text;
 
 /**
  * This class parses JSON elements from a GSON JsonReader. It disallows multiple elements of the same name unlike the
@@ -53,6 +57,8 @@ import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
  */
 @Beta
 public final class JsonParserStream implements Closeable, Flushable {
+    static final String ANYXML_ARRAY_ELEMENT_ID = "array-element";
+
     private final Deque<URI> namespaces = new ArrayDeque<>();
     private final NormalizedNodeStreamWriter writer;
     private final JSONCodecFactory codecs;
@@ -111,15 +117,58 @@ public final class JsonParserStream implements Closeable, Flushable {
         }
     }
 
-    private void setValue(final AbstractNodeDataWithSchema parent, final String value) {
-        Preconditions.checkArgument(parent instanceof SimpleNodeDataWithSchema, "Node %s is not a simple type",
-                parent.getSchema().getQName());
-        final SimpleNodeDataWithSchema parentSimpleNode = (SimpleNodeDataWithSchema) parent;
-        Preconditions.checkArgument(parentSimpleNode.getValue() == null, "Node '%s' has already set its value to '%s'",
-                parentSimpleNode.getSchema().getQName(), parentSimpleNode.getValue());
+    private void traverseAnyXmlValue(final JsonReader in, final Document doc, final Element parentElement)
+            throws IOException {
+        switch (in.peek()) {
+            case STRING:
+            case NUMBER:
+                Text textNode = doc.createTextNode(in.nextString());
+                parentElement.appendChild(textNode);
+                break;
+            case BOOLEAN:
+                textNode = doc.createTextNode(Boolean.toString(in.nextBoolean()));
+                parentElement.appendChild(textNode);
+                break;
+            case NULL:
+                in.nextNull();
+                textNode = doc.createTextNode("null");
+                parentElement.appendChild(textNode);
+                break;
+            case BEGIN_ARRAY:
+                in.beginArray();
+                while (in.hasNext()) {
+                    final Element childElement = doc.createElement(ANYXML_ARRAY_ELEMENT_ID);
+                    parentElement.appendChild(childElement);
+                    traverseAnyXmlValue(in, doc, childElement);
+                }
+                in.endArray();
+                break;
+            case BEGIN_OBJECT:
+                in.beginObject();
+                while (in.hasNext()) {
+                    final Element childElement = doc.createElement(in.nextName());
+                    parentElement.appendChild(childElement);
+                    traverseAnyXmlValue(in, doc, childElement);
+                }
+                in.endObject();
+            case END_DOCUMENT:
+            case NAME:
+            case END_OBJECT:
+            case END_ARRAY:
+                break;
+        }
+    }
 
-        final Object translatedValue = translateValueByType(value, parentSimpleNode.getSchema());
-        parentSimpleNode.setValue(translatedValue);
+    private void readAnyXmlValue(final JsonReader in, final AnyXmlNodeDataWithSchema parent,
+            final String anyXmlObjectName) throws IOException {
+        final String anyXmlObjectNS = getCurrentNamespace().toString();
+        final Document doc = UntrustedXML.newDocumentBuilder().newDocument();
+        final Element rootElement = doc.createElementNS(anyXmlObjectNS, anyXmlObjectName);
+        doc.appendChild(rootElement);
+        traverseAnyXmlValue(in, doc, rootElement);
+
+        final DOMSource domSource = new DOMSource(doc.getDocumentElement());
+        parent.setValue(domSource);
     }
 
     public void read(final JsonReader in, AbstractNodeDataWithSchema parent) throws IOException {
@@ -182,13 +231,8 @@ public final class JsonParserStream implements Closeable, Flushable {
                 }
 
                 final AbstractNodeDataWithSchema newChild = ((CompositeNodeDataWithSchema) parent).addChild(childDataSchemaNodes);
-                /*
-                 * FIXME:anyxml data shouldn't be skipped but should be loaded somehow.
-                 * will be able to load anyxml which conforms to YANG data using these
-                 * parser, for other anyxml will be harder.
-                 */
                 if (newChild instanceof AnyXmlNodeDataWithSchema) {
-                    in.skipValue();
+                    readAnyXmlValue(in, (AnyXmlNodeDataWithSchema) newChild, jsonElementName);
                 } else {
                     read(in, newChild);
                 }
@@ -221,15 +265,18 @@ public final class JsonParserStream implements Closeable, Flushable {
         return newChild;
     }
 
+    private void setValue(final AbstractNodeDataWithSchema parent, final String value) {
+        Preconditions.checkArgument(parent instanceof SimpleNodeDataWithSchema, "Node %s is not a simple type",
+                parent.getSchema().getQName());
+        final SimpleNodeDataWithSchema parentSimpleNode = (SimpleNodeDataWithSchema) parent;
+        Preconditions.checkArgument(parentSimpleNode.getValue() == null, "Node '%s' has already set its value to '%s'",
+                parentSimpleNode.getSchema().getQName(), parentSimpleNode.getValue());
+
+        final Object translatedValue = translateValueByType(value, parentSimpleNode.getSchema());
+        parentSimpleNode.setValue(translatedValue);
+    }
+
     private Object translateValueByType(final String value, final DataSchemaNode node) {
-        if (node instanceof AnyXmlSchemaNode) {
-            /*
-             *  FIXME: Figure out some YANG extension dispatch, which will
-             *  reuse JSON parsing or XML parsing - anyxml is not well-defined in
-             * JSON.
-             */
-            return value;
-        }
         return codecs.codecFor(node).deserialize(value);
     }
 

@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -50,26 +49,6 @@ public class JsonStreamToNormalizedNodeTest {
     @BeforeClass
     public static void initialization() throws IOException, URISyntaxException, ReactorException {
         schemaContext = loadModules("/complexjson/yang");
-    }
-
-    /**
-     * case when anyxml contains simple value will be implemented when anyxml normalized node reprezentation will be
-     * specified
-     */
-    @Ignore
-    @Test
-    public void anyXmlNodeWithSimpleValueInContainer() throws IOException, URISyntaxException {
-
-    }
-
-    /**
-     * case when anyxml contains complex xml will be implemented when anyxml normalized node reprezentation will be
-     * specified
-     */
-    @Ignore
-    @Test
-    public void anyXmlNodeWithCompositeValueInContainer() throws IOException, URISyntaxException {
-
     }
 
     @Test
