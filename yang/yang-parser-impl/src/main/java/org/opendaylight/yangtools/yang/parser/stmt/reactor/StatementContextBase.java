@@ -128,6 +128,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public void addAsEffectOfStatement(final Collection<StatementContextBase<?, ?, ?>> ctxs) {
+        if (ctxs.isEmpty()) {
+            return;
+        }
+
         if (effectOfStatement.isEmpty()) {
             effectOfStatement = new ArrayList<>(ctxs.size());
         }
@@ -325,6 +329,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *             if statement parameter is null
      */
     public void addEffectiveSubstatements(final Collection<StatementContextBase<?, ?, ?>> substatements) {
+        if (substatements.isEmpty()) {
+            return;
+        }
+
         substatements.forEach(Preconditions::checkNotNull);
         beforeAddEffectiveStatement(substatements.size());
         effective.addAll(substatements);
