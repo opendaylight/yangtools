@@ -1,0 +1,27 @@
+{
+  "complexjson:cont1": {
+    "lf12-any": [true, {"baz": [120, "str-val", false]}, {"foo": null}],
+
+    "lf13-any": {
+      "anyxml-array-a": [{"foo": true}, 10, {"bar": false}],
+      "anyxml-array-b": [1, 2, [4, 5], 7]
+    },
+
+    "lf14-any": {
+      "anyxml-object-a": {
+        "data-a1": 10,
+        "data-a2": 11
+      },
+
+      "anyxml-object-b": {
+        "child-object-b1": {
+          "data-b1": 5.5
+        },
+
+        "child-object-b2": {
+          "data-b2": "b2-val"
+        }
+      }
+    }
+  }
+}
