@@ -82,12 +82,13 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             .put(TypeUtils.INSTANCE_IDENTIFIER, new InstanceIdentifierSpecificationImpl.Definition())
             .build();
 
-    private final Multimap<ModelProcessingPhase, ModifierImpl> modifiers = HashMultimap.create();
     private final QNameToStatementDefinitionMap qNameToStmtDefMap = new QNameToStatementDefinitionMap();
+    private final Multimap<ModelProcessingPhase, ModifierImpl> modifiers = HashMultimap.create();
     private final PrefixToModuleMap prefixToModuleMap = new PrefixToModuleMap();
     private final BuildGlobalContext currentContext;
     private final StatementStreamSource source;
 
+    private Map<QName, StatementSupport<?, ?, ?>> definedExtensions = ImmutableMap.of();
     private Collection<NamespaceStorageNode> importedNamespaces = ImmutableList.of();
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
     private ModelProcessingPhase inProgressPhase;
@@ -111,7 +112,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         StatementDefinitionContext<?, ?, ?> def = currentContext.getStatementDefinition(name);
 
         if (def == null) {
-            final StatementSupport<?, ?, ?> extension = qNameToStmtDefMap.get(name);
+            final StatementSupport<?, ?, ?> extension = definedExtensions.get(name);
             if (extension != null) {
                 def = new StatementDefinitionContext<>(extension);
             } else {
@@ -366,23 +367,26 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         // regular YANG statements and extension supports added
         qNameToStmtDefMap.putAll(currentContext.getSupportsForPhase(inProgressPhase).getDefinitions());
 
-        // No further actions needed
-        if (inProgressPhase != ModelProcessingPhase.FULL_DECLARATION) {
-            return qNameToStmtDefMap;
-        }
-
         // We need to any and all extension statements which have been declared in the context
-        final Map<QName, StatementSupport<?, ?, ?>> extensions = currentContext.getAllFromNamespace(
+        if (inProgressPhase == ModelProcessingPhase.FULL_DECLARATION) {
+            final Map<QName, StatementSupport<?, ?, ?>> extensions = currentContext.getAllFromNamespace(
                 StatementDefinitionNamespace.class);
-        if (extensions != null) {
-            extensions.forEach((qname, support) -> {
-                final StatementSupport<?, ?, ?> existing = qNameToStmtDefMap.putIfAbsent(qname, support);
-                if (existing != null) {
-                    LOG.debug("Source {} already defines statement {} as {}", source, qname, existing);
-                } else {
-                    LOG.debug("Source {} defined statement {} as {}", source, qname, support);
-                }
-            });
+            if (extensions != null) {
+                // We maintain this map for createDeclaredChild(), which calls out to global context first,
+                // hence there is no point in performing double lookups.
+                //
+                // FIXME: this should be filtered through the imports, so we do not end up polluting our space
+                //        with statements which have not been imported.
+                definedExtensions = ImmutableMap.copyOf(extensions);
+                extensions.forEach((qname, support) -> {
+                    final StatementSupport<?, ?, ?> existing = qNameToStmtDefMap.putIfAbsent(qname, support);
+                    if (existing != null) {
+                        LOG.debug("Source {} already defines statement {} as {}", source, qname, existing);
+                    } else {
+                        LOG.debug("Source {} defined statement {} as {}", source, qname, support);
+                    }
+                });
+            }
         }
 
         return qNameToStmtDefMap;
