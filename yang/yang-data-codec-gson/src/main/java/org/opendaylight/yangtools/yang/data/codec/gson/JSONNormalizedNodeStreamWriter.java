@@ -7,10 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
+import static org.opendaylight.yangtools.yang.data.codec.gson.JsonParserStream.ANYXML_ARRAY_ELEMENT_ID;
+import static org.w3c.dom.Node.ELEMENT_NODE;
+import static org.w3c.dom.Node.TEXT_NODE;
+
 import com.google.common.base.Preconditions;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
+import javax.xml.transform.dom.DOMSource;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -22,6 +27,8 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * This implementation will create JSON output as output stream.
@@ -183,8 +190,8 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
 
         context.emittingChild(codecs.getSchemaContext(), writer);
         context.writeChildJsonIdentifier(codecs.getSchemaContext(), writer, name.getNodeType());
-        // FIXME this kind of serialization is incorrect since the value for AnyXml is now a DOMSource
-        writer.value(String.valueOf(value));
+
+        writeAnyXmlValue((DOMSource) value);
     }
 
     @Override
@@ -206,6 +213,102 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
     private void writeValue(final Object value, final JSONCodec<?> codec)
             throws IOException {
         ((JSONCodec<Object>) codec).serializeToWriter(writer, value);
+    }
+
+    private void writeAnyXmlValue(final DOMSource anyXmlValue) throws IOException {
+        final Node documentNode = anyXmlValue.getNode();
+        final Node firstChild = documentNode.getFirstChild();
+        if (ELEMENT_NODE == firstChild.getNodeType() && !ANYXML_ARRAY_ELEMENT_ID.equals(firstChild.getNodeName())) {
+            writer.beginObject();
+            traverseAnyXmlValue(documentNode);
+            writer.endObject();
+        } else {
+            traverseAnyXmlValue(documentNode);
+        }
+    }
+
+    private void traverseAnyXmlValue(final Node node) throws IOException {
+        final NodeList children = node.getChildNodes();
+        boolean inArray = false;
+
+        for (int i = 0; i < children.getLength(); i++) {
+            final Node childNode = children.item(i);
+            boolean inObject = false;
+
+            if (ELEMENT_NODE == childNode.getNodeType()) {
+                final Node firstChild = childNode.getFirstChild();
+                // beginning of an array
+                if (ANYXML_ARRAY_ELEMENT_ID.equals(childNode.getNodeName()) && !inArray) {
+                    writer.beginArray();
+                    inArray = true;
+                    // object at the beginning of the array
+                    if (isJsonObjectInArray(childNode, firstChild)) {
+                        writer.beginObject();
+                        inObject = true;
+                    }
+                    // object in the array
+                } else if (isJsonObjectInArray(childNode, firstChild)) {
+                    writer.beginObject();
+                    inObject = true;
+                    // object
+                } else if (isJsonObject(firstChild)) {
+                    writer.name(childNode.getNodeName());
+                    writer.beginObject();
+                    inObject = true;
+                    // name
+                } else if (!inArray){
+                    writer.name(childNode.getNodeName());
+                }
+            }
+
+            // text value, i.e. a number, string, boolean or null
+            if (TEXT_NODE == childNode.getNodeType()) {
+                final String childNodeText = childNode.getNodeValue();
+                if (childNodeText.matches("-?\\d+(\\.\\d+)?")) {
+                    writer.value(parseNumber(childNodeText));
+                } else if ("true".equals(childNodeText) || "false".equals(childNodeText)) {
+                    writer.value(Boolean.parseBoolean(childNodeText));
+                } else if ("null".equals(childNodeText)) {
+                    writer.nullValue();
+                } else {
+                    writer.value(childNodeText);
+                }
+
+                return;
+            }
+
+            traverseAnyXmlValue(childNode);
+
+            if (inObject) {
+                writer.endObject();
+            }
+        }
+
+        if (inArray) {
+            writer.endArray();
+        }
+    }
+
+    // json numbers are 64 bit wide floating point numbers - in java terms it is either long or double
+    private static Number parseNumber(final String numberText) {
+        Number ret = null;
+        if (numberText.matches("-?\\d+")) {
+            ret = Long.parseLong(numberText);
+        } else if (numberText.matches("-?\\d+(\\.\\d+)?")) {
+            ret = Double.parseDouble(numberText);
+        }
+
+        return ret;
+    }
+
+    private static boolean isJsonObject(final Node firstChild) {
+        return !ANYXML_ARRAY_ELEMENT_ID.equals(firstChild.getNodeName()) && TEXT_NODE != firstChild.getNodeType();
+    }
+
+    private static boolean isJsonObjectInArray(final Node node, final Node firstChild) {
+        return ANYXML_ARRAY_ELEMENT_ID.equals(node.getNodeName())
+                && !ANYXML_ARRAY_ELEMENT_ID.equals(firstChild.getNodeName())
+                && TEXT_NODE != firstChild.getNodeType();
     }
 
     @Override
