@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a65312a_03db381c",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeCandidateTip.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-26T23:29:22Z",
+      "side": 1,
+      "message": "SPI-level leak in API. Why is this method needed?",
+      "range": {
+        "startLine": 22,
+        "startChar": 4,
+        "endLine": 22,
+        "endChar": 26
+      },
+      "revId": "d33c1e4e68890b2ef8d3f6267fcf8f6020f66185",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_23091496",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeTip.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-26T23:29:22Z",
+      "side": 1,
+      "message": "Another SPI-level leak. What is the meaning of the argument? How does this method differ from the existing method?",
+      "range": {
+        "startLine": 36,
+        "startChar": 4,
+        "endLine": 36,
+        "endChar": 94
+      },
+      "revId": "d33c1e4e68890b2ef8d3f6267fcf8f6020f66185",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_83fe286a",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/AbstractDataTreeTip.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-26T23:29:22Z",
+      "side": 1,
+      "message": "trailing whitespace",
+      "range": {
+        "startLine": 58,
+        "startChar": 0,
+        "endLine": 58,
+        "endChar": 1
+      },
+      "revId": "d33c1e4e68890b2ef8d3f6267fcf8f6020f66185",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_63030c74",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/AbstractDataTreeTip.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-26T23:29:22Z",
+      "side": 1,
+      "message": "stray tab",
+      "range": {
+        "startLine": 59,
+        "startChar": 0,
+        "endLine": 59,
+        "endChar": 1
+      },
+      "revId": "d33c1e4e68890b2ef8d3f6267fcf8f6020f66185",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_c3f7808b",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/AbstractDataTreeTip.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-26T23:29:22Z",
+      "side": 1,
+      "message": "this is copy\u0026paste of above -- such code has to always be refactored.",
+      "range": {
+        "startLine": 61,
+        "startChar": 0,
+        "endLine": 76,
+        "endChar": 113
+      },
+      "revId": "d33c1e4e68890b2ef8d3f6267fcf8f6020f66185",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_a3f40488",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/InMemoryDataTree.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-26T23:29:22Z",
+      "side": 1,
+      "message": "This is an implementation detail -- why should we expose it?",
+      "range": {
+        "startLine": 153,
+        "startChar": 0,
+        "endLine": 153,
+        "endChar": 34
+      },
+      "revId": "d33c1e4e68890b2ef8d3f6267fcf8f6020f66185",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
