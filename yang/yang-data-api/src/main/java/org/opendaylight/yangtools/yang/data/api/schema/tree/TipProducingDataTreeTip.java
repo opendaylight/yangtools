@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
-
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 /**
  * A {@link DataTreeCandidateTip} which produces {@link DataTreeCandidateTip}s from its
  * {@link #prepare(DataTreeModification)} method.
@@ -14,4 +14,6 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree;
 public interface TipProducingDataTreeTip extends DataTreeTip {
     @Override
     DataTreeCandidateTip prepare(DataTreeModification modification);
+    @Override
+    DataTreeCandidateTip prepare(DataTreeModification modification, TreeNode lastPrepareRoot);
 }

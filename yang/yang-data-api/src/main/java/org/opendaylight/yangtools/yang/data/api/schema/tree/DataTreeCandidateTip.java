@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import com.google.common.annotations.Beta;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 
 /**
  * A {@link DataTreeCandidate} which is also a {@link DataTreeTip}. This indicates that
@@ -18,5 +19,5 @@ import com.google.common.annotations.Beta;
  */
 @Beta
 public interface DataTreeCandidateTip extends DataTreeCandidate, TipProducingDataTreeTip {
-
+    TreeNode getTipRoot();
 }

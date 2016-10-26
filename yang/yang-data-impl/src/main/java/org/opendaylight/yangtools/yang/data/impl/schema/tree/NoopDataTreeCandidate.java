@@ -75,7 +75,7 @@ final class NoopDataTreeCandidate extends AbstractDataTreeCandidate {
 
     @Override
     @Nonnull
-    protected TreeNode getTipRoot() {
+    public TreeNode getTipRoot() {
         return afterRoot;
     }
 }
