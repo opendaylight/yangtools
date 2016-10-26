@@ -150,7 +150,7 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
 
     @Override
     @Nonnull
-    protected TreeNode getTipRoot() {
+    public TreeNode getTipRoot() {
         return state.getRoot();
     }
 }

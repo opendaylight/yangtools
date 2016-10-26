@@ -38,6 +38,11 @@ abstract class AbstractDataTreeTip implements DataTreeTip {
 
     @Override
     public final DataTreeCandidateTip prepare(final DataTreeModification modification) {
+        return prepare(modification, null);
+    }
+
+    @Override
+    public final DataTreeCandidateTip prepare(final DataTreeModification modification, final TreeNode lastPrepareRoot) {
         Preconditions.checkArgument(modification instanceof InMemoryDataTreeModification,
             "Invalid modification class %s", modification.getClass());
         final InMemoryDataTreeModification m = (InMemoryDataTreeModification)modification;
@@ -45,14 +50,15 @@ abstract class AbstractDataTreeTip implements DataTreeTip {
 
         final ModifiedNode root = m.getRootModification();
 
-        final TreeNode currentRoot = getTipRoot();
+        final TreeNode prepareRoot = (lastPrepareRoot != null) ? lastPrepareRoot : getTipRoot();
+
         if (root.getOperation() == LogicalOperation.NONE) {
-            return new NoopDataTreeCandidate(YangInstanceIdentifier.EMPTY, root, currentRoot);
+            return new NoopDataTreeCandidate(YangInstanceIdentifier.EMPTY, root, prepareRoot);
         }
 
         final Optional<TreeNode> newRoot = m.getStrategy().apply(m.getRootModification(),
-            Optional.of(currentRoot), m.getVersion());
+            Optional.of(prepareRoot), m.getVersion());
         Preconditions.checkState(newRoot.isPresent(), "Apply strategy failed to produce root node for modification %s", modification);
-        return new InMemoryDataTreeCandidate(YangInstanceIdentifier.EMPTY, root, currentRoot, newRoot.get());
+        return new InMemoryDataTreeCandidate(YangInstanceIdentifier.EMPTY, root, prepareRoot, newRoot.get());
     }
 }

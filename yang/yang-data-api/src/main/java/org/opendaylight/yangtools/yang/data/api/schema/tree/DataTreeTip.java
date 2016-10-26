@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
-
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import com.google.common.annotations.Beta;
 
 /**
@@ -32,4 +32,6 @@ public interface DataTreeTip {
      * @return candidate data tree
      */
     DataTreeCandidate prepare(DataTreeModification modification);
+
+    DataTreeCandidateTip prepare(DataTreeModification modification, TreeNode lastPrepareRoot);
 }
