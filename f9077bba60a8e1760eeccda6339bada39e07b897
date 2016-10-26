@@ -16,6 +16,23 @@
       "revId": "f9077bba60a8e1760eeccda6339bada39e07b897",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_2809f395",
+        "filename": "yang/yang-data-impl/pom.xml",
+        "patchSetId": 18
+      },
+      "lineNbr": 125,
+      "author": {
+        "id": 4540
+      },
+      "writtenOn": "2016-10-26T17:01:51Z",
+      "side": 1,
+      "message": "How about this? Would you prefer to only have feature POMs referred to for dependencies from upstream projects?",
+      "revId": "f9077bba60a8e1760eeccda6339bada39e07b897",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
