@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a65312a_88e767e4",
+        "filename": "yang/yang-data-impl/pom.xml",
+        "patchSetId": 18
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 4540
+      },
+      "writtenOn": "2016-10-26T17:00:08Z",
+      "side": 1,
+      "message": "Robert, is this more acceptable? (Apart from the version, I\u0027d need to fix the odlparent artifacts POM...)",
+      "revId": "f9077bba60a8e1760eeccda6339bada39e07b897",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
