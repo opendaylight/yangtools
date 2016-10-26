@@ -144,7 +144,7 @@ public final class YangInferencePipeline {
             .addSupport(new FractionDigitsStatementImpl.Definition())
             .addSupport(new BaseStatementImpl.Definition())
             .addSupport(global(DerivedIdentitiesNamespace.class))
-            .addSupport(sourceLocal(StatementDefinitionNamespace.class))
+            .addSupport(global(StatementDefinitionNamespace.class))
             .build();
 
     public static final StatementSupportBundle FULL_DECL_BUNDLE = StatementSupportBundle
