@@ -11,45 +11,36 @@ import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 
-class StatementContextWriter implements StatementWriter {
-
+final class StatementContextWriter implements StatementWriter {
+    private final ModelProcessingPhase phase;
     private final SourceSpecificContext ctx;
+
     private StatementContextBase<?, ?, ?> parent;
     private ContextBuilder<?, ?, ?> current;
-    private ModelProcessingPhase phase;
 
-    public StatementContextWriter(SourceSpecificContext ctx, ModelProcessingPhase phase) {
+    public StatementContextWriter(final SourceSpecificContext ctx, final ModelProcessingPhase phase) {
         this.ctx = Preconditions.checkNotNull(ctx);
         this.phase = Preconditions.checkNotNull(phase);
     }
 
     @Override
-    public void startStatement(QName name, StatementSourceReference ref) throws SourceException {
-        defferedCreate();
+    public void startStatement(final QName name, final StatementSourceReference ref) {
+        deferredCreate();
         current = ctx.createDeclaredChild(parent, name, ref);
-
     }
 
     @Override
-    public void argumentValue(String value, StatementSourceReference ref) {
+    public void argumentValue(final String value, final StatementSourceReference ref) {
         Preconditions.checkState(current != null, "Could not set two arguments for one statement: %s", ref);
         current.setArgument(value, ref);
     }
 
-    void defferedCreate() throws SourceException {
-        if (current != null) {
-            parent = current.build();
-            current = null;
-        }
-    }
-
     @Override
-    public void endStatement(StatementSourceReference ref) throws SourceException {
-        defferedCreate();
+    public void endStatement(final StatementSourceReference ref) {
+        deferredCreate();
         Preconditions.checkState(parent != null);
         parent.endDeclared(ref,phase);
         parent = parent.getParentContext();
@@ -61,4 +52,10 @@ class StatementContextWriter implements StatementWriter {
         return phase;
     }
 
+    private void deferredCreate() {
+        if (current != null) {
+            parent = current.build();
+            current = null;
+        }
+    }
 }
