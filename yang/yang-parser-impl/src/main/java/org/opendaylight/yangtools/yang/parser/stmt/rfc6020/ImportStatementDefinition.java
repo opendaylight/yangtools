@@ -46,6 +46,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToSemVerModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ImportEffectiveStatementImpl;

@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Regist
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.IncludedModuleContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
 
 /**
  * Root statement class for a YANG source. All statements defined in that YANG source are mapped underneath an instance

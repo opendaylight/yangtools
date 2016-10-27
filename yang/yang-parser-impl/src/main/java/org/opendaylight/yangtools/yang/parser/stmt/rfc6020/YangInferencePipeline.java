@@ -38,6 +38,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModule
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToSemVerModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
