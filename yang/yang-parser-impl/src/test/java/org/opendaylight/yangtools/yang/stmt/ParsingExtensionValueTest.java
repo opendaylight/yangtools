@@ -11,6 +11,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * Test for testing of extensions and their arguments.
@@ -24,8 +26,9 @@ public class ParsingExtensionValueTest {
         try {
             TestUtils.loadModules(getClass().getResource("/extensions").toURI());
         } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
-            assertTrue(e.getMessage().startsWith("ext:id is not a YANG statement or use of extension"));
+            assertEquals(SomeModifiersUnresolvedException.class, e.getClass());
+            assertTrue(e.getCause() instanceof SourceException);
+            assertTrue(e.getCause().getMessage().startsWith("ext:id is not a YANG statement or use of extension"));
         }
     }
 }

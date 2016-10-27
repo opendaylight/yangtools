@@ -61,6 +61,8 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
@@ -844,9 +846,10 @@ public class YangParserTest {
         // TODO: change test or create new module in order to respect new statement parser validations
         try {
             final EffectiveSchemaContext result = reactor.buildEffective();
-        } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
-            assertTrue(e.getMessage().startsWith("aaa is not a YANG statement or use of extension"));
+        } catch (final Exception e) {
+            assertEquals(SomeModifiersUnresolvedException.class, e.getClass());
+            assertTrue(e.getCause() instanceof SourceException);
+            assertTrue(e.getCause().getMessage().startsWith("aaa is not a YANG statement or use of extension"));
         }
     }
 
