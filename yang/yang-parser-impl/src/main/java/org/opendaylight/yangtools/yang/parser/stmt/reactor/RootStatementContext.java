@@ -8,6 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
@@ -26,18 +29,23 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.IncludedModuleContext;
 
 /**
- * root statement class for a Yang source
+ * Root statement class for a YANG source. All statements defined in that YANG source are mapped underneath an instance
+ * of this class, hence recursive lookups from them cross this class.
  */
 public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> extends
         StatementContextBase<A, D, E> {
 
     private final SourceSpecificContext sourceContext;
-    private final Collection<NamespaceStorageNode> includedContexts = new ArrayList<>();
     private final A argument;
+
+    /**
+     * References to RootStatementContext of submodules which are included in this source.
+     */
+    private Collection<RootStatementContext<?, ?, ?>> includedContexts = ImmutableList.of();
 
     RootStatementContext(final ContextBuilder<A, D, E> builder, final SourceSpecificContext sourceContext) {
         super(builder);
-        this.sourceContext = sourceContext;
+        this.sourceContext = Preconditions.checkNotNull(sourceContext);
         this.argument = builder.getDefinition().parseArgumentValue(this, builder.getRawArgument());
     }
 
@@ -45,7 +53,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
         final CopyType typeOfCopy) {
         super(original);
 
-        sourceContext = original.sourceContext;
+        sourceContext = Preconditions.checkNotNull(original.sourceContext);
         this.argument = original.argument;
 
         final Collection<StatementContextBase<?, ?, ?>> declared = original.declaredSubstatements();
@@ -168,7 +176,11 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     public <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(final Class<N> type, final K key,
             final V value) {
         if (IncludedModuleContext.class.isAssignableFrom(type)) {
-            includedContexts.add((NamespaceStorageNode) value);
+            if (includedContexts.isEmpty()) {
+                includedContexts = new ArrayList<>(1);
+            }
+            Verify.verify(value instanceof RootStatementContext);
+            includedContexts.add((RootStatementContext<?, ?, ?>) value);
         }
         super.addToLocalStorage(type, key, value);
     }
