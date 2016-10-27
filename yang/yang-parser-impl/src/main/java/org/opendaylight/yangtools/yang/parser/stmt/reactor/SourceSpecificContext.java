@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -28,7 +29,6 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ImportedNamespaceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -37,9 +37,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Namesp
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModuleMap;
@@ -88,7 +90,12 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     private final BuildGlobalContext currentContext;
     private final StatementStreamSource source;
 
-    private Collection<NamespaceStorageNode> importedNamespaces = ImmutableList.of();
+    /*
+     * "imported" namespaces in this source -- this points to RootStatementContexts of
+     * - modules imported via 'import' statement
+     * - parent module, declared via 'belongs-to' statement
+     */
+    private Collection<RootStatementContext<?, ?, ?>> importedNamespaces = ImmutableList.of();
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
     private ModelProcessingPhase inProgressPhase;
     private RootStatementContext<?, ?, ?> root;
@@ -182,12 +189,17 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(final Class<N> type, final K key,
            final V value) {
-        if (ImportedNamespaceContext.class.isAssignableFrom(type)) {
+
+        if (BelongsToModuleContext.class.isAssignableFrom(type) || ImportedModuleContext.class.isAssignableFrom(type)) {
             if (importedNamespaces.isEmpty()) {
                 importedNamespaces = new ArrayList<>(1);
             }
-            importedNamespaces.add((NamespaceStorageNode) value);
+
+            Verify.verify(value instanceof RootStatementContext);
+            importedNamespaces.add((RootStatementContext<?, ?, ?>) value);
         }
+
+        // RootStatementContext takes care of IncludedModuleContext and the rest...
         getRoot().addToLocalStorage(type, key, value);
     }
 
