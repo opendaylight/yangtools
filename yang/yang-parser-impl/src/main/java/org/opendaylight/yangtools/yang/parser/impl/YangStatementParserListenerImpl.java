@@ -59,35 +59,35 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
     @Override
     public void enterStatement(final StatementContext ctx) {
         final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, ctx
-                .getStart().getLine(), ctx.getStart().getCharPositionInLine());
-        final KeywordContext keywordCtx = Verify.verifyNotNull(ctx.getChild(KeywordContext.class, 0));
-        final ArgumentContext argumentCtx = ctx.getChild(ArgumentContext.class, 0);
-        final String keywordTxt = keywordCtx.getText();
-
+            .getStart().getLine(), ctx.getStart().getCharPositionInLine());
+        final String keywordTxt = Verify.verifyNotNull(ctx.getChild(KeywordContext.class, 0)).getText();
         final QName identifier = QName.create(YangConstants.RFC6020_YIN_MODULE, keywordTxt);
         final QName validStatementDefinition = Utils.getValidStatementDefinition(prefixes, stmtDef, identifier);
-        if (stmtDef != null && validStatementDefinition != null && toBeSkipped.isEmpty()) {
-            final String argument = argumentCtx != null ? Utils.stringFromStringContext(argumentCtx) : null;
-            // FIXME: Refactor/clean up this special case
-            if (identifier.equals(Rfc6020Mapping.TYPE.getStatementName())) {
-                Preconditions.checkArgument(argument != null);
-                if (TypeUtils.isYangTypeBodyStmtString(argument)) {
-                    writer.startStatement(QName.create(YangConstants.RFC6020_YIN_MODULE, argument), ref);
-                } else {
-                    writer.startStatement(QName.create(YangConstants.RFC6020_YIN_MODULE, Rfc6020Mapping
-                        .TYPE.getStatementName().getLocalName()), ref);
-                }
-                writer.argumentValue(argument, ref);
-            } else {
-                writer.startStatement(validStatementDefinition, ref);
-                if (argument != null) {
-                    writer.argumentValue(argument, ref);
-                }
-            }
-        } else {
-            Preconditions.checkArgument(writer.getPhase() != ModelProcessingPhase.FULL_DECLARATION,
-                    "%s is not a YANG statement or use of extension. Source: %s", identifier.getLocalName(), ref);
+
+        if (stmtDef == null || validStatementDefinition == null || !toBeSkipped.isEmpty()) {
+            SourceException.throwIf(writer.getPhase() == ModelProcessingPhase.FULL_DECLARATION, ref,
+                    "%s is not a YANG statement or use of extension.", keywordTxt);
             toBeSkipped.add(keywordTxt);
+            return;
+        }
+
+        final ArgumentContext argumentCtx = ctx.getChild(ArgumentContext.class, 0);
+        final String argument = argumentCtx != null ? Utils.stringFromStringContext(argumentCtx) : null;
+        // FIXME: Refactor/clean up this special case
+        if (identifier.equals(Rfc6020Mapping.TYPE.getStatementName())) {
+            Preconditions.checkArgument(argument != null);
+            if (TypeUtils.isYangTypeBodyStmtString(argument)) {
+                writer.startStatement(QName.create(YangConstants.RFC6020_YIN_MODULE, argument), ref);
+            } else {
+                writer.startStatement(QName.create(YangConstants.RFC6020_YIN_MODULE, Rfc6020Mapping
+                    .TYPE.getStatementName().getLocalName()), ref);
+            }
+            writer.argumentValue(argument, ref);
+        } else {
+            writer.startStatement(validStatementDefinition, ref);
+            if (argument != null) {
+                writer.argumentValue(argument, ref);
+            }
         }
     }
 

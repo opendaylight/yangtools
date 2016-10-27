@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -35,6 +36,8 @@ import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
@@ -389,8 +392,9 @@ public class TypesResolutionTest {
             final EffectiveSchemaContext result = reactor.buildEffective();
             fail("effective build should fail due to union in list; this is not allowed");
         } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
-            assertTrue(e.getMessage().startsWith("union is not a YANG statement or use of extension"));
+            assertEquals(SomeModifiersUnresolvedException.class, e.getClass());
+            assertTrue(e.getCause() instanceof SourceException);
+            assertTrue(e.getCause().getMessage().startsWith("union is not a YANG statement or use of extension"));
         }
     }
 
