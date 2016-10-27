@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a65312a_5e37c2b0",
+        "filename": "yang/yang-system-test/src/main/java/org/opendaylight/yangtools/yang/parser/system/test/Main.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-27T21:16:20Z",
+      "side": 1,
+      "message": "just after this, let us dump some information from java.lang.Runtime(): freeMemory()/totalMemory()/maxMemory().\n\nAfter that start a Stopwatch.",
+      "range": {
+        "startLine": 29,
+        "startChar": 8,
+        "endLine": 29,
+        "endChar": 37
+      },
+      "revId": "800dd65643f242db7aab01fa3bde6e054cae022f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_feba0e09",
+        "filename": "yang/yang-system-test/src/main/java/org/opendaylight/yangtools/yang/parser/system/test/Main.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-27T21:16:20Z",
+      "side": 1,
+      "message": "return;\n\nwill do just fine",
+      "range": {
+        "startLine": 34,
+        "startChar": 12,
+        "endLine": 34,
+        "endChar": 27
+      },
+      "revId": "800dd65643f242db7aab01fa3bde6e054cae022f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_9e415a0e",
+        "filename": "yang/yang-system-test/src/main/java/org/opendaylight/yangtools/yang/parser/system/test/Main.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-10-27T21:16:20Z",
+      "side": 1,
+      "message": "- stop the stopwatch\n- print elapsed time\n- print the memory information from Runtime\n- print this message\n- run Runtime.gc()\n- print memory information",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 36,
+        "endChar": 69
+      },
+      "revId": "800dd65643f242db7aab01fa3bde6e054cae022f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
