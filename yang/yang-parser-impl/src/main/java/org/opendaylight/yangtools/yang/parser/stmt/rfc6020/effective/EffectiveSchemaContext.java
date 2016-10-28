@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -18,6 +17,7 @@ import java.net.URI;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
+import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 
 public final class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
@@ -63,7 +63,8 @@ public final class EffectiveSchemaContext extends AbstractEffectiveSchemaContext
         for (Module m : modulesInit) {
             nameMap.put(m.getName(), m);
             nsMap.put(m.getNamespace(), m);
-            modIdBuilder.add(new ModuleIdentifierImpl(m.getName(), Optional.of(m.getNamespace()), Optional.of(m.getRevision())));
+            modIdBuilder.add(ModuleIdentifierImpl.create(m.getName(), Optional.of(m.getNamespace()),
+                Optional.of(m.getRevision())));
             resolveSubmoduleIdentifiers(m.getSubmodules(), modIdBuilder);
         }
 
@@ -97,7 +98,8 @@ public final class EffectiveSchemaContext extends AbstractEffectiveSchemaContext
         for (Module m : modules) {
             nameMap.put(m.getName(), m);
             nsMap.put(m.getNamespace(), m);
-            modIdBuilder.add(new ModuleIdentifierImpl(m.getName(), Optional.of(m.getNamespace()), Optional.of(m.getRevision())));
+            modIdBuilder.add(ModuleIdentifierImpl.create(m.getName(), Optional.of(m.getNamespace()),
+                Optional.of(m.getRevision())));
             resolveSubmoduleIdentifiers(m.getSubmodules(), modIdBuilder);
         }
 
@@ -113,10 +115,10 @@ public final class EffectiveSchemaContext extends AbstractEffectiveSchemaContext
        return new EffectiveSchemaContext(modules);
     }
 
-    private void resolveSubmoduleIdentifiers(final Set<Module> submodules, Set<ModuleIdentifier> modIdBuilder) {
+    private static void resolveSubmoduleIdentifiers(final Set<Module> submodules, final Set<ModuleIdentifier> modIdBuilder) {
         for (Module submodule : submodules) {
-            modIdBuilder.add(new ModuleIdentifierImpl(submodule.getName(), Optional.of(
-                    submodule.getNamespace()), Optional.of(submodule.getRevision())));
+            modIdBuilder.add(ModuleIdentifierImpl.create(submodule.getName(),
+                Optional.of(submodule.getNamespace()), Optional.of(submodule.getRevision())));
         }
     }
 
