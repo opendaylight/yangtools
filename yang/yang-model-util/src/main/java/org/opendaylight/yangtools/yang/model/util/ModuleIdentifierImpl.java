@@ -5,14 +5,15 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.builder.impl;
+package org.opendaylight.yangtools.yang.model.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.base.Optional;
+import com.google.common.annotations.Beta;
 import java.net.URI;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -22,24 +23,28 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
  * ModuleIdentifier that can be used for indexing/searching by name.
  * Name is only non-null attribute.
  * Equality check on namespace and revision is only triggered if they are non-null
- *
  */
-
-// FIXME: This class is used widely by yang statement parser. This class should be moved to one of yang statement
-// parser packages after removal of deprecated pre-beryllium implementation.
-public class ModuleIdentifierImpl implements ModuleIdentifier {
+@Beta
+public final class ModuleIdentifierImpl implements ModuleIdentifier {
     private final QNameModule qnameModule;
     private final String name;
     private final SemVer semVer;
 
-    public ModuleIdentifierImpl(final String name, final Optional<URI> namespace, final Optional<Date> revision) {
-        this(name, namespace, revision, Module.DEFAULT_SEMANTIC_VERSION);
+    private ModuleIdentifierImpl(final String name, final Optional<URI> namespace, final Optional<Date> revision,
+            final SemVer semVer) {
+        this.name = checkNotNull(name);
+        this.qnameModule = QNameModule.create(namespace.orElse(null), revision.orElse(null));
+        this.semVer = (semVer == null ? Module.DEFAULT_SEMANTIC_VERSION : semVer);
     }
 
-    public ModuleIdentifierImpl(final String name, final Optional<URI> namespace, final Optional<Date> revision, final SemVer semVer) {
-        this.name = checkNotNull(name);
-        this.qnameModule = QNameModule.create(namespace.orNull(), revision.orNull());
-        this.semVer = (semVer == null ? Module.DEFAULT_SEMANTIC_VERSION : semVer);
+    public static ModuleIdentifier create(final String name, final Optional<URI> namespace,
+            final Optional<Date> revision) {
+        return create(name, namespace, revision, Module.DEFAULT_SEMANTIC_VERSION);
+    }
+
+    public static ModuleIdentifier create(final String name, final Optional<URI> namespace,
+            final Optional<Date> revision, final SemVer semVer) {
+        return new ModuleIdentifierImpl(name, namespace, revision, semVer);
     }
 
     @Override

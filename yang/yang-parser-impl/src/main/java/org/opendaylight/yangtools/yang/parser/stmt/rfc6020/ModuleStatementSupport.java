@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
-import com.google.common.base.Optional;
 import java.net.URI;
 import java.util.Date;
 import java.util.NavigableMap;
+import java.util.Optional;
 import java.util.TreeMap;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
+import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
@@ -117,13 +117,12 @@ public class ModuleStatementSupport extends
 
         stmt.addContext(PreLinkageModuleNamespace.class, moduleName, stmt);
 
-        Optional<Date> revisionDate = Optional.fromNullable(Utils.getLatestRevision(stmt.declaredSubstatements
-                ()));
+        Optional<Date> revisionDate = Optional.ofNullable(Utils.getLatestRevision(stmt.declaredSubstatements()));
         if (!revisionDate.isPresent()) {
             revisionDate = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
         }
 
-        QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate.orNull()).intern();
+        QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate.orElse(null)).intern();
 
         stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule);
     };
@@ -131,19 +130,19 @@ public class ModuleStatementSupport extends
     @Override
     public void onLinkageDeclared(final Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt) {
 
-        Optional<URI> moduleNs = Optional.fromNullable(firstAttributeOf(stmt.declaredSubstatements(),
+        Optional<URI> moduleNs = Optional.ofNullable(firstAttributeOf(stmt.declaredSubstatements(),
                 NamespaceStatement.class));
         SourceException.throwIf(!moduleNs.isPresent(), stmt.getStatementSourceReference(),
             "Namespace of the module [%s] is missing", stmt.getStatementArgument());
 
-        Optional<Date> revisionDate = Optional.fromNullable(Utils.getLatestRevision(stmt.declaredSubstatements()));
+        Optional<Date> revisionDate = Optional.ofNullable(Utils.getLatestRevision(stmt.declaredSubstatements()));
         if (!revisionDate.isPresent()) {
             revisionDate = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
         }
 
-        QNameModule qNameModule = QNameModule.create(moduleNs.get(), revisionDate.orNull()).intern();
-        ModuleIdentifier moduleIdentifier = new ModuleIdentifierImpl(stmt.getStatementArgument(),
-                Optional.absent(), revisionDate);
+        QNameModule qNameModule = QNameModule.create(moduleNs.get(), revisionDate.orElse(null)).intern();
+        ModuleIdentifier moduleIdentifier = ModuleIdentifierImpl.create(stmt.getStatementArgument(),
+                Optional.empty(), revisionDate);
 
         stmt.addContext(ModuleNamespace.class, moduleIdentifier, stmt);
         stmt.addContext(ModuleNamespaceForBelongsTo.class, moduleIdentifier.getName(), stmt);
@@ -166,7 +165,7 @@ public class ModuleStatementSupport extends
         }
     }
 
-    private void addToSemVerModuleNamespace(
+    private static void addToSemVerModuleNamespace(
             final Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt) {
         final String moduleName = stmt.getStatementArgument();
         NavigableMap<SemVer, StmtContext<?, ?, ?>> modulesMap = stmt.getFromNamespace(

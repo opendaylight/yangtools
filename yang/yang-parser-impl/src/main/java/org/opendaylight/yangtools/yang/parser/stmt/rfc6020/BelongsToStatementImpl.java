@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import com.google.common.base.Optional;
 import java.util.Collection;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
+import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -98,7 +98,7 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
         private static ModuleIdentifier getModuleIdentifier(
                 final StmtContext.Mutable<String, BelongsToStatement, EffectiveStatement<String, BelongsToStatement>> belongsToCtx) {
             String moduleName = belongsToCtx.getStatementArgument();
-            return new ModuleIdentifierImpl(moduleName, Optional.absent(),
+            return ModuleIdentifierImpl.create(moduleName, Optional.empty(),
                 Optional.of(SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE));
         }
 
