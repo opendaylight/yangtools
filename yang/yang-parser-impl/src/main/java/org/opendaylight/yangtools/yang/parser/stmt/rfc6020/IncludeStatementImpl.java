@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
-import com.google.common.base.Optional;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
+import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
@@ -104,7 +104,7 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
                 revisionDate = SimpleDateFormatUtil.DEFAULT_DATE_IMP;
             }
 
-            return new ModuleIdentifierImpl(subModuleName, Optional.absent(), Optional.of(revisionDate));
+            return ModuleIdentifierImpl.create(subModuleName, Optional.empty(), Optional.of(revisionDate));
         }
 
         @Override

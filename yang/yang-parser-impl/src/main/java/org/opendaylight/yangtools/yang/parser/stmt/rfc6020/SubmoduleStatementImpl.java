@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
-import com.google.common.base.Optional;
 import java.util.Date;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
+import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -92,12 +92,11 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
         @Override
         public void onLinkageDeclared(
                 final Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> stmt) {
+            final Date maybeDate = Utils.getLatestRevision(stmt.declaredSubstatements());
+            final Optional<Date> revisionDate = maybeDate == null ? Optional.of(maybeDate) : DEFAULT_REVISION;
 
-            final Optional<Date> revisionDate = Optional.fromNullable(
-                Utils.getLatestRevision(stmt.declaredSubstatements())).or(DEFAULT_REVISION);
-
-            ModuleIdentifier submoduleIdentifier = new ModuleIdentifierImpl(stmt.getStatementArgument(),
-                Optional.absent(), revisionDate);
+            ModuleIdentifier submoduleIdentifier = ModuleIdentifierImpl.create(stmt.getStatementArgument(),
+                Optional.empty(), revisionDate);
 
             stmt.addContext(SubmoduleNamespace.class, submoduleIdentifier, stmt);
 
