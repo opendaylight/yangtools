@@ -8,124 +8,104 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
+import com.google.common.collect.ForwardingObject;
+import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
+import com.google.common.io.Files;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import org.opendaylight.yangtools.yang.parser.impl.YinStatementParserImpl;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.YinDomSchemaSource;
+import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YinStatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YinTextToDomTransformer;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
-import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * This class represents implementation of StatementStreamSource
  * in order to emit YIN statements using supplied StatementWriter
  *
+ * @deprecated Scheduled for removal. Use {@link YinStatementStreamSource} instead.
  */
-public class YinStatementSourceImpl implements StatementStreamSource {
+@Deprecated
+public final class YinStatementSourceImpl extends ForwardingObject implements StatementStreamSource {
+    private final StatementStreamSource delegate;
 
-    private static final Logger LOG = LoggerFactory.getLogger(YinStatementSourceImpl.class);
-    private static XMLInputFactory xmlInputFactory = XMLInputFactory.newFactory();
+    private YinStatementSourceImpl(final YinDomSchemaSource source) {
+        this.delegate = YinStatementStreamSource.create(source);
+    }
 
-    private YinStatementParserImpl yinStatementModelParser;
-    private XMLStreamReader streamReader;
-    private InputStream inputStream;
-    private String fileName;
-    private boolean isAbsolute;
+    @Override
+    public StatementStreamSource delegate() {
+        return delegate;
+    }
 
-    // FIXME IO exception: input stream closed when called from StmtTestUtils parserseYinSources method
     public YinStatementSourceImpl(final InputStream inputStream) {
-        yinStatementModelParser = new YinStatementParserImpl(inputStream.toString());
-        this.inputStream = new BufferedInputStream(inputStream);
-        this.inputStream.mark(Integer.MAX_VALUE);
+        this(newStreamSource(inputStream));
+    }
+
+    private static YinDomSchemaSource newStreamSource(final InputStream inputStream) {
+        final SourceIdentifier id = YinTextSchemaSource.identifierFromFilename(inputStream.toString());
+
+        try {
+            final YinTextSchemaSource text = YinTextSchemaSource.delegateForByteSource(id,
+                ByteSource.wrap(ByteStreams.toByteArray(inputStream)));
+            return YinTextToDomTransformer.TRANSFORMATION.apply(text).get();
+        } catch (Exception e) {
+            throw Throwables.propagate(e);
+        }
+    }
+
+    private static YinDomSchemaSource newStreamSource(final String fileName, final boolean isAbsolute) {
+        try {
+            final File file;
+            if (isAbsolute) {
+                file = new File(fileName);
+            } else {
+                file = new File(YinStatementSourceImpl.class.getResource(fileName).toURI());
+            }
+
+            final YinTextSchemaSource text = YinTextSchemaSource.delegateForByteSource(
+                YinTextSchemaSource.identifierFromFilename(fileName), Files.asByteSource(file));
+
+            return YinTextToDomTransformer.TRANSFORMATION.apply(text).get();
+        } catch (Exception e) {
+            throw Throwables.propagate(e);
+        }
     }
 
     public YinStatementSourceImpl(final String fileName, final boolean isAbsolute) {
-        yinStatementModelParser = new YinStatementParserImpl(fileName);
-        this.fileName = Preconditions.checkNotNull(fileName);
-        this.isAbsolute = isAbsolute;
+        this(newStreamSource(fileName, isAbsolute));
     }
 
     @Override
-    public void writePreLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef) {
-        initializeReader();
-        yinStatementModelParser.setAttributes(writer, stmtDef);
-        yinStatementModelParser.walk(streamReader);
+    public void writePreLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
+        delegate.writePreLinkage(writer, stmtDef);
     }
 
     @Override
-    public void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef, final PrefixToModule preLinkagePrefixes) {
-        initializeReader();
-        yinStatementModelParser.setAttributes(writer, stmtDef, preLinkagePrefixes);
-        yinStatementModelParser.walk(streamReader);
+    public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+            final PrefixToModule preLinkagePrefixes) {
+        delegate.writeLinkage(writer, stmtDef, preLinkagePrefixes);
+
     }
 
     @Override
-    public void writeLinkageAndStatementDefinitions(StatementWriter writer, QNameToStatementDefinition stmtDef,
-            PrefixToModule prefixes) {
-        initializeReader();
-        yinStatementModelParser.setAttributes(writer, stmtDef, prefixes);
-        yinStatementModelParser.walk(streamReader);
+    public void writeLinkageAndStatementDefinitions(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+            final PrefixToModule prefixes) {
+        delegate.writeLinkageAndStatementDefinitions(writer, stmtDef, prefixes);
     }
 
     @Override
-    public void writeFull(StatementWriter writer, QNameToStatementDefinition stmtDef, PrefixToModule prefixes) {
-        initializeReader();
-        yinStatementModelParser.setAttributes(writer, stmtDef, prefixes);
-        yinStatementModelParser.walk(streamReader);
-        closeReader();
+    public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+            final PrefixToModule prefixes) {
+        delegate().writeFull(writer, stmtDef, prefixes);
     }
 
-    private void initializeReader() {
-        try {
-            if (fileName != null) {
-                inputStream = loadFile(fileName, isAbsolute);
-                streamReader = xmlInputFactory.createXMLStreamReader(inputStream);
-            } else {
-                inputStream.reset();
-                streamReader = xmlInputFactory.createXMLStreamReader(new ByteArrayInputStream(ByteStreams.toByteArray
-                        (inputStream)));
-            }
-        } catch (XMLStreamException e) {
-            LOG.warn("Error while creating XMLStreamReader from input stream", e);
-        } catch (URISyntaxException e) {
-            LOG.warn("File name {} cannot be parsed as URI reference", fileName, e);
-        } catch (IOException e) {
-            LOG.warn("File {} cannot be found or read into string ", fileName, e);
-        }
-    }
 
-    private void closeReader() {
-        try {
-            inputStream.close();
-            streamReader.close();
-        } catch (XMLStreamException e) {
-            LOG.warn("Error occured while freeing associated resources", e);
-        } catch (IOException e) {
-            LOG.warn("I/O error occured during closing the input stream", e);
-        }
-    }
-
-    private InputStream loadFile(final String fileName, boolean isAbsolute) throws URISyntaxException, IOException {
-        final File file;
-        if (isAbsolute) {
-            file = new File(fileName);
-        } else {
-            file = new File(getClass().getResource(fileName).toURI());
-        }
-
-        return new NamedFileInputStream(file, fileName);
-    }
 }
