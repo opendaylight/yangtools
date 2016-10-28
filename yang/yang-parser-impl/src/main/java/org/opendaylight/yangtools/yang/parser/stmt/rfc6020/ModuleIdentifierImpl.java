@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.builder.impl;
+package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -22,12 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
  * ModuleIdentifier that can be used for indexing/searching by name.
  * Name is only non-null attribute.
  * Equality check on namespace and revision is only triggered if they are non-null
- *
  */
-
-// FIXME: This class is used widely by yang statement parser. This class should be moved to one of yang statement
-// parser packages after removal of deprecated pre-beryllium implementation.
-public class ModuleIdentifierImpl implements ModuleIdentifier {
+public final class ModuleIdentifierImpl implements ModuleIdentifier {
     private final QNameModule qnameModule;
     private final String name;
     private final SemVer semVer;
