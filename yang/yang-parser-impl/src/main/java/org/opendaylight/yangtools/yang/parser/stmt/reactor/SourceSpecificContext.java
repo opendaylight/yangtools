@@ -197,10 +197,10 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
             Verify.verify(value instanceof RootStatementContext);
             importedNamespaces.add((RootStatementContext<?, ?, ?>) value);
+        } else {
+            // RootStatementContext takes care of IncludedModuleContext and the rest...
+            getRoot().addToLocalStorage(type, key, value);
         }
-
-        // RootStatementContext takes care of IncludedModuleContext and the rest...
-        getRoot().addToLocalStorage(type, key, value);
     }
 
     @Override
@@ -227,19 +227,13 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     @Nullable
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromLocalStorage(final Class<N> type) {
+        // This relies on the fact that our storage and root's storage are distinct
         final Map<K, V> potentialLocal = getRoot().getAllFromLocalStorage(type);
         if (potentialLocal != null) {
             return potentialLocal;
         }
 
-        for (final NamespaceStorageNode importedSource : importedNamespaces) {
-            final Map<K, V> potential = importedSource.getAllFromLocalStorage(type);
-
-            if (potential != null) {
-                return potential;
-            }
-        }
-        return null;
+        return RootStatementContext.getFromAll(importedNamespaces, type);
     }
 
     @Override

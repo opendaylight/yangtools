@@ -13,6 +13,8 @@ import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -181,8 +183,33 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
             }
             Verify.verify(value instanceof RootStatementContext);
             includedContexts.add((RootStatementContext<?, ?, ?>) value);
+        } else {
+            // All other types
+            super.addToLocalStorage(type, key, value);
         }
-        super.addToLocalStorage(type, key, value);
+    }
+
+    static <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getFromAll(
+            final Collection<? extends NamespaceStorageNode> nodes, final Class<N> type) {
+        final List<Map<K, V>> results = new ArrayList<>(nodes.size());
+        for (final NamespaceStorageNode node : nodes) {
+            final Map<K, V> potential = node.getAllFromLocalStorage(type);
+            if (potential != null) {
+                results.add(potential);
+            }
+        }
+        switch (results.size()) {
+            case 0:
+                return null;
+            case 1:
+                return results.get(0);
+            default:
+                final Map<K, V> ret = new HashMap<>();
+                for (Map<K, V> r : results) {
+                    ret.putAll(r);
+                }
+                return ret;
+        }
     }
 
     @Override
@@ -207,12 +234,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
         if (potentialLocal != null) {
             return potentialLocal;
         }
-        for (final NamespaceStorageNode includedSource : includedContexts) {
-            final Map<K, V> potential = includedSource.getAllFromLocalStorage(type);
-            if (potential != null) {
-                return potential;
-            }
-        }
-        return null;
+
+        return getFromAll(includedContexts, type);
     }
 }
