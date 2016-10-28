@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -22,7 +23,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 abstract class NamespaceStorageSupport implements NamespaceStorageNode {
 
-    private Map<Class<?>, Map<?,?>> namespaces = new HashMap<>();
+    private Map<Class<?>, Map<?,?>> namespaces = ImmutableMap.of();
 
     @Override
     public abstract NamespaceStorageNode getParentNamespaceStorage();
