@@ -11,10 +11,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import org.opendaylight.yangtools.util.concurrent.ExceptionMapper;
 import org.opendaylight.yangtools.util.concurrent.ReflectiveExceptionMapper;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
@@ -30,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D extends SchemaSourceRepresentation> implements SchemaSourceListener, SchemaSourceProvider<D> {
     private static final ExceptionMapper<SchemaSourceException> MAPPER = ReflectiveExceptionMapper.create("Source transformation", SchemaSourceException.class);
 
+    @FunctionalInterface
     public interface Transformation<S extends SchemaSourceRepresentation, D extends SchemaSourceRepresentation> extends AsyncFunction<S, D> {
         @Override
         CheckedFuture<D, SchemaSourceException> apply(final S input) throws Exception;
