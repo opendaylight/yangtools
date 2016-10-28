@@ -11,7 +11,6 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPha
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_PRE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Verify;
 import java.net.URI;
 import java.util.Collection;
@@ -19,6 +18,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
+import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
+import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
@@ -207,8 +207,7 @@ public class ImportStatementDefinition extends
                 revision = SimpleDateFormatUtil.DEFAULT_DATE_IMP;
             }
 
-            return new ModuleIdentifierImpl(stmt.getStatementArgument(), Optional.absent(),
-                    Optional.of(revision));
+            return ModuleIdentifierImpl.create(stmt.getStatementArgument(), Optional.empty(), Optional.of(revision));
         }
     }
 
@@ -292,14 +291,15 @@ public class ImportStatementDefinition extends
         }
 
         private static ModuleIdentifier getImportedModuleIdentifier(final Mutable<String, ImportStatement, ?> impStmt) {
-            return new ModuleIdentifierImpl(impStmt.getStatementArgument(), Optional.absent(),
+            return ModuleIdentifierImpl.create(impStmt.getStatementArgument(), Optional.empty(),
                     Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_IMP));
         }
 
         private static ModuleIdentifier createSemVerModuleIdentifier(final ModuleIdentifier importedModuleIdentifier,
                 final SemVer semVer) {
-            return new ModuleIdentifierImpl(importedModuleIdentifier.getName(), Optional.fromNullable(importedModuleIdentifier
-                    .getNamespace()), Optional.of(importedModuleIdentifier.getRevision()), semVer);
+            return ModuleIdentifierImpl.create(importedModuleIdentifier.getName(),
+                Optional.ofNullable(importedModuleIdentifier.getNamespace()),
+                Optional.of(importedModuleIdentifier.getRevision()), semVer);
         }
     }
 }
