@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.api;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -30,9 +29,15 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
     }
 
     public static SourceIdentifier identifierFromFilename(final String name) {
-        checkArgument(name.endsWith(".yin"), "Filename %s does not have a .yin extension", name);
+        final String baseName;
+        if (name.endsWith(".xml") || name.endsWith(".yin")) {
+            baseName = name.substring(0, name.length() - 4);
+        } else {
+            throw new IllegalArgumentException("Filename " + name + " does not have a .yin or .xml extension");
+        }
+
         // FIXME: add revision-awareness
-        return SourceIdentifier.create(name.substring(0, name.length() - 4), Optional.absent());
+        return SourceIdentifier.create(baseName, Optional.absent());
     }
 
     /**
