@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.repo.api;
 
 import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -16,7 +17,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map.Entry;
 import org.opendaylight.yangtools.concepts.Delegator;
+import org.opendaylight.yangtools.yang.common.YangNames;
 
 /**
  * YANG text schema source representation. Exposes an RFC6020 text representation
@@ -32,8 +35,10 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
 
     public static SourceIdentifier identifierFromFilename(final String name) {
         checkArgument(name.endsWith(".yang"), "Filename %s does not have a .yang extension", name);
-        // FIXME: add revision-awareness
-        return SourceIdentifier.create(name.substring(0, name.length() - 5), Optional.absent());
+
+        final String baseName = name.substring(0, name.length() - 5);
+        final Entry<String, String> parsed = YangNames.parseFilename(baseName);
+        return RevisionSourceIdentifier.create(parsed.getKey(), Optional.fromNullable(parsed.getValue()));
     }
 
     /**

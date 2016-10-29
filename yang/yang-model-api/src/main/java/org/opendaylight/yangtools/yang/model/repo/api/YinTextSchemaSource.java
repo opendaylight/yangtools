@@ -15,7 +15,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map.Entry;
 import org.opendaylight.yangtools.concepts.Delegator;
+import org.opendaylight.yangtools.yang.common.YangNames;
 
 /**
  * YIN text schema source representation. Exposes an RFC6020 XML representation as an {@link InputStream}.
@@ -36,8 +38,8 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
             throw new IllegalArgumentException("Filename " + name + " does not have a .yin or .xml extension");
         }
 
-        // FIXME: add revision-awareness
-        return SourceIdentifier.create(baseName, Optional.absent());
+        final Entry<String, String> parsed = YangNames.parseFilename(baseName);
+        return RevisionSourceIdentifier.create(parsed.getKey(), Optional.fromNullable(parsed.getValue()));
     }
 
     /**
