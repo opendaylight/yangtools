@@ -14,19 +14,50 @@ import java.net.URI;
  */
 public final class YangConstants {
     /**
-     * YANG namespace, as defined in RFC 6020.
+     * YANG File Extension, as defined in https://tools.ietf.org/html/rfc6020#section-14.1.
      */
-    public static final URI RFC6020_YANG_NAMESPACE = URI.create("urn:ietf:params:xml:ns:yang:1");
+    public static final String RFC6020_YANG_FILE_EXTENSION = ".yang";
 
     /**
-     * YIN namespace, as defined in RFC 6020.
+     * YANG Media Type, as defined in https://tools.ietf.org/html/rfc6020#section-14.1.
      */
-    public static final URI RFC6020_YIN_NAMESPACE = URI.create("urn:ietf:params:xml:ns:yang:yin:1");
+    public static final String RFC6020_YANG_MAC_FILE_TYPE = "TEXT";
+
+
+    /**
+     * YANG Media Type, as defined in https://tools.ietf.org/html/rfc6020#section-14.1.
+     */
+    public static final String RFC6020_YANG_MEDIA_TYPE = "application/yang";
+
+    /**
+     * YANG namespace, as defined in https://tools.ietf.org/html/rfc6020#section-14.
+     */
+    public static final URI RFC6020_YANG_NAMESPACE = URI.create("urn:ietf:params:xml:ns:yang:1");
 
     /**
      * Base QNameModule for all YANG statements.
      */
     public static final QNameModule RFC6020_YANG_MODULE = QNameModule.create(RFC6020_YANG_NAMESPACE, null).intern();
+
+    /**
+     * YIN File Extension, as defined in https://tools.ietf.org/html/rfc6020#section-14.2.
+     */
+    public static final String RFC6020_YIN_FILE_EXTENSION = ".yin";
+
+    /**
+     * YANG Media Type, as defined in https://tools.ietf.org/html/rfc6020#section-14.1.
+     */
+    public static final String RFC6020_MAC_FILE_TYPE = "TEXT";
+
+    /**
+     * YANG Media Type, as defined in https://tools.ietf.org/html/rfc6020#section-14.1.
+     */
+    public static final String RFC6020_YIN_MEDIA_TYPE = "application/xml+yin";
+
+    /**
+     * YIN namespace, as defined in https://tools.ietf.org/html/rfc6020#section-14.
+     */
+    public static final URI RFC6020_YIN_NAMESPACE = URI.create("urn:ietf:params:xml:ns:yang:yin:1");
 
     /**
      * Base QNameModule for all YIN statements.
@@ -36,5 +67,4 @@ public final class YangConstants {
     private YangConstants() {
         throw new UnsupportedOperationException("Utility class");
     }
-
 }
