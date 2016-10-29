@@ -7,8 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.api;
 
+import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YIN_MODULE;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.MODULE;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.REVISION;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.SUBMODULE;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 import javax.xml.transform.Source;
@@ -16,12 +22,22 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Utility {@link YinXmlSchemaSource} exposing a W3C {@link DOMSource} representation of YIN model.
  */
 public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
+    private static final Logger LOG = LoggerFactory.getLogger(YinDomSchemaSource.class);
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
+    private static final QName REVISION_STMT = REVISION.getStatementName();
 
     YinDomSchemaSource() {
         // Prevent outside instantiation
@@ -34,28 +50,50 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
      * @param source W3C DOM source
      * @return A new {@link YinDomSchemaSource} instance.
      */
-    @Nonnull public static YinDomSchemaSource create(@Nonnull final SourceIdentifier identifier, @Nonnull final DOMSource source) {
-        return new Simple(identifier, source);
-    }
+    public static @Nonnull YinDomSchemaSource create(@Nonnull final SourceIdentifier identifier,
+            final @Nonnull DOMSource source) {
 
-    private static YinDomSchemaSource castSchemaSource(final YinXmlSchemaSource xmlSchemaSource) {
-        if (xmlSchemaSource instanceof YinDomSchemaSource) {
-            return (YinDomSchemaSource) xmlSchemaSource;
+        final Node root = source.getNode().getFirstChild();
+        final String rootNs = root.getNamespaceURI();
+        if (rootNs == null) {
+            // Let whoever is using this deal with this
+            return new Simple(identifier, source);
         }
 
-        final Source source = xmlSchemaSource.getSource();
-        if (source instanceof DOMSource) {
-            return create(xmlSchemaSource.getIdentifier(), (DOMSource) source);
+        final QName qname = QName.create(rootNs, root.getLocalName());
+        Preconditions.checkArgument(RFC6020_YIN_MODULE.equals(qname.getModule()),
+            "Root node namepsace %s does not match %s", rootNs, YangConstants.RFC6020_YIN_NAMESPACE);
+        Preconditions.checkArgument(MODULE.getStatementName().equals(qname) ||
+            SUBMODULE.getStatementName().equals(qname), "Root element %s is not a module nor a submodule", qname);
+
+        Preconditions.checkArgument(root instanceof Element, "Root node %s is not an element", root);
+        final Element element = (Element)root;
+
+        final Attr nameAttr = element.getAttributeNode(MODULE.getArgumentName().getLocalName());
+        Preconditions.checkArgument(nameAttr != null, "No %s name argument found in %s", element.getLocalName());
+
+        final NodeList revisions = element.getElementsByTagNameNS(REVISION_STMT.getNamespace().toString(),
+            REVISION_STMT.getLocalName());
+        if (revisions.getLength() == 0) {
+            // FIXME: is module name important (as that may have changed)
+            return new Simple(identifier, source);
         }
 
-        return null;
-    }
+        final Element revisionStmt = (Element) revisions.item(0);
+        final Attr dateAttr = revisionStmt.getAttributeNode(REVISION.getArgumentName().getLocalName());
+        Preconditions.checkArgument(dateAttr != null, "No revision statement argument found in %s", revisionStmt);
 
-    static DOMSource transformSource(final Source source) throws TransformerException {
-        final DOMResult result = new DOMResult();
-        TRANSFORMER_FACTORY.newTransformer().transform(source, result);
+        final SourceIdentifier parsedId = RevisionSourceIdentifier.create(nameAttr.getValue(),
+            Optional.of(dateAttr.getValue()));
+        final SourceIdentifier id;
+        if (!parsedId.equals(identifier)) {
+            LOG.debug("Changed identifier from {} to {}", identifier, parsedId);
+            id = parsedId;
+        } else {
+            id = identifier;
+        }
 
-        return new DOMSource(result.getNode(), result.getSystemId());
+        return new Simple(id, source);
     }
 
     /**
@@ -86,12 +124,12 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
     }
 
     @Override
+    @Nonnull public abstract DOMSource getSource();
+
+    @Override
     public final Class<? extends YinXmlSchemaSource> getType() {
         return YinDomSchemaSource.class;
     }
-
-    @Override
-    @Nonnull public abstract DOMSource getSource();
 
     @Override
     public final String toString() {
@@ -108,6 +146,26 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
      * @return ToStringHelper supplied as input argument.
      */
     protected abstract ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper);
+
+    static DOMSource transformSource(final Source source) throws TransformerException {
+        final DOMResult result = new DOMResult();
+        TRANSFORMER_FACTORY.newTransformer().transform(source, result);
+
+        return new DOMSource(result.getNode(), result.getSystemId());
+    }
+
+    private static YinDomSchemaSource castSchemaSource(final YinXmlSchemaSource xmlSchemaSource) {
+        if (xmlSchemaSource instanceof YinDomSchemaSource) {
+            return (YinDomSchemaSource) xmlSchemaSource;
+        }
+
+        final Source source = xmlSchemaSource.getSource();
+        if (source instanceof DOMSource) {
+            return create(xmlSchemaSource.getIdentifier(), (DOMSource) source);
+        }
+
+        return null;
+    }
 
     private static final class Simple extends YinDomSchemaSource {
         private final SourceIdentifier identifier;
