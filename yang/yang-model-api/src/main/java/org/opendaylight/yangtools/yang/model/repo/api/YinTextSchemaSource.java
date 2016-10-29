@@ -16,13 +16,21 @@ import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map.Entry;
 import org.opendaylight.yangtools.concepts.Delegator;
+import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.common.YangNames;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * YIN text schema source representation. Exposes an RFC6020 XML representation as an {@link InputStream}.
  */
 @Beta
 public abstract class YinTextSchemaSource extends ByteSource implements YinSchemaSourceRepresentation {
+    private static final Logger LOG = LoggerFactory.getLogger(YinTextSchemaSource.class);
+    private static final String XML_EXTENSION = ".xml";
+
     private final SourceIdentifier identifier;
 
     protected YinTextSchemaSource(final SourceIdentifier identifier) {
@@ -30,9 +38,19 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
     }
 
     public static SourceIdentifier identifierFromFilename(final String name) {
-        checkArgument(name.endsWith(".yin"), "Filename %s does not have a .yin extension", name);
-        // FIXME: add revision-awareness
-        return SourceIdentifier.create(name.substring(0, name.length() - 4), Optional.absent());
+        final String baseName;
+        if (name.endsWith(YangConstants.RFC6020_YIN_FILE_EXTENSION)) {
+            baseName = name.substring(0, name.length() - YangConstants.RFC6020_YIN_FILE_EXTENSION.length());
+        } else if (name.endsWith(XML_EXTENSION)) {
+            // FIXME: BUG-7061: remove this once we do not need it
+            LOG.warn("XML file {} being loaded as YIN", name);
+            baseName = name.substring(0, name.length() - XML_EXTENSION.length());
+        } else {
+            throw new IllegalArgumentException("Filename " + name + " does not have a .yin or .xml extension");
+        }
+
+        final Entry<String, String> parsed = YangNames.parseFilename(baseName);
+        return RevisionSourceIdentifier.create(parsed.getKey(), Optional.fromNullable(parsed.getValue()));
     }
 
     /**
