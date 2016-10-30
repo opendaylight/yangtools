@@ -10,11 +10,17 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 final class StatementContextWriter implements StatementWriter {
+    private static final QName TYPE = Rfc6020Mapping.TYPE.getStatementName();
+
     private final ModelProcessingPhase phase;
     private final SourceSpecificContext ctx;
 
@@ -27,15 +33,26 @@ final class StatementContextWriter implements StatementWriter {
     }
 
     @Override
-    public void startStatement(final QName name, final StatementSourceReference ref) {
+    public void startStatement(final QName name, final String argument, final StatementSourceReference ref) {
         deferredCreate();
-        current = ctx.createDeclaredChild(parent, name, ref);
-    }
 
-    @Override
-    public void argumentValue(final String value, final StatementSourceReference ref) {
-        Preconditions.checkState(current != null, "Could not set two arguments for one statement: %s", ref);
-        current.setArgument(value, ref);
+        // FIXME: Refactor/clean up this special case
+        final QName hackName;
+        if (TYPE.equals(name)) {
+            SourceException.throwIfNull(argument, ref, "Type statement requires an argument");
+            if (TypeUtils.isYangTypeBodyStmtString(argument)) {
+                hackName = QName.create(YangConstants.RFC6020_YIN_MODULE, argument);
+            } else {
+                hackName = QName.create(YangConstants.RFC6020_YIN_MODULE, TYPE.getLocalName());
+            }
+        } else {
+            hackName = name;
+        }
+
+        current = ctx.createDeclaredChild(parent, hackName, ref);
+        if (argument != null) {
+            current.setArgument(argument, ref);
+        }
     }
 
     @Override

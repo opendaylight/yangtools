@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 
@@ -24,47 +25,21 @@ public interface StatementWriter {
      * correct.
      * </p>
      * <p>
-     * If statement requires an argument, user must call
-     * {@link #argumentValue(String, StatementSourceReference)} to emit
-     * argument, otherwise any subsequent call to this {@link StatementWriter}
-     * will throw {@link SourceException}.
-     * </p>
-     * <p>
      * If statement has substatements, in order to start substatement, call to
-     * {@link #startStatement(QName, StatementSourceReference)} needs to be done
+     * {@link #startStatement(QName, String, StatementSourceReference)} needs to be done
      * for substatement.
      *
      * @param name
      *            Fully qualified name of statement.
+     * @param argument
+     *            String representation of value as appeared in source, null if not present
      * @param ref
      *            Identifier of location in source, which will be used for
      *            reporting in case of statement processing error.
      * @throws SourceException
      *             if statement is not valid according to current context.
      */
-    void startStatement(@Nonnull QName name, @Nonnull StatementSourceReference ref) throws SourceException;
-
-    /**
-     *
-     * Emits an argument to current opened statement.
-     *
-     * <p>
-     * If statement has an argument, this must be called right after
-     * {@link #startStatement(QName, StatementSourceReference)} otherwise any
-     * subsequent call to this {@link StatementWriter} will throw
-     * {@link SourceException}.
-     *
-     *
-     *
-     * @param value
-     *            String representation of value as appeared in source
-     * @param ref
-     *            Identifier of location in source, which will be used for
-     *            reporting in case of statement processing error.
-     * @throws SourceException
-     *             if argument is not valid for current statement.
-     */
-    void argumentValue(@Nonnull String value,@Nonnull StatementSourceReference ref) throws SourceException;
+    void startStatement(@Nonnull QName name, @Nullable String argument, @Nonnull StatementSourceReference ref);
 
     /**
      * Ends current opened statement.
