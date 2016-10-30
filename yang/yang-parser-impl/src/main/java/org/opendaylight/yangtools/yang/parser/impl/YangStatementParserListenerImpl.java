@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,6 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.Statement
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParserBaseListener;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
@@ -26,7 +24,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinit
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,22 +70,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
 
         final ArgumentContext argumentCtx = ctx.getChild(ArgumentContext.class, 0);
         final String argument = argumentCtx != null ? Utils.stringFromStringContext(argumentCtx) : null;
-        // FIXME: Refactor/clean up this special case
-        if (identifier.equals(Rfc6020Mapping.TYPE.getStatementName())) {
-            Preconditions.checkArgument(argument != null);
-            if (TypeUtils.isYangTypeBodyStmtString(argument)) {
-                writer.startStatement(QName.create(YangConstants.RFC6020_YIN_MODULE, argument), ref);
-            } else {
-                writer.startStatement(QName.create(YangConstants.RFC6020_YIN_MODULE, Rfc6020Mapping
-                    .TYPE.getStatementName().getLocalName()), ref);
-            }
-            writer.argumentValue(argument, ref);
-        } else {
-            writer.startStatement(validStatementDefinition, ref);
-            if (argument != null) {
-                writer.argumentValue(argument, ref);
-            }
-        }
+        writer.startStatement(validStatementDefinition, argument, ref);
     }
 
     @Override

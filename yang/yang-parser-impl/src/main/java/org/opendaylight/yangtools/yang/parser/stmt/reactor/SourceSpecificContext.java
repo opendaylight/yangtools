@@ -25,7 +25,9 @@ import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
+import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -72,6 +74,25 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         FINISHED
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private final class RootContextBuilder extends ContextBuilder {
+        RootContextBuilder(final StatementDefinitionContext def, final StatementSourceReference sourceRef) {
+            super(def, sourceRef);
+        }
+
+        @Override
+        public StatementContextBase build() {
+            if (root == null) {
+                root = new RootStatementContext(this, SourceSpecificContext.this);
+            } else {
+                Preconditions.checkState(root.getIdentifier().equals(createIdentifier()),
+                    "Root statement was already defined as %s.", root.getIdentifier());
+            }
+            root.resetLists();
+            return root;
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(SourceSpecificContext.class);
     private static final Map<String, StatementSupport<?, ?, ?>> BUILTIN_TYPE_SUPPORTS =
             ImmutableMap.<String, StatementSupport<?, ?, ?>>builder()
@@ -83,6 +104,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             .put(TypeUtils.IDENTITY_REF, new IdentityRefSpecificationImpl.Definition())
             .put(TypeUtils.INSTANCE_IDENTIFIER, new InstanceIdentifierSpecificationImpl.Definition())
             .build();
+    private static final QName TYPE = Rfc6020Mapping.TYPE.getStatementName();
 
     private final Multimap<ModelProcessingPhase, ModifierImpl> modifiers = HashMultimap.create();
     private final QNameToStatementDefinitionMap qNameToStmtDefMap = new QNameToStatementDefinitionMap();
@@ -113,8 +135,18 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return inProgressPhase;
     }
 
-    ContextBuilder<?, ?, ?> createDeclaredChild(final StatementContextBase<?, ?, ?> current, final QName name,
-                                                final StatementSourceReference ref) {
+    ContextBuilder<?, ?, ?> createDeclaredChild(final StatementContextBase<?, ?, ?> current, QName name,
+                                                final String argument, final StatementSourceReference ref) {
+        // FIXME: BUG-7038: Refactor/clean up this special case
+        if (TYPE.equals(name)) {
+            SourceException.throwIfNull(argument, ref, "Type statement requires an argument");
+            if (TypeUtils.isYangTypeBodyStmtString(argument)) {
+                name = QName.create(YangConstants.RFC6020_YIN_MODULE, argument);
+            } else {
+                name = QName.create(YangConstants.RFC6020_YIN_MODULE, TYPE.getLocalName());
+            }
+        }
+
         StatementDefinitionContext<?, ?, ?> def = currentContext.getStatementDefinition(name);
 
         if (def == null) {
@@ -140,30 +172,18 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         }
 
         Preconditions.checkArgument(def != null, "Statement %s does not have type mapping defined.", name);
+        final ContextBuilder<?, ?, ?> ret;
         if (current == null) {
-            return createDeclaredRoot(def, ref);
+            ret = new RootContextBuilder(def, ref);
+        } else {
+            ret = current.substatementBuilder(def, ref);
         }
-        return current.substatementBuilder(def, ref);
-    }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private ContextBuilder<?, ?, ?> createDeclaredRoot(final StatementDefinitionContext<?, ?, ?> def,
-                                                       final StatementSourceReference ref) {
-        return new ContextBuilder(def, ref) {
+        if (argument != null) {
+            ret.setArgument(argument, ref);
+        }
 
-            @Override
-            public StatementContextBase build() {
-                if (root == null) {
-                    root = new RootStatementContext(this, SourceSpecificContext.this);
-                } else {
-                    Preconditions.checkState(root.getIdentifier().equals(createIdentifier()),
-                            "Root statement was already defined as %s.", root.getIdentifier());
-                }
-                root.resetLists();
-                return root;
-            }
-
-        };
+        return ret;
     }
 
     RootStatementContext<?, ?, ?> getRoot() {
