@@ -87,6 +87,7 @@ public class StatementDefinitionContext<A,D extends DeclaredStatement<A>,E exten
     }
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+        // FIXME: this should provide more details about support (think 'type uint8')
         return toStringHelper.add("statement", getStatementName());
     }
 }

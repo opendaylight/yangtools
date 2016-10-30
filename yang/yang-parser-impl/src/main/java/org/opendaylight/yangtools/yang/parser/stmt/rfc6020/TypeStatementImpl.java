@@ -7,8 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
+import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
+import java.util.Map;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -40,6 +43,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -79,87 +83,191 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
         super(context);
     }
 
-    public static class Definition
-            extends
-            AbstractStatementSupport<String, TypeStatement, EffectiveStatement<String, TypeStatement>> {
-
-        public Definition() {
+    private static abstract class AbstractDefinition extends
+        AbstractStatementSupport<String, TypeStatement, EffectiveStatement<String, TypeStatement>> {
+        AbstractDefinition() {
             super(Rfc6020Mapping.TYPE);
         }
 
         @Override
-        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        public final String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
+    }
+
+    public static class Definition extends AbstractDefinition {
 
         @Override
         public TypeStatement createDeclared(final StmtContext<String, TypeStatement, ?> ctx) {
-            return BuiltinTypeStatement.maybeReplace(new TypeStatementImpl(ctx));
+            return new TypeStatementImpl(ctx);
         }
 
         @Override
         public TypeEffectiveStatement<TypeStatement> createEffective(
                 final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
 
-            // First look up the proper base type
-            final TypeEffectiveStatement<TypeStatement> typeStmt;
-            switch (ctx.getStatementArgument()) {
-                case TypeUtils.BINARY:
-                    typeStmt = BuiltinEffectiveStatements.BINARY;
-                    break;
-                case TypeUtils.BOOLEAN:
-                    typeStmt = BuiltinEffectiveStatements.BOOLEAN;
-                    break;
-                case TypeUtils.EMPTY:
-                    typeStmt = BuiltinEffectiveStatements.EMPTY;
-                    break;
-                case TypeUtils.INSTANCE_IDENTIFIER:
-                    typeStmt = BuiltinEffectiveStatements.INSTANCE_IDENTIFIER;
-                    break;
-            case TypeUtils.INT8:
-                typeStmt = BuiltinEffectiveStatements.INT8;
-                break;
-            case TypeUtils.INT16:
-                typeStmt = BuiltinEffectiveStatements.INT16;
-                break;
-            case TypeUtils.INT32:
-                typeStmt = BuiltinEffectiveStatements.INT32;
-                break;
-            case TypeUtils.INT64:
-                typeStmt = BuiltinEffectiveStatements.INT64;
-                break;
-            case TypeUtils.STRING:
-                typeStmt = BuiltinEffectiveStatements.STRING;
-                break;
-            case TypeUtils.UINT8:
-                typeStmt = BuiltinEffectiveStatements.UINT8;
-                break;
-            case TypeUtils.UINT16:
-                typeStmt = BuiltinEffectiveStatements.UINT16;
-                break;
-            case TypeUtils.UINT32:
-                typeStmt = BuiltinEffectiveStatements.UINT32;
-                break;
-            case TypeUtils.UINT64:
-                typeStmt = BuiltinEffectiveStatements.UINT64;
-                break;
-            default:
-                final QName qname = Utils.qNameFromArgument(ctx, ctx.getStatementArgument());
-                final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> typedef =
-                        ctx.getFromNamespace(TypeNamespace.class, qname);
-                SourceException.throwIfNull(typedef, ctx.getStatementSourceReference(), "Type '%s' not found", qname);
+            final QName qname = Utils.qNameFromArgument(ctx, ctx.getStatementArgument());
+            final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> typedef =
+                    ctx.getFromNamespace(TypeNamespace.class, qname);
+            SourceException.throwIfNull(typedef, ctx.getStatementSourceReference(), "Type '%s' not found", qname);
 
-                final TypedefEffectiveStatement effectiveTypedef = typedef.buildEffective();
-                Verify.verify(effectiveTypedef instanceof TypeDefEffectiveStatementImpl);
-                typeStmt = ((TypeDefEffectiveStatementImpl) effectiveTypedef).asTypeEffectiveStatement();
-            }
+            final TypedefEffectiveStatement effectiveTypedef = typedef.buildEffective();
+            Verify.verify(effectiveTypedef instanceof TypeDefEffectiveStatementImpl);
+            final TypeEffectiveStatement<TypeStatement> typeStmt =
+                    ((TypeDefEffectiveStatementImpl) effectiveTypedef).asTypeEffectiveStatement();
 
             if (ctx.declaredSubstatements().isEmpty() && ctx.effectiveSubstatements().isEmpty()) {
                 return typeStmt;
             }
 
+            return createEffective(typeStmt.getTypeDefinition(), ctx);
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(
+                final Mutable<String, TypeStatement, EffectiveStatement<String, TypeStatement>> stmt){
+
+            final QName typeQName = Utils.qNameFromArgument(stmt, stmt.getStatementArgument());
+            final ModelActionBuilder typeAction = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
+            final Prerequisite<StmtContext<?, ?, ?>> typePrereq = typeAction.requiresCtx(stmt, TypeNamespace.class,
+                    typeQName, ModelProcessingPhase.EFFECTIVE_MODEL);
+            typeAction.mutatesEffectiveCtx(stmt.getParentContext());
+
+            /*
+             * If the type does not exist, throw new InferenceException.
+             * Otherwise perform no operation.
+             */
+            typeAction.apply(new InferenceAction() {
+                @Override
+                public void apply() {
+                    // FIXME: This is not correct: statements should be validated based on the target type -- the following
+                    //        is incorrent:
+                    //        typedef foo { type string; }
+                    //        typedef bar { type foo { fraction-digits 5; } }
+                    // typePrereq.get() should get us to the right validator
+
+                    SUBSTATEMENT_VALIDATOR.validate(stmt);
+                }
+
+                @Override
+                public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
+                    InferenceException.throwIf(failed.contains(typePrereq), stmt.getStatementSourceReference(),
+                        "Type [%s] was not found.", typeQName);
+                }
+            });
+        }
+
+        private static abstract class BuiltinDefinition extends AbstractDefinition {
+            final EffectiveStatement<String, TypeStatement> effective;
+            final TypeStatement declared;
+
+            BuiltinDefinition(final TypeStatement declared, final EffectiveStatement<String, TypeStatement> effective) {
+                this.declared = Preconditions.checkNotNull(declared);
+                this.effective = Preconditions.checkNotNull(effective);
+            }
+
+            @Override
+            public final TypeStatement createDeclared(final StmtContext<String, TypeStatement, ?> ctx) {
+                if (ctx.declaredSubstatements().isEmpty() && ctx.effectiveSubstatements().isEmpty()) {
+                    return declared;
+                }
+
+                return new TypeStatementImpl(ctx);
+            }
+            @Override
+            public EffectiveStatement<String, TypeStatement> createEffective(
+                    final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
+                if (ctx.declaredSubstatements().isEmpty() && ctx.effectiveSubstatements().isEmpty()) {
+                    return effective;
+                }
+
+                return effective(ctx);
+            }
+
+            abstract EffectiveStatement<String, TypeStatement> effective(
+                    StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx);
+        }
+
+        private static final class IntegerDefinition extends BuiltinDefinition {
+
+            IntegerDefinition(final TypeStatement declared, final EffectiveStatement<String, TypeStatement> effective) {
+                super(declared, effective);
+            }
+
+            @Override
+            final EffectiveStatement<String, TypeStatement> effective(
+                    final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
+                return new IntegerTypeEffectiveStatementImpl(ctx, (IntegerTypeDefinition) effective);
+            }
+        }
+
+        private static final class UnsignedIntegerDefinition extends BuiltinDefinition {
+            UnsignedIntegerDefinition(final TypeStatement declared,
+                final EffectiveStatement<String, TypeStatement> effective) {
+                super(declared, effective);
+            }
+
+            @Override
+            final EffectiveStatement<String, TypeStatement> effective(
+                    final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
+                return new UnsignedIntegerTypeEffectiveStatementImpl(ctx, (UnsignedIntegerTypeDefinition) effective);
+            }
+        }
+
+        private static final class StringDefinition extends BuiltinDefinition {
+            StringDefinition() {
+                super(BuiltinTypeStatement.STRING, BuiltinEffectiveStatements.STRING);
+            }
+
+            @Override
+            final EffectiveStatement<String, TypeStatement> effective(
+                    final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
+                return new StringTypeEffectiveStatementImpl(ctx, (StringTypeDefinition) effective);
+            }
+        }
+
+        private static final Map<String, StatementSupport<?, ?, ?>> BUILTIN_TYPES =
+                ImmutableMap.<String, StatementSupport<?, ?, ?>>builder()
+
+                // BINARY
+                // EMPTY
+                // INSTANCE_IDENTIFIER
+
+                .put(TypeUtils.BITS, new BitsSpecificationImpl.Definition())
+                .put(TypeUtils.DECIMAL64, new Decimal64SpecificationImpl.Definition())
+                .put(TypeUtils.ENUMERATION, new EnumSpecificationImpl.Definition())
+                .put(TypeUtils.IDENTITY_REF, new IdentityRefSpecificationImpl.Definition())
+                .put(TypeUtils.INSTANCE_IDENTIFIER, new InstanceIdentifierSpecificationImpl.Definition())
+                .put(TypeUtils.INT8, new IntegerDefinition(BuiltinTypeStatement.INT8,
+                    BuiltinEffectiveStatements.INT8))
+                .put(TypeUtils.INT16, new IntegerDefinition(BuiltinTypeStatement.INT16,
+                    BuiltinEffectiveStatements.INT16))
+                .put(TypeUtils.INT32, new IntegerDefinition(BuiltinTypeStatement.INT32,
+                    BuiltinEffectiveStatements.INT32))
+                .put(TypeUtils.INT64, new IntegerDefinition(BuiltinTypeStatement.INT64,
+                    BuiltinEffectiveStatements.INT64))
+                .put(TypeUtils.LEAF_REF, new LeafrefSpecificationImpl.Definition())
+                .put(TypeUtils.UINT8, new StringDefinition())
+                .put(TypeUtils.UINT8, new UnsignedIntegerDefinition(BuiltinTypeStatement.UINT8,
+                    BuiltinEffectiveStatements.UINT8))
+                .put(TypeUtils.UINT16, new UnsignedIntegerDefinition(BuiltinTypeStatement.UINT16,
+                    BuiltinEffectiveStatements.UINT16))
+                .put(TypeUtils.UINT32, new UnsignedIntegerDefinition(BuiltinTypeStatement.UINT32,
+                    BuiltinEffectiveStatements.UINT32))
+                .put(TypeUtils.UINT64, new UnsignedIntegerDefinition(BuiltinTypeStatement.UINT64,
+                    BuiltinEffectiveStatements.UINT64))
+                .put(TypeUtils.UNION, new UnionSpecificationImpl.Definition())
+                .build();
+
+        @Override
+        public StatementSupport<?, ?, ?> getSupportForArgument(final String argumentValue) {
+            final StatementSupport<?, ?, ?> builtin = BUILTIN_TYPES.get(argumentValue);
+            return builtin != null ? builtin : super.getSupportForArgument(argumentValue);
+        }
+
+        private static TypeEffectiveStatement<TypeStatement> createEffective(final TypeDefinition<?> baseType,
+                final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
             // Now instantiate the proper effective statement for that type
-            final TypeDefinition<?> baseType = typeStmt.getTypeDefinition();
             if (baseType instanceof BinaryTypeDefinition) {
                 return new BinaryTypeEffectiveStatementImpl(ctx, (BinaryTypeDefinition) baseType);
             } else if (baseType instanceof BitsTypeDefinition) {
@@ -189,40 +297,6 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
             } else {
                 throw new IllegalStateException("Unhandled base type " + baseType);
             }
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(
-                final Mutable<String, TypeStatement, EffectiveStatement<String, TypeStatement>> stmt){
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
-
-            // if it is yang built-in type, no prerequisite is needed, so simply return
-            if (TypeUtils.isYangBuiltInTypeString(stmt.getStatementArgument())) {
-                return;
-            }
-
-            final QName typeQName = Utils.qNameFromArgument(stmt, stmt.getStatementArgument());
-            final ModelActionBuilder typeAction = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
-            final Prerequisite<StmtContext<?, ?, ?>> typePrereq = typeAction.requiresCtx(stmt, TypeNamespace.class,
-                    typeQName, ModelProcessingPhase.EFFECTIVE_MODEL);
-            typeAction.mutatesEffectiveCtx(stmt.getParentContext());
-
-            /*
-             * If the type does not exist, throw new InferenceException.
-             * Otherwise perform no operation.
-             */
-            typeAction.apply(new InferenceAction() {
-                @Override
-                public void apply() {
-                    // Intentional NOOP
-                }
-
-                @Override
-                public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                    InferenceException.throwIf(failed.contains(typePrereq), stmt.getStatementSourceReference(),
-                        "Type [%s] was not found.", typeQName);
-                }
-            });
         }
     }
 
