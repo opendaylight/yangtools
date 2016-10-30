@@ -33,7 +33,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
 
     private final StatementDefinition type;
 
-    protected AbstractStatementSupport(StatementDefinition publicDefinition) {
+    protected AbstractStatementSupport(final StatementDefinition publicDefinition) {
         Preconditions.checkArgument(publicDefinition != this);
         this.type = Preconditions.checkNotNull(publicDefinition);
     }
@@ -67,7 +67,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     public abstract A parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) throws SourceException;
 
     @Override
-    public void onStatementAdded(StmtContext.Mutable<A, D, E> stmt) {
+    public void onStatementAdded(final StmtContext.Mutable<A, D, E> stmt) {
         // NOOP for most implementations
     }
 
@@ -81,7 +81,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
      *
      */
     @Override
-    public void onPreLinkageDeclared(StmtContext.Mutable<A, D, E> stmt) {
+    public void onPreLinkageDeclared(final StmtContext.Mutable<A, D, E> stmt) {
         // NOOP for most implementations
     }
 
@@ -95,7 +95,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
      *
      */
     @Override
-    public void onLinkageDeclared(StmtContext.Mutable<A, D, E> stmt) throws SourceException {
+    public void onLinkageDeclared(final StmtContext.Mutable<A, D, E> stmt) throws SourceException {
         // NOOP for most implementations
     }
 
@@ -109,7 +109,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
      *
      */
     @Override
-    public void onStatementDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt) throws SourceException {
+    public void onStatementDefinitionDeclared(final StmtContext.Mutable<A, D, E> stmt) throws SourceException {
         // NOOP for most implementations
     }
 
@@ -123,9 +123,16 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
      *
      */
     @Override
-    public void onFullDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt) throws SourceException {
+    public void onFullDefinitionDeclared(final StmtContext.Mutable<A, D, E> stmt) throws SourceException {
         // NOOP for most implementations
     }
+
+    @Override
+    public StatementSupport<?, ?, ?> getSupportForArgument(final String argumentValue) {
+        // No change for most statements
+        return this;
+    }
+
 
     @Override
     public boolean isArgumentYinElement() {
