@@ -11,7 +11,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import java.net.URI;
 import java.util.ArrayList;
@@ -25,9 +24,7 @@ import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -52,15 +49,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinit
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.BitsSpecificationImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Decimal64SpecificationImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.EnumSpecificationImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.IdentityRefSpecificationImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.InstanceIdentifierSpecificationImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.LeafrefSpecificationImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ModelDefinedStatementDefinition;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnionSpecificationImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.slf4j.Logger;
@@ -94,17 +83,6 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(SourceSpecificContext.class);
-    private static final Map<String, StatementSupport<?, ?, ?>> BUILTIN_TYPE_SUPPORTS =
-            ImmutableMap.<String, StatementSupport<?, ?, ?>>builder()
-            .put(TypeUtils.DECIMAL64, new Decimal64SpecificationImpl.Definition())
-            .put(TypeUtils.UNION, new UnionSpecificationImpl.Definition())
-            .put(TypeUtils.ENUMERATION, new EnumSpecificationImpl.Definition())
-            .put(TypeUtils.LEAF_REF, new LeafrefSpecificationImpl.Definition())
-            .put(TypeUtils.BITS, new BitsSpecificationImpl.Definition())
-            .put(TypeUtils.IDENTITY_REF, new IdentityRefSpecificationImpl.Definition())
-            .put(TypeUtils.INSTANCE_IDENTIFIER, new InstanceIdentifierSpecificationImpl.Definition())
-            .build();
-    private static final QName TYPE = Rfc6020Mapping.TYPE.getStatementName();
 
     private final Multimap<ModelProcessingPhase, ModifierImpl> modifiers = HashMultimap.create();
     private final QNameToStatementDefinitionMap qNameToStmtDefMap = new QNameToStatementDefinitionMap();
@@ -135,54 +113,49 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return inProgressPhase;
     }
 
-    ContextBuilder<?, ?, ?> createDeclaredChild(final StatementContextBase<?, ?, ?> current, QName name,
+    ContextBuilder<?, ?, ?> createDeclaredChild(final StatementContextBase<?, ?, ?> current, final QName name,
                                                 final String argument, final StatementSourceReference ref) {
-        // FIXME: BUG-7038: Refactor/clean up this special case
-        if (TYPE.equals(name)) {
-            SourceException.throwIfNull(argument, ref, "Type statement requires an argument");
-            if (TypeUtils.isYangTypeBodyStmtString(argument)) {
-                name = QName.create(YangConstants.RFC6020_YIN_MODULE, argument);
-            } else {
-                name = QName.create(YangConstants.RFC6020_YIN_MODULE, TYPE.getLocalName());
-            }
-        }
 
-        StatementDefinitionContext<?, ?, ?> def = currentContext.getStatementDefinition(name);
+        final ContextBuilder<?, ?, ?> ret;
 
-        if (def == null) {
-            final StatementSupport<?, ?, ?> extension = qNameToStmtDefMap.get(name);
-            if (extension != null) {
-                def = new StatementDefinitionContext<>(extension);
-            } else {
-                // type-body-stmts
-                def = resolveTypeBodyStmts(name.getLocalName());
-            }
-        } else if (current != null && current.definition().getRepresentingClass().equals(UnknownStatementImpl.class)) {
+        if (current != null && current.definition().getRepresentingClass().equals(UnknownStatementImpl.class)) {
             /*
              * This code wraps statements encountered inside an extension so they do not get confused with regular
              * statements.
              *
-             * FIXME: BUG-7037: re-evaluate whether this is really needed, as this is a very expensive way of making
-             *        this work. We really should be peeking into the extension definition to find these nodes,
-             *        as otherwise we are not reusing definitions nor support for these nodes.
+             * FIXME: BUG-7037: this really is something that 'current' should be taking care of allocating the
+             *                  proper support for this statement -- that way it can keep a proper (dynamic)
+             *                  statement definition context
              */
             final QName qName = Utils.qNameFromArgument(current, name.getLocalName());
-            def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition(
-                new ModelDefinedStatementDefinition(qName)));
-        }
-
-        Preconditions.checkArgument(def != null, "Statement %s does not have type mapping defined.", name);
-        final ContextBuilder<?, ?, ?> ret;
-        if (current == null) {
-            ret = new RootContextBuilder(def, ref);
+            final StatementSupport<?, ?, ?> support = new UnknownStatementImpl.Definition(
+                new ModelDefinedStatementDefinition(qName));
+            ret =  current.substatementBuilder(new StatementDefinitionContext<>(support), ref);
         } else {
-            ret = current.substatementBuilder(def, ref);
+            StatementSupport<?, ?, ?> support = qNameToStmtDefMap.get(name);
+            SourceException.throwIfNull(support, ref, "Statement %s does not have type mapping defined.", name);
+
+            if (argument != null) {
+                // This allows statement support to change its behavior based on argument and branch to different
+                // statement mutations. It allows us to differentiated 'type uint8' vs. 'type decimal64'.
+                support = support.getSupportForArgument(argument);
+                LOG.debug("Statement {} argument {} resolved to {}", name, argument, support);
+            } else {
+                SourceException.throwIf(support.getArgumentName()!= null, ref, "Statement %s requires an argument",
+                        name);
+            }
+
+            final StatementDefinitionContext<?, ?, ?> def = currentContext.getStatementDefinition(support);
+            if (current == null) {
+                ret =  new RootContextBuilder(def, ref);
+            } else {
+                ret = current.substatementBuilder(def, ref);
+            }
         }
 
         if (argument != null) {
             ret.setArgument(argument, ref);
         }
-
         return ret;
     }
 
@@ -360,11 +333,6 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             default:
                 break;
         }
-    }
-
-    private static StatementDefinitionContext<?, ?, ?> resolveTypeBodyStmts(final String typeArgument) {
-        final StatementSupport<?, ?, ?> support = BUILTIN_TYPE_SUPPORTS.get(typeArgument);
-        return support == null ? null : new StatementDefinitionContext<>(support);
     }
 
     private PrefixToModule preLinkagePrefixes() {
