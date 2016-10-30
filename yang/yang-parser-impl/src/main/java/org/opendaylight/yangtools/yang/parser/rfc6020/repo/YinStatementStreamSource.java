@@ -19,8 +19,6 @@ import java.net.URISyntaxException;
 import javax.xml.transform.TransformerException;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YinDomSchemaSource;
@@ -32,7 +30,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
@@ -97,11 +94,8 @@ public final class YinStatementStreamSource implements Identifiable<SourceIdenti
             return;
         }
 
-        writer.startStatement(def.getStatementName(), ref);
         final String value = attr.getValue();
-        if (!value.isEmpty()) {
-            writer.argumentValue(value, ref);
-        }
+        writer.startStatement(def.getStatementName(), value.isEmpty() ? null : value, ref);
         writer.endStatement(ref);
     }
 
@@ -149,23 +143,7 @@ public final class YinStatementStreamSource implements Identifiable<SourceIdenti
             allElements = false;
         }
 
-        // FIXME: this is a hack
-        if (element.getLocalName().equals(Rfc6020Mapping.TYPE.getStatementName().getLocalName())) {
-            LOG.debug("Type statement encountered, arg {}", argValue);
-            Preconditions.checkArgument(argValue != null);
-            if (TypeUtils.isYangTypeBodyStmtString(argValue)) {
-                writer.startStatement(QName.create(YangConstants.RFC6020_YIN_MODULE, argValue), ref);
-            } else {
-                writer.startStatement(QName.create(YangConstants.RFC6020_YIN_MODULE, Rfc6020Mapping
-                    .TYPE.getStatementName().getLocalName()), ref);
-            }
-            writer.argumentValue(argValue, ref);
-        } else {
-            writer.startStatement(def.getStatementName(), ref);
-            if (argValue != null) {
-                writer.argumentValue(argValue, ref);
-            }
-        }
+        writer.startStatement(def.getStatementName(), argValue, ref);
 
         // First process any statements defined as attributes. We need to skip argument, if present
         final NamedNodeMap attributes = element.getAttributes();

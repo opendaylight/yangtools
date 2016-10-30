@@ -49,6 +49,42 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWit
 public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends NamespaceStorageSupport implements StmtContext.Mutable<A, D, E>, Identifiable<StatementIdentifier> {
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private final class SubContextBuilder extends ContextBuilder {
+        SubContextBuilder(final StatementDefinitionContext def, final StatementSourceReference sourceRef) {
+            super(def, sourceRef);
+        }
+
+        @Override
+        public StatementContextBase build() throws SourceException {
+            StatementContextBase<?, ?, ?> potential = null;
+
+            final StatementDefinition stmtDef = getDefinition().getPublicView();
+            if (stmtDef != Rfc6020Mapping.AUGMENT && stmtDef != Rfc6020Mapping.DEVIATION
+                    && stmtDef != Rfc6020Mapping.TYPE) {
+                potential = substatements.get(createIdentifier());
+            }
+            if (potential == null) {
+                potential = new SubstatementContext(StatementContextBase.this, this);
+                if (substatements.isEmpty()) {
+                    substatements = new LinkedHashMap<>(1);
+                }
+                substatements.put(createIdentifier(), potential);
+                getDefinition().onStatementAdded(potential);
+            }
+            potential.resetLists();
+            switch (this.getStamementSource().getStatementSource()) {
+            case DECLARATION:
+                addDeclaredSubstatement(potential);
+                break;
+            case CONTEXT:
+                addEffectiveSubstatement(potential);
+                break;
+            }
+            return potential;
+        }
+    }
+
     /**
      * event listener when an item is added to model namespace
      */
@@ -373,40 +409,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *
      * @return instance of ContextBuilder
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public ContextBuilder<?, ?, ?> substatementBuilder(final StatementDefinitionContext<?, ?, ?> def,
             final StatementSourceReference ref) {
-        return new ContextBuilder(def, ref) {
-
-            @Override
-            public StatementContextBase build() throws SourceException {
-                StatementContextBase<?, ?, ?> potential = null;
-
-                final StatementDefinition stmtDef = getDefinition().getPublicView();
-                if (stmtDef != Rfc6020Mapping.AUGMENT && stmtDef != Rfc6020Mapping.DEVIATION
-                        && stmtDef != Rfc6020Mapping.TYPE) {
-                    potential = substatements.get(createIdentifier());
-                }
-                if (potential == null) {
-                    potential = new SubstatementContext(StatementContextBase.this, this);
-                    if (substatements.isEmpty()) {
-                        substatements = new LinkedHashMap<>(1);
-                    }
-                    substatements.put(createIdentifier(), potential);
-                    getDefinition().onStatementAdded(potential);
-                }
-                potential.resetLists();
-                switch (this.getStamementSource().getStatementSource()) {
-                case DECLARATION:
-                    addDeclaredSubstatement(potential);
-                    break;
-                case CONTEXT:
-                    addEffectiveSubstatement(potential);
-                    break;
-                }
-                return potential;
-            }
-        };
+        return new SubContextBuilder(def, ref);
     }
 
     /**
