@@ -134,6 +134,13 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     }
 
     @Override
+    public StatementSupport<?, ?, ?> getSupportForArgument(final String argumentValue) {
+        // No change for most statements
+        return this;
+    }
+
+
+    @Override
     public boolean isArgumentYinElement() {
         return getPublicView().isArgumentYinElement();
     }

@@ -57,6 +57,9 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      */
     A parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) throws SourceException;
 
+    // FIXME: relationship to parseArgumentValue? We want to parse that thing only once
+    StatementSupport<?, ?, ?> getSupportForArgument(String argumentValue);
+
     /**
      *
      * Invoked when statement is added to build context.
@@ -134,4 +137,5 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      *            accessible.
      */
     void onFullDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt) throws SourceException;
+
 }

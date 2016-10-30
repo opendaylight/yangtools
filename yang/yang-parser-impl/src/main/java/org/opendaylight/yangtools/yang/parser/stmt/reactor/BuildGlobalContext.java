@@ -163,6 +163,11 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         return new SimpleNamespaceContext<>(potentialRaw);
     }
 
+    /**
+     *
+     * @deprecated See {@link #getStatementDefinition(YangVersion, StatementSupport)}.
+     */
+    @Deprecated
     StatementDefinitionContext<?, ?, ?> getStatementDefinition(final YangVersion version, final QName name) {
         StatementDefinitionContext<?, ?, ?> potential = definitions.get(version, name);
         if (potential == null) {
@@ -174,6 +179,16 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
             }
         }
         return potential;
+    }
+
+    StatementDefinitionContext<?, ?, ?> getStatementDefinition(final YangVersion version,
+            final StatementSupport<?, ?, ?> support) {
+        StatementDefinitionContext<?, ?, ?> ret = definitions.get(version, support.getStatementName());
+        if (ret == null) {
+            ret = new StatementDefinitionContext<>(support);
+            definitions.put(version, ret.getStatementName(), ret);
+        }
+        return ret;
     }
 
     EffectiveModelContext build() throws SourceException, ReactorException {

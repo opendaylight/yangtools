@@ -11,6 +11,7 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
 public final class BuiltinEffectiveStatements {
@@ -49,7 +50,7 @@ public final class BuiltinEffectiveStatements {
     public static final TypeEffectiveStatement<TypeStatement> INT8 = new AbstractBuiltinEffectiveStatement() {
         @Nonnull
         @Override
-        public TypeDefinition<?> getTypeDefinition() {
+        public IntegerTypeDefinition getTypeDefinition() {
             return BaseTypes.int8Type();
         }
     };

@@ -10,14 +10,12 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
@@ -55,12 +53,6 @@ public final class TypeUtils {
     public static final String UINT64 = "uint64";
     public static final String UNION = "union";
 
-    private static final Set<String> BUILT_IN_TYPES =
-            ImmutableSet.of(BINARY, BITS, BOOLEAN, DECIMAL64, EMPTY, ENUMERATION, IDENTITY_REF, INSTANCE_IDENTIFIER,
-                    INT8, INT16, INT32, INT64, LEAF_REF, STRING, UINT8, UINT16, UINT32, UINT64, UNION);
-
-    private static final Set<String> TYPE_BODY_STMTS = ImmutableSet.of(
-        DECIMAL64, ENUMERATION, LEAF_REF, IDENTITY_REF, BITS, UNION);
     private static final Splitter PIPE_SPLITTER = Splitter.on('|').trimResults();
     private static final Splitter TWO_DOTS_SPLITTER = Splitter.on("..").trimResults();
 
@@ -193,15 +185,6 @@ public final class TypeUtils {
 
         return lengthConstraints;
     }
-
-    public static boolean isYangTypeBodyStmtString(final String typeName) {
-        return TYPE_BODY_STMTS.contains(typeName);
-    }
-
-    public static boolean isYangBuiltInTypeString(final String typeName) {
-        return BUILT_IN_TYPES.contains(typeName);
-    }
-
 
     public static SchemaPath typeEffectiveSchemaPath(final StmtContext<?, ?, ?> stmtCtx) {
         final SchemaPath path = stmtCtx.getSchemaPath().get();

@@ -9,8 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Collection;
 import java.util.Map;
 import javax.annotation.Nonnull;
@@ -20,46 +18,25 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 
-final class BuiltinTypeStatement implements TypeStatement {
-    private static final Map<String, BuiltinTypeStatement> BUILTINS;
-    static {
-        final Builder<String, BuiltinTypeStatement> builder = ImmutableMap.builder();
-        putBuiltin(builder, TypeUtils.BINARY);
-        putBuiltin(builder, TypeUtils.BOOLEAN);
-        putBuiltin(builder, TypeUtils.EMPTY);
-        putBuiltin(builder, TypeUtils.INSTANCE_IDENTIFIER);
-        putBuiltin(builder, TypeUtils.INT8);
-        putBuiltin(builder, TypeUtils.INT16);
-        putBuiltin(builder, TypeUtils.INT32);
-        putBuiltin(builder, TypeUtils.INT64);
-        putBuiltin(builder, TypeUtils.STRING);
-        putBuiltin(builder, TypeUtils.UINT8);
-        putBuiltin(builder, TypeUtils.UINT16);
-        putBuiltin(builder, TypeUtils.UINT32);
-        putBuiltin(builder, TypeUtils.UINT64);
-        BUILTINS = builder.build();
-    }
-
-    private static void putBuiltin(final Builder<String, BuiltinTypeStatement> builder, final String argument) {
-        builder.put(argument, new BuiltinTypeStatement(argument));
-    }
+enum BuiltinTypeStatement implements TypeStatement {
+    BINARY(TypeUtils.BINARY),
+    BOOLEAN(TypeUtils.BOOLEAN),
+    EMPTY(TypeUtils.EMPTY),
+    INSTANCE_IDENTIFIER(TypeUtils.INSTANCE_IDENTIFIER),
+    INT8(TypeUtils.INT8),
+    INT16(TypeUtils.INT16),
+    INT32(TypeUtils.INT32),
+    INT64(TypeUtils.INT64),
+    STRING(TypeUtils.STRING),
+    UINT8(TypeUtils.UINT8),
+    UINT16(TypeUtils.UINT16),
+    UINT32(TypeUtils.UINT32),
+    UINT64(TypeUtils.UINT64);
 
     private final String argument;
 
     private BuiltinTypeStatement(final String argument) {
         this.argument = Preconditions.checkNotNull(argument);
-    }
-
-    static TypeStatement maybeReplace(final TypeStatementImpl orig) {
-        if (orig.declaredSubstatements().isEmpty() && orig.getStatementSource() == StatementSource.DECLARATION &&
-                orig.statementDefinition() == YangStmtMapping.TYPE) {
-            final BuiltinTypeStatement builtin = BUILTINS.get(orig.argument());
-            if (builtin != null) {
-                return builtin;
-            }
-        }
-
-        return orig;
     }
 
     @Override
