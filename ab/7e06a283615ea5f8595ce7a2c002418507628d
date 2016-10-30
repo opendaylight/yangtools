@@ -1,0 +1,8 @@
+Verified+1: jenkins-releng <jenkins-releng@opendaylight.org>
+Code-Review+2: Anil Belur <abelur@linuxfoundation.org>
+Verified+1: Anil Belur <abelur@linuxfoundation.org>
+Submitted-by: Anil Belur <abelur@linuxfoundation.org>
+Submitted-at: Sun, 30 Oct 2016 11:43:29 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/47618
+Project: yangtools
+Branch: refs/heads/stable/boron
