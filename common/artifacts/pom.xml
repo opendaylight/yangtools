@@ -13,18 +13,18 @@
     <parent>
       <groupId>org.opendaylight.odlparent</groupId>
       <artifactId>odlparent-lite</artifactId>
-      <version>1.7.1-SNAPSHOT</version>
+      <version>1.7.1-Boron-SR1</version>
       <relativePath/>
     </parent>
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yangtools-artifacts</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1-Boron-SR1</version>
     <packaging>pom</packaging>
 
     <properties>
         <!-- Model versions -->
-        <ietf.topology.version>2013.10.21.9.1-SNAPSHOT</ietf.topology.version>
+        <ietf.topology.version>2013.10.21.9.1-Boron-SR1</ietf.topology.version>
     </properties>
 
     <dependencyManagement>
