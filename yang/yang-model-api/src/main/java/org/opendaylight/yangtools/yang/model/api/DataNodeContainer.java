@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Set;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -51,4 +53,13 @@ public interface DataNodeContainer {
      * @return Set of all uses nodes defined within this DataNodeContainer
      */
     Set<UsesNode> getUses();
+
+    /**
+     * Returns a Collection of notifications in chronological order.
+     *
+     * @return notification statements in chronological order
+     */
+    @Nonnull default Collection<NotificationDefinition> getNotifications() {
+        return ImmutableList.of();
+    }
 }
