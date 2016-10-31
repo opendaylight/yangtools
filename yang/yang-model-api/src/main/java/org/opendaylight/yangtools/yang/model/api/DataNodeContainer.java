@@ -11,6 +11,8 @@ import java.util.Collection;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 
+import javax.management.Notification;
+
 /**
  * Node which can contains other nodes.
  */
@@ -51,4 +53,13 @@ public interface DataNodeContainer {
      * @return Set of all uses nodes defined within this DataNodeContainer
      */
     Set<UsesNode> getUses();
+
+    /**
+     * Returns a Collection of notifications in chronological order.
+     *
+     * @return notification statements in chronological order
+     */
+    default Collection<NotificationDefinition> getNotifications() {
+        return null;
+    }
 }
