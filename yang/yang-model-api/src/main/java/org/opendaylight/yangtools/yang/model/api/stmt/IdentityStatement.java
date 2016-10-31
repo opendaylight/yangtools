@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface IdentityStatement extends DeclaredStatement<QName>, DocumentationGroup.WithStatus {
+public interface IdentityStatement extends DeclaredStatement<QName>, DocumentationGroup.WithStatus, ConditionalFeature {
 
     @Nonnull QName getName();
 
