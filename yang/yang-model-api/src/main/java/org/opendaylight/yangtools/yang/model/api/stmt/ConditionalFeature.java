@@ -7,11 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 
 @Rfc6020AbnfRule("*(if-feature-stmt)")
 public interface ConditionalFeature {
 
-    @Nonnull Collection<? extends IfFeatureStatement> getIfFeatures();
+    @Nonnull default Collection<? extends IfFeatureStatement> getIfFeatures() {
+        return ImmutableList.of();
+    }
 }
