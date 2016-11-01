@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a65312a_4f90a795",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/ConditionalFeature.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-11-01T12:51:46Z",
+      "side": 1,
+      "message": "add javadoc, please. Also mention that the definition should be overridden by implementations and it is being kept default because it is being retrofitted.\n\nI am still on the fence of whether we should make it default or not... Where do the implementations live?",
+      "range": {
+        "startLine": 17,
+        "startChar": 0,
+        "endLine": 17,
+        "endChar": 79
+      },
+      "revId": "07e8c54a57e564ee9b041db65713ba252e110cfa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
