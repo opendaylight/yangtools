@@ -109,6 +109,7 @@
                                             <generator>
                                                 <codeGeneratorClass>org.opendaylight.yangtools.maven.sal.api.gen.plugin.CodeGeneratorImpl</codeGeneratorClass>
                                                 <outputBaseDir>${salGeneratorPath}</outputBaseDir>
+                                                <resourceBaseDir>${project.build.directory}/generated-sources/spi</resourceBaseDir>
                                             </generator>
                                         </codeGenerators>
                                         <inspectDependencies>true</inspectDependencies>
