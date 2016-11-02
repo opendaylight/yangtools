@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a65312a_80ee0c8a",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/ModifiedNode.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-11-02T11:36:39Z",
+      "side": 1,
+      "message": "This needs a comment, especially on how it interacts with validate() and prepare(). I would assume this is not needed here, as it would be re-done when we run prepare() at the latest. Is that the case or not?",
+      "range": {
+        "startLine": 290,
+        "startChar": 16,
+        "endLine": 290,
+        "endChar": 105
+      },
+      "revId": "ac1974f173a11629f5ab45c5b3ac1f28605e5cea",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
