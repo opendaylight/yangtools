@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "3a65312a_607e50e6",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/YangNames.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-11-02T11:22:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a65312a_e0c0a07e",
+      "range": {
+        "startLine": 2,
+        "startChar": 17,
+        "endLine": 2,
+        "endChar": 21
+      },
+      "revId": "119dc3595f0c28149adabb8b26d1bf04b65faaaa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a65312a_c041240d",
         "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/YangNames.java",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2016-11-02T10:12:22Z",
       "side": 1,
       "message": "not sure about conventions here",
+      "range": {
+        "startLine": 33,
+        "startChar": 18,
+        "endLine": 33,
+        "endChar": 25
+      },
+      "revId": "119dc3595f0c28149adabb8b26d1bf04b65faaaa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_608db031",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/YangNames.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-11-02T11:22:25Z",
+      "side": 1,
+      "message": "just a little pun :)",
+      "parentUuid": "3a65312a_c041240d",
       "range": {
         "startLine": 33,
         "startChar": 18,
