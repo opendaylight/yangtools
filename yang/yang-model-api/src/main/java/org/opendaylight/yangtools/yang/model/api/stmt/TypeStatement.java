@@ -49,6 +49,19 @@ public interface TypeStatement extends DeclaredStatement<String> {
     interface LeafrefSpecification extends TypeStatement {
 
         @Nonnull PathStatement getPath();
+
+        /**
+         * All implementations should override this method.
+         * The default definition of this method is used only in YANG 1.0 (RFC6020) implementation of
+         * LeafrefSpecification which does not support require-instance statement.
+         * YANG leafref type has been changed in YANG 1.1 (RFC7950) and now allows require-instance statement.
+         *
+         * @return require-instance statement
+         */
+         // FIXME: version 2.0.0: make this method non-default
+        @Nullable default RequireInstanceStatement getRequireInstance() {
+            return null;
+        }
     }
 
     @Rfc6020AbnfRule("instanceidentifier-specification")
