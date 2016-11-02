@@ -12,8 +12,14 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+import java.util.function.Predicate;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.repo.api.IfFeaturePredicates;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -55,14 +61,15 @@ public class YangParserUtils {
 
     public static SchemaContext parseYangSources(final StatementStreamSource... sources) throws SourceException,
             ReactorException {
-        return parseYangSources(StatementParserMode.DEFAULT_MODE, sources);
+        return parseYangSources(IfFeaturePredicates.ALL_FEATURES, StatementParserMode.DEFAULT_MODE, sources);
     }
 
-    public static SchemaContext parseYangSources(final StatementParserMode statementParserMode,
-            final StatementStreamSource... sources) throws SourceException, ReactorException {
+    public static SchemaContext parseYangSources(final Predicate<QName> isFeatureSupported,
+            final StatementParserMode statementParserMode, final StatementStreamSource... sources)
+            throws SourceException, ReactorException {
 
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-                .newBuild(statementParserMode);
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(
+                statementParserMode, isFeatureSupported);
         reactor.addSources(sources);
 
         return reactor.buildEffective();
@@ -70,11 +77,12 @@ public class YangParserUtils {
 
     public static SchemaContext parseYangSources(final File... files) throws SourceException, ReactorException,
             FileNotFoundException {
-        return parseYangSources(StatementParserMode.DEFAULT_MODE, files);
+        return parseYangSources(IfFeaturePredicates.ALL_FEATURES, StatementParserMode.DEFAULT_MODE, files);
     }
 
-    public static SchemaContext parseYangSources(final StatementParserMode statementParserMode, final File... files)
-            throws SourceException, ReactorException, FileNotFoundException {
+    public static SchemaContext parseYangSources(final Predicate<QName> isFeatureSupported,
+            final StatementParserMode statementParserMode, final File... files) throws SourceException,
+            ReactorException, FileNotFoundException {
 
         final StatementStreamSource[] sources = new StatementStreamSource[files.length];
 
@@ -82,18 +90,18 @@ public class YangParserUtils {
             sources[i] = new YangStatementSourceImpl(new NamedFileInputStream(files[i], files[i].getPath()));
         }
 
-        return parseYangSources(statementParserMode, sources);
+        return parseYangSources(isFeatureSupported, statementParserMode, sources);
     }
 
-    public static SchemaContext parseYangSources(final Collection<File> files) throws SourceException,
-            ReactorException, FileNotFoundException {
-        return parseYangSources(files, StatementParserMode.DEFAULT_MODE);
+    public static SchemaContext parseYangSources(final Collection<File> files, final Predicate<QName> isFeatureSupported)
+            throws SourceException, ReactorException, FileNotFoundException {
+        return parseYangSources(files, StatementParserMode.DEFAULT_MODE, isFeatureSupported);
     }
 
     public static SchemaContext parseYangSources(final Collection<File> files,
-            final StatementParserMode statementParserMode) throws SourceException, ReactorException,
-            FileNotFoundException {
-        return parseYangSources(statementParserMode, files.toArray(new File[files.size()]));
+            final StatementParserMode statementParserMode, final Predicate<QName> isFeatureSupported)
+            throws SourceException, ReactorException, FileNotFoundException {
+        return parseYangSources(isFeatureSupported, statementParserMode, files.toArray(new File[files.size()]));
     }
 
     public static SchemaContext parseYangSources(final String yangSourcesDirectoryPath) throws SourceException,
@@ -105,7 +113,8 @@ public class YangParserUtils {
             final StatementParserMode statementParserMode) throws SourceException, ReactorException,
             FileNotFoundException, URISyntaxException {
         final File testSourcesDir = new File(yangSourcesDirectoryPath);
-        return parseYangSources(statementParserMode, testSourcesDir.listFiles(YANG_FILE_FILTER));
+        return parseYangSources(IfFeaturePredicates.ALL_FEATURES, statementParserMode,
+                testSourcesDir.listFiles(YANG_FILE_FILTER));
     }
 
     public static SchemaContext parseYinSources(final String yinSourcesDirectoryPath,
@@ -136,5 +145,24 @@ public class YangParserUtils {
         reactor.addSources(sources);
 
         return reactor.buildEffective();
+    }
+
+    public static SchemaContext parseYangSources(final List<String> yangDirs, final List<String> yangFiles,
+            final Predicate<QName> isFeatureSupported) throws SourceException, FileNotFoundException, ReactorException {
+        final List<File> allYangFiles = new ArrayList<>();
+        for (final String yangDir : yangDirs) {
+            allYangFiles.addAll(getYangFiles(yangDir));
+        }
+
+        for (final String yangFile : yangFiles) {
+            allYangFiles.add(new File(yangFile));
+        }
+
+        return parseYangSources(allYangFiles, isFeatureSupported);
+    }
+
+    public static Collection<File> getYangFiles(final String yangSourcesDirectoryPath) {
+        final File testSourcesDir = new File(yangSourcesDirectoryPath);
+        return Arrays.asList(testSourcesDir.listFiles(YANG_FILE_FILTER));
     }
 }
