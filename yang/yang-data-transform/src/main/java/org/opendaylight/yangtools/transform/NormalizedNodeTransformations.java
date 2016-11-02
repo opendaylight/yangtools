@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.transform;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Function;
 import com.google.common.base.Throwables;
 import java.io.IOException;
 import java.util.Map;
+import java.util.function.Function;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
