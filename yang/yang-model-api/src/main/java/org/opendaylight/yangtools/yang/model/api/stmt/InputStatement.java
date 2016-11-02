@@ -7,10 +7,24 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import com.google.common.collect.ImmutableList;
+import java.util.Collection;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface InputStatement  extends DeclaredStatement<QName>, DataDefinitionContainer.WithReusableDefinitions {
+public interface InputStatement extends DeclaredStatement<QName>, DataDefinitionContainer.WithReusableDefinitions {
 
+    /**
+     * All implementations should override this method.
+     * The default definition of this method is used only in YANG 1.0 (RFC6020) implementation of
+     * InputStatement which does not support must statements.
+     * YANG input statement has been changed in YANG 1.1 (RFC7950) and now allows must statements.
+     *
+     * @return collection of must statements
+     */
+    @Nonnull default Collection<? extends MustStatement> getMusts() {
+        return ImmutableList.of();
+    }
 }

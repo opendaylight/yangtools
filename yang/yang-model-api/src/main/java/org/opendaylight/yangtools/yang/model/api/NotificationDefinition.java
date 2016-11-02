@@ -13,4 +13,15 @@ package org.opendaylight.yangtools.yang.model.api;
  */
 public interface NotificationDefinition extends SchemaNode, DataNodeContainer, AugmentationTarget {
 
+    /**
+     * All implementations should override this method.
+     * The default definition of this method is used only in YANG 1.0 (RFC6020) implementation of
+     * NotificationDefinition which does not support any constraints.
+     * YANG notification statement has been changed in YANG 1.1 (RFC7950) and now allows must constraints.
+     *
+     * @return the constraints associated with this NotificationDefinition
+     */
+    default ConstraintDefinition getConstraints() {
+        return null;
+    }
 }
