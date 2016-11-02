@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.collect.ImmutableList;
 import java.util.List;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -36,16 +37,19 @@ abstract class AbstractEffectiveSchemaNode<D extends DeclaredStatement<QName>> e
         this.unknownNodes = listBuilder.build();
     }
 
+    @Nonnull
     @Override
     public QName getQName() {
         return path.getLastComponent();
     }
 
+    @Nonnull
     @Override
     public SchemaPath getPath() {
         return path;
     }
 
+    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;

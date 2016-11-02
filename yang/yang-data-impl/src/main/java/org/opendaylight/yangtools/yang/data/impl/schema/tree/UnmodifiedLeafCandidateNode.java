@@ -23,6 +23,7 @@ final class UnmodifiedLeafCandidateNode extends AbstractAvailableLeafCandidateNo
         return ModificationType.UNMODIFIED;
     }
 
+    @Nonnull
     @Override
     public Optional<NormalizedNode<?, ?>> getDataBefore() {
         return dataOptional();

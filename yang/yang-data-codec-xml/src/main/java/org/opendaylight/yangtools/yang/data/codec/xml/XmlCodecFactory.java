@@ -16,6 +16,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Map.Entry;
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
@@ -65,7 +66,7 @@ public final class XmlCodecFactory {
             CacheBuilder.newBuilder().softValues().build(
                     new CacheLoader<Entry<DataSchemaNode, NamespaceContext>, XmlCodec<?>>() {
                 @Override
-                public XmlCodec<?> load(final Entry<DataSchemaNode, NamespaceContext> schemaNodeAndNamespaceCtxPair)
+                public XmlCodec<?> load(@Nonnull final Entry<DataSchemaNode, NamespaceContext> schemaNodeAndNamespaceCtxPair)
                         throws Exception {
                     final DataSchemaNode schemaNode = schemaNodeAndNamespaceCtxPair.getKey();
                     final TypeDefinition<?> type;

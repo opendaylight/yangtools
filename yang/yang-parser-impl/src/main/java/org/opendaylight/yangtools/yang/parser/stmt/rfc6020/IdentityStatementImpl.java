@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -93,6 +94,7 @@ public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
         return firstDeclared(BaseStatement.class);
     }
 
+    @Nonnull
     @Override
     public QName getName() {
         return argument();

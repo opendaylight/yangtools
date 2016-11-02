@@ -27,19 +27,19 @@ final class StatementContextWriter implements StatementWriter {
     }
 
     @Override
-    public void startStatement(final QName name, final StatementSourceReference ref) {
+    public void startStatement(@Nonnull final QName name, @Nonnull final StatementSourceReference ref) {
         deferredCreate();
         current = ctx.createDeclaredChild(parent, name, ref);
     }
 
     @Override
-    public void argumentValue(final String value, final StatementSourceReference ref) {
+    public void argumentValue(@Nonnull final String value, @Nonnull final StatementSourceReference ref) {
         Preconditions.checkState(current != null, "Could not set two arguments for one statement: %s", ref);
         current.setArgument(value, ref);
     }
 
     @Override
-    public void endStatement(final StatementSourceReference ref) {
+    public void endStatement(@Nonnull final StatementSourceReference ref) {
         deferredCreate();
         Preconditions.checkState(parent != null);
         parent.endDeclared(ref,phase);

@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
 import java.util.List;
+import javax.annotation.Nonnull;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import org.junit.Before;
@@ -205,16 +206,19 @@ public class YangModeledAnyXMLDeserializationTest {
             return null;
         }
 
+        @Nonnull
         @Override
         public QName getQName() {
             return qName;
         }
 
+        @Nonnull
         @Override
         public SchemaPath getPath() {
             return null;
         }
 
+        @Nonnull
         @Override
         public List<UnknownSchemaNode> getUnknownSchemaNodes() {
             return null;
@@ -230,11 +234,13 @@ public class YangModeledAnyXMLDeserializationTest {
             return null;
         }
 
+        @Nonnull
         @Override
         public Status getStatus() {
             return null;
         }
 
+        @Nonnull
         @Override
         public ContainerSchemaNode getSchemaOfAnyXmlData() {
             return contentSchema;

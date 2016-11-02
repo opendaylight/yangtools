@@ -16,6 +16,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 import java.io.IOException;
 import java.io.InputStream;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Delegator;
 
 /**
@@ -47,6 +48,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
     public Class<? extends YangTextSchemaSource> getType() {
         return YangTextSchemaSource.class;

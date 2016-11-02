@@ -13,6 +13,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import java.util.Collection;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
@@ -60,16 +61,19 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
         return argument;
     }
 
+    @Nonnull
     @Override
     public StatementDefinition statementDefinition() {
         return definition;
     }
 
+    @Nonnull
     @Override
     public Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
         return substatements;
     }
 
+    @Nonnull
     @Override
     public StatementSource getStatementSource() {
         return source;

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
@@ -25,6 +26,7 @@ final class RestrictedUnsignedType extends AbstractRestrictedType<UnsignedIntege
         this.rangeConstraints = ImmutableList.copyOf(rangeConstraints);
     }
 
+    @Nonnull
     @Override
     public List<RangeConstraint> getRangeConstraints() {
         return rangeConstraints;

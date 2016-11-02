@@ -76,7 +76,7 @@ public class QNameToStatementDefinitionMap implements QNameToStatementDefinition
 
     @Nullable
     @Override
-    public StatementDefinition getByNamespaceAndLocalName(final URI namespace, @Nonnull final String localName) {
+    public StatementDefinition getByNamespaceAndLocalName(@Nonnull final URI namespace, @Nonnull final String localName) {
         return noRevQNameToSupport.get(QName.create(namespace, null, localName));
     }
 

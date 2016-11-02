@@ -10,9 +10,11 @@ package org.opendaylight.yangtools.yang.data.api;
 import com.google.common.collect.UnmodifiableIterator;
 import java.util.AbstractList;
 import java.util.Collection;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 abstract class PathArgumentList extends AbstractList<PathArgument> {
+    @Nonnull
     @Override
     public abstract UnmodifiableIterator<PathArgument> iterator();
 
@@ -27,17 +29,17 @@ abstract class PathArgumentList extends AbstractList<PathArgument> {
     }
 
     @Override
-    public final boolean addAll(final Collection<? extends PathArgument> c) {
+    public final boolean addAll(@Nonnull final Collection<? extends PathArgument> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final boolean removeAll(final Collection<?> c) {
+    public final boolean removeAll(@Nonnull final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final boolean retainAll(final Collection<?> c) {
+    public final boolean retainAll(@Nonnull final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 

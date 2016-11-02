@@ -29,6 +29,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.annotation.Nonnull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -122,7 +123,7 @@ public class DeadlockDetectingListeningExecutorServiceTest {
             }
 
             @Override
-            public void onFailure( final Throwable t ) {
+            public void onFailure( @Nonnull final Throwable t ) {
                 caughtEx.set( t );
                 futureCompletedLatch.countDown();
             }

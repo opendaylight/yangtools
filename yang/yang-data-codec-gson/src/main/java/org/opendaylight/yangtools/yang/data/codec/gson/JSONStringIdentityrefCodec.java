@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.util.ModuleStringIdentityrefCodec;
@@ -21,7 +22,7 @@ final class JSONStringIdentityrefCodec extends ModuleStringIdentityrefCodec impl
     }
 
     @Override
-    protected Module moduleForPrefix(final String prefix) {
+    protected Module moduleForPrefix(@Nonnull final String prefix) {
         if (prefix.isEmpty()) {
             return context.findModuleByNamespaceAndRevision(parentModuleQname.getNamespace(),
                     parentModuleQname.getRevision());

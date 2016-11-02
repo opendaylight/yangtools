@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
@@ -63,11 +64,13 @@ public class LeafrefSpecificationImpl extends AbstractDeclaredStatement<String>
         }
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return argument();
     }
 
+    @Nonnull
     @Override
     public PathStatement getPath() {
         return firstDeclared(PathStatement.class);

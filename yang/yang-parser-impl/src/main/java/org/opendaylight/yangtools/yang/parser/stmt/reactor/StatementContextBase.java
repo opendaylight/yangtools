@@ -207,6 +207,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     /**
      * @return root context of statement
      */
+    @Nonnull
     @Override
     public abstract RootStatementContext<?, ?, ?> getRoot();
 
@@ -221,6 +222,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     /**
      * @return origin of statement
      */
+    @Nonnull
     @Override
     public StatementSource getStatementSource() {
         return statementDeclSource.getStatementSource();
@@ -229,6 +231,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     /**
      * @return reference of statement source
      */
+    @Nonnull
     @Override
     public StatementSourceReference getStatementSourceReference() {
         return statementDeclSource;
@@ -250,6 +253,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return Collections.unmodifiableCollection(input);
     }
 
+    @Nonnull
     @Override
     public Collection<StatementContextBase<?, ?, ?>> declaredSubstatements() {
         return maybeWrap(declared);
@@ -263,6 +267,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return maybeWrap(substatements.values());
     }
 
+    @Nonnull
     @Override
     public Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements() {
         return maybeWrap(effective);
@@ -592,6 +597,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     /**
      * @see StatementSupport#getPublicView()
      */
+    @Nonnull
     @Override
     public StatementDefinition getPublicDefinition() {
         return definition().getPublicView();

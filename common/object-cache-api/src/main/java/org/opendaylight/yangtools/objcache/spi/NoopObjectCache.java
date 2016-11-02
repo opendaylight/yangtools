@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.objcache.spi;
 
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.ProductAwareBuilder;
 import org.opendaylight.yangtools.objcache.ObjectCache;
 
@@ -37,7 +38,7 @@ public final class NoopObjectCache implements ObjectCache {
     }
 
     @Override
-    public <B extends ProductAwareBuilder<P>, P> P getProduct(final B builder) {
+    public <B extends ProductAwareBuilder<P>, P> P getProduct(@Nonnull final B builder) {
         return builder.build();
     }
 }

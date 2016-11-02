@@ -85,6 +85,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
             create(xmlSchemaSource.getIdentifier(), transformSource(xmlSchemaSource.getSource()));
     }
 
+    @Nonnull
     @Override
     public final Class<? extends YinXmlSchemaSource> getType() {
         return YinDomSchemaSource.class;
@@ -118,6 +119,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
             this.source = Preconditions.checkNotNull(source);
         }
 
+        @Nonnull
         @Override
         public DOMSource getSource() {
             return source;
@@ -142,6 +144,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
             this.xmlSchemaSource = Preconditions.checkNotNull(xmlSchemaSource);
         }
 
+        @Nonnull
         @Override
         public DOMSource getSource() {
             DOMSource ret = source;

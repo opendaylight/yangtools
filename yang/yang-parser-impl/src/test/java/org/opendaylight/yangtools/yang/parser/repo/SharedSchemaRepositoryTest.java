@@ -38,6 +38,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import javax.annotation.Nonnull;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
@@ -292,7 +293,7 @@ public class SharedSchemaRepositoryTest {
             }
 
             @Override
-            public void onFailure(final Throwable t) {
+            public void onFailure(@Nonnull final Throwable t) {
                 // Creation of schema context fails, since we do not provide regular sources, but we just want to check cache
                 final List<File> cachedSchemas = Arrays.asList(storageDir.listFiles());
                 assertEquals(1, cachedSchemas.size());

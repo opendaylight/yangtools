@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -60,6 +61,7 @@ public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredState
         return reference;
     }
 
+    @Nonnull
     @Override
     public final Status getStatus() {
         return status;

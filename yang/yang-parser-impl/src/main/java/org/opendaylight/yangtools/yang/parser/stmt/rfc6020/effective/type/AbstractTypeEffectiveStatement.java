@@ -8,6 +8,7 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -35,6 +36,7 @@ abstract class AbstractTypeEffectiveStatement<T extends TypeDefinition<T>> exten
         typeDefinition = builder.build();
     }
 
+    @Nonnull
     @Override
     public final T getTypeDefinition() {
         return typeDefinition;

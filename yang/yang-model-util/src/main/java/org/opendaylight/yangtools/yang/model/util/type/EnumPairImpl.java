@@ -11,6 +11,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import java.util.List;
 import java.util.Objects;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -34,6 +35,7 @@ final class EnumPairImpl implements EnumPair, Immutable {
         this.unknownSchemaNodes = Preconditions.checkNotNull(unknownSchemaNodes);
     }
 
+    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownSchemaNodes;
@@ -49,6 +51,7 @@ final class EnumPairImpl implements EnumPair, Immutable {
         return reference;
     }
 
+    @Nonnull
     @Override
     public Status getStatus() {
         return status;

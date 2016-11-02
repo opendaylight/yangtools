@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.base.Preconditions;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -38,6 +39,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
         this.type = Preconditions.checkNotNull(publicDefinition);
     }
 
+    @Nonnull
     @Override
     public final QName getStatementName() {
         return type.getStatementName();
@@ -48,11 +50,13 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
         return type.getArgumentName();
     }
 
+    @Nonnull
     @Override
     public final Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
         return type.getDeclaredRepresentationClass();
     }
 
+    @Nonnull
     @Override
     public final Class<? extends EffectiveStatement<?,?>> getEffectiveRepresentationClass() {
         return type.getEffectiveRepresentationClass();

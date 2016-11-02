@@ -19,7 +19,7 @@ public final class DataSchemaContextTree {
     private static final LoadingCache<SchemaContext, DataSchemaContextTree> TREES = CacheBuilder.newBuilder()
             .weakKeys().weakValues().build(new CacheLoader<SchemaContext, DataSchemaContextTree>() {
                 @Override
-                public DataSchemaContextTree load(final SchemaContext key) throws Exception {
+                public DataSchemaContextTree load(@Nonnull final SchemaContext key) throws Exception {
                     return new DataSchemaContextTree(key);
                 }
             });

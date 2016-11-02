@@ -32,6 +32,7 @@ final class NoopDataTreeCandidate extends AbstractDataTreeCandidate {
             return ModificationType.UNMODIFIED;
         }
 
+        @Nonnull
         @Override
         public Collection<DataTreeCandidateNode> getChildNodes() {
             return Collections.emptyList();

@@ -9,6 +9,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import java.util.Objects;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -41,11 +42,13 @@ public final class UnknownEffectiveStatementImpl extends UnknownEffectiveStateme
         path = ctx.getParentContext().getSchemaPath().get().createChild(maybeQNameArgument);
     }
 
+    @Nonnull
     @Override
     public QName getQName() {
         return maybeQNameArgument;
     }
 
+    @Nonnull
     @Override
     public SchemaPath getPath() {
         return path;
