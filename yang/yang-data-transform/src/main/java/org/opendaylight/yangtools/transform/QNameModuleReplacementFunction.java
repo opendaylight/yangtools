@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.transform;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import java.util.Map;
+import java.util.function.Function;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
