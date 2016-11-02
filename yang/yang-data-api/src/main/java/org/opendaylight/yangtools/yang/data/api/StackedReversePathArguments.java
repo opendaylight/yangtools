@@ -33,7 +33,7 @@ final class StackedReversePathArguments extends PathArgumentList {
             }
 
             Verify.verify(current instanceof StackedYangInstanceIdentifier);
-            current = ((StackedYangInstanceIdentifier)current).getParent();
+            current = current.getParent();
         }
     }
 

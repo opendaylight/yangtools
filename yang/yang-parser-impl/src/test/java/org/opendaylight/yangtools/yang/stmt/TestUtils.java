@@ -227,7 +227,7 @@ public final class TestUtils {
     public static void checkIsAddedByUses(final GroupingDefinition node,
             final boolean expected) {
         assertEquals(expected, node.isAddedByUses());
-        for (DataSchemaNode child : ((DataNodeContainer) node).getChildNodes()) {
+        for (DataSchemaNode child : node.getChildNodes()) {
             checkIsAddedByUses(child, expected);
         }
     }

@@ -666,7 +666,7 @@ public class RegularExpression implements java.io.Serializable {
      * @return true if the target is matched to this regular expression.
      */
     public boolean matches(char[]  target) {
-        return this.matches(target, 0,  target .length , (Match)null);
+        return this.matches(target, 0,  target .length , null);
     }
 
     /**
@@ -678,7 +678,7 @@ public class RegularExpression implements java.io.Serializable {
      * @return true if the target is matched to this regular expression.
      */
     public boolean matches(char[]  target, int start, int end) {
-        return this.matches(target, start, end, (Match)null);
+        return this.matches(target, start, end, null);
     }
 
     /**
@@ -856,7 +856,7 @@ public class RegularExpression implements java.io.Serializable {
      * @return true if the target is matched to this regular expression.
      */
     public boolean matches(String  target) {
-        return this.matches(target, 0,  target .length() , (Match)null);
+        return this.matches(target, 0,  target .length() , null);
     }
 
     /**
@@ -868,7 +868,7 @@ public class RegularExpression implements java.io.Serializable {
      * @return true if the target is matched to this regular expression.
      */
     public boolean matches(String  target, int start, int end) {
-        return this.matches(target, start, end, (Match)null);
+        return this.matches(target, start, end, null);
     }
 
     /**
@@ -1585,7 +1585,7 @@ public class RegularExpression implements java.io.Serializable {
      * @return true if the target is matched to this regular expression.
      */
     public boolean matches(CharacterIterator target) {
-        return this.matches(target, (Match)null);
+        return this.matches(target, null);
     }
 
 

@@ -671,7 +671,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     @Override
     public <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(final Class<N> namespace, final KT key,
             final StmtContext<?, ?, ?> stmt) {
-        addContextToNamespace(namespace, (K) key, stmt);
+        addContextToNamespace(namespace, key, stmt);
     }
 
     @Override
