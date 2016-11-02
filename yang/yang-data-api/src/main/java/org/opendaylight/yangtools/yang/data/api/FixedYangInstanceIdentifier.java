@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import java.io.ObjectStreamException;
 import java.util.List;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 
 final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implements Cloneable {
@@ -57,6 +58,7 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
         return ret;
     }
 
+    @Nonnull
     @Override
     public YangInstanceIdentifier getAncestor(final int depth) {
         Preconditions.checkArgument(depth >= 0, "Negative depth is not allowed");
@@ -82,11 +84,13 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
         return path.reverse();
     }
 
+    @Nonnull
     @Override
     List<PathArgument> tryPathArguments() {
         return path;
     }
 
+    @Nonnull
     @Override
     List<PathArgument> tryReversePathArguments() {
         return path.reverse();
@@ -97,6 +101,7 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
         return path.isEmpty()? null : path.get(path.size() - 1);
     }
 
+    @Nonnull
     @Override
     YangInstanceIdentifier createRelativeIdentifier(final int skipFromRoot) {
         if (skipFromRoot == path.size()) {

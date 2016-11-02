@@ -124,7 +124,7 @@ class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNormalizedN
     }
 
     @Override
-    protected void writeValue(XMLStreamWriter xmlWriter, QName qname, Object value, Object context)
+    protected void writeValue(XMLStreamWriter xmlWriter, QName qname, @Nonnull Object value, Object context)
             throws XMLStreamException {
         xmlWriter.writeCharacters(value.toString());
     }

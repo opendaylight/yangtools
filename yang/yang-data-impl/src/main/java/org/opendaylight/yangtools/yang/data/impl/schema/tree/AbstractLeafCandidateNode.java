@@ -27,6 +27,7 @@ abstract class AbstractLeafCandidateNode implements DataTreeCandidateNode {
         return Optional.of(data);
     }
 
+    @Nonnull
     @Override
     public final Collection<DataTreeCandidateNode> getChildNodes() {
         return Collections.emptyList();

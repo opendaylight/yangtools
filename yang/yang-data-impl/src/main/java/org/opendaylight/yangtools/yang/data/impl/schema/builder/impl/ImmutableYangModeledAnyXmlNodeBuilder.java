@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import com.google.common.base.Preconditions;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -64,6 +65,7 @@ public class ImmutableYangModeledAnyXmlNodeBuilder extends
             this.contentSchema = Preconditions.checkNotNull(contentSchema, "Schema of yang modeled anyXml content cannot be null.");
         }
 
+        @Nonnull
         @Override
         public ContainerSchemaNode getSchemaOfAnyXmlData() {
             return contentSchema;

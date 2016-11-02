@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import com.google.common.base.Optional;
 import com.google.common.collect.Collections2;
 import java.util.Collection;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -67,6 +68,7 @@ abstract class AbstractRecursiveCandidateNode extends AbstractDataTreeCandidateN
         return null;
     }
 
+    @Nonnull
     @Override
     public final Collection<DataTreeCandidateNode> getChildNodes() {
         return Collections2.transform(getData().getValue(), this::createChild);

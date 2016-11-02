@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.List;
 import java.util.Set;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.concepts.SemVer;
@@ -206,6 +207,7 @@ public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIden
      *
      * @return unknown nodes in lexicographical order
      */
+    @Nonnull
     List<UnknownSchemaNode> getUnknownSchemaNodes();
 
     /**

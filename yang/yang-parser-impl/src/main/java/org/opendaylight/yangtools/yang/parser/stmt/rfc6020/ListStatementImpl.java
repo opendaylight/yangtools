@@ -161,21 +161,25 @@ public class ListStatementImpl extends AbstractDeclaredStatement<QName>
         return firstDeclared(OrderedByStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends TypedefStatement> getTypedefs() {
         return allDeclared(TypedefStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends GroupingStatement> getGroupings() {
         return allDeclared(GroupingStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends DataDefinitionStatement> getDataDefinitions() {
         return allDeclared(DataDefinitionStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends MustStatement> getMusts() {
         return allDeclared(MustStatement.class);
@@ -186,6 +190,7 @@ public class ListStatementImpl extends AbstractDeclaredStatement<QName>
         return firstDeclared(KeyStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends UniqueStatement> getUnique() {
         return allDeclared(UniqueStatement.class);

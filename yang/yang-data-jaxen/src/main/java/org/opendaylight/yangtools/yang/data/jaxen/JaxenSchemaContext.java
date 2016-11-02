@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.jaxen;
 
 import com.google.common.base.Converter;
 import com.google.common.base.Preconditions;
+import javax.annotation.Nonnull;
 import javax.xml.xpath.XPathExpressionException;
 import org.jaxen.JaxenException;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -28,9 +29,10 @@ final class JaxenSchemaContext implements XPathSchemaContext {
         this.context = Preconditions.checkNotNull(context);
     }
 
+    @Nonnull
     @Override
-    public XPathExpression compileExpression(final SchemaPath schemaPath,
-            final Converter<String, QNameModule> prefixes, final String xpath) throws XPathExpressionException {
+    public XPathExpression compileExpression(@Nonnull final SchemaPath schemaPath,
+            final Converter<String, QNameModule> prefixes, @Nonnull final String xpath) throws XPathExpressionException {
         try {
             return JaxenXPath.create(prefixes, schemaPath, xpath);
         } catch (JaxenException e) {
@@ -38,8 +40,9 @@ final class JaxenSchemaContext implements XPathSchemaContext {
         }
     }
 
+    @Nonnull
     @Override
-    public XPathDocument createDocument(final NormalizedNode<?, ?> documentRoot) {
+    public XPathDocument createDocument(@Nonnull final NormalizedNode<?, ?> documentRoot) {
         return new JaxenDocument(this, documentRoot);
     }
 }

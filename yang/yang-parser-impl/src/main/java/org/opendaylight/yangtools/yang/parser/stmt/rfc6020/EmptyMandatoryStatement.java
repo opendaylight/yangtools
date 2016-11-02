@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Objects;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -19,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 
 abstract class EmptyMandatoryStatement implements MandatoryStatement {
     static final MandatoryStatement FALSE = new EmptyMandatoryStatement() {
+        @Nonnull
         @Override
         public Boolean getValue() {
             return Boolean.FALSE;
@@ -31,6 +33,7 @@ abstract class EmptyMandatoryStatement implements MandatoryStatement {
     };
 
     static final MandatoryStatement TRUE = new EmptyMandatoryStatement() {
+        @Nonnull
         @Override
         public Boolean getValue() {
             return Boolean.TRUE;
@@ -48,11 +51,13 @@ abstract class EmptyMandatoryStatement implements MandatoryStatement {
 
     abstract EffectiveStatement<Boolean, MandatoryStatement> toEffective();
 
+    @Nonnull
     @Override
     public final Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
         return ImmutableList.of();
     }
 
+    @Nonnull
     @Override
     public final StatementDefinition statementDefinition() {
         return Rfc6020Mapping.MANDATORY;
@@ -68,6 +73,7 @@ abstract class EmptyMandatoryStatement implements MandatoryStatement {
         return getValue();
     }
 
+    @Nonnull
     @Override
     public final StatementSource getStatementSource() {
         return StatementSource.DECLARATION;

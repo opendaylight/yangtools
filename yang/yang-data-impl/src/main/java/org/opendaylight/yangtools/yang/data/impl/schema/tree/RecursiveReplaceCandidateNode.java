@@ -33,11 +33,13 @@ final class RecursiveReplaceCandidateNode extends AbstractDataTreeCandidateNode 
         return ModificationType.WRITE;
     }
 
+    @Nonnull
     @Override
     public Optional<NormalizedNode<?, ?>> getDataAfter() {
         return super.dataOptional();
     }
 
+    @Nonnull
     @Override
     public Optional<NormalizedNode<?, ?>> getDataBefore() {
         return Optional.of(oldData);

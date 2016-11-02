@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Optional;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 abstract class AbstractAvailableLeafCandidateNode extends AbstractLeafCandidateNode {
@@ -15,6 +16,7 @@ abstract class AbstractAvailableLeafCandidateNode extends AbstractLeafCandidateN
         super(dataAfter);
     }
 
+    @Nonnull
     @Override
     public final Optional<NormalizedNode<?, ?>> getDataAfter() {
         return dataOptional();

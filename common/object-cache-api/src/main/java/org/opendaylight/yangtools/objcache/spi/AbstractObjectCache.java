@@ -14,6 +14,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.cache.Cache;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.ProductAwareBuilder;
 import org.opendaylight.yangtools.objcache.ObjectCache;
 import org.slf4j.Logger;
@@ -136,7 +137,7 @@ public abstract class AbstractObjectCache implements ObjectCache {
     }
 
     @Override
-    public final <B extends ProductAwareBuilder<P>, P> P getProduct(final B builder) {
+    public final <B extends ProductAwareBuilder<P>, P> P getProduct(@Nonnull final B builder) {
         throw new UnsupportedOperationException();
 //        LOG.debug("Looking up product for {}", builder);
 //

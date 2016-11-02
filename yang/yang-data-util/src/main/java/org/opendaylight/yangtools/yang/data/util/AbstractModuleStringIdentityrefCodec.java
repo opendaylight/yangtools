@@ -26,7 +26,7 @@ public abstract class AbstractModuleStringIdentityrefCodec extends AbstractStrin
     protected abstract Module moduleForPrefix(@Nonnull String prefix);
 
     @Override
-    protected final QName createQName(final String prefix, final String localName) {
+    protected final QName createQName(@Nonnull final String prefix, @Nonnull final String localName) {
         final Module module = moduleForPrefix(prefix);
         Preconditions.checkArgument(module != null, "Failed to lookup prefix %s", prefix);
         return QName.create(module.getQNameModule(), localName);

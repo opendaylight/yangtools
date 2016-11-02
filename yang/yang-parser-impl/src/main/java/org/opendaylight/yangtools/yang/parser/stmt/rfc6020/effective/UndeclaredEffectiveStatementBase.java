@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.base.Verify;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
@@ -29,6 +30,7 @@ public abstract class UndeclaredEffectiveStatementBase<A, D extends DeclaredStat
         Verify.verify(declareInstance == null, "Statement %s resulted in declared statement %s", declareInstance);
     }
 
+    @Nonnull
     @Override
     public final StatementDefinition statementDefinition() {
         return statementDefinition;
@@ -39,6 +41,7 @@ public abstract class UndeclaredEffectiveStatementBase<A, D extends DeclaredStat
         return argument;
     }
 
+    @Nonnull
     @Override
     public final StatementSource getStatementSource() {
         return statementSource;

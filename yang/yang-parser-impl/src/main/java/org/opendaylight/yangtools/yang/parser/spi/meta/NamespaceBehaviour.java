@@ -53,7 +53,6 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
         @Nullable
         <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromLocalStorage(Class<N> type);
 
-        @Nullable
         <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(Class<N> type, K key, V value);
 
     }

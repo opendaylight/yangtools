@@ -16,6 +16,7 @@ import javax.xml.transform.Source;
  */
 @Beta
 public interface YinXmlSchemaSource extends YinSchemaSourceRepresentation {
+    @Nonnull
     @Override
     Class<? extends YinXmlSchemaSource> getType();
 

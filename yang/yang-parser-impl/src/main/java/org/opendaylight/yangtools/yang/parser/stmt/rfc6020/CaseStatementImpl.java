@@ -97,6 +97,7 @@ public class CaseStatementImpl extends AbstractDeclaredStatement<QName> implemen
         return allDeclared(IfFeatureStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends DataDefinitionStatement> getDataDefinitions() {
         return allDeclared(DataDefinitionStatement.class);

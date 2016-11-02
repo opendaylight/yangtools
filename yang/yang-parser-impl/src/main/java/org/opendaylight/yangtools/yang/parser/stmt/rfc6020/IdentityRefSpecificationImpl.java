@@ -84,6 +84,7 @@ public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<Stri
         }
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return argument();

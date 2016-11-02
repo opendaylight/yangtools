@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -69,15 +70,16 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
     }
 
     @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> V get(final Class<N> namespace, final K identifier) {
+    public final <K, V, N extends IdentifierNamespace<K, V>> V get(@Nonnull final Class<N> namespace, @Nonnull final K identifier) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(final Class<N> namespace) {
+    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(@Nonnull final Class<N> namespace) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
+    @Nonnull
     @Override
     public final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
         return substatements;
