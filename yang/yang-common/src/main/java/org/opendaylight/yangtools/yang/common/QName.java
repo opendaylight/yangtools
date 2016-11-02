@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.Nonnull;
 import javax.annotation.RegEx;
 import org.opendaylight.yangtools.concepts.Immutable;
 
@@ -401,7 +402,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     @Override
-    public int compareTo(final QName other) {
+    public int compareTo(@Nonnull final QName other) {
         // compare mandatory localName parameter
         int result = localName.compareTo(other.localName);
         if (result != 0) {

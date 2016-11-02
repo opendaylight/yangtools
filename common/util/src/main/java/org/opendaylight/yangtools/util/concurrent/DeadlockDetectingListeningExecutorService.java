@@ -86,20 +86,23 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
     }
 
     @Override
-    public void execute(final Runnable command) {
+    public void execute(@Nonnull final Runnable command) {
         getDelegate().execute(wrapRunnable(command));
     }
 
+    @Nonnull
     @Override
     public <T> ListenableFuture<T> submit(final Callable<T> task) {
         return wrapListenableFuture(super.submit(wrapCallable(task)));
     }
 
+    @Nonnull
     @Override
     public ListenableFuture<?> submit(final Runnable task) {
         return wrapListenableFuture(super.submit(wrapRunnable(task)));
     }
 
+    @Nonnull
     @Override
     public <T> ListenableFuture<T> submit(final Runnable task, final T result) {
         return wrapListenableFuture(super.submit(wrapRunnable(task), result));
@@ -159,7 +162,7 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
             }
 
             @Override
-            public T get(final long timeout, final TimeUnit unit)
+            public T get(final long timeout, @Nonnull final TimeUnit unit)
                     throws InterruptedException, ExecutionException, TimeoutException {
                 checkDeadLockDetectorTL();
                 return super.get(timeout, unit);

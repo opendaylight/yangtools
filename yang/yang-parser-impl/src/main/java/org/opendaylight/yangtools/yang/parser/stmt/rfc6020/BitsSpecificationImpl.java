@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
@@ -61,11 +62,13 @@ public class BitsSpecificationImpl extends AbstractDeclaredStatement<String> imp
         }
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return argument();
     }
 
+    @Nonnull
     @Override
     public Collection<? extends BitStatement> getBits() {
         return allDeclared(BitStatement.class);

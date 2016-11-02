@@ -12,6 +12,7 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 
 import java.util.Date;
 import java.util.Optional;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -120,6 +121,7 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
         }
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return rawArgument();
@@ -130,6 +132,7 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
         return firstDeclared(YangVersionStatement.class);
     }
 
+    @Nonnull
     @Override
     public BelongsToStatement getBelongsTo() {
         return firstDeclared(BelongsToStatement.class);

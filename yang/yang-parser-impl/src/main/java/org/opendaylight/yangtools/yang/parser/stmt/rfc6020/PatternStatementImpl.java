@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import com.google.common.base.Optional;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -102,6 +103,7 @@ public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConst
         return firstDeclared(ReferenceStatement.class);
     }
 
+    @Nonnull
     @Override
     public PatternConstraint getValue() {
         return argument();

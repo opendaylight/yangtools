@@ -26,11 +26,13 @@ final class RecursiveUnmodifiedCandidateNode extends AbstractRecursiveCandidateN
         return ModificationType.UNMODIFIED;
     }
 
+    @Nonnull
     @Override
     public Optional<NormalizedNode<?, ?>> getDataAfter() {
         return dataOptional();
     }
 
+    @Nonnull
     @Override
     public Optional<NormalizedNode<?, ?>> getDataBefore() {
         return dataOptional();

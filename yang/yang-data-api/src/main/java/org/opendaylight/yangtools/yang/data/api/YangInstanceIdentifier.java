@@ -264,7 +264,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
     }
 
     @Override
-    public final boolean contains(final YangInstanceIdentifier other) {
+    public final boolean contains(@Nonnull final YangInstanceIdentifier other) {
         if (this == other) {
             return true;
         }
@@ -429,7 +429,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         @Override
-        public int compareTo(final PathArgument o) {
+        public int compareTo(@Nonnull final PathArgument o) {
             return nodeType.compareTo(o.getNodeType());
         }
 
@@ -486,7 +486,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         private static final LoadingCache<QName, NodeIdentifier> CACHE = CacheBuilder.newBuilder().weakValues()
                 .build(new CacheLoader<QName, NodeIdentifier>() {
                     @Override
-                    public NodeIdentifier load(final QName key) {
+                    public NodeIdentifier load(@Nonnull final QName key) {
                         return new NodeIdentifier(key);
                     }
                 });
@@ -701,7 +701,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         @Override
-        public int compareTo(final PathArgument o) {
+        public int compareTo(@Nonnull final PathArgument o) {
             if (!(o instanceof AugmentationIdentifier)) {
                 return -1;
             }

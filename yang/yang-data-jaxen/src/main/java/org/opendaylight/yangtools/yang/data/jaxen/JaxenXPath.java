@@ -12,6 +12,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import java.util.List;
+import javax.annotation.Nonnull;
 import javax.xml.xpath.XPathExpressionException;
 import org.jaxen.BaseXPath;
 import org.jaxen.ContextSupport;
@@ -66,7 +67,7 @@ final class JaxenXPath implements XPathExpression {
     }
 
     @Override
-    public Optional<? extends XPathResult<?>> evaluate(final XPathDocument document, final YangInstanceIdentifier path)
+    public Optional<? extends XPathResult<?>> evaluate(@Nonnull final XPathDocument document, @Nonnull final YangInstanceIdentifier path)
             throws XPathExpressionException {
         Preconditions.checkArgument(document instanceof JaxenDocument);
 
@@ -96,11 +97,13 @@ final class JaxenXPath implements XPathExpression {
         }
     }
 
+    @Nonnull
     @Override
     public SchemaPath getEvaluationPath() {
         return schemaPath;
     }
 
+    @Nonnull
     @Override
     public SchemaPath getApexPath() {
         // TODO: improve this

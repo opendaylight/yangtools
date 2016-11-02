@@ -13,6 +13,7 @@ import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.util.concurrent.ExceptionMapper;
 import org.opendaylight.yangtools.util.concurrent.ReflectiveExceptionMapper;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
@@ -31,7 +32,7 @@ public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D ext
     @FunctionalInterface
     public interface Transformation<S extends SchemaSourceRepresentation, D extends SchemaSourceRepresentation> extends AsyncFunction<S, D> {
         @Override
-        CheckedFuture<D, SchemaSourceException> apply(final S input) throws Exception;
+        CheckedFuture<D, SchemaSourceException> apply(@Nonnull final S input) throws Exception;
     }
 
     private final Map<PotentialSchemaSource<?>, RefcountedRegistration> sources = new HashMap<>();

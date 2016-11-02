@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -83,6 +84,7 @@ public final class AugmentEffectiveStatementImpl extends
         return whenCondition;
     }
 
+    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;
@@ -141,7 +143,7 @@ public final class AugmentEffectiveStatementImpl extends
     }
 
     @Override
-    public int compareTo(final AugmentEffectiveStatementImpl o) {
+    public int compareTo(@Nonnull final AugmentEffectiveStatementImpl o) {
         checkNotNull(o);
         Iterator<QName> thisIt = this.targetPath.getPathFromRoot().iterator();
         Iterator<QName> otherIt = o.getTargetPath().getPathFromRoot().iterator();

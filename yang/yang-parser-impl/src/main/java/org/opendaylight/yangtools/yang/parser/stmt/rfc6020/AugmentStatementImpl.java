@@ -363,6 +363,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
         return argument();
     }
 
+    @Nonnull
     @Override
     public Collection<? extends DataDefinitionStatement> getDataDefinitions() {
         return allDeclared(DataDefinitionStatement.class);

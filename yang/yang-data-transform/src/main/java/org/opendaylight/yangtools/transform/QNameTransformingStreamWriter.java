@@ -52,8 +52,9 @@ public abstract class QNameTransformingStreamWriter extends ForwardingObject imp
               return delegate;
             }
 
+            @Nonnull
             @Override
-            protected QName transform(final QName key) {
+            protected QName transform(@Nonnull final QName key) {
                 return transformation.apply(key);
             }
 

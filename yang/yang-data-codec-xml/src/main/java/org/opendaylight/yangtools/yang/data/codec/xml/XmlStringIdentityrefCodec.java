@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import com.google.common.base.Preconditions;
 import java.net.URI;
+import javax.annotation.Nonnull;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -30,7 +31,7 @@ final class XmlStringIdentityrefCodec extends ModuleStringIdentityrefCodec imple
     }
 
     @Override
-    protected Module moduleForPrefix(final String prefix) {
+    protected Module moduleForPrefix(@Nonnull final String prefix) {
         if (prefix.isEmpty()) {
             return context.findModuleByNamespaceAndRevision(parentModuleQname.getNamespace(),
                     parentModuleQname.getRevision());

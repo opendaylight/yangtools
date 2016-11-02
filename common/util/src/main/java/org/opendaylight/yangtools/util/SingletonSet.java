@@ -78,14 +78,16 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
         return Iterators.singletonIterator(getElement());
     }
 
+    @Nonnull
     @Override
     public final Object[] toArray() {
         return new Object[] { getElement() };
     }
 
+    @Nonnull
     @SuppressWarnings("unchecked")
     @Override
-    public final <T> T[] toArray(final T[] a) {
+    public final <T> T[] toArray(@Nonnull final T[] a) {
         if (a.length > 0) {
             a[0] = (T)getElement();
             return a;
@@ -105,7 +107,7 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
     }
 
     @Override
-    public final boolean containsAll(final Collection<?> c) {
+    public final boolean containsAll(@Nonnull final Collection<?> c) {
         if (c.isEmpty()) {
             return true;
         }
@@ -117,17 +119,17 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
     }
 
     @Override
-    public final boolean addAll(final Collection<? extends E> c) {
+    public final boolean addAll(@Nonnull final Collection<? extends E> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final boolean retainAll(final Collection<?> c) {
+    public final boolean retainAll(@Nonnull final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final boolean removeAll(final Collection<?> c) {
+    public final boolean removeAll(@Nonnull final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 

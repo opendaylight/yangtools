@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
 import com.google.common.annotations.Beta;
 import java.util.Objects;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
@@ -32,11 +33,13 @@ public final class ThirdPartyExtensionEffectiveStatementImpl extends UnknownEffe
         return valueFromNamespace;
     }
 
+    @Nonnull
     @Override
     public QName getQName() {
         return getNodeType();
     }
 
+    @Nonnull
     @Override
     public SchemaPath getPath() {
         return path;

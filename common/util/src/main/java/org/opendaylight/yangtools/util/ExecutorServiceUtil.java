@@ -14,6 +14,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +57,7 @@ public final class ExecutorServiceUtil {
     public static <E> BlockingQueue<E> offerFailingBlockingQueue(final BlockingQueue<E> delegate) {
         return new ForwardingBlockingQueue<E>() {
             @Override
-            public boolean offer(final E o) {
+            public boolean offer(@Nonnull final E o) {
                 return false;
             }
 

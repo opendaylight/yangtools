@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 final class ReplaceLeafCandidateNode extends AbstractWriteCandidate {
@@ -19,6 +20,7 @@ final class ReplaceLeafCandidateNode extends AbstractWriteCandidate {
         this.oldData = Preconditions.checkNotNull(oldData);
     }
 
+    @Nonnull
     @Override
     public Optional<NormalizedNode<?, ?>> getDataBefore() {
         return Optional.of(oldData);

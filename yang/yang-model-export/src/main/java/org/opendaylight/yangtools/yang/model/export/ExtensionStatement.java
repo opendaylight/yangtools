@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.export;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -46,6 +47,7 @@ final class ExtensionStatement implements StatementDefinition {
         return argumentName;
     }
 
+    @Nonnull
     @Override
     public QName getStatementName() {
         return statementName;
@@ -56,11 +58,13 @@ final class ExtensionStatement implements StatementDefinition {
         return yinElement;
     }
 
+    @Nonnull
     @Override
     public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
         throw new UnsupportedOperationException("Not defined");
     }
 
+    @Nonnull
     @Override
     public Class<? extends EffectiveStatement<?,?>> getEffectiveRepresentationClass() {
         throw new UnsupportedOperationException("Not defined");

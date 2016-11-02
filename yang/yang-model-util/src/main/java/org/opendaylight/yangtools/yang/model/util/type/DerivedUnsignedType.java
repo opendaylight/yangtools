@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
 import java.util.List;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -24,6 +25,7 @@ final class DerivedUnsignedType extends AbstractDerivedType<UnsignedIntegerTypeD
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 
+    @Nonnull
     @Override
     public List<RangeConstraint> getRangeConstraints() {
         return baseType().getRangeConstraints();

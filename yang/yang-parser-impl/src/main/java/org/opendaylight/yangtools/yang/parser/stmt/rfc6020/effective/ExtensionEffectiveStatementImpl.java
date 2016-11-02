@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -133,16 +134,19 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
         return super.initSubstatements(substatementsInit);
     }
 
+    @Nonnull
     @Override
     public QName getQName() {
         return qname;
     }
 
+    @Nonnull
     @Override
     public SchemaPath getPath() {
         return schemaPath;
     }
 
+    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;
