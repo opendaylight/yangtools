@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Function;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -154,6 +155,7 @@ class ModifierImpl implements ModelActionBuilder {
         return false;
     }
 
+    @Nonnull
     @Override
     public <C extends Mutable<?, ?, ?>, CT extends C> Prerequisite<C> mutatesCtx(final CT context, final ModelProcessingPhase phase) {
         try {
@@ -163,28 +165,33 @@ class ModifierImpl implements ModelActionBuilder {
         }
     }
 
+    @Nonnull
     @Override
     public <A,D extends DeclaredStatement<A>,E extends EffectiveStatement<A, D>> AbstractPrerequisite<StmtContext<A, D, E>> requiresCtx(final StmtContext<A, D, E> context, final ModelProcessingPhase phase) {
         return requiresCtxImpl(context, phase);
     }
 
 
+    @Nonnull
     @Override
     public <K, N extends StatementNamespace<K, ?, ? >> Prerequisite<StmtContext<?,?,?>> requiresCtx(final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key, final ModelProcessingPhase phase) {
         return requiresCtxImpl(context, namespace, key, phase);
     }
 
+    @Nonnull
     @Override
     public <D extends DeclaredStatement<?>> Prerequisite<D> requiresDeclared(final StmtContext<?, ? extends D, ?> context) {
         return requiresCtxImpl(context, FULL_DECLARATION).transform(StmtContext::buildDeclared);
     }
 
+    @Nonnull
     @Override
     public <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>> AbstractPrerequisite<StmtContext<?, D, ?>> requiresDeclaredCtx(
             final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
         return requiresCtxImpl(context, namespace, key, FULL_DECLARATION);
     }
 
+    @Nonnull
     @Override
     public <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>> Prerequisite<D> requiresDeclared(
             final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
@@ -192,17 +199,20 @@ class ModifierImpl implements ModelActionBuilder {
         return rawContext.transform(StmtContext::buildDeclared);
     }
 
+    @Nonnull
     @Override
     public <E extends EffectiveStatement<?, ?>> Prerequisite<E> requiresEffective(final StmtContext<?, ?, ? extends E> stmt) {
         return requiresCtxImpl(stmt, EFFECTIVE_MODEL).transform(StmtContext::buildEffective);
     }
 
+    @Nonnull
     @Override
     public <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>> AbstractPrerequisite<StmtContext<?, ?, E>> requiresEffectiveCtx(
             final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
         return requiresCtxImpl(contextImpl(context), namespace,key, EFFECTIVE_MODEL);
     }
 
+    @Nonnull
     @Override
     public <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>> Prerequisite<E> requiresEffective(
             final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
@@ -211,6 +221,7 @@ class ModifierImpl implements ModelActionBuilder {
     }
 
 
+    @Nonnull
     @Override
     public <N extends IdentifierNamespace<?, ?>> Prerequisite<Mutable<?, ?, ?>> mutatesNs(final Mutable<?, ?, ?> context,
             final Class<N> namespace) {
@@ -221,11 +232,13 @@ class ModifierImpl implements ModelActionBuilder {
         }
     }
 
+    @Nonnull
     @Override
     public <T extends Mutable<?, ?, ?>> Prerequisite<T> mutatesEffectiveCtx(final T stmt) {
         return mutatesCtx(stmt, EFFECTIVE_MODEL);
     }
 
+   @Nonnull
    @Override
     public <K, E extends EffectiveStatement<?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>> AbstractPrerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(
             final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -88,11 +89,13 @@ public class RpcStatementImpl extends AbstractDeclaredStatement<QName>
         return argument();
     }
 
+    @Nonnull
     @Override
     public Collection<? extends TypedefStatement> getTypedefs() {
         return allDeclared(TypedefStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends GroupingStatement> getGroupings() {
         return allDeclared(GroupingStatement.class);
@@ -126,6 +129,7 @@ public class RpcStatementImpl extends AbstractDeclaredStatement<QName>
         return firstDeclared(OutputStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends IfFeatureStatement> getIfFeatures() {
         return allDeclared(IfFeatureStatement.class);

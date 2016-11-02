@@ -18,6 +18,7 @@ import com.google.common.io.ByteSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map.Entry;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangNames;
@@ -54,6 +55,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
     public Class<? extends YangTextSchemaSource> getType() {
         return YangTextSchemaSource.class;

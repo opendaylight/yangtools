@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
+import javax.annotation.Nonnull;
 
 /**
  * A {@link LinkedBlockingQueue} that tracks the largest queue size for debugging.
@@ -76,7 +77,7 @@ public class TrackingLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
     }
 
     @Override
-    public boolean offer(final E e) {
+    public boolean offer(@Nonnull final E e) {
         if (super.offer( e ) ) {
             updateLargestQueueSize();
             return true;

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import com.google.common.base.Preconditions;
 import java.net.URI;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.data.util.AbstractStringInstanceIdentifierCodec;
@@ -52,12 +53,12 @@ final class ElementInstanceIdentifierParser extends AbstractStringInstanceIdenti
     }
 
     @Override
-    protected String prefixForNamespace(final URI namespace) {
+    protected String prefixForNamespace(@Nonnull final URI namespace) {
         return element.lookupPrefix(namespace.toString());
     }
 
     @Override
-    protected QName createQName(final String prefix, final String localName) {
+    protected QName createQName(@Nonnull final String prefix, @Nonnull final String localName) {
         final String namespace = element.lookupNamespaceURI(prefix);
         Preconditions.checkArgument(namespace != null, "Failed to lookup prefix %s", prefix);
 
@@ -67,6 +68,7 @@ final class ElementInstanceIdentifierParser extends AbstractStringInstanceIdenti
         return QName.create(module.getQNameModule(), localName);
     }
 
+    @Nonnull
     @Override
     protected DataSchemaContextTree getDataContextTree() {
         return dataContextTree;

@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import java.math.BigDecimal;
 import java.util.List;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
@@ -60,6 +61,7 @@ final class BaseDecimalType extends AbstractRangedBaseType<DecimalTypeDefinition
         this.fractionDigits = fractionDigits;
     }
 
+    @Nonnull
     @Override
     public Integer getFractionDigits() {
         return fractionDigits;

@@ -91,7 +91,7 @@ public final class SemVer implements Comparable<SemVer>, Serializable {
     }
 
     @Override
-    public int compareTo(final SemVer other) {
+    public int compareTo(@Nonnull final SemVer other) {
         int cmp = Integer.compare(major, other.major);
         if (cmp == 0) {
             cmp = Integer.compare(minor, other.minor);

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import com.google.common.base.Preconditions;
 import java.net.URI;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.util.AbstractStringIdentityrefCodec;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -25,12 +26,12 @@ final class ElementIdentityrefParser extends AbstractStringIdentityrefCodec {
     }
 
     @Override
-    protected String prefixForNamespace(final URI namespace) {
+    protected String prefixForNamespace(@Nonnull final URI namespace) {
         return element.lookupPrefix(namespace.toString());
     }
 
     @Override
-    protected QName createQName(final String prefix, final String localName) {
+    protected QName createQName(@Nonnull final String prefix, @Nonnull final String localName) {
         final String namespace = element.lookupNamespaceURI(!prefix.isEmpty() ? prefix : null);
         Preconditions.checkArgument(namespace != null, "Failed to lookup prefix %s", prefix);
 

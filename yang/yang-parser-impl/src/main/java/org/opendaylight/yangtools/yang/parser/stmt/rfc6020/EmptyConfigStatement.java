@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Objects;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -48,11 +49,13 @@ abstract class EmptyConfigStatement implements ConfigStatement {
 
     abstract EffectiveStatement<Boolean, ConfigStatement> toEffective();
 
+    @Nonnull
     @Override
     public final Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
         return ImmutableList.of();
     }
 
+    @Nonnull
     @Override
     public final StatementDefinition statementDefinition() {
         return Rfc6020Mapping.CONFIG;
@@ -68,6 +71,7 @@ abstract class EmptyConfigStatement implements ConfigStatement {
         return Boolean.valueOf(getValue());
     }
 
+    @Nonnull
     @Override
     public final StatementSource getStatementSource() {
         return StatementSource.DECLARATION;

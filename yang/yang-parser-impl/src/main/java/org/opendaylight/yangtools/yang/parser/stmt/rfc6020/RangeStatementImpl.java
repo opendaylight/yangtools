@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.math.BigDecimal;
 import java.util.List;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -93,6 +94,7 @@ public class RangeStatementImpl extends AbstractDeclaredStatement<List<RangeCons
         return firstDeclared(ReferenceStatement.class);
     }
 
+    @Nonnull
     @Override
     public List<RangeConstraint> getRange() {
         return argument();

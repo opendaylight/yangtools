@@ -118,6 +118,7 @@ public final class ContainerSchemaNodes {
             return schemaNode.getStatus();
         }
 
+        @Nonnull
         @Override
         public List<UnknownSchemaNode> getUnknownSchemaNodes() {
             return ImmutableList.of();

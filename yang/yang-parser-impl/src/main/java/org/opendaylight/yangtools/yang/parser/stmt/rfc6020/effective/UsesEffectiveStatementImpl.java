@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -82,11 +83,13 @@ public final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumente
         this.whenCondition = (whenStmt == null) ? null : whenStmt.argument();
     }
 
+    @Nonnull
     @Override
     public SchemaPath getGroupingPath() {
         return groupingPath;
     }
 
+    @Nonnull
     @Override
     public Set<AugmentationSchema> getAugmentations() {
         return augmentations;
@@ -102,16 +105,19 @@ public final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumente
         return addedByUses;
     }
 
+    @Nonnull
     @Override
     public Map<SchemaPath, SchemaNode> getRefines() {
         return refines;
     }
 
+    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;
     }
 
+    @Nonnull
     @Override
     public Optional<RevisionAwareXPath> getWhenCondition() {
         return Optional.fromNullable(whenCondition);

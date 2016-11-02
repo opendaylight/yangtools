@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.jaxen;
 
 import com.google.common.base.Preconditions;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathDocument;
 
@@ -18,6 +19,7 @@ final class JaxenDocument implements XPathDocument {
         this.root = Preconditions.checkNotNull(root);
     }
 
+    @Nonnull
     @Override
     public NormalizedNode<?, ?> getRootNode() {
         return root;

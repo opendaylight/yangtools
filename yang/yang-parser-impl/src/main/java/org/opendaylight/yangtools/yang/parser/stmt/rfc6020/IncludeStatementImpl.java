@@ -13,6 +13,7 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -115,11 +116,13 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
         }
     }
 
+    @Nonnull
     @Override
     public String getModule() {
         return argument();
     }
 
+    @Nonnull
     @Override
     public PrefixStatement getPrefix() {
         return firstDeclared(PrefixStatement.class);

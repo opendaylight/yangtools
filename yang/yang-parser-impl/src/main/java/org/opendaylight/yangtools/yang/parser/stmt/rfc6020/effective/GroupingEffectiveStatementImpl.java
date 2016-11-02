@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import java.util.List;
 import java.util.Objects;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -47,11 +48,13 @@ public class GroupingEffectiveStatementImpl extends
         unknownNodes = b.build();
     }
 
+    @Nonnull
     @Override
     public QName getQName() {
         return qname;
     }
 
+    @Nonnull
     @Override
     public SchemaPath getPath() {
         return path;
@@ -62,6 +65,7 @@ public class GroupingEffectiveStatementImpl extends
         return addedByUses;
     }
 
+    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;

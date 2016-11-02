@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BodyGroup;
@@ -40,11 +41,13 @@ public abstract class AbstractRootStatement<T extends DeclaredStatement<String>>
         super(context);
     }
 
+    @Nonnull
     @Override
     public final Collection<? extends ImportStatement> getImports() {
         return allDeclared(ImportStatement.class);
     }
 
+    @Nonnull
     @Override
     public final Collection<? extends IncludeStatement> getIncludes() {
         return allDeclared(IncludeStatement.class);
@@ -70,56 +73,67 @@ public abstract class AbstractRootStatement<T extends DeclaredStatement<String>>
         return firstDeclared(ContactStatement.class);
     }
 
+    @Nonnull
     @Override
     public final Collection<? extends RevisionStatement> getRevisions() {
         return allDeclared(RevisionStatement.class);
     }
 
+    @Nonnull
     @Override
     public final Collection<? extends ExtensionStatement> getExtensions() {
         return allDeclared(ExtensionStatement.class);
     }
 
+    @Nonnull
     @Override
     public final Collection<? extends FeatureStatement> getFeatures() {
         return allDeclared(FeatureStatement.class);
     }
 
+    @Nonnull
     @Override
     public final Collection<? extends IdentityStatement> getIdentities() {
         return allDeclared(IdentityStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends TypedefStatement> getTypedefs() {
         return allDeclared(TypedefStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends GroupingStatement> getGroupings() {
         return allDeclared(GroupingStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends DataDefinitionStatement> getDataDefinitions() {
         return allDeclared(DataDefinitionStatement.class);
     }
 
+    @Nonnull
     @Override
     public final Collection<? extends AugmentStatement> getAugments() {
         return allDeclared(AugmentStatement.class);
     }
 
+    @Nonnull
     @Override
     public final Collection<? extends RpcStatement> getRpcs() {
         return allDeclared(RpcStatement.class);
     }
 
+    @Nonnull
     @Override
     public final Collection<? extends NotificationStatement> getNotifications() {
         return allDeclared(NotificationStatement.class);
     }
 
+    @Nonnull
     @Override
     public final Collection<? extends DeviationStatement> getDeviations() {
         return allDeclared(DeviationStatement.class);

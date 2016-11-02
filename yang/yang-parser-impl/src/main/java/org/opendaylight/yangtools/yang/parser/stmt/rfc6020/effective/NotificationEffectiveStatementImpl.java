@@ -15,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
@@ -55,11 +56,13 @@ public class NotificationEffectiveStatementImpl extends
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
     }
 
+    @Nonnull
     @Override
     public QName getQName() {
         return qname;
     }
 
+    @Nonnull
     @Override
     public SchemaPath getPath() {
         return path;
@@ -70,6 +73,7 @@ public class NotificationEffectiveStatementImpl extends
         return augmentations;
     }
 
+    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;

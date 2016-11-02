@@ -38,6 +38,7 @@ final class RecursiveDeleteCandidateNode extends AbstractRecursiveCandidateNode 
         return Optional.absent();
     }
 
+    @Nonnull
     @Override
     public Optional<NormalizedNode<?, ?>> getDataBefore() {
         return dataOptional();

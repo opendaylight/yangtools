@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
@@ -152,11 +153,13 @@ abstract class AbstractEffectiveSchemaContext implements SchemaContext {
         return null;
     }
 
+    @Nonnull
     @Override
     public QName getQName() {
         return SchemaContext.NAME;
     }
 
+    @Nonnull
     @Override
     public SchemaPath getPath() {
         return SchemaPath.ROOT;
@@ -172,11 +175,13 @@ abstract class AbstractEffectiveSchemaContext implements SchemaContext {
         return null;
     }
 
+    @Nonnull
     @Override
     public Status getStatus() {
         return Status.CURRENT;
     }
 
+    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         final List<UnknownSchemaNode> result = new ArrayList<>();

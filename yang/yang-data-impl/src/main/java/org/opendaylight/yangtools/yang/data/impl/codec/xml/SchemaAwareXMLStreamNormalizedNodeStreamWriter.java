@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -45,7 +46,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     }
 
     @Override
-    protected void writeValue(final XMLStreamWriter xmlWriter, final QName qname, final Object value,
+    protected void writeValue(final XMLStreamWriter xmlWriter, final QName qname, @Nonnull final Object value,
             final SchemaNode schemaNode) throws IOException, XMLStreamException {
         streamUtils.writeValue(xmlWriter, schemaNode, value, qname.getModule());
     }

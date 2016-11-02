@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -138,6 +139,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
 
     }
 
+    @Nonnull
     @Override
     public QName getName() {
         return argument();
@@ -148,6 +150,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
         return firstDeclared(WhenStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends IfFeatureStatement> getIfFeatures() {
         return allDeclared(IfFeatureStatement.class);
@@ -168,11 +171,13 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
         return firstDeclared(ReferenceStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends AugmentStatement> getAugments() {
         return allDeclared(AugmentStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends RefineStatement> getRefines() {
         return allDeclared(RefineStatement.class);

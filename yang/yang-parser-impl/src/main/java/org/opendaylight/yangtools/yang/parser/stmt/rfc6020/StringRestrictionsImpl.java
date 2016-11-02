@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
@@ -64,6 +65,7 @@ public class StringRestrictionsImpl extends AbstractDeclaredStatement<String> im
         }
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return argument();
@@ -74,6 +76,7 @@ public class StringRestrictionsImpl extends AbstractDeclaredStatement<String> im
         return firstDeclared(LengthStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends PatternStatement> getPatterns() {
         return allDeclared(PatternStatement.class);

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.annotations.Beta;
 import java.util.Objects;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -28,11 +29,13 @@ public final class SemanticVersionEffectiveStatementImpl extends
         path = ctx.getParentContext().getSchemaPath().get().createChild(getNodeType());
     }
 
+    @Nonnull
     @Override
     public QName getQName() {
         return getNodeType();
     }
 
+    @Nonnull
     @Override
     public SchemaPath getPath() {
         return path;

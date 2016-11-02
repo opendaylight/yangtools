@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -65,16 +66,19 @@ final class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
         return caseShorthandNode.getConstraints();
     }
 
+    @Nonnull
     @Override
     public QName getQName() {
         return caseShorthandNode.getQName();
     }
 
+    @Nonnull
     @Override
     public SchemaPath getPath() {
         return path;
     }
 
+    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return ImmutableList.of();
@@ -90,6 +94,7 @@ final class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
         return caseShorthandNode.getReference();
     }
 
+    @Nonnull
     @Override
     public Status getStatus() {
         return caseShorthandNode.getStatus();
