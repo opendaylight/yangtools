@@ -141,6 +141,7 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
         return semVerId;
     }
 
+    @Nonnull
     @Override
     public Class<? extends SchemaSourceRepresentation> getType() {
         return ASTSchemaSource.class;

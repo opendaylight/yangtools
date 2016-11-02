@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -103,6 +104,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     /**
      * @return this as its own root
      */
+    @Nonnull
     @Override
     public RootStatementContext<?, ?, ?> getRoot() {
         return this;
@@ -149,6 +151,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
         return copy;
     }
 
+    @Nonnull
     @Override
     public Optional<SchemaPath> getSchemaPath() {
         return Optional.of(SchemaPath.ROOT);

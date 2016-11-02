@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -25,22 +26,25 @@ abstract class AbstractBuiltinEffectiveStatement implements TypeEffectiveStateme
     }
 
     @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> V get(final Class<N> namespace, final K identifier) {
+    public final <K, V, N extends IdentifierNamespace<K, V>> V get(@Nonnull final Class<N> namespace,
+            @Nonnull final K identifier) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(final Class<N> namespace) {
+    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(@Nonnull final Class<N> namespace) {
         // TODO Auto-generated method stub
         return null;
     }
 
+    @Nonnull
     @Override
     public final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
         return ImmutableList.of();
     }
 
+    @Nonnull
     @Override
     public final StatementDefinition statementDefinition() {
         return Rfc6020Mapping.TYPE;
@@ -51,6 +55,7 @@ abstract class AbstractBuiltinEffectiveStatement implements TypeEffectiveStateme
         return getTypeDefinition().getQName().getLocalName();
     }
 
+    @Nonnull
     @Override
     public final StatementSource getStatementSource() {
         return StatementSource.CONTEXT;

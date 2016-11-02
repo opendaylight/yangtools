@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import javax.annotation.Nonnull;
 
 /**
  * Internal array-backed {@link List}. It assumes the array does not contain nulls and it does not get modified
@@ -51,6 +52,7 @@ final class ConstantArrayCollection<E> implements Collection<E>, Serializable {
         return false;
     }
 
+    @Nonnull
     @Override
     public Iterator<E> iterator() {
         return new UnmodifiableIterator<E>() {
@@ -71,14 +73,16 @@ final class ConstantArrayCollection<E> implements Collection<E>, Serializable {
         };
     }
 
+    @Nonnull
     @Override
     public Object[] toArray() {
         return array.clone();
     }
 
+    @Nonnull
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T[] toArray(final T[] a) {
+    public <T> T[] toArray(@Nonnull final T[] a) {
         if (a.length < array.length) {
             return Arrays.copyOf(array, array.length, (Class<T[]>)a.getClass().getComponentType());
         }
@@ -101,7 +105,7 @@ final class ConstantArrayCollection<E> implements Collection<E>, Serializable {
     }
 
     @Override
-    public boolean containsAll(final Collection<?> c) {
+    public boolean containsAll(@Nonnull final Collection<?> c) {
         for (Object o : c) {
             if (!contains(o)) {
                 return false;
@@ -112,17 +116,17 @@ final class ConstantArrayCollection<E> implements Collection<E>, Serializable {
     }
 
     @Override
-    public boolean addAll(final Collection<? extends E> c) {
+    public boolean addAll(@Nonnull final Collection<? extends E> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean removeAll(final Collection<?> c) {
+    public boolean removeAll(@Nonnull final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean retainAll(final Collection<?> c) {
+    public boolean retainAll(@Nonnull final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 

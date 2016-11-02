@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.objcache.guava;
 
 import com.google.common.base.FinalizableReferenceQueue;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.objcache.ObjectCache;
 import org.opendaylight.yangtools.objcache.spi.IObjectCacheFactory;
 
@@ -22,7 +23,7 @@ public final class GuavaObjectCacheFactory implements AutoCloseable, IObjectCach
     }
 
     @Override
-    public ObjectCache getObjectCache(final Class<?> objClass) {
+    public ObjectCache getObjectCache(@Nonnull final Class<?> objClass) {
         return cache;
     }
 

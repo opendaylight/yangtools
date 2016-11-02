@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import java.util.Collection;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -62,6 +63,7 @@ public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchema
         typeDefinition = builder.build();
     }
 
+    @Nonnull
     @Override
     public TypeDefinition<?> getTypeDefinition() {
         return typeDefinition;
@@ -89,21 +91,23 @@ public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchema
         }
 
         @Override
-        public <K, V, N extends IdentifierNamespace<K, V>> V get(final Class<N> namespace, final K identifier) {
+        public <K, V, N extends IdentifierNamespace<K, V>> V get(@Nonnull final Class<N> namespace, @Nonnull final K identifier) {
             return TypeDefEffectiveStatementImpl.this.get(namespace, identifier);
         }
 
         @Override
-        public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(final Class<N> namespace) {
+        public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(@Nonnull final Class<N> namespace) {
             return TypeDefEffectiveStatementImpl.this.getAll(namespace);
         }
 
+        @Nonnull
         @Override
         public Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
             // FIXME: this is tricky
             throw new UnsupportedOperationException("Not implemented yet");
         }
 
+        @Nonnull
         @Override
         public StatementDefinition statementDefinition() {
             return Rfc6020Mapping.TYPE;
@@ -114,11 +118,13 @@ public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchema
             return getQName().getLocalName();
         }
 
+        @Nonnull
         @Override
         public StatementSource getStatementSource() {
             return StatementSource.CONTEXT;
         }
 
+        @Nonnull
         @Override
         public TypeDefinition<?> getTypeDefinition() {
             return TypeDefEffectiveStatementImpl.this.getTypeDefinition();

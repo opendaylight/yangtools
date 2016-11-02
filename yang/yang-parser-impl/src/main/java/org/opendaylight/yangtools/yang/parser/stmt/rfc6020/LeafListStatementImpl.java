@@ -157,6 +157,7 @@ public class LeafListStatementImpl extends AbstractDeclaredStatement<QName>
         return allDeclared(MustStatement.class);
     }
 
+    @Nonnull
     @Override
     public TypeStatement getType() {
         return firstDeclared(TypeStatement.class);

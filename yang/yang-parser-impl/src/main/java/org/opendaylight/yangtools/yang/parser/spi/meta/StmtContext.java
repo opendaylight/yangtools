@@ -140,6 +140,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
                 Class<N> type, KT key, VT value)
                 throws NamespaceNotAvailableException;
 
+        @Nonnull
         @Override
         StmtContext.Mutable<?, ?, ?> getRoot();
 

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import java.net.URI;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.util.AbstractStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
@@ -28,15 +29,16 @@ final class RandomPrefixInstanceIdentifierSerializer extends AbstractStringInsta
     }
 
     @Override
-    protected String prefixForNamespace(final URI namespace) {
+    protected String prefixForNamespace(@Nonnull final URI namespace) {
         return prefixes.encodePrefix(namespace);
     }
 
     @Override
-    protected QName createQName(final String prefix, final String localName) {
+    protected QName createQName(@Nonnull final String prefix, @Nonnull final String localName) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
+    @Nonnull
     @Override
     protected DataSchemaContextTree getDataContextTree() {
         return schemaTree;

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
@@ -19,11 +20,13 @@ public class ImportStatementImpl extends AbstractDeclaredStatement<String> imple
         super(context);
     }
 
+    @Nonnull
     @Override
     public String getModule() {
         return rawArgument();
     }
 
+    @Nonnull
     @Override
     public PrefixStatement getPrefix() {
         return firstDeclared(PrefixStatement.class);

@@ -68,6 +68,7 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
         return new UnmodifiableCollection<>(collection);
     }
 
+    @Nonnull
     @Override
     public Iterator<E> iterator() {
         return Iterators.unmodifiableIterator(delegate.iterator());
@@ -94,12 +95,12 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
     }
 
     @Override
-    public <T> T[] toArray(final T[] a) {
+    public <T> T[] toArray(@Nonnull final T[] a) {
         return delegate.toArray(a);
     }
 
     @Override
-    public boolean containsAll(final Collection<?> c) {
+    public boolean containsAll(@Nonnull final Collection<?> c) {
         return delegate.containsAll(c);
     }
 
@@ -109,7 +110,7 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
     }
 
     @Override
-    public boolean addAll(final Collection<? extends E> c) {
+    public boolean addAll(@Nonnull final Collection<? extends E> c) {
         throw new UnsupportedOperationException();
     }
 
@@ -119,12 +120,12 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
     }
 
     @Override
-    public boolean removeAll(final Collection<?> c) {
+    public boolean removeAll(@Nonnull final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean retainAll(final Collection<?> c) {
+    public boolean retainAll(@Nonnull final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 

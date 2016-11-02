@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.util;
 
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 
 import com.google.common.util.concurrent.AsyncFunction;
@@ -142,7 +143,7 @@ public class SchemaSourceTransformerTest {
     private class Provider extends AbstractSchemaRepository {
 
         @Override
-        public SchemaContextFactory createSchemaContextFactory(final SchemaSourceFilter filter) {
+        public SchemaContextFactory createSchemaContextFactory(@Nonnull final SchemaSourceFilter filter) {
             return null;
         }
 
@@ -151,7 +152,7 @@ public class SchemaSourceTransformerTest {
     private class Consumer extends AbstractSchemaRepository {
 
         @Override
-        public SchemaContextFactory createSchemaContextFactory(final SchemaSourceFilter filter) {
+        public SchemaContextFactory createSchemaContextFactory(@Nonnull final SchemaSourceFilter filter) {
             return null;
         }
 

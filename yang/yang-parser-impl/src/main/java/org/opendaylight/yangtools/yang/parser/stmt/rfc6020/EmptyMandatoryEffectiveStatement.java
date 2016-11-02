@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -36,6 +37,7 @@ abstract class EmptyMandatoryEffectiveStatement implements MandatoryEffectiveSta
         // Hidden
     }
 
+    @Nonnull
     @Override
     public final StatementDefinition statementDefinition() {
         return getDeclared().statementDefinition();
@@ -46,21 +48,23 @@ abstract class EmptyMandatoryEffectiveStatement implements MandatoryEffectiveSta
         return getDeclared().argument();
     }
 
+    @Nonnull
     @Override
     public final StatementSource getStatementSource() {
         return getDeclared().getStatementSource();
     }
 
     @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> V get(final Class<N> namespace, final K identifier) {
+    public final <K, V, N extends IdentifierNamespace<K, V>> V get(@Nonnull final Class<N> namespace, @Nonnull final K identifier) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(final Class<N> namespace) {
+    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(@Nonnull final Class<N> namespace) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
+    @Nonnull
     @Override
     public final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
         return ImmutableList.of();

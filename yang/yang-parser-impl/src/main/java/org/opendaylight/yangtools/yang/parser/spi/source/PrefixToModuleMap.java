@@ -11,6 +11,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
@@ -35,7 +36,7 @@ public class PrefixToModuleMap implements PrefixToModule {
 
     @Nullable
     @Override
-    public QNameModule get(String prefix) {
+    public QNameModule get(@Nonnull String prefix) {
         return prefixToModuleMap.get(prefix);
     }
 

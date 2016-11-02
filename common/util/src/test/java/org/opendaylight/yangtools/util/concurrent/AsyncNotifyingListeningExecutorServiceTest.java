@@ -30,6 +30,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.annotation.Nonnull;
 import org.junit.After;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.concurrent.CommonTestUtils.Invoker;
@@ -150,7 +151,7 @@ public class AsyncNotifyingListeningExecutorServiceTest {
             }
 
             @Override
-            public void onFailure( Throwable t ) {
+            public void onFailure( @Nonnull Throwable t ) {
                 // Shouldn't happen
                 t.printStackTrace();
             }

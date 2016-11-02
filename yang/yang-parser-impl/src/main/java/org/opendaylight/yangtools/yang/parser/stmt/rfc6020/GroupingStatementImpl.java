@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -85,6 +86,7 @@ public class GroupingStatementImpl extends AbstractDeclaredStatement<QName>
 
     }
 
+    @Nonnull
     @Override
     public QName getName() {
         return argument();
@@ -105,16 +107,19 @@ public class GroupingStatementImpl extends AbstractDeclaredStatement<QName>
         return firstDeclared(ReferenceStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends TypedefStatement> getTypedefs() {
         return allDeclared(TypedefStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends GroupingStatement> getGroupings() {
         return allDeclared(GroupingStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends DataDefinitionStatement> getDataDefinitions() {
         return allDeclared(DataDefinitionStatement.class);

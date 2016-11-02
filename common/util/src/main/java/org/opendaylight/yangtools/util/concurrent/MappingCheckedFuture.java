@@ -16,6 +16,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import javax.annotation.Nonnull;
 
 /**
  * An implementation of CheckedFuture that provides similar behavior for the <code>get</code> methods
@@ -55,7 +56,7 @@ public final class MappingCheckedFuture<V, X extends Exception> extends Abstract
     }
 
     @Override
-    protected X mapException( final Exception e ) {
+    protected X mapException( @Nonnull final Exception e ) {
         return mapper.apply( e );
     }
 
@@ -78,7 +79,7 @@ public final class MappingCheckedFuture<V, X extends Exception> extends Abstract
     }
 
     @Override
-    public V get( final long timeout, final TimeUnit unit )
+    public V get( final long timeout, @Nonnull final TimeUnit unit )
             throws InterruptedException, ExecutionException, TimeoutException {
         try {
             return super.get( timeout, unit );

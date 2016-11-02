@@ -15,6 +15,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -59,7 +60,7 @@ public final class JSONCodecFactory {
     private final LoadingCache<DataSchemaNode, JSONCodec<?>> codecs =
             CacheBuilder.newBuilder().softValues().build(new CacheLoader<DataSchemaNode, JSONCodec<?>>() {
         @Override
-        public JSONCodec<?> load(final DataSchemaNode key) throws Exception {
+        public JSONCodec<?> load(@Nonnull final DataSchemaNode key) throws Exception {
             final TypeDefinition<?> type;
             if (key instanceof LeafSchemaNode) {
                 type = ((LeafSchemaNode) key).getType();

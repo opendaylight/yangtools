@@ -44,6 +44,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
             super(offsets, objects);
         }
 
+        @Nonnull
         @Override
         public MutableOffsetMap<K, V> toModifiableMap() {
             return MutableOffsetMap.orderedCopyOf(this);
@@ -63,6 +64,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
             super(offsets, objects);
         }
 
+        @Nonnull
         @Override
         public MutableOffsetMap<K, V> toModifiableMap() {
             return MutableOffsetMap.unorderedCopyOf(this);
@@ -96,6 +98,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         Preconditions.checkArgument(offsets.size() == objects.length);
     }
 
+    @Nonnull
     @Override
     public abstract MutableOffsetMap<K, V> toModifiableMap();
 
@@ -295,7 +298,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
     }
 
     @Override
-    public final void putAll(final Map<? extends K, ? extends V> m) {
+    public final void putAll(@Nonnull final Map<? extends K, ? extends V> m) {
         throw new UnsupportedOperationException();
     }
 
@@ -309,11 +312,13 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         return offsets.keySet();
     }
 
+    @Nonnull
     @Override
     public final Collection<V> values() {
         return new ConstantArrayCollection<>(objects);
     }
 
+    @Nonnull
     @Override
     public final Set<Entry<K, V>> entrySet() {
         return new EntrySet();
@@ -346,6 +351,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
     }
 
     private final class EntrySet extends AbstractSet<Entry<K, V>> {
+        @Nonnull
         @Override
         public Iterator<Entry<K, V>> iterator() {
             final Iterator<Entry<K, Integer>> it = offsets.entrySet().iterator();

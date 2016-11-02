@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.Decimal64Specification;
@@ -45,6 +46,7 @@ public final class Decimal64SpecificationEffectiveStatementImpl extends
         typeDefinition = builder.build();
     }
 
+    @Nonnull
     @Override
     public DecimalTypeDefinition getTypeDefinition() {
         return typeDefinition;

@@ -70,6 +70,7 @@ final class StackedPathArguments extends PathArgumentList {
         return base.lastIndexOf(srch);
     }
 
+    @Nonnull
     @Override
     public UnmodifiableIterator<PathArgument> iterator() {
         return new IteratorImpl(base, stack);

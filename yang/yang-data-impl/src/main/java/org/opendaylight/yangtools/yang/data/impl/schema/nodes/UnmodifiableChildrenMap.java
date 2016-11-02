@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 
@@ -97,7 +98,7 @@ final class UnmodifiableChildrenMap implements CloneableMap<PathArgument, DataCo
     }
 
     @Override
-    public void putAll(final Map<? extends PathArgument, ? extends DataContainerChild<? extends PathArgument, ?>> m) {
+    public void putAll(@Nonnull final Map<? extends PathArgument, ? extends DataContainerChild<? extends PathArgument, ?>> m) {
         throw new UnsupportedOperationException();
     }
 
@@ -111,6 +112,7 @@ final class UnmodifiableChildrenMap implements CloneableMap<PathArgument, DataCo
         return Collections.unmodifiableSet(delegate.keySet());
     }
 
+    @Nonnull
     @Override
     public Collection<DataContainerChild<? extends PathArgument, ?>> values() {
         if (values == null) {
