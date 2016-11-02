@@ -88,7 +88,7 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
 
     public YangStatementSourceImpl(final SourceIdentifier identifier, final YangStatementParser.StatementContext statementContext) {
         try {
-            this.statementContext = statementContext;
+            this.statementContext =  statementContext;
             this.sourceName = identifier.getName();
             yangStatementModelParser = new YangStatementParserListenerImpl(sourceName);
         } catch (Exception e) {
