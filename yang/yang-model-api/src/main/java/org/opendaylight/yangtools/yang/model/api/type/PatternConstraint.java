@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 
 /**
@@ -23,4 +24,16 @@ public interface PatternConstraint extends ConstraintMetaDefinition {
      *         the YANG <code>pattern</code> substatement
      */
     String getRegularExpression();
+
+    /**
+     * All implementations should override this method.
+     * The default definition of this method is used only in YANG 1.0 (RFC6020)
+     * implementations of PatternConstraint which do not support modifier statement.
+     * YANG pattern statement has been changed in YANG 1.1 (RFC7950) and now allows modifier statement.
+     *
+     * @return enum constant which represents the value of modifier statement
+     */
+    @Nullable default ModifierKind getModifier() {
+        return null;
+    }
 }
