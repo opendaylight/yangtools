@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a65312a_5bd50542",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MutableUniqueIndex.java",
+        "patchSetId": 43
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-11-02T12:45:18Z",
+      "side": 1,
+      "message": "this can return null, leading to a kaboom",
+      "range": {
+        "startLine": 196,
+        "startChar": 16,
+        "endLine": 196,
+        "endChar": 119
+      },
+      "revId": "f7c07c7db55d6a80fddfaafa40ae9d8e9aba949b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
