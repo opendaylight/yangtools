@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
+import javax.annotation.Nonnull;
 import javax.xml.transform.dom.DOMSource;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -354,7 +355,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
-    public void nextDataSchemaNode(final DataSchemaNode schema) {
+    public void nextDataSchemaNode(@Nonnull final DataSchemaNode schema) {
         nextSchema = Preconditions.checkNotNull(schema);
     }
 }

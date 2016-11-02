@@ -15,6 +15,7 @@ import com.google.common.cache.LoadingCache;
 import java.io.Serializable;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Map;
+import javax.annotation.Nonnull;
 
 /**
  * Implementation of the {@link Map} interface which stores a single mapping. The key set is shared among all instances
@@ -32,6 +33,7 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
             super(key, value);
         }
 
+        @Nonnull
         @Override
         public ModifiableMapPhase<K, V> toModifiableMap() {
             return MutableOffsetMap.orderedCopyOf(this);
@@ -45,6 +47,7 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
             super(key, value);
         }
 
+        @Nonnull
         @Override
         public ModifiableMapPhase<K, V> toModifiableMap() {
             return MutableOffsetMap.unorderedCopyOf(this);
@@ -55,7 +58,7 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
     private static final LoadingCache<Object, SingletonSet<Object>> CACHE = CacheBuilder.newBuilder().weakValues()
             .build(new CacheLoader<Object, SingletonSet<Object>>() {
                 @Override
-                public SingletonSet<Object> load(final Object key) {
+                public SingletonSet<Object> load(@Nonnull final Object key) {
                     return SingletonSet.of(key);
                 }
             });
@@ -91,16 +94,19 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
         return new Unordered<>(e.getKey(), e.getValue());
     }
 
+    @Nonnull
     @Override
     public final SingletonSet<Entry<K, V>> entrySet() {
         return SingletonSet.of(new SimpleImmutableEntry<>(keySet.getElement(), value));
     }
 
+    @Nonnull
     @Override
     public final SingletonSet<K> keySet() {
         return keySet;
     }
 
+    @Nonnull
     @Override
     public final SingletonSet<V> values() {
         return SingletonSet.of(value);
@@ -142,7 +148,7 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
     }
 
     @Override
-    public final void putAll(final Map<? extends K, ? extends V> m) {
+    public final void putAll(@Nonnull final Map<? extends K, ? extends V> m) {
         throw new UnsupportedOperationException();
     }
 

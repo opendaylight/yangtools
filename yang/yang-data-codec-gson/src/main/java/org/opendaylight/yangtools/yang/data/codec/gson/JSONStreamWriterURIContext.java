@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 
@@ -25,6 +26,7 @@ abstract class JSONStreamWriterURIContext extends JSONStreamWriterContext {
         this.namespace = namespace;
     }
 
+    @Nonnull
     @Override
     protected final URI getNamespace() {
         return namespace;

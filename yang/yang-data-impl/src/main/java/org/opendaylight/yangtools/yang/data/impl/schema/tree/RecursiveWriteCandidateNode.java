@@ -38,6 +38,7 @@ final class RecursiveWriteCandidateNode extends AbstractRecursiveCandidateNode {
         return new WriteLeafCandidateNode(childData);
     }
 
+    @Nonnull
     @Override
     public Optional<NormalizedNode<?, ?>> getDataAfter() {
         return dataOptional();

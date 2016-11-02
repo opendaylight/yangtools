@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import com.google.common.base.Optional;
 import java.util.Collection;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -113,6 +114,7 @@ public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implem
         }
     }
 
+    @Nonnull
     @Override
     public QName getName() {
         return argument();
@@ -123,11 +125,13 @@ public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implem
         return firstDeclared(WhenStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends IfFeatureStatement> getIfFeatures() {
         return allDeclared(IfFeatureStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends MustStatement> getMusts() {
         return allDeclared(MustStatement.class);

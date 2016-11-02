@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import java.net.URISyntaxException;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -30,7 +31,7 @@ public interface PrefixToModule extends IdentifierNamespace<String, QNameModule>
      *
      */
     @Override
-    @Nullable QNameModule get(String prefix);
+    @Nullable QNameModule get(@Nonnull String prefix);
 
     /**
      * Returns QNameModule (namespace + revision) associated with XML namespace

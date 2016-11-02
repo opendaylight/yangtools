@@ -16,6 +16,7 @@ import com.google.common.io.ByteSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map.Entry;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangNames;
@@ -63,6 +64,7 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
     public Class<? extends YinTextSchemaSource> getType() {
         return YinTextSchemaSource.class;

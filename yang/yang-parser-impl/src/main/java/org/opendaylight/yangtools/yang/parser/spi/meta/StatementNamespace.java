@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -16,7 +17,7 @@ public interface StatementNamespace<K, D extends DeclaredStatement<?>, E extends
         IdentifierNamespace<K, StmtContext<?, D, E>> {
     @Override
     @Nullable
-    StmtContext<?, D, E> get(K key);
+    StmtContext<?, D, E> get(@Nonnull K key);
 
     interface TreeScoped<K, D extends DeclaredStatement<?>, E extends EffectiveStatement<?, D>> extends
             StatementNamespace<K, D, E> {

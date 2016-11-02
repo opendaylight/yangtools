@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 
 import java.net.URI;
 
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -34,6 +35,7 @@ abstract class JSONStreamWriterQNameContext extends JSONStreamWriterContext {
         return qname;
     }
 
+    @Nonnull
     @Override
     protected final URI getNamespace() {
         return qname.getNamespace();

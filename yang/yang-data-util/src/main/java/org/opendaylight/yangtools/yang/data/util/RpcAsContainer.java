@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
@@ -49,6 +50,7 @@ public final class RpcAsContainer implements ContainerSchemaNode {
         return delegate.getGroupings();
     }
 
+    @Nonnull
     @Override
     public Status getStatus() {
         return delegate.getStatus();
@@ -66,16 +68,19 @@ public final class RpcAsContainer implements ContainerSchemaNode {
         delegate = parentNode;
     }
 
+    @Nonnull
     @Override
     public QName getQName() {
         return delegate.getQName();
     }
 
+    @Nonnull
     @Override
     public SchemaPath getPath() {
         return delegate.getPath();
     }
 
+    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return Collections.emptyList();

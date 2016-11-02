@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -98,6 +99,7 @@ public class TypedefStatementImpl extends AbstractDeclaredStatement<QName> imple
         return firstDeclared(ReferenceStatement.class);
     }
 
+    @Nonnull
     @Override
     public TypeStatement getType() {
         return firstDeclared(TypeStatement.class);
@@ -108,6 +110,7 @@ public class TypedefStatementImpl extends AbstractDeclaredStatement<QName> imple
         return firstDeclared(UnitsStatement.class);
     }
 
+    @Nonnull
     @Override
     public QName getName() {
         return argument();

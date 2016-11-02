@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
@@ -32,16 +33,17 @@ final class JSONStringInstanceIdentifierCodec extends AbstractModuleStringInstan
     }
 
     @Override
-    protected Module moduleForPrefix(final String prefix) {
+    protected Module moduleForPrefix(@Nonnull final String prefix) {
         return context.findModuleByName(prefix, null);
     }
 
     @Override
-    protected String prefixForNamespace(final URI namespace) {
+    protected String prefixForNamespace(@Nonnull final URI namespace) {
         final Module module = context.findModuleByNamespaceAndRevision(namespace, null);
         return module == null ? null : module.getName();
     }
 
+    @Nonnull
     @Override
     protected DataSchemaContextTree getDataContextTree() {
         return dataContextTree;

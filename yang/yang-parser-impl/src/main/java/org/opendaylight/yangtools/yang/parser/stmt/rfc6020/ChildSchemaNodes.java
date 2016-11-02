@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Map;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -30,7 +31,7 @@ public class ChildSchemaNodes<D extends DeclaredStatement<QName>,E extends Effec
     }
 
     @Override
-    public StmtContext<?, D, E> get(final QName key) {
+    public StmtContext<?, D, E> get(@Nonnull final QName key) {
         // TODO Auto-generated method stub
         return null;
     }
