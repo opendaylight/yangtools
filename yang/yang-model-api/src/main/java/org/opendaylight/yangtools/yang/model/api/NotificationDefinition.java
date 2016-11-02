@@ -13,4 +13,10 @@ package org.opendaylight.yangtools.yang.model.api;
  */
 public interface NotificationDefinition extends SchemaNode, DataNodeContainer, AugmentationTarget {
 
+    /**
+     * Returns the constraints associated with this NotificationDefinition
+     *
+     * @return the constraints associated with this NotificationDefinition
+     */
+    ConstraintDefinition getConstraints();
 }
