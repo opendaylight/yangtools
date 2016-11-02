@@ -10,44 +10,136 @@ package org.opendaylight.yangtools.yang.parser.system.test;
 import com.google.common.base.Stopwatch;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.cli.BasicParser;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Main class of Yang parser system test.
+ *
+ * yang-system-test [-f features] [-h help] [-p path] [-v verbose] yangFiles...
+ *  -f,--features &lt;arg&gt;   features is a string on the form
+ *                        modulename:[feature(,feature)*]. This option is
+ *                        used to prune the data model by removing all nodes
+ *                        that are defined with a "if-feature".
+ *  -h,--help             print help message and exit.
+ *  -p,--path &lt;arg&gt;       path is a colon (:) separated list of directories
+ *                        to search for yang modules.
+ *  -v,--verbose          shows details about the results of test running.
+ *
  */
 public class Main {
-    private static final Logger LOG = LoggerFactory.getLogger(Main.class);
+    private static final Logger LOG = Logger.getLogger(Main.class.getName());
     private static final int MB = 1024 * 1024;
-    private static final String DEFAULT_YANG_DIR_PATH = "./src/main/yang";
 
     public static void main(final String[] args) throws SourceException, FileNotFoundException, ReactorException,
             URISyntaxException {
-        final String yangDirPath = args.length == 1 ? args[0] : DEFAULT_YANG_DIR_PATH;
-        LOG.info("Yang models dir path: {} ", yangDirPath);
+
+        final HelpFormatter formatter = new HelpFormatter();
+        final Options options = createOptions();
+        final CommandLine arguments = parseArguments(args, options, formatter);
+
+        if (arguments.hasOption("help")) {
+            printHelp(options, formatter);
+            return;
+        }
+
+        if (arguments.hasOption("verbose")) {
+            LOG.setLevel(Level.CONFIG);
+        } else {
+            LOG.setLevel(Level.SEVERE);
+        }
+
+        final List<String> yangDirs = new ArrayList<>();
+        if (arguments.hasOption("path")) {
+            for (final String pathArg : arguments.getOptionValues("path")) {
+                yangDirs.addAll(Arrays.asList(pathArg.split(":")));
+            }
+        }
+
+        final List<String> yangFiles = Arrays.asList(arguments.getArgs());
+
+        LOG.log(Level.INFO, "Yang model dirs: {0} ", yangDirs);
+        LOG.log(Level.INFO, "Yang model files: {0} ", yangFiles);
         SchemaContext context = null;
         printMemoryInfo("start");
         final Stopwatch stopWatch = Stopwatch.createStarted();
         try {
-            context = YangParserUtils.parseYangSources(yangDirPath);
+            context = YangParserUtils.parseYangSources(yangDirs, yangFiles);
         } catch (final Exception e) {
-            LOG.error("Failed to create SchemaContext.", e);
+            LOG.log(Level.SEVERE, "Failed to create SchemaContext.", e);
             System.exit(1);
         }
         stopWatch.stop();
-        LOG.info("Elapsed time: {}", stopWatch);
+        LOG.log(Level.INFO, "Elapsed time: {0}", stopWatch);
         printMemoryInfo("end");
-        LOG.info("SchemaContext resolved Successfully. {}", context);
+        LOG.log(Level.INFO, "SchemaContext resolved Successfully. {0}", context);
         Runtime.getRuntime().gc();
         printMemoryInfo("after gc");
     }
 
+    private static CommandLine parseArguments(final String[] args, final Options options, final HelpFormatter formatter) {
+        final CommandLineParser parser = new BasicParser();
+
+        CommandLine cmd = null;
+        try {
+            cmd = parser.parse(options, args);
+        } catch (final ParseException e) {
+            LOG.log(Level.SEVERE, "Failed to parse command line options.", e);
+            printHelp(options, formatter);
+
+            System.exit(1);
+        }
+
+        return cmd;
+    }
+
+    private static void printHelp(final Options options, final HelpFormatter formatter) {
+        formatter.printHelp("yang-system-test [-f features] [-h help] [-p path] [-v verbose] yangFiles...", options);
+    }
+
+    private static Options createOptions() {
+        final Options options = new Options();
+
+        final Option help = new Option("h", "help", false, "print help message and exit.");
+        help.setRequired(false);
+        options.addOption(help);
+
+        final Option path = new Option("p", "path", true,
+                "path is a colon (:) separated list of directories to search for yang modules.");
+        path.setRequired(false);
+        options.addOption(path);
+
+        final Option verbose = new Option("v", "verbose", false, "shows details about the results of test running.");
+        verbose.setRequired(false);
+        options.addOption(verbose);
+
+        final Option feature = new Option(
+                "f",
+                "features",
+                true,
+                "features is a string on the form modulename:[feature(,feature)*]. This option is used to prune the data model by removing all nodes that are defined with a \"if-feature\". ");
+        feature.setRequired(false);
+        options.addOption(feature);
+        return options;
+    }
+
     private static void printMemoryInfo(final String info) {
-        LOG.info("Memory INFO [{}]: free {}MB, used {}MB, total {}MB, max {}MB", info, Runtime.getRuntime()
-                .freeMemory() / MB, (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / MB,
-                Runtime.getRuntime().totalMemory() / MB, Runtime.getRuntime().maxMemory() / MB);
+        LOG.log(Level.INFO, "Memory INFO [{0}]: free {1}MB, used {2}MB, total {3}MB, max {4}MB", new Object[] { info,
+                Runtime.getRuntime().freeMemory() / MB,
+                (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / MB,
+                Runtime.getRuntime().totalMemory() / MB, Runtime.getRuntime().maxMemory() / MB });
     }
 }
