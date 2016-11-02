@@ -91,7 +91,7 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
             return a;
         }
 
-        return (T[]) new Object[] { (T) getElement() };
+        return (T[]) new Object[] {getElement()};
     }
 
     @Override

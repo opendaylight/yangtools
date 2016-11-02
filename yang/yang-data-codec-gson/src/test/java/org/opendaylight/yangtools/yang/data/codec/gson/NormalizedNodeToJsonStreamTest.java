@@ -122,7 +122,7 @@ public class NormalizedNodeToJsonStreamTest {
                 final HashSet<Object> lflst11Values = Sets.newHashSet();
                 for (final JsonElement jsonElement : lflst11) {
                     assertTrue(jsonElement instanceof JsonPrimitive);
-                    lflst11Values.add(((JsonPrimitive) jsonElement).getAsString());
+                    lflst11Values.add(jsonElement.getAsString());
                 }
 
                 assertEquals(Sets.newHashSet("lflst11 value2\r\nanother line 2", "lflst11 value1\nanother line 1"),
@@ -172,7 +172,7 @@ public class NormalizedNodeToJsonStreamTest {
                 final HashSet<Object> lflst11Values = Sets.newHashSet();
                 for (final JsonElement jsonElement : lflst11) {
                     assertTrue(jsonElement instanceof JsonPrimitive);
-                    lflst11Values.add(((JsonPrimitive) jsonElement).getAsString());
+                    lflst11Values.add(jsonElement.getAsString());
                 }
 
                 assertEquals(Sets.newHashSet("lflst11 value2", "lflst11 value1"), lflst11Values);

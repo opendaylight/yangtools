@@ -143,10 +143,8 @@ class SingleModuleYinStatementWriter implements StatementTextWriter {
     }
 
     private static boolean isArgumentYinElement(final StatementDefinition currentStatement) {
-        if (currentStatement instanceof Rfc6020Mapping) {
-            return ((Rfc6020Mapping) currentStatement).isArgumentYinElement();
-        } else if (currentStatement instanceof ExtensionStatement) {
-            return ((ExtensionStatement) currentStatement).isArgumentYinElement();
+        if (currentStatement instanceof Rfc6020Mapping || currentStatement instanceof ExtensionStatement) {
+            return currentStatement.isArgumentYinElement();
         }
         return false;
     }

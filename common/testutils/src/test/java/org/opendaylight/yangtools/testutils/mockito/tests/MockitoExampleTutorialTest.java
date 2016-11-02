@@ -61,7 +61,7 @@ public class MockitoExampleTutorialTest {
         SomeService service = mock(SomeService.class);
         when(service.foobar(any())).thenAnswer(invocation -> {
             // Urgh! This is ugly.. (Mockito 2.0 may be better, see http://site.mockito.org/mockito/docs/current/org/mockito/ArgumentMatcher.html)
-            File file = (File) invocation.getArgumentAt(0, File.class);
+            File file = invocation.getArgumentAt(0, File.class);
             if (file.getName().equals("hello.txt")) {
                 return 123;
             } else {

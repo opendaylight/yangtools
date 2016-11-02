@@ -13,7 +13,6 @@ import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -45,7 +44,7 @@ public final class LeafInterner {
     }
 
     private static <T extends LeafNode<?>> T intern(final T sample) {
-        if (((AttributesContainer) sample).getAttributes().isEmpty()) {
+        if (sample.getAttributes().isEmpty()) {
             @SuppressWarnings("unchecked")
             final T ret = (T) INTERNER.intern(sample);
             LOG.trace("Interned object {} to {}", sample, ret);

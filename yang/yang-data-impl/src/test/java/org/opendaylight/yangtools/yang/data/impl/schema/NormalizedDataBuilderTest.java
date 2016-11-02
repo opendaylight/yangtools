@@ -91,7 +91,7 @@ public class NormalizedDataBuilderTest {
                 .withNodeIdentifier(
                         new NodeIdentifierWithPredicates(
                                 getNodeIdentifier("list").getNodeType(), Collections.singletonMap(
-                                getNodeIdentifier("uint32InList").getNodeType(), (Object) 1))).build();
+                                getNodeIdentifier("uint32InList").getNodeType(), 1))).build();
 
         MapNode list = Builders.mapBuilder().withChild(listChild1).withNodeIdentifier(getNodeIdentifier("list"))
                 .build();

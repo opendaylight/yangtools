@@ -42,7 +42,7 @@ public class QNameTest {
         }
         // no namespace nor revision
         {
-            QName qName = new QName((URI) null, localName);
+            QName qName = new QName(null, localName);
             assertEquals(localName, qName.toString());
             QName copied = QName.create(qName.toString());
             assertEquals(qName, copied);
@@ -132,7 +132,7 @@ public class QNameTest {
 
     private static void assertLocalNameFails(final String localName) {
         try {
-            new QName((URI)null, localName);
+            new QName(null, localName);
             fail("Local name should fail:" + localName);
         } catch (IllegalArgumentException e) {
         }

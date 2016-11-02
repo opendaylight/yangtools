@@ -467,7 +467,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         @Override
         public String toRelativeString(final PathArgument previous) {
             if (previous instanceof AbstractPathArgument) {
-                final QNameModule mod = ((AbstractPathArgument)previous).getNodeType().getModule();
+                final QNameModule mod = previous.getNodeType().getModule();
                 if (getNodeType().getModule().equals(mod)) {
                     return getNodeType().getLocalName();
                 }

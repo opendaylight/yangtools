@@ -30,7 +30,7 @@ public class SchemaResolutionException extends SchemaSourceException {
     private final Collection<SourceIdentifier> resolvedSources;
 
     public SchemaResolutionException(@Nonnull final String message) {
-        this(message, (Throwable)null);
+        this(message, null);
     }
 
     public SchemaResolutionException(@Nonnull final String message, final Throwable cause) {

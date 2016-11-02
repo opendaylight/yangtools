@@ -61,7 +61,7 @@ public class MappingCheckedFutureTest {
         @Override
         public Throwable extractWrappedTestEx( final Exception from ) {
             if (from instanceof ExecutionException ) {
-                return ((ExecutionException)from).getCause();
+                return from.getCause();
             }
 
             return from;
@@ -77,7 +77,7 @@ public class MappingCheckedFutureTest {
         @Override
         public Throwable extractWrappedTestEx( final Exception from ) {
             if (from instanceof ExecutionException ) {
-                return ((ExecutionException)from).getCause();
+                return from.getCause();
             }
 
             return from;

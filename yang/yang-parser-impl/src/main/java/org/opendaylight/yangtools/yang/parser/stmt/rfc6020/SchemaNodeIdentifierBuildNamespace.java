@@ -54,14 +54,14 @@ public class SchemaNodeIdentifierBuildNamespace extends
             return null;
         }
         QName nextPath = iterator.next();
-        StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> current = (StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>) lookupStartStorage
+        StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> current = lookupStartStorage
                 .getFromLocalStorage(ChildSchemaNodes.class, nextPath);
         if (current == null && lookupStartStorage instanceof StmtContext<?, ?, ?>) {
             return tryToFindUnknownStatement(nextPath.getLocalName(), (Mutable<?, ?, EffectiveStatement<?, ?>>) lookupStartStorage);
         }
         while (current != null && iterator.hasNext()) {
             nextPath = iterator.next();
-            final StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> nextNodeCtx = (StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>) current
+            final StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> nextNodeCtx = current
                     .getFromNamespace(ChildSchemaNodes.class, nextPath);
             if (nextNodeCtx == null) {
                 return tryToFindUnknownStatement(nextPath.getLocalName(), current);
