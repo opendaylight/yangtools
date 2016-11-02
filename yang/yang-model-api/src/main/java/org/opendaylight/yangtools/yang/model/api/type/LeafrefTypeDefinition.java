@@ -13,4 +13,16 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 public interface LeafrefTypeDefinition extends TypeDefinition<LeafrefTypeDefinition> {
 
     RevisionAwareXPath getPathStatement();
+
+    /**
+     * All implementations should override this method.
+     * The default definition of this method is used only in YANG 1.0 (RFC6020) implementation of
+     * LeafrefTypeDefinition which does not support require-instance statement.
+     * YANG leafref type has been changed in YANG 1.1 (RFC7950) and now allows require-instance statement.
+     *
+     * @return boolean value which is true if the <code>require-instance</code> statement is true and vice versa
+     */
+    default boolean requireInstance() {
+        return true;
+    }
 }
