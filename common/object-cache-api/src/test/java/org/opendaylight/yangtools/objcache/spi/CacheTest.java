@@ -15,7 +15,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.objcache.ObjectCache;
-import org.opendaylight.yangtools.objcache.spi.AbstractObjectCache.SoftKey;
 
 import com.google.common.base.FinalizableReferenceQueue;
 import com.google.common.cache.CacheBuilder;
@@ -27,7 +26,7 @@ public class CacheTest {
     @Before
     public void setUp() {
         queue = new FinalizableReferenceQueue();
-        oc = new AbstractObjectCache(CacheBuilder.newBuilder().softValues().<SoftKey<?>, Object>build(), queue) {
+        oc = new AbstractObjectCache(CacheBuilder.newBuilder().softValues().build(), queue) {
         };
     }
 
