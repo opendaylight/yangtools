@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a65312a_7b2601bc",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONNormalizedNodeStreamWriter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 234,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-11-02T12:27:02Z",
+      "side": 1,
+      "message": "int i \u003d 0, len \u003d children.getLength(); i \u003c len",
+      "range": {
+        "startLine": 234,
+        "startChar": 13,
+        "endLine": 234,
+        "endChar": 48
+      },
+      "revId": "c226d34d1b84b27454ac05cc017c1efba187cdf3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_5b2b4582",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONNormalizedNodeStreamWriter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 267,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-11-02T12:27:02Z",
+      "side": 1,
+      "message": "Pre-compile this pattern. It should also be stored as a constant string with @RegEx annotation.",
+      "range": {
+        "startLine": 267,
+        "startChar": 42,
+        "endLine": 267,
+        "endChar": 60
+      },
+      "revId": "c226d34d1b84b27454ac05cc017c1efba187cdf3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_9b25ddad",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONNormalizedNodeStreamWriter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-11-02T12:27:02Z",
+      "side": 1,
+      "message": "Pre-compile this pattern.",
+      "range": {
+        "startLine": 295,
+        "startChar": 31,
+        "endLine": 295,
+        "endChar": 39
+      },
+      "revId": "c226d34d1b84b27454ac05cc017c1efba187cdf3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_7b4d6172",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStream.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-11-02T12:27:02Z",
+      "side": 1,
+      "message": "Use UntrustedXML from util package instead.",
+      "range": {
+        "startLine": 61,
+        "startChar": 4,
+        "endLine": 61,
+        "endChar": 56
+      },
+      "revId": "c226d34d1b84b27454ac05cc017c1efba187cdf3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_5b522514",
+        "filename": "yang/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/AnyXmlSupportTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-11-02T12:27:02Z",
+      "side": 1,
+      "message": "use UntrustedXML instead",
+      "range": {
+        "startLine": 54,
+        "startChar": 4,
+        "endLine": 54,
+        "endChar": 50
+      },
+      "revId": "c226d34d1b84b27454ac05cc017c1efba187cdf3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
