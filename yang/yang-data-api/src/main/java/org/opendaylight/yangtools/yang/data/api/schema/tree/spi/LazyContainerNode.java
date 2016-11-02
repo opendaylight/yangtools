@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  */
 final class LazyContainerNode extends AbstractModifiedContainerNode {
     LazyContainerNode(final NormalizedNode<?, ?> data, final Version version, final Version subtreeVersion) {
-        this(data, version, MapAdaptor.getDefaultInstance().<PathArgument, TreeNode>initialSnapshot(1), subtreeVersion);
+        this(data, version, MapAdaptor.getDefaultInstance().initialSnapshot(1), subtreeVersion);
     }
 
     LazyContainerNode(final NormalizedNode<?, ?> data, final Version version, final Map<PathArgument, TreeNode> children,

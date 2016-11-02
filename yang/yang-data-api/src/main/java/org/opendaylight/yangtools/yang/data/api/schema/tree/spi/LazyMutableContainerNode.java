@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  */
 final class LazyMutableContainerNode extends AbstractMutableContainerNode {
     LazyMutableContainerNode(final AbstractContainerNode parent) {
-        this(parent, MapAdaptor.getDefaultInstance().<PathArgument, TreeNode>initialSnapshot(1));
+        this(parent, MapAdaptor.getDefaultInstance().initialSnapshot(1));
     }
 
     LazyMutableContainerNode(final AbstractContainerNode parent, final Map<PathArgument, TreeNode> children) {
