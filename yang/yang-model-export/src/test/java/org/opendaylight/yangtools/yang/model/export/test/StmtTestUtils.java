@@ -24,12 +24,9 @@ import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 
 final class StmtTestUtils {
 
-    final static FileFilter YANG_FILE_FILTER = new FileFilter() {
-        @Override
-        public boolean accept(File file) {
-            String name = file.getName().toLowerCase();
-            return name.endsWith(".yang") && file.isFile();
-        }
+    final static FileFilter YANG_FILE_FILTER = file -> {
+        String name = file.getName().toLowerCase();
+        return name.endsWith(".yang") && file.isFile();
     };
 
     private StmtTestUtils() {

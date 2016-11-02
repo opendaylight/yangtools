@@ -16,7 +16,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.UnmodifiableIterator;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -250,28 +249,23 @@ public abstract class SchemaPath implements Immutable {
      *         path from the schema node towards the root.
      */
     public Iterable<QName> getPathTowardsRoot() {
-        return new Iterable<QName>() {
+        return () -> new UnmodifiableIterator<QName>() {
+            private SchemaPath current = SchemaPath.this;
+
             @Override
-            public Iterator<QName> iterator() {
-                return new UnmodifiableIterator<QName>() {
-                    private SchemaPath current = SchemaPath.this;
+            public boolean hasNext() {
+                return current.parent != null;
+            }
 
-                    @Override
-                    public boolean hasNext() {
-                        return current.parent != null;
-                    }
-
-                    @Override
-                    public QName next() {
-                        if (current.parent != null) {
-                            final QName ret = current.qname;
-                            current = current.parent;
-                            return ret;
-                        } else {
-                            throw new NoSuchElementException("No more elements available");
-                        }
-                    }
-                };
+            @Override
+            public QName next() {
+                if (current.parent != null) {
+                    final QName ret = current.qname;
+                    current = current.parent;
+                    return ret;
+                } else {
+                    throw new NoSuchElementException("No more elements available");
+                }
             }
         };
     }

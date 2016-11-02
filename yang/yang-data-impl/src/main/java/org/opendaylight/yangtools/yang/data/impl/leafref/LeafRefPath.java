@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -238,35 +238,30 @@ public abstract class LeafRefPath implements Immutable {
      *         the schema node towards the root.
      */
     public Iterable<QNameWithPredicate> getPathTowardsRoot() {
-        return new Iterable<QNameWithPredicate>() {
+        return () -> new Iterator<QNameWithPredicate>() {
+            private LeafRefPath current = LeafRefPath.this;
+
             @Override
-            public Iterator<QNameWithPredicate> iterator() {
-                return new Iterator<QNameWithPredicate>() {
-                    private LeafRefPath current = LeafRefPath.this;
+            public boolean hasNext() {
+                return current.parent != null;
+            }
 
-                    @Override
-                    public boolean hasNext() {
-                        return current.parent != null;
-                    }
+            @Override
+            public QNameWithPredicate next() {
+                if (current.parent != null) {
+                    final QNameWithPredicate ret = current.qname;
+                    current = current.parent;
+                    return ret;
+                } else {
+                    throw new NoSuchElementException(
+                            "No more elements available");
+                }
+            }
 
-                    @Override
-                    public QNameWithPredicate next() {
-                        if (current.parent != null) {
-                            final QNameWithPredicate ret = current.qname;
-                            current = current.parent;
-                            return ret;
-                        } else {
-                            throw new NoSuchElementException(
-                                    "No more elements available");
-                        }
-                    }
-
-                    @Override
-                    public void remove() {
-                        throw new UnsupportedOperationException(
-                                "Component removal not supported");
-                    }
-                };
+            @Override
+            public void remove() {
+                throw new UnsupportedOperationException(
+                        "Component removal not supported");
             }
         };
     }

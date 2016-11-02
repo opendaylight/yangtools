@@ -11,7 +11,6 @@ import com.google.common.base.Converter;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
-import java.util.Collection;
 import java.util.List;
 import javax.xml.xpath.XPathExpressionException;
 import org.jaxen.BaseXPath;
@@ -20,7 +19,6 @@ import org.jaxen.JaxenException;
 import org.jaxen.expr.Expr;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathBooleanResult;
 import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathDocument;
 import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathExpression;
@@ -83,34 +81,15 @@ final class JaxenXPath implements XPathExpression {
         }
 
         if (result instanceof String) {
-            return Optional.of(new XPathStringResult() {
-                @Override
-                public String getValue() {
-                    return (String)result;
-                }
-            });
+            return Optional.of((XPathStringResult) () -> (String)result);
         } else if (result instanceof Number) {
-            return Optional.of(new XPathNumberResult() {
-                @Override
-                public Number getValue() {
-                    return (Number) result;
-                }
-            });
+            return Optional.of((XPathNumberResult) () -> (Number) result);
         } else if (result instanceof Boolean) {
-            return Optional.of(new XPathBooleanResult() {
-                @Override
-                public Boolean getValue() {
-                    return (Boolean) result;
-                }
-            });
+            return Optional.of((XPathBooleanResult) () -> (Boolean) result);
         } else if (result != null){
-            return Optional.of(new XPathNodesetResult() {
-                @SuppressWarnings("unchecked")
-                @Override
-                public Collection<NormalizedNode<?, ?>> getValue() {
-                    // XXX: Will this really work, or do we need to perform deep transformation?
-                    return Lists.transform((List<NormalizedNodeContext>) result, NormalizedNodeContext::getNode);
-                }
+            return Optional.of((XPathNodesetResult) () -> {
+                // XXX: Will this really work, or do we need to perform deep transformation?
+                return Lists.transform((List<NormalizedNodeContext>) result, NormalizedNodeContext::getNode);
             });
         } else {
             return Optional.absent();

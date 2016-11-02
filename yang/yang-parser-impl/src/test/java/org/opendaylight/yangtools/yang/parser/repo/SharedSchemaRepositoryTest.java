@@ -242,12 +242,8 @@ public class SharedSchemaRepositoryTest {
 
         assertEquals(4, listener.registeredSources.size());
 
-        final Function<PotentialSchemaSource<?>, SourceIdentifier> potSourceToSID = new Function<PotentialSchemaSource<?>, SourceIdentifier>() {
-            @Override
-            public SourceIdentifier apply(final PotentialSchemaSource<?> input) {
-                return input.getSourceIdentifier();
-            }
-        };
+        final Function<PotentialSchemaSource<?>, SourceIdentifier> potSourceToSID =
+                PotentialSchemaSource::getSourceIdentifier;
         assertThat(Collections2.transform(listener.registeredSources, potSourceToSID),
                 both(hasItem(RevisionSourceIdentifier.create("test", Optional.absent())))
                         .and(hasItem(RevisionSourceIdentifier.create("test", Optional.of("2012-12-12"))))

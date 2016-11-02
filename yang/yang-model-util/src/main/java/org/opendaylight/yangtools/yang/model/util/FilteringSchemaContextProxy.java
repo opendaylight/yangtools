@@ -99,7 +99,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
     }
 
     private static TreeMultimap<String, Module> getStringModuleTreeMultimap() {
-        return TreeMultimap.create((o1, o2) -> o1.compareTo(o2), REVISION_COMPARATOR);
+        return TreeMultimap.create(String::compareTo, REVISION_COMPARATOR);
     }
 
     private static void processForAdditionalModules(final SchemaContext delegate,

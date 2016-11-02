@@ -26,49 +26,25 @@ public class CommonTestUtils {
                 CountDownLatch blockingLatch );
     }
 
-    public static final Invoker SUBMIT_CALLABLE = new Invoker() {
+    public static final Invoker SUBMIT_CALLABLE = (executor, blockingLatch) -> executor.submit(new Callable<Void>() {
         @Override
-        public ListenableFuture<?> invokeExecutor( ListeningExecutorService executor,
-                final CountDownLatch blockingLatch ) {
-            return executor.submit( new Callable<Void>() {
-                @Override
-                public Void call() throws Exception {
-                    if (blockingLatch != null ) {
-                        Uninterruptibles.awaitUninterruptibly( blockingLatch );
-                    }
-                    return null;
-                }
-            } );
+        public Void call() throws Exception {
+            if (blockingLatch != null ) {
+                Uninterruptibles.awaitUninterruptibly( blockingLatch );
+            }
+            return null;
         }
-    };
+    } );
 
-    public static final Invoker SUBMIT_RUNNABLE =  new Invoker() {
-        @Override
-        public ListenableFuture<?> invokeExecutor( ListeningExecutorService executor,
-                final CountDownLatch blockingLatch ) {
-            return executor.submit( new Runnable() {
-                @Override
-                public void run() {
-                    if (blockingLatch != null ) {
-                        Uninterruptibles.awaitUninterruptibly( blockingLatch );
-                    }
-                }
-            } );
+    public static final Invoker SUBMIT_RUNNABLE = (executor, blockingLatch) -> executor.submit(() -> {
+        if (blockingLatch != null ) {
+            Uninterruptibles.awaitUninterruptibly( blockingLatch );
         }
-    };
+    });
 
-    public static final Invoker SUBMIT_RUNNABLE_WITH_RESULT = new Invoker() {
-        @Override
-        public ListenableFuture<?> invokeExecutor( ListeningExecutorService executor,
-                final CountDownLatch blockingLatch ) {
-            return executor.submit( new Runnable() {
-                @Override
-                public void run() {
-                    if (blockingLatch != null ) {
-                        Uninterruptibles.awaitUninterruptibly( blockingLatch );
-                    }
-                }
-            }, "foo" );
+    public static final Invoker SUBMIT_RUNNABLE_WITH_RESULT = (executor, blockingLatch) -> executor.submit(() -> {
+        if (blockingLatch != null ) {
+            Uninterruptibles.awaitUninterruptibly( blockingLatch );
         }
-    };
+    }, "foo" );
 }
