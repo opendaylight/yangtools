@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import com.google.common.base.Preconditions;
 import java.util.List;
 import java.util.Objects;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -37,11 +38,13 @@ final class BitImpl implements Bit, Immutable {
         this.unknownNodes = Preconditions.checkNotNull(unknownNodes);
     }
 
+    @Nonnull
     @Override
     public QName getQName() {
         return schemaPath.getLastComponent();
     }
 
+    @Nonnull
     @Override
     public SchemaPath getPath() {
         return schemaPath;
@@ -57,11 +60,13 @@ final class BitImpl implements Bit, Immutable {
         return reference;
     }
 
+    @Nonnull
     @Override
     public Status getStatus() {
         return status;
     }
 
+    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;
@@ -72,6 +77,7 @@ final class BitImpl implements Bit, Immutable {
         return position;
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return getQName().getLocalName();

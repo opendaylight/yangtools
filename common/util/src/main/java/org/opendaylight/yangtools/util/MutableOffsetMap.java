@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import javax.annotation.Nonnull;
 
 /**
  * A mutable version of {@link ImmutableOffsetMap}. It inherits the set of mappings from the immutable version and
@@ -312,11 +313,13 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         }
     }
 
+    @Nonnull
     @Override
     public final Set<Entry<K, V>> entrySet() {
         return new EntrySet();
     }
 
+    @Nonnull
     @Override
     public Map<K, V> toUnmodifiableMap() {
         if (removed == 0 && newKeys.isEmpty()) {
@@ -470,6 +473,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         return true;
     }
 
+    @Nonnull
     @Override
     public final Set<K> keySet() {
         return new KeySet();
@@ -491,6 +495,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     }
 
     private final class EntrySet extends AbstractSet<Entry<K, V>> {
+        @Nonnull
         @Override
         public Iterator<Entry<K, V>> iterator() {
             return new AbstractSetIterator<Entry<K, V>>() {
@@ -556,6 +561,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     }
 
     private final class KeySet extends AbstractSet<K> {
+        @Nonnull
         @Override
         public Iterator<K> iterator() {
             return new AbstractSetIterator<K>() {

@@ -29,7 +29,7 @@ public abstract class ModuleStringIdentityrefCodec
     }
 
     @Override
-    protected String prefixForNamespace(final URI namespace) {
+    protected String prefixForNamespace(@Nonnull final URI namespace) {
         final Module module = context.findModuleByNamespaceAndRevision(namespace, null);
         return module == null ? null : module.getName();
     }

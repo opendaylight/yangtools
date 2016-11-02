@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
 import java.util.Optional;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -110,11 +111,13 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
         }
     }
 
+    @Nonnull
     @Override
     public String getModule() {
         return argument();
     }
 
+    @Nonnull
     @Override
     public PrefixStatement getPrefix() {
         return firstDeclared(PrefixStatement.class);

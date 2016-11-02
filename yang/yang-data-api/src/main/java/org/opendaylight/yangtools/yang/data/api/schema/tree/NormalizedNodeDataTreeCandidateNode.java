@@ -40,11 +40,13 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
         this.data = Preconditions.checkNotNull(data);
     }
 
+    @Nonnull
     @Override
     public PathArgument getIdentifier() {
         return data.getIdentifier();
     }
 
+    @Nonnull
     @Override
     public Collection<DataTreeCandidateNode> getChildNodes() {
         if (data instanceof NormalizedNodeContainer) {
@@ -65,16 +67,19 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
         }
     }
 
+    @Nonnull
     @Override
     public ModificationType getModificationType() {
         return ModificationType.WRITE;
     }
 
+    @Nonnull
     @Override
     public Optional<NormalizedNode<?, ?>> getDataAfter() {
         return Optional.of(data);
     }
 
+    @Nonnull
     @Override
     public Optional<NormalizedNode<?, ?>> getDataBefore() {
         return Optional.absent();

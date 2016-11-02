@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import java.util.Map;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
@@ -29,7 +30,7 @@ public final class QNameCacheNamespace extends NamespaceBehaviour<QName, QName, 
     }
 
     @Override
-    public QName get(final QName identifier) {
+    public QName get(@Nonnull final QName identifier) {
         throw new UnsupportedOperationException("Identifier/implementation API borkage");
     }
 

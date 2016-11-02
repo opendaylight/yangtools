@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -94,6 +95,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         return parent.getBehaviourRegistry();
     }
 
+    @Nonnull
     @Override
     public RootStatementContext<?, ?, ?> getRoot() {
         return parent.getRoot();
@@ -242,6 +244,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         return maybeParentPath.orNull();
     }
 
+    @Nonnull
     @Override
     public Optional<SchemaPath> getSchemaPath() {
         SchemaPath local = schemaPath;

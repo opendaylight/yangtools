@@ -13,6 +13,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
@@ -33,7 +34,7 @@ public final class SharedSchemaRepository extends AbstractSchemaRepository imple
     private final LoadingCache<SchemaSourceFilter, SchemaContextFactory> cache =
             CacheBuilder.newBuilder().softValues().build(new CacheLoader<SchemaSourceFilter, SchemaContextFactory>() {
                 @Override
-                public SchemaContextFactory load(final SchemaSourceFilter key) {
+                public SchemaContextFactory load(@Nonnull final SchemaSourceFilter key) {
                     return new SharedSchemaContextFactory(SharedSchemaRepository.this, key);
                 }
             });
@@ -49,7 +50,7 @@ public final class SharedSchemaRepository extends AbstractSchemaRepository imple
     }
 
     @Override
-    public SchemaContextFactory createSchemaContextFactory(final SchemaSourceFilter filter) {
+    public SchemaContextFactory createSchemaContextFactory(@Nonnull final SchemaSourceFilter filter) {
         return cache.getUnchecked(filter);
     }
 

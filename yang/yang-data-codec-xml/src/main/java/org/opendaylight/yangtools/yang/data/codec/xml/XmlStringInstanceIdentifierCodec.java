@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import com.google.common.base.Preconditions;
 import java.net.URI;
+import javax.annotation.Nonnull;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -38,17 +39,18 @@ final class XmlStringInstanceIdentifierCodec  extends AbstractModuleStringInstan
     }
 
     @Override
-    protected Module moduleForPrefix(final String prefix) {
+    protected Module moduleForPrefix(@Nonnull final String prefix) {
         final String prefixedNS = namespaceContext.getNamespaceURI(prefix);
         return context.findModuleByNamespaceAndRevision(URI.create(prefixedNS), null);
     }
 
     @Override
-    protected String prefixForNamespace(final URI namespace) {
+    protected String prefixForNamespace(@Nonnull final URI namespace) {
         final Module module = context.findModuleByNamespaceAndRevision(namespace, null);
         return module == null ? null : module.getName();
     }
 
+    @Nonnull
     @Override
     protected DataSchemaContextTree getDataContextTree() {
         return dataContextTree;

@@ -189,6 +189,7 @@ public enum Rfc6020Mapping implements StatementDefinition {
         return QName.create(YangConstants.RFC6020_YIN_MODULE, nameStr).intern();
     }
 
+    @Nonnull
     @Override
     public QName getStatementName() {
         return name;
@@ -204,6 +205,7 @@ public enum Rfc6020Mapping implements StatementDefinition {
         return type;
     }
 
+    @Nonnull
     @Override
     public Class<? extends EffectiveStatement<?,?>> getEffectiveRepresentationClass() {
         return effectiveType;

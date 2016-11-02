@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
 import java.util.List;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -19,6 +20,7 @@ final class RestrictedBitsType extends AbstractRestrictedType<BitsTypeDefinition
         super(baseType, path, unknownSchemaNodes);
     }
 
+    @Nonnull
     @Override
     public List<Bit> getBits() {
         return getBaseType().getBits();

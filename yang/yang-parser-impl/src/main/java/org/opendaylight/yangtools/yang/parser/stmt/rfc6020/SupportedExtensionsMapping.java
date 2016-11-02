@@ -64,6 +64,7 @@ public enum SupportedExtensionsMapping implements StatementDefinition {
         return QName.create(namespace, revision, localName).intern();
     }
 
+    @Nonnull
     @Override
     public QName getStatementName() {
         return name;
@@ -81,6 +82,7 @@ public enum SupportedExtensionsMapping implements StatementDefinition {
         return type;
     }
 
+    @Nonnull
     @Override
     public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
         return effectiveType;

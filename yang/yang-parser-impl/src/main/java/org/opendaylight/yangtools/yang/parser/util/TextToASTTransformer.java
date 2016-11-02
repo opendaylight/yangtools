@@ -13,6 +13,7 @@ import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
 import java.io.IOException;
 import java.io.InputStream;
+import javax.annotation.Nonnull;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
@@ -33,7 +34,7 @@ public final class TextToASTTransformer extends SchemaSourceTransformer<YangText
 
     public static final class TextToASTTransformation implements Transformation<YangTextSchemaSource, ASTSchemaSource> {
         @Override
-        public CheckedFuture<ASTSchemaSource, SchemaSourceException> apply(final YangTextSchemaSource input) throws IOException, YangSyntaxErrorException {
+        public CheckedFuture<ASTSchemaSource, SchemaSourceException> apply(@Nonnull final YangTextSchemaSource input) throws IOException, YangSyntaxErrorException {
             try (InputStream is = input.openStream()) {
                 final ParserRuleContext ctx = new YangStatementSourceImpl(is).getYangAST();
                 LOG.debug("Model {} parsed successfully", input);

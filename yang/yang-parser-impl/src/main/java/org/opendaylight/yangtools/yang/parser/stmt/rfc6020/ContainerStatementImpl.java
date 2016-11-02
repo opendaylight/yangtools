@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -91,6 +92,7 @@ public class ContainerStatementImpl extends AbstractDeclaredStatement<QName> imp
         }
     }
 
+    @Nonnull
     @Override
     public QName getName() {
         return argument();
@@ -101,6 +103,7 @@ public class ContainerStatementImpl extends AbstractDeclaredStatement<QName> imp
         return firstDeclared(WhenStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends IfFeatureStatement> getIfFeatures() {
         return allDeclared(IfFeatureStatement.class);
@@ -136,16 +139,19 @@ public class ContainerStatementImpl extends AbstractDeclaredStatement<QName> imp
         return firstDeclared(ReferenceStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends TypedefStatement> getTypedefs() {
         return allDeclared(TypedefStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends GroupingStatement> getGroupings() {
         return allDeclared(GroupingStatement.class);
     }
 
+    @Nonnull
     @Override
     public Collection<? extends DataDefinitionStatement> getDataDefinitions() {
         return allDeclared(DataDefinitionStatement.class);

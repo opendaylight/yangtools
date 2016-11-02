@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
 import java.util.Iterator;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -32,7 +33,7 @@ public class SchemaNodeIdentifierBuildNamespace extends
 
     @Override
     public StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> get(
-            final SchemaNodeIdentifier key) {
+            @Nonnull final SchemaNodeIdentifier key) {
         throw new UnsupportedOperationException("Direct access to namespace is not supported");
     }
 

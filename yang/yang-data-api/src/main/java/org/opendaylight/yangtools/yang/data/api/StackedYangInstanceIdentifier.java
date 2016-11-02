@@ -17,6 +17,7 @@ import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import javax.annotation.Nonnull;
 
 final class StackedYangInstanceIdentifier extends YangInstanceIdentifier implements Cloneable {
     private static final long serialVersionUID = 1L;
@@ -60,6 +61,7 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
         return parent;
     }
 
+    @Nonnull
     @Override
     public YangInstanceIdentifier getAncestor(final int depth) {
         Preconditions.checkArgument(depth >= 0, "Steps cannot be negative");
@@ -132,16 +134,19 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
         return pathArgument;
     }
 
+    @Nonnull
     @Override
     StackedPathArguments tryPathArguments() {
         return pathArguments;
     }
 
+    @Nonnull
     @Override
     StackedReversePathArguments tryReversePathArguments() {
         return reversePathArguments;
     }
 
+    @Nonnull
     @Override
     YangInstanceIdentifier createRelativeIdentifier(final int skipFromRoot) {
         // TODO: can we optimize this one?

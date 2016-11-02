@@ -24,6 +24,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.GuardedBy;
 import org.opendaylight.yangtools.util.concurrent.ExceptionMapper;
 import org.opendaylight.yangtools.util.concurrent.ReflectiveExceptionMapper;
@@ -73,7 +74,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
 
         return Futures.makeChecked(Futures.withFallback(f, new FutureFallback<T>() {
             @Override
-            public ListenableFuture<T> create(final Throwable t) throws SchemaSourceException {
+            public ListenableFuture<T> create(@Nonnull final Throwable t) throws SchemaSourceException {
                 LOG.debug("Failed to acquire source from {}", reg, t);
 
                 if (it.hasNext()) {
@@ -86,7 +87,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
     }
 
     @Override
-    public <T extends SchemaSourceRepresentation> CheckedFuture<T, SchemaSourceException> getSchemaSource(final SourceIdentifier id, final Class<T> representation) {
+    public <T extends SchemaSourceRepresentation> CheckedFuture<T, SchemaSourceException> getSchemaSource(@Nonnull final SourceIdentifier id, @Nonnull final Class<T> representation) {
         final ArrayList<AbstractSchemaSourceRegistration<?>> sortedSchemaSourceRegistrations;
 
         synchronized (this) {
@@ -118,7 +119,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
             }
 
             @Override
-            public void onFailure(final Throwable t) {
+            public void onFailure(@Nonnull final Throwable t) {
                 LOG.trace("Skipping notification for encountered source {}, fetching source failed", id, t);
             }
         });

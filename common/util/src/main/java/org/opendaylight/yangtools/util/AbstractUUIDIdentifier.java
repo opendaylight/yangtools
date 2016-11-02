@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.util;
 
 import com.google.common.annotations.Beta;
 import java.util.UUID;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Identifier;
 
 /**
@@ -26,7 +27,7 @@ public abstract class AbstractUUIDIdentifier<T extends AbstractUUIDIdentifier<T>
     }
 
     @Override
-    public final int compareTo(final T o) {
+    public final int compareTo(@Nonnull final T o) {
         return getValue().compareTo(o.getValue());
     }
 }

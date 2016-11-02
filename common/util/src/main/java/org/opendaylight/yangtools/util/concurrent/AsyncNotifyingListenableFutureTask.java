@@ -67,7 +67,7 @@ public class AsyncNotifyingListenableFutureTask<V> extends FutureTask<V> impleme
         }
 
         @Override
-        public void addListener(final Runnable listener, final Executor executor) {
+        public void addListener(@Nonnull final Runnable listener, @Nonnull final Executor executor) {
             // Wrap the listener Runnable in a DelegatingRunnable. If the specified executor is one that
             // runs tasks in the same thread as the caller submitting the task
             // (e.g. {@link com.google.common.util.concurrent.MoreExecutors#sameThreadExecutor}) and the
@@ -163,7 +163,7 @@ public class AsyncNotifyingListenableFutureTask<V> extends FutureTask<V> impleme
     }
 
     @Override
-    public void addListener(@Nonnull final Runnable listener, final Executor executor) {
+    public void addListener(@Nonnull final Runnable listener, @Nonnull final Executor executor) {
         executionList.add(listener, executor);
     }
 

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.base.Preconditions;
 import java.util.Objects;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
@@ -27,6 +28,7 @@ public final class YangModeledAnyXmlEffectiveStatementImpl extends AnyXmlEffecti
         schemaOfAnyXmlData = Preconditions.checkNotNull(contentSchema);
     }
 
+    @Nonnull
     @Override
     public ContainerSchemaNode getSchemaOfAnyXmlData() {
         return schemaOfAnyXmlData;

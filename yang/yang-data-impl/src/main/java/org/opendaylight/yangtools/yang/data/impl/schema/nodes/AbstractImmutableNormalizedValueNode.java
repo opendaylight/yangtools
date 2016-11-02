@@ -19,7 +19,7 @@ public abstract class AbstractImmutableNormalizedValueNode<K extends PathArgumen
     @Nullable
     private final V value;
 
-    protected AbstractImmutableNormalizedValueNode(final K nodeIdentifier, final V value) {
+    protected AbstractImmutableNormalizedValueNode(final K nodeIdentifier, @Nullable final V value) {
         super(nodeIdentifier);
         if (value == null) {
             /*
@@ -31,6 +31,7 @@ public abstract class AbstractImmutableNormalizedValueNode<K extends PathArgumen
         this.value = value;
     }
 
+    @Nullable
     @Override
     public final V getValue() {
         return value;

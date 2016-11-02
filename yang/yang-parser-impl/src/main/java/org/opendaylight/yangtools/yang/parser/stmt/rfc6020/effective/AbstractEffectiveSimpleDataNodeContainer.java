@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
@@ -74,11 +75,13 @@ abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatem
         }
     }
 
+    @Nonnull
     @Override
     public QName getQName() {
         return path.getLastComponent();
     }
 
+    @Nonnull
     @Override
     public SchemaPath getPath() {
         return path;
@@ -109,6 +112,7 @@ abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatem
         return augmentations;
     }
 
+    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;

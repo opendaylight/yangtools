@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
@@ -54,6 +55,7 @@ public class PrefixStatementImpl extends AbstractDeclaredStatement<String> imple
         super(context);
     }
 
+    @Nonnull
     @Override
     public String getValue() {
         return rawArgument();

@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.api;
 
+import javax.annotation.Nonnull;
+
 /**
  * A YANG {@link SchemaSourceRepresentation}.
  */
@@ -16,6 +18,7 @@ public interface YangSchemaSourceRepresentation extends SchemaSourceRepresentati
      *
      * @return The type of representation.
      */
+    @Nonnull
     @Override
     Class<? extends YangSchemaSourceRepresentation> getType();
 }

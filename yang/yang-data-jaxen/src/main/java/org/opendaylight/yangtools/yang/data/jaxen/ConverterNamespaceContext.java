@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.jaxen;
 
 import com.google.common.base.Converter;
 import com.google.common.base.Preconditions;
+import javax.annotation.Nonnull;
 import org.jaxen.NamespaceContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -21,12 +22,12 @@ final class ConverterNamespaceContext extends Converter<String, QNameModule> imp
     }
 
     @Override
-    protected QNameModule doForward(final String a) {
+    protected QNameModule doForward(@Nonnull final String a) {
         return delegate.convert(a);
     }
 
     @Override
-    protected String doBackward(final QNameModule b) {
+    protected String doBackward(@Nonnull final QNameModule b) {
         return delegate.reverse().convert(b);
     }
 

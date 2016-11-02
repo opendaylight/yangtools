@@ -18,6 +18,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -94,7 +95,7 @@ public class AsyncNotifyingListeningExecutorService extends AbstractListeningExe
     }
 
     @Override
-    public boolean awaitTermination( final long timeout, final TimeUnit unit ) throws InterruptedException {
+    public boolean awaitTermination( final long timeout, @Nonnull final TimeUnit unit ) throws InterruptedException {
         return delegate.awaitTermination( timeout, unit );
     }
 
@@ -113,16 +114,18 @@ public class AsyncNotifyingListeningExecutorService extends AbstractListeningExe
         delegate.shutdown();
     }
 
+    @Nonnull
     @Override
     public List<Runnable> shutdownNow() {
         return delegate.shutdownNow();
     }
 
     @Override
-    public void execute( final Runnable command ) {
+    public void execute( @Nonnull final Runnable command ) {
         delegate.execute( command );
     }
 
+    @Nonnull
     @Override
     public <T> ListenableFuture<T> submit( final Callable<T> task ) {
         AsyncNotifyingListenableFutureTask<T> futureTask = newFutureTask( task );
@@ -130,6 +133,7 @@ public class AsyncNotifyingListeningExecutorService extends AbstractListeningExe
         return futureTask;
     }
 
+    @Nonnull
     @Override
     public ListenableFuture<?> submit( final Runnable task ) {
         AsyncNotifyingListenableFutureTask<Void> futureTask = newFutureTask( task, null );
@@ -137,6 +141,7 @@ public class AsyncNotifyingListeningExecutorService extends AbstractListeningExe
         return futureTask;
     }
 
+    @Nonnull
     @Override
     public <T> ListenableFuture<T> submit( final Runnable task, final T result ) {
         AsyncNotifyingListenableFutureTask<T> futureTask = newFutureTask( task, result );

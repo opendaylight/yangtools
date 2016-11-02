@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Predicate;
+import javax.annotation.Nonnull;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.util.concurrent.ExceptionMapper;
@@ -111,7 +112,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
             }
 
             @Override
-            public void onFailure(final Throwable t) {
+            public void onFailure(@Nonnull final Throwable t) {
                 LOG.debug("Failed to assemble sources", t);
             }
         });
@@ -187,7 +188,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         }
 
         @Override
-        public ListenableFuture<SchemaContext> apply(final List<ASTSchemaSource> sources) throws SchemaResolutionException,
+        public ListenableFuture<SchemaContext> apply(@Nonnull final List<ASTSchemaSource> sources) throws SchemaResolutionException,
                 SourceException, ReactorException {
             final Map<SourceIdentifier, ASTSchemaSource> srcs = Maps.uniqueIndex(sources, getIdentifier);
             final Map<SourceIdentifier, YangModelDependencyInfo> deps =
