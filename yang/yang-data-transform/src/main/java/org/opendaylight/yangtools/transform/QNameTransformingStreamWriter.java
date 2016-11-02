@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.transform;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ForwardingObject;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;

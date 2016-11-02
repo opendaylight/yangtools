@@ -8,7 +8,6 @@
 
 package org.opendaylight.yangtools.yang.model.util;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
@@ -29,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Function;
 import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
@@ -79,7 +79,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         processForAdditionalModules(delegate, additionalModuleIds, filteredModulesBuilder);
 
         filteredModulesBuilder.addAll(getImportedModules(
-                Maps.uniqueIndex(delegate.getModules(), ModuleId.MODULE_TO_MODULE_ID), filteredModulesBuilder.build(), nameToModulesAll));
+                Maps.uniqueIndex(delegate.getModules(), ModuleId.MODULE_TO_MODULE_ID::apply), filteredModulesBuilder.build(), nameToModulesAll));
 
         /**
          * Instead of doing this on each invocation of getModules(), pre-compute
