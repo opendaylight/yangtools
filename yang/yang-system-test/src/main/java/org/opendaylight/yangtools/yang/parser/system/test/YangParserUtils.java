@@ -12,7 +12,10 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -136,5 +139,24 @@ public class YangParserUtils {
         reactor.addSources(sources);
 
         return reactor.buildEffective();
+    }
+
+    public static SchemaContext parseYangSources(final List<String> yangDirs, final List<String> yangFiles)
+            throws SourceException, FileNotFoundException, ReactorException {
+        final List<File> allYangFiles = new ArrayList<>();
+        for (final String yangDir : yangDirs) {
+            allYangFiles.addAll(getYangFiles(yangDir));
+        }
+
+        for (final String yangFile : yangFiles) {
+            allYangFiles.add(new File(yangFile));
+        }
+
+        return parseYangSources(allYangFiles);
+    }
+
+    public static Collection<File> getYangFiles(final String yangSourcesDirectoryPath) {
+        final File testSourcesDir = new File(yangSourcesDirectoryPath);
+        return Arrays.asList(testSourcesDir.listFiles(YANG_FILE_FILTER));
     }
 }

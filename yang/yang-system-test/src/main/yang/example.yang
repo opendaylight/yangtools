@@ -1,6 +1,6 @@
-module foo {
-    namespace "foo";
-    prefix foo;
+module example {
+    namespace "example";
+    prefix example;
     yang-version 1;
 
     revision 2016-10-24;
