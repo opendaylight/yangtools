@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.function.Function;
 
 final class NumberUtil {
     private static final Comparator<Number> NUMBER_COMPARATOR = (o1, o2) -> {
