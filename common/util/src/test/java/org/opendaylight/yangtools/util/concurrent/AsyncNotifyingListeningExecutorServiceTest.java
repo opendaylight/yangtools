@@ -160,10 +160,7 @@ public class AsyncNotifyingListeningExecutorServiceTest {
     @Test
     public void testDelegatedMethods() throws InterruptedException {
 
-        Runnable task = new Runnable() {
-            @Override
-            public void run(){
-            }
+        Runnable task = () -> {
         };
 
         List<Runnable> taskList = Lists.newArrayList();

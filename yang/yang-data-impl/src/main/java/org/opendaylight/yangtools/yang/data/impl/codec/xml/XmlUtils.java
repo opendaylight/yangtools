@@ -16,12 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * JAXP API.
  */
 public final class XmlUtils {
-    public static final XmlCodecProvider DEFAULT_XML_CODEC_PROVIDER = new XmlCodecProvider() {
-        @Override
-        public TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codecFor(final TypeDefinition<?> baseType) {
-            return TypeDefinitionAwareCodec.from(baseType);
-        }
-    };
+    public static final XmlCodecProvider DEFAULT_XML_CODEC_PROVIDER =
+            TypeDefinitionAwareCodec::from;
 
     private XmlUtils() {
         throw new UnsupportedOperationException();

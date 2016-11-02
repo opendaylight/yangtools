@@ -36,20 +36,14 @@ import org.slf4j.LoggerFactory;
 
 public class StmtTestUtils {
 
-    final public static FileFilter YANG_FILE_FILTER = new FileFilter() {
-        @Override
-        public boolean accept(File file) {
-            String name = file.getName().toLowerCase();
-            return name.endsWith(".yang") && file.isFile();
-        }
+    final public static FileFilter YANG_FILE_FILTER = file -> {
+        String name = file.getName().toLowerCase();
+        return name.endsWith(".yang") && file.isFile();
     };
 
-    final public static FileFilter YIN_FILE_FILTER = new FileFilter() {
-        @Override
-        public boolean accept(File file) {
-            String name = file.getName().toLowerCase();
-            return name.endsWith(".xml") && file.isFile();
-        }
+    final public static FileFilter YIN_FILE_FILTER = file -> {
+        String name = file.getName().toLowerCase();
+        return name.endsWith(".xml") && file.isFile();
     };
 
     private static final Logger LOG = LoggerFactory.getLogger(StmtTestUtils.class);

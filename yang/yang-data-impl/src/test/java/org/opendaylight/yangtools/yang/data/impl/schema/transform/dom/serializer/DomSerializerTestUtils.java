@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer.NodeSerializerDispatcher;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
@@ -43,12 +42,7 @@ public class DomSerializerTestUtils {
     static final Document DOC = XmlDocumentUtils.getDocument();
     static final Element DATA = DOC.createElement("data");
     static final NodeSerializerDispatcher MOCK_DISPATCHER = Mockito.mock(NodeSerializerDispatcher.class);
-    static final XmlCodecProvider CODEC_PROVIDER = new XmlCodecProvider() {
-        @Override
-        public TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codecFor(TypeDefinition<?> baseType) {
-            return TypeDefinitionAwareCodec.from(baseType);
-        }
-    };
+    static final XmlCodecProvider CODEC_PROVIDER = TypeDefinitionAwareCodec::from;
 
     private DomSerializerTestUtils() {
         throw new UnsupportedOperationException("Utility class");

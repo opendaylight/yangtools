@@ -13,7 +13,6 @@ import com.google.common.collect.Maps;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -275,12 +274,8 @@ final class Util {
                     //FIXME: code duplicate
                     File yangDir = new File(file, YangToSourcesProcessor.META_INF_YANG_STRING);
                     if (yangDir.exists() && yangDir.isDirectory()) {
-                        File[] yangFiles = yangDir.listFiles(new FilenameFilter() {
-                            @Override
-                            public boolean accept(File dir, String name) {
-                                return name.endsWith(".yang") && new File(dir, name).isFile();
-                            }
-                        });
+                        File[] yangFiles = yangDir.listFiles(
+                                (dir, name) -> name.endsWith(".yang") && new File(dir, name).isFile());
                         for (final File yangFile : yangFiles) {
                             yangsFromDependencies.add(new YangSourceFromFile(yangFile));
                         }
@@ -344,12 +339,8 @@ final class Util {
                     //FIXME: code duplicate
                     File yangDir = new File(file, YangToSourcesProcessor.META_INF_YANG_STRING);
                     if (yangDir.exists() && yangDir.isDirectory()) {
-                        File[] yangFiles = yangDir.listFiles(new FilenameFilter() {
-                            @Override
-                            public boolean accept(File dir, String name) {
-                                return name.endsWith(".yang") && new File(dir, name).isFile();
-                            }
-                        });
+                        File[] yangFiles = yangDir.listFiles(
+                                (dir, name) -> name.endsWith(".yang") && new File(dir, name).isFile());
 
                         yangsFilesFromDependencies.addAll(Arrays.asList(yangFiles));
                     }

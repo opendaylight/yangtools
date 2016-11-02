@@ -39,9 +39,7 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
      * Comparator based on alphabetical order of local name of SchemaNode's
      * qname.
      */
-    private static final Comparator<SchemaNode> SCHEMA_NODE_COMP = (o1, o2) -> {
-        return o1.getQName().compareTo(o2.getQName());
-    };
+    private static final Comparator<SchemaNode> SCHEMA_NODE_COMP = (o1, o2) -> o1.getQName().compareTo(o2.getQName());
 
     private final ChoiceSchemaNode original;
     private final String defaultCase;

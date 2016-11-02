@@ -7,17 +7,10 @@
  */
 package org.opendaylight.yangtools.objcache.spi;
 
-import org.opendaylight.yangtools.objcache.ObjectCache;
-
 public final class NoopObjectCacheBinder extends AbstractObjectCacheBinder {
     public static final NoopObjectCacheBinder INSTANCE = new NoopObjectCacheBinder();
 
     private  NoopObjectCacheBinder() {
-        super(new IObjectCacheFactory() {
-            @Override
-            public ObjectCache getObjectCache(final Class<?> objClass) {
-                return NoopObjectCache.getInstance();
-            }
-        });
+        super(objClass -> NoopObjectCache.getInstance());
     }
 }

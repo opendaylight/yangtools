@@ -11,7 +11,6 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.augmenta
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
@@ -273,13 +272,10 @@ public class NormalizedNodeXmlTranslationTest {
     List<InputStream> getTestYangs(final String... yangPaths) {
 
         return Lists.newArrayList(Collections2.transform(Lists.newArrayList(yangPaths),
-                new Function<String, InputStream>() {
-                    @Override
-                    public InputStream apply(final String input) {
-                        final InputStream resourceAsStream = NormalizedDataBuilderTest.class.getResourceAsStream(input);
-                        Preconditions.checkNotNull(resourceAsStream, "File %s was null", resourceAsStream);
-                        return resourceAsStream;
-                    }
+                input -> {
+                    final InputStream resourceAsStream = NormalizedDataBuilderTest.class.getResourceAsStream(input);
+                    Preconditions.checkNotNull(resourceAsStream, "File %s was null", resourceAsStream);
+                    return resourceAsStream;
                 }));
     }
 

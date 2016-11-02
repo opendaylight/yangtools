@@ -21,7 +21,6 @@ import static org.mockito.Mockito.verify;
 
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 
-import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.collect.Collections2;
@@ -98,12 +97,7 @@ public class FilesystemSchemaSourceCacheTest {
     }
 
     private static Collection<String> filesToFilenamesWithoutRevision(final List<File> storedFiles) {
-        return Collections2.transform(storedFiles, new Function<File, String>() {
-            @Override
-            public String apply(final File input) {
-                return Files.getNameWithoutExtension(input.getName());
-            }
-        });
+        return Collections2.transform(storedFiles, input -> Files.getNameWithoutExtension(input.getName()));
     }
 
     @Test
