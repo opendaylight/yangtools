@@ -11,9 +11,9 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.base.Function;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.function.Function;
 import org.junit.Test;
 
 public class NumberUtilTest {
