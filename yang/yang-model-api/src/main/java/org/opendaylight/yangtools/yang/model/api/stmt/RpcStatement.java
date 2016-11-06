@@ -7,20 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Collection;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface RpcStatement extends DeclaredStatement<QName>, DocumentationGroup.WithStatus, ConditionalFeature {
+public interface RpcStatement extends DeclaredStatement<QName>, OperationGroup, DocumentationGroup.WithStatus,
+        ConditionalFeature {
 
-    QName getName();
-
-    @Nonnull Collection<? extends TypedefStatement> getTypedefs();
-
-    @Nonnull Collection<? extends GroupingStatement> getGroupings();
-
-    InputStatement getInput();
-
-    OutputStatement getOutput();
 }
