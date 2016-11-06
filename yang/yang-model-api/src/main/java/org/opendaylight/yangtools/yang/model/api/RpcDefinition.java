@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import java.util.Set;
-
 /**
  * Interface describing YANG 'rpc' statement.
  * <p>
@@ -17,28 +15,6 @@ import java.util.Set;
  * are also defined.
  * </p>
  */
-public interface RpcDefinition extends SchemaNode {
-
-    /**
-     * @return Set of type definitions declared under this rpc statement.
-     */
-    Set<TypeDefinition<?>> getTypeDefinitions();
-
-    /**
-     * @return Set of grouping statements declared under this rpc statement.
-     */
-    Set<GroupingDefinition> getGroupings();
-
-    /**
-     * @return Definition of input parameters to the RPC operation. The
-     *         substatements of input define nodes under the RPC's input node.
-     */
-    ContainerSchemaNode getInput();
-
-    /**
-     * @return Definition of output parameters to the RPC operation. The
-     *         substatements of output define nodes under the RPC's output node.
-     */
-    ContainerSchemaNode getOutput();
+public interface RpcDefinition extends OperationDefinition {
 
 }
