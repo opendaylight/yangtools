@@ -21,7 +21,8 @@ import org.opendaylight.yangtools.yang.common.QName;
  * if defined.
  * </p>
  */
-public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, DataSchemaNode, NotificationNodeContainer {
+public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, DataSchemaNode, NotificationNodeContainer,
+        ActionNodeContainer {
 
     /**
      * @return List of QNames of leaf identifiers of this list

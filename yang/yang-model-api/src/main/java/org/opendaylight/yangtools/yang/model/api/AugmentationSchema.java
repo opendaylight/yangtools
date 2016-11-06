@@ -16,7 +16,7 @@ import java.util.List;
  * module, or the current module and its submodules, and to add to the nodes
  * from a grouping in a "uses" statement.
  */
-public interface AugmentationSchema extends DataNodeContainer, NotificationNodeContainer {
+public interface AugmentationSchema extends DataNodeContainer, NotificationNodeContainer, ActionNodeContainer {
 
     /**
      * Returns when statement
