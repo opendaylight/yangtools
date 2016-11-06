@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import com.google.common.base.Optional;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ActionNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -17,8 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class ContainerEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<ContainerStatement>
-        implements
-        DerivableSchemaNode {
+        implements DerivableSchemaNode, ActionNodeContainer {
 
     private final ContainerSchemaNode original;
 
