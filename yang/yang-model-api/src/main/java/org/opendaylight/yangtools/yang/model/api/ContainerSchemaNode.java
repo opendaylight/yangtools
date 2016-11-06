@@ -15,7 +15,7 @@ package org.opendaylight.yangtools.yang.model.api;
  * configuration has an explicit meaning.
  */
 public interface ContainerSchemaNode extends DataNodeContainer,
-        AugmentationTarget, DataSchemaNode {
+        AugmentationTarget, DataSchemaNode, ActionNodeContainer {
 
     /**
      * @return true, if presence of this container has an explicit meaning,
