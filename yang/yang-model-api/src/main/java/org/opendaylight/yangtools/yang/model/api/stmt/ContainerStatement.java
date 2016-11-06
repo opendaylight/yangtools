@@ -11,7 +11,7 @@ import java.util.Collection;
 import javax.annotation.Nullable;
 
 public interface ContainerStatement extends DataDefinitionStatement, DataDefinitionContainer.WithReusableDefinitions,
-        NotificationStatementContainer {
+        NotificationStatementContainer, ActionStatementContainer {
 
     @Nullable Collection<? extends MustStatement> getMusts();
 

@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface AugmentStatement extends DeclaredStatement<SchemaNodeIdentifier>, DataDefinitionContainer,
-        NotificationStatementContainer {
+        NotificationStatementContainer, ActionStatementContainer {
 
     @Nonnull SchemaNodeIdentifier getTargetNode();
 }
