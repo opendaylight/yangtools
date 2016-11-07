@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- vi: set et smarttab sw=4 tabstop=4: -->
+<!--
+ Copyright (c) 2016 Pantheon Technologies, s.r.o. and others.  All rights reserved.
+
+ This program and the accompanying materials are made available under the
+ terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ and is available at http://www.eclipse.org/legal/epl-v10.html
+-->
+<xs:schema targetNamespace="https://opendaylight.org/yangtools/schemacontext/1.0.0" xmlns="https://opendaylight.org/yangtools/schemacontext/1.0.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+    <xs:group name="documentedNode">
+        <xs:sequence>
+            <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="reference" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:attributeGroup name="status">
+        <xs:attribute name="status" default="current">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="current"/>
+                    <xs:enumeration value="deprecated"/>
+                    <xs:enumeration value="obsolete"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:attributeGroup>
+
+    <xs:complexType name="abstractTypedef" abstract="true">
+        <xs:sequence>
+            <xs:group ref="documentedNode"/>
+        </xs:sequence>
+        <xs:attributeGroup ref="status"/>
+        <xs:attribute name="name" type="xs:QName" use="required"/>
+        <xs:attribute name="base" type="xs:QName" use="required"/>
+        <xs:attribute name="units" type="xs:string"/>
+
+        <!-- XXX: all subclasses need to proper 'default' attribute -->
+    </xs:complexType>
+
+    <xs:attributeGroup name="constraintMetaDefinition">
+        <xs:attribute name="error-app-tag" type="xs:string" use="optional"/>
+        <xs:attribute name="error-message" type="xs:string" use="optional"/>
+    </xs:attributeGroup>
+
+    <xs:complexType name="lengthConstraint">
+        <xs:group ref="documentedNode"/>
+        <xs:attributeGroup ref="constraintMetaDefinition"/>
+        <xs:attribute name="min" type="xs:unsignedLong" use="required"/>
+        <xs:attribute name="max" type="xs:unsignedLong" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="patternConstraint">
+        <xs:group ref="documentedNode"/>
+        <xs:attributeGroup ref="constraintMetaDefinition"/>
+        <xs:attribute name="regex" type="xs:string" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="rangeConstraint" abstract="true">
+        <xs:group ref="documentedNode"/>
+        <xs:attributeGroup ref="constraintMetaDefinition"/>
+    </xs:complexType>
+
+    <xs:group name="typedef">
+        <xs:choice>
+            <!-- TODO: this needs to be replicated for all other types
+                     | enumeration         | Enumerated strings                  |
+                     | identityref         | A reference to an abstract identity |
+                     | instance-identifier | References a data tree node         |
+                     | leafref             | A reference to a leaf instance      | -->
+  
+            <xs:element name="binary">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="abstractTypedef">
+                            <xs:sequence>
+                                <xs:element name="length" type="lengthConstraint"/>
+                            </xs:sequence>
+                            <xs:attribute name="default" type="xs:base64Binary" use="optional"/>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="bits">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="abstractTypedef">
+                            <xs:sequence>
+                                <xs:element name="bit" minOccurs="1">
+                                    <xs:complexType>
+                                        <xs:group ref="documentedNode"/>
+                                        <xs:attributeGroup ref="status"/>
+                                        <xs:attribute name="position" type="xs:unsignedInt"/>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:sequence>
+                            <xs:attribute name="default" type="xs:base64Binary" use="optional"/>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="bool">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="abstractTypedef">
+                            <xs:attribute name="default" type="xs:boolean" use="optional"/>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="decimal64">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="abstractTypedef">
+                            <xs:sequence>
+                                <xs:element name="range">
+                                    <xs:complexType>
+                                        <xs:complexContent>
+                                            <xs:extension base="rangeConstraint">
+                                                <xs:attribute name="min" type="xs:decimal" use="required"/>
+                                                <xs:attribute name="max" type="xs:decimal" use="required"/>
+                                            </xs:extension>
+                                        </xs:complexContent>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:sequence>
+                            <xs:attribute name="fraction-digits" use="required">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:unsignedByte">
+                                        <xs:minInclusive value="1"/>
+                                        <xs:maxInclusive value="18"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:attribute>
+                            <xs:attribute name="default" type="xs:decimal" use="optional"/>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="empty">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="abstractTypedef"/>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="int8">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="abstractTypedef">
+                            <xs:sequence>
+                                <xs:element name="range">
+                                    <xs:complexType>
+                                        <xs:complexContent>
+                                            <xs:extension base="rangeConstraint">
+                                                <xs:attribute name="min" type="xs:byte" use="required"/>
+                                                <xs:attribute name="max" type="xs:byte" use="required"/>
+                                            </xs:extension>
+                                        </xs:complexContent>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:sequence>
+                            <xs:attribute name="default" type="xs:byte" use="optional"/>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="int16">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="abstractTypedef">
+                            <xs:sequence>
+                                <xs:element name="range">
+                                    <xs:complexType>
+                                        <xs:complexContent>
+                                            <xs:extension base="rangeConstraint">
+                                                <xs:attribute name="min" type="xs:short" use="required"/>
+                                                <xs:attribute name="max" type="xs:short" use="required"/>
+                                            </xs:extension>
+                                        </xs:complexContent>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:sequence>
+                            <xs:attribute name="default" type="xs:short" use="optional"/>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="int32">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="abstractTypedef">
+                            <xs:sequence>
+                                <xs:element name="range">
+                                    <xs:complexType>
+                                        <xs:complexContent>
+                                            <xs:extension base="rangeConstraint">
+                                                <xs:attribute name="min" type="xs:int" use="required"/>
+                                                <xs:attribute name="max" type="xs:int" use="required"/>
+                                            </xs:extension>
+                                        </xs:complexContent>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:sequence>
+                            <xs:attribute name="default" type="xs:int" use="optional"/>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="int64">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="abstractTypedef">
+                            <xs:sequence>
+                                <xs:element name="range">
+                                    <xs:complexType>
+                                        <xs:complexContent>
+                                            <xs:extension base="rangeConstraint">
+                                                <xs:attribute name="min" type="xs:long" use="required"/>
+                                                <xs:attribute name="max" type="xs:long" use="required"/>
+                                            </xs:extension>
+                                        </xs:complexContent>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:sequence>
+                            <xs:attribute name="default" type="xs:long" use="optional"/>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="string">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="abstractTypedef">
+                            <xs:sequence>
+                                <xs:element name="length" type="lengthConstraint"/>
+                                <xs:element name="pattern" type="patternConstraint"/>
+                            </xs:sequence>
+                            <xs:attribute name="default" type="xs:string" use="optional"/>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="uint8">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="abstractTypedef">
+                            <xs:sequence>
+                                <xs:element name="range">
+                                    <xs:complexType>
+                                        <xs:complexContent>
+                                            <xs:extension base="rangeConstraint">
+                                                <xs:attribute name="min" type="xs:unsignedByte" use="required"/>
+                                                <xs:attribute name="max" type="xs:unsignedByte" use="required"/>
+                                            </xs:extension>
+                                        </xs:complexContent>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:sequence>
+                            <xs:attribute name="default" type="xs:unsignedByte" use="optional"/>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="uint16">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="abstractTypedef">
+                            <xs:sequence>
+                                <xs:element name="range">
+                                    <xs:complexType>
+                                        <xs:complexContent>
+                                            <xs:extension base="rangeConstraint">
+                                                <xs:attribute name="min" type="xs:unsignedShort" use="required"/>
+                                                <xs:attribute name="max" type="xs:unsignedShort" use="required"/>
+                                            </xs:extension>
+                                        </xs:complexContent>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:sequence>
+                            <xs:attribute name="default" type="xs:unsignedShort" use="optional"/>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="uint32">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="abstractTypedef">
+                            <xs:sequence>
+                                <xs:element name="range">
+                                    <xs:complexType>
+                                        <xs:complexContent>
+                                            <xs:extension base="rangeConstraint">
+                                                <xs:attribute name="min" type="xs:unsignedInt" use="required"/>
+                                                <xs:attribute name="max" type="xs:unsignedInt" use="required"/>
+                                            </xs:extension>
+                                        </xs:complexContent>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:sequence>
+                            <xs:attribute name="default" type="xs:unsignedInt" use="optional"/>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="uint64">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="abstractTypedef">
+                            <xs:sequence>
+                                <xs:element name="range">
+                                    <xs:complexType>
+                                        <xs:complexContent>
+                                            <xs:extension base="rangeConstraint">
+                                                <xs:attribute name="min" type="xs:unsignedLong" use="required"/>
+                                                <xs:attribute name="max" type="xs:unsignedLong" use="required"/>
+                                            </xs:extension>
+                                        </xs:complexContent>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:sequence>
+                            <xs:attribute name="default" type="xs:unsignedLong" use="optional"/>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="union">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="abstractTypedef">
+                            <xs:sequence>
+                                <xs:group ref="type" minOccurs="1" maxOccurs="unbounded"/>
+                            </xs:sequence>
+                            <xs:attribute name="default" type="xs:string" use="optional"/>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+        </xs:choice>
+    </xs:group>
+
+    <!-- A type definition or a type reference -->
+    <xs:group name="type">
+        <xs:choice>
+            <xs:group ref="typedef"/>
+            <xs:element name="typeref" type="xs:QName"/>
+        </xs:choice>
+    </xs:group>
+
+    <xs:complexType name="dataSchemaNode">
+        <!-- FIXME: implement this -->
+    </xs:complexType>
+
+    <xs:element name="schemaContext">
+        <xs:complexType>
+            <xs:sequence>
+                <!--
+                     IMPLEMENTATION NOTE: type definitions MUST be ordered in their dependency order,
+                                          that is to say that every typedef in this list can only specify
+                                          base to be either a builtin type or a typedef which occurs
+                                          earlier in the document.
+                 -->
+                <xs:group ref="typedef" maxOccurs="unbounded"/>
+                <!-- xs:element name="notification" type="notificationDefinition maxOccurs="unbounded""/ -->
+                <!-- xs:element name="rpc" type="rpcDefinition" maxOccurs="unbounded"/ -->
+                <xs:element name="data" type="dataSchemaNode" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+    <!--
+
+        SCRATCH SPACE BELOW
+
+    -->
+
+
+
+
+
+
+
+
+
+
+
+    <!--xs:simpleType name="revision">
+        <xs:restriction base="xs:date"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="semver">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="\d.\d.\d"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:group name="augmentationTarget">
+        <xs:sequence>
+            <xs:element name="augmentation">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:group ref="documentedNode"/>
+                        <xs:element name="whenCondition" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:group>
+
+	<xs:group name="dateNodeContainer">
+        <xs:sequence>
+            <xs:element name="typeDefinitions">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="typeDefinition" type="typeDefinition"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+
+            <xs:element name="childNodes">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="child" type="dataSchemaNode"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:complexType name="moduleImport">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="prefix" type="xs:string"/>
+            <xs:element name="revision" type="revision" minOccurs="0"/>
+            <xs:element name="semver" type="semver" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="module">
+        <xs:sequence>
+            <xs:element name="name" type="xs:string"/>
+            <xs:element name="prefix" type="xs:string"/>
+            <xs:element name="namespace" type="xs:anyURI"/>
+            <xs:element name="revision" type="revision"/>
+            <xs:element name="semver" type="semver" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    
+
+    <xs:complexType name="containerSchemaNode">
+        
+
+    </xs:complexType -->
+
+</xs:schema>
