@@ -34,6 +34,7 @@
         <module>yang-maven-plugin-it</module>
         <module>yang-maven-plugin-spi</module>
         <module>yang-model-api</module>
+        <module>yang-model-codec-xml</module>
         <module>yang-model-export</module>
         <module>yang-model-immutable</module>
         <module>yang-model-util</module>
