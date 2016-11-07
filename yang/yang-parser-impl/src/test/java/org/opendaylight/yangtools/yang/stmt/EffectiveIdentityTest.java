@@ -101,7 +101,7 @@ public class EffectiveIdentityTest {
         assertNotNull(child2);
         assertNotNull(child12);
 
-        assertNull(root.getBaseIdentity());
+        assertTrue(root.getBaseIdentities().isEmpty());
 
         Set<IdentitySchemaNode> rootDerivedIdentities = root
                 .getDerivedIdentities();
@@ -112,8 +112,8 @@ public class EffectiveIdentityTest {
         assertFalse(rootDerivedIdentities.contains(child12));
         assertFalse(child1.equals(child2));
 
-        assertTrue(root == child1.getBaseIdentity());
-        assertTrue(root == child2.getBaseIdentity());
+        assertTrue(root == child1.getBaseIdentities().iterator().next());
+        assertTrue(root == child2.getBaseIdentities().iterator().next());
 
         assertTrue(child2.getDerivedIdentities().isEmpty());
 
@@ -123,7 +123,7 @@ public class EffectiveIdentityTest {
         assertTrue(child1DerivedIdentities.contains(child12));
         assertFalse(child1DerivedIdentities.contains(child1));
 
-        assertTrue(child1 == child12.getBaseIdentity());
+        assertTrue(child1 == child12.getBaseIdentities().iterator().next());
         assertTrue(child12 == child1DerivedIdentities.iterator().next());
     }
 

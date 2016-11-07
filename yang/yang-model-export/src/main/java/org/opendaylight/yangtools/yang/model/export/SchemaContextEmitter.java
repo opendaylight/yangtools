@@ -361,8 +361,8 @@ class SchemaContextEmitter {
 
     private void emitIdentity(final IdentitySchemaNode identity) {
         writer.startIdentityNode(identity.getQName());
-        if (identity.getBaseIdentity() != null) {
-            emitBase(identity.getBaseIdentity().getQName());
+        if (!identity.getBaseIdentities().isEmpty()) {
+            emitBase(identity.getBaseIdentities().iterator().next().getQName());
         }
         emitStatusNode(identity.getStatus());
         emitDescriptionNode(identity.getDescription());

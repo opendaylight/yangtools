@@ -22,13 +22,14 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class IdentityEffectiveStatementImpl extends AbstractEffectiveSchemaNode<IdentityStatement>
         implements IdentitySchemaNode {
-    private IdentitySchemaNode baseIdentity;
+    private Set<IdentitySchemaNode> baseIdentity;
     private final Set<IdentitySchemaNode> derivedIdentities;
 
     public IdentityEffectiveStatementImpl(
             final StmtContext<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> ctx) {
         super(ctx);
 
+        this.baseIdentity = ImmutableSet.of();
         // initDerivedIdentities
         Set<IdentitySchemaNode> derivedIdentitiesInit = new HashSet<>();
         List<StmtContext<?, ?, ?>> derivedIdentitiesCtxList = ctx.getFromNamespace(
@@ -47,11 +48,11 @@ public final class IdentityEffectiveStatementImpl extends AbstractEffectiveSchem
     }
 
     private void initBaseIdentity(final IdentityEffectiveStatementImpl baseIdentity) {
-        this.baseIdentity = baseIdentity;
+        this.baseIdentity = ImmutableSet.of(baseIdentity);
     }
 
     @Override
-    public IdentitySchemaNode getBaseIdentity() {
+    public Set<IdentitySchemaNode> getBaseIdentities() {
         return baseIdentity;
     }
 

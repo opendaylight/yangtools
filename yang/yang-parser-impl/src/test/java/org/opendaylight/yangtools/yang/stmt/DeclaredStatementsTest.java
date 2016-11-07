@@ -351,7 +351,7 @@ public class DeclaredStatementsTest {
             }
         }
 
-        assertEquals("test-base-id", identityStatement.getBase().getName().getLocalName());
+        assertEquals("test-base-id", identityStatement.getBases().iterator().next().getName().getLocalName());
         assertEquals(Status.CURRENT, identityStatement.getStatus().getValue());
         assertEquals("test description", identityStatement.getDescription().getText());
         assertEquals("test reference", identityStatement.getReference().getText());

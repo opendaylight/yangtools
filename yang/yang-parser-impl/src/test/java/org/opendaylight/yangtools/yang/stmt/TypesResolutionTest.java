@@ -207,13 +207,13 @@ public class TypesResolutionTest {
             }
         }
         assertNotNull(cryptoAlg);
-        IdentitySchemaNode baseIdentity = cryptoAlg.getBaseIdentity();
+        IdentitySchemaNode baseIdentity = cryptoAlg.getBaseIdentities().iterator().next();
         assertEquals("crypto-base", baseIdentity.getQName().getLocalName());
         assertTrue(cryptoAlg.getDerivedIdentities().isEmpty());
-        assertNull(baseIdentity.getBaseIdentity());
+        assertTrue(baseIdentity.getBaseIdentities().isEmpty());
 
         assertNotNull(cryptoBase);
-        assertNull(cryptoBase.getBaseIdentity());
+        assertTrue(cryptoBase.getBaseIdentities().isEmpty());
         assertEquals(3, cryptoBase.getDerivedIdentities().size());
 
         assertNotNull(cryptoId);

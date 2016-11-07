@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -89,8 +90,8 @@ public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
     }
 
     @Override
-    public BaseStatement getBase() {
-        return firstDeclared(BaseStatement.class);
+    public Collection<? extends BaseStatement> getBases() {
+        return allDeclared(BaseStatement.class);
     }
 
     @Override
