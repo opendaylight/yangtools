@@ -331,7 +331,7 @@ public class YangParserWithContextTest {
         assertEquals(simpleDateFormat.parse("2013-06-18"), idQName.getRevision());
         assertEquals("pt", idQName.getLocalName());
 
-        final IdentitySchemaNode baseIdentity = identity.getBaseIdentity();
+        final IdentitySchemaNode baseIdentity = identity.getBaseIdentities().iterator().next();
         final QName idBaseQName = baseIdentity.getQName();
         assertEquals(URI.create("urn:custom.types.demo"), idBaseQName.getNamespace());
         assertEquals(simpleDateFormat.parse("2012-04-16"), idBaseQName.getRevision());
