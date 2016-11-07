@@ -305,10 +305,10 @@ abstract class BaseTemplate {
 
         val StringTokenizer tokenizer = new StringTokenizer(formattedText, " ", true);
 
-        while(tokenizer.hasMoreElements) {
+        while (tokenizer.hasMoreElements) {
             val nextElement = tokenizer.nextElement.toString
 
-            if(lineBuilder.length + nextElement.length > 80) {
+            if (lineBuilder.length != 0 && lineBuilder.length + nextElement.length > 80) {
                 if (lineBuilder.charAt(lineBuilder.length - 1) == ' ') {
                     lineBuilder.setLength(0)
                     lineBuilder.append(lineBuilder.substring(0, lineBuilder.length - 1))
@@ -327,7 +327,7 @@ abstract class BaseTemplate {
                 }
             }
 
-            if(isFirstElementOnNewLineEmptyChar) {
+            if (isFirstElementOnNewLineEmptyChar) {
                 isFirstElementOnNewLineEmptyChar = !isFirstElementOnNewLineEmptyChar
             }
 
