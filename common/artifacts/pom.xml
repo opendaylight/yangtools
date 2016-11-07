@@ -91,6 +91,11 @@
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>yang-model-codec-xml</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-model-export</artifactId>
                 <version>${project.version}</version>
             </dependency>
