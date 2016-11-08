@@ -104,7 +104,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
 
     protected static void checkNotConflicting(final YangInstanceIdentifier path, final TreeNode original, final TreeNode current) throws ConflictingModificationAppliedException {
         checkConflicting(path, original.getVersion().equals(current.getVersion()),
-                "Node was replaced by other transaction.");
+                "Node was replaced by other transaction");
         checkConflicting(path, original.getSubtreeVersion().equals(current.getSubtreeVersion()),
                 "Node children was modified by other transaction");
     }
@@ -169,9 +169,9 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         if (original.isPresent() && current.isPresent()) {
             checkNotConflicting(path, original.get(), current.get());
         } else if (original.isPresent()) {
-            throw new ConflictingModificationAppliedException(path,"Node was deleted by other transaction.");
+            throw new ConflictingModificationAppliedException(path,"Node was deleted by other transaction");
         } else if (current.isPresent()) {
-            throw new ConflictingModificationAppliedException(path, "Node was created by other transaction.");
+            throw new ConflictingModificationAppliedException(path, "Node was created by other transaction");
         }
     }
 

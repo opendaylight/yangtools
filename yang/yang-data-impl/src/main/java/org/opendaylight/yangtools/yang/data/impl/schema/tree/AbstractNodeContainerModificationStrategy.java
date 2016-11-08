@@ -286,7 +286,7 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
         }
 
         if (!current.isPresent()) {
-            throw new ConflictingModificationAppliedException(path, "Node was deleted by other transaction.");
+            throw new ConflictingModificationAppliedException(path, "Node was deleted by other transaction");
         }
 
         checkChildPreconditions(path, modification, current.get(), version);
