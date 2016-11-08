@@ -9,6 +9,7 @@
 .project
 .settings
 target
+target-ide
 *.iml
 .idea
 bin
