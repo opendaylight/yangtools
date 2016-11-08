@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  * Statement that defines new data nodes.
  *
  * One of container, leaf, leaf-list, list, choice, case,
- * augment, uses, and anyxml.
+ * augment, uses, anyxml and anydata.
  *
  * Defined in: <a href="https://tools.ietf.org/html/rfc6020#section-3">RFC6020, Section 3</a>
  */
