@@ -1,0 +1,142 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a65312a_6a58d532",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/AutoCloseables.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-11-08T14:31:04Z",
+      "side": 1,
+      "message": "I would put is on a separate line, but I am not a checkstyle expert. :)",
+      "range": {
+        "startLine": 31,
+        "startChar": 31,
+        "endLine": 31,
+        "endChar": 32
+      },
+      "revId": "7737e40fc74559e8443a155fe6b6d1590fb340fa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_2409f331",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/AutoCloseables.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-11-08T14:31:04Z",
+      "side": 1,
+      "message": "null",
+      "range": {
+        "startLine": 68,
+        "startChar": 19,
+        "endLine": 68,
+        "endChar": 28
+      },
+      "revId": "7737e40fc74559e8443a155fe6b6d1590fb340fa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_c418ff86",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/AutoCloseables.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-11-08T14:31:04Z",
+      "side": 1,
+      "message": "{} will either be empty, or start with a colon. Thus no space is required in this implementation.",
+      "range": {
+        "startLine": 74,
+        "startChar": 53,
+        "endLine": 74,
+        "endChar": 54
+      },
+      "revId": "7737e40fc74559e8443a155fe6b6d1590fb340fa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_8a3e11b7",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/AutoCloseables.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-11-08T14:31:04Z",
+      "side": 1,
+      "message": "Also redundant, due to line 81.\nPerhaps \"discouraged\" is the word you are looking for?",
+      "range": {
+        "startLine": 84,
+        "startChar": 58,
+        "endLine": 84,
+        "endChar": 62
+      },
+      "revId": "7737e40fc74559e8443a155fe6b6d1590fb340fa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_247453ce",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/AutoCloseables.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-11-08T14:31:04Z",
+      "side": 1,
+      "message": "This seem to be useful also outside this class.\norg.opendaylight.yangtools.util.ToStrings?",
+      "range": {
+        "startLine": 99,
+        "startChar": 26,
+        "endLine": 99,
+        "endChar": 38
+      },
+      "revId": "7737e40fc74559e8443a155fe6b6d1590fb340fa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_242293b9",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/AutoCloseables.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-11-08T14:31:04Z",
+      "side": 1,
+      "message": "This is not part of \"to string\" logic. This is part of \"how to append a possibly empty value\" logic.\nBy coincidence, I was also hacking [0] around that today, so perhaps yet another utility class should be created specifically for nice concatenations.\n\n[0] https://git.opendaylight.org/gerrit/#/c/48118/1/yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataValidationFailedException.java@63",
+      "range": {
+        "startLine": 102,
+        "startChar": 30,
+        "endLine": 102,
+        "endChar": 32
+      },
+      "revId": "7737e40fc74559e8443a155fe6b6d1590fb340fa",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
