@@ -1,0 +1,70 @@
+submodule subfoo {
+    yang-version 1.1;
+
+    belongs-to foo {
+        prefix f;
+    }
+
+    import bar {
+        prefix "br";
+        revision-date 2013-07-03;
+    }
+
+    import baz {
+        prefix "bz";
+        revision-date 2013-02-27;
+    }
+
+    revision "2013-02-27" {
+    }
+
+    leaf id {
+        type br:int32-ext2 {
+            range "12..max";
+        }
+    }
+
+    leaf foo-id {
+        type f:identifier;
+    }
+
+    container sub-ext {
+        bz:c-define "MY_INTERFACES";
+    }
+
+    container sub-transfer {
+        choice how {
+            default interval;
+            container input {
+            }
+            list output {
+                leaf id {
+                    type string;
+                }
+            }
+            case manual {
+                leaf manual {
+                    type empty;
+                }
+            }
+        }
+    }
+
+    anyxml sub-datas {
+        status obsolete;
+    }
+
+    augment "/br:interfaces/br:ifEntry/bz:augment-holder" {
+        when "if:ifType='ds0'";
+        leaf subleaf {
+            type string;
+        }
+    }
+
+    extension sub-mountpoint {
+        argument "name" {
+            yin-element "true";
+        }
+    }
+
+}
