@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
+import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -302,5 +303,15 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     @Override
     public boolean isEnabledSemanticVersioning() {
         return parent.isEnabledSemanticVersioning();
+    }
+
+    @Override
+    public SemVer getRootVersion() {
+        return getRoot().getRootVersion();
+    }
+
+    @Override
+    public void setRootVersion(final SemVer version) {
+        getRoot().setRootVersion(version);
     }
 }

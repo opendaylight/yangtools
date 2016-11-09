@@ -12,25 +12,35 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SupportedVersionsBundle;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.Builder;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class CustomStatementParserBuilder {
-    private final Map<ModelProcessingPhase, StatementSupportBundle.Builder> reactorSupportBundles = ImmutableMap
-            .<ModelProcessingPhase, StatementSupportBundle.Builder> builder()
-            .put(ModelProcessingPhase.INIT, StatementSupportBundle.builder())
-            .put(ModelProcessingPhase.SOURCE_PRE_LINKAGE, StatementSupportBundle.builder())
-            .put(ModelProcessingPhase.SOURCE_LINKAGE, StatementSupportBundle.builder())
-            .put(ModelProcessingPhase.STATEMENT_DEFINITION, StatementSupportBundle.builder())
-            .put(ModelProcessingPhase.FULL_DECLARATION, StatementSupportBundle.builder())
-            .put(ModelProcessingPhase.EFFECTIVE_MODEL, StatementSupportBundle.builder()).build();
+    private final Map<ModelProcessingPhase, StatementSupportBundle.Builder> reactorSupportBundles;
     private final Map<ValidationBundleType, Collection<StatementDefinition>> reactorValidationBundles = new HashMap<>();
+
+    public CustomStatementParserBuilder() {
+        this(YangInferencePipeline.SUPPORTED_VERSION_BUNDLE);
+    }
+
+    public CustomStatementParserBuilder(final SupportedVersionsBundle supportedVersions) {
+        reactorSupportBundles = ImmutableMap.<ModelProcessingPhase, StatementSupportBundle.Builder> builder()
+                .put(ModelProcessingPhase.INIT, StatementSupportBundle.builder(supportedVersions))
+                .put(ModelProcessingPhase.SOURCE_PRE_LINKAGE, StatementSupportBundle.builder(supportedVersions))
+                .put(ModelProcessingPhase.SOURCE_LINKAGE, StatementSupportBundle.builder(supportedVersions))
+                .put(ModelProcessingPhase.STATEMENT_DEFINITION, StatementSupportBundle.builder(supportedVersions))
+                .put(ModelProcessingPhase.FULL_DECLARATION, StatementSupportBundle.builder(supportedVersions))
+                .put(ModelProcessingPhase.EFFECTIVE_MODEL, StatementSupportBundle.builder(supportedVersions)).build();
+    }
 
     public CustomStatementParserBuilder addStatementSupport(final ModelProcessingPhase phase,
             final StatementSupport<?, ?, ?> stmtSupport) {
@@ -69,7 +79,11 @@ public class CustomStatementParserBuilder {
 
     public CustomStatementParserBuilder addAllSupports(final ModelProcessingPhase phase,
             final StatementSupportBundle stmtSupportBundle) {
-        addAllStatementSupports(phase, stmtSupportBundle.getDefinitions().values());
+        addAllCommonStatementSupports(phase, stmtSupportBundle.getCommonDefinitions().values());
+        for (final Entry<SemVer, ImmutableMap<QName, StatementSupport<?, ?, ?>>> entry : stmtSupportBundle
+                .getAllVersionSpecificDefinitions().entrySet()) {
+            addAllStatementSupportsForVersion(phase, entry.getKey(), entry.getValue().values());
+        }
         addAllNamespaceSupports(phase, stmtSupportBundle.getNamespaceDefinitions().values());
         return this;
     }
@@ -83,11 +97,30 @@ public class CustomStatementParserBuilder {
         return this;
     }
 
+    /**
+     * Use {@link #addAllCommonStatementSupports(ModelProcessingPhase, Collection<StatementSupport<?, ?, ?>>)
+     * addAllCommonStatementSupports} method instead.
+     */
+    @Deprecated
     public CustomStatementParserBuilder addAllStatementSupports(final ModelProcessingPhase phase,
+            final Collection<StatementSupport<?, ?, ?>> statementSupports) {
+        return addAllCommonStatementSupports(phase, statementSupports);
+    }
+
+    public CustomStatementParserBuilder addAllCommonStatementSupports(final ModelProcessingPhase phase,
             final Collection<StatementSupport<?, ?, ?>> statementSupports) {
         final StatementSupportBundle.Builder stmtBundleBuilder = reactorSupportBundles.get(phase);
         for (final StatementSupport<?, ?, ?> statementSupport : statementSupports) {
             stmtBundleBuilder.addSupport(statementSupport);
+        }
+        return this;
+    }
+
+    public CustomStatementParserBuilder addAllStatementSupportsForVersion(final ModelProcessingPhase phase,
+            final SemVer version, final Collection<StatementSupport<?, ?, ?>> statementSupports) {
+        final StatementSupportBundle.Builder stmtBundleBuilder = reactorSupportBundles.get(phase);
+        for (final StatementSupport<?, ?, ?> statementSupport : statementSupports) {
+            stmtBundleBuilder.addVersionSpecificSupport(version, statementSupport);
         }
         return this;
     }

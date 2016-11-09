@@ -37,12 +37,12 @@ import org.slf4j.LoggerFactory;
 public class StmtTestUtils {
 
     final public static FileFilter YANG_FILE_FILTER = file -> {
-        String name = file.getName().toLowerCase();
+        final String name = file.getName().toLowerCase();
         return name.endsWith(".yang") && file.isFile();
     };
 
     final public static FileFilter YIN_FILE_FILTER = file -> {
-        String name = file.getName().toLowerCase();
+        final String name = file.getName().toLowerCase();
         return name.endsWith(".xml") && file.isFile();
     };
 
@@ -52,18 +52,18 @@ public class StmtTestUtils {
 
     }
 
-    public static void log(Throwable e, String indent) {
+    public static void log(final Throwable e, final String indent) {
         LOG.debug(indent + e.getMessage());
 
-        Throwable[] suppressed = e.getSuppressed();
-        for (Throwable throwable : suppressed) {
+        final Throwable[] suppressed = e.getSuppressed();
+        for (final Throwable throwable : suppressed) {
             log(throwable, indent + "        ");
         }
     }
 
     public static List<Module> findModules(final Set<Module> modules, final String moduleName) {
-        List<Module> result = new ArrayList<>();
-        for (Module module : modules) {
+        final List<Module> result = new ArrayList<>();
+        for (final Module module : modules) {
             if (module.getName().equals(moduleName)) {
                 result.add(module);
             }
@@ -71,24 +71,24 @@ public class StmtTestUtils {
         return result;
     }
 
-    public static void addSources(CrossSourceStatementReactor.BuildAction reactor, YangStatementSourceImpl... sources) {
-        for (YangStatementSourceImpl source : sources) {
+    public static void addSources(final CrossSourceStatementReactor.BuildAction reactor, final YangStatementSourceImpl... sources) {
+        for (final YangStatementSourceImpl source : sources) {
             reactor.addSource(source);
         }
     }
 
-    public static void printReferences(Module module, boolean isSubmodule, String indent) {
+    public static void printReferences(final Module module, final boolean isSubmodule, final String indent) {
         LOG.debug(indent + (isSubmodule ? "Submodule " : "Module ") + module.getName());
-        Set<Module> submodules = module.getSubmodules();
-        for (Module submodule : submodules) {
+        final Set<Module> submodules = module.getSubmodules();
+        for (final Module submodule : submodules) {
             printReferences(submodule, true, indent + "      ");
             printChilds(submodule.getChildNodes(), indent + "            ");
         }
     }
 
-    public static void printChilds(Collection<DataSchemaNode> childNodes, String indent) {
+    public static void printChilds(final Collection<DataSchemaNode> childNodes, final String indent) {
 
-        for (DataSchemaNode child : childNodes) {
+        for (final DataSchemaNode child : childNodes) {
             LOG.debug(indent + "Child " + child.getQName().getLocalName());
             if (child instanceof DataNodeContainer) {
                 printChilds(((DataNodeContainer) child).getChildNodes(), indent + "      ");
@@ -96,29 +96,29 @@ public class StmtTestUtils {
         }
     }
 
-    public static SchemaContext parseYangSources(StatementStreamSource... sources) throws SourceException,
+    public static SchemaContext parseYangSources(final StatementStreamSource... sources) throws SourceException,
             ReactorException {
         return parseYangSources(StatementParserMode.DEFAULT_MODE, sources);
     }
 
-    public static SchemaContext parseYangSources(StatementParserMode statementParserMode, StatementStreamSource... sources)
+    public static SchemaContext parseYangSources(final StatementParserMode statementParserMode, final StatementStreamSource... sources)
             throws SourceException, ReactorException {
 
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(statementParserMode);
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(statementParserMode);
         reactor.addSources(sources);
 
         return reactor.buildEffective();
     }
 
-    public static SchemaContext parseYangSources(File... files) throws SourceException, ReactorException,
+    public static SchemaContext parseYangSources(final File... files) throws SourceException, ReactorException,
             FileNotFoundException {
         return parseYangSources(StatementParserMode.DEFAULT_MODE, files);
     }
 
-    public static SchemaContext parseYangSources(StatementParserMode statementParserMode, File... files) throws SourceException,
+    public static SchemaContext parseYangSources(final StatementParserMode statementParserMode, final File... files) throws SourceException,
             ReactorException, FileNotFoundException {
 
-        StatementStreamSource[] sources = new StatementStreamSource[files.length];
+        final StatementStreamSource[] sources = new StatementStreamSource[files.length];
 
         for (int i = 0; i < files.length; i++) {
             sources[i] = new YangStatementSourceImpl(new NamedFileInputStream(files[i], files[i].getPath()));
@@ -127,43 +127,55 @@ public class StmtTestUtils {
         return parseYangSources(statementParserMode, sources);
     }
 
-    public static SchemaContext parseYangSources(Collection<File> files) throws SourceException, ReactorException,
+    public static SchemaContext parseYangSources(final Collection<File> files) throws SourceException, ReactorException,
             FileNotFoundException {
         return parseYangSources(files, StatementParserMode.DEFAULT_MODE);
     }
 
-    public static SchemaContext parseYangSources(Collection<File> files, StatementParserMode statementParserMode)
+    public static SchemaContext parseYangSources(final Collection<File> files, final StatementParserMode statementParserMode)
             throws SourceException, ReactorException, FileNotFoundException {
         return parseYangSources(statementParserMode, files.toArray(new File[files.size()]));
     }
 
-    public static SchemaContext parseYangSources(String yangSourcesDirectoryPath) throws SourceException,
+    public static SchemaContext parseYangSources(final String yangSourcesDirectoryPath) throws SourceException,
             ReactorException, FileNotFoundException, URISyntaxException {
         return parseYangSources(yangSourcesDirectoryPath, StatementParserMode.DEFAULT_MODE);
     }
 
-    public static SchemaContext parseYangSources(String yangSourcesDirectoryPath, StatementParserMode statementParserMode)
+    public static SchemaContext parseYangSource(final String yangSourcePath) throws SourceException, ReactorException,
+            FileNotFoundException, URISyntaxException {
+        return parseYangSource(yangSourcePath, StatementParserMode.DEFAULT_MODE);
+    }
+
+    public static SchemaContext parseYangSource(final String yangSourcePath, final StatementParserMode statementParserMode)
+            throws SourceException, ReactorException, FileNotFoundException, URISyntaxException {
+        final URL source = StmtTestUtils.class.getResource(yangSourcePath);
+        final File sourceFile = new File(source.toURI());
+        return parseYangSources(statementParserMode, sourceFile);
+    }
+
+    public static SchemaContext parseYangSources(final String yangSourcesDirectoryPath, final StatementParserMode statementParserMode)
             throws SourceException, ReactorException, FileNotFoundException, URISyntaxException {
 
-        URL resourceDir = StmtTestUtils.class.getResource(yangSourcesDirectoryPath);
-        File testSourcesDir = new File(resourceDir.toURI());
+        final URL resourceDir = StmtTestUtils.class.getResource(yangSourcesDirectoryPath);
+        final File testSourcesDir = new File(resourceDir.toURI());
 
         return parseYangSources(statementParserMode, testSourcesDir.listFiles(YANG_FILE_FILTER));
     }
 
-    public static SchemaContext parseYinSources(String yinSourcesDirectoryPath, StatementParserMode statementParserMode)
+    public static SchemaContext parseYinSources(final String yinSourcesDirectoryPath, final StatementParserMode statementParserMode)
             throws SourceException, ReactorException, FileNotFoundException, URISyntaxException {
 
-        URL resourceDir = StmtTestUtils.class.getResource(yinSourcesDirectoryPath);
-        File testSourcesDir = new File(resourceDir.toURI());
+        final URL resourceDir = StmtTestUtils.class.getResource(yinSourcesDirectoryPath);
+        final File testSourcesDir = new File(resourceDir.toURI());
 
         return parseYinSources(statementParserMode, testSourcesDir.listFiles(YIN_FILE_FILTER));
     }
 
-    public static SchemaContext parseYinSources(StatementParserMode statementParserMode, File... files) throws SourceException,
+    public static SchemaContext parseYinSources(final StatementParserMode statementParserMode, final File... files) throws SourceException,
             ReactorException, FileNotFoundException {
 
-        StatementStreamSource[] sources = new StatementStreamSource[files.length];
+        final StatementStreamSource[] sources = new StatementStreamSource[files.length];
 
         for (int i = 0; i < files.length; i++) {
             sources[i] = new YinStatementSourceImpl(new NamedFileInputStream(files[i], files[i].getPath()));
@@ -172,26 +184,26 @@ public class StmtTestUtils {
         return parseYinSources(statementParserMode, sources);
     }
 
-    public static SchemaContext parseYinSources(StatementParserMode statementParserMode, StatementStreamSource... sources)
+    public static SchemaContext parseYinSources(final StatementParserMode statementParserMode, final StatementStreamSource... sources)
             throws SourceException, ReactorException {
 
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(statementParserMode);
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(statementParserMode);
         reactor.addSources(sources);
 
         return reactor.buildEffective();
     }
 
-    public static Module findImportedModule(SchemaContext context, Module rootModule, String importedModuleName) {
+    public static Module findImportedModule(final SchemaContext context, final Module rootModule, final String importedModuleName) {
         ModuleImport requestedModuleImport = null;
-        Set<ModuleImport> rootImports = rootModule.getImports();
-        for (ModuleImport moduleImport : rootImports) {
+        final Set<ModuleImport> rootImports = rootModule.getImports();
+        for (final ModuleImport moduleImport : rootImports) {
             if (moduleImport.getModuleName().equals(importedModuleName)) {
                 requestedModuleImport = moduleImport;
                 break;
             }
         }
 
-        Module importedModule = context.findModuleByName(requestedModuleImport.getModuleName(),
+        final Module importedModule = context.findModuleByName(requestedModuleImport.getModuleName(),
                 requestedModuleImport.getRevision());
         return importedModule;
     }
