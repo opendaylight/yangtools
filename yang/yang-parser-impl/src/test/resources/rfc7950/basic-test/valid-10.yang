@@ -1,0 +1,7 @@
+module valid-10 {
+    namespace "valid-10";
+    prefix v;
+
+    container root {
+    }
+}

@@ -122,7 +122,7 @@ public class ModuleStatementSupport extends
             revisionDate = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
         }
 
-        QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate.orElse(null)).intern();
+        final QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate.orElse(null)).intern();
 
         stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule);
     }
@@ -130,7 +130,7 @@ public class ModuleStatementSupport extends
     @Override
     public void onLinkageDeclared(final Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt) {
 
-        Optional<URI> moduleNs = Optional.ofNullable(firstAttributeOf(stmt.declaredSubstatements(),
+        final Optional<URI> moduleNs = Optional.ofNullable(firstAttributeOf(stmt.declaredSubstatements(),
                 NamespaceStatement.class));
         SourceException.throwIf(!moduleNs.isPresent(), stmt.getStatementSourceReference(),
             "Namespace of the module [%s] is missing", stmt.getStatementArgument());
@@ -140,8 +140,8 @@ public class ModuleStatementSupport extends
             revisionDate = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
         }
 
-        QNameModule qNameModule = QNameModule.create(moduleNs.get(), revisionDate.orElse(null)).intern();
-        ModuleIdentifier moduleIdentifier = ModuleIdentifierImpl.create(stmt.getStatementArgument(),
+        final QNameModule qNameModule = QNameModule.create(moduleNs.get(), revisionDate.orElse(null)).intern();
+        final ModuleIdentifier moduleIdentifier = ModuleIdentifierImpl.create(stmt.getStatementArgument(),
                 Optional.empty(), revisionDate);
 
         stmt.addContext(ModuleNamespace.class, moduleIdentifier, stmt);
@@ -185,6 +185,10 @@ public class ModuleStatementSupport extends
     public void onFullDefinitionDeclared(final Mutable<String, ModuleStatement,
             EffectiveStatement<String, ModuleStatement>> stmt) {
         super.onFullDefinitionDeclared(stmt);
-        SUBSTATEMENT_VALIDATOR.validate(stmt);
+        getSubstatementValidator().validate(stmt);
+    }
+
+    protected SubstatementValidator getSubstatementValidator() {
+        return SUBSTATEMENT_VALIDATOR;
     }
 }
