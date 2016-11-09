@@ -46,17 +46,6 @@ public interface SchemaContext extends ContainerSchemaNode {
     Set<Module> getModules();
 
     /**
-     *
-     * Returns notification definition instances which are defined as the direct
-     * subelements in all YANG modules in the context.
-     *
-     * @return set of <code>NotificationDefinition</code> instances which
-     *         represents nodes defined via <code>notification</code> YANG
-     *         keyword
-     */
-    Set<NotificationDefinition> getNotifications();
-
-    /**
      * Returns rpc definition instances which are defined as the direct
      * subelements in all YANG modules in the context.
      *
