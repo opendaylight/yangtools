@@ -14,6 +14,7 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import java.util.Map;
+import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
@@ -57,6 +58,9 @@ import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNa
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 
 public final class YangInferencePipeline {
+    public static final SemVer YANG1 = SemVer.create(1);
+    public static final SemVer YANG1_1 = SemVer.create(1, 1);
+    public static final Map<String, SemVer> SUPPORTED_YANG_VERSIONS = ImmutableMap.of("1", YANG1, "1.1", YANG1_1);
 
     public static final StatementSupportBundle INIT_BUNDLE = StatementSupportBundle
             .builder().addSupport(global(ValidationBundlesNamespace.class))

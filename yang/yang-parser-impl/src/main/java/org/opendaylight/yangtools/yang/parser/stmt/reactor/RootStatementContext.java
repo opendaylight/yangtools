@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import javax.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -27,6 +28,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Storag
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 /**
  * Root statement class for a YANG source. All statements defined in that YANG source are mapped underneath an instance
@@ -35,8 +37,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
 public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> extends
         StatementContextBase<A, D, E> {
 
+    private static final SemVer DEFAULT_VERSION = YangInferencePipeline.YANG1;
     private final SourceSpecificContext sourceContext;
     private final A argument;
+
+    private SemVer version;
 
     /**
      * References to RootStatementContext of submodules which are included in this source.
@@ -214,5 +219,17 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
             }
         }
         return null;
+    }
+
+    @Override
+    public SemVer getRootVersion() {
+        return version == null ? DEFAULT_VERSION : version;
+    }
+
+    @Override
+    public void setRootVersion(final SemVer version) {
+        Preconditions.checkState(this.version == null, "Version of root statement context has been already set to "
+                + this.version);
+        this.version = Preconditions.checkNotNull(version);
     }
 }

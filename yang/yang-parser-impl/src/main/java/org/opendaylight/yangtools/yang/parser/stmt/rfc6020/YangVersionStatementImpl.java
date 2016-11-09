@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
@@ -15,6 +16,7 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.YangVersionEffectiveStatementImpl;
 
 public class YangVersionStatementImpl extends AbstractDeclaredStatement<String> implements YangVersionStatement {
@@ -22,7 +24,7 @@ public class YangVersionStatementImpl extends AbstractDeclaredStatement<String> 
             .YANG_VERSION)
             .build();
 
-    protected YangVersionStatementImpl(StmtContext<String, YangVersionStatement, ?> context) {
+    protected YangVersionStatementImpl(final StmtContext<String, YangVersionStatement, ?> context) {
         super(context);
     }
 
@@ -34,23 +36,32 @@ public class YangVersionStatementImpl extends AbstractDeclaredStatement<String> 
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
         @Override
-        public YangVersionStatement createDeclared(StmtContext<String, YangVersionStatement, ?> ctx) {
+        public YangVersionStatement createDeclared(final StmtContext<String, YangVersionStatement, ?> ctx) {
             return new YangVersionStatementImpl(ctx);
         }
 
         @Override
+        public void onPreLinkageDeclared(
+                final StmtContext.Mutable<String, YangVersionStatement, EffectiveStatement<String, YangVersionStatement>> stmt) {
+            final SemVer version = YangInferencePipeline.SUPPORTED_YANG_VERSIONS.get(stmt.getStatementArgument());
+            SourceException.throwIfNull(version, stmt.getStatementSourceReference(), "Unsupported yang version '%s'",
+                    stmt.getStatementArgument());
+            stmt.setRootVersion(version);
+        };
+
+        @Override
         public EffectiveStatement<String, YangVersionStatement> createEffective
-                (StmtContext<String, YangVersionStatement, EffectiveStatement<String, YangVersionStatement>> ctx) {
+                (final StmtContext<String, YangVersionStatement, EffectiveStatement<String, YangVersionStatement>> ctx) {
             return new YangVersionEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, YangVersionStatement,
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<String, YangVersionStatement,
                 EffectiveStatement<String, YangVersionStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);

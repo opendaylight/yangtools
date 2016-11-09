@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
+import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -188,6 +189,15 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     RootStatementContext<?, ?, ?> getRoot() {
         return root;
+    }
+
+    /**
+     * Return version of root statement context.
+     *
+     * @return version of root statement context
+     */
+    SemVer getRootVersion() {
+        return root.getRootVersion();
     }
 
     DeclaredStatement<?> buildDeclared() {
@@ -396,7 +406,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     private QNameToStatementDefinition stmtDef() {
         // regular YANG statements and extension supports added
-        qNameToStmtDefMap.putAll(currentContext.getSupportsForPhase(inProgressPhase).getDefinitions());
+        qNameToStmtDefMap.putAll(currentContext.getSupportsForPhase(inProgressPhase).forVersion(getRootVersion())
+                .getDefinitions());
 
         // No further actions needed
         if (inProgressPhase != ModelProcessingPhase.FULL_DECLARATION) {
