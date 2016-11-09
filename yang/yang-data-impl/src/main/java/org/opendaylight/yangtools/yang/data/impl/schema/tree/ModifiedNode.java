@@ -296,7 +296,10 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
              * cases full validation is performed only once just here.
              */
             case MERGE:
-                schema.verifyStructure(schema.apply(this, getOriginal(), version).get().getData(), true);
+                final Optional<TreeNode> result = schema.apply(this, getOriginal(), version);
+                if (result.isPresent()) {
+                    schema.verifyStructure(result.get().getData(), true);
+                }
                 break;
             default:
                 break;
