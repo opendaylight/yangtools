@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 /**
  * SchemaNode represents a node in schema tree.
  */
-public interface SchemaNode extends DocumentedNode {
+public interface SchemaNode extends DocumentedNode.WithStatus {
     /**
      * Returns QName of the instance of the type <code>SchemaNode</code>.
      *

@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.concepts.SemVer;
  * another module or submodule.
  * </p>
  */
-public interface ModuleImport {
+public interface ModuleImport extends DocumentedNode {
 
     /**
      * @return Name of the module to import
@@ -40,5 +40,4 @@ public interface ModuleImport {
      * @return Prefix used to point to imported module
      */
     String getPrefix();
-
 }
