@@ -26,4 +26,7 @@ public interface CursorAwareDataTreeSnapshot extends DataTreeSnapshot {
      * @throws IllegalStateException if there is another cursor currently open.
      */
     @Nullable DataTreeSnapshotCursor createCursor(@Nonnull YangInstanceIdentifier path);
+
+    @Override
+    CursorAwareDataTreeModification newModification();
 }

@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.CursorAwareDataTreeModification;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModificationCursor;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
@@ -40,7 +39,8 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     private volatile int sealed = 0;
 
-    InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot, final RootModificationApplyOperation resolver) {
+    InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot,
+            final RootModificationApplyOperation resolver) {
         this.snapshot = Preconditions.checkNotNull(snapshot);
         this.strategyTree = Preconditions.checkNotNull(resolver).snapshot();
         this.rootNode = ModifiedNode.createUnmodified(snapshot.getRootNode(), strategyTree.getChildPolicy());
@@ -102,9 +102,9 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         if (result.isPresent()) {
             final NormalizedNode<?, ?> data = result.get().getData();
             return NormalizedNodes.findNode(key, data, path);
-        } else {
-            return Optional.absent();
         }
+
+        return Optional.absent();
     }
 
     private Optional<TreeNode> resolveSnapshot(final YangInstanceIdentifier path, final ModifiedNode modification) {
@@ -176,7 +176,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     @Override
-    public DataTreeModification newModification() {
+    public InMemoryDataTreeModification newModification() {
         Preconditions.checkState(sealed == 1, "Attempted to chain on an unsealed modification");
 
         if (rootNode.getOperation() == LogicalOperation.NONE) {
@@ -190,9 +190,11 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
          */
         final TreeNode originalSnapshotRoot = snapshot.getRootNode();
         final Optional<TreeNode> tempRoot = strategyTree.apply(rootNode, Optional.of(originalSnapshotRoot), version);
-        Preconditions.checkState(tempRoot.isPresent(), "Data tree root is not present, possibly removed by previous modification");
+        Preconditions.checkState(tempRoot.isPresent(),
+            "Data tree root is not present, possibly removed by previous modification");
 
-        final InMemoryDataTreeSnapshot tempTree = new InMemoryDataTreeSnapshot(snapshot.getSchemaContext(), tempRoot.get(), strategyTree);
+        final InMemoryDataTreeSnapshot tempTree = new InMemoryDataTreeSnapshot(snapshot.getSchemaContext(),
+            tempRoot.get(), strategyTree);
         return tempTree.newModification();
     }
 
@@ -254,7 +256,8 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             "Instance identifier references %s but data identifier is %s", arg, data.getIdentifier());
     }
 
-    private static void checkIdentifierReferencesData(final YangInstanceIdentifier path, final NormalizedNode<?, ?> data) {
+    private static void checkIdentifierReferencesData(final YangInstanceIdentifier path,
+            final NormalizedNode<?, ?> data) {
         if (!path.isEmpty()) {
             final PathArgument lastArg = path.getLastPathArgument();
             Preconditions.checkArgument(lastArg != null, "Instance identifier %s has invalid null path argument", path);
