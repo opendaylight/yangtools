@@ -31,7 +31,7 @@ public interface EnumTypeDefinition extends TypeDefinition<EnumTypeDefinition> {
      * Contains the methods for accessing the data about the concrete
      * enumeration item which represents <code>enum</code> YANG type.
      */
-    interface EnumPair extends DocumentedNode {
+    interface EnumPair extends DocumentedNode.WithStatus {
         /**
          * The name to specify each assigned name of an enumeration type.
          *

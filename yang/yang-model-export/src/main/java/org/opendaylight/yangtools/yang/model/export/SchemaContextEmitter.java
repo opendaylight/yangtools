@@ -734,7 +734,7 @@ class SchemaContextEmitter {
         }
     }
 
-    private void emitDocumentedNode(final DocumentedNode input) {
+    private void emitDocumentedNode(final DocumentedNode.WithStatus input) {
         emitStatusNode(input.getStatus());
         emitDescriptionNode(input.getDescription());
         emitReferenceNode(input.getReference());

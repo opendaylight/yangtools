@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredStatement<A>>
-        extends DeclaredEffectiveStatementBase<A, D> implements DocumentedNode {
+        extends DeclaredEffectiveStatementBase<A, D> implements DocumentedNode.WithStatus {
 
     private final String description;
     private final String reference;

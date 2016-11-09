@@ -20,32 +20,30 @@ import javax.annotation.Nullable;
 public interface DocumentedNode {
 
     /**
-     * Returns description of the instance of the type <code>SchemaNode</code>
+     * All implementations should override this method.
+     * The default definition of this method is used only in YANG 1.0 (RFC6020) implementations of
+     * ModuleImport which do not allow a description statement.
+     * YANG import statement has been changed in YANG 1.1 (RFC7950) and can now contain a description statement.
      *
-     * @return string with textual description the node which represents the
-     *         argument of the YANG <code>description</code> substatement
+     * @return string that represents the argument of description statement
      */
-    @Nullable String getDescription();
+    // FIXME: version 2.0.0: make this method non-default
+    @Nullable default String getDescription() {
+        return null;
+    }
 
     /**
-     * Returns reference of the instance of the type <code>SchemaNode</code>
+     * All implementations should override this method.
+     * The default definition of this method is used only in YANG 1.0 (RFC6020) implementations of
+     * ModuleImport which do not allow a reference statement.
+     * YANG import statement has been changed in YANG 1.1 (RFC7950) and can now contain a reference statement.
      *
-     * The reference refers to external document that provides additional
-     * information relevant for the instance of this type.
-     *
-     * @return string with the reference to some external document which
-     *         represents the argument of the YANG <code>reference</code>
-     *         substatement
+     * @return string that represents the argument of reference statement
      */
-    @Nullable String getReference();
-
-    /**
-     * Returns status of the instance of the type <code>SchemaNode</code>
-     *
-     * @return status of this node which represents the argument of the YANG
-     *         <code>status</code> substatement
-     */
-    @Nonnull Status getStatus();
+    // FIXME: version 2.0.0: make this method non-default
+    @Nullable default String getReference() {
+        return null;
+    }
 
     /**
      * Returns unknown schema nodes which belongs to this instance.
@@ -54,5 +52,16 @@ public interface DocumentedNode {
      */
     default @Nonnull List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return ImmutableList.of();
+    }
+
+    interface WithStatus extends DocumentedNode {
+
+        /**
+         * Returns status of the instance of the type <code>SchemaNode</code>
+         *
+         * @return status of this node which represents the argument of the YANG
+         *         <code>status</code> substatement
+         */
+        @Nonnull Status getStatus();
     }
 }

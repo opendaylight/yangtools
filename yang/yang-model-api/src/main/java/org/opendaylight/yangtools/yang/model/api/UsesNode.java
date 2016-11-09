@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
  * <code>uses</code> substatement.
  *
  */
-public interface UsesNode extends DocumentedNode {
+public interface UsesNode extends DocumentedNode.WithStatus {
 
     /**
      * Returns the schema path to used grouping.
