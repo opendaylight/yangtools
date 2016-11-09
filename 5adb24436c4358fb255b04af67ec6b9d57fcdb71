@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a65312a_332774b8",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/ContainerEffectiveStatementImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-11-09T09:33:58Z",
+      "side": 1,
+      "message": "Please remove this from here and add to ContainerSchemaNode in yang-model-api. I understand your motivation to exclude actions for rpc\u0027s input and output, but this solution is not correct, because this is an implementation and we can not get actions from ContainerSchemaNode (API). We can either create new interface for rpc\u0027s input and output or maybe better to extract common interface from output, input and container and then input and output will have this common interface and ContainerSchemaNode interface will implement ActionNodeContainer. However, if we want be compatible with current API, another solution can be simply to add ActionNodeContainer to ContainerSchemaNode and implementations of RPC\u0027s Input and Output will always return empty collection on getActions().",
+      "range": {
+        "startLine": 21,
+        "startChar": 40,
+        "endLine": 21,
+        "endChar": 59
+      },
+      "revId": "5adb24436c4358fb255b04af67ec6b9d57fcdb71",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
