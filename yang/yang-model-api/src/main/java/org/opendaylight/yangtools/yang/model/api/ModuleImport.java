@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Date;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.SemVer;
 
 /**
@@ -41,4 +42,29 @@ public interface ModuleImport {
      */
     String getPrefix();
 
+    /**
+     * All implementations should override this method.
+     * The default definition of this method is used only in YANG 1.0 (RFC6020) implementations of
+     * ModuleImport which do not allow a description statement.
+     * These YANG statements have been changed in YANG 1.1 (RFC7950) and can now contain a description statement.
+     *
+     * @return string that represents the argument of description statement
+     */
+    // FIXME: version 2.0.0: make this method non-default
+    @Nullable default String getDescription() {
+        return null;
+    }
+
+    /**
+     * All implementations should override this method.
+     * The default definition of this method is used only in YANG 1.0 (RFC6020) implementations of
+     * ModuleImport which do not allow a reference statement.
+     * These YANG statements have been changed in YANG 1.1 (RFC7950) and can now contain a reference statement.
+     *
+     * @return string that represents the argument of reference statement
+     */
+    // FIXME: version 2.0.0: make this method non-default
+    @Nullable default String getReference() {
+        return null;
+    }
 }

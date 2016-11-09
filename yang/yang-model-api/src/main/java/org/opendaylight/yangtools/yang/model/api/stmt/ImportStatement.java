@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface ImportStatement extends DeclaredStatement<String> {
+public interface ImportStatement extends DeclaredStatement<String>, DocumentationGroup {
 
     @Nonnull String getModule();
 
