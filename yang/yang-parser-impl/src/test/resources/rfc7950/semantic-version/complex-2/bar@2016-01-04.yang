@@ -1,0 +1,23 @@
+module bar {
+    namespace "bar";
+    prefix bar;
+    yang-version 1.1;
+
+    import semantic-version { prefix sv; sv:semantic-version "2.0.50"; }
+    import foobar { prefix foobar; sv:semantic-version "7.12.54"; }
+
+    revision "2016-01-04" {
+        description "Not-imported version";
+    }
+    sv:semantic-version "3.0.5";
+
+    augment "/foobar:root/foobar:test-container" {
+        leaf should-not-be-present-leaf-1 {
+            type string;
+        }
+        leaf should-not-be-present-leaf-2 {
+            type uint8;
+            default 0;
+        }
+    }
+}
