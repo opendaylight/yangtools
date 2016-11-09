@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a65312a_f3933cf8",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/ActionDefinition.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-11-09T13:30:46Z",
+      "side": 1,
+      "message": "ActionDefinition has the same interface as RPCDefinition, so maybe consider extraction of common interface, but I think it is not strictly necessary. Maybe Robert could say his opinion ?",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 45,
+        "endChar": 36
+      },
+      "revId": "24eaa09252e61987655d6966ea26c29e29d80728",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
