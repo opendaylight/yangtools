@@ -15,7 +15,7 @@ package org.opendaylight.yangtools.yang.model.api;
  * it.
  * </p>
  */
-public interface GroupingDefinition extends DataNodeContainer, SchemaNode {
+public interface GroupingDefinition extends DataNodeContainer, SchemaNode, NotificationNodeContainer {
 
     /**
      * Returns <code>true</code> if the data node was added by uses statement,

@@ -58,7 +58,7 @@ import org.opendaylight.yangtools.concepts.SemVer;
     </code>
  */
 @Immutable
-public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIdentifier {
+public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIdentifier, NotificationNodeContainer {
     /**
      * Default semantic version of Module.
      */
@@ -148,16 +148,6 @@ public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIden
      *         color="#8b0000">feature</font></b>} keywords.
      */
     Set<FeatureDefinition> getFeatures();
-
-    /**
-     * Returns <code>NotificationDefinition</code> instances which contain data
-     * from <b>notification</b> statements defined in the module.
-     *
-     * @return notification statements in lexicographical order which are
-     *         specified in the module as the argument of YANG {@link Module
-     *         <b><font color="#b22222">notification</font></b>} keywords.
-     */
-    Set<NotificationDefinition> getNotifications();
 
     /**
      * Returns <code>AugmentationSchema</code> instances which contain data from

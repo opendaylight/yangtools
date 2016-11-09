@@ -12,7 +12,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public interface ListStatement extends DataDefinitionStatement, MultipleElementsGroup,
-        DataDefinitionContainer.WithReusableDefinitions {
+        DataDefinitionContainer.WithReusableDefinitions, NotificationStatementContainer {
 
     @Nonnull Collection<? extends MustStatement> getMusts();
 

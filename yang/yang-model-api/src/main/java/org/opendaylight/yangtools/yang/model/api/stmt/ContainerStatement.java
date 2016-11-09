@@ -10,7 +10,8 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.Collection;
 import javax.annotation.Nullable;
 
-public interface ContainerStatement extends DataDefinitionStatement, DataDefinitionContainer.WithReusableDefinitions {
+public interface ContainerStatement extends DataDefinitionStatement, DataDefinitionContainer.WithReusableDefinitions,
+        NotificationStatementContainer {
 
     @Nullable Collection<? extends MustStatement> getMusts();
 
