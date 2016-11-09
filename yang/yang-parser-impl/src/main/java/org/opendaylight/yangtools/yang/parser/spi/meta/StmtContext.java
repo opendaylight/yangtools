@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -130,6 +131,13 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     ModelProcessingPhase getCompletedPhase();
 
+    /**
+     * Return version of root statement context.
+     *
+     * @return version of root statement context
+     */
+    @Nonnull SemVer getRootVersion();
+
     interface Mutable<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
             extends StmtContext<A, D, E> {
 
@@ -149,6 +157,14 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
                 Class<N> namespace, KT key, StmtContext<?, ?, ?> stmt);
 
         void setSupportedByFeatures(boolean isSupported);
+
+        /**
+         * Set version of root statement context.
+         *
+         * @param version
+         *            of root statement context
+         */
+        void setRootVersion(SemVer version);
     }
 
 }

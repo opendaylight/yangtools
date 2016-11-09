@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifiable;
+import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 /**
@@ -37,7 +38,11 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
     }
 
     public interface Registry {
-        <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(Class<N> type);
+//        <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> getCommonNamespaceBehaviour(
+//                Class<N> type);
+
+        <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(
+                SemVer version, Class<N> type);
     }
 
     public interface NamespaceStorageNode {
@@ -60,7 +65,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
 
     private final Class<N> identifier;
 
-    protected NamespaceBehaviour(Class<N> identifier) {
+    protected NamespaceBehaviour(final Class<N> identifier) {
         this.identifier = Preconditions.checkNotNull(identifier);
     }
 
@@ -80,7 +85,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
      * @return global namespace behaviour for supplied namespace type.
      */
     public static @Nonnull <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> global(
-            Class<N> identifier) {
+            final Class<N> identifier) {
         return new StorageSpecific<>(identifier, StorageNodeType.GLOBAL);
     }
 
@@ -100,12 +105,12 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
      * @return source-local namespace behaviour for supplied namespace type.
      */
     public static <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> sourceLocal(
-            Class<N> identifier) {
+            final Class<N> identifier) {
         return new StorageSpecific<>(identifier, StorageNodeType.SOURCE_LOCAL_SPECIAL);
     }
 
     public static <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> statementLocal(
-           Class<N> identifier) {
+           final Class<N> identifier) {
        return new StorageSpecific<>(identifier, StorageNodeType.STATEMENT_LOCAL);
    }
 
@@ -124,7 +129,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
      *
      * @return tree-scoped namespace behaviour for supplied namespace type.
      */
-    public static <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> treeScoped(Class<N> identifier) {
+    public static <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> treeScoped(final Class<N> identifier) {
         return new TreeScoped<>(identifier);
     }
 
@@ -161,15 +166,15 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
         return identifier;
     }
 
-    protected final V getFromLocalStorage(NamespaceStorageNode storage, K key) {
+    protected final V getFromLocalStorage(final NamespaceStorageNode storage, final K key) {
         return storage.getFromLocalStorage(getIdentifier(), key);
     }
 
-    protected final Map<K, V> getAllFromLocalStorage(NamespaceStorageNode storage) {
+    protected final Map<K, V> getAllFromLocalStorage(final NamespaceStorageNode storage) {
         return storage.getAllFromLocalStorage(getIdentifier());
     }
 
-    protected final void addToStorage(NamespaceStorageNode storage, K key, V value) {
+    protected final void addToStorage(final NamespaceStorageNode storage, final K key, final V value) {
         storage.addToLocalStorage(getIdentifier(), key, value);
     }
 
@@ -177,14 +182,14 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
 
         StorageNodeType storageType;
 
-        public StorageSpecific(Class<N> identifier, StorageNodeType type) {
+        public StorageSpecific(final Class<N> identifier, final StorageNodeType type) {
             super(identifier);
             storageType = Preconditions.checkNotNull(type);
         }
 
         @Override
         public V getFrom(final NamespaceStorageNode storage, final K key) {
-            NamespaceStorageNode current = findClosestTowardsRoot(storage, storageType);
+            final NamespaceStorageNode current = findClosestTowardsRoot(storage, storageType);
             return getFromLocalStorage(current, key);
         }
 
@@ -199,8 +204,8 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
         }
 
         @Override
-        public void addTo(NamespaceBehaviour.NamespaceStorageNode storage, K key, V value) {
-            NamespaceStorageNode current = findClosestTowardsRoot(storage, storageType);
+        public void addTo(final NamespaceBehaviour.NamespaceStorageNode storage, final K key, final V value) {
+            final NamespaceStorageNode current = findClosestTowardsRoot(storage, storageType);
             addToStorage(current, key, value);
         }
 
@@ -208,7 +213,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
 
     static class TreeScoped<K, V, N extends IdentifierNamespace<K, V>> extends NamespaceBehaviour<K, V, N> {
 
-        public TreeScoped(Class<N> identifier) {
+        public TreeScoped(final Class<N> identifier) {
             super(identifier);
         }
 
@@ -239,13 +244,13 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
         }
 
         @Override
-        public void addTo(NamespaceStorageNode storage, K key, V value) {
+        public void addTo(final NamespaceStorageNode storage, final K key, final V value) {
             addToStorage(storage, key, value);
         }
 
     }
 
-    protected static NamespaceStorageNode findClosestTowardsRoot(NamespaceStorageNode storage, StorageNodeType type) {
+    protected static NamespaceStorageNode findClosestTowardsRoot(final NamespaceStorageNode storage, final StorageNodeType type) {
         NamespaceStorageNode current = storage;
         while (current != null && current.getStorageNodeType() != type) {
             current = current.getParentNamespaceStorage();

@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
+import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -39,6 +40,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Namesp
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SupportedVersionsBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
@@ -147,7 +150,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             }
         }
 
-        StatementDefinitionContext<?, ?, ?> def = currentContext.getStatementDefinition(name);
+        StatementDefinitionContext<?, ?, ?> def = currentContext.getStatementDefinition(getRootVersion(), name);
 
         if (def == null) {
             final StatementSupport<?, ?, ?> extension = qNameToStmtDefMap.get(name);
@@ -188,6 +191,15 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     RootStatementContext<?, ?, ?> getRoot() {
         return root;
+    }
+
+    /**
+     * Return version of root statement context.
+     *
+     * @return version of root statement context
+     */
+    SemVer getRootVersion() {
+        return root.getRootVersion();
     }
 
     DeclaredStatement<?> buildDeclared() {
@@ -263,9 +275,9 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(
+    public <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(final SemVer version,
             final Class<N> type) {
-        return currentContext.getNamespaceBehaviour(type);
+        return currentContext.getNamespaceBehaviour(version, type);
     }
 
     @Override
@@ -396,7 +408,9 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     private QNameToStatementDefinition stmtDef() {
         // regular YANG statements and extension supports added
-        qNameToStmtDefMap.putAll(currentContext.getSupportsForPhase(inProgressPhase).getDefinitions());
+        final StatementSupportBundle supportsForPhase = currentContext.getSupportsForPhase(inProgressPhase);
+        qNameToStmtDefMap.putAll(supportsForPhase.getCommonDefinitions());
+        qNameToStmtDefMap.putAll(supportsForPhase.getDefinitionsForVersion(getRootVersion()));
 
         // No further actions needed
         if (inProgressPhase != ModelProcessingPhase.FULL_DECLARATION) {
@@ -418,5 +432,9 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         }
 
         return qNameToStmtDefMap;
+    }
+
+    public SupportedVersionsBundle getSupportedVersions() {
+        return currentContext.getSupportedVersions();
     }
 }
