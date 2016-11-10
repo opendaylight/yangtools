@@ -64,8 +64,9 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         this.parent = newParent;
 
         if (newQNameModule != null) {
-            if (original.argument instanceof QName) {
-                final QName originalQName = (QName) original.argument;
+            final A originalArg = original.argument;
+            if (originalArg instanceof QName) {
+                final QName originalQName = (QName) originalArg;
                 this.argument = (A) getFromNamespace(QNameCacheNamespace.class,
                         QName.create(newQNameModule, originalQName.getLocalName()));
             } else if (StmtContextUtils.producesDeclared(original, KeyStatement.class)) {
