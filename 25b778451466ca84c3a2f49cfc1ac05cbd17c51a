@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a65312a_3fbc5569",
+        "filename": "yang/yang-parser-impl/src/test/resources/bugs/bug6150/aug-first.yang",
+        "patchSetId": 6
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 4561
+      },
+      "writtenOn": "2016-11-10T13:08:12Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this be // ?",
+      "range": {
+        "startLine": 14,
+        "startChar": 2,
+        "endLine": 14,
+        "endChar": 3
+      },
+      "revId": "25b778451466ca84c3a2f49cfc1ac05cbd17c51a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_9fb0098d",
+        "filename": "yang/yang-parser-impl/src/test/resources/bugs/bug6150/aug-second.yang",
+        "patchSetId": 6
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 4561
+      },
+      "writtenOn": "2016-11-10T13:08:12Z",
+      "side": 1,
+      "message": "Shouldn\u0027t this be // ?",
+      "range": {
+        "startLine": 14,
+        "startChar": 2,
+        "endLine": 14,
+        "endChar": 3
+      },
+      "revId": "25b778451466ca84c3a2f49cfc1ac05cbd17c51a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
