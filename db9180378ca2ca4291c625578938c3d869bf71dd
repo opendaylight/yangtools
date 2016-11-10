@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a65312a_9120fd4a",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/spi/AbstractTreeNode.java",
+        "patchSetId": 45
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 866
+      },
+      "writtenOn": "2016-11-10T14:21:55Z",
+      "side": 1,
+      "message": "possible NPE - Map#get may return null",
+      "range": {
+        "startLine": 71,
+        "startChar": 23,
+        "endLine": 71,
+        "endChar": 26
+      },
+      "revId": "db9180378ca2ca4291c625578938c3d869bf71dd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
