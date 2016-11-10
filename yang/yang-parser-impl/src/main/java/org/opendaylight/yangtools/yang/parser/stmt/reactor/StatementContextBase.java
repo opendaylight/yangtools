@@ -390,7 +390,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
                 final StatementDefinition stmtDef = getDefinition().getPublicView();
                 if (stmtDef != Rfc6020Mapping.AUGMENT && stmtDef != Rfc6020Mapping.DEVIATION
-                        && stmtDef != Rfc6020Mapping.TYPE) {
+                        && stmtDef != Rfc6020Mapping.IMPORT && stmtDef != Rfc6020Mapping.TYPE) {
                     potential = substatements.get(createIdentifier());
                 }
                 if (potential == null) {
