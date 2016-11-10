@@ -1,0 +1,21 @@
+module aug-second {
+
+  namespace "odl:test:bug6150:aug-second";
+  prefix "as";
+  revision 2016-11-10;
+
+  import target {
+    prefix tf;
+  }
+  import target {
+    prefix ts;
+  }
+
+  // With Bug present, this works just because tf is not involved.
+  augment "/ts:target" {
+    leaf added-leaf {
+      type string;
+    }
+  }
+
+}
