@@ -1,0 +1,26 @@
+module bug6183 {
+
+    namespace "odl:test:bug6183";
+    prefix "b";
+    revision 2016-11-10;
+
+    choice my-choice {
+        container implicit-case-container {
+        }
+    }
+
+    // With Bug present, this works as the path points to the container directly.
+    augment "/my-choice/implicit-case-container" {
+        leaf shorthand-leaf {
+            type empty;
+        }
+    }
+
+    // With Bug present, this fails as the case node is not created.
+    augment "/my-choice/implicit-case-container/implicit-case-container" {
+        leaf fullpath-leaf {
+            type empty;
+        }
+    }
+
+}
