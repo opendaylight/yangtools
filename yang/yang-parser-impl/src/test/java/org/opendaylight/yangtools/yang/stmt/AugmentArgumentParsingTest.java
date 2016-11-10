@@ -25,20 +25,19 @@ public class AugmentArgumentParsingTest {
 
     private static final YangStatementSourceImpl IMPORTED = new YangStatementSourceImpl(
             "/semantic-statement-parser/augment-arg-parsing/imported.yang", false);
-
-    private static YangStatementSourceImpl VALID_ARGS = new YangStatementSourceImpl(
+    private static final YangStatementSourceImpl VALID_ARGS = new YangStatementSourceImpl(
             "/semantic-statement-parser/augment-arg-parsing/root-valid-aug-args.yang", false);
-    private static YangStatementSourceImpl INVALID_REL1 = new YangStatementSourceImpl(
+    private static final YangStatementSourceImpl INVALID_REL1 = new YangStatementSourceImpl(
             "/semantic-statement-parser/augment-arg-parsing/root-invalid-rel1.yang", false);
-    private static YangStatementSourceImpl INVALID_REL2 = new YangStatementSourceImpl(
+    private static final YangStatementSourceImpl INVALID_REL2 = new YangStatementSourceImpl(
             "/semantic-statement-parser/augment-arg-parsing/root-invalid-rel2.yang", false);
-    private static YangStatementSourceImpl INVALID_ABS = new YangStatementSourceImpl(
+    private static final YangStatementSourceImpl INVALID_ABS = new YangStatementSourceImpl(
             "/semantic-statement-parser/augment-arg-parsing/root-invalid-abs.yang", false);
-    private static YangStatementSourceImpl INVALID_ABS_PREFIXED_NO_IMP = new YangStatementSourceImpl(
+    private static final YangStatementSourceImpl INVALID_ABS_PREFIXED_NO_IMP = new YangStatementSourceImpl(
             "/semantic-statement-parser/augment-arg-parsing/root-invalid-abs-no-imp.yang", false);
-    private static YangStatementSourceImpl INVALID_EMPTY = new YangStatementSourceImpl(
+    private static final YangStatementSourceImpl INVALID_EMPTY = new YangStatementSourceImpl(
             "/semantic-statement-parser/augment-arg-parsing/root-invalid-empty.yang", false);
-    private static YangStatementSourceImpl INVALID_XPATH = new YangStatementSourceImpl(
+    private static final YangStatementSourceImpl INVALID_XPATH = new YangStatementSourceImpl(
             "/semantic-statement-parser/augment-arg-parsing/root-invalid-xpath.yang", false);
 
     @Test

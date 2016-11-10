@@ -56,4 +56,12 @@ abstract class ContextBuilder<A, D extends DeclaredStatement<A>, E extends Effec
     StatementIdentifier createIdentifier() {
         return new StatementIdentifier(definition.getStatementName(), rawArg);
     }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws SourceException when a source-level problem is found
+     */
+    @Override
+    public abstract StatementContextBase<A, D, E> build();
 }
