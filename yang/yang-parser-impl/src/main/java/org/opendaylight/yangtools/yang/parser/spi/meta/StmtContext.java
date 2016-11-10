@@ -72,8 +72,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements();
 
-    Collection<StatementContextBase<?, ?, ?>> substatements();
-
     D buildDeclared();
 
     E buildEffective();

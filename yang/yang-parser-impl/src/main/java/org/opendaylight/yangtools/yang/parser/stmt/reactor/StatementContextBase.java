@@ -22,8 +22,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EventListener;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Identifiable;
@@ -258,17 +258,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return maybeWrap(declared);
     }
 
-    /**
-     * @return collection of substatements
-     */
-    @Override
-    public Collection<StatementContextBase<?, ?, ?>> substatements() {
-        return maybeWrap(substatements.values());
-    }
-
-    /**
-     * @return collection of effective substatements
-     */
     @Override
     public Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements() {
         return maybeWrap(effective);
@@ -396,7 +385,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                 if (potential == null) {
                     potential = new SubstatementContext(StatementContextBase.this, this);
                     if (substatements.isEmpty()) {
-                        substatements = new LinkedHashMap<>(1);
+                        substatements = new HashMap<>(1);
                     }
                     substatements.put(createIdentifier(), potential);
                     getDefinition().onStatementAdded(potential);

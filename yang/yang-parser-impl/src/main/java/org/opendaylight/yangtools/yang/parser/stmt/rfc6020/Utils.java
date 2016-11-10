@@ -556,7 +556,8 @@ public final class Utils {
         if (StmtContextUtils.producesDeclared(rootCtx, ModuleStatement.class)) {
             qNameModule = rootCtx.getFromNamespace(ModuleCtxToModuleQName.class, rootCtx);
         } else if (StmtContextUtils.producesDeclared(rootCtx, SubmoduleStatement.class)) {
-            final String belongsToModuleName = firstAttributeOf(rootCtx.substatements(), BelongsToStatement.class);
+            final String belongsToModuleName = firstAttributeOf(rootCtx.declaredSubstatements(),
+                BelongsToStatement.class);
             qNameModule = rootCtx.getFromNamespace(ModuleNameToModuleQName.class, belongsToModuleName);
         } else {
             qNameModule = null;
