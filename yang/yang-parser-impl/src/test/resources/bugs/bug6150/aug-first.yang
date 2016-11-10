@@ -1,0 +1,21 @@
+module aug-first {
+
+  namespace "odl:test:bug6150:aug-first";
+  prefix "af";
+  revision 2016-11-10;
+
+  import target {
+    prefix tf;
+  }
+  import target {
+    prefix ts;
+  }
+
+  # With Bug present, this fails because tf got overwritten.
+  augment "/tf:target" {
+    leaf added-leaf {
+      type string;
+    }
+  }
+
+}
