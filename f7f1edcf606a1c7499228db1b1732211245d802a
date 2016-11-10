@@ -22,6 +22,30 @@
       "revId": "f7f1edcf606a1c7499228db1b1732211245d802a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_b4e4073c",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataValidationFailedException.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-11-10T16:37:29Z",
+      "side": 1,
+      "message": "If the caller could format the message without calling path.toString(), that would be nice. I will think about how to achieve that.",
+      "parentUuid": "3a65312a_9eb00f8d",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 40,
+        "endChar": 122
+      },
+      "revId": "f7f1edcf606a1c7499228db1b1732211245d802a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
