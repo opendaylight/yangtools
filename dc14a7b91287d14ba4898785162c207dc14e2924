@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a65312a_7f224dba",
+        "filename": "yang/yang-parser-impl/src/test/resources/bugs/bug6150/aug-first.yang",
+        "patchSetId": 4
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-11-10T13:15:57Z",
+      "side": 1,
+      "message": "6.1.1. Comments\n Comments are C++ style. A single line comment starts with \"//\" and\n ends at the end of the line. A block comment is enclosed within \"/*\"\n and \"*/\".",
+      "range": {
+        "startLine": 14,
+        "startChar": 2,
+        "endLine": 14,
+        "endChar": 60
+      },
+      "revId": "dc14a7b91287d14ba4898785162c207dc14e2924",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_3f41f55a",
+        "filename": "yang/yang-parser-impl/src/test/resources/bugs/bug6150/aug-second.yang",
+        "patchSetId": 4
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-11-10T13:15:57Z",
+      "side": 1,
+      "message": "6.1.1. Comments\n Comments are C++ style. A single line comment starts with \"//\" and\n ends at the end of the line. A block comment is enclosed within \"/*\"\n and \"*/\".",
+      "range": {
+        "startLine": 14,
+        "startChar": 2,
+        "endLine": 14,
+        "endChar": 65
+      },
+      "revId": "dc14a7b91287d14ba4898785162c207dc14e2924",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
