@@ -2,6 +2,40 @@
   "comments": [
     {
       "key": {
+        "uuid": "3a65312a_f104d116",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/stmt/Bug6150Test.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-11-10T13:22:48Z",
+      "side": 1,
+      "message": "final",
+      "revId": "dc14a7b91287d14ba4898785162c207dc14e2924",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_310f6932",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/stmt/Bug6150Test.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-11-10T13:22:48Z",
+      "side": 1,
+      "message": "final",
+      "revId": "dc14a7b91287d14ba4898785162c207dc14e2924",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3a65312a_7f224dba",
         "filename": "yang/yang-parser-impl/src/test/resources/bugs/bug6150/aug-first.yang",
         "patchSetId": 4
