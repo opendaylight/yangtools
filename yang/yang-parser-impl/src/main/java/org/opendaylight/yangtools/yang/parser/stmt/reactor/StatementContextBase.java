@@ -293,14 +293,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return maybeWrap(declared);
     }
 
-    /**
-     * @return collection of all substatements
-     */
-    @Override
-    public Collection<StatementContextBase<?, ?, ?>> substatements() {
-        return maybeWrap(substatements.values());
-    }
-
     @Override
     public Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements() {
         return maybeWrap(effective);
