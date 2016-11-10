@@ -22,6 +22,14 @@ public class ConflictingModificationAppliedException extends DataValidationFaile
      */
     private static final long serialVersionUID = 1L;
 
+    public ConflictingModificationAppliedException(final String messagePattern, final YangInstanceIdentifier path, final Throwable cause) {
+        super(messagePattern, path, cause);
+    }
+
+    public ConflictingModificationAppliedException(final String messagePattern, final YangInstanceIdentifier path) {
+        super(messagePattern, path);
+    }
+
     public ConflictingModificationAppliedException(final YangInstanceIdentifier path, final String message, final Throwable cause) {
         super(path, message, cause);
     }
