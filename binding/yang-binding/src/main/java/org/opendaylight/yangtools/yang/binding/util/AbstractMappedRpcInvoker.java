@@ -45,7 +45,7 @@ abstract class AbstractMappedRpcInvoker<T> extends RpcServiceInvoker {
 
     @Override
     public final Future<RpcResult<?>> invokeRpc(@Nonnull final RpcService impl, @Nonnull final QName rpcName, @Nullable final DataObject input) {
-        Preconditions.checkNotNull(impl, "implemetation must be supplied");
+        Preconditions.checkNotNull(impl, "Implementation must be supplied");
 
         RpcMethodInvoker invoker = map.get(qnameToKey(rpcName));
         Preconditions.checkArgument(invoker != null, "Supplied RPC is not valid for implementation %s", impl);

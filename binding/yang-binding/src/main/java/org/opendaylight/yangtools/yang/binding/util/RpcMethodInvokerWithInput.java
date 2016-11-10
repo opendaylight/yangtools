@@ -17,7 +17,8 @@ import org.opendaylight.yangtools.yang.common.RpcResult;
 
 class RpcMethodInvokerWithInput extends RpcMethodInvoker {
 
-    private static final MethodType INVOCATION_SIGNATURE = MethodType.methodType(Future.class, RpcService.class,DataObject.class);
+    private static final MethodType INVOCATION_SIGNATURE =
+            MethodType.methodType(Future.class, RpcService.class, DataObject.class);
     private final MethodHandle handle;
 
     RpcMethodInvokerWithInput(MethodHandle methodHandle) {

@@ -131,8 +131,6 @@ public class BindingReflections {
     /**
      * Checks if method is RPC invocation
      *
-     *
-     *
      * @param possibleMethod
      *            Method to check
      * @return true if method is RPC invocation, false otherwise.
@@ -140,7 +138,11 @@ public class BindingReflections {
     public static boolean isRpcMethod(final Method possibleMethod) {
         return possibleMethod != null && RpcService.class.isAssignableFrom(possibleMethod.getDeclaringClass())
                 && Future.class.isAssignableFrom(possibleMethod.getReturnType())
-                && possibleMethod.getParameterTypes().length <= 1;
+                // length <= 2: it seemed to be impossible to get correct RpcMethodInvoker because of
+                // resolveRpcInputClass() check.While RpcMethodInvoker counts with one argument for
+                // non input type and two arguments for input type, resolveRpcInputClass() counting
+                // with zero for non input and one for input type
+                && possibleMethod.getParameterTypes().length <= 2;
     }
 
     /**
@@ -154,12 +156,12 @@ public class BindingReflections {
      */
     @SuppressWarnings("rawtypes")
     public static Optional<Class<?>> resolveRpcOutputClass(final Method targetMethod) {
-        checkState(isRpcMethod(targetMethod), "Supplied method is not Rpc invocation method");
+        checkState(isRpcMethod(targetMethod), "Supplied method is not a RPC invocation method");
         Type futureType = targetMethod.getGenericReturnType();
         Type rpcResultType = ClassLoaderUtils.getFirstGenericParameter(futureType);
         Type rpcResultArgument = ClassLoaderUtils.getFirstGenericParameter(rpcResultType);
         if (rpcResultArgument instanceof Class && !Void.class.equals(rpcResultArgument)) {
-            return Optional.<Class<?>> of((Class) rpcResultArgument);
+            return Optional.of((Class) rpcResultArgument);
         }
         return Optional.absent();
     }
@@ -172,17 +174,14 @@ public class BindingReflections {
      *            method to scan
      * @return Optional.absent() if rpc has no input, Rpc input type otherwise.
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public static Optional<Class<? extends DataContainer>> resolveRpcInputClass(final Method targetMethod) {
-        @SuppressWarnings("rawtypes")
-        Class[] types = targetMethod.getParameterTypes();
-        if (types.length == 0) {
-            return Optional.absent();
+        for (Class clazz : targetMethod.getParameterTypes()) {
+            if (DataContainer.class.isAssignableFrom(clazz)) {
+                return Optional.of(clazz);
+            }
         }
-        if (types.length == 1) {
-            return Optional.<Class<? extends DataContainer>> of(types[0]);
-        }
-        throw new IllegalArgumentException("Method has 2 or more arguments.");
+        return Optional.absent();
     }
 
     public static QName getQName(final Class<? extends BaseIdentity> context) {
@@ -362,7 +361,7 @@ public class BindingReflections {
      * @return Set of {@link YangModuleInfo} available for supplied classloader.
      */
     public static ImmutableSet<YangModuleInfo> loadModuleInfos(final ClassLoader loader) {
-        Builder<YangModuleInfo> moduleInfoSet = ImmutableSet.<YangModuleInfo> builder();
+        Builder<YangModuleInfo> moduleInfoSet = ImmutableSet.builder();
         ServiceLoader<YangModelBindingProvider> serviceLoader = ServiceLoader.load(YangModelBindingProvider.class,
                 loader);
         for (YangModelBindingProvider bindingProvider : serviceLoader) {
@@ -451,7 +450,7 @@ public class BindingReflections {
         @SuppressWarnings("rawtypes")
         Class returnType = method.getReturnType();
         if (DataContainer.class.isAssignableFrom(returnType)) {
-            return Optional.<Class<? extends DataContainer>> of(returnType);
+            return Optional.of(returnType);
         } else if (List.class.isAssignableFrom(returnType)) {
             try {
                 return ClassLoaderUtils.withClassLoader(method.getDeclaringClass().getClassLoader(),
@@ -459,7 +458,7 @@ public class BindingReflections {
                             Type listResult = ClassLoaderUtils.getFirstGenericParameter(method.getGenericReturnType());
                             if (listResult instanceof Class
                                     && DataContainer.class.isAssignableFrom((Class) listResult)) {
-                                return Optional.<Class<? extends DataContainer>> of((Class) listResult);
+                                return Optional.of((Class) listResult);
                             }
                             return Optional.absent();
                         });
@@ -479,7 +478,7 @@ public class BindingReflections {
     private static class ClassToQNameLoader extends CacheLoader<Class<?>, Optional<QName>> {
 
         @Override
-        public Optional<QName> load(final Class<?> key) throws Exception {
+        public Optional<QName> load(@SuppressWarnings("NullableProblems") final Class<?> key) throws Exception {
             return resolveQNameNoCache(key);
         }
 

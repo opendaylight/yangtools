@@ -35,6 +35,5 @@ abstract class RpcMethodInvoker {
         } catch (IllegalAccessException e) {
             throw new IllegalStateException("Lookup on public method failed.",e);
         }
-
     }
 }
