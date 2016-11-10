@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a65312a_a7005bab",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataValidationFailedException.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-11-10T18:43:55Z",
+      "side": 1,
+      "message": "I am not sure how useful this would be. I can move code from line 88 into line 46 instead.",
+      "range": {
+        "startLine": 87,
+        "startChar": 4,
+        "endLine": 87,
+        "endChar": 13
+      },
+      "revId": "e290a7071686ee676270c82bd16b4a0bf110ef17",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
