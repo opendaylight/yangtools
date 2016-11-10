@@ -1,0 +1,11 @@
+module target {
+
+  namespace "odl:test:bug6150:target";
+  prefix "t";
+  revision 2016-11-10;
+
+  container target {
+    presence "Augmentations go here.";
+  }
+
+}
