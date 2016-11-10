@@ -1,0 +1,24 @@
+module bug6183 {
+
+    namespace "odl:test:bug6183";
+    prefix "b";
+    revision 2016-11-10;
+
+    choice my-choice {
+        container implicit-case-container {
+        }
+    }
+
+    augment "/my-choice/implicit-case-container/implicit-case-container" {
+        leaf fullpath-leaf {
+            type empty;
+        }
+    }
+
+    augment "/my-choice/implicit-case-container" {
+        leaf shorthand-leaf {
+            type empty;
+        }
+    }
+
+}
