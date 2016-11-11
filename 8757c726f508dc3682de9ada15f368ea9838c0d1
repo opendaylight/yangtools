@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a65312a_a04681bd",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/EmptyDeque.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-11-11T13:58:08Z",
+      "side": 1,
+      "message": "entry here (or e in line 43).",
+      "range": {
+        "startLine": 48,
+        "startChar": 38,
+        "endLine": 48,
+        "endChar": 39
+      },
+      "revId": "8757c726f508dc3682de9ada15f368ea9838c0d1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
