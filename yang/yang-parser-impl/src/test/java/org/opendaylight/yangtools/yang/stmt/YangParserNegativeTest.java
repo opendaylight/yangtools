@@ -197,10 +197,8 @@ public class YangParserNegativeTest {
                 fail("SourceException should be thrown");
             }
         } catch (final ReactorException e) {
-            final String expected = "Error in module 'typedef': cannot add '(urn:simple.container" +
-                    ".demo?revision=1970-01-01)int-ext'. Node name collision: '(urn:simple.container" +
-                    ".demo?revision=1970-01-01)int-ext' already declared.";
-            assertTrue(e.getCause().getMessage().startsWith(expected));
+            assertTrue(e.getCause().getMessage().startsWith(
+                "Duplicate name for typedef (urn:simple.container.demo?revision=1970-01-01)int-ext [at"));
         }
     }
 
