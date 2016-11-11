@@ -29,6 +29,9 @@ public interface StatementWriter {
      * {@link #startStatement(QName, String, StatementSourceReference)} needs to be done
      * for substatement.
      *
+     * @param childId
+     *            Child identifier, unique among siblings
+     *
      * @param name
      *            Fully qualified name of statement.
      * @param argument
@@ -39,7 +42,8 @@ public interface StatementWriter {
      * @throws SourceException
      *             if statement is not valid according to current context.
      */
-    void startStatement(@Nonnull QName name, @Nullable String argument, @Nonnull StatementSourceReference ref);
+    void startStatement(final int childId, @Nonnull QName name, @Nullable String argument,
+            @Nonnull StatementSourceReference ref);
 
     /**
      * Ends current opened statement.

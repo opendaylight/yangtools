@@ -51,8 +51,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private final class SubContextBuilder extends ContextBuilder {
-        SubContextBuilder(final StatementDefinitionContext def, final StatementSourceReference sourceRef) {
+        final int childId;
+
+        SubContextBuilder(final int childId, final StatementDefinitionContext def,
+            final StatementSourceReference sourceRef) {
             super(def, sourceRef);
+            this.childId = childId;
         }
 
         @Override
@@ -71,7 +75,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                 if (substatements.isEmpty()) {
                     substatements = new LinkedHashMap<>(1);
                 }
-                substatements.put(createIdentifier(), potential);
+                substatements.put(childId, potential);
                 getDefinition().onStatementAdded(potential);
             }
             potential.resetLists();
@@ -121,7 +125,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private Multimap<ModelProcessingPhase, OnPhaseFinished> phaseListeners = ImmutableMultimap.of();
     private Multimap<ModelProcessingPhase, ContextMutation> phaseMutation = ImmutableMultimap.of();
-    private Map<StatementIdentifier, StatementContextBase<?, ?, ?>> substatements = ImmutableMap.of();
+    private Map<Integer, StatementContextBase<?, ?, ?>> substatements = ImmutableMap.of();
     private Collection<StatementContextBase<?, ?, ?>> declared = ImmutableList.of();
     private Collection<StatementContextBase<?, ?, ?>> effective = ImmutableList.of();
     private Collection<StatementContextBase<?, ?, ?>> effectOfStatement = ImmutableList.of();
@@ -411,9 +415,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *
      * @return instance of ContextBuilder
      */
-    public ContextBuilder<?, ?, ?> substatementBuilder(final StatementDefinitionContext<?, ?, ?> def,
+    ContextBuilder<?, ?, ?> substatementBuilder(final int childId, final StatementDefinitionContext<?, ?, ?> def,
             final StatementSourceReference ref) {
-        return new SubContextBuilder(def, ref);
+        return new SubContextBuilder(childId, def, ref);
     }
 
     /**
