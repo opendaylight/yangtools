@@ -8,7 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.impl;
 
 import com.google.common.base.Verify;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.ArgumentContext;
@@ -28,7 +30,16 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 @Immutable
 public class YangStatementParserListenerImpl extends YangStatementParserBaseListener {
+    private static final class Counter {
+        private int value = 0;
+
+        int getAndIncrement() {
+            return value++;
+        }
+    }
+
     private final List<String> toBeSkipped = new ArrayList<>();
+    private final Deque<Counter> counters = new ArrayDeque<>();
     private final String sourceName;
     private QNameToStatementDefinition stmtDef;
     private PrefixToModule prefixes;
@@ -41,12 +52,20 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
     public void setAttributes(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
         this.writer = writer;
         this.stmtDef = stmtDef;
+        initCounters();
     }
 
-    public void setAttributes(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) {
+    public void setAttributes(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+            final PrefixToModule prefixes) {
         this.writer = writer;
         this.stmtDef = stmtDef;
         this.prefixes = prefixes;
+        initCounters();
+    }
+
+    private void initCounters() {
+        counters.clear();
+        counters.push(new Counter());
     }
 
     @Override
@@ -57,6 +76,8 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
         final QName identifier = QName.create(YangConstants.RFC6020_YIN_MODULE, keywordTxt);
         final QName validStatementDefinition = Utils.getValidStatementDefinition(prefixes, stmtDef, identifier);
 
+        final int childId = counters.peek().getAndIncrement();
+        counters.push(new Counter());
         if (stmtDef == null || validStatementDefinition == null || !toBeSkipped.isEmpty()) {
             SourceException.throwIf(writer.getPhase() == ModelProcessingPhase.FULL_DECLARATION, ref,
                     "%s is not a YANG statement or use of extension.", keywordTxt);
@@ -66,7 +87,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
 
         final ArgumentContext argumentCtx = ctx.getChild(ArgumentContext.class, 0);
         final String argument = argumentCtx != null ? Utils.stringFromStringContext(argumentCtx) : null;
-        writer.startStatement(validStatementDefinition, argument, ref);
+        writer.startStatement(childId, validStatementDefinition, argument, ref);
     }
 
     @Override
@@ -84,5 +105,6 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
 
         // No-op if the statement is not on the list
         toBeSkipped.remove(statementName);
+        counters.pop();
     }
 }
