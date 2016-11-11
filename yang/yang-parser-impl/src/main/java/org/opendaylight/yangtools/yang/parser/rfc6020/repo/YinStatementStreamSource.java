@@ -87,7 +87,7 @@ public final class YinStatementStreamSource implements Identifiable<SourceIdenti
         return def;
     }
 
-    private static void processAttribute(final Attr attr, final StatementWriter writer,
+    private static void processAttribute(final int childId, final Attr attr, final StatementWriter writer,
             final QNameToStatementDefinition stmtDef, final StatementSourceReference ref) {
         final StatementDefinition def = getValidDefinition(attr, writer, stmtDef, ref);
         if (def == null) {
@@ -95,7 +95,7 @@ public final class YinStatementStreamSource implements Identifiable<SourceIdenti
         }
 
         final String value = attr.getValue();
-        writer.startStatement(def.getStatementName(), value.isEmpty() ? null : value, ref);
+        writer.startStatement(childId, def.getStatementName(), value.isEmpty() ? null : value, ref);
         writer.endStatement(ref);
     }
 
@@ -117,7 +117,7 @@ public final class YinStatementStreamSource implements Identifiable<SourceIdenti
         return attr.getValue();
     }
 
-    private static void processElement(final Element element, final StatementWriter writer,
+    private static void processElement(final int childId, final Element element, final StatementWriter writer,
             final QNameToStatementDefinition stmtDef) {
         final StatementSourceReference ref = extractRef(element);
         final StatementDefinition def = getValidDefinition(element, writer, stmtDef, ref);
@@ -143,7 +143,10 @@ public final class YinStatementStreamSource implements Identifiable<SourceIdenti
             allElements = false;
         }
 
-        writer.startStatement(def.getStatementName(), argValue, ref);
+        writer.startStatement(childId, def.getStatementName(), argValue, ref);
+
+        // Child counter
+        int childCounter = 0;
 
         // First process any statements defined as attributes. We need to skip argument, if present
         final NamedNodeMap attributes = element.getAttributes();
@@ -151,7 +154,7 @@ public final class YinStatementStreamSource implements Identifiable<SourceIdenti
             for (int i = 0, len = attributes.getLength(); i < len; ++i) {
                 final Attr attr = (Attr) attributes.item(i);
                 if (allAttrs || !isArgument(argName, attr)) {
-                    processAttribute(attr, writer, stmtDef, ref);
+                    processAttribute(childCounter++, attr, writer, stmtDef, ref);
                 }
             }
         }
@@ -162,7 +165,7 @@ public final class YinStatementStreamSource implements Identifiable<SourceIdenti
             final Node child = children.item(i);
             if (child.getNodeType() == Node.ELEMENT_NODE) {
                 if (allElements || !isArgument(argName, child)) {
-                    processElement((Element) child, writer, stmtDef);
+                    processElement(childCounter++, (Element) child, writer, stmtDef);
                 }
             }
         }
@@ -176,10 +179,12 @@ public final class YinStatementStreamSource implements Identifiable<SourceIdenti
 
     private void walkTree(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
         final NodeList children = root.getChildNodes();
+
+        int childCounter = 0;
         for (int i = 0, len = children.getLength(); i < len; ++i) {
             final Node child = children.item(i);
             if (child.getNodeType() == Node.ELEMENT_NODE) {
-                processElement((Element) child, writer, stmtDef);
+                processElement(childCounter++, (Element) child, writer, stmtDef);
             }
         }
     }

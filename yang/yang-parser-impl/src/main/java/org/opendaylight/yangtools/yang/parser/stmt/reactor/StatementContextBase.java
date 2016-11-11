@@ -13,7 +13,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
@@ -22,12 +21,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EventListener;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Identifiable;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -51,27 +47,20 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private final class SubContextBuilder extends ContextBuilder {
-        SubContextBuilder(final StatementDefinitionContext def, final StatementSourceReference sourceRef) {
+        final int childId;
+
+        SubContextBuilder(final int childId, final StatementDefinitionContext def,
+            final StatementSourceReference sourceRef) {
             super(def, sourceRef);
+            this.childId = childId;
         }
 
         @Override
         public StatementContextBase build() {
-            StatementContextBase<?, ?, ?> potential = null;
-
-            final StatementDefinition stmtDef = getDefinition().getPublicView();
-            // FIXME: this is rather ugly. Rather than having an explicit blacklist, StatementDefinitionContext should
-            //        give us information whether we should really bother with the substatements map.
-            if (stmtDef != Rfc6020Mapping.AUGMENT && stmtDef != Rfc6020Mapping.DEVIATION
-                    && stmtDef != Rfc6020Mapping.IMPORT && stmtDef != Rfc6020Mapping.TYPE) {
-                potential = substatements.get(createIdentifier());
-            }
+            StatementContextBase<?, ?, ?> potential = substatements.get(childId);
             if (potential == null) {
                 potential = new SubstatementContext(StatementContextBase.this, this);
-                if (substatements.isEmpty()) {
-                    substatements = new HashMap<>(1);
-                }
-                substatements.put(createIdentifier(), potential);
+                substatements = substatements.put(childId, potential);
                 getDefinition().onStatementAdded(potential);
             }
             potential.resetLists();
@@ -121,10 +110,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private Multimap<ModelProcessingPhase, OnPhaseFinished> phaseListeners = ImmutableMultimap.of();
     private Multimap<ModelProcessingPhase, ContextMutation> phaseMutation = ImmutableMultimap.of();
-    private Map<StatementIdentifier, StatementContextBase<?, ?, ?>> substatements = ImmutableMap.of();
     private Collection<StatementContextBase<?, ?, ?>> declared = ImmutableList.of();
     private Collection<StatementContextBase<?, ?, ?>> effective = ImmutableList.of();
     private Collection<StatementContextBase<?, ?, ?>> effectOfStatement = ImmutableList.of();
+    private StatementMap substatements = StatementMap.empty();
 
     private SupportedByFeatures supportedByFeatures = SupportedByFeatures.UNDEFINED;
     private CopyHistory copyHistory = CopyHistory.original();
@@ -403,9 +392,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *
      * @return instance of ContextBuilder
      */
-    public ContextBuilder<?, ?, ?> substatementBuilder(final StatementDefinitionContext<?, ?, ?> def,
+    ContextBuilder<?, ?, ?> substatementBuilder(final int childId, final StatementDefinitionContext<?, ?, ?> def,
             final StatementSourceReference ref) {
-        return new SubContextBuilder(def, ref);
+        return new SubContextBuilder(childId, def, ref);
     }
 
     /**
