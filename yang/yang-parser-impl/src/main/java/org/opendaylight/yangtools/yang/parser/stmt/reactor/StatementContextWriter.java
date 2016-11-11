@@ -27,9 +27,10 @@ final class StatementContextWriter implements StatementWriter {
     }
 
     @Override
-    public void startStatement(final QName name, final String argument, final StatementSourceReference ref) {
+    public void startStatement(final int childId, final QName name, final String argument,
+            final StatementSourceReference ref) {
         deferredCreate();
-        current = ctx.createDeclaredChild(parent, name, argument, ref);
+        current = ctx.createDeclaredChild(parent, childId, name, argument, ref);
     }
 
     @Override
