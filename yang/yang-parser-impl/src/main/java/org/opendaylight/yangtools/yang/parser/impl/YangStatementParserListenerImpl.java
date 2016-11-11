@@ -28,13 +28,9 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Immutable
 public class YangStatementParserListenerImpl extends YangStatementParserBaseListener {
-    private static final Logger LOG = LoggerFactory.getLogger(YangStatementParserListenerImpl.class);
-
     private final List<String> toBeSkipped = new ArrayList<>();
     private final String sourceName;
     private QNameToStatementDefinition stmtDef;
@@ -96,19 +92,15 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
         final StatementSourceReference ref = DeclarationInTextSource.atPosition(
             sourceName, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
 
-        try {
-            KeywordContext keyword = ctx.getChild(KeywordContext.class, 0);
-            String statementName = keyword.getText();
-            QName identifier = QName.create(YangConstants.RFC6020_YIN_MODULE, statementName);
-            if (stmtDef != null && Utils.getValidStatementDefinition(prefixes, stmtDef, identifier) != null
-                    && toBeSkipped.isEmpty()) {
-                writer.endStatement(ref);
-            }
-
-            // No-op if the statement is not on the list
-            toBeSkipped.remove(statementName);
-        } catch (SourceException e) {
-            LOG.warn(e.getMessage(), e);
+        KeywordContext keyword = ctx.getChild(KeywordContext.class, 0);
+        String statementName = keyword.getText();
+        QName identifier = QName.create(YangConstants.RFC6020_YIN_MODULE, statementName);
+        if (stmtDef != null && Utils.getValidStatementDefinition(prefixes, stmtDef, identifier) != null
+                && toBeSkipped.isEmpty()) {
+            writer.endStatement(ref);
         }
+
+        // No-op if the statement is not on the list
+        toBeSkipped.remove(statementName);
     }
 }
