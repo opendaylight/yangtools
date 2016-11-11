@@ -135,8 +135,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return inProgressPhase;
     }
 
-    ContextBuilder<?, ?, ?> createDeclaredChild(final StatementContextBase<?, ?, ?> current, QName name,
-                                                final String argument, final StatementSourceReference ref) {
+    ContextBuilder<?, ?, ?> createDeclaredChild(final StatementContextBase<?, ?, ?> current, final int childId,
+            QName name, final String argument, final StatementSourceReference ref) {
         // FIXME: BUG-7038: Refactor/clean up this special case
         if (TYPE.equals(name)) {
             SourceException.throwIfNull(argument, ref, "Type statement requires an argument");
@@ -176,7 +176,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         if (current == null) {
             ret = new RootContextBuilder(def, ref);
         } else {
-            ret = current.substatementBuilder(def, ref);
+            ret = current.substatementBuilder(childId, def, ref);
         }
 
         if (argument != null) {
