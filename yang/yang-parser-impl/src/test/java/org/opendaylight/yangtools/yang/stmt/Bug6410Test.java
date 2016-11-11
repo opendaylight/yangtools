@@ -44,12 +44,12 @@ public class Bug6410Test {
     @Test
     public void shouldFailOnDuplicateTypedefs() {
         try {
-            final SchemaContext schemaContext = StmtTestUtils.parseYangSources(
-                    new YangStatementSourceImpl("/bugs/bug6410/bar.yang", false));
+            StmtTestUtils.parseYangSources(new YangStatementSourceImpl("/bugs/bug6410/bar.yang", false));
             fail("A ReactorException should have been thrown.");
         } catch (ReactorException ex) {
-            assertTrue(ex.getCause() instanceof SourceException);
-            assertTrue(ex.getCause().getMessage().contains("Node name collision"));
+            final Throwable cause = ex.getCause();
+            assertTrue(cause instanceof SourceException);
+            assertTrue(cause.getMessage().contains("Duplicate name for typedef"));
         }
     }
 }
