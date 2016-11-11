@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import com.google.common.base.VerifyException;
 import java.io.ByteArrayOutputStream;
@@ -25,6 +26,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
 public class SubstatementValidatorTest {
 
@@ -53,27 +55,32 @@ public class SubstatementValidatorTest {
     }
 
     @Test
-    public void undesirableElementException() throws URISyntaxException, ReactorException {
-        final Set<Module> modules = TestUtils.loadModules(getClass().getResource(
-                "/substatement-validator/undesirable-element").toURI());
-        testLog = output.toString();
-        assertTrue(testLog.contains("TYPE is not valid for REVISION"));
+    public void undesirableElementException() throws URISyntaxException {
+        try {
+            TestUtils.loadModules(getClass().getResource("/substatement-validator/undesirable-element").toURI());
+            fail("Unexpected success");
+        } catch (ReactorException ex) {
+            assertNotNull(ex.getCause());
+            assertTrue(ex.getCause().getMessage().contains("TYPE is not valid for REVISION"));
+        }
     }
 
     @Test
     public void maximalElementCountException() throws URISyntaxException, ReactorException {
-        final Set<Module> modules = TestUtils.loadModules(getClass().getResource(
-                "/substatement-validator/maximal-element").toURI());
-        testLog = output.toString();
-        assertTrue(testLog.contains("Maximal count of DESCRIPTION for AUGMENT is 1"));
+        try {
+            TestUtils.loadModules(getClass().getResource("/substatement-validator/maximal-element").toURI());
+            fail("Unexpected success");
+        } catch (ReactorException ex) {
+            assertNotNull(ex.getCause());
+            assertTrue(ex.getCause().getMessage().contains("Maximal count of DESCRIPTION for AUGMENT is 1"));
+        }
     }
 
     @Test
     public void missingElementException() throws URISyntaxException, ReactorException {
         expectedEx.expect(VerifyException.class);
 
-        final Set<Module> modules = TestUtils.loadModules(getClass().getResource(
-                "/substatement-validator/missing-element").toURI());
+        TestUtils.loadModules(getClass().getResource("/substatement-validator/missing-element").toURI());
     }
 
     @Test
@@ -85,9 +92,7 @@ public class SubstatementValidatorTest {
 
     @Test
     public void bug4310test() throws URISyntaxException, ReactorException {
-        expectedEx.expect(IllegalArgumentException.class);
-
-        final Set<Module> modules = TestUtils.loadModules(getClass().getResource("/substatement-validator/bug-4310")
-                .toURI());
+        expectedEx.expect(SomeModifiersUnresolvedException.class);
+        TestUtils.loadModules(getClass().getResource("/substatement-validator/bug-4310").toURI());
     }
 }
