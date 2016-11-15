@@ -330,8 +330,8 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
 
     @Override
     public String toString() {
-        return "NodeModification [identifier=" + identifier + ", modificationType="
-                + operation + ", childModification=" + children + "]";
+        return "NodeModification [identifier=" + identifier + ", modificationType=" + String.valueOf(modType)
+                + "operation=" + operation + ", childModification=" + children + "]";
     }
 
     void resolveModificationType(@Nonnull final ModificationType type) {
