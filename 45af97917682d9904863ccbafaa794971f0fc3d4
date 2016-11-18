@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a65312a_7116e856",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/ActionDefinition.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-11-18T08:22:43Z",
+      "side": 1,
+      "message": "move extends SchemaNode to OperationDefinition",
+      "range": {
+        "startLine": 23,
+        "startChar": 42,
+        "endLine": 23,
+        "endChar": 52
+      },
+      "revId": "45af97917682d9904863ccbafaa794971f0fc3d4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_f12af88e",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/OperationDefinition.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-11-18T08:22:43Z",
+      "side": 1,
+      "message": "an operation (+ other places)",
+      "range": {
+        "startLine": 15,
+        "startChar": 23,
+        "endLine": 15,
+        "endChar": 38
+      },
+      "revId": "45af97917682d9904863ccbafaa794971f0fc3d4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_11305400",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/OperationDefinition.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-11-18T08:22:43Z",
+      "side": 1,
+      "message": "extends SchemaNode",
+      "range": {
+        "startLine": 18,
+        "startChar": 17,
+        "endLine": 18,
+        "endChar": 36
+      },
+      "revId": "45af97917682d9904863ccbafaa794971f0fc3d4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_51192c87",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/RpcDefinition.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-11-18T08:22:43Z",
+      "side": 1,
+      "message": "move extends SchemaNode to OperationDefinition",
+      "range": {
+        "startLine": 18,
+        "startChar": 39,
+        "endLine": 18,
+        "endChar": 49
+      },
+      "revId": "45af97917682d9904863ccbafaa794971f0fc3d4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a65312a_d10c1c45",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/OperationGroup.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-11-18T08:22:43Z",
+      "side": 1,
+      "message": "extends DocumentationGroup.WithStatus",
+      "range": {
+        "startLine": 20,
+        "startChar": 17,
+        "endLine": 20,
+        "endChar": 31
+      },
+      "revId": "45af97917682d9904863ccbafaa794971f0fc3d4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
