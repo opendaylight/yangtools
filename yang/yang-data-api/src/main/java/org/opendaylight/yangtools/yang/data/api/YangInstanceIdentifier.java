@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.GuardedBy;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
@@ -415,9 +416,13 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
     private static abstract class AbstractPathArgument implements PathArgument {
         private static final long serialVersionUID = -4546547994250849340L;
+
         private final QName nodeType;
-        private transient int hashValue;
-        private transient volatile boolean hashGuard = false;
+
+        private transient volatile int hashValue;
+
+        @GuardedBy("this")
+        private transient boolean hashGuard = false;
 
         protected AbstractPathArgument(final QName nodeType) {
             this.nodeType = Preconditions.checkNotNull(nodeType);
@@ -433,18 +438,26 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
             return nodeType.compareTo(o.getNodeType());
         }
 
+        @GuardedBy("this")
         protected int hashCodeImpl() {
             return 31 + getNodeType().hashCode();
         }
 
         @Override
         public final int hashCode() {
-            if (!hashGuard) {
-                hashValue = hashCodeImpl();
-                hashGuard = true;
+            int local = hashValue;
+            if (local == 0) {
+                synchronized (this) {
+                    local = hashValue;
+                    if (local == 0 && !hashGuard) {
+                        local = hashCodeImpl();
+                        hashValue = local;
+                        hashGuard = true;
+                    }
+                }
             }
 
-            return hashValue;
+            return local;
         }
 
         @Override
