@@ -120,9 +120,8 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
     boolean pathArgumentsEqual(final YangInstanceIdentifier other) {
         if (other instanceof FixedYangInstanceIdentifier) {
             return path.equals(((FixedYangInstanceIdentifier) other).path);
-        } else {
-            return super.pathArgumentsEqual(other);
         }
+        return super.pathArgumentsEqual(other);
     }
 
     @Override

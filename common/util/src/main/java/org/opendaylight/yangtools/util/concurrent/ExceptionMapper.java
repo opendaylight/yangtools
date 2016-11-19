@@ -81,22 +81,21 @@ public abstract class ExceptionMapper<X extends Exception> implements Function<E
         // If exception is ExecutionException whose cause is of the specified
         // type, return the cause.
         if (e instanceof ExecutionException && e.getCause() != null) {
-            if (exceptionType.isAssignableFrom( e.getCause().getClass())) {
+            if (exceptionType.isAssignableFrom(e.getCause().getClass())) {
                 return (X) e.getCause();
-            } else {
-                return newWithCause(opName + " execution failed", e.getCause());
             }
+            return newWithCause(opName + " execution failed", e.getCause());
         }
 
         // Otherwise return an instance of the specified type with the original
         // cause.
 
         if (e instanceof InterruptedException) {
-            return newWithCause( opName + " was interupted.", e);
+            return newWithCause(opName + " was interupted.", e);
         }
 
         if (e instanceof CancellationException ) {
-            return newWithCause( opName + " was cancelled.", e);
+            return newWithCause(opName + " was cancelled.", e);
         }
 
         // We really shouldn't get here but need to cover it anyway for completeness.

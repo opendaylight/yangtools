@@ -40,9 +40,8 @@ final class StackedPathArguments extends PathArgumentList {
     public PathArgument get(final int index) {
         if (index < base.size()) {
             return base.get(index);
-        } else {
-            return stack.get(index - base.size());
         }
+        return stack.get(index - base.size());
     }
 
     @Override

@@ -205,9 +205,8 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
         }
         if (augmentation != null) {
             return new InstanceIdToCompositeNodes.AugmentationNormalization(augmentation, parent);
-        } else {
-            return fromDataSchemaNode(child);
         }
+        return fromDataSchemaNode(child);
     }
 
     static InstanceIdToNodes<?> fromDataSchemaNode(final DataSchemaNode potential) {

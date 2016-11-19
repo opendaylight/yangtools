@@ -23,11 +23,7 @@ abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
     private static Optional<NormalizedNode<?, ?>> getChild(
             final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> container,
                     final PathArgument identifier) {
-        if (container != null) {
-            return container.getChild(identifier);
-        } else {
-            return Optional.absent();
-        }
+        return container == null ? Optional.absent() : container.getChild(identifier);
     }
 
     static DataTreeCandidateNode deltaChild(
@@ -40,19 +36,15 @@ abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
             final NormalizedNode<?, ?> oldChild = maybeOldChild.get();
             if (maybeNewChild.isPresent()) {
                 return AbstractRecursiveCandidateNode.replaceNode(oldChild, maybeNewChild.get());
-            } else {
-                return AbstractRecursiveCandidateNode.deleteNode(oldChild);
             }
-        } else {
-            if (maybeNewChild.isPresent()) {
-                return AbstractRecursiveCandidateNode.writeNode(maybeNewChild.get());
-            } else {
-                return null;
-            }
+            return AbstractRecursiveCandidateNode.deleteNode(oldChild);
         }
+
+        return maybeNewChild.isPresent() ? AbstractRecursiveCandidateNode.writeNode(maybeNewChild.get()) : null;
     }
 
-    static Collection<DataTreeCandidateNode> deltaChildren(@Nullable final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> oldData,
+    static Collection<DataTreeCandidateNode> deltaChildren(
+            @Nullable final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> oldData,
             @Nullable final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> newData) {
         Preconditions.checkArgument(newData != null || oldData != null,
                 "No old or new data, modification type should be NONE and deltaChildren() mustn't be called.");

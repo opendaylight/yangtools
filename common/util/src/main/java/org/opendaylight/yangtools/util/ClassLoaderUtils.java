@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -109,9 +110,9 @@ public final class ClassLoaderUtils {
                 final String outerName = Joiner.on(".").join(components.subList(0, length));
                 final String innerName = outerName + "$" + components.get(length);
                 return cls.loadClass(innerName);
-            } else {
-                throw e;
             }
+
+            throw e;
         }
     }
 

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
@@ -35,11 +36,7 @@ public final class NormalizedNodes {
 
     public static Optional<NormalizedNode<?, ?>> findNode(final YangInstanceIdentifier rootPath, final NormalizedNode<?, ?> rootNode, final YangInstanceIdentifier childPath) {
         final Optional<YangInstanceIdentifier> relativePath = childPath.relativeTo(rootPath);
-        if (relativePath.isPresent()) {
-            return findNode(rootNode, relativePath.get());
-        } else {
-            return Optional.absent();
-        }
+        return relativePath.isPresent() ? findNode(rootNode, relativePath.get()) : Optional.absent();
     }
 
     public static Optional<NormalizedNode<?, ?>> findNode(final Optional<NormalizedNode<?, ?>> parent, final Iterable<PathArgument> relativePath) {

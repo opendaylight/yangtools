@@ -167,8 +167,8 @@ public final class MapAdaptor {
      * Input will be thrown away, result will be retained for read-only access or
      * {@link #takeSnapshot(Map)} purposes.
      *
-     * @param input
-     * @return
+     * @param input non-optimized (read-write) map
+     * @return  optimized read-only map
      */
     public <K, V> Map<K, V> optimize(final Map<K, V> input) {
         if (input instanceof ReadOnlyTrieMap) {

@@ -99,9 +99,8 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         dirty = true;
         if (value.isEmpty()) {
             return new EmptyImmutableUnkeyedListNode(nodeIdentifier);
-        } else {
-            return new ImmutableUnkeyedListNode(nodeIdentifier, ImmutableList.copyOf(value));
         }
+        return new ImmutableUnkeyedListNode(nodeIdentifier, ImmutableList.copyOf(value));
     }
 
     @Override
@@ -115,7 +114,9 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         return withoutChild(key);
     }
 
-    protected static final class EmptyImmutableUnkeyedListNode extends AbstractImmutableNormalizedNode<NodeIdentifier, Collection<UnkeyedListEntryNode>> implements Immutable, UnkeyedListNode {
+    protected static final class EmptyImmutableUnkeyedListNode extends
+            AbstractImmutableNormalizedNode<NodeIdentifier, Collection<UnkeyedListEntryNode>> implements Immutable,
+            UnkeyedListNode {
         protected EmptyImmutableUnkeyedListNode(final NodeIdentifier nodeIdentifier) {
             super(nodeIdentifier);
         }

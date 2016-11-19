@@ -156,7 +156,7 @@ public class SchemaOrderedNormalizedNodeWriterTest {
         XMLAssert.assertXMLIdentical(new Diff(EXPECTED_2, stringWriter.toString()), true);
     }
 
-    private SchemaContext getSchemaContext(String filePath) throws URISyntaxException, ReactorException, FileNotFoundException {
+    private SchemaContext getSchemaContext(final String filePath) throws URISyntaxException, ReactorException, FileNotFoundException {
         final InputStream resourceStream = getClass().getResourceAsStream(filePath);
         final YangStatementSourceImpl source = new YangStatementSourceImpl(resourceStream);
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
@@ -165,11 +165,11 @@ public class SchemaOrderedNormalizedNodeWriterTest {
         return reactor.buildEffective();
     }
 
-    private YangInstanceIdentifier.NodeIdentifier getNodeIdentifier(String ns, String name) {
+    private static YangInstanceIdentifier.NodeIdentifier getNodeIdentifier(final String ns, final String name) {
         return YangInstanceIdentifier.NodeIdentifier.create(createQName(ns, name));
     }
 
-    private QName createQName(String ns, String name) {
+    private static QName createQName(final String ns, final String name) {
         return QName.create(ns, "2016-02-17", name);
     }
 

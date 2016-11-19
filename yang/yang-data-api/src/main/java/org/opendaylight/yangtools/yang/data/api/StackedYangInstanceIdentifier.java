@@ -153,9 +153,8 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
         if (other instanceof StackedYangInstanceIdentifier) {
             final StackedYangInstanceIdentifier stacked = (StackedYangInstanceIdentifier) other;
             return pathArgument.equals(stacked.pathArgument) && parent.equals(stacked.parent);
-        } else {
-            return super.pathArgumentsEqual(other);
         }
+        return super.pathArgumentsEqual(other);
     }
 
     private void readObject(final ObjectInputStream inputStream) throws IOException, ClassNotFoundException {

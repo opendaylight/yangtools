@@ -266,7 +266,6 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     /**
-     *
      * Creates new QName.
      *
      * @param namespace
@@ -276,7 +275,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *            in format <code>YYYY-mm-dd</code>.
      * @param localName
      *            Local name part of QName. MUST NOT BE null.
-     * @return
+     * @return A new QName
      * @throws NullPointerException
      *             If any of parameters is null.
      * @throws IllegalArgumentException
@@ -305,7 +304,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *            Namespace of QName, MUST NOT BE Null.
      * @param localName
      *            Local name part of QName. MUST NOT BE null.
-     * @return
+     * @return A new QName
      * @throws NullPointerException
      *             If any of parameters is null.
      * @throws IllegalArgumentException
