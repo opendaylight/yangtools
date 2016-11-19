@@ -10,8 +10,8 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.Collections;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -46,11 +46,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     }
 
     private static TreeNode childMeta(final TreeNode parent, final PathArgument id) {
-        if (parent != null) {
-            return parent.getChild(id).orNull();
-        } else {
-            return null;
-        }
+        return parent == null ? null : parent.getChild(id).orNull();
     }
 
     private static boolean canHaveChildren(@Nullable final TreeNode oldMeta, @Nullable final TreeNode newMeta) {
@@ -84,21 +80,20 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
         case UNMODIFIED:
             // Unmodified node, but we still need to resolve potential children. canHaveChildren returns
             // false if both arguments are null.
-            if (canHaveChildren(oldMeta, newMeta)) {
-                return Collections2.transform(getContainer(newMeta != null ? newMeta : oldMeta).getValue(),
-                    AbstractRecursiveCandidateNode::unmodifiedNode);
-            } else {
-                return Collections.emptyList();
+            if (!canHaveChildren(oldMeta, newMeta)) {
+                return ImmutableList.of();
             }
+
+            return Collections2.transform(getContainer(newMeta != null ? newMeta : oldMeta).getValue(),
+                AbstractRecursiveCandidateNode::unmodifiedNode);
         case DELETE:
         case WRITE:
             // This is unusual, the user is requesting we follow into an otherwise-terminal node.
             // We need to fudge things based on before/after data to correctly fake the expectations.
-            if (canHaveChildren(oldMeta, newMeta)) {
-                return AbstractDataTreeCandidateNode.deltaChildren(getContainer(oldMeta), getContainer(newMeta));
-            } else {
-                return Collections.emptyList();
+            if (!canHaveChildren(oldMeta, newMeta)) {
+                return ImmutableList.of();
             }
+            return AbstractDataTreeCandidateNode.deltaChildren(getContainer(oldMeta), getContainer(newMeta));
         default:
             throw new IllegalArgumentException("Unhandled modification type " + mod.getModificationType());
         }
@@ -111,11 +106,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     }
 
     private static Optional<NormalizedNode<?, ?>> optionalData(final TreeNode meta) {
-        if (meta != null) {
-            return Optional.of(meta.getData());
-        } else {
-            return Optional.absent();
-        }
+        return meta == null ? Optional.absent() : Optional.of(meta.getData());
     }
 
     @Override
@@ -142,23 +133,18 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
             }
             return null;
         case UNMODIFIED:
-            if (canHaveChildren(oldMeta, newMeta)) {
-                final Optional<NormalizedNode<?, ?>> maybeChild = getContainer(newMeta != null ? newMeta : oldMeta).getChild(identifier);
-                if (maybeChild.isPresent()) {
-                    return AbstractRecursiveCandidateNode.unmodifiedNode(maybeChild.get());
-                } else {
-                    return null;
-                }
-            } else {
+            if (!canHaveChildren(oldMeta, newMeta)) {
                 return null;
             }
+            final Optional<NormalizedNode<?, ?>> maybeChild = getContainer(newMeta != null ? newMeta : oldMeta)
+                    .getChild(identifier);
+            return maybeChild.isPresent() ? AbstractRecursiveCandidateNode.unmodifiedNode(maybeChild.get()) : null;
         case DELETE:
         case WRITE:
-            if (canHaveChildren(oldMeta, newMeta)) {
-                return AbstractDataTreeCandidateNode.deltaChild(getContainer(oldMeta), getContainer(newMeta), identifier);
-            } else {
+            if (!canHaveChildren(oldMeta, newMeta)) {
                 return null;
             }
+            return AbstractDataTreeCandidateNode.deltaChild(getContainer(oldMeta), getContainer(newMeta), identifier);
         default:
             throw new IllegalArgumentException("Unhandled modification type " + mod.getModificationType());
         }

@@ -76,9 +76,8 @@ abstract class AbstractRecursiveCandidateNode extends AbstractDataTreeCandidateN
     private DataTreeCandidateNode createChild(final NormalizedNode<?, ?> childData) {
         if (isContainer(childData)) {
             return createContainer((NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) childData);
-        } else {
-            return createLeaf(childData);
         }
+        return createLeaf(childData);
     }
 
     protected abstract DataTreeCandidateNode createContainer(NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> childData);

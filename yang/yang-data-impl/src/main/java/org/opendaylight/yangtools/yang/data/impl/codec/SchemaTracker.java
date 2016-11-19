@@ -172,12 +172,12 @@ public final class SchemaTracker {
         final Object parent = getParent();
         if (parent instanceof LeafListSchemaNode) {
             return (LeafListSchemaNode) parent;
-        } else {
-            final SchemaNode child = SchemaUtils.findChildSchemaByQName((SchemaNode) parent, qname);
-            Preconditions.checkArgument(child instanceof LeafListSchemaNode,
-                    "Node %s is neither a leaf-list nor currently in a leaf-list", child.getPath());
-            return (LeafListSchemaNode) child;
         }
+
+        final SchemaNode child = SchemaUtils.findChildSchemaByQName((SchemaNode) parent, qname);
+        Preconditions.checkArgument(child instanceof LeafListSchemaNode,
+            "Node %s is neither a leaf-list nor currently in a leaf-list", child.getPath());
+        return (LeafListSchemaNode) child;
     }
 
     public ChoiceSchemaNode startChoiceNode(final NodeIdentifier name) {

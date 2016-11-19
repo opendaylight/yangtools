@@ -13,6 +13,7 @@ import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntry;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
+
 import com.google.common.base.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -89,7 +90,7 @@ public class NormalizedNodeUtilsTest {
      *
      * </pre>
      *
-     * @return
+     * @return A test document
      */
     public NormalizedNode<?, ?> createDocumentOne() {
         return ImmutableContainerNodeBuilder

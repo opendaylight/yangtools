@@ -136,11 +136,10 @@ public class AsyncNotifyingListenableFutureTask<V> extends FutureTask<V> impleme
      */
     public static <V> AsyncNotifyingListenableFutureTask<V> create(final Callable<V> callable,
             @Nullable final Executor listenerExecutor) {
-        if (listenerExecutor != null) {
-            return new DelegatingAsyncNotifyingListenableFutureTask<>(callable, listenerExecutor);
-        } else {
+        if (listenerExecutor == null) {
             return new AsyncNotifyingListenableFutureTask<>(callable);
         }
+        return new DelegatingAsyncNotifyingListenableFutureTask<>(callable, listenerExecutor);
     }
 
     /**
@@ -155,11 +154,10 @@ public class AsyncNotifyingListenableFutureTask<V> extends FutureTask<V> impleme
      */
     public static <V> AsyncNotifyingListenableFutureTask<V> create(final Runnable runnable, @Nullable final V result,
             @Nullable final Executor listenerExecutor) {
-        if (listenerExecutor != null) {
-            return new DelegatingAsyncNotifyingListenableFutureTask<>(runnable, result, listenerExecutor);
-        } else {
+        if (listenerExecutor == null) {
             return new AsyncNotifyingListenableFutureTask<>(runnable, result);
         }
+        return new DelegatingAsyncNotifyingListenableFutureTask<>(runnable, result, listenerExecutor);
     }
 
     @Override

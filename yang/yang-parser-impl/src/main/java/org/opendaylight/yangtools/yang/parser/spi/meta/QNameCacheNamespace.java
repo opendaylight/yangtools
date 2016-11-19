@@ -47,12 +47,12 @@ public final class QNameCacheNamespace extends NamespaceBehaviour<QName, QName, 
     public QName getFrom(final NamespaceStorageNode storage, final QName key) {
         final NamespaceStorageNode root = getRoot(storage);
         final QName stored = root.getFromLocalStorage(QNameCacheNamespace.class, key);
-        if (stored == null) {
-            root.addToLocalStorage(QNameCacheNamespace.class, key, key);
-            return key;
-        } else {
+        if (stored != null) {
             return stored;
         }
+
+        root.addToLocalStorage(QNameCacheNamespace.class, key, key);
+        return key;
     }
 
     @Override

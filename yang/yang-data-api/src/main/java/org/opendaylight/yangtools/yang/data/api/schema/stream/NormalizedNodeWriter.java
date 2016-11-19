@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
 import static org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.UNKNOWN_SIZE;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -81,11 +82,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
      * @return A new instance.
      */
     public static NormalizedNodeWriter forStreamWriter(final NormalizedNodeStreamWriter writer, final boolean orderKeyLeaves) {
-        if (orderKeyLeaves) {
-            return new OrderedNormalizedNodeWriter(writer);
-        } else {
-            return new NormalizedNodeWriter(writer);
-        }
+        return orderKeyLeaves ? new OrderedNormalizedNodeWriter(writer) : new NormalizedNodeWriter(writer);
     }
 
     /**
