@@ -182,11 +182,10 @@ public abstract class DurationStatisticsTracker {
     }
 
     private static String formatDuration(final DurationWithTime current) {
-        if (current != null) {
-            return formatDuration(current.getDuration(), current.getTimeMillis());
-        } else {
+        if (current == null) {
             return formatDuration(0, null);
         }
+        return formatDuration(current.getDuration(), current.getTimeMillis());
     }
 
     private static TimeUnit chooseUnit(final long nanos) {

@@ -304,15 +304,15 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                  */
                 if (!Utils.belongsToTheSameModule(targetStmtQName, sourceStmtQName)) {
                     return true;
-                } else {
-                    /*
-                     * If target or one of its parent is a presence container from
-                     * the same module, return false and skip mandatory nodes
-                     * validation
-                     */
-                    if (StmtContextUtils.isPresenceContainer(targetCtx)) {
-                        return false;
-                    }
+                }
+
+                /*
+                 * If target or one of its parent is a presence container from
+                 * the same module, return false and skip mandatory nodes
+                 * validation
+                 */
+                if (StmtContextUtils.isPresenceContainer(targetCtx)) {
+                    return false;
                 }
             } while ((targetCtx = targetCtx.getParentContext()) != root);
 

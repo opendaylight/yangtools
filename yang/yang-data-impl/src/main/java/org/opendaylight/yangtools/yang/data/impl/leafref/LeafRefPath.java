@@ -195,8 +195,7 @@ public abstract class LeafRefPath implements Immutable {
      * @return A new child path
      */
     public LeafRefPath createChild(final LeafRefPath relative) {
-        Preconditions.checkArgument(!relative.isAbsolute(),
-                "Child creation requires relative path");
+        Preconditions.checkArgument(!relative.isAbsolute(), "Child creation requires relative path");
 
         LeafRefPath parent = this;
         for (QNameWithPredicate qname : relative.getPathFromRoot()) {
@@ -248,20 +247,18 @@ public abstract class LeafRefPath implements Immutable {
 
             @Override
             public QNameWithPredicate next() {
-                if (current.parent != null) {
-                    final QNameWithPredicate ret = current.qname;
-                    current = current.parent;
-                    return ret;
-                } else {
-                    throw new NoSuchElementException(
-                            "No more elements available");
+                if (current.parent == null) {
+                    throw new NoSuchElementException("No more elements available");
                 }
+
+                final QNameWithPredicate ret = current.qname;
+                current = current.parent;
+                return ret;
             }
 
             @Override
             public void remove() {
-                throw new UnsupportedOperationException(
-                        "Component removal not supported");
+                throw new UnsupportedOperationException("Component removal not supported");
             }
         };
     }

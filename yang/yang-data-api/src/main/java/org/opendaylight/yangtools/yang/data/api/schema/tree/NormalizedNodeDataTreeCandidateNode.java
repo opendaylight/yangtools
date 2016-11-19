@@ -11,8 +11,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.Collections;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -49,9 +49,8 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
     public Collection<DataTreeCandidateNode> getChildNodes() {
         if (data instanceof NormalizedNodeContainer) {
             return Collections2.transform(((NormalizedNodeContainer<?, ?, ?>) data).getValue(), FACTORY_FUNCTION);
-        } else {
-            return Collections.emptyList();
         }
+        return ImmutableList.of();
     }
 
     @Override
@@ -60,9 +59,8 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
             @SuppressWarnings({ "rawtypes", "unchecked" })
             final Optional<? extends NormalizedNode<?, ?>> child = ((NormalizedNodeContainer)data).getChild(identifier);
             return FACTORY_FUNCTION.apply(child.orNull());
-        } else {
-            return null;
         }
+        return null;
     }
 
     @Override

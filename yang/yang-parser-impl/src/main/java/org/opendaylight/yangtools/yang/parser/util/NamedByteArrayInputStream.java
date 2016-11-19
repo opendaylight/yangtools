@@ -15,19 +15,18 @@ import java.io.InputStream;
 
 public class NamedByteArrayInputStream extends ByteArrayInputStream implements NamedInputStream {
     private final String toString;
-    public NamedByteArrayInputStream(byte[] buf, String toString) {
+    public NamedByteArrayInputStream(final byte[] buf, final String toString) {
         super(buf);
         this.toString = toString;
     }
 
-    public static ByteArrayInputStream create(InputStream originalIS) throws IOException {
+    public static ByteArrayInputStream create(final InputStream originalIS) throws IOException {
         final byte[] data = ByteStreams.toByteArray(originalIS);
 
         if (originalIS instanceof NamedInputStream) {
             return new NamedByteArrayInputStream(data, originalIS.toString());
-        } else {
-            return new ByteArrayInputStream(data);
         }
+        return new ByteArrayInputStream(data);
     }
 
     @Override

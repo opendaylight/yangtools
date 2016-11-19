@@ -33,9 +33,8 @@ final class UnionStringCodec extends TypeDefinitionAwareCodec<Object, UnionTypeD
     public String serialize(final Object data) {
         if (data instanceof byte[]) {
             return BaseEncoding.base64().encode((byte[]) data);
-        } else {
-            return Objects.toString(data, "");
         }
+        return Objects.toString(data, "");
     }
 
     @Override

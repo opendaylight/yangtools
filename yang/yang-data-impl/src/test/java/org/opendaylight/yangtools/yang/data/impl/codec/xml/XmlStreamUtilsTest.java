@@ -13,6 +13,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import java.io.ByteArrayOutputStream;
@@ -190,9 +191,8 @@ public class XmlStreamUtilsTest {
             final QName moduleQName = QName.create(namespace, revision, "module");
             final QNameModule module = QNameModule.create(moduleQName.getNamespace(), moduleQName.getRevision());
             return QName.create(module, localName);
-        } else {
-            return QName.create(namespace, revision, localName);
         }
+        return QName.create(namespace, revision, localName);
     }
 
     private LeafSchemaNode findSchemaNodeWithLeafrefType(final DataNodeContainer module, final String nodeName) {
