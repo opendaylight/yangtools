@@ -275,7 +275,6 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
                 if (children.isEmpty()) {
                     updateOperationType(LogicalOperation.NONE);
                 }
-
                 break;
             case WRITE:
                 // A WRITE can collapse all of its children
@@ -285,21 +284,6 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
                 }
 
                 schema.verifyStructure(value, true);
-                break;
-            /*
-             * Perform full validation in case of merge operation. This validation is performed during sealing of
-             * a ModifiedNode when we run InMemoryDataTreeModification.ready() just as it is in case of write operation
-             * above.
-             *
-             * Some parts of this validation may also be re-done during InMemoryDataTree.prepare() in case when we
-             * merge or write a MapEntry directly (e.g. Bug5968MergeTest.mergeValidMapEntryTest()), however in other
-             * cases full validation is performed only once just here.
-             */
-            case MERGE:
-                final Optional<TreeNode> result = schema.apply(this, getOriginal(), version);
-                if (result.isPresent()) {
-                    schema.verifyStructure(result.get().getData(), true);
-                }
                 break;
             default:
                 break;
