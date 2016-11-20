@@ -38,10 +38,8 @@ final class OperationWithModification {
          * written. In order to do that, we first pretend the data was written, run verification and
          * then perform the merge -- with the explicit assumption that adding the newly-validated
          * data with the previously-validated data will not result in invalid data.
-         *
-         * Fast validation of structure, full validation on data will be run during seal.
          */
-        applyOperation.verifyStructure(data, false);
+        applyOperation.verifyStructure(data, true);
         applyOperation.mergeIntoModifiedNode(modification, data, version);
     }
 
