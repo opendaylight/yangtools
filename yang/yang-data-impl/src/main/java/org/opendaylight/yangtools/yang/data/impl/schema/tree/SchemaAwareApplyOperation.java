@@ -15,9 +15,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
@@ -202,12 +202,15 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         case MERGE:
             final TreeNode result;
 
-            // This is a slight optimization: a merge on a non-existing node equals to a write
-            if (currentMeta.isPresent()) {
-                result = applyMerge(modification, currentMeta.get(), version);
-            } else {
+            if (!currentMeta.isPresent()) {
+                // This is a slight optimization: a merge on a non-existing node equals to a write. Written data
+                // structure is usually verified when the transaction is sealed. To preserve correctness, we have
+                // to run that validation here.
                 modification.resolveModificationType(ModificationType.WRITE);
                 result = applyWrite(modification, currentMeta, version);
+                verifyStructure(result.getData(), true);
+            } else {
+                result = applyMerge(modification, currentMeta.get(), version);
             }
 
             return modification.setSnapshot(Optional.of(result));
