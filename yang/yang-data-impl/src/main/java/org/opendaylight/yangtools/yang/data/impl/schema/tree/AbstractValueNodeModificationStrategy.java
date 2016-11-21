@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -55,7 +56,8 @@ abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> e
     @Override
     protected final TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
             final Version version) {
-        // Just overwrite whatever was there
+        // Just overwrite whatever was there, but be sure to run validation
+        verifyStructure(modification.getWrittenValue(), true);
         modification.resolveModificationType(ModificationType.WRITE);
         return applyWrite(modification, null, version);
     }
@@ -89,7 +91,7 @@ abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> e
     }
 
     @Override
-    void recursivelyVerifyStructure(NormalizedNode<?, ?> value) {
+    void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
         verifyStructure(value, false);
     }
 }
