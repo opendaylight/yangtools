@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a65312a_638570cf",
+        "filename": "yang/yang-maven-plugin-it/src/test/java/org/opendaylight/yangtools/yang2sources/plugin/it/YangToSourcesPluginTestIT.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-11-23T18:11:27Z",
+      "side": 1,
+      "message": "4 spaces",
+      "range": {
+        "startLine": 126,
+        "startChar": 0,
+        "endLine": 126,
+        "endChar": 1
+      },
+      "revId": "3f924bf51bce77949345a75e31b71b656a0e3435",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
