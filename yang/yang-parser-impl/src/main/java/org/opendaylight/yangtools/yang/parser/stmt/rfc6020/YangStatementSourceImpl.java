@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.io.IOException;
@@ -73,7 +74,7 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
             statementContext = parseYangSource(loadFile(fileName, isAbsolute));
             yangStatementModelParser = new YangStatementParserListenerImpl(sourceName);
         } catch (Exception e) {
-            logError(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -82,7 +83,7 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
             statementContext = parseYangSource(inputStream);
             yangStatementModelParser = new YangStatementParserListenerImpl(sourceName);
         } catch (Exception e) {
-            logError(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -92,7 +93,7 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
             this.sourceName = identifier.getName();
             yangStatementModelParser = new YangStatementParserListenerImpl(sourceName);
         } catch (Exception e) {
-            logError(e);
+            throw Throwables.propagate(e);
         }
     }
 
@@ -162,13 +163,5 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
     @Override
     public String toString() {
         return sourceName;
-    }
-
-    private static void logError(final Exception e) {
-        if (e instanceof YangSyntaxErrorException) {
-            LOG.error(((YangSyntaxErrorException) e).getFormattedMessage(), e);
-        } else {
-            LOG.error(e.getMessage(), e);
-        }
     }
 }
