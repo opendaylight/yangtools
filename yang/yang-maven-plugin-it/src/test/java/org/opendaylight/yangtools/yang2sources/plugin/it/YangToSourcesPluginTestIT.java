@@ -156,8 +156,7 @@ public class YangToSourcesPluginTestIT {
 
     @Test
     public void testFindResourceOnCp() throws Exception {
-        Verifier v1 = new Verifier(new File(getClass().getResource(
-                "/test-parent/GenerateTest1/pom.xml").toURI()).getParent());
+        Verifier v1 = setUp("test-parent/GenerateTest1/", false);
         v1.executeGoal("clean");
         v1.executeGoal("package");
 
@@ -166,8 +165,7 @@ public class YangToSourcesPluginTestIT {
         v1.assertFilePresent(buildDir + "/classes/META-INF/yang/testfile2.yang");
         v1.assertFilePresent(buildDir + "/classes/META-INF/yang/testfile3.yang");
 
-        Verifier v2 = new Verifier(new File(getClass().getResource(
-                "/test-parent/GenerateTest2/pom.xml").toURI()).getParent());
+        Verifier v2 = setUp("test-parent/GenerateTest2/", false);
         v2.executeGoal("clean");
         v2.executeGoal("package");
 
