@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.io.IOException;
@@ -72,8 +73,8 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
         try {
             statementContext = parseYangSource(loadFile(fileName, isAbsolute));
             yangStatementModelParser = new YangStatementParserListenerImpl(sourceName);
-        } catch (Exception e) {
-            logError(e);
+        } catch (IOException | URISyntaxException | YangSyntaxErrorException e) {
+            throw Throwables.propagate(e);
         }
     }
 
@@ -81,19 +82,15 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
         try {
             statementContext = parseYangSource(inputStream);
             yangStatementModelParser = new YangStatementParserListenerImpl(sourceName);
-        } catch (Exception e) {
-            logError(e);
+        } catch (IOException | YangSyntaxErrorException e) {
+            throw Throwables.propagate(e);
         }
     }
 
     public YangStatementSourceImpl(final SourceIdentifier identifier, final YangStatementParser.StatementContext statementContext) {
-        try {
-            this.statementContext = statementContext;
-            this.sourceName = identifier.getName();
-            yangStatementModelParser = new YangStatementParserListenerImpl(sourceName);
-        } catch (Exception e) {
-            logError(e);
-        }
+        this.statementContext = statementContext;
+        this.sourceName = identifier.getName();
+        yangStatementModelParser = new YangStatementParserListenerImpl(sourceName);
     }
 
     @Override
@@ -162,13 +159,5 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
     @Override
     public String toString() {
         return sourceName;
-    }
-
-    private static void logError(final Exception e) {
-        if (e instanceof YangSyntaxErrorException) {
-            LOG.error(((YangSyntaxErrorException) e).getFormattedMessage(), e);
-        } else {
-            LOG.error(e.getMessage(), e);
-        }
     }
 }
