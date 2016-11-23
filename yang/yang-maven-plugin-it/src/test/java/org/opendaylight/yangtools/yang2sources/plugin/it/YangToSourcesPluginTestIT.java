@@ -123,8 +123,8 @@ public class YangToSourcesPluginTestIT {
             verifier.addCliOption("-fn");
         }
 
-		final Optional<String> maybeSettings = getEffectiveSettingsXML();
-		if (maybeSettings.isPresent()) {
+        final Optional<String> maybeSettings = getEffectiveSettingsXML();
+        if (maybeSettings.isPresent()) {
             verifier.addCliOption("-gs");
             verifier.addCliOption(maybeSettings.get());
         }
