@@ -28,16 +28,6 @@ import org.junit.Test;
 
 public class YangToSourcesPluginTestIT {
 
-    private static String GLOBAL_SETTINGS_OVERRIDE;
-    private static String USER_SETTINGS_OVERRIDE;
-
-    @BeforeClass
-    public static void setupClass() {
-        // OpenDaylight Jenkins does not have settings at the default path, pick file locations from environment
-        GLOBAL_SETTINGS_OVERRIDE = System.getenv("GLOBAL_SETTINGS_FILE");
-        USER_SETTINGS_OVERRIDE = System.getenv("SETTINGS_FILE");
-    }
-
     // TODO Test yang files in transitive dependencies
 
     @Test
@@ -132,16 +122,11 @@ public class YangToSourcesPluginTestIT {
         if (ignoreF) {
             verifier.addCliOption("-fn");
         }
-        if (GLOBAL_SETTINGS_OVERRIDE != null) {
+
+        final Optional<String> maybeSettings = getEffectiveSettingsXML();
+        if (maybeSettings.isPresent()) {
             verifier.addCliOption("-gs");
-            verifier.addCliOption(GLOBAL_SETTINGS_OVERRIDE);
-        } else if (getEffectiveSettingsXML().isPresent()) {
-            verifier.addCliOption("-gs");
-            verifier.addCliOption(getEffectiveSettingsXML().get());
-        }
-        if (USER_SETTINGS_OVERRIDE != null) {
-            verifier.addCliOption("-s");
-            verifier.addCliOption(USER_SETTINGS_OVERRIDE);
+            verifier.addCliOption(maybeSettings.get());
         }
         verifier.setMavenDebug(true);
         verifier.executeGoal("generate-sources");
