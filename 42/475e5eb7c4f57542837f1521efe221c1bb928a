@@ -1,0 +1,7 @@
+Code-Review+2: Robert Varga <nite@hq.sk>
+Verified+1: jenkins-releng <jenkins-releng@opendaylight.org>
+Submitted-by: Robert Varga <nite@hq.sk>
+Submitted-at: Wed, 23 Nov 2016 17:55:57 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/48637
+Project: yangtools
+Branch: refs/heads/stable/boron
