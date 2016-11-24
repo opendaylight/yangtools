@@ -9,7 +9,9 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 /**
  * DataTree configuration class.
@@ -35,23 +37,28 @@ import org.opendaylight.yangtools.concepts.Immutable;
  */
 @Beta
 public class DataTreeConfiguration implements Immutable {
-    public static final DataTreeConfiguration DEFAULT_CONFIGURATION = new DataTreeConfiguration(TreeType.CONFIGURATION,
-            false, true);
-    public static final DataTreeConfiguration DEFAULT_OPERATIONAL = new DataTreeConfiguration(TreeType.OPERATIONAL,
-            false, true);
+    public static final DataTreeConfiguration DEFAULT_CONFIGURATION = new Builder(TreeType.CONFIGURATION)
+            .setMandatoryNodesValidation(true).build();
+    public static final DataTreeConfiguration DEFAULT_OPERATIONAL = new Builder(TreeType.OPERATIONAL).build();
 
     private final TreeType treeType;
+    private final YangInstanceIdentifier rootPath;
     private final boolean uniqueIndexes;
     private final boolean mandatoryNodesValidation;
 
-    private DataTreeConfiguration(final TreeType treeType, final boolean uniqueIndexes,
+    DataTreeConfiguration(final TreeType treeType, final YangInstanceIdentifier rootPath, final boolean uniqueIndexes,
             final boolean mandatoryNodesValidation) {
         this.treeType = Preconditions.checkNotNull(treeType);
+        this.rootPath = Preconditions.checkNotNull(rootPath);
         this.uniqueIndexes = uniqueIndexes;
         this.mandatoryNodesValidation = mandatoryNodesValidation;
     }
 
-    public TreeType getTreeType() {
+    public @Nonnull YangInstanceIdentifier getRootPath() {
+        return rootPath;
+    }
+
+    public @Nonnull TreeType getTreeType() {
         return treeType;
     }
 
@@ -71,17 +78,19 @@ public class DataTreeConfiguration implements Immutable {
         case OPERATIONAL:
             return DEFAULT_OPERATIONAL;
         default:
-            return new DataTreeConfiguration(treeType, false, true);
+            return new DataTreeConfiguration(treeType, YangInstanceIdentifier.EMPTY, false, true);
         }
     }
 
-    public static class Builder {
+    public static class Builder implements org.opendaylight.yangtools.concepts.Builder<DataTreeConfiguration> {
         private final TreeType treeType;
+        private YangInstanceIdentifier rootPath;
         private boolean uniqueIndexes;
         private boolean mandatoryNodesValidation;
 
         public Builder(final TreeType treeType) {
             this.treeType = Preconditions.checkNotNull(treeType);
+            this.rootPath = YangInstanceIdentifier.EMPTY;
         }
 
         public Builder setUniqueIndexes(final boolean uniqueIndexes) {
@@ -94,8 +103,14 @@ public class DataTreeConfiguration implements Immutable {
             return this;
         }
 
+        public Builder setRootPath(final YangInstanceIdentifier root) {
+            this.rootPath = rootPath.toOptimized();
+            return this;
+        }
+
+        @Override
         public DataTreeConfiguration build() {
-            return new DataTreeConfiguration(treeType, uniqueIndexes, mandatoryNodesValidation);
+            return new DataTreeConfiguration(treeType, rootPath, uniqueIndexes, mandatoryNodesValidation);
         }
     }
 }
