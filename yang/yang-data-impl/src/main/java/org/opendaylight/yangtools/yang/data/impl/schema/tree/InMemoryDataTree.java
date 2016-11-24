@@ -14,9 +14,8 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
@@ -35,7 +34,6 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
             AtomicReferenceFieldUpdater.newUpdater(InMemoryDataTree.class, DataTreeState.class, "state");
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTree.class);
 
-    private final YangInstanceIdentifier rootPath;
     private final DataTreeConfiguration treeConfig;
 
     /**
@@ -43,13 +41,9 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
      */
     private volatile DataTreeState state;
 
-    public InMemoryDataTree(final TreeNode rootNode, final TreeType treeType, final YangInstanceIdentifier rootPath, final SchemaContext schemaContext) {
-        this(rootNode, DataTreeConfiguration.getDefault(treeType), rootPath, schemaContext);
-    }
-
-    public InMemoryDataTree(final TreeNode rootNode, final DataTreeConfiguration treeConfig, final YangInstanceIdentifier rootPath, final SchemaContext schemaContext) {
+    InMemoryDataTree(final TreeNode rootNode, final DataTreeConfiguration treeConfig,
+        final SchemaContext schemaContext) {
         this.treeConfig = Preconditions.checkNotNull(treeConfig, "treeConfig");
-        this.rootPath = Preconditions.checkNotNull(rootPath, "rootPath");
         state = DataTreeState.createInitial(rootNode);
         if (schemaContext != null) {
             setSchemaContext(schemaContext);
@@ -67,15 +61,15 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
         LOG.debug("Following schema contexts will be attempted {}", newSchemaContext);
 
         final DataSchemaContextTree contextTree = DataSchemaContextTree.from(newSchemaContext);
-        final DataSchemaContextNode<?> rootContextNode = contextTree.getChild(rootPath);
+        final DataSchemaContextNode<?> rootContextNode = contextTree.getChild(getRootPath());
         if (rootContextNode == null) {
-            LOG.debug("Could not find root {} in new schema context, not upgrading", rootPath);
+            LOG.warn("Could not find root {} in new schema context, not upgrading", getRootPath());
             return;
         }
 
         final DataSchemaNode rootSchemaNode = rootContextNode.getDataSchemaNode();
         if (!(rootSchemaNode instanceof DataNodeContainer)) {
-            LOG.warn("Root {} resolves to non-container type {}, not upgrading", rootPath, rootSchemaNode);
+            LOG.warn("Root {} resolves to non-container type {}, not upgrading", getRootPath(), rootSchemaNode);
             return;
         }
 
@@ -136,14 +130,14 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
 
     @Override
     public YangInstanceIdentifier getRootPath() {
-        return rootPath;
+        return treeConfig.getRootPath();
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).
                 add("object", super.toString()).
-                add("rootPath", rootPath).
+                add("config", treeConfig).
                 add("state", state).
                 toString();
     }

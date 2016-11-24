@@ -29,32 +29,15 @@ import org.slf4j.LoggerFactory;
 
 // TODO: would making this Serializable be useful (for Functions and similar?)
 abstract class MandatoryLeafEnforcer implements Immutable {
-    private static final class NoOp extends MandatoryLeafEnforcer {
-        @Override
-        protected void enforceOnTreeNode(final TreeNode tree) {
-            // Intentional no-op
-        }
-
-        @Override
-        protected void enforceOnTreeNode(final NormalizedNode<?, ?> normalizedNode) {
-            // Intentional no-op
-        }
-    }
-
     private static final class Strict extends MandatoryLeafEnforcer {
         private final Collection<YangInstanceIdentifier> mandatoryNodes;
 
-        private Strict(final Collection<YangInstanceIdentifier> mandatoryNodes) {
+        Strict(final Collection<YangInstanceIdentifier> mandatoryNodes) {
             this.mandatoryNodes = Preconditions.checkNotNull(mandatoryNodes);
         }
 
         @Override
-        protected void enforceOnTreeNode(final TreeNode tree) {
-            enforceOnTreeNode(tree.getData());
-        }
-
-        @Override
-        protected void enforceOnTreeNode(final NormalizedNode<?, ?> data) {
+        void enforceOnData(final NormalizedNode<?, ?> data) {
             for (final YangInstanceIdentifier id : mandatoryNodes) {
                 final Optional<NormalizedNode<?, ?>> descandant = NormalizedNodes.findNode(data, id);
                 Preconditions.checkArgument(descandant.isPresent(), "Node %s is missing mandatory descendant %s",
@@ -64,11 +47,18 @@ abstract class MandatoryLeafEnforcer implements Immutable {
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(MandatoryLeafEnforcer.class);
-    private static final MandatoryLeafEnforcer NOOP_ENFORCER = new NoOp();
+    private static final MandatoryLeafEnforcer NOOP_ENFORCER = new MandatoryLeafEnforcer() {
+        @Override
+        void enforceOnData(final NormalizedNode<?, ?> normalizedNode) {
+            // Intentional no-op
+        }
+    };
 
-    protected abstract void enforceOnTreeNode(final TreeNode tree);
+    final void enforceOnTreeNode(final TreeNode tree) {
+        enforceOnData(tree.getData());
+    }
 
-    protected abstract void enforceOnTreeNode(final NormalizedNode<?, ?> normalizedNode);
+    abstract void enforceOnData(final NormalizedNode<?, ?> normalizedNode);
 
     private static void findMandatoryNodes(final Builder<YangInstanceIdentifier> builder,
             final YangInstanceIdentifier id, final DataNodeContainer schema, final TreeType type) {
@@ -82,7 +72,7 @@ abstract class MandatoryLeafEnforcer implements Immutable {
                 } else {
                     final ConstraintDefinition constraints = child.getConstraints();
                     final Integer minElements = constraints.getMinElements();
-                    if (constraints.isMandatory() || (minElements != null && minElements > 0)) {
+                    if (constraints.isMandatory() || (minElements != null && minElements.intValue() > 0)) {
                         final YangInstanceIdentifier childId = id.node(NodeIdentifier.create(child.getQName()));
                         LOG.debug("Adding mandatory child {}", childId);
                         builder.add(childId.toOptimized());
@@ -96,17 +86,10 @@ abstract class MandatoryLeafEnforcer implements Immutable {
         if (!treeConfig.isMandatoryNodesValidationEnabled()) {
             return NOOP_ENFORCER;
         }
-        final TreeType treeType = treeConfig.getTreeType();
-        switch (treeType) {
-        case CONFIGURATION:
-            final Builder<YangInstanceIdentifier> builder = ImmutableList.builder();
-            findMandatoryNodes(builder, YangInstanceIdentifier.EMPTY, schema, treeType);
-            final Collection<YangInstanceIdentifier> mandatoryNodes = builder.build();
-            return mandatoryNodes.isEmpty() ? NOOP_ENFORCER : new Strict(mandatoryNodes);
-        case OPERATIONAL:
-            return NOOP_ENFORCER;
-        default:
-            throw new UnsupportedOperationException(String.format("Not supported tree type %s", treeType));
-        }
+
+        final Builder<YangInstanceIdentifier> builder = ImmutableList.builder();
+        findMandatoryNodes(builder, YangInstanceIdentifier.EMPTY, schema, treeConfig.getTreeType());
+        final Collection<YangInstanceIdentifier> mandatoryNodes = builder.build();
+        return mandatoryNodes.isEmpty() ? NOOP_ENFORCER : new Strict(mandatoryNodes);
     }
 }
