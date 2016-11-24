@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -23,7 +22,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -256,16 +254,18 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             "Instance identifier references %s but data identifier is %s", arg, data.getIdentifier());
     }
 
-    private static void checkIdentifierReferencesData(final YangInstanceIdentifier path,
+    private void checkIdentifierReferencesData(final YangInstanceIdentifier path,
             final NormalizedNode<?, ?> data) {
+        final PathArgument arg;
+
         if (!path.isEmpty()) {
-            final PathArgument lastArg = path.getLastPathArgument();
-            Preconditions.checkArgument(lastArg != null, "Instance identifier %s has invalid null path argument", path);
-            checkIdentifierReferencesData(lastArg, data);
+            arg = path.getLastPathArgument();
+            Preconditions.checkArgument(arg != null, "Instance identifier %s has invalid null path argument", path);
         } else {
-            final QName type = data.getNodeType();
-            Preconditions.checkArgument(SchemaContext.NAME.equals(type), "Incorrect name %s of root node", type);
+            arg = rootNode.getIdentifier();
         }
+
+        checkIdentifierReferencesData(arg, data);
     }
 
     @Override

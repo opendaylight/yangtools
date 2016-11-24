@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -33,13 +34,13 @@ public class DataTreeCandidatesTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataTreeCandidates.class);
 
-    private static SchemaContext SCHEMA_CONTEXT = null;
+    private static final SchemaContext SCHEMA_CONTEXT;
 
     static {
         try {
             SCHEMA_CONTEXT = TestModel.createTestContext();
         } catch (ReactorException e) {
-            LOG.error("Failed to setup test schema context", e);
+            throw new ExceptionInInitializerError(e);
         }
     }
 
@@ -100,7 +101,7 @@ public class DataTreeCandidatesTest {
         DataTreeCandidates.applyToModification(newModification,
                 newCandidate);
 
-        final LeafNode<String> readLeaf = (LeafNode<String>) newModification.readNode(TestModel.INNER_VALUE_PATH).get();
+        final LeafNode<?> readLeaf = (LeafNode<?>) newModification.readNode(TestModel.INNER_VALUE_PATH).get();
         assertEquals(readLeaf, leaf);
     }
 }

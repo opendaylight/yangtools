@@ -29,10 +29,10 @@ final class PresenceContainerModificationStrategy extends ContainerModificationS
 
     @Override
     void verifyStructure(final NormalizedNode<?, ?> writtenValue, final boolean verifyChildren) {
-        if (verifyChildrenStructure() && verifyChildren) {
-            enforcer.enforceOnTreeNode(writtenValue);
-        }
         super.verifyStructure(writtenValue, verifyChildren);
+        if (verifyChildren) {
+            enforcer.enforceOnData(writtenValue);
+        }
     }
 
     @Override
