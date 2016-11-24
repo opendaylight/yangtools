@@ -55,6 +55,6 @@ final class CaseEnforcer implements Immutable {
     }
 
     void enforceOnTreeNode(final NormalizedNode<?, ?> normalizedNode) {
-        enforcer.enforceOnTreeNode(normalizedNode);
+        enforcer.enforceOnData(normalizedNode);
     }
 }
