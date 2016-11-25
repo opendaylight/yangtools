@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.text.ParseException;
+import java.util.Date;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -24,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
@@ -101,5 +103,29 @@ public class RpcStmtTest {
         assertFalse(fooRpc1.getOutput().equals(null));
         assertFalse(fooRpc1.getOutput().equals("str"));
         assertFalse(fooRpc1.getOutput().equals(fooRpc2.getOutput()));
+    }
+
+    @Test
+    public void testImplicitInputAndOutput() throws Exception {
+        final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rpc-stmt-test/bar.yang");
+        assertNotNull(schemaContext);
+
+        final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2016-11-25");
+
+        final Module barModule = schemaContext.findModuleByName("bar", revision);
+        assertNotNull(barModule);
+
+        final Set<RpcDefinition> rpcs = barModule.getRpcs();
+        assertEquals(1, rpcs.size());
+
+        final RpcDefinition barRpc = rpcs.iterator().next();
+
+        final ContainerSchemaNode input = barRpc.getInput();
+        assertNotNull(input);
+        assertEquals(2, input.getChildNodes().size());
+
+        final ContainerSchemaNode output = barRpc.getOutput();
+        assertNotNull(output);
+        assertEquals(2, output.getChildNodes().size());
     }
 }
