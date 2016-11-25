@@ -27,6 +27,11 @@ abstract class StatementMap {
         StatementMap put(final int index, final StatementContextBase<?, ?, ?> object) {
             return index == 0 ? new Singleton(object) : new Regular(index, object);
         }
+
+        @Override
+        int getIndexOfLastElement() {
+            return -1;
+        }
     }
 
     private static final class Regular extends StatementMap {
@@ -64,6 +69,11 @@ abstract class StatementMap {
             elements[index] = Preconditions.checkNotNull(object);
             return this;
         }
+
+        @Override
+        int getIndexOfLastElement() {
+            return elements.length - 1;
+        }
     }
 
     private static final class Singleton extends StatementMap {
@@ -83,6 +93,11 @@ abstract class StatementMap {
             Preconditions.checkArgument(index != 0);
             return new Regular(this.object, index, object);
         }
+
+        @Override
+        int getIndexOfLastElement() {
+            return 0;
+        }
     }
 
     private static final StatementMap EMPTY = new Empty();
@@ -93,4 +108,5 @@ abstract class StatementMap {
 
     abstract StatementContextBase<?, ?, ?> get(int index);
     abstract @Nonnull StatementMap put(int index, @Nonnull StatementContextBase<?, ?, ?> object);
+    abstract int getIndexOfLastElement();
 }
