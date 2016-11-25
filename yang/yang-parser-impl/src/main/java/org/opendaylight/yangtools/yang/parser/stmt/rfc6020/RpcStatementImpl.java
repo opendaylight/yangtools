@@ -25,8 +25,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementDefinitionContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RpcEffectiveStatementImpl;
 
 public class RpcStatementImpl extends AbstractDeclaredStatement<QName>
@@ -50,6 +54,9 @@ public class RpcStatementImpl extends AbstractDeclaredStatement<QName>
     public static class Definition
             extends
             AbstractStatementSupport<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> {
+
+        private static final StatementSupport<?, ?, ?> implicitInput = new InputStatementImpl.Definition();
+        private static final StatementSupport<?, ?, ?> implicitOutput = new OutputStatementImpl.Definition();
 
         public Definition() {
             super(YangStmtMapping.RPC);
@@ -81,7 +88,22 @@ public class RpcStatementImpl extends AbstractDeclaredStatement<QName>
         public void onFullDefinitionDeclared(final Mutable<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             getSubstatementValidator().validate(stmt);
+
+            if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, InputStatement.class) == null) {
+                addImplicitStatement((StatementContextBase<?, ?, ?>) stmt, implicitInput);
+            }
+
+            if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, OutputStatement.class) == null) {
+                addImplicitStatement((StatementContextBase<?, ?, ?>) stmt, implicitOutput);
+            }
         }
+
+        private void addImplicitStatement(final StatementContextBase<?, ?, ?> statementToAddTo,
+                final StatementSupport<?, ?, ?> statementToAdd) {
+            final int implicitStatementChildId = statementToAddTo.getSubstatementCount();
+            statementToAddTo.substatementBuilder(implicitStatementChildId, new StatementDefinitionContext<>(statementToAdd),
+               statementToAddTo.getStatementSourceReference()).build();                                
+         }
 
         @Override
         protected SubstatementValidator getSubstatementValidator() {
