@@ -1,0 +1,30 @@
+module bar {
+    namespace bar-namespace;
+    prefix bar-prefix;
+
+    revision 2016-11-25;
+
+    rpc bar-rpc {
+
+    }
+
+    augment "/bar-rpc/input" {
+        leaf bar-leaf-a {
+            type string;
+        }
+
+        leaf bar-leaf-b {
+            type string;
+        }
+    }
+
+    augment "/bar-rpc/output" {
+        leaf bar-leaf-c {
+            type string;
+        }
+
+        leaf bar-leaf-d {
+            type string;
+        }
+    }
+}

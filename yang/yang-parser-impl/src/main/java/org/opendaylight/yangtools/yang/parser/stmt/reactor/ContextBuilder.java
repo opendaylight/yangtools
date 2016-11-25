@@ -16,7 +16,15 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
-abstract class ContextBuilder<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+/**
+ * This class and its subclasses provide functionality for building root statement/substatement contexts
+ * based on statement definition context and statement source reference
+ *
+ * @param <A> argument type of declared statement
+ * @param <D> declared statement
+ * @param <E> effective statement
+ */
+public abstract class ContextBuilder<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
     implements Builder<StatementContextBase<A, D, E>> {
 
     private final StatementDefinitionContext<A, D, E> definition;
