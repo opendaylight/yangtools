@@ -287,6 +287,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return maybeWrap(effective);
     }
 
+    public int getLastSubstatementChildId() {
+        return substatements.getIndexOfLastElement();
+    }
+
     public void removeStatementsFromEffectiveSubstatements(final Collection<StatementContextBase<?, ?, ?>> substatements) {
         if (!effective.isEmpty()) {
             effective.removeAll(substatements);
@@ -392,7 +396,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *
      * @return instance of ContextBuilder
      */
-    ContextBuilder<?, ?, ?> substatementBuilder(final int childId, final StatementDefinitionContext<?, ?, ?> def,
+    public ContextBuilder<?, ?, ?> substatementBuilder(final int childId, final StatementDefinitionContext<?, ?, ?> def,
             final StatementSourceReference ref) {
         return new SubContextBuilder(childId, def, ref);
     }
