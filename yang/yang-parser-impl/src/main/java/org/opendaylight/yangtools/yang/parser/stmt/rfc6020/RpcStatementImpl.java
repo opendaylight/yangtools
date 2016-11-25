@@ -25,8 +25,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementDefinitionContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RpcEffectiveStatementImpl;
 
 public class RpcStatementImpl extends AbstractDeclaredStatement<QName>
@@ -48,8 +53,10 @@ public class RpcStatementImpl extends AbstractDeclaredStatement<QName>
     }
 
     public static class Definition
-            extends
-            AbstractStatementSupport<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> {
+            extends AbstractStatementSupport<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> {
+        // TODO: share instances
+        private static final StatementSupport<?, ?, ?> IMPLICIT_INPUT = new InputStatementImpl.Definition();
+        private static final StatementSupport<?, ?, ?> IMPLICIT_OUTPUT = new OutputStatementImpl.Definition();
 
         public Definition() {
             super(YangStmtMapping.RPC);
@@ -78,8 +85,37 @@ public class RpcStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
+        public void onFullDefinitionDeclared(final Mutable<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> stmt) {
+            super.onFullDefinitionDeclared(stmt);
+
+            if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, InputStatement.class) == null) {
+                addImplicitStatement((StatementContextBase<?, ?, ?>) stmt, implictInput());
+            }
+
+            if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, OutputStatement.class) == null) {
+                addImplicitStatement((StatementContextBase<?, ?, ?>) stmt, implictOutput());
+            }
+        }
+
+        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
+        }
+
+        protected StatementSupport<?, ?, ?> implictInput() {
+            return IMPLICIT_INPUT;
+        }
+
+        protected StatementSupport<?, ?, ?> implictOutput() {
+            return IMPLICIT_OUTPUT;
+        }
+
+        private static void addImplicitStatement(final StatementContextBase<?, ?, ?> parent,
+                final StatementSupport<?, ?, ?> statementToAdd) {
+            final StatementDefinitionContext<?, ?, ?> stmtDefCtx = new StatementDefinitionContext<>(statementToAdd);
+
+            parent.createSubstatement(parent.declaredSubstatements().size(), stmtDefCtx,
+                ImplicitSubstatement.of(parent.getStatementSourceReference()), null);
         }
     }
 
