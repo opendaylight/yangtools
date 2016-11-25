@@ -24,8 +24,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementDefinitionContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RpcEffectiveStatementImpl;
 
 public class RpcStatementImpl extends AbstractDeclaredStatement<QName>
@@ -80,6 +83,31 @@ public class RpcStatementImpl extends AbstractDeclaredStatement<QName>
         public void onFullDefinitionDeclared(final Mutable<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
+
+            if (!searchStatement(stmt, Rfc6020Mapping.INPUT)) {
+                addImplicitStatement((StatementContextBase<?, ?, ?>) stmt, new InputStatementImpl.Definition());
+            }
+
+            if (!searchStatement(stmt, Rfc6020Mapping.OUTPUT)) {
+                addImplicitStatement((StatementContextBase<?, ?, ?>) stmt, new OutputStatementImpl.Definition());
+            }
+        }
+
+        private boolean searchStatement(final Mutable<?, ?, ?> statementToSearchIn, final Rfc6020Mapping statementToSearchFor) {
+            for (StatementContextBase declaredSubstatement : statementToSearchIn.declaredSubstatements()) {
+                if (statementToSearchFor.equals(declaredSubstatement.getPublicDefinition())) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private void addImplicitStatement(final StatementContextBase<?, ?, ?> statementToAddTo,
+                final StatementSupport<?, ?, ?> statementToAdd) {
+            final int implicitStatementChildId = statementToAddTo.getLastSubstatementChildId() + 1;
+            statementToAddTo.substatementBuilder(implicitStatementChildId, new StatementDefinitionContext<>(statementToAdd),
+                    statementToAddTo.getStatementSourceReference()).build();
         }
     }
 
