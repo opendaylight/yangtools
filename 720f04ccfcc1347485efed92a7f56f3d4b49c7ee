@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a622d24_a8917f54",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/AbstractEffectiveDataSchemaNode.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-11-29T14:01:11Z",
+      "side": 1,
+      "message": "based on your comment, it would be nice to have BUG-XXXX number here",
+      "range": {
+        "startLine": 21,
+        "startChar": 4,
+        "endLine": 21,
+        "endChar": 41
+      },
+      "revId": "720f04ccfcc1347485efed92a7f56f3d4b49c7ee",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
