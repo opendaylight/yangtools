@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a622d24_02069420",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/RpcStatementImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-11-29T09:21:37Z",
+      "side": 1,
+      "message": "This creates new Input/Output Definition objects for each RPC unnecessarily.",
+      "range": {
+        "startLine": 92,
+        "startChar": 75,
+        "endLine": 92,
+        "endChar": 111
+      },
+      "revId": "fbdcc8cf1059b949cd3a1dff8f0d788f0f133379",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_221d9074",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/RpcStatementImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 104,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-11-29T09:21:37Z",
+      "side": 1,
+      "message": "please use StmtContextUtils methods",
+      "range": {
+        "startLine": 96,
+        "startChar": 0,
+        "endLine": 104,
+        "endChar": 9
+      },
+      "revId": "fbdcc8cf1059b949cd3a1dff8f0d788f0f133379",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
