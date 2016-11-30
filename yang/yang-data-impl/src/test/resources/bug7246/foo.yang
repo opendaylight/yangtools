@@ -1,0 +1,30 @@
+module foo {
+    yang-version 1;
+    namespace "foo";
+    prefix foo;
+
+    revision 2016-11-30 {
+        description "test";
+    }
+
+    grouping test {
+        leaf id {
+           type string;
+        }
+        leaf desc {
+           type string;
+        }
+    }
+    rpc test {
+        input {
+          leaf id {
+           type string;
+          }
+        }
+        output {
+          leaf result {
+           type string;
+          }
+        }
+    }
+}

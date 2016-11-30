@@ -394,11 +394,53 @@ public final class SchemaUtils {
      * @return schema node on path
      */
     public static SchemaNode findParentSchemaOnPath(final SchemaContext schemaContext, final SchemaPath path) {
-        SchemaNode current = Preconditions.checkNotNull(schemaContext);
+        SchemaNode maybeDataContainer = Preconditions.checkNotNull(schemaContext);
+        SchemaNode maybeGroupings = schemaContext;
+        SchemaNode maybeRpc = schemaContext;
+        SchemaNode maybeNotification = schemaContext;
+        SchemaNode node = schemaContext;
+
+        boolean isRoot = true;
+
         for (final QName qname : path.getPathFromRoot()) {
-            current = findChildSchemaByQName(current, qname);
+            if(isRoot) {
+                maybeDataContainer = schemaContext.getDataChildByName(qname);
+                maybeGroupings = tryFindGroupings(schemaContext, qname).orNull();
+                maybeRpc = tryFindRpc(schemaContext, qname).orNull();
+                maybeNotification = tryFindNotification(schemaContext, qname).orNull();
+                if(maybeDataContainer != null) {
+                    node = maybeDataContainer;
+                }
+                if(maybeGroupings != null) {
+                    node = maybeGroupings;
+                }
+                if(maybeRpc != null) {
+                    node = maybeRpc;
+                }
+                if(maybeDataContainer != null) {
+                    node = maybeNotification;
+                }
+                isRoot = false;
+            } else {
+                if(maybeDataContainer != null) {
+                    maybeDataContainer = findChildSchemaByQName(maybeDataContainer, qname);
+                    node = maybeDataContainer;
+                }
+                if(maybeGroupings != null) {
+                    maybeGroupings = findChildSchemaByQName(maybeGroupings, qname);
+                    node = maybeGroupings;
+                }
+                if(maybeRpc != null) {
+                    maybeRpc = findChildSchemaByQName(maybeRpc, qname);
+                    node = maybeRpc;
+                }
+                if(maybeDataContainer != null) {
+                    maybeNotification = findChildSchemaByQName(maybeNotification, qname);
+                    node = maybeNotification;
+                }
+            }
         }
-        return current;
+        return node;
     }
 
     /**
