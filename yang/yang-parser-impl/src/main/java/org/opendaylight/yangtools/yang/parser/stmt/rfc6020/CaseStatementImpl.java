@@ -11,7 +11,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
@@ -28,20 +28,20 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.CaseEffectiveStatementImpl;
 
 public class CaseStatementImpl extends AbstractDeclaredStatement<QName> implements CaseStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .CASE)
-            .addAny(Rfc6020Mapping.ANYXML)
-            .addAny(Rfc6020Mapping.CHOICE)
-            .addAny(Rfc6020Mapping.CONTAINER)
-            .addOptional(Rfc6020Mapping.DESCRIPTION)
-            .addAny(Rfc6020Mapping.IF_FEATURE)
-            .addAny(Rfc6020Mapping.LEAF)
-            .addAny(Rfc6020Mapping.LEAF_LIST)
-            .addAny(Rfc6020Mapping.LIST)
-            .addOptional(Rfc6020Mapping.REFERENCE)
-            .addOptional(Rfc6020Mapping.STATUS)
-            .addAny(Rfc6020Mapping.USES)
-            .addOptional(Rfc6020Mapping.WHEN)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.CHOICE)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addAny(YangStmtMapping.USES)
+            .addOptional(YangStmtMapping.WHEN)
             .build();
 
     protected CaseStatementImpl(
@@ -52,7 +52,7 @@ public class CaseStatementImpl extends AbstractDeclaredStatement<QName> implemen
     public static class Definition extends AbstractStatementSupport<QName,CaseStatement,EffectiveStatement<QName,CaseStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.CASE);
+            super(YangStmtMapping.CASE);
         }
 
         @Override public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {

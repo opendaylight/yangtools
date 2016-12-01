@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.function.Predicate;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
@@ -242,7 +242,7 @@ public final class StmtContextUtils {
         boolean isSupported = false;
         boolean containsIfFeature = false;
         for (final StatementContextBase<?, ?, ?> stmt : substatements) {
-            if (stmt.getPublicDefinition().equals(Rfc6020Mapping.IF_FEATURE)) {
+            if (stmt.getPublicDefinition().equals(YangStmtMapping.IF_FEATURE)) {
                 containsIfFeature = true;
                 if (isFeatureSupported.test((QName) stmt.getStatementArgument())) {
                     isSupported = true;
@@ -264,7 +264,7 @@ public final class StmtContextUtils {
      * @return true if it is a presence container
      */
     public static boolean isPresenceContainer(final StatementContextBase<?, ?, ?> stmtCtx) {
-        return stmtCtx.getPublicDefinition() == Rfc6020Mapping.CONTAINER && containsPresenceSubStmt(stmtCtx);
+        return stmtCtx.getPublicDefinition() == YangStmtMapping.CONTAINER && containsPresenceSubStmt(stmtCtx);
     }
 
     /**
@@ -275,7 +275,7 @@ public final class StmtContextUtils {
      * @return true if it is a non-presence container
      */
     public static boolean isNonPresenceContainer(final StatementContextBase<?, ?, ?> stmtCtx) {
-        return stmtCtx.getPublicDefinition() == Rfc6020Mapping.CONTAINER && !containsPresenceSubStmt(stmtCtx);
+        return stmtCtx.getPublicDefinition() == YangStmtMapping.CONTAINER && !containsPresenceSubStmt(stmtCtx);
     }
 
     private static boolean containsPresenceSubStmt(final StatementContextBase<?, ?, ?> stmtCtx) {
@@ -295,10 +295,10 @@ public final class StmtContextUtils {
     }
 
     private static boolean isMandatoryLeafChoiceOrAnyXML(final StatementContextBase<?, ?, ?> stmtCtx) {
-        if (!(stmtCtx.getPublicDefinition() instanceof Rfc6020Mapping)) {
+        if (!(stmtCtx.getPublicDefinition() instanceof YangStmtMapping)) {
             return false;
         }
-        switch ((Rfc6020Mapping) stmtCtx.getPublicDefinition()) {
+        switch ((YangStmtMapping) stmtCtx.getPublicDefinition()) {
         case LEAF:
         case CHOICE:
         case ANYXML:
@@ -309,10 +309,10 @@ public final class StmtContextUtils {
     }
 
     private static boolean isMandatoryListOrLeafList(final StatementContextBase<?, ?, ?> stmtCtx) {
-        if (!(stmtCtx.getPublicDefinition() instanceof Rfc6020Mapping)) {
+        if (!(stmtCtx.getPublicDefinition() instanceof YangStmtMapping)) {
             return false;
         }
-        switch ((Rfc6020Mapping) stmtCtx.getPublicDefinition()) {
+        switch ((YangStmtMapping) stmtCtx.getPublicDefinition()) {
         case LIST:
         case LEAF_LIST:
             final Integer minElements = firstSubstatementAttributeOf(stmtCtx, MinElementsStatement.class);

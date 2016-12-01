@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
@@ -50,15 +50,15 @@ import org.slf4j.LoggerFactory;
 
 
 public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implements UsesStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .USES)
-            .addAny(Rfc6020Mapping.AUGMENT)
-            .addOptional(Rfc6020Mapping.DESCRIPTION)
-            .addAny(Rfc6020Mapping.IF_FEATURE)
-            .addAny(Rfc6020Mapping.REFINE)
-            .addOptional(Rfc6020Mapping.REFERENCE)
-            .addOptional(Rfc6020Mapping.STATUS)
-            .addOptional(Rfc6020Mapping.WHEN)
+            .addAny(YangStmtMapping.AUGMENT)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addAny(YangStmtMapping.REFINE)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addOptional(YangStmtMapping.WHEN)
             .build();
 
     private static final Logger LOG = LoggerFactory.getLogger(UsesStatementImpl.class);
@@ -71,7 +71,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
             AbstractStatementSupport<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.USES);
+            super(YangStmtMapping.USES);
         }
 
         @Override
@@ -222,22 +222,22 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
         }
     }
 
-    private static final Set<Rfc6020Mapping> TOP_REUSED_DEF_SET = ImmutableSet.of(
-        Rfc6020Mapping.TYPE,
-        Rfc6020Mapping.TYPEDEF);
+    private static final Set<YangStmtMapping> TOP_REUSED_DEF_SET = ImmutableSet.of(
+        YangStmtMapping.TYPE,
+        YangStmtMapping.TYPEDEF);
 
     private static boolean isReusedByUsesOnTop(final StmtContext<?, ?, ?> stmtContext) {
         return TOP_REUSED_DEF_SET.contains(stmtContext.getPublicDefinition());
     }
 
-    private static final Set<Rfc6020Mapping> NOCOPY_FROM_GROUPING_SET = ImmutableSet.of(
-        Rfc6020Mapping.DESCRIPTION,
-        Rfc6020Mapping.REFERENCE,
-        Rfc6020Mapping.STATUS);
-    private static final Set<Rfc6020Mapping> REUSED_DEF_SET = ImmutableSet.of(
-        Rfc6020Mapping.TYPE,
-        Rfc6020Mapping.TYPEDEF,
-        Rfc6020Mapping.USES);
+    private static final Set<YangStmtMapping> NOCOPY_FROM_GROUPING_SET = ImmutableSet.of(
+        YangStmtMapping.DESCRIPTION,
+        YangStmtMapping.REFERENCE,
+        YangStmtMapping.STATUS);
+    private static final Set<YangStmtMapping> REUSED_DEF_SET = ImmutableSet.of(
+        YangStmtMapping.TYPE,
+        YangStmtMapping.TYPEDEF,
+        YangStmtMapping.USES);
 
     public static boolean needToCopyByUses(final StmtContext<?, ?, ?> stmtContext) {
         final StatementDefinition def = stmtContext.getPublicDefinition();
@@ -246,7 +246,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
             return false;
         }
         if (NOCOPY_FROM_GROUPING_SET.contains(def)) {
-            return !Rfc6020Mapping.GROUPING.equals(stmtContext.getParentContext().getPublicDefinition());
+            return !YangStmtMapping.GROUPING.equals(stmtContext.getParentContext().getPublicDefinition());
         }
 
         LOG.debug("Will copy {} statement {}", def, stmtContext);
@@ -318,7 +318,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
         }
     }
 
-    private static final Set<Rfc6020Mapping> ALLOWED_TO_ADD_BY_REFINE_DEF_SET = ImmutableSet.of(Rfc6020Mapping.MUST);
+    private static final Set<YangStmtMapping> ALLOWED_TO_ADD_BY_REFINE_DEF_SET = ImmutableSet.of(YangStmtMapping.MUST);
 
     private static boolean isAllowedToAddByRefine(final StatementDefinition publicDefinition) {
         return ALLOWED_TO_ADD_BY_REFINE_DEF_SET.contains(publicDefinition);
@@ -349,7 +349,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
         if (targetCtx.isRootContext()) {
             return targetCtx.getFromNamespace(ModuleCtxToModuleQName.class, targetCtx);
         }
-        if (targetCtx.getPublicDefinition() == Rfc6020Mapping.AUGMENT) {
+        if (targetCtx.getPublicDefinition() == YangStmtMapping.AUGMENT) {
             return targetCtx.getFromNamespace(ModuleCtxToModuleQName.class, targetCtx.getRoot());
         }
 

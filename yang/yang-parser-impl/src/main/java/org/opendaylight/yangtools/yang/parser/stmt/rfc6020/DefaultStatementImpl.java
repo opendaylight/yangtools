@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DefaultEffe
 
 public class DefaultStatementImpl extends AbstractDeclaredStatement<String> implements
         DefaultStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .DEFAULT)
             .build();
 
@@ -31,7 +31,7 @@ public class DefaultStatementImpl extends AbstractDeclaredStatement<String> impl
     public static class Definition extends AbstractStatementSupport<String,DefaultStatement,EffectiveStatement<String,DefaultStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.DEFAULT);
+            super(YangStmtMapping.DEFAULT);
         }
 
         @Override public String parseArgumentValue(

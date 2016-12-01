@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ContactEffectiveStatementImpl;
 
 public class ContactStatementImpl extends AbstractDeclaredStatement<String> implements ContactStatement{
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .CONTACT)
             .build();
 
@@ -29,7 +29,7 @@ public class ContactStatementImpl extends AbstractDeclaredStatement<String> impl
     public static class Definition extends AbstractStatementSupport<String,ContactStatement,EffectiveStatement<String,ContactStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.CONTACT);
+            super(YangStmtMapping.CONTACT);
         }
 
         @Override

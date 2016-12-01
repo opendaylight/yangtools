@@ -83,8 +83,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 
+/**
+ * Mapping for both RFC6020 and RFC7950 statements.
+ */
 @Beta
-public enum Rfc6020Mapping implements StatementDefinition {
+public enum YangStmtMapping implements StatementDefinition {
     ANYDATA(AnydataStatement.class, "anydata", "name"),
     ANYXML(AnyxmlStatement.class, "anyxml", "name"),
     ARGUMENT(ArgumentStatement.class, "argument", "name"),
@@ -158,7 +161,7 @@ public enum Rfc6020Mapping implements StatementDefinition {
     private final QName argument;
     private final boolean yinElement;
 
-    Rfc6020Mapping(final Class<? extends DeclaredStatement<?>> clz, final String nameStr) {
+    YangStmtMapping(final Class<? extends DeclaredStatement<?>> clz, final String nameStr) {
         type = Preconditions.checkNotNull(clz);
         //FIXME: fill up effective type correctly
         effectiveType = null;
@@ -167,7 +170,7 @@ public enum Rfc6020Mapping implements StatementDefinition {
         yinElement = false;
     }
 
-    Rfc6020Mapping(final Class<? extends DeclaredStatement<?>> clz, final String nameStr, final String argumentStr) {
+    YangStmtMapping(final Class<? extends DeclaredStatement<?>> clz, final String nameStr, final String argumentStr) {
         type = Preconditions.checkNotNull(clz);
         //FIXME: fill up effective type correctly
         effectiveType = null;
@@ -176,7 +179,7 @@ public enum Rfc6020Mapping implements StatementDefinition {
         this.yinElement = false;
     }
 
-    Rfc6020Mapping(final Class<? extends DeclaredStatement<?>> clz, final String nameStr, final String argumentStr,
+    YangStmtMapping(final Class<? extends DeclaredStatement<?>> clz, final String nameStr, final String argumentStr,
             final boolean yinElement) {
         type = Preconditions.checkNotNull(clz);
         //FIXME: fill up effective type correctly

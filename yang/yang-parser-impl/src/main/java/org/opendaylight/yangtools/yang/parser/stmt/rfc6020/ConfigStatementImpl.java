@@ -8,7 +8,7 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ConfigEffec
 
 public class ConfigStatementImpl extends AbstractDeclaredStatement<Boolean> implements ConfigStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        Rfc6020Mapping.CONFIG).build();
+        YangStmtMapping.CONFIG).build();
 
     protected ConfigStatementImpl(final StmtContext<Boolean, ConfigStatement, ?> context) {
         super(context);
@@ -29,7 +29,7 @@ public class ConfigStatementImpl extends AbstractDeclaredStatement<Boolean> impl
         AbstractStatementSupport<Boolean, ConfigStatement, EffectiveStatement<Boolean, ConfigStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.CONFIG);
+            super(YangStmtMapping.CONFIG);
         }
 
         @Override
