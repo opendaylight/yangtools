@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
@@ -23,17 +23,17 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.OutputEffectiveStatementImpl;
 
 public class OutputStatementImpl extends AbstractDeclaredStatement<QName> implements OutputStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .OUTPUT)
-            .addAny(Rfc6020Mapping.ANYXML)
-            .addAny(Rfc6020Mapping.CHOICE)
-            .addAny(Rfc6020Mapping.CONTAINER)
-            .addAny(Rfc6020Mapping.GROUPING)
-            .addAny(Rfc6020Mapping.LEAF)
-            .addAny(Rfc6020Mapping.LEAF_LIST)
-            .addAny(Rfc6020Mapping.LIST)
-            .addAny(Rfc6020Mapping.TYPEDEF)
-            .addAny(Rfc6020Mapping.USES)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.CHOICE)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(YangStmtMapping.USES)
             .build();
 
     protected OutputStatementImpl(final StmtContext<QName, OutputStatement, ?> context) {
@@ -44,7 +44,7 @@ public class OutputStatementImpl extends AbstractDeclaredStatement<QName> implem
             AbstractStatementSupport<QName, OutputStatement, EffectiveStatement<QName, OutputStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.OUTPUT);
+            super(YangStmtMapping.OUTPUT);
         }
 
         @Override

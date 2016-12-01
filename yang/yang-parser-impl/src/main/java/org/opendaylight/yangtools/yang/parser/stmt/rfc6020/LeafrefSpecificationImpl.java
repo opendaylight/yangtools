@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
@@ -19,10 +19,10 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Leafre
 
 public class LeafrefSpecificationImpl extends AbstractDeclaredStatement<String>
         implements TypeStatement.LeafrefSpecification {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .TYPE)
-            .addMandatory(Rfc6020Mapping.PATH)
-            .addOptional(Rfc6020Mapping.REQUIRE_INSTANCE)
+            .addMandatory(YangStmtMapping.PATH)
+            .addOptional(YangStmtMapping.REQUIRE_INSTANCE)
             .build();
 
     protected LeafrefSpecificationImpl(
@@ -35,7 +35,7 @@ public class LeafrefSpecificationImpl extends AbstractDeclaredStatement<String>
             AbstractStatementSupport<String, TypeStatement.LeafrefSpecification, EffectiveStatement<String, TypeStatement.LeafrefSpecification>> {
 
         public Definition() {
-            super(Rfc6020Mapping.TYPE);
+            super(YangStmtMapping.TYPE);
         }
 
         @Override

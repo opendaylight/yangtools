@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
@@ -21,10 +21,10 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.String
 
 public class StringRestrictionsImpl extends AbstractDeclaredStatement<String> implements
         TypeStatement.StringRestrictions {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .TYPE)
-            .addOptional(Rfc6020Mapping.LENGTH)
-            .addAny(Rfc6020Mapping.PATTERN)
+            .addOptional(YangStmtMapping.LENGTH)
+            .addAny(YangStmtMapping.PATTERN)
             .build();
 
     protected StringRestrictionsImpl(final StmtContext<String, TypeStatement.StringRestrictions, ?> context) {
@@ -36,7 +36,7 @@ public class StringRestrictionsImpl extends AbstractDeclaredStatement<String> im
             AbstractStatementSupport<String, TypeStatement.StringRestrictions, EffectiveStatement<String, TypeStatement.StringRestrictions>> {
 
         public Definition() {
-            super(Rfc6020Mapping.TYPE);
+            super(YangStmtMapping.TYPE);
         }
 
         @Override

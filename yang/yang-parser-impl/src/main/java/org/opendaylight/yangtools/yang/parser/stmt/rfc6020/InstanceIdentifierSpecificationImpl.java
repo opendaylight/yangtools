@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
@@ -20,9 +20,9 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Instan
 public class InstanceIdentifierSpecificationImpl extends
         AbstractDeclaredStatement<String> implements
         TypeStatement.InstanceIdentifierSpecification {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .TYPE)
-            .addOptional(Rfc6020Mapping.REQUIRE_INSTANCE)
+            .addOptional(YangStmtMapping.REQUIRE_INSTANCE)
             .build();
 
     protected InstanceIdentifierSpecificationImpl(
@@ -35,7 +35,7 @@ public class InstanceIdentifierSpecificationImpl extends
             AbstractStatementSupport<String, TypeStatement.InstanceIdentifierSpecification, EffectiveStatement<String, TypeStatement.InstanceIdentifierSpecification>> {
 
         public Definition() {
-            super(Rfc6020Mapping.TYPE);
+            super(YangStmtMapping.TYPE);
         }
 
         @Override

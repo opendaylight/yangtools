@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
@@ -19,17 +19,17 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeviateEffectiveStatementImpl;
 
 public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind> implements DeviateStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .DEVIATE)
-            .addOptional(Rfc6020Mapping.CONFIG)
-            .addOptional(Rfc6020Mapping.DEFAULT)
-            .addOptional(Rfc6020Mapping.MANDATORY)
-            .addOptional(Rfc6020Mapping.MAX_ELEMENTS)
-            .addOptional(Rfc6020Mapping.MIN_ELEMENTS)
-            .addAny(Rfc6020Mapping.MUST)
-            .addOptional(Rfc6020Mapping.TYPE)
-            .addAny(Rfc6020Mapping.UNIQUE)
-            .addOptional(Rfc6020Mapping.UNITS)
+            .addOptional(YangStmtMapping.CONFIG)
+            .addOptional(YangStmtMapping.DEFAULT)
+            .addOptional(YangStmtMapping.MANDATORY)
+            .addOptional(YangStmtMapping.MAX_ELEMENTS)
+            .addOptional(YangStmtMapping.MIN_ELEMENTS)
+            .addAny(YangStmtMapping.MUST)
+            .addOptional(YangStmtMapping.TYPE)
+            .addAny(YangStmtMapping.UNIQUE)
+            .addOptional(YangStmtMapping.UNITS)
             .build();
 
     protected DeviateStatementImpl(final StmtContext<DeviateKind, DeviateStatement, ?> context) {
@@ -40,7 +40,7 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
             EffectiveStatement<DeviateKind, DeviateStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.DEVIATE);
+            super(YangStmtMapping.DEVIATE);
         }
 
         @Override public DeviateKind parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {

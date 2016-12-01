@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -41,7 +41,7 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
         final Collection<StatementContextBase<?, ?, ?>> supportedDeclaredSubStmts = Collections2.filter(
                 ctx.declaredSubstatements(), StmtContextUtils::areFeaturesSupported);
         for (final StatementContextBase<?, ?, ?> declaredSubstatement : supportedDeclaredSubStmts) {
-            if (declaredSubstatement.getPublicDefinition().equals(Rfc6020Mapping.USES)) {
+            if (declaredSubstatement.getPublicDefinition().equals(YangStmtMapping.USES)) {
                 substatementsInit.add(declaredSubstatement);
                 substatementsInit.addAll(declaredSubstatement.getEffectOfStatement());
                 ((StatementContextBase<?, ?, ?>) ctx).removeStatementsFromEffectiveSubstatements(declaredSubstatement

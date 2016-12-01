@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ErrorMessag
 
 public class ErrorMessageStatementImpl extends
         AbstractDeclaredStatement<String> implements ErrorMessageStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .ERROR_MESSAGE)
             .build();
 
@@ -32,7 +32,7 @@ public class ErrorMessageStatementImpl extends
             AbstractStatementSupport<String, ErrorMessageStatement, EffectiveStatement<String, ErrorMessageStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.ERROR_MESSAGE);
+            super(YangStmtMapping.ERROR_MESSAGE);
         }
 
         @Override

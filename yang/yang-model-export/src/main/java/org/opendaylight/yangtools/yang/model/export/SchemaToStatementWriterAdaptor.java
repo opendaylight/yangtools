@@ -18,7 +18,7 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -44,55 +44,55 @@ final class SchemaToStatementWriterAdaptor implements Rfc6020ModuleWriter {
 
     @Override
     public void startModuleNode(final String identifier) {
-        writer.startStatement(Rfc6020Mapping.MODULE);
+        writer.startStatement(YangStmtMapping.MODULE);
         writer.writeArgument(identifier);
     }
 
     @Override
     public void startOrganizationNode(final String input) {
-        writer.startStatement(Rfc6020Mapping.ORGANIZATION);
+        writer.startStatement(YangStmtMapping.ORGANIZATION);
         writer.writeArgument(input);
     }
 
     @Override
     public void startContactNode(final String input) {
-        writer.startStatement(Rfc6020Mapping.CONTACT);
+        writer.startStatement(YangStmtMapping.CONTACT);
         writer.writeArgument(input);
     }
 
     @Override
     public void startDescriptionNode(final String input) {
-        writer.startStatement(Rfc6020Mapping.DESCRIPTION);
+        writer.startStatement(YangStmtMapping.DESCRIPTION);
         writer.writeArgument(input);
     }
 
     @Override
     public void startReferenceNode(final String input) {
-        writer.startStatement(Rfc6020Mapping.REFERENCE);
+        writer.startStatement(YangStmtMapping.REFERENCE);
         writer.writeArgument(input);
     }
 
     @Override
     public void startUnitsNode(final String input) {
-        writer.startStatement(Rfc6020Mapping.UNITS);
+        writer.startStatement(YangStmtMapping.UNITS);
         writer.writeArgument(input);
     }
 
     @Override
     public void startYangVersionNode(final String input) {
-        writer.startStatement(Rfc6020Mapping.YANG_VERSION);
+        writer.startStatement(YangStmtMapping.YANG_VERSION);
         writer.writeArgument(input);
     }
 
     @Override
     public void startNamespaceNode(final URI uri) {
-        writer.startStatement(Rfc6020Mapping.NAMESPACE);
+        writer.startStatement(YangStmtMapping.NAMESPACE);
         writer.writeArgument(uri.toString());
     }
 
     @Override
     public void startKeyNode(final List<QName> keyList) {
-        writer.startStatement(Rfc6020Mapping.KEY);
+        writer.startStatement(YangStmtMapping.KEY);
         final StringBuilder keyStr = new StringBuilder();
         final Iterator<QName> iter = keyList.iterator();
         while (iter.hasNext()) {
@@ -106,281 +106,281 @@ final class SchemaToStatementWriterAdaptor implements Rfc6020ModuleWriter {
 
     @Override
     public void startPrefixNode(final String input) {
-        writer.startStatement(Rfc6020Mapping.PREFIX);
+        writer.startStatement(YangStmtMapping.PREFIX);
         writer.writeArgument(input);
     }
 
     @Override
     public void startFeatureNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.FEATURE);
+        writer.startStatement(YangStmtMapping.FEATURE);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startExtensionNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.EXTENSION);
+        writer.startStatement(YangStmtMapping.EXTENSION);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startArgumentNode(final String input) {
-        writer.startStatement(Rfc6020Mapping.ARGUMENT);
+        writer.startStatement(YangStmtMapping.ARGUMENT);
         writer.writeArgument(input);
     }
 
     @Override
     public void startStatusNode(final Status status) {
-        writer.startStatement(Rfc6020Mapping.STATUS);
+        writer.startStatement(YangStmtMapping.STATUS);
         writer.writeArgument(status.toString().toLowerCase());
     }
 
     @Override
     public void startTypeNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.TYPE);
+        writer.startStatement(YangStmtMapping.TYPE);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startLeafNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.LEAF);
+        writer.startStatement(YangStmtMapping.LEAF);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startContainerNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.CONTAINER);
+        writer.startStatement(YangStmtMapping.CONTAINER);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startGroupingNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.GROUPING);
+        writer.startStatement(YangStmtMapping.GROUPING);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startRpcNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.RPC);
+        writer.startStatement(YangStmtMapping.RPC);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startInputNode() {
-        writer.startStatement(Rfc6020Mapping.INPUT);
+        writer.startStatement(YangStmtMapping.INPUT);
     }
 
     @Override
     public void startOutputNode() {
-        writer.startStatement(Rfc6020Mapping.OUTPUT);
+        writer.startStatement(YangStmtMapping.OUTPUT);
     }
 
     @Override
     public void startLeafListNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.LEAF_LIST);
+        writer.startStatement(YangStmtMapping.LEAF_LIST);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startListNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.LIST);
+        writer.startStatement(YangStmtMapping.LIST);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startChoiceNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.CHOICE);
+        writer.startStatement(YangStmtMapping.CHOICE);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startCaseNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.CASE);
+        writer.startStatement(YangStmtMapping.CASE);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startNotificationNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.NOTIFICATION);
+        writer.startStatement(YangStmtMapping.NOTIFICATION);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startIdentityNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.IDENTITY);
+        writer.startStatement(YangStmtMapping.IDENTITY);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startBaseNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.BASE);
+        writer.startStatement(YangStmtMapping.BASE);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startTypedefNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.TYPEDEF);
+        writer.startStatement(YangStmtMapping.TYPEDEF);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startRevisionNode(final Date date) {
-        writer.startStatement(Rfc6020Mapping.REVISION);
+        writer.startStatement(YangStmtMapping.REVISION);
         writer.writeArgument(SimpleDateFormatUtil.getRevisionFormat().format(date));
     }
 
     @Override
     public void startDefaultNode(final String string) {
-        writer.startStatement(Rfc6020Mapping.DEFAULT);
+        writer.startStatement(YangStmtMapping.DEFAULT);
         writer.writeArgument(string);
     }
 
     @Override
     public void startMustNode(final RevisionAwareXPath xpath) {
-        writer.startStatement(Rfc6020Mapping.MUST);
+        writer.startStatement(YangStmtMapping.MUST);
         writer.writeArgument(xpath);
     }
 
     @Override
     public void startErrorMessageNode(final String input) {
-        writer.startStatement(Rfc6020Mapping.ERROR_MESSAGE);
+        writer.startStatement(YangStmtMapping.ERROR_MESSAGE);
         writer.writeArgument(input);
     }
 
     @Override
     public void startErrorAppTagNode(final String input) {
-        writer.startStatement(Rfc6020Mapping.ERROR_APP_TAG);
+        writer.startStatement(YangStmtMapping.ERROR_APP_TAG);
         writer.writeArgument(input);
     }
 
     @Override
     public void startPatternNode(final String regularExpression) {
-        writer.startStatement(Rfc6020Mapping.PATTERN);
+        writer.startStatement(YangStmtMapping.PATTERN);
         writer.writeArgument(regularExpression);
     }
 
     @Override
     public void startValueNode(final Integer integer) {
-        writer.startStatement(Rfc6020Mapping.VALUE);
+        writer.startStatement(YangStmtMapping.VALUE);
         writer.writeArgument(integer.toString());
     }
 
     @Override
     public void startEnumNode(final String name) {
-        writer.startStatement(Rfc6020Mapping.ENUM);
+        writer.startStatement(YangStmtMapping.ENUM);
         writer.writeArgument(name);
     }
 
     @Override
     public void startRequireInstanceNode(final boolean require) {
-        writer.startStatement(Rfc6020Mapping.REQUIRE_INSTANCE);
+        writer.startStatement(YangStmtMapping.REQUIRE_INSTANCE);
         writer.writeArgument(Boolean.toString(require));
     }
 
     @Override
     public void startPathNode(final RevisionAwareXPath revisionAwareXPath) {
-        writer.startStatement(Rfc6020Mapping.PATH);
+        writer.startStatement(YangStmtMapping.PATH);
         writer.writeArgument(revisionAwareXPath);
     }
 
     @Override
     public void startBitNode(final String name) {
-        writer.startStatement(Rfc6020Mapping.BIT);
+        writer.startStatement(YangStmtMapping.BIT);
         writer.writeArgument(name);
     }
 
     @Override
     public void startPositionNode(final UnsignedInteger position) {
-        writer.startStatement(Rfc6020Mapping.POSITION);
+        writer.startStatement(YangStmtMapping.POSITION);
         writer.writeArgument(position.toString());
     }
 
     @Override
     public void startImportNode(final String moduleName) {
-        writer.startStatement(Rfc6020Mapping.IMPORT);
+        writer.startStatement(YangStmtMapping.IMPORT);
         writer.writeArgument(moduleName);
     }
 
     @Override
     public void startRevisionDateNode(final Date date) {
-        writer.startStatement(Rfc6020Mapping.REVISION_DATE);
+        writer.startStatement(YangStmtMapping.REVISION_DATE);
         writer.writeArgument(SimpleDateFormatUtil.getRevisionFormat().format(date));
     }
 
     @Override
     public void startUsesNode(final QName groupingName) {
-        writer.startStatement(Rfc6020Mapping.USES);
+        writer.startStatement(YangStmtMapping.USES);
         writer.writeArgument(groupingName);
     }
 
     @Override
     public void startAugmentNode(final SchemaPath targetPath) {
-        writer.startStatement(Rfc6020Mapping.AUGMENT);
+        writer.startStatement(YangStmtMapping.AUGMENT);
         writer.writeArgument(targetPath);
     }
 
     @Override
     public void startConfigNode(final boolean config) {
-        writer.startStatement(Rfc6020Mapping.CONFIG);
+        writer.startStatement(YangStmtMapping.CONFIG);
         writer.writeArgument(Boolean.toString(config));
     }
 
     @Override
     public void startLengthNode(final String lengthString) {
-        writer.startStatement(Rfc6020Mapping.LENGTH);
+        writer.startStatement(YangStmtMapping.LENGTH);
         writer.writeArgument(lengthString);
     }
 
     @Override
     public void startMaxElementsNode(final Integer max) {
-        writer.startStatement(Rfc6020Mapping.MAX_ELEMENTS);
+        writer.startStatement(YangStmtMapping.MAX_ELEMENTS);
         writer.writeArgument(max.toString());
     }
 
     @Override
     public void startMinElementsNode(final Integer min) {
-        writer.startStatement(Rfc6020Mapping.MIN_ELEMENTS);
+        writer.startStatement(YangStmtMapping.MIN_ELEMENTS);
         writer.writeArgument(min.toString());
     }
 
     @Override
     public void startPresenceNode(final boolean presence) {
-        writer.startStatement(Rfc6020Mapping.PRESENCE);
+        writer.startStatement(YangStmtMapping.PRESENCE);
         writer.writeArgument(Boolean.toString(presence));
     }
 
     @Override
     public void startOrderedByNode(final String ordering) {
-        writer.startStatement(Rfc6020Mapping.ORDERED_BY);
+        writer.startStatement(YangStmtMapping.ORDERED_BY);
         writer.writeArgument(ordering);
     }
 
     @Override
     public void startRangeNode(final String rangeString) {
-        writer.startStatement(Rfc6020Mapping.RANGE);
+        writer.startStatement(YangStmtMapping.RANGE);
         writer.writeArgument(rangeString);
     }
 
     @Override
     public void startFractionDigitsNode(final Integer fractionDigits) {
-        writer.startStatement(Rfc6020Mapping.FRACTION_DIGITS);
+        writer.startStatement(YangStmtMapping.FRACTION_DIGITS);
         writer.writeArgument(fractionDigits.toString());
     }
 
     @Override
     public void startRefineNode(final SchemaPath path) {
-        writer.startStatement(Rfc6020Mapping.REFINE);
+        writer.startStatement(YangStmtMapping.REFINE);
         writer.writeArgument(path);
     }
 
     @Override
     public void startMandatoryNode(final boolean mandatory) {
-        writer.startStatement(Rfc6020Mapping.MANDATORY);
+        writer.startStatement(YangStmtMapping.MANDATORY);
         writer.writeArgument(Boolean.toString(mandatory));
     }
 
     @Override
     public void startAnyxmlNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.ANYXML);
+        writer.startStatement(YangStmtMapping.ANYXML);
         writer.writeArgument(qName);
     }
 
@@ -397,13 +397,13 @@ final class SchemaToStatementWriterAdaptor implements Rfc6020ModuleWriter {
 
     @Override
     public void startYinElementNode(final boolean yinElement) {
-        writer.startStatement(Rfc6020Mapping.YIN_ELEMENT);
+        writer.startStatement(YangStmtMapping.YIN_ELEMENT);
         writer.writeArgument(Boolean.toString(yinElement));
     }
 
     @Override
     public void startWhenNode(final RevisionAwareXPath revisionAwareXPath) {
-        writer.startStatement(Rfc6020Mapping.WHEN);
+        writer.startStatement(YangStmtMapping.WHEN);
         writer.writeArgument(revisionAwareXPath);
     }
 }

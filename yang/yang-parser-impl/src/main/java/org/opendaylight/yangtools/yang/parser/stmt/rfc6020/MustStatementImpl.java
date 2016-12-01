@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
@@ -24,12 +24,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.MustEffectiveStatementImpl;
 
 public class MustStatementImpl extends AbstractDeclaredStatement<RevisionAwareXPath> implements MustStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .MUST)
-            .addOptional(Rfc6020Mapping.DESCRIPTION)
-            .addOptional(Rfc6020Mapping.ERROR_APP_TAG)
-            .addOptional(Rfc6020Mapping.ERROR_MESSAGE)
-            .addOptional(Rfc6020Mapping.REFERENCE)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(YangStmtMapping.ERROR_APP_TAG)
+            .addOptional(YangStmtMapping.ERROR_MESSAGE)
+            .addOptional(YangStmtMapping.REFERENCE)
             .build();
 
     protected MustStatementImpl(final StmtContext<RevisionAwareXPath, MustStatement, ?> context) {
@@ -40,7 +40,7 @@ public class MustStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
             AbstractStatementSupport<RevisionAwareXPath, MustStatement, EffectiveStatement<RevisionAwareXPath, MustStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.MUST);
+            super(YangStmtMapping.MUST);
         }
 
         @Override
