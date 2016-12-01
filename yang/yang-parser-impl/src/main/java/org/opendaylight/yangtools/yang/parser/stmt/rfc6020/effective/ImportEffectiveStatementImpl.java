@@ -26,6 +26,8 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
     private final Date revision;
     private final SemVer semVer;
     private final String prefix;
+    private final String description;
+    private final String reference;
 
     public ImportEffectiveStatementImpl(final StmtContext<String, ImportStatement, ?> ctx) {
         super(ctx);
@@ -49,6 +51,12 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
             revision = importedModuleIdentifier.getRevision();
             semVer = importedModuleIdentifier.getSemanticVersion();
         }
+
+        DescriptionEffectiveStatementImpl descriptionStmt = firstEffective(DescriptionEffectiveStatementImpl.class);
+        this.description = (descriptionStmt != null) ? descriptionStmt.argument() : null;
+
+        ReferenceEffectiveStatementImpl referenceStmt = firstEffective(ReferenceEffectiveStatementImpl.class);
+        this.reference = (referenceStmt != null) ? referenceStmt.argument() : null;
     }
 
     @Override
@@ -72,14 +80,18 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
     }
 
     @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public String getReference() {
+        return reference;
+    }
+
+    @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(moduleName);
-        result = prime * result + Objects.hashCode(revision);
-        result = prime * result + Objects.hashCode(prefix);
-        result = prime * result + Objects.hashCode(semVer);
-        return result;
+        return Objects.hash(moduleName, revision, prefix, semVer, description, reference);
     }
 
     @Override
@@ -94,24 +106,16 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
             return false;
         }
         ImportEffectiveStatementImpl other = (ImportEffectiveStatementImpl) obj;
-        if (!Objects.equals(getModuleName(), other.getModuleName())) {
-            return false;
-        }
-        if (!Objects.equals(getRevision(), other.getRevision())) {
-            return false;
-        }
-        if (!Objects.equals(getPrefix(), other.getPrefix())) {
-            return false;
-        }
-        if (!Objects.equals(getSemanticVersion(), other.getSemanticVersion())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(moduleName, other.moduleName) && Objects.equals(revision, other.revision)
+                && Objects.equals(semVer, other.semVer) && Objects.equals(prefix, other.prefix)
+                && Objects.equals(description, other.description) && Objects.equals(reference, other.reference);
     }
 
     @Override
     public String toString() {
-        return ImportEffectiveStatementImpl.class.getSimpleName() + "[moduleName=" + moduleName + ", revision="
-                + revision + ", semantic version=" + semVer + ", prefix=" + prefix + "]";
+        return ImportEffectiveStatementImpl.class.getSimpleName() + "[moduleName=" + getModuleName()
+                + ", revision=" + getRevision() + ", semantic version=" + getSemanticVersion()
+                + ", prefix=" + getPrefix() + ", description=" + getDescription()
+                + ", reference=" + getReference() + "]";
     }
 }

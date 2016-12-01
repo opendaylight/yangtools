@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Map;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -47,7 +47,7 @@ abstract class AbstractBuiltinEffectiveStatement implements TypeEffectiveStateme
     @Nonnull
     @Override
     public final StatementDefinition statementDefinition() {
-        return Rfc6020Mapping.TYPE;
+        return YangStmtMapping.TYPE;
     }
 
     @Override

@@ -9,19 +9,15 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ImportStatementDefinition;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMapping;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.IncludeStatementImpl;
 
-public class ImportStatementRfc7950Definition extends ImportStatementDefinition {
+public class IncludeStatementRfc7950Support extends IncludeStatementImpl.Definition {
 
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator
-            .builder(YangStmtMapping.IMPORT)
-            .addMandatory(YangStmtMapping.PREFIX)
+            .builder(YangStmtMapping.INCLUDE)
             .addOptional(YangStmtMapping.REVISION_DATE)
-            .addOptional(SupportedExtensionsMapping.SEMANTIC_VERSION)
             .addOptional(YangStmtMapping.DESCRIPTION)
-            .addOptional(YangStmtMapping.REFERENCE)
-            .build();
+            .addOptional(YangStmtMapping.REFERENCE).build();
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {
