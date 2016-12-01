@@ -13,6 +13,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 
 /**
  * This interface contains the methods for getting the data from the YANG
@@ -77,13 +78,13 @@ public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIden
     /**
      * Returns the YANG version.
      *
-     * Default value is 1.
+     * Default value is {@link YangVersion#VERSION_1}.
      *
      * @return string with the module YANG version which is specified as
      *         argument of YANG {@link Module <b> <font
      *         color="#8b4513">yang-version</font></b>} keyword
      */
-    String getYangVersion();
+    YangVersion getYangVersion();
 
     /**
      * Returns the module description.
