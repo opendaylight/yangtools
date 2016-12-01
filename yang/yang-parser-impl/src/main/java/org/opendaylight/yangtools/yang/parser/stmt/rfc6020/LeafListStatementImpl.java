@@ -11,7 +11,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -35,20 +35,20 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.LeafListEff
 
 public class LeafListStatementImpl extends AbstractDeclaredStatement<QName>
         implements LeafListStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .LEAF_LIST)
-            .addOptional(Rfc6020Mapping.CONFIG)
-            .addOptional(Rfc6020Mapping.DESCRIPTION)
-            .addAny(Rfc6020Mapping.IF_FEATURE)
-            .addOptional(Rfc6020Mapping.MIN_ELEMENTS)
-            .addOptional(Rfc6020Mapping.MAX_ELEMENTS)
-            .addAny(Rfc6020Mapping.MUST)
-            .addOptional(Rfc6020Mapping.ORDERED_BY)
-            .addOptional(Rfc6020Mapping.REFERENCE)
-            .addOptional(Rfc6020Mapping.STATUS)
-            .addMandatory(Rfc6020Mapping.TYPE)
-            .addOptional(Rfc6020Mapping.UNITS)
-            .addOptional(Rfc6020Mapping.WHEN)
+            .addOptional(YangStmtMapping.CONFIG)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addOptional(YangStmtMapping.MIN_ELEMENTS)
+            .addOptional(YangStmtMapping.MAX_ELEMENTS)
+            .addAny(YangStmtMapping.MUST)
+            .addOptional(YangStmtMapping.ORDERED_BY)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addMandatory(YangStmtMapping.TYPE)
+            .addOptional(YangStmtMapping.UNITS)
+            .addOptional(YangStmtMapping.WHEN)
             .build();
 
     protected LeafListStatementImpl(
@@ -61,7 +61,7 @@ public class LeafListStatementImpl extends AbstractDeclaredStatement<QName>
             AbstractStatementSupport<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.LEAF_LIST);
+            super(YangStmtMapping.LEAF_LIST);
         }
 
         @Override

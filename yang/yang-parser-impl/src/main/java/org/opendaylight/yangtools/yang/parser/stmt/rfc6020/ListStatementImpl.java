@@ -11,7 +11,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
@@ -38,29 +38,29 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ListEffecti
 
 public class ListStatementImpl extends AbstractDeclaredStatement<QName>
         implements ListStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .LIST)
-            .addAny(Rfc6020Mapping.ANYXML)
-            .addAny(Rfc6020Mapping.CHOICE)
-            .addOptional(Rfc6020Mapping.CONFIG)
-            .addAny(Rfc6020Mapping.CONTAINER)
-            .addOptional(Rfc6020Mapping.DESCRIPTION)
-            .addAny(Rfc6020Mapping.GROUPING)
-            .addAny(Rfc6020Mapping.IF_FEATURE)
-            .addOptional(Rfc6020Mapping.KEY)
-            .addAny(Rfc6020Mapping.LEAF)
-            .addAny(Rfc6020Mapping.LEAF_LIST)
-            .addAny(Rfc6020Mapping.LIST)
-            .addOptional(Rfc6020Mapping.MAX_ELEMENTS)
-            .addOptional(Rfc6020Mapping.MIN_ELEMENTS)
-            .addAny(Rfc6020Mapping.MUST)
-            .addOptional(Rfc6020Mapping.ORDERED_BY)
-            .addOptional(Rfc6020Mapping.REFERENCE)
-            .addOptional(Rfc6020Mapping.STATUS)
-            .addAny(Rfc6020Mapping.TYPEDEF)
-            .addAny(Rfc6020Mapping.UNIQUE)
-            .addAny(Rfc6020Mapping.USES)
-            .addOptional(Rfc6020Mapping.WHEN)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.CHOICE)
+            .addOptional(YangStmtMapping.CONFIG)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addOptional(YangStmtMapping.KEY)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addOptional(YangStmtMapping.MAX_ELEMENTS)
+            .addOptional(YangStmtMapping.MIN_ELEMENTS)
+            .addAny(YangStmtMapping.MUST)
+            .addOptional(YangStmtMapping.ORDERED_BY)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(YangStmtMapping.UNIQUE)
+            .addAny(YangStmtMapping.USES)
+            .addOptional(YangStmtMapping.WHEN)
             .build();
 
     protected ListStatementImpl(final StmtContext<QName, ListStatement, ?> context) {
@@ -72,7 +72,7 @@ public class ListStatementImpl extends AbstractDeclaredStatement<QName>
             AbstractStatementSupport<QName, ListStatement, EffectiveStatement<QName, ListStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.LIST);
+            super(YangStmtMapping.LIST);
         }
 
         @Override

@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.MandatoryEffectiveStatementImpl;
 
 public class MandatoryStatementImpl extends AbstractDeclaredStatement<Boolean> implements MandatoryStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .MANDATORY)
             .build();
 
@@ -30,7 +30,7 @@ public class MandatoryStatementImpl extends AbstractDeclaredStatement<Boolean> i
         AbstractStatementSupport<Boolean, MandatoryStatement, EffectiveStatement<Boolean, MandatoryStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.MANDATORY);
+            super(YangStmtMapping.MANDATORY);
         }
 
         @Override

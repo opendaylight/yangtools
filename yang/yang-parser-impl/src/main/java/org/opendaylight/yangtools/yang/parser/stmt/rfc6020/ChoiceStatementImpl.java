@@ -11,7 +11,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
@@ -32,22 +32,22 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ChoiceEffec
 
 public class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
         implements ChoiceStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .CHOICE)
-            .addAny(Rfc6020Mapping.ANYXML)
-            .addAny(Rfc6020Mapping.CASE)
-            .addOptional(Rfc6020Mapping.CONFIG)
-            .addAny(Rfc6020Mapping.CONTAINER)
-            .addOptional(Rfc6020Mapping.DEFAULT)
-            .addOptional(Rfc6020Mapping.DESCRIPTION)
-            .addAny(Rfc6020Mapping.IF_FEATURE)
-            .addAny(Rfc6020Mapping.LEAF)
-            .addAny(Rfc6020Mapping.LEAF_LIST)
-            .addAny(Rfc6020Mapping.LIST)
-            .addOptional(Rfc6020Mapping.MANDATORY)
-            .addOptional(Rfc6020Mapping.REFERENCE)
-            .addOptional(Rfc6020Mapping.STATUS)
-            .addOptional(Rfc6020Mapping.WHEN)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.CASE)
+            .addOptional(YangStmtMapping.CONFIG)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(YangStmtMapping.DEFAULT)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addOptional(YangStmtMapping.MANDATORY)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addOptional(YangStmtMapping.WHEN)
             .build();
 
     protected ChoiceStatementImpl(final StmtContext<QName, ChoiceStatement, ?> context) {
@@ -59,7 +59,7 @@ public class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
             AbstractStatementSupport<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.CHOICE);
+            super(YangStmtMapping.CHOICE);
         }
 
         @Override

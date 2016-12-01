@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.MinElements
 
 public class MinElementsStatementImpl extends
         AbstractDeclaredStatement<Integer> implements MinElementsStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .MIN_ELEMENTS)
             .build();
 
@@ -32,7 +32,7 @@ public class MinElementsStatementImpl extends
             AbstractStatementSupport<Integer, MinElementsStatement, EffectiveStatement<Integer, MinElementsStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.MIN_ELEMENTS);
+            super(YangStmtMapping.MIN_ELEMENTS);
         }
 
         @Override

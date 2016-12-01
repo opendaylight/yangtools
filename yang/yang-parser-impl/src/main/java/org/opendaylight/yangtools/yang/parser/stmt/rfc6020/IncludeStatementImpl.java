@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
@@ -37,7 +37,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IncludeEffe
 
 public class IncludeStatementImpl extends AbstractDeclaredStatement<String> implements IncludeStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        Rfc6020Mapping.INCLUDE).addOptional(Rfc6020Mapping.REVISION_DATE).build();
+        YangStmtMapping.INCLUDE).addOptional(YangStmtMapping.REVISION_DATE).build();
 
     protected IncludeStatementImpl(final StmtContext<String, IncludeStatement, ?> context) {
         super(context);
@@ -47,7 +47,7 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
             AbstractStatementSupport<String, IncludeStatement, EffectiveStatement<String, IncludeStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.INCLUDE);
+            super(YangStmtMapping.INCLUDE);
         }
 
         @Override

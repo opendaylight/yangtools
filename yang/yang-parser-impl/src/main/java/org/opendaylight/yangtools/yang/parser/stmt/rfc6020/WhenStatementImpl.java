@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
@@ -22,10 +22,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.WhenEffectiveStatementImpl;
 
 public class WhenStatementImpl extends AbstractDeclaredStatement<RevisionAwareXPath> implements WhenStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .WHEN)
-            .addOptional(Rfc6020Mapping.DESCRIPTION)
-            .addOptional(Rfc6020Mapping.REFERENCE)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(YangStmtMapping.REFERENCE)
             .build();
 
     protected WhenStatementImpl(final StmtContext<RevisionAwareXPath, WhenStatement, ?> context) {
@@ -36,7 +36,7 @@ public class WhenStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
             AbstractStatementSupport<RevisionAwareXPath, WhenStatement, EffectiveStatement<RevisionAwareXPath, WhenStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.WHEN);
+            super(YangStmtMapping.WHEN);
         }
 
         @Override

@@ -11,7 +11,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
@@ -33,19 +33,19 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.LeafEffectiveStatementImpl;
 
 public class LeafStatementImpl extends AbstractDeclaredStatement<QName> implements LeafStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .LEAF)
-            .addOptional(Rfc6020Mapping.CONFIG)
-            .addOptional(Rfc6020Mapping.DEFAULT)
-            .addOptional(Rfc6020Mapping.DESCRIPTION)
-            .addAny(Rfc6020Mapping.IF_FEATURE)
-            .addOptional(Rfc6020Mapping.MANDATORY)
-            .addAny(Rfc6020Mapping.MUST)
-            .addOptional(Rfc6020Mapping.REFERENCE)
-            .addOptional(Rfc6020Mapping.STATUS)
-            .addMandatory(Rfc6020Mapping.TYPE)
-            .addOptional(Rfc6020Mapping.UNITS)
-            .addOptional(Rfc6020Mapping.WHEN)
+            .addOptional(YangStmtMapping.CONFIG)
+            .addOptional(YangStmtMapping.DEFAULT)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addOptional(YangStmtMapping.MANDATORY)
+            .addAny(YangStmtMapping.MUST)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addMandatory(YangStmtMapping.TYPE)
+            .addOptional(YangStmtMapping.UNITS)
+            .addOptional(YangStmtMapping.WHEN)
             .build();
 
     protected LeafStatementImpl(final StmtContext<QName, LeafStatement, ?> context) {
@@ -55,7 +55,7 @@ public class LeafStatementImpl extends AbstractDeclaredStatement<QName> implemen
     public static class Definition extends AbstractStatementSupport<QName,LeafStatement,EffectiveStatement<QName,LeafStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.LEAF);
+            super(YangStmtMapping.LEAF);
         }
 
         @Override public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
