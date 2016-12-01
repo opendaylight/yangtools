@@ -12,7 +12,7 @@ import java.util.Date;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
@@ -27,9 +27,9 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RevisionEff
 public class RevisionStatementImpl extends AbstractDeclaredStatement<Date>
         implements RevisionStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        Rfc6020Mapping.REVISION)
-            .addOptional(Rfc6020Mapping.DESCRIPTION)
-            .addOptional(Rfc6020Mapping.REFERENCE)
+        YangStmtMapping.REVISION)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(YangStmtMapping.REFERENCE)
             .build();
 
     protected RevisionStatementImpl(final StmtContext<Date, RevisionStatement, ?> context) {
@@ -41,7 +41,7 @@ public class RevisionStatementImpl extends AbstractDeclaredStatement<Date>
             AbstractStatementSupport<Date, RevisionStatement, EffectiveStatement<Date, RevisionStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.REVISION);
+            super(YangStmtMapping.REVISION);
         }
 
         @Override

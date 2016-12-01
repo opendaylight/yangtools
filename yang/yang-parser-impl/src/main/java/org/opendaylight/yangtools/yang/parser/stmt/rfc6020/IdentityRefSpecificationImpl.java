@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
@@ -24,9 +24,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.IdentityRefSpecificationEffectiveStatementImpl;
 
 public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<String> implements TypeStatement.IdentityRefSpecification {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .TYPE)
-            .addMandatory(Rfc6020Mapping.BASE)
+            .addMandatory(YangStmtMapping.BASE)
             .build();
 
     protected IdentityRefSpecificationImpl(
@@ -39,7 +39,7 @@ public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<Stri
             AbstractStatementSupport<String, TypeStatement.IdentityRefSpecification, EffectiveStatement<String, TypeStatement.IdentityRefSpecification>> {
 
         public Definition() {
-            super(Rfc6020Mapping.TYPE);
+            super(YangStmtMapping.TYPE);
         }
 
         @Override
