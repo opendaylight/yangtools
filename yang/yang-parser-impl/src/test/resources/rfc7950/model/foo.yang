@@ -1,0 +1,235 @@
+module foo {
+    yang-version 1.1;
+    namespace "urn:opendaylight.foo";
+    prefix "foo";
+
+    import bar {
+        prefix "br";
+        revision-date 2013-07-03;
+    }
+
+    import baz {
+        prefix "bz";
+        revision-date 2013-02-27;
+    }
+
+    include subfoo {
+        revision-date "2013-02-27";
+    }
+
+    organization "opendaylight";
+    contact "http://www.opendaylight.org/";
+
+    revision "2013-02-27" {
+        reference " WILL BE DEFINED LATER";
+    }
+
+    typedef identifier {
+        type int32;
+    }
+
+    leaf int32-leaf {
+        type br:int32-ext2 {
+            range "12..max";
+        }
+    }
+
+    leaf string-leaf {
+        type br:string-ext4;
+    }
+
+    leaf invalid-pattern-string-leaf {
+        type br:invalid-string-pattern;
+    }
+
+    leaf invalid-direct-string-pattern-def-leaf {
+        type string {
+            pattern "[[A-1*-%22!^^}";
+        }
+    }
+
+    leaf multiple-pattern-string-leaf {
+        type br:multiple-pattern-string;
+    }
+
+    leaf multiple-pattern-direct-string-def-leaf {
+        type string {
+            pattern "[e-z]*";
+            pattern "[[A-1*-%22!^^}";
+            pattern "[a-d]*";
+        }
+    }
+
+    leaf length-leaf {
+        type br:string-ext2 {
+            length "7..max";
+        }
+    }
+
+    leaf decimal-leaf {
+        type br:my-decimal-type {
+            fraction-digits 4;
+        }
+    }
+
+    leaf decimal-leaf2 {
+        type br:my-decimal-type;
+    }
+
+    container ext {
+        bz:c-define "MY_INTERFACES";
+    }
+
+    leaf union-leaf {
+        type br:my-union-ext;
+    }
+
+    deviation /br:interfaces/br:ifEntry {
+        deviate add {
+            default "admin";
+            config "true";
+        }
+        reference "system/user ref";
+    }
+
+    leaf custom-union-leaf {
+        type bz:union1;
+    }
+
+    container transfer {
+        choice how {
+            default interval;
+            container input {
+            }
+            list output {
+                leaf id {
+                    type string;
+                }
+            }
+            case interval {
+                leaf interval {
+                    type uint16;
+                    default 30;
+                    units minutes;
+                }
+            }
+            case daily {
+                leaf daily {
+                    type empty;
+                }
+                leaf time-of-day {
+                    type string;
+                    units 24-hour-clock;
+                    default 1am;
+                }
+            }
+            case manual {
+                leaf manual {
+                    type empty;
+                }
+            }
+        }
+    }
+
+    anyxml datas {
+        description
+          "Copy of the source typesstore subset that matched
+           the filter criteria (if any).  An empty types container
+           indicates that the request did not produce any results.";
+        status obsolete;
+    }
+
+    augment "/br:interfaces/br:ifEntry/bz:augment-holder" {
+        when "if:ifType='ds0'";
+        leaf ds0ChannelNumber {
+            type string;
+        }
+        leaf interface-id {
+            type leafref {
+                path "/if:interfaces/if:interface/if:name";
+            }
+        }
+        leaf my-type {
+            type br:int32-ext2;
+        }
+        container schemas {
+        }
+        choice odl {
+            leaf id {
+                type int8;
+            }
+            case node1 {
+                description "node1";
+            }
+            case node2 {
+                description "node2";
+            }
+            container node3 {
+                description "node3";
+            }
+        }
+    }
+
+    container mycont {
+        container innercont {
+            typedef mytype {
+                type string;
+            }
+            leaf myleaf {
+                type mytype;
+            }
+        }
+    }
+
+    uses bz:target {
+        augment "how/interval" {
+            description "inner augment";
+            leaf name {
+                type string;
+            }
+        }
+    }
+
+    container peer {
+        container destination {
+            uses bz:target {
+                refine address {
+                    default "1.2.3.4";
+                    description "IP address of target node";
+                    reference "address reference added by refine";
+                    config false;
+                    mandatory false;
+                    must "ifType != 'ethernet' or " +
+                            "(ifType = 'ethernet' and ifMTU = 1500)" {
+                        error-message "An ethernet MTU must be 1500";
+                    }
+                    foo:mountpoint "mnt-extension";
+                }
+                refine port {
+                    description "description of port defined by refine";
+                    reference "port reference added by refine";
+                    config false;
+                    presence "presence is required";
+                }
+                refine "addresses" {
+                    description "description of addresses defined by refine";
+                    reference "addresses reference added by refine";
+                    config false;
+                    min-elements 2;
+                    max-elements unbounded;
+                }
+                refine addresses/id {
+                    description "id of address";
+                }
+            }
+        }
+    }
+
+    extension mountpoint {
+        description "enter point";
+        argument "name" {
+            yin-element "true";
+        }
+    }
+
+}
