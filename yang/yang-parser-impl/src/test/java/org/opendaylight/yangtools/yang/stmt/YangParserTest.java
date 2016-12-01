@@ -31,6 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -98,7 +99,7 @@ public class YangParserTest {
         final Module foo = TestUtils.findModule(modules, "foo");
 
         assertEquals("foo", foo.getName());
-        assertEquals("1", foo.getYangVersion());
+        assertEquals(YangVersion.VERSION_1, foo.getYangVersion());
         assertEquals(fooNS, foo.getNamespace());
         assertEquals("foo", foo.getPrefix());
 

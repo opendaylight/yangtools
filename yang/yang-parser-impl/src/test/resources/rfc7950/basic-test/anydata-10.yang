@@ -1,0 +1,11 @@
+module anydata-10 {
+    namespace "anydata-10";
+    prefix a;
+    yang-version 1;
+
+    anydata my-data {
+    }
+
+    container root {
+    }
+}

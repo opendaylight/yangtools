@@ -17,6 +17,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -305,5 +306,15 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     @Override
     public boolean isEnabledSemanticVersioning() {
         return parent.isEnabledSemanticVersioning();
+    }
+
+    @Override
+    public YangVersion getRootVersion() {
+        return getRoot().getRootVersion();
+    }
+
+    @Override
+    public void setRootVersion(final YangVersion version) {
+        getRoot().setRootVersion(version);
     }
 }
