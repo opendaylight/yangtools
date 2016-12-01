@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
@@ -57,7 +58,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
     private final String name;
     private final String sourcePath;
     private final String prefix;
-    private final String yangVersion;
+    private final YangVersion yangVersion;
     private final String organization;
     private final String contact;
     private final Set<ModuleImport> imports;
@@ -86,7 +87,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
         this.prefix = (prefixStmt == null) ? null : prefixStmt.argument();
 
         YangVersionEffectiveStatementImpl yangVersionStmt = firstEffective(YangVersionEffectiveStatementImpl.class);
-        this.yangVersion = (yangVersionStmt == null) ? "1" : yangVersionStmt.argument();
+        this.yangVersion = (yangVersionStmt == null) ? YangVersion.VERSION_1 : yangVersionStmt.argument();
 
         SemanticVersionEffectiveStatementImpl semanticVersionStmt = firstEffective(SemanticVersionEffectiveStatementImpl.class);
         this.semanticVersion = (semanticVersionStmt == null) ? DEFAULT_SEMANTIC_VERSION : semanticVersionStmt.argument();
@@ -285,7 +286,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
 
     @Override
     public String getYangVersion() {
-        return yangVersion;
+        return yangVersion.toCanonicalString();
     }
 
     @Override

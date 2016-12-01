@@ -1,0 +1,8 @@
+module unsupported-version {
+    namespace "version-test";
+    prefix un;
+    yang-version 2.3;
+
+    container root {
+    }
+}
