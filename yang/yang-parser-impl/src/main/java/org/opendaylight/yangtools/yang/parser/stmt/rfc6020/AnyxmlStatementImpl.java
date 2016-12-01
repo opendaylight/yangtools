@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
@@ -37,16 +37,16 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AnyXmlEffec
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.YangModeledAnyXmlEffectiveStatementImpl;
 
 public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implements AnyxmlStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .ANYXML)
-            .addOptional(Rfc6020Mapping.CONFIG)
-            .addOptional(Rfc6020Mapping.DESCRIPTION)
-            .addAny(Rfc6020Mapping.IF_FEATURE)
-            .addOptional(Rfc6020Mapping.MANDATORY)
-            .addAny(Rfc6020Mapping.MUST)
-            .addOptional(Rfc6020Mapping.REFERENCE)
-            .addOptional(Rfc6020Mapping.STATUS)
-            .addOptional(Rfc6020Mapping.WHEN)
+            .addOptional(YangStmtMapping.CONFIG)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addOptional(YangStmtMapping.MANDATORY)
+            .addAny(YangStmtMapping.MUST)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addOptional(YangStmtMapping.WHEN)
             .addOptional(SupportedExtensionsMapping.ANYXML_SCHEMA_LOCATION)
             .build();
 
@@ -58,7 +58,7 @@ public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implem
             AbstractStatementSupport<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.ANYXML);
+            super(YangStmtMapping.ANYXML);
         }
 
         @Override

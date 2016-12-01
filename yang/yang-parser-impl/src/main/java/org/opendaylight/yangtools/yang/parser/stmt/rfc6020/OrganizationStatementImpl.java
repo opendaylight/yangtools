@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.Organizatio
 
 public class OrganizationStatementImpl extends
         AbstractDeclaredStatement<String> implements OrganizationStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .ORGANIZATION)
             .build();
 
@@ -32,7 +32,7 @@ public class OrganizationStatementImpl extends
             AbstractStatementSupport<String, OrganizationStatement, EffectiveStatement<String, OrganizationStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.ORGANIZATION);
+            super(YangStmtMapping.ORGANIZATION);
         }
 
         @Override

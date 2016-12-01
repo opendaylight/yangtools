@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import java.text.ParseException;
 import java.util.Date;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RevisionDat
 
 public class RevisionDateStatementImpl extends AbstractDeclaredStatement<Date> implements RevisionDateStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-            SubstatementValidator.builder(Rfc6020Mapping.REVISION_DATE).build();
+            SubstatementValidator.builder(YangStmtMapping.REVISION_DATE).build();
 
     protected RevisionDateStatementImpl(final StmtContext<Date, RevisionDateStatement, ?> context) {
         super(context);
@@ -33,7 +33,7 @@ public class RevisionDateStatementImpl extends AbstractDeclaredStatement<Date> i
             AbstractStatementSupport<Date, RevisionDateStatement, EffectiveStatement<Date, RevisionDateStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.REVISION_DATE);
+            super(YangStmtMapping.REVISION_DATE);
         }
 
         @Override
