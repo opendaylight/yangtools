@@ -1,0 +1,10 @@
+module valid-11 {
+    namespace "valid-11";
+    prefix v;
+    yang-version 1.1;
+
+    container root {
+        notification root-notification {
+        }
+    }
+}

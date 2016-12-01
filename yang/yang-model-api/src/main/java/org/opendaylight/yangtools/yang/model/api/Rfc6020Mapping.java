@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
@@ -82,9 +83,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 
-
 @Beta
 public enum Rfc6020Mapping implements StatementDefinition {
+    ANYDATA(AnydataStatement.class, "anydata", "name"),
     ANYXML(AnyxmlStatement.class, "anyxml", "name"),
     ARGUMENT(ArgumentStatement.class, "argument", "name"),
     AUGMENT(AugmentStatement.class, "augment", "target-node"),
@@ -157,7 +158,7 @@ public enum Rfc6020Mapping implements StatementDefinition {
     private final QName argument;
     private final boolean yinElement;
 
-    Rfc6020Mapping(Class<? extends DeclaredStatement<?>> clz, final String nameStr) {
+    Rfc6020Mapping(final Class<? extends DeclaredStatement<?>> clz, final String nameStr) {
         type = Preconditions.checkNotNull(clz);
         //FIXME: fill up effective type correctly
         effectiveType = null;
@@ -166,7 +167,7 @@ public enum Rfc6020Mapping implements StatementDefinition {
         yinElement = false;
     }
 
-    Rfc6020Mapping(Class<? extends DeclaredStatement<?>> clz, final String nameStr, final String argumentStr) {
+    Rfc6020Mapping(final Class<? extends DeclaredStatement<?>> clz, final String nameStr, final String argumentStr) {
         type = Preconditions.checkNotNull(clz);
         //FIXME: fill up effective type correctly
         effectiveType = null;
@@ -175,7 +176,7 @@ public enum Rfc6020Mapping implements StatementDefinition {
         this.yinElement = false;
     }
 
-    Rfc6020Mapping(Class<? extends DeclaredStatement<?>> clz, final String nameStr, final String argumentStr,
+    Rfc6020Mapping(final Class<? extends DeclaredStatement<?>> clz, final String nameStr, final String argumentStr,
             final boolean yinElement) {
         type = Preconditions.checkNotNull(clz);
         //FIXME: fill up effective type correctly
@@ -185,7 +186,7 @@ public enum Rfc6020Mapping implements StatementDefinition {
         this.yinElement = yinElement;
     }
 
-    @Nonnull private static QName yinQName(String nameStr) {
+    @Nonnull private static QName yinQName(final String nameStr) {
         return QName.create(YangConstants.RFC6020_YIN_MODULE, nameStr).intern();
     }
 
