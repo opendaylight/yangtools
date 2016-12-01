@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
@@ -19,9 +19,9 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Numeri
 
 public class NumericalRestrictionsImpl extends AbstractDeclaredStatement<String> implements
         TypeStatement.NumericalRestrictions {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .TYPE)
-            .addMandatory(Rfc6020Mapping.RANGE)
+            .addMandatory(YangStmtMapping.RANGE)
             .build();
 
     protected NumericalRestrictionsImpl(final StmtContext<String, TypeStatement.NumericalRestrictions, ?> context) {
@@ -32,7 +32,7 @@ public class NumericalRestrictionsImpl extends AbstractDeclaredStatement<String>
             AbstractStatementSupport<String, TypeStatement.NumericalRestrictions, EffectiveStatement<String, TypeStatement.NumericalRestrictions>> {
 
         public Definition() {
-            super(Rfc6020Mapping.TYPE);
+            super(YangStmtMapping.TYPE);
         }
 
         @Override

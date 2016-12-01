@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
@@ -19,9 +19,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitsSpecificationEffectiveStatementImpl;
 
 public class BitsSpecificationImpl extends AbstractDeclaredStatement<String> implements TypeStatement.BitsSpecification {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .TYPE)
-            .addMultiple(Rfc6020Mapping.BIT)
+            .addMultiple(YangStmtMapping.BIT)
             .build();
 
     protected BitsSpecificationImpl(final StmtContext<String, TypeStatement.BitsSpecification, ?> context) {
@@ -33,7 +33,7 @@ public class BitsSpecificationImpl extends AbstractDeclaredStatement<String> imp
             AbstractStatementSupport<String, TypeStatement.BitsSpecification, EffectiveStatement<String, TypeStatement.BitsSpecification>> {
 
         public Definition() {
-            super(Rfc6020Mapping.TYPE);
+            super(YangStmtMapping.TYPE);
         }
 
         @Override

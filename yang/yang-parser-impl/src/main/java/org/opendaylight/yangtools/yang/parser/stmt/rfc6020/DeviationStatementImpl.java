@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
@@ -19,11 +19,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeviationEffectiveStatementImpl;
 
 public class DeviationStatementImpl extends AbstractDeclaredStatement<SchemaNodeIdentifier> implements DeviationStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .DEVIATION)
-            .addOptional(Rfc6020Mapping.DESCRIPTION)
-            .addAny(Rfc6020Mapping.DEVIATE)
-            .addOptional(Rfc6020Mapping.REFERENCE)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.DEVIATE)
+            .addOptional(YangStmtMapping.REFERENCE)
             .build();
 
     protected DeviationStatementImpl(final StmtContext<SchemaNodeIdentifier, DeviationStatement, ?> context) {
@@ -33,7 +33,7 @@ public class DeviationStatementImpl extends AbstractDeclaredStatement<SchemaNode
     public static class Definition extends AbstractStatementSupport<SchemaNodeIdentifier,DeviationStatement,EffectiveStatement<SchemaNodeIdentifier,DeviationStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.DEVIATION);
+            super(YangStmtMapping.DEVIATION);
         }
 
         @Override
