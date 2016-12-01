@@ -17,6 +17,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -36,8 +37,12 @@ import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
 public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> extends
         StatementContextBase<A, D, E> {
 
+    public static final YangVersion DEFAULT_VERSION = YangVersion.VERSION_1;
+
     private final SourceSpecificContext sourceContext;
     private final A argument;
+
+    private YangVersion version;
 
     /**
      * References to RootStatementContext of submodules which are included in this source.
@@ -48,6 +53,12 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
         super(builder);
         this.sourceContext = Preconditions.checkNotNull(sourceContext);
         this.argument = builder.getDefinition().parseArgumentValue(this, builder.getRawArgument());
+    }
+
+    RootStatementContext(final ContextBuilder<A, D, E> builder, final SourceSpecificContext sourceContext,
+            final YangVersion version) {
+        this(builder, sourceContext);
+        this.setRootVersion(version);
     }
 
     RootStatementContext(final RootStatementContext<A, D, E> original, final QNameModule newQNameModule,
@@ -217,5 +228,19 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
             }
         }
         return null;
+    }
+
+    @Override
+    public YangVersion getRootVersion() {
+        return version == null ? DEFAULT_VERSION : version;
+    }
+
+    @Override
+    public void setRootVersion(final YangVersion version) {
+        Preconditions.checkArgument(sourceContext.getSupportedVersions().contains(version),
+                "Unsupported yang version %s in %s", version, getStatementSourceReference());
+        Preconditions.checkState(this.version == null, "Version of root %s has been already set to %s", argument,
+                this.version);
+        this.version = Preconditions.checkNotNull(version);
     }
 }

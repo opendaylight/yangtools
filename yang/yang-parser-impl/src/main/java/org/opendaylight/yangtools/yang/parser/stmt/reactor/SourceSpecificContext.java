@@ -21,11 +21,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -39,6 +41,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Namesp
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
@@ -82,11 +85,18 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
         @Override
         public StatementContextBase build() {
+            /*
+             * If root is null or root version is other than default,
+             * we need to create new root.
+             */
             if (root == null) {
                 root = new RootStatementContext(this, SourceSpecificContext.this);
+            } else if (!RootStatementContext.DEFAULT_VERSION.equals(root.getRootVersion())
+                    && inProgressPhase == ModelProcessingPhase.SOURCE_LINKAGE) {
+                root = new RootStatementContext(this, SourceSpecificContext.this, root.getRootVersion());
             } else {
                 Preconditions.checkState(root.getIdentifier().equals(createIdentifier()),
-                    "Root statement was already defined as %s.", root.getIdentifier());
+                        "Root statement was already defined as %s.", root.getIdentifier());
             }
             root.resetLists();
             return root;
@@ -147,7 +157,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             }
         }
 
-        StatementDefinitionContext<?, ?, ?> def = currentContext.getStatementDefinition(name);
+        StatementDefinitionContext<?, ?, ?> def = currentContext.getStatementDefinition(getRootVersion(), name);
 
         if (def == null) {
             final StatementSupport<?, ?, ?> extension = qNameToStmtDefMap.get(name);
@@ -188,6 +198,15 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     RootStatementContext<?, ?, ?> getRoot() {
         return root;
+    }
+
+    /**
+     * Return version of root statement context.
+     *
+     * @return version of root statement context
+     */
+    YangVersion getRootVersion() {
+        return root != null ? root.getRootVersion() : RootStatementContext.DEFAULT_VERSION;
     }
 
     DeclaredStatement<?> buildDeclared() {
@@ -396,7 +415,9 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     private QNameToStatementDefinition stmtDef() {
         // regular YANG statements and extension supports added
-        qNameToStmtDefMap.putAll(currentContext.getSupportsForPhase(inProgressPhase).getDefinitions());
+        final StatementSupportBundle supportsForPhase = currentContext.getSupportsForPhase(inProgressPhase);
+        qNameToStmtDefMap.putAll(supportsForPhase.getCommonDefinitions());
+        qNameToStmtDefMap.putAll(supportsForPhase.getDefinitionsSpecificForVersion(getRootVersion()));
 
         // No further actions needed
         if (inProgressPhase != ModelProcessingPhase.FULL_DECLARATION) {
@@ -418,5 +439,9 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         }
 
         return qNameToStmtDefMap;
+    }
+
+    public Set<YangVersion> getSupportedVersions() {
+        return currentContext.getSupportedVersions();
     }
 }

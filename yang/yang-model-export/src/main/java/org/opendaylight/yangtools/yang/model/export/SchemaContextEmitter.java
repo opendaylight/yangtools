@@ -23,6 +23,7 @@ import java.util.Set;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -230,8 +231,8 @@ class SchemaContextEmitter {
         }
     }
 
-    private void emitYangVersionNode(final String input) {
-        writer.startYangVersionNode(input);
+    private void emitYangVersionNode(final YangVersion input) {
+        writer.startYangVersionNode(input.toCanonicalString());
         writer.endNode();
     }
 

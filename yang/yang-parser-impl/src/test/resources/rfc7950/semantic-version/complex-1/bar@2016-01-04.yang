@@ -1,0 +1,24 @@
+module bar {
+    namespace "bar";
+    prefix bar;
+    yang-version 1.1;
+
+    import semantic-version { prefix sv; sv:semantic-version "1.2.210"; }
+    import foobar { prefix foobar; sv:semantic-version "2.25.3"; }
+
+    revision "2016-01-04" {
+        description "Not-imported version";
+    }
+    sv:semantic-version "2.200.200";
+
+    container root {
+        container test-container {
+            uses foobar:test-grouping;
+        }
+    }
+
+    leaf-list should-not-be-present {
+        type uint32;
+        description "List of integers";
+    }
+}

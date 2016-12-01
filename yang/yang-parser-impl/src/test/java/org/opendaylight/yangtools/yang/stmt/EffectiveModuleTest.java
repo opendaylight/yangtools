@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
@@ -82,7 +83,7 @@ public class EffectiveModuleTest {
         assertNotNull(rootModule);
 
         assertEquals("root-pref", rootModule.getPrefix());
-        assertEquals("1", rootModule.getYangVersion());
+        assertEquals(YangVersion.VERSION_1, rootModule.getYangVersion());
         assertEquals("cisco", rootModule.getOrganization());
         assertEquals("cisco email", rootModule.getContact());
 
