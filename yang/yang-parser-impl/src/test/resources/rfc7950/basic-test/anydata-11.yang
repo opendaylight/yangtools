@@ -1,0 +1,13 @@
+module anydata-11 {
+    namespace "anydata-11";
+    prefix a;
+    yang-version 1.1;
+
+    anydata my-data {
+    }
+
+    container root {
+        notification root-notification {
+        }
+    }
+}

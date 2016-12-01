@@ -11,8 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
-
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -21,6 +19,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -32,22 +31,34 @@ public class SemanticVersionComplexTest {
     @Test
     public void complexTest1() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException,
             ParseException {
-        SchemaContext context = StmtTestUtils.parseYangSources("/semantic-version/complex/complex-1",
+        final SchemaContext context = StmtTestUtils.parseYangSources("/semantic-version/complex/complex-1",
                 StatementParserMode.SEMVER_MODE);
+        verifySchemaContextTest1(context);
+    }
+
+    @Test
+    public void complexTest1Yang1_1() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException,
+            ParseException {
+        final SchemaContext context = StmtTestUtils.parseYangSources("/rfc7950/semantic-version/complex-1",
+                StatementParserMode.SEMVER_MODE);
+        verifySchemaContextTest1(context);
+    }
+
+    private void verifySchemaContextTest1(final SchemaContext context) throws URISyntaxException {
         assertNotNull(context);
 
-        Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
-        Module semVer = context.findModuleByNamespace(new URI("urn:opendaylight:yang:extension:semantic-version"))
+        final Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
+        final Module semVer = context.findModuleByNamespace(new URI("urn:opendaylight:yang:extension:semantic-version"))
                 .iterator().next();
 
         // check module versions
         assertEquals(SemVer.valueOf("1.3.95"), semVer.getSemanticVersion());
         assertEquals(SemVer.valueOf("1.50.2"), foo.getSemanticVersion());
 
-        Module bar = StmtTestUtils.findImportedModule(context, foo, "bar");
+        final Module bar = StmtTestUtils.findImportedModule(context, foo, "bar");
         assertEquals(SemVer.valueOf("1.2.6"), bar.getSemanticVersion());
 
-        Module foobar = StmtTestUtils.findImportedModule(context, bar, "foobar");
+        final Module foobar = StmtTestUtils.findImportedModule(context, bar, "foobar");
         assertEquals(SemVer.valueOf("2.26.465"), foobar.getSemanticVersion());
 
         // check imported components
@@ -68,22 +79,34 @@ public class SemanticVersionComplexTest {
     @Test
     public void complexTest2() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException,
             ParseException {
-        SchemaContext context = StmtTestUtils.parseYangSources("/semantic-version/complex/complex-2",
+        final SchemaContext context = StmtTestUtils.parseYangSources("/semantic-version/complex/complex-2",
                 StatementParserMode.SEMVER_MODE);
+        verifySchemaContextTest2(context);
+    }
+
+    @Test
+    public void complexTest2Yang1_1() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException,
+            ParseException {
+        final SchemaContext context = StmtTestUtils.parseYangSources("/rfc7950/semantic-version/complex-2",
+                StatementParserMode.SEMVER_MODE);
+        verifySchemaContextTest2(context);
+    }
+
+    private void verifySchemaContextTest2(final SchemaContext context) throws URISyntaxException {
         assertNotNull(context);
 
-        Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
-        Module semVer = context.findModuleByNamespace(new URI("urn:opendaylight:yang:extension:semantic-version"))
+        final Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
+        final Module semVer = context.findModuleByNamespace(new URI("urn:opendaylight:yang:extension:semantic-version"))
                 .iterator().next();
 
         // check module versions
         assertEquals(SemVer.valueOf("2.5.50"), semVer.getSemanticVersion());
         assertEquals(SemVer.valueOf("2.32.2"), foo.getSemanticVersion());
 
-        Module bar = StmtTestUtils.findImportedModule(context, foo, "bar");
+        final Module bar = StmtTestUtils.findImportedModule(context, foo, "bar");
         assertEquals(SemVer.valueOf("4.9.8"), bar.getSemanticVersion());
 
-        Module foobar = StmtTestUtils.findImportedModule(context, bar, "foobar");
+        final Module foobar = StmtTestUtils.findImportedModule(context, bar, "foobar");
         assertEquals(SemVer.valueOf("7.13.99"), foobar.getSemanticVersion());
 
         // check used augmentations
