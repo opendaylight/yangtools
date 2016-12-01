@@ -1,0 +1,9 @@
+module invalid-10 {
+    namespace "invalid-10";
+    prefix v;
+
+    container root {
+        notification root-notification {
+        }
+    }
+}
