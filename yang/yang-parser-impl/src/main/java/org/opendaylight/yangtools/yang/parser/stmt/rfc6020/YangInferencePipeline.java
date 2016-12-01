@@ -12,8 +12,10 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.treeScoped;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.Map;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
@@ -30,6 +32,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionModuleName
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SupportedVersionsBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.AnyxmlSchemaLocationNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
@@ -55,17 +58,23 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamesp
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.AnydataStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ContainerStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ModuleStatementRfc7950Support;
 
 public final class YangInferencePipeline {
+    public static final SupportedVersionsBundle SUPPORTED_VERSION_BUNDLE = new SupportedVersionsBundle(
+        ImmutableSet.of(YangVersion.VERSION_1, YangVersion.VERSION_1_1));
 
     public static final StatementSupportBundle INIT_BUNDLE = StatementSupportBundle
-            .builder().addSupport(global(ValidationBundlesNamespace.class))
+            .builder(SUPPORTED_VERSION_BUNDLE).addSupport(global(ValidationBundlesNamespace.class))
             .addSupport(global(SupportedFeaturesNamespace.class))
             .build();
 
     public static final StatementSupportBundle PRE_LINKAGE_BUNDLE = StatementSupportBundle
             .derivedFrom(INIT_BUNDLE)
-            .addSupport(new ModuleStatementSupport())
+            .addVersionSpecificSupport(YangVersion.VERSION_1, new ModuleStatementSupport())
+            .addVersionSpecificSupport(YangVersion.VERSION_1_1, new ModuleStatementRfc7950Support())
             .addSupport(new SubmoduleStatementImpl.Definition())
             .addSupport(new NamespaceStatementImpl.Definition())
             .addSupport(new ImportStatementDefinition())
@@ -135,7 +144,8 @@ public final class YangInferencePipeline {
             .addSupport(new LengthStatementImpl.Definition())
             .addSupport(new PatternStatementImpl.Definition())
             .addSupport(new RangeStatementImpl.Definition())
-            .addSupport(new ContainerStatementImpl.Definition())
+            .addVersionSpecificSupport(YangVersion.VERSION_1, new ContainerStatementImpl.Definition())
+            .addVersionSpecificSupport(YangVersion.VERSION_1_1, new ContainerStatementRfc7950Support())
             .addSupport(new GroupingStatementImpl.Definition())
             .addSupport(new ListStatementImpl.Definition())
             .addSupport(new UniqueStatementImpl.Definition())
@@ -160,6 +170,7 @@ public final class YangInferencePipeline {
             .addSupport(new MustStatementImpl.Definition())
             .addSupport(new MandatoryStatementImpl.Definition())
             .addSupport(new AnyxmlStatementImpl.Definition())
+            .addVersionSpecificSupport(YangVersion.VERSION_1_1, new AnydataStatementImpl.Definition())
             .addSupport(new IfFeatureStatementImpl.Definition())
             .addSupport(new UsesStatementImpl.Definition())
             .addSupport(treeScoped(GroupingNamespace.class)) //treeScoped
