@@ -9,8 +9,11 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Table;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,6 +27,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -40,6 +44,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SupportedVersionsBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
@@ -61,7 +66,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
             .add(ModelProcessingPhase.SOURCE_LINKAGE).add(ModelProcessingPhase.STATEMENT_DEFINITION)
             .add(ModelProcessingPhase.FULL_DECLARATION).add(ModelProcessingPhase.EFFECTIVE_MODEL).build();
 
-    private final Map<QName, StatementDefinitionContext<?, ?, ?>> definitions = new HashMap<>();
+    private final Table<SemVer, QName, StatementDefinitionContext<?, ?, ?>> definitions = HashBasedTable.create();
     private final Map<Class<?>, NamespaceBehaviourWithListeners<?, ?, ?>> supportedNamespaces = new HashMap<>();
 
     private final Map<ModelProcessingPhase, StatementSupportBundle> supports;
@@ -71,16 +76,11 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
 
     private final boolean enabledSemanticVersions;
+    private final SupportedVersionsBundle supportedVersions;
 
     BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports,
             final StatementParserMode statementParserMode, final Predicate<QName> isFeatureSupported) {
-        super();
-        this.supports = Preconditions.checkNotNull(supports, "BuildGlobalContext#supports cannot be null");
-        Preconditions.checkNotNull(statementParserMode, "Statement parser mode must not be null.");
-        this.enabledSemanticVersions = statementParserMode == StatementParserMode.SEMVER_MODE;
-
-        addToNs(SupportedFeaturesNamespace.class, SupportedFeatures.SUPPORTED_FEATURES,
-                Preconditions.checkNotNull(isFeatureSupported, "Supported feature predicate must not be null."));
+        this(supports, ImmutableMap.of(), statementParserMode, isFeatureSupported);
     }
 
     BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports,
@@ -97,6 +97,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
         addToNs(SupportedFeaturesNamespace.class, SupportedFeatures.SUPPORTED_FEATURES,
                 Preconditions.checkNotNull(isFeatureSupported, "Supported feature predicate must not be null."));
+        this.supportedVersions = Preconditions.checkNotNull(supports.get(ModelProcessingPhase.INIT).getSupportedVersionBundle());
     }
 
     boolean isEnabledSemanticVersioning() {
@@ -162,13 +163,14 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         return new SimpleNamespaceContext<>(potentialRaw);
     }
 
-    StatementDefinitionContext<?, ?, ?> getStatementDefinition(final QName name) {
-        StatementDefinitionContext<?, ?, ?> potential = definitions.get(name);
+    StatementDefinitionContext<?, ?, ?> getStatementDefinition(final SemVer version, final QName name) {
+        StatementDefinitionContext<?, ?, ?> potential = definitions.get(version, name);
         if (potential == null) {
-            final StatementSupport<?, ?, ?> potentialRaw = supports.get(currentPhase).getStatementDefinition(name);
+            final StatementSupport<?, ?, ?> potentialRaw = supports.get(currentPhase).getStatementDefinition(version,
+                    name);
             if (potentialRaw != null) {
                 potential = new StatementDefinitionContext<>(potentialRaw);
-                definitions.put(name, potential);
+                definitions.put(version, name, potential);
             }
         }
         return potential;
@@ -342,5 +344,9 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     Set<SourceSpecificContext> getSources() {
         return sources;
+    }
+
+    public SupportedVersionsBundle getSupportedVersions() {
+        return supportedVersions;
     }
 }
