@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
@@ -155,4 +156,8 @@ public class ContainerStatementImpl extends AbstractDeclaredStatement<QName> imp
         return allDeclared(DataDefinitionStatement.class);
     }
 
+    @Override
+    public final Collection<? extends NotificationStatement> getNotifications() {
+        return allDeclared(NotificationStatement.class);
+    }
 }
