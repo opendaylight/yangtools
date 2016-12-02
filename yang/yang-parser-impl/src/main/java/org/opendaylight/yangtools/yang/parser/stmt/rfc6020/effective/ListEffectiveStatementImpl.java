@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDataNodeContainer<ListStatement> implements
+public class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDataNodeContainer<ListStatement> implements
         ListSchemaNode, DerivableSchemaNode {
     private static final String ORDER_BY_USER_KEYWORD = "user";
 
@@ -42,7 +42,7 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
 
         this.original = ctx.getOriginalCtx() == null ? null : (ListSchemaNode) ctx.getOriginalCtx().buildEffective();
 
-        OrderedByEffectiveStatementImpl orderedByStmt = firstEffective(OrderedByEffectiveStatementImpl.class);
+        final OrderedByEffectiveStatementImpl orderedByStmt = firstEffective(OrderedByEffectiveStatementImpl.class);
         if (orderedByStmt != null && ORDER_BY_USER_KEYWORD.equals(orderedByStmt.argument())) {
             this.userOrdered = true;
         } else {
@@ -50,11 +50,11 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
         }
 
         // initKeyDefinition
-        List<QName> keyDefinitionInit = new LinkedList<>();
-        KeyEffectiveStatementImpl keyEffectiveSubstatement = firstEffective(KeyEffectiveStatementImpl.class);
+        final List<QName> keyDefinitionInit = new LinkedList<>();
+        final KeyEffectiveStatementImpl keyEffectiveSubstatement = firstEffective(KeyEffectiveStatementImpl.class);
 
         if (keyEffectiveSubstatement != null) {
-            Set<QName> possibleLeafQNamesForKey = new HashSet<>();
+            final Set<QName> possibleLeafQNamesForKey = new HashSet<>();
 
             for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
                 if (effectiveStatement instanceof LeafSchemaNode) {
@@ -62,7 +62,7 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
                 }
             }
 
-            for (SchemaNodeIdentifier key : keyEffectiveSubstatement.argument()) {
+            for (final SchemaNodeIdentifier key : keyEffectiveSubstatement.argument()) {
                 final QName keyQName = key.getLastComponent();
 
                 if (!possibleLeafQNamesForKey.contains(keyQName)) {

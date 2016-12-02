@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-public final class AugmentEffectiveStatementImpl extends
+public class AugmentEffectiveStatementImpl extends
         AbstractEffectiveDocumentedDataNodeContainer<SchemaNodeIdentifier, AugmentStatement> implements
         AugmentationSchema, NamespaceRevisionAware, Comparable<AugmentEffectiveStatementImpl> {
     private final SchemaPath targetPath;
@@ -47,20 +47,20 @@ public final class AugmentEffectiveStatementImpl extends
 
         this.targetPath = ctx.getStatementArgument().asSchemaPath();
 
-        QNameModule rootModuleQName = Utils.getRootModuleQName(ctx);
+        final QNameModule rootModuleQName = Utils.getRootModuleQName(ctx);
         this.namespace = rootModuleQName.getNamespace();
         this.revision = rootModuleQName.getRevision();
 
         this.order = ctx.getOrder();
         this.copyOf = ctx.getOriginalCtx() == null ? null : (AugmentationSchema) ctx.getOriginalCtx().buildEffective();
 
-        WhenEffectiveStatementImpl whenStmt = firstEffective(WhenEffectiveStatementImpl.class);
+        final WhenEffectiveStatementImpl whenStmt = firstEffective(WhenEffectiveStatementImpl.class);
         this.whenCondition = (whenStmt == null) ? null : whenStmt.argument();
 
         // initSubstatementCollections
-        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-        ImmutableList.Builder<UnknownSchemaNode> listBuilder = new ImmutableList.Builder<>();
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+        final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
+        final ImmutableList.Builder<UnknownSchemaNode> listBuilder = new ImmutableList.Builder<>();
+        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 listBuilder.add((UnknownSchemaNode) effectiveStatement);
             }
@@ -119,7 +119,7 @@ public final class AugmentEffectiveStatementImpl extends
         if (getClass() != obj.getClass()) {
             return false;
         }
-        AugmentEffectiveStatementImpl other = (AugmentEffectiveStatementImpl) obj;
+        final AugmentEffectiveStatementImpl other = (AugmentEffectiveStatementImpl) obj;
         if (!Objects.equals(targetPath, other.targetPath)) {
             return false;
         }
@@ -143,11 +143,11 @@ public final class AugmentEffectiveStatementImpl extends
     @Override
     public int compareTo(final AugmentEffectiveStatementImpl o) {
         checkNotNull(o);
-        Iterator<QName> thisIt = this.targetPath.getPathFromRoot().iterator();
-        Iterator<QName> otherIt = o.getTargetPath().getPathFromRoot().iterator();
+        final Iterator<QName> thisIt = this.targetPath.getPathFromRoot().iterator();
+        final Iterator<QName> otherIt = o.getTargetPath().getPathFromRoot().iterator();
         while (thisIt.hasNext()) {
             if (otherIt.hasNext()) {
-                int comp = thisIt.next().compareTo(otherIt.next());
+                final int comp = thisIt.next().compareTo(otherIt.next());
                 if (comp != 0) {
                     return comp;
                 }

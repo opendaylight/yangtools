@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class ContainerEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<ContainerStatement>
+public class ContainerEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<ContainerStatement>
         implements
         DerivableSchemaNode {
 
@@ -53,7 +53,7 @@ public final class ContainerEffectiveStatementImpl extends AbstractEffectiveCont
         if (getClass() != obj.getClass()) {
             return false;
         }
-        ContainerEffectiveStatementImpl other = (ContainerEffectiveStatementImpl) obj;
+        final ContainerEffectiveStatementImpl other = (ContainerEffectiveStatementImpl) obj;
         return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 

@@ -109,7 +109,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                 return;
             }
 
-            SUBSTATEMENT_VALIDATOR.validate(augmentNode);
+            getSubstatementValidator().validate(augmentNode);
 
             if (StmtContextUtils.isInExtensionBody(augmentNode)) {
                 return;
@@ -186,6 +186,10 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                             "Augment target '%s' not found", augmentNode.getStatementArgument());
                 }
             });
+        }
+
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
 
         private static Mutable<?, ?, ?> getSearchRoot(final Mutable<?, ?, ?> augmentContext) {

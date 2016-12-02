@@ -76,13 +76,16 @@ public class GroupingStatementImpl extends AbstractDeclaredStatement<QName>
         @Override
         public void onFullDefinitionDeclared(final Mutable<QName, GroupingStatement,
                 EffectiveStatement<QName, GroupingStatement>> stmt) {
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
 
             if (stmt != null && stmt.getParentContext() != null) {
                 stmt.getParentContext().addContext(GroupingNamespace.class, stmt.getStatementArgument(), stmt);
             }
         }
 
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
+        }
     }
 
     @Override
