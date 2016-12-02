@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -17,6 +18,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
@@ -320,5 +322,30 @@ public final class StmtContextUtils {
         default:
             return false;
         }
+    }
+
+    /**
+     * Checks whether at least one ancestor of a StatementContext matches one
+     * from collection of statement definitions.
+     *
+     * @param ctx
+     *            StatementContext to be checked
+     * @param ancestorTypes
+     *            collection of statement definitions
+     *
+     * @return true if at least one ancestor of a StatementContext matches one
+     *         from collection of statement definitions, otherwise false.
+     */
+    public static boolean hasAncestorOfType(final StmtContext<?, ?, ?> ctx,
+            final Collection<StatementDefinition> ancestorTypes) {
+        Preconditions.checkNotNull(ctx);
+        Preconditions.checkNotNull(ancestorTypes);
+        StmtContext<?, ?, ?> current = ctx;
+        while ((current = current.getParentContext()) != null) {
+            if (ancestorTypes.contains(current.getPublicDefinition())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
