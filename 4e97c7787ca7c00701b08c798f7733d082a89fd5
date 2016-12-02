@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1a622d24_2ba71f51",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/YangStmtMapping.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 87,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-12-02T10:01:02Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a622d24_e1dc2d77",
+      "range": {
+        "startLine": 87,
+        "startChar": 0,
+        "endLine": 87,
+        "endChar": 60
+      },
+      "revId": "4e97c7787ca7c00701b08c798f7733d082a89fd5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a622d24_c1d93185",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc7950/ContainerStatementRFC7950Support.java",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2016-12-01T11:52:03Z",
       "side": 1,
       "message": "I assume that ANYDATA will be added when resolving \nhttps://bugs.opendaylight.org/show_bug.cgi?id\u003d6883 right?",
+      "range": {
+        "startLine": 15,
+        "startChar": 25,
+        "endLine": 15,
+        "endChar": 47
+      },
+      "revId": "4e97c7787ca7c00701b08c798f7733d082a89fd5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_0b77c3d5",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc7950/ContainerStatementRFC7950Support.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-12-02T10:01:02Z",
+      "side": 1,
+      "message": "Yes, exactly.",
+      "parentUuid": "1a622d24_c1d93185",
       "range": {
         "startLine": 15,
         "startChar": 25,
