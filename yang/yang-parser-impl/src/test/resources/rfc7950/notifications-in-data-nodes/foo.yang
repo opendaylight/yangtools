@@ -1,0 +1,29 @@
+module foo {
+    namespace foo;
+    prefix foo;
+    yang-version 1.1;
+
+    container root {
+    }
+
+    container top {
+        notification top-notification {
+        }
+    }
+
+    list top-list {
+        notification top-list-notification {
+        }
+    }
+
+    grouping grp {
+        notification grp-notification {
+        }
+    }
+
+    augment "/root" {
+        uses grp;
+        notification aug-notification {
+        }
+    }
+}
