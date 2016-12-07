@@ -1,0 +1,15 @@
+module import-test-root {
+    namespace "urn:opendaylight:Import-test-root";
+    prefix "import-test-root";
+
+    revision 2016-12-12 {
+        description "Initial revision";
+    }
+
+    import import-test-imported {
+        prefix "imported-module";
+        revision-date "2016-12-12";
+        description "Yang 1.1: Allow description and reference in include and import.";
+        reference "https://tools.ietf.org/html/rfc7950 section-7.1.5/6";
+    }
+}
