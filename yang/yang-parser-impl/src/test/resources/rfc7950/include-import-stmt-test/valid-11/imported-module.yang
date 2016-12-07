@@ -1,0 +1,10 @@
+module imported-module {
+    yang-version 1.1;
+    namespace "urn:opendaylight:imported-module";
+    prefix "imported-module";
+
+    revision 2016-12-12 {
+        description "Initial revision";
+    }
+
+}
