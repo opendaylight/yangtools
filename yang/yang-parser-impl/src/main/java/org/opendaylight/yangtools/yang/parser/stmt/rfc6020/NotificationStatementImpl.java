@@ -86,7 +86,11 @@ public class NotificationStatementImpl extends AbstractDeclaredStatement<QName>
         public void onFullDefinitionDeclared(final Mutable<QName, NotificationStatement,
                 EffectiveStatement<QName, NotificationStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

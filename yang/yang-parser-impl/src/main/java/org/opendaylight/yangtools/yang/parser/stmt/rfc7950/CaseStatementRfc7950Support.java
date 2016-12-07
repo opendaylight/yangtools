@@ -9,25 +9,24 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.GroupingStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.CaseStatementImpl;
 
-public class GroupingStatementRfc7950Support extends GroupingStatementImpl.Definition {
+public class CaseStatementRfc7950Support extends CaseStatementImpl.Definition {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-            .GROUPING)
+            .CASE)
             .addAny(YangStmtMapping.ANYDATA)
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.CHOICE)
             .addAny(YangStmtMapping.CONTAINER)
             .addOptional(YangStmtMapping.DESCRIPTION)
-            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.IF_FEATURE)
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
-            .addAny(YangStmtMapping.NOTIFICATION)
             .addOptional(YangStmtMapping.REFERENCE)
             .addOptional(YangStmtMapping.STATUS)
-            .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
+            .addOptional(YangStmtMapping.WHEN)
             .build();
 
     @Override

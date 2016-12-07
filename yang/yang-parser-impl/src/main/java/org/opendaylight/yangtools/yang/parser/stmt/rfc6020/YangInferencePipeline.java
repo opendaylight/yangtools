@@ -59,11 +59,16 @@ import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNa
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.AnydataStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.AugmentStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.CaseStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ChoiceStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ContainerStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.GroupingStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.InputStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ListStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ModuleStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.NotificationStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.OutputStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.SubmoduleStatementRfc7950Support;
 
 public final class YangInferencePipeline {
     public static final SemVer YANG1 = SemVer.create(1);
@@ -79,7 +84,8 @@ public final class YangInferencePipeline {
             .derivedFrom(INIT_BUNDLE)
             .addVersionSpecificSupport(YANG1, new ModuleStatementSupport())
             .addVersionSpecificSupport(YANG1_1, new ModuleStatementRfc7950Support())
-            .addSupport(new SubmoduleStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1, new SubmoduleStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1_1, new SubmoduleStatementRfc7950Support())
             .addSupport(new NamespaceStatementImpl.Definition())
             .addSupport(new ImportStatementDefinition())
             .addSupport(new IncludeStatementImpl.Definition())
@@ -156,8 +162,10 @@ public final class YangInferencePipeline {
             .addVersionSpecificSupport(YANG1_1, new ListStatementRfc7950Support())
             .addSupport(new UniqueStatementImpl.Definition())
             .addSupport(new RpcStatementImpl.Definition())
-            .addSupport(new InputStatementImpl.Definition())
-            .addSupport(new OutputStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1, new InputStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1_1, new InputStatementRfc7950Support())
+            .addVersionSpecificSupport(YANG1, new OutputStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1_1, new OutputStatementRfc7950Support())
             .addVersionSpecificSupport(YANG1, new NotificationStatementImpl.Definition())
             .addVersionSpecificSupport(YANG1_1, new NotificationStatementRfc7950Support())
             .addSupport(new FractionDigitsStatementImpl.Definition())
@@ -172,8 +180,10 @@ public final class YangInferencePipeline {
             .addSupport(new ConfigStatementImpl.Definition())
             .addSupport(new DeviationStatementImpl.Definition())
             .addSupport(new DeviateStatementImpl.Definition())
-            .addSupport(new ChoiceStatementImpl.Definition())
-            .addSupport(new CaseStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1, new ChoiceStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1_1, new ChoiceStatementRfc7950Support())
+            .addVersionSpecificSupport(YANG1, new CaseStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1_1, new CaseStatementRfc7950Support())
             .addSupport(new MustStatementImpl.Definition())
             .addSupport(new MandatoryStatementImpl.Definition())
             .addSupport(new AnyxmlStatementImpl.Definition())
