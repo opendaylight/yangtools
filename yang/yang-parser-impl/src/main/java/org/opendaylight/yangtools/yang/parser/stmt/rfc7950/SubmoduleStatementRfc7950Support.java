@@ -9,25 +9,37 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.GroupingStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SubmoduleStatementImpl;
 
-public class GroupingStatementRfc7950Support extends GroupingStatementImpl.Definition {
+public class SubmoduleStatementRfc7950Support extends SubmoduleStatementImpl.Definition {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-            .GROUPING)
+            .SUBMODULE)
             .addAny(YangStmtMapping.ANYDATA)
             .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.AUGMENT)
+            .addMandatory(YangStmtMapping.BELONGS_TO)
             .addAny(YangStmtMapping.CHOICE)
+            .addOptional(YangStmtMapping.CONTACT)
             .addAny(YangStmtMapping.CONTAINER)
             .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.DEVIATION)
+            .addAny(YangStmtMapping.EXTENSION)
+            .addAny(YangStmtMapping.FEATURE)
             .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.IDENTITY)
+            .addAny(YangStmtMapping.IMPORT)
+            .addAny(YangStmtMapping.INCLUDE)
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
             .addAny(YangStmtMapping.NOTIFICATION)
+            .addOptional(YangStmtMapping.ORGANIZATION)
             .addOptional(YangStmtMapping.REFERENCE)
-            .addOptional(YangStmtMapping.STATUS)
+            .addAny(YangStmtMapping.REVISION)
+            .addAny(YangStmtMapping.RPC)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
+            .addOptional(YangStmtMapping.YANG_VERSION)
             .build();
 
     @Override

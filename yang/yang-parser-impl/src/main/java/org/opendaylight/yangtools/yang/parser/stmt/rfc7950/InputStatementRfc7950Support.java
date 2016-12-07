@@ -9,23 +9,19 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.GroupingStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.InputStatementImpl;
 
-public class GroupingStatementRfc7950Support extends GroupingStatementImpl.Definition {
+public class InputStatementRfc7950Support extends InputStatementImpl.Definition {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-            .GROUPING)
+            .INPUT)
             .addAny(YangStmtMapping.ANYDATA)
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.CHOICE)
             .addAny(YangStmtMapping.CONTAINER)
-            .addOptional(YangStmtMapping.DESCRIPTION)
             .addAny(YangStmtMapping.GROUPING)
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
-            .addAny(YangStmtMapping.NOTIFICATION)
-            .addOptional(YangStmtMapping.REFERENCE)
-            .addOptional(YangStmtMapping.STATUS)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
             .build();

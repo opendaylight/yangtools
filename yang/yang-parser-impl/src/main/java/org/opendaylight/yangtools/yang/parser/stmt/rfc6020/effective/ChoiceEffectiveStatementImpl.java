@@ -18,20 +18,16 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangValidationBundles;
 
 public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<ChoiceStatement> implements
         ChoiceSchemaNode, DerivableSchemaNode {
@@ -52,31 +48,27 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
         super(ctx);
         this.original = ctx.getOriginalCtx() == null ? null : (ChoiceSchemaNode) ctx.getOriginalCtx().buildEffective();
 
-        DefaultEffectiveStatementImpl defaultStmt = firstEffective(DefaultEffectiveStatementImpl.class);
+        final DefaultEffectiveStatementImpl defaultStmt = firstEffective(DefaultEffectiveStatementImpl.class);
         this.defaultCase = (defaultStmt == null) ? null : defaultStmt.argument();
 
         // initSubstatementCollectionsAndFields
-        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-        Set<AugmentationSchema> augmentationsInit = new LinkedHashSet<>();
-        SortedSet<ChoiceCaseNode> casesInit = new TreeSet<>(SCHEMA_NODE_COMP);
+        final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
+        final Set<AugmentationSchema> augmentationsInit = new LinkedHashSet<>();
+        final SortedSet<ChoiceCaseNode> casesInit = new TreeSet<>(SCHEMA_NODE_COMP);
 
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof AugmentationSchema) {
-                AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
+                final AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
                 augmentationsInit.add(augmentationSchema);
             }
             if (effectiveStatement instanceof ChoiceCaseNode) {
-                ChoiceCaseNode choiceCaseNode = (ChoiceCaseNode) effectiveStatement;
+                final ChoiceCaseNode choiceCaseNode = (ChoiceCaseNode) effectiveStatement;
                 casesInit.add(choiceCaseNode);
             }
-            if (effectiveStatement instanceof AnyXmlSchemaNode || effectiveStatement instanceof ContainerSchemaNode
-                    || effectiveStatement instanceof ListSchemaNode || effectiveStatement instanceof LeafListSchemaNode
-                    || effectiveStatement instanceof LeafSchemaNode) {
-
-                DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;
-                ChoiceCaseNode shorthandCase = new CaseShorthandImpl(dataSchemaNode);
+            if (YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(effectiveStatement.statementDefinition())) {
+                final DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;
+                final ChoiceCaseNode shorthandCase = new CaseShorthandImpl(dataSchemaNode);
                 casesInit.add(shorthandCase);
-
                 if (dataSchemaNode.isAugmenting() && !this.augmenting) {
                     resetAugmenting(dataSchemaNode);
                 }
@@ -89,19 +81,19 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
 
     private static void resetAugmenting(final DataSchemaNode dataSchemaNode) {
         if (dataSchemaNode instanceof LeafEffectiveStatementImpl) {
-            LeafEffectiveStatementImpl leaf = (LeafEffectiveStatementImpl) dataSchemaNode;
+            final LeafEffectiveStatementImpl leaf = (LeafEffectiveStatementImpl) dataSchemaNode;
             leaf.augmenting = false;
         } else if (dataSchemaNode instanceof ContainerEffectiveStatementImpl) {
-            ContainerEffectiveStatementImpl container = (ContainerEffectiveStatementImpl) dataSchemaNode;
+            final ContainerEffectiveStatementImpl container = (ContainerEffectiveStatementImpl) dataSchemaNode;
             container.augmenting = false;
         } else if (dataSchemaNode instanceof LeafListEffectiveStatementImpl) {
-            LeafListEffectiveStatementImpl leafList = (LeafListEffectiveStatementImpl) dataSchemaNode;
+            final LeafListEffectiveStatementImpl leafList = (LeafListEffectiveStatementImpl) dataSchemaNode;
             leafList.augmenting = false;
         } else if (dataSchemaNode instanceof ListEffectiveStatementImpl) {
-            ListEffectiveStatementImpl list = (ListEffectiveStatementImpl) dataSchemaNode;
+            final ListEffectiveStatementImpl list = (ListEffectiveStatementImpl) dataSchemaNode;
             list.augmenting = false;
         } else if (dataSchemaNode instanceof AnyXmlEffectiveStatementImpl) {
-            AnyXmlEffectiveStatementImpl anyXml = (AnyXmlEffectiveStatementImpl) dataSchemaNode;
+            final AnyXmlEffectiveStatementImpl anyXml = (AnyXmlEffectiveStatementImpl) dataSchemaNode;
             anyXml.augmenting = false;
         }
     }
@@ -170,7 +162,7 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
         if (getClass() != obj.getClass()) {
             return false;
         }
-        ChoiceEffectiveStatementImpl other = (ChoiceEffectiveStatementImpl) obj;
+        final ChoiceEffectiveStatementImpl other = (ChoiceEffectiveStatementImpl) obj;
         return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 
