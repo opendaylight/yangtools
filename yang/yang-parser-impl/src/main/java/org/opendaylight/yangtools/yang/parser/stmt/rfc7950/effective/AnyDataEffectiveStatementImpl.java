@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950.effective;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import java.util.Objects;
@@ -19,15 +20,24 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AbstractEffectiveDataSchemaNode;
 
-public class AnyDataEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<AnydataStatement> implements
+/**
+ * YANG 1.1 AnyData effective statement implementation.
+ */
+@Beta
+public final class AnyDataEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<AnydataStatement> implements
         AnyDataSchemaNode, DerivableSchemaNode {
 
     private final AnyDataSchemaNode original;
+    private final ContainerSchemaNode schema;
 
     public AnyDataEffectiveStatementImpl(
             final StmtContext<QName, AnydataStatement, EffectiveStatement<QName, AnydataStatement>> ctx) {
         super(ctx);
         this.original = ctx.getOriginalCtx() == null ? null : (AnyDataSchemaNode) ctx.getOriginalCtx().buildEffective();
+        /*
+         * :TODO we need to determine a way how to set schema of AnyData
+         */
+        this.schema = null;
     }
 
     @Override
@@ -63,7 +73,6 @@ public class AnyDataEffectiveStatementImpl extends AbstractEffectiveDataSchemaNo
 
     @Override
     public ContainerSchemaNode getSchemaOfAnyData() {
-        // TODO Auto-generated method stub
-        return null;
+        return schema;
     }
 }

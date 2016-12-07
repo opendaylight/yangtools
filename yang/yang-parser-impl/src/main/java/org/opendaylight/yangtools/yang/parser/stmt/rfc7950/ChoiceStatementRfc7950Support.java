@@ -10,37 +10,29 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ListStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ChoiceStatementImpl;
 
 /**
- * Class providing necessary support for processing YANG 1.1 List statement.
+ * Class providing necessary support for processing YANG 1.1 Choice statement.
  */
 @Beta
-public final class ListStatementRfc7950Support extends ListStatementImpl.Definition {
+public final class ChoiceStatementRfc7950Support extends ChoiceStatementImpl.Definition {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-            .LIST)
+            .CHOICE)
             .addAny(YangStmtMapping.ANYDATA)
             .addAny(YangStmtMapping.ANYXML)
-            .addAny(YangStmtMapping.CHOICE)
+            .addAny(YangStmtMapping.CASE)
             .addOptional(YangStmtMapping.CONFIG)
             .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(YangStmtMapping.DEFAULT)
             .addOptional(YangStmtMapping.DESCRIPTION)
-            .addAny(YangStmtMapping.GROUPING)
             .addAny(YangStmtMapping.IF_FEATURE)
-            .addOptional(YangStmtMapping.KEY)
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
-            .addOptional(YangStmtMapping.MAX_ELEMENTS)
-            .addOptional(YangStmtMapping.MIN_ELEMENTS)
-            .addAny(YangStmtMapping.MUST)
-            .addAny(YangStmtMapping.NOTIFICATION)
-            .addOptional(YangStmtMapping.ORDERED_BY)
+            .addOptional(YangStmtMapping.MANDATORY)
             .addOptional(YangStmtMapping.REFERENCE)
             .addOptional(YangStmtMapping.STATUS)
-            .addAny(YangStmtMapping.TYPEDEF)
-            .addAny(YangStmtMapping.UNIQUE)
-            .addAny(YangStmtMapping.USES)
             .addOptional(YangStmtMapping.WHEN)
             .build();
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -30,8 +30,11 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ChildSchemaNodes;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.effective.AnyDataEffectiveStatementImpl;
 
+/**
+ * YANG 1.1 AnyData declared statement implementation.
+ */
 @Beta
-public class AnydataStatementImpl extends AbstractDeclaredStatement<QName> implements AnydataStatement {
+public final class AnydataStatementImpl extends AbstractDeclaredStatement<QName> implements AnydataStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .ANYDATA)
             .addOptional(YangStmtMapping.CONFIG)

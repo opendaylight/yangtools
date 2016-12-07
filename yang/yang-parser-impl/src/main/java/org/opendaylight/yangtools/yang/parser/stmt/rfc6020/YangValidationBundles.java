@@ -30,11 +30,11 @@ public final class YangValidationBundles {
         final Builder<StatementDefinition, Set<StatementDefinition>> b = ImmutableMap.builder();
         b.put(YangStmtMapping.DEFAULT, ImmutableSet.of(YangStmtMapping.LEAF, YangStmtMapping.CHOICE));
         b.put(YangStmtMapping.MANDATORY, ImmutableSet.of(
-                YangStmtMapping.LEAF, YangStmtMapping.CHOICE, YangStmtMapping.ANYXML));
+                YangStmtMapping.LEAF, YangStmtMapping.CHOICE, YangStmtMapping.ANYXML, YangStmtMapping.ANYDATA));
         b.put(YangStmtMapping.PRESENCE, ImmutableSet.of(YangStmtMapping.CONTAINER));
         b.put(YangStmtMapping.MUST, ImmutableSet.of(
                 YangStmtMapping.CONTAINER, YangStmtMapping.LIST, YangStmtMapping.LEAF,
-                YangStmtMapping.LEAF_LIST, YangStmtMapping.ANYXML));
+                YangStmtMapping.LEAF_LIST, YangStmtMapping.ANYXML, YangStmtMapping.ANYDATA));
         b.put(YangStmtMapping.MIN_ELEMENTS, ImmutableSet.of(
                 YangStmtMapping.LIST, YangStmtMapping.LEAF_LIST));
         b.put(YangStmtMapping.MAX_ELEMENTS, ImmutableSet.of(
@@ -49,9 +49,9 @@ public final class YangValidationBundles {
 
     public static final Set<StatementDefinition> SUPPORTED_CASE_SHORTHANDS = ImmutableSet.of(
         YangStmtMapping.CONTAINER, YangStmtMapping.LIST, YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST,
-        YangStmtMapping.ANYXML);
+        YangStmtMapping.ANYXML, YangStmtMapping.ANYDATA);
 
     public static final Set<StatementDefinition> SUPPORTED_DATA_NODES = ImmutableSet.of(
         YangStmtMapping.CONTAINER, YangStmtMapping.LIST, YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST,
-        YangStmtMapping.ANYXML);
+        YangStmtMapping.ANYXML, YangStmtMapping.ANYDATA);
 }
