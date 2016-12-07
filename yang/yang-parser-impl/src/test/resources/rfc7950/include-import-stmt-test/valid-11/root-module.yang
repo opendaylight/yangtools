@@ -1,0 +1,23 @@
+module root-module {
+    yang-version 1.1;
+    namespace "urn:opendaylight.org:root-module";
+    prefix "rtm";
+
+    include child-module {
+        description "Yang 1.1: Allow description and reference in include and import.";
+        reference "https://tools.ietf.org/html/rfc7950 section-7.1.5/6";
+    }
+
+    include child-module-1;
+
+    import imported-module {
+        prefix "imported-module";
+        revision-date "2016-12-12";
+        description "Yang 1.1: Allow description and reference in include and import.";
+        reference "https://tools.ietf.org/html/rfc7950 section-7.1.5/6";
+    }
+
+    leaf new-leaf {
+        type new-string-type;
+    }
+}

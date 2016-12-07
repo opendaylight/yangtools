@@ -1,0 +1,13 @@
+submodule child-module-1 {
+    yang-version 1.1;
+    belongs-to "root-module" {
+        prefix "root";
+    }
+
+    container new-container {
+        description "New container definition";
+        leaf new-leaf {
+            type string;
+        }
+    }
+}
