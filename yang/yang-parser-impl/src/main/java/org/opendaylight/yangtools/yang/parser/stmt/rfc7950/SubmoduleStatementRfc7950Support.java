@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -7,19 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
-import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ModuleStatementSupport;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMapping;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SubmoduleStatementImpl;
 
-@Beta
-public class ModuleStatementRfc7950Support extends ModuleStatementSupport {
+public class SubmoduleStatementRfc7950Support extends SubmoduleStatementImpl.Definition {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-            .MODULE)
+            .SUBMODULE)
             .addAny(YangStmtMapping.ANYDATA)
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.AUGMENT)
+            .addMandatory(YangStmtMapping.BELONGS_TO)
             .addAny(YangStmtMapping.CHOICE)
             .addOptional(YangStmtMapping.CONTACT)
             .addAny(YangStmtMapping.CONTAINER)
@@ -34,17 +32,14 @@ public class ModuleStatementRfc7950Support extends ModuleStatementSupport {
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
-            .addMandatory(YangStmtMapping.NAMESPACE)
             .addAny(YangStmtMapping.NOTIFICATION)
             .addOptional(YangStmtMapping.ORGANIZATION)
-            .addMandatory(YangStmtMapping.PREFIX)
             .addOptional(YangStmtMapping.REFERENCE)
             .addAny(YangStmtMapping.REVISION)
             .addAny(YangStmtMapping.RPC)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
-            .addMandatory(YangStmtMapping.YANG_VERSION)
-            .addOptional(SupportedExtensionsMapping.SEMANTIC_VERSION)
+            .addOptional(YangStmtMapping.YANG_VERSION)
             .build();
 
     @Override

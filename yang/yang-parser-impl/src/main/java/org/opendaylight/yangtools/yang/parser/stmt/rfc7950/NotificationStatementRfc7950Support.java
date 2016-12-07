@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -27,6 +28,24 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.Notificatio
  */
 @Beta
 public final class NotificationStatementRfc7950Support extends NotificationStatementImpl.Definition {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
+            .NOTIFICATION)
+            .addAny(YangStmtMapping.ANYDATA)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.CHOICE)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(YangStmtMapping.USES)
+            .build();
+
     // :FIXME add action statement to the set of illegal parents, once bug-6896
     // will be resolved.
     private static final Set<StatementDefinition> ILLEGAL_PARENTS = ImmutableSet.of(YangStmtMapping.NOTIFICATION,
@@ -45,5 +64,10 @@ public final class NotificationStatementRfc7950Support extends NotificationState
         SourceException.throwIf(StmtContextUtils.hasParentOfType(ctx, YangStmtMapping.CASE), ctx.getStatementSourceReference(),
                 "Notification %s is defined within a case statement", ctx.getStatementArgument());
         return new NotificationEffectiveStatementImpl(ctx);
+    }
+
+    @Override
+    protected SubstatementValidator getSubstatementValidator() {
+        return SUBSTATEMENT_VALIDATOR;
     }
 }
