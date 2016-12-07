@@ -96,19 +96,19 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
             final Date maybeDate = Utils.getLatestRevision(stmt.declaredSubstatements());
             final Optional<Date> revisionDate = maybeDate != null ? Optional.of(maybeDate) : DEFAULT_REVISION;
 
-            ModuleIdentifier submoduleIdentifier = ModuleIdentifierImpl.create(stmt.getStatementArgument(),
+            final ModuleIdentifier submoduleIdentifier = ModuleIdentifierImpl.create(stmt.getStatementArgument(),
                 Optional.empty(), revisionDate);
 
             stmt.addContext(SubmoduleNamespace.class, submoduleIdentifier, stmt);
 
-            String belongsToModuleName = firstAttributeOf(
+            final String belongsToModuleName = firstAttributeOf(
                     stmt.declaredSubstatements(), BelongsToStatement.class);
-            StmtContext<?, ?, ?> prefixSubStmtCtx = findFirstDeclaredSubstatement(
+            final StmtContext<?, ?, ?> prefixSubStmtCtx = findFirstDeclaredSubstatement(
                     stmt, 0, BelongsToStatement.class, PrefixStatement.class);
             SourceException.throwIfNull(prefixSubStmtCtx, stmt.getStatementSourceReference(),
                 "Prefix of belongsTo statement is missing in submodule [%s]", stmt.getStatementArgument());
 
-            String prefix = (String) prefixSubStmtCtx.getStatementArgument();
+            final String prefix = (String) prefixSubStmtCtx.getStatementArgument();
 
             stmt.addToNs(BelongsToPrefixToModuleName.class, prefix, belongsToModuleName);
         }
@@ -117,7 +117,11 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
         public void onFullDefinitionDeclared(final Mutable<String, SubmoduleStatement,
                 EffectiveStatement<String, SubmoduleStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

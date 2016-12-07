@@ -15,8 +15,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMa
 public class ModuleStatementRfc7950Support extends ModuleStatementSupport {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .MODULE)
-            .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.ANYDATA)
+            .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.AUGMENT)
             .addAny(YangStmtMapping.CHOICE)
             .addOptional(YangStmtMapping.CONTACT)
