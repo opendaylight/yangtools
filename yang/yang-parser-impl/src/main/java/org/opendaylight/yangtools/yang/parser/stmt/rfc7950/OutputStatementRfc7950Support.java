@@ -10,41 +10,25 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ModuleStatementSupport;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMapping;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.OutputStatementImpl;
 
+/**
+ * Class providing necessary support for processing YANG 1.1 Output statement.
+ */
 @Beta
-public class ModuleStatementRfc7950Support extends ModuleStatementSupport {
+public final class OutputStatementRfc7950Support extends OutputStatementImpl.Definition {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-            .MODULE)
+            .OUTPUT)
             .addAny(YangStmtMapping.ANYDATA)
             .addAny(YangStmtMapping.ANYXML)
-            .addAny(YangStmtMapping.AUGMENT)
             .addAny(YangStmtMapping.CHOICE)
-            .addOptional(YangStmtMapping.CONTACT)
             .addAny(YangStmtMapping.CONTAINER)
-            .addOptional(YangStmtMapping.DESCRIPTION)
-            .addAny(YangStmtMapping.DEVIATION)
-            .addAny(YangStmtMapping.EXTENSION)
-            .addAny(YangStmtMapping.FEATURE)
             .addAny(YangStmtMapping.GROUPING)
-            .addAny(YangStmtMapping.IDENTITY)
-            .addAny(YangStmtMapping.IMPORT)
-            .addAny(YangStmtMapping.INCLUDE)
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
-            .addMandatory(YangStmtMapping.NAMESPACE)
-            .addAny(YangStmtMapping.NOTIFICATION)
-            .addOptional(YangStmtMapping.ORGANIZATION)
-            .addMandatory(YangStmtMapping.PREFIX)
-            .addOptional(YangStmtMapping.REFERENCE)
-            .addAny(YangStmtMapping.REVISION)
-            .addAny(YangStmtMapping.RPC)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
-            .addMandatory(YangStmtMapping.YANG_VERSION)
-            .addOptional(SupportedExtensionsMapping.SEMANTIC_VERSION)
             .build();
 
     @Override
@@ -52,3 +36,4 @@ public class ModuleStatementRfc7950Support extends ModuleStatementSupport {
         return SUBSTATEMENT_VALIDATOR;
     }
 }
+
