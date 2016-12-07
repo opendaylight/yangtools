@@ -23,11 +23,16 @@ public class AnyDataEffectiveStatementImpl extends AbstractEffectiveDataSchemaNo
         AnyDataSchemaNode, DerivableSchemaNode {
 
     private final AnyDataSchemaNode original;
+    private final ContainerSchemaNode schema;
 
     public AnyDataEffectiveStatementImpl(
             final StmtContext<QName, AnydataStatement, EffectiveStatement<QName, AnydataStatement>> ctx) {
         super(ctx);
         this.original = ctx.getOriginalCtx() == null ? null : (AnyDataSchemaNode) ctx.getOriginalCtx().buildEffective();
+        /*
+         * :TODO we need to determine a way how to set schema of AnyData
+         */
+        this.schema = null;
     }
 
     @Override
@@ -63,7 +68,6 @@ public class AnyDataEffectiveStatementImpl extends AbstractEffectiveDataSchemaNo
 
     @Override
     public ContainerSchemaNode getSchemaOfAnyData() {
-        // TODO Auto-generated method stub
-        return null;
+        return schema;
     }
 }

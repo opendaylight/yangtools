@@ -1,0 +1,51 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+    yang-version 1.1;
+
+    include sub-foo;
+
+    anydata top {
+        description "top anydata";
+        status deprecated;
+        mandatory true;
+        must "1!=0";
+    }
+
+    container root {
+        anydata root-anydata;
+    }
+
+    list my-list {
+        anydata list-anydata;
+    }
+
+    rpc my-rpc {
+        input {
+            anydata input-anydata;
+        }
+        output {
+            anydata output-anydata;
+        }
+    }
+
+    notification my-notification {
+        anydata notification-anydata;
+    }
+
+    choice my-choice {
+        case one {
+            anydata case-anydata;
+        }
+        anydata case-shorthand-anydata;
+    }
+
+    grouping grp {
+        anydata grp-anydata;
+    }
+
+    augment "/root" {
+        uses grp;
+        anydata aug-anydata;
+    }
+}
