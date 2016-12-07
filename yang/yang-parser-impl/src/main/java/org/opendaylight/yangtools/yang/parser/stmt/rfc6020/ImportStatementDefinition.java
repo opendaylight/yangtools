@@ -85,7 +85,7 @@ public class ImportStatementDefinition extends
     public void onFullDefinitionDeclared(
             final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt) {
         super.onFullDefinitionDeclared(stmt);
-        SUBSTATEMENT_VALIDATOR.validate(stmt);
+        getSubstatementValidator().validate(stmt);
     }
 
     @Override
@@ -128,6 +128,10 @@ public class ImportStatementDefinition extends
         } else {
             RevisionImport.onLinkageDeclared(stmt);
         }
+    }
+
+    protected SubstatementValidator getSubstatementValidator() {
+        return SUBSTATEMENT_VALIDATOR;
     }
 
     private static class RevisionImport {

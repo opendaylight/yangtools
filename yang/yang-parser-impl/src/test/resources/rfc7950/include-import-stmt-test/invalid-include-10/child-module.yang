@@ -1,0 +1,15 @@
+submodule child-module {
+    belongs-to "root-module" {
+        prefix "root";
+    }
+
+    typedef new-string-type {
+        type string {
+            pattern "[abc]{3}";
+        }
+    }
+
+    feature new-feature {
+        description "A new feature";
+    }
+}
