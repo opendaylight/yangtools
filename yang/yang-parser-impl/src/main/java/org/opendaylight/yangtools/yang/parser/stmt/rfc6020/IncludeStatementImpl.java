@@ -18,8 +18,10 @@ import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
@@ -112,7 +114,11 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
         public void onFullDefinitionDeclared(final Mutable<String, IncludeStatement,
                 EffectiveStatement<String, IncludeStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 
@@ -131,6 +137,16 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
     @Override
     public RevisionDateStatement getRevisionDate() {
         return firstDeclared(RevisionDateStatement.class);
+    }
+
+    @Override
+    public DescriptionStatement getDescription() {
+        return firstDeclared(DescriptionStatement.class);
+    }
+
+    @Override
+    public ReferenceStatement getReference() {
+        return firstDeclared(ReferenceStatement.class);
     }
 
 }

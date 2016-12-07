@@ -16,6 +16,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Iterator;
 import java.util.Set;
+import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -35,14 +36,30 @@ public class IncludedStmtsTest {
             ("/included-statements-test/root-module.yang", false);
     private static final YangStatementSourceImpl CHILD_MODULE = new YangStatementSourceImpl
             ("/included-statements-test/child-module.yang", false);
+    private static EffectiveSchemaContext result;
+
+    protected YangStatementSourceImpl getRootModule() {
+        return ROOT_MODULE;
+    }
+
+    protected YangStatementSourceImpl getChildModule() {
+        return CHILD_MODULE;
+    }
+
+    protected EffectiveSchemaContext getEffectiveSchemaContext() {
+        return result;
+    }
+
+    @Before
+    public void setUp() throws ReactorException {
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        StmtTestUtils.addSources(reactor, getRootModule(), getChildModule());
+        result = reactor.buildEffective();
+        assertNotNull(result);
+    }
 
     @Test
-    public void includedTypedefsTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        StmtTestUtils.addSources(reactor, ROOT_MODULE, CHILD_MODULE);
-
-        final EffectiveSchemaContext result = reactor.buildEffective();
-        assertNotNull(result);
+    public void includedTypedefsTest() {
 
         final Module testModule = result.findModuleByName("root-module", null);
         assertNotNull(testModule);
@@ -60,12 +77,7 @@ public class IncludedStmtsTest {
     }
 
     @Test
-    public void includedFeaturesTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        StmtTestUtils.addSources(reactor, ROOT_MODULE, CHILD_MODULE);
-
-        final EffectiveSchemaContext result = reactor.buildEffective();
-        assertNotNull(result);
+    public void includedFeaturesTest() {
 
         final Module testModule = result.findModuleByName("root-module", null);
         assertNotNull(testModule);
@@ -81,12 +93,7 @@ public class IncludedStmtsTest {
     }
 
     @Test
-    public void includedContainersAndListsTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        StmtTestUtils.addSources(reactor, ROOT_MODULE, CHILD_MODULE);
-
-        final EffectiveSchemaContext result = reactor.buildEffective();
-        assertNotNull(result);
+    public void includedContainersAndListsTest() {
 
         final Module testModule = result.findModuleByName("root-module", null);
         assertNotNull(testModule);
@@ -104,12 +111,7 @@ public class IncludedStmtsTest {
     }
 
     @Test
-    public void submoduleNamespaceTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        StmtTestUtils.addSources(reactor, ROOT_MODULE, CHILD_MODULE);
-
-        final EffectiveSchemaContext result = reactor.buildEffective();
-        assertNotNull(result);
+    public void submoduleNamespaceTest() {
 
         final Module testModule = result.findModuleByName("root-module", null);
         assertNotNull(testModule);

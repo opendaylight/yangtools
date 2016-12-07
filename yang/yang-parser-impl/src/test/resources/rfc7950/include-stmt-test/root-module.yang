@@ -1,0 +1,18 @@
+module root-module {
+    yang-version 1.1;
+    namespace "urn:opendaylight.org/root-module";
+    prefix "rtm";
+
+    include child-module {
+        description "Test for Yang 1.1 description substatement support";
+        reference "RFC 7950: The YANG 1.1 Data Modeling Language";
+    }
+
+    leaf new-leaf {
+        type new-string-type;
+    }
+
+    leaf old-leaf {
+        type new-int32-type;
+    }
+}

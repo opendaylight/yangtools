@@ -1,0 +1,37 @@
+submodule child-module {
+    yang-version 1.1;
+    belongs-to "root-module" {
+        prefix "root";
+    }
+
+    typedef new-string-type {
+        type string {
+            pattern "[abc]{3}";
+        }
+    }
+
+    typedef new-int32-type {
+        type int32 {
+            range "1..4 | 10..20";
+         }
+    }
+
+    feature new-feature1 {
+        description "a new feature";
+    }
+
+    feature new-feature2 {
+        description "another new feature";
+    }
+
+    container parent-container {
+        container child-container {
+            leaf autumn-leaf {
+                type string;
+            }
+            leaf winter-snow {
+                type string;
+            }
+        }
+    }
+}
