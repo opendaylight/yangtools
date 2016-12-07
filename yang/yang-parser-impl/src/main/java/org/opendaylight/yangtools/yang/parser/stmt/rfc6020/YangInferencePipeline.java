@@ -60,6 +60,8 @@ import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNa
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.AnydataStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ContainerStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ImportStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.IncludeStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ModuleStatementRfc7950Support;
 
 public final class YangInferencePipeline {
@@ -77,8 +79,10 @@ public final class YangInferencePipeline {
             .addVersionSpecificSupport(YangVersion.VERSION_1_1, new ModuleStatementRfc7950Support())
             .addSupport(new SubmoduleStatementImpl.Definition())
             .addSupport(new NamespaceStatementImpl.Definition())
-            .addSupport(new ImportStatementDefinition())
-            .addSupport(new IncludeStatementImpl.Definition())
+            .addVersionSpecificSupport(YangVersion.VERSION_1, new ImportStatementDefinition())
+            .addVersionSpecificSupport(YangVersion.VERSION_1_1, new ImportStatementRfc7950Support())
+            .addVersionSpecificSupport(YangVersion.VERSION_1, new IncludeStatementImpl.Definition())
+            .addVersionSpecificSupport(YangVersion.VERSION_1_1, new IncludeStatementRfc7950Support())
             .addSupport(new PrefixStatementImpl.Definition())
             .addSupport(new YangVersionStatementImpl.Definition())
             .addSupport(new RevisionStatementImpl.Definition())
