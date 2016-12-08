@@ -1,0 +1,15 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+    yang-version 1.1;
+
+    container root {
+        leaf my-leaf {
+            type string {
+                pattern '[xX][mM][lL].*' {
+                    modifier Invert-match;
+                }
+            }
+        }
+    }
+}
