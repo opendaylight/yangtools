@@ -40,6 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.export.YinExportUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -49,7 +50,7 @@ public class SchemaContextEmitterTest {
     @Test
     public void testSchemaContextEmitter() throws ReactorException, IOException, URISyntaxException,
             XMLStreamException, SAXException {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/schema-context-emitter-test");
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangSources("/schema-context-emitter-test");
         assertNotNull(schemaContext);
         assertEquals(1, schemaContext.getModules().size());
 

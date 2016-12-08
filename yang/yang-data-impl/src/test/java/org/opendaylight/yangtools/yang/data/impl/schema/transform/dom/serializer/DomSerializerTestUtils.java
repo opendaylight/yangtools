@@ -24,7 +24,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.mockito.Mockito;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.impl.TestUtils;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
@@ -32,8 +31,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serialize
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -49,8 +48,8 @@ public class DomSerializerTestUtils {
     }
 
     public static SchemaContext getSchemaContext() throws ReactorException, IOException, YangSyntaxErrorException {
-        final StatementStreamSource source = new YangStatementSourceImpl("/dom-serializer-test/serializer-test.yang", false);
-        final SchemaContext schemaContext = TestUtils.parseYangSources(source);
+        final YangStatementSourceImpl source = new YangStatementSourceImpl("/dom-serializer-test/serializer-test.yang", false);
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangSources(source);
 
         assertNotNull("Schema context must not be null.", schemaContext);
         return schemaContext;

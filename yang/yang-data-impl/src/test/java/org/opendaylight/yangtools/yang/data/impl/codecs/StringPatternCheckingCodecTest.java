@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
-import org.opendaylight.yangtools.yang.data.impl.TestUtils;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -29,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.data.api.codec.StringCodec;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +40,7 @@ public class StringPatternCheckingCodecTest {
 
     @Test
     public void testStringPatternCheckingCodec() throws ReactorException, ParseException, URISyntaxException {
-        SchemaContext schemaContext = TestUtils.parseYangSources(TEST_MODULE);
+        SchemaContext schemaContext = YangParserTestUtils.parseYangSources(TEST_MODULE);
         assertNotNull(schemaContext);
 
         QNameModule testModuleQName = QNameModule.create(new URI("string-pattern-checking-codec-test"),

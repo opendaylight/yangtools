@@ -20,7 +20,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.data.impl.TestUtils;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContext;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContextUtils;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -28,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class LeafRefContextTest {
 
@@ -44,7 +44,7 @@ public class LeafRefContextTest {
 
         final File resourceDir = resourceFile.getParentFile();
 
-        context = TestUtils.parseYangSources(Arrays.asList(resourceDir.listFiles()));
+        context = YangParserTestUtils.parseYangSources(Arrays.asList(resourceDir.listFiles()));
 
         final Set<Module> modules = context.getModules();
         for (final Module module : modules) {

@@ -40,6 +40,7 @@
         <module>yang-model-export</module>
         <module>yang-data-jaxen</module>
         <module>yang-system-test</module>
+        <module>yang-test-util</module>
     </modules>
     <build>
         <plugins>

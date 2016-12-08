@@ -40,9 +40,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMa
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug4454Test {
     private static final YangStatementSourceImpl source = new YangStatementSourceImpl("/bug-4454-test.yang", false);
@@ -122,10 +121,7 @@ public class Bug4454Test {
     }
 
     public static SchemaContext createTestContext() throws IOException, YangSyntaxErrorException, ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(source);
-
-        return reactor.buildEffective();
+        return YangParserTestUtils.parseYangSources(source);
     }
 
     @Test

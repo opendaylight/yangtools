@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadModules;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
 import com.google.common.base.Optional;
@@ -30,13 +29,14 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeS
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug6112Test {
     private static SchemaContext schemaContext;
 
     @BeforeClass
     public static void initialization() throws IOException, URISyntaxException, ReactorException {
-        schemaContext = loadModules("/bug-6112/yang");
+        schemaContext = YangParserTestUtils.parseYangSources("/bug-6112/yang");
     }
 
     private NormalizedNode<?, ?> readJson(final String jsonPath) throws IOException, URISyntaxException {

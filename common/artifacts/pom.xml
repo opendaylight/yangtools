@@ -111,6 +111,12 @@
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>yang-test-util</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-maven-plugin</artifactId>
                 <version>${project.version}</version>
             </dependency>

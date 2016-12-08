@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadModules;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
 import com.google.gson.JsonElement;
@@ -39,6 +38,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -54,7 +54,7 @@ public class AnyXmlSupportTest {
 
     @BeforeClass
     public static void setup() throws IOException, URISyntaxException, ReactorException {
-        schemaContext = loadModules("/complexjson/yang");
+        schemaContext = YangParserTestUtils.parseYangSources("/complexjson/yang");
     }
 
     @Test

@@ -30,13 +30,14 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug4969Test {
 
     @Test
     public void newParserLeafRefTest() throws SourceException, ReactorException, URISyntaxException, IOException {
         File sourceDir = new File(Bug4969Test.class.getResource("/bug-4969/yang").toURI());
-        SchemaContext context = TestUtils.parseYangSources(sourceDir.listFiles());
+        SchemaContext context = YangParserTestUtils.parseYangSources(sourceDir.listFiles());
         assertNotNull(context);
 
         verifyNormalizedNodeResult(context);
@@ -95,7 +96,7 @@ public class Bug4969Test {
     @Test
     public void newParserLeafRefTest2() throws SourceException, ReactorException, URISyntaxException, IOException {
         File sourceDir = new File(Bug4969Test.class.getResource("/leafref/yang").toURI());
-        SchemaContext context = TestUtils.parseYangSources(sourceDir.listFiles());
+        SchemaContext context = YangParserTestUtils.parseYangSources(sourceDir.listFiles());
         assertNotNull(context);
 
         parseJsonToNormalizedNodes(context);

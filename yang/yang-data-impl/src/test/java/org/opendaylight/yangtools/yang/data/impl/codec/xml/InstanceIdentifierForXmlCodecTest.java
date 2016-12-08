@@ -19,9 +19,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.impl.TestUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -40,7 +40,7 @@ public class InstanceIdentifierForXmlCodecTest {
     @Before
     public void setup() throws Exception {
         final File rpcTestYang = new File(getClass().getResource("iid-test.yang").toURI());
-        this.schemaContext = TestUtils.parseYangSources(rpcTestYang);
+        this.schemaContext = YangParserTestUtils.parseYangSources(rpcTestYang);
 
         final YangInstanceIdentifier.NodeIdentifier container = new YangInstanceIdentifier.NodeIdentifier(
                 QName.create(InstanceIdentifierForXmlCodecTest.NS, InstanceIdentifierForXmlCodecTest.REVISION, "cont"));

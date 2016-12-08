@@ -15,11 +15,12 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.export.YinExportUtils;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug4504Test {
     @Test
     public void test() throws Exception {
-        SchemaContext schema = StmtTestUtils.parseYangSources("/bugs/bug4504");
+        SchemaContext schema = YangParserTestUtils.parseYangSources("/bugs/bug4504");
         assertNotNull(schema);
         final File outDir = new File("target/bug4504-export");
         outDir.mkdirs();

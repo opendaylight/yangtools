@@ -18,11 +18,12 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.export.YinExportUtils;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug5531Test {
     @Test
     public void test() throws Exception {
-        SchemaContext schema = StmtTestUtils.parseYangSources("/bugs/bug5531");
+        SchemaContext schema = YangParserTestUtils.parseYangSources("/bugs/bug5531");
 
         assertNotNull(schema);
         assertNotNull(schema.getModules());

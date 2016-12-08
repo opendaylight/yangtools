@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -41,12 +40,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.ContextHolder;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.YangsInZipsResult;
 
@@ -145,7 +139,7 @@ public class UtilTest {
     public void contextHolderTest() throws Exception {
         final File testYang1 = new File(getClass().getResource("/test.yang").toURI());
         final File testYang2 = new File(getClass().getResource("/test2.yang").toURI());
-        final SchemaContext context = parseYangSources(testYang1, testYang2);
+        final SchemaContext context = YangParserTestUtils.parseYangSources(testYang1, testYang2);
         final Set<Module> yangModules = new HashSet<>();
         final Util.ContextHolder cxH = new ContextHolder(context, yangModules);
         Assert.assertEquals(context, cxH.getContext());
@@ -231,20 +225,5 @@ public class UtilTest {
                 in.close();
             }
         }
-    }
-
-    private SchemaContext parseYangSources(final File... files)
-            throws SourceException, ReactorException, FileNotFoundException {
-
-        final StatementStreamSource[] sources = new StatementStreamSource[files.length];
-
-        for (int i = 0; i < files.length; i++) {
-            sources[i] = new YangStatementSourceImpl(new FileInputStream(files[i]));
-        }
-
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(sources);
-
-        return reactor.buildEffective();
     }
 }

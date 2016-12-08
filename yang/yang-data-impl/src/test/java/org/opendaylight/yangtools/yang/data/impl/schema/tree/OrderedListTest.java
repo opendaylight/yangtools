@@ -34,9 +34,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeSnapshot;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
-import org.opendaylight.yangtools.yang.data.impl.TestUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +60,7 @@ public class OrderedListTest {
     public void setup() throws Exception {
         final File resourceFile = new File(Bug4295Test.class.getResource("/ordered-list-modification-test.yang")
                 .toURI());
-        context = TestUtils.parseYangSources(resourceFile);
+        context = YangParserTestUtils.parseYangSources(resourceFile);
         testModule = QNameModule.create(new URI("ordered-list-modification-test"),
                 SimpleDateFormatUtil.getRevisionFormat().parse("1970-01-01"));
         parentContainer = QName.create(testModule, "parent-container");

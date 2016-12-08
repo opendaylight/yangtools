@@ -8,8 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.system.test;
 
 import com.google.common.base.Stopwatch;
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,8 +26,7 @@ import org.apache.commons.cli.ParseException;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.IfFeaturePredicates;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
  * Main class of Yang parser system test.
@@ -78,8 +75,7 @@ public class Main {
         return options;
     }
 
-    public static void main(final String[] args) throws SourceException, FileNotFoundException, ReactorException,
-            URISyntaxException {
+    public static void main(final String[] args) {
 
         final HelpFormatter formatter = new HelpFormatter();
         final Options options = createOptions();
@@ -117,7 +113,7 @@ public class Main {
         final Stopwatch stopWatch = Stopwatch.createStarted();
 
         try {
-            context = YangParserUtils.parseYangSources(yangDirs, yangFiles, isFeatureSupported);
+            context = YangParserTestUtils.parseYangSources(yangDirs, yangFiles, isFeatureSupported);
         } catch (final Exception e) {
             LOG.log(Level.SEVERE, "Failed to create SchemaContext.", e);
             System.exit(1);

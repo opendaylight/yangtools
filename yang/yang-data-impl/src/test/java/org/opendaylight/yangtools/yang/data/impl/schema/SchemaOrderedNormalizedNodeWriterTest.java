@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -31,9 +30,7 @@ import org.opendaylight.yangtools.yang.data.impl.codec.xml.XMLStreamNormalizedNo
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class SchemaOrderedNormalizedNodeWriterTest {
 
@@ -157,12 +154,7 @@ public class SchemaOrderedNormalizedNodeWriterTest {
     }
 
     private SchemaContext getSchemaContext(final String filePath) throws URISyntaxException, ReactorException, FileNotFoundException {
-        final InputStream resourceStream = getClass().getResourceAsStream(filePath);
-        final YangStatementSourceImpl source = new YangStatementSourceImpl(resourceStream);
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-                .newBuild();
-        reactor.addSources(source);
-        return reactor.buildEffective();
+        return YangParserTestUtils.parseYangSource(filePath);
     }
 
     private static YangInstanceIdentifier.NodeIdentifier getNodeIdentifier(final String ns, final String name) {
