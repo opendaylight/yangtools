@@ -205,8 +205,12 @@ public final class TypeUtils {
 
     public static SchemaPath typeEffectiveSchemaPath(final StmtContext<?, ?, ?> stmtCtx) {
         final SchemaPath path = stmtCtx.getSchemaPath().get();
+        final SchemaPath parent = path.getParent();
+        final QName parentQName = parent.getLastComponent();
+        Preconditions.checkArgument(parentQName != null, "Path %s results has empty parent", path);
+
         final QName qname = stmtCtx.getFromNamespace(QNameCacheNamespace.class,
-            QName.create(path.getParent().getLastComponent(), path.getLastComponent().getLocalName()));
-        return path.getParent().createChild(qname);
+            QName.create(parentQName, path.getLastComponent().getLocalName()));
+        return parent.createChild(qname);
     }
 }
