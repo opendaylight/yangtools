@@ -11,7 +11,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.KeyEffectiv
 
 public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<SchemaNodeIdentifier>> implements
         KeyStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .KEY)
             .build();
 
@@ -38,7 +38,7 @@ public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<Schem
                     EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.KEY);
+            super(YangStmtMapping.KEY);
         }
 
         @Override

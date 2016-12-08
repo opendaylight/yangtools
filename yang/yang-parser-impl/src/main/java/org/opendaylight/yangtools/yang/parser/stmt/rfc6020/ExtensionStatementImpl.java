@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -26,12 +26,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ExtensionEffectiveStatementImpl;
 
 public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> implements ExtensionStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .EXTENSION)
-            .addOptional(Rfc6020Mapping.ARGUMENT)
-            .addOptional(Rfc6020Mapping.DESCRIPTION)
-            .addOptional(Rfc6020Mapping.REFERENCE)
-            .addOptional(Rfc6020Mapping.STATUS)
+            .addOptional(YangStmtMapping.ARGUMENT)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
             .build();
 
     protected ExtensionStatementImpl(final StmtContext<QName, ExtensionStatement,?> context) {
@@ -40,7 +40,7 @@ public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> imp
 
     public static class Definition extends AbstractStatementSupport<QName,ExtensionStatement,EffectiveStatement<QName,ExtensionStatement>> {
         public Definition() {
-            super(Rfc6020Mapping.EXTENSION);
+            super(YangStmtMapping.EXTENSION);
         }
 
         @Override

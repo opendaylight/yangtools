@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.MaxElements
 
 public class MaxElementsStatementImpl extends AbstractDeclaredStatement<String>
         implements MaxElementsStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .MAX_ELEMENTS)
             .build();
 
@@ -33,7 +33,7 @@ public class MaxElementsStatementImpl extends AbstractDeclaredStatement<String>
             AbstractStatementSupport<String, MaxElementsStatement, EffectiveStatement<String, MaxElementsStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.MAX_ELEMENTS);
+            super(YangStmtMapping.MAX_ELEMENTS);
         }
 
         @Override

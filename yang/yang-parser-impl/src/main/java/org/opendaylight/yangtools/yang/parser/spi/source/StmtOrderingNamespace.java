@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 /**
  * Map of statement order.
  */
 public interface StmtOrderingNamespace extends
-        IdentifierNamespace<Rfc6020Mapping, Integer> {
+        IdentifierNamespace<YangStmtMapping, Integer> {
 }

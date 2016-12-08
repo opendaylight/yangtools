@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
@@ -54,20 +54,20 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
     private static final Pattern PATH_REL_PATTERN1 = Pattern.compile("\\.\\.?\\s*/(.+)");
     private static final Pattern PATH_REL_PATTERN2 = Pattern.compile("//.*");
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator
-            .builder(Rfc6020Mapping.AUGMENT)
-            .addAny(Rfc6020Mapping.ANYXML)
-            .addAny(Rfc6020Mapping.CASE)
-            .addAny(Rfc6020Mapping.CHOICE)
-            .addAny(Rfc6020Mapping.CONTAINER)
-            .addOptional(Rfc6020Mapping.DESCRIPTION)
-            .addAny(Rfc6020Mapping.IF_FEATURE)
-            .addAny(Rfc6020Mapping.LEAF)
-            .addAny(Rfc6020Mapping.LEAF_LIST)
-            .addAny(Rfc6020Mapping.LIST)
-            .addOptional(Rfc6020Mapping.REFERENCE)
-            .addOptional(Rfc6020Mapping.STATUS)
-            .addAny(Rfc6020Mapping.USES)
-            .addOptional(Rfc6020Mapping.WHEN)
+            .builder(YangStmtMapping.AUGMENT)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.CASE)
+            .addAny(YangStmtMapping.CHOICE)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addAny(YangStmtMapping.USES)
+            .addOptional(YangStmtMapping.WHEN)
             .build();
 
     protected AugmentStatementImpl(final StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> context) {
@@ -78,7 +78,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
             AbstractStatementSupport<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.AUGMENT);
+            super(YangStmtMapping.AUGMENT);
         }
 
         @Override
@@ -134,7 +134,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                     /**
                      * Marks case short hand in augment
                      */
-                    if (augmentTargetCtx.getPublicDefinition() == Rfc6020Mapping.CHOICE) {
+                    if (augmentTargetCtx.getPublicDefinition() == YangStmtMapping.CHOICE) {
                         augmentNode.addToNs(AugmentToChoiceNamespace.class, augmentNode, Boolean.TRUE);
                     }
 
@@ -154,7 +154,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
 
                 private void updateAugmentOrder(final StatementContextBase<?, ?, ?> augmentSourceCtx) {
                     Integer currentOrder = augmentSourceCtx.getFromNamespace(StmtOrderingNamespace.class,
-                        Rfc6020Mapping.AUGMENT);
+                        YangStmtMapping.AUGMENT);
                     if (currentOrder == null) {
                         currentOrder = 1;
                     } else {
@@ -162,7 +162,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                     }
 
                     augmentSourceCtx.setOrder(currentOrder);
-                    augmentSourceCtx.addToNs(StmtOrderingNamespace.class, Rfc6020Mapping.AUGMENT, currentOrder);
+                    augmentSourceCtx.addToNs(StmtOrderingNamespace.class, YangStmtMapping.AUGMENT, currentOrder);
                 }
 
                 @Override
@@ -170,7 +170,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                     /*
                      * Do not fail, if it is an uses-augment to an unknown node.
                      */
-                    if (Rfc6020Mapping.USES == augmentNode.getParentContext().getPublicDefinition()) {
+                    if (YangStmtMapping.USES == augmentNode.getParentContext().getPublicDefinition()) {
                         final StatementContextBase<?, ?, ?> targetNode = Utils.findNode(getSearchRoot(augmentNode),
                                 augmentNode.getStatementArgument());
                         if (Utils.isUnknownNode(targetNode)) {
@@ -191,7 +191,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
         private static Mutable<?, ?, ?> getSearchRoot(final Mutable<?, ?, ?> augmentContext) {
             final Mutable<?, ?, ?> parent = augmentContext.getParentContext();
             // Augment is in uses - we need to augment instantiated nodes in parent.
-            if (Rfc6020Mapping.USES == parent.getPublicDefinition()) {
+            if (YangStmtMapping.USES == parent.getPublicDefinition()) {
                 return parent.getParentContext();
             }
             return parent;
@@ -323,14 +323,14 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
             return false;
         }
 
-        private static final Set<Rfc6020Mapping> NOCOPY_DEF_SET = ImmutableSet.of(Rfc6020Mapping.USES, Rfc6020Mapping.WHEN,
-                Rfc6020Mapping.DESCRIPTION, Rfc6020Mapping.REFERENCE, Rfc6020Mapping.STATUS);
+        private static final Set<YangStmtMapping> NOCOPY_DEF_SET = ImmutableSet.of(YangStmtMapping.USES, YangStmtMapping.WHEN,
+                YangStmtMapping.DESCRIPTION, YangStmtMapping.REFERENCE, YangStmtMapping.STATUS);
 
         public static boolean needToCopyByAugment(final StmtContext<?, ?, ?> stmtContext) {
             return !NOCOPY_DEF_SET.contains(stmtContext.getPublicDefinition());
         }
 
-        private static final Set<Rfc6020Mapping> REUSED_DEF_SET = ImmutableSet.of(Rfc6020Mapping.TYPEDEF);
+        private static final Set<YangStmtMapping> REUSED_DEF_SET = ImmutableSet.of(YangStmtMapping.TYPEDEF);
 
         public static boolean isReusedByAugment(final StmtContext<?, ?, ?> stmtContext) {
             return REUSED_DEF_SET.contains(stmtContext.getPublicDefinition());

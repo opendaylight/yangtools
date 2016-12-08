@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Range;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.FractionDigitsEffectiveStatementImpl;
 
 public class FractionDigitsStatementImpl extends AbstractDeclaredStatement<Integer> implements FractionDigitsStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .FRACTION_DIGITS)
             .build();
 
@@ -34,7 +34,7 @@ public class FractionDigitsStatementImpl extends AbstractDeclaredStatement<Integ
             EffectiveStatement<Integer, FractionDigitsStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.FRACTION_DIGITS);
+            super(YangStmtMapping.FRACTION_DIGITS);
         }
 
         @Override

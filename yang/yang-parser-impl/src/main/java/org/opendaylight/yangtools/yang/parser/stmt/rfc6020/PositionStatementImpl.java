@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PositionEff
 
 public class PositionStatementImpl extends AbstractDeclaredStatement<Long> implements PositionStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        Rfc6020Mapping.POSITION).build();
+        YangStmtMapping.POSITION).build();
 
     protected PositionStatementImpl(final StmtContext<Long, PositionStatement, ?> context) {
         super(context);
@@ -29,7 +29,7 @@ public class PositionStatementImpl extends AbstractDeclaredStatement<Long> imple
             EffectiveStatement<Long, PositionStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.POSITION);
+            super(YangStmtMapping.POSITION);
         }
 
         @Override
