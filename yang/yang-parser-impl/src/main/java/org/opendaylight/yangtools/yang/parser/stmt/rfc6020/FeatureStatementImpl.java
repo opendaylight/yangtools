@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
@@ -25,12 +25,12 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.FeatureEffe
 
 public class FeatureStatementImpl extends AbstractDeclaredStatement<QName>
         implements FeatureStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .FEATURE)
-            .addOptional(Rfc6020Mapping.DESCRIPTION)
-            .addAny(Rfc6020Mapping.IF_FEATURE)
-            .addOptional(Rfc6020Mapping.STATUS)
-            .addOptional(Rfc6020Mapping.REFERENCE)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addOptional(YangStmtMapping.REFERENCE)
             .build();
 
     protected FeatureStatementImpl(
@@ -43,7 +43,7 @@ public class FeatureStatementImpl extends AbstractDeclaredStatement<QName>
             AbstractStatementSupport<QName, FeatureStatement, EffectiveStatement<QName, FeatureStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.FEATURE);
+            super(YangStmtMapping.FEATURE);
         }
 
         @Override

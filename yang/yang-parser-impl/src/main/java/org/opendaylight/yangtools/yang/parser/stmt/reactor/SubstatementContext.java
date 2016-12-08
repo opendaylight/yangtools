@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -171,14 +171,14 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     }
 
     // FIXME: revise this, as it seems to be wrong
-    private static final Set<Rfc6020Mapping> NOCOPY_FROM_GROUPING_SET = ImmutableSet.of(
-        Rfc6020Mapping.DESCRIPTION,
-        Rfc6020Mapping.REFERENCE,
-        Rfc6020Mapping.STATUS);
-    private static final Set<Rfc6020Mapping> REUSED_DEF_SET = ImmutableSet.of(
-        Rfc6020Mapping.TYPE,
-        Rfc6020Mapping.TYPEDEF,
-        Rfc6020Mapping.USES);
+    private static final Set<YangStmtMapping> NOCOPY_FROM_GROUPING_SET = ImmutableSet.of(
+        YangStmtMapping.DESCRIPTION,
+        YangStmtMapping.REFERENCE,
+        YangStmtMapping.STATUS);
+    private static final Set<YangStmtMapping> REUSED_DEF_SET = ImmutableSet.of(
+        YangStmtMapping.TYPE,
+        YangStmtMapping.TYPEDEF,
+        YangStmtMapping.USES);
 
     private static boolean needToCopyByUses(final StmtContext<?, ?, ?> stmtContext) {
         final StatementDefinition def = stmtContext.getPublicDefinition();
@@ -187,7 +187,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
             return false;
         }
         if (NOCOPY_FROM_GROUPING_SET.contains(def)) {
-            return !Rfc6020Mapping.GROUPING.equals(stmtContext.getParentContext().getPublicDefinition());
+            return !YangStmtMapping.GROUPING.equals(stmtContext.getParentContext().getPublicDefinition());
         }
 
         LOG.debug("Will copy {} statement {}", def, stmtContext);

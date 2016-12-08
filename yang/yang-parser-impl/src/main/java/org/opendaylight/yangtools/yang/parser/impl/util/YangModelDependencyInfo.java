@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMapping;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
@@ -193,12 +193,12 @@ public abstract class YangModelDependencyInfo {
         if (rootStatement
                 .keyword()
                 .getText()
-                .equals(Rfc6020Mapping.MODULE.getStatementName().getLocalName())) {
+                .equals(YangStmtMapping.MODULE.getStatementName().getLocalName())) {
             return parseModuleContext(rootStatement);
         } else if (rootStatement
                 .keyword()
                 .getText()
-                .equals(Rfc6020Mapping.SUBMODULE.getStatementName()
+                .equals(YangStmtMapping.SUBMODULE.getStatementName()
                         .getLocalName())) {
             return parseSubmoduleContext(rootStatement);
         }
@@ -244,7 +244,7 @@ public abstract class YangModelDependencyInfo {
             if (subStatementContext
                     .keyword()
                     .getText()
-                    .equals(Rfc6020Mapping.IMPORT.getStatementName()
+                    .equals(YangStmtMapping.IMPORT.getStatementName()
                             .getLocalName())) {
                 final String revisionDateStr = getRevisionDateString(subStatementContext);
                 final String importedModuleName = Utils
@@ -285,7 +285,7 @@ public abstract class YangModelDependencyInfo {
             if (subStatementContext
                     .keyword()
                     .getText()
-                    .equals(Rfc6020Mapping.INCLUDE.getStatementName()
+                    .equals(YangStmtMapping.INCLUDE.getStatementName()
                             .getLocalName())) {
                 final String revisionDateStr = getRevisionDateString(subStatementContext);
                 final String IncludeModuleName = Utils
@@ -305,7 +305,7 @@ public abstract class YangModelDependencyInfo {
             if (importSubStatement
                     .keyword()
                     .getText()
-                    .equals(Rfc6020Mapping.REVISION_DATE.getStatementName()
+                    .equals(YangStmtMapping.REVISION_DATE.getStatementName()
                             .getLocalName())) {
                 revisionDateStr = Utils
                         .stringFromStringContext(importSubStatement.argument());
@@ -321,7 +321,7 @@ public abstract class YangModelDependencyInfo {
             if (subStatementContext
                     .keyword()
                     .getText()
-                    .equals(Rfc6020Mapping.REVISION.getStatementName()
+                    .equals(YangStmtMapping.REVISION.getStatementName()
                             .getLocalName())) {
                 final String currentRevision = Utils
                         .stringFromStringContext(subStatementContext.argument());
@@ -352,7 +352,7 @@ public abstract class YangModelDependencyInfo {
             if (subStatementContext
                     .keyword()
                     .getText()
-                    .equals(Rfc6020Mapping.BELONGS_TO.getStatementName()
+                    .equals(YangStmtMapping.BELONGS_TO.getStatementName()
                             .getLocalName())) {
                 return Utils.stringFromStringContext(subStatementContext
                         .argument());
