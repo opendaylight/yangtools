@@ -71,9 +71,11 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ImportStatementRfc795
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.IncludeStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.InputStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ListStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ModifierStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ModuleStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.NotificationStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.OutputStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.PatternStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.SubmoduleStatementRfc7950Support;
 
 public final class YangInferencePipeline {
@@ -158,7 +160,9 @@ public final class YangInferencePipeline {
             .addSupport(new PathStatementImpl.Definition())
             .addSupport(new EnumStatementImpl.Definition())
             .addSupport(new LengthStatementImpl.Definition())
-            .addSupport(new PatternStatementImpl.Definition())
+            .addVersionSpecificSupport(VERSION_1, new PatternStatementImpl.Definition())
+            .addVersionSpecificSupport(VERSION_1_1, new PatternStatementRfc7950Support())
+            .addVersionSpecificSupport(VERSION_1_1, new ModifierStatementImpl.Definition())
             .addSupport(new RangeStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1, new ContainerStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1_1, new ContainerStatementRfc7950Support())

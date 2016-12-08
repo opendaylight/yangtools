@@ -9,23 +9,28 @@
 package org.opendaylight.yangtools.yang.model.api.type;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
+import java.util.Arrays;
+import java.util.Map;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Enum describing the effect of a YANG modifier statement.
  *
- * As of YANG 1.1 (RFC7950) there is only one modifier value
- * available and that is "invert-match".
- * If there are more possible values added in the future,
+ * As of YANG 1.1 (RFC7950) there is only one modifier value available and that
+ * is "invert-match". If there are more possible values added in the future,
  * this enum can be extended with more enum constants.
  */
 public enum ModifierKind {
-
     INVERT_MATCH("invert-match");
+
+    private static final Map<String, ModifierKind> MODIFIER_KIND_MAP = Maps.uniqueIndex(
+        Arrays.asList(ModifierKind.values()), ModifierKind::getKeyword);
 
     private final String keyword;
 
-    ModifierKind(final String keyword) {
+    private ModifierKind(final String keyword) {
         this.keyword = Preconditions.checkNotNull(keyword);
     }
 
@@ -34,5 +39,16 @@ public enum ModifierKind {
      */
     public @Nonnull String getKeyword() {
         return keyword;
+    }
+
+    /**
+     * Returns ModifierKind based on supplied Yang keyword
+     *
+     * @param keyword
+     *            Yang keyword in string form
+     * @return ModifierKind based on supplied Yang keyword, or null if the input is not a valid modifier.
+     */
+    public static @Nullable ModifierKind fromKeyword(final String keyword) {
+        return MODIFIER_KIND_MAP.get(keyword);
     }
 }
