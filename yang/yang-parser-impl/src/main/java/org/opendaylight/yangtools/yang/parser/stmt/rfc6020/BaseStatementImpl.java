@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.BaseEffecti
 
 public class BaseStatementImpl extends AbstractDeclaredStatement<QName> implements BaseStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-            SubstatementValidator.builder(Rfc6020Mapping.BASE).build();
+            SubstatementValidator.builder(YangStmtMapping.BASE).build();
 
     protected BaseStatementImpl(final StmtContext<QName, BaseStatement, ?> context) {
         super(context);
@@ -43,7 +43,7 @@ public class BaseStatementImpl extends AbstractDeclaredStatement<QName> implemen
             extends AbstractStatementSupport<QName, BaseStatement, EffectiveStatement<QName, BaseStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.BASE);
+            super(YangStmtMapping.BASE);
         }
 
         @Override

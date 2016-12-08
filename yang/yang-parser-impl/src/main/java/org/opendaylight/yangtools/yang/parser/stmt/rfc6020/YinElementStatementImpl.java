@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.YinElementE
 public class YinElementStatementImpl extends AbstractDeclaredStatement<Boolean>
         implements YinElementStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        Rfc6020Mapping.YIN_ELEMENT).build();
+        YangStmtMapping.YIN_ELEMENT).build();
 
     protected YinElementStatementImpl(final StmtContext<Boolean, YinElementStatement, ?> context) {
         super(context);
@@ -29,7 +29,7 @@ public class YinElementStatementImpl extends AbstractDeclaredStatement<Boolean>
             AbstractStatementSupport<Boolean, YinElementStatement, EffectiveStatement<Boolean, YinElementStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.YIN_ELEMENT);
+            super(YangStmtMapping.YIN_ELEMENT);
         }
 
         @Override

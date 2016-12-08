@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
@@ -28,14 +28,14 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.TypeDefEffectiveStatementImpl;
 
 public class TypedefStatementImpl extends AbstractDeclaredStatement<QName> implements TypedefStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .TYPEDEF)
-            .addOptional(Rfc6020Mapping.DEFAULT)
-            .addOptional(Rfc6020Mapping.DESCRIPTION)
-            .addOptional(Rfc6020Mapping.REFERENCE)
-            .addOptional(Rfc6020Mapping.STATUS)
-            .addMandatory(Rfc6020Mapping.TYPE)
-            .addOptional(Rfc6020Mapping.UNITS)
+            .addOptional(YangStmtMapping.DEFAULT)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addMandatory(YangStmtMapping.TYPE)
+            .addOptional(YangStmtMapping.UNITS)
             .build();
 
     protected TypedefStatementImpl(final StmtContext<QName, TypedefStatement, ?> context) {
@@ -46,7 +46,7 @@ public class TypedefStatementImpl extends AbstractDeclaredStatement<QName> imple
             AbstractStatementSupport<QName, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.TYPEDEF);
+            super(YangStmtMapping.TYPEDEF);
         }
 
         @Override

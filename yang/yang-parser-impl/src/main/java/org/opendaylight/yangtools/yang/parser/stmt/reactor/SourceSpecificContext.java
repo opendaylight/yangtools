@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -114,7 +114,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             .put(TypeUtils.IDENTITY_REF, new IdentityRefSpecificationImpl.Definition())
             .put(TypeUtils.INSTANCE_IDENTIFIER, new InstanceIdentifierSpecificationImpl.Definition())
             .build();
-    private static final QName TYPE = Rfc6020Mapping.TYPE.getStatementName();
+    private static final QName TYPE = YangStmtMapping.TYPE.getStatementName();
 
     private final Multimap<ModelProcessingPhase, ModifierImpl> modifiers = HashMultimap.create();
     private final QNameToStatementDefinitionMap qNameToStmtDefMap = new QNameToStatementDefinitionMap();
