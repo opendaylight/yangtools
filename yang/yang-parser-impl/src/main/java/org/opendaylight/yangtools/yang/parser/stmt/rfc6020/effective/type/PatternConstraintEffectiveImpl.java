@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.Objects;
+import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
 public class PatternConstraintEffectiveImpl implements PatternConstraint {
@@ -19,15 +21,16 @@ public class PatternConstraintEffectiveImpl implements PatternConstraint {
     private final String reference;
     private final String errorAppTag;
     private final String errorMessage;
+    private final ModifierKind modifier;
 
     public PatternConstraintEffectiveImpl(final String regex, final Optional<String> description,
             final Optional<String> reference) {
         this(regex, description.orNull(), reference.orNull(), "invalid-regular-expression", String.format(
-                "String %s is not valid regular expression.", regex));
+                "String %s is not valid regular expression.", regex), null);
     }
 
     public PatternConstraintEffectiveImpl(final String regex, final String description, final String reference,
-            final String errorAppTag, final String errorMessage) {
+            final String errorAppTag, final String errorMessage, final ModifierKind modifier) {
         super();
         this.regEx = Preconditions.checkNotNull(regex, "regex must not be null.");
         this.description = description;
@@ -35,6 +38,7 @@ public class PatternConstraintEffectiveImpl implements PatternConstraint {
         this.errorAppTag = errorAppTag != null ? errorAppTag : "invalid-regular-expression";
         this.errorMessage = errorMessage != null ? errorMessage : String.format(
                 "String %s is not valid regular expression.", regex);
+        this.modifier = modifier;
     }
 
     @Override
@@ -58,20 +62,18 @@ public class PatternConstraintEffectiveImpl implements PatternConstraint {
     }
 
     @Override
+    public ModifierKind getModifier() {
+        return modifier;
+    }
+
+    @Override
     public String getReference() {
         return reference;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(description);
-        result = prime * result + Objects.hashCode(errorAppTag);
-        result = prime * result + Objects.hashCode(errorMessage);
-        result = prime * result + Objects.hashCode(reference);
-        result = prime * result + regEx.hashCode();
-        return result;
+        return Objects.hash(description, errorAppTag, errorMessage, reference, regEx, modifier);
     }
 
     @Override
@@ -86,28 +88,15 @@ public class PatternConstraintEffectiveImpl implements PatternConstraint {
             return false;
         }
         final PatternConstraintEffectiveImpl other = (PatternConstraintEffectiveImpl) obj;
-        if (!Objects.equals(description, other.description)) {
-            return false;
-        }
-        if (!Objects.equals(errorAppTag, other.errorAppTag)) {
-            return false;
-        }
-        if (!Objects.equals(errorMessage, other.errorMessage)) {
-            return false;
-        }
-        if (!Objects.equals(reference, other.reference)) {
-            return false;
-        }
-        if (!Objects.equals(regEx, other.regEx)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(description, other.description) && Objects.equals(errorAppTag, other.errorAppTag)
+                && Objects.equals(errorMessage, other.errorMessage) && Objects.equals(reference, other.reference)
+                && Objects.equals(regEx, other.regEx) && Objects.equals(modifier, other.modifier);
     }
 
     @Override
     public String toString() {
-        return PatternConstraintEffectiveImpl.class.getSimpleName() + " [regex=" + regEx + ", description="
-                + description + ", reference=" + reference + ", errorAppTag=" + errorAppTag + ", errorMessage="
-                + errorMessage + "]";
+        return MoreObjects.toStringHelper(this).add("regex", regEx).add("description", description)
+                .add("reference", reference).add("errorAppTag", errorAppTag).add("errorMessage", errorMessage)
+                .add("modifier", modifier).toString();
     }
 }
