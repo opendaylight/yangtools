@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.model.repo.api;
 
 import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YIN_MODULE;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.MODULE;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.REVISION;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.SUBMODULE;
+import static org.opendaylight.yangtools.yang.model.api.YangStmtMapping.MODULE;
+import static org.opendaylight.yangtools.yang.model.api.YangStmtMapping.REVISION;
+import static org.opendaylight.yangtools.yang.model.api.YangStmtMapping.SUBMODULE;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;

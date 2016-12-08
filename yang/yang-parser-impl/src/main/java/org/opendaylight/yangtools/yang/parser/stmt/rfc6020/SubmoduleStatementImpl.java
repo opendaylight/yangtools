@@ -15,7 +15,7 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
@@ -32,33 +32,33 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.SubmoduleEffectiveStatementImpl;
 
 public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleStatement> implements SubmoduleStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .SUBMODULE)
-            .addAny(Rfc6020Mapping.ANYXML)
-            .addAny(Rfc6020Mapping.AUGMENT)
-            .addMandatory(Rfc6020Mapping.BELONGS_TO)
-            .addAny(Rfc6020Mapping.CHOICE)
-            .addOptional(Rfc6020Mapping.CONTACT)
-            .addAny(Rfc6020Mapping.CONTAINER)
-            .addOptional(Rfc6020Mapping.DESCRIPTION)
-            .addAny(Rfc6020Mapping.DEVIATION)
-            .addAny(Rfc6020Mapping.EXTENSION)
-            .addAny(Rfc6020Mapping.FEATURE)
-            .addAny(Rfc6020Mapping.GROUPING)
-            .addAny(Rfc6020Mapping.IDENTITY)
-            .addAny(Rfc6020Mapping.IMPORT)
-            .addAny(Rfc6020Mapping.INCLUDE)
-            .addAny(Rfc6020Mapping.LEAF)
-            .addAny(Rfc6020Mapping.LEAF_LIST)
-            .addAny(Rfc6020Mapping.LIST)
-            .addAny(Rfc6020Mapping.NOTIFICATION)
-            .addOptional(Rfc6020Mapping.ORGANIZATION)
-            .addOptional(Rfc6020Mapping.REFERENCE)
-            .addAny(Rfc6020Mapping.REVISION)
-            .addAny(Rfc6020Mapping.RPC)
-            .addAny(Rfc6020Mapping.TYPEDEF)
-            .addAny(Rfc6020Mapping.USES)
-            .addOptional(Rfc6020Mapping.YANG_VERSION)
+            .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.AUGMENT)
+            .addMandatory(YangStmtMapping.BELONGS_TO)
+            .addAny(YangStmtMapping.CHOICE)
+            .addOptional(YangStmtMapping.CONTACT)
+            .addAny(YangStmtMapping.CONTAINER)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.DEVIATION)
+            .addAny(YangStmtMapping.EXTENSION)
+            .addAny(YangStmtMapping.FEATURE)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.IDENTITY)
+            .addAny(YangStmtMapping.IMPORT)
+            .addAny(YangStmtMapping.INCLUDE)
+            .addAny(YangStmtMapping.LEAF)
+            .addAny(YangStmtMapping.LEAF_LIST)
+            .addAny(YangStmtMapping.LIST)
+            .addAny(YangStmtMapping.NOTIFICATION)
+            .addOptional(YangStmtMapping.ORGANIZATION)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addAny(YangStmtMapping.REVISION)
+            .addAny(YangStmtMapping.RPC)
+            .addAny(YangStmtMapping.TYPEDEF)
+            .addAny(YangStmtMapping.USES)
+            .addOptional(YangStmtMapping.YANG_VERSION)
             .build();
     private static final Optional<Date> DEFAULT_REVISION = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
 
@@ -70,7 +70,7 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
             EffectiveStatement<String, SubmoduleStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.SUBMODULE);
+            super(YangStmtMapping.SUBMODULE);
         }
 
         @Override

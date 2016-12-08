@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -25,12 +25,12 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IdentityEff
 
 public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
         implements IdentityStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .IDENTITY)
-            .addOptional(Rfc6020Mapping.BASE)
-            .addOptional(Rfc6020Mapping.DESCRIPTION)
-            .addOptional(Rfc6020Mapping.REFERENCE)
-            .addOptional(Rfc6020Mapping.STATUS)
+            .addOptional(YangStmtMapping.BASE)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
             .build();
 
     protected IdentityStatementImpl(
@@ -41,7 +41,7 @@ public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
     public static class Definition extends AbstractStatementSupport<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.IDENTITY);
+            super(YangStmtMapping.IDENTITY);
         }
 
         @Override

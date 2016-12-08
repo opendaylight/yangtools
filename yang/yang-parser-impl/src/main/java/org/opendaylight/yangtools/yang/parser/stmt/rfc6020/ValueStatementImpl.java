@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ValueEffect
 
 public class ValueStatementImpl extends AbstractDeclaredStatement<Integer> implements ValueStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        Rfc6020Mapping.VALUE).build();
+        YangStmtMapping.VALUE).build();
 
     protected ValueStatementImpl(final StmtContext<Integer, ValueStatement, ?> context) {
         super(context);
@@ -29,7 +29,7 @@ public class ValueStatementImpl extends AbstractDeclaredStatement<Integer> imple
             AbstractStatementSupport<Integer, ValueStatement, EffectiveStatement<Integer, ValueStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.VALUE);
+            super(YangStmtMapping.VALUE);
         }
 
         @Override
