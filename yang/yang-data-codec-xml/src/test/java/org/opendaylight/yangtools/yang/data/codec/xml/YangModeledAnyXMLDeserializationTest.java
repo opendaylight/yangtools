@@ -43,9 +43,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class YangModeledAnyXMLDeserializationTest {
 
@@ -77,12 +75,7 @@ public class YangModeledAnyXMLDeserializationTest {
         myLeaf2 = QName.create(fooModuleQName, "my-leaf-2");
         myAnyXMLDataFoo = QName.create(fooModuleQName, "my-anyxml-data");
 
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(new YangStatementSourceImpl("/anyxml-support/yang/foo.yang", false),
-                new YangStatementSourceImpl("/anyxml-support/yang/bar.yang", false),
-                new YangStatementSourceImpl("/anyxml-support/yang/yang-ext.yang", false));
-
-        schemaContext = reactor.buildEffective();
+        schemaContext = YangParserTestUtils.parseYangSources("/anyxml-support/yang");
     }
 
     @Test

@@ -70,6 +70,10 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>yang-test-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>yang-maven-plugin-spi</artifactId>
         </dependency>
 

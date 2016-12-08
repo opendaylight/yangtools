@@ -21,7 +21,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>yang-parser-impl</artifactId>
+            <artifactId>yang-test-util</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

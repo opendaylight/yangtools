@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadModules;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.augmentationBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
@@ -35,6 +34,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
  *
@@ -48,7 +48,7 @@ public class JsonStreamToNormalizedNodeTest {
 
     @BeforeClass
     public static void initialization() throws IOException, URISyntaxException, ReactorException {
-        schemaContext = loadModules("/complexjson/yang");
+        schemaContext = YangParserTestUtils.parseYangSources("/complexjson/yang");
     }
 
     @Test

@@ -51,9 +51,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -82,10 +80,7 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
         myContainer2QName = QName.create(bazModuleQName, "my-container-2");
         myAnyXMLDataBaz = QName.create(bazModuleQName, "my-anyxml-data");
 
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(new YangStatementSourceImpl("/anyxml-support/serialization/baz.yang", false),
-                new YangStatementSourceImpl("/anyxml-support/serialization/yang-ext.yang", false));
-        schemaContext = reactor.buildEffective();
+        schemaContext = YangParserTestUtils.parseYangSources("/anyxml-support/serialization");
     }
 
     @Test

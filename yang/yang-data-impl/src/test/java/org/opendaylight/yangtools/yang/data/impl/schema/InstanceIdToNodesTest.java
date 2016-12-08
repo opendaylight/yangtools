@@ -25,9 +25,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.impl.TestUtils;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class InstanceIdToNodesTest {
 
@@ -55,7 +55,7 @@ public class InstanceIdToNodesTest {
 
     static SchemaContext createTestContext() throws URISyntaxException, FileNotFoundException, ReactorException {
         final File resourceFile = new File(InstanceIdToNodesTest.class.getResource("/filter-test.yang").toURI());
-        return TestUtils.parseYangSources(resourceFile);
+        return YangParserTestUtils.parseYangSources(resourceFile);
     }
 
     @BeforeClass

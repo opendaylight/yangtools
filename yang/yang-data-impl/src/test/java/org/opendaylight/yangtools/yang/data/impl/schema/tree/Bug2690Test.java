@@ -25,11 +25,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
-import org.opendaylight.yangtools.yang.data.impl.TestUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug2690Test {
     private static final String ODL_DATASTORE_TEST_YANG = "/odl-datastore-test.yang";
@@ -53,7 +53,7 @@ public class Bug2690Test {
     }
 
     public static SchemaContext createTestContext() throws ReactorException {
-        return TestUtils.parseYangStreams(Collections.singletonList(getDatastoreTestInputStream()));
+        return YangParserTestUtils.parseYangStreams(Collections.singletonList(getDatastoreTestInputStream()));
     }
 
     @Test

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadModules;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -31,6 +30,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeS
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +41,7 @@ public class StreamToNormalizedNodeTest {
 
     @BeforeClass
     public static void initialization() throws IOException, URISyntaxException, ReactorException {
-        schemaContext = loadModules("/complexjson/yang");
+        schemaContext = YangParserTestUtils.parseYangSources("/complexjson/yang");
         streamAsString = loadTextFile(new File(StreamToNormalizedNodeTest.class.getResource(
                 "/complexjson/complex-json.json").toURI()));
     }

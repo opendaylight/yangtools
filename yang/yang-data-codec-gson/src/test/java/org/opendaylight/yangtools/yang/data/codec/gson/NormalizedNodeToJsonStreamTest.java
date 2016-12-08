@@ -13,7 +13,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.childArray;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.childPrimitive;
-import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadModules;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.resolveCont1;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonArray;
@@ -40,6 +39,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
  * Each test tests whether json output obtained after transformation contains is corect. The transformation takes
@@ -59,7 +59,7 @@ public class NormalizedNodeToJsonStreamTest {
 
     @BeforeClass
     public static void initialization() throws IOException, URISyntaxException, ReactorException {
-        schemaContext = loadModules("/complexjson/yang");
+        schemaContext = YangParserTestUtils.parseYangSources("/complexjson/yang");
     }
 
     @Test

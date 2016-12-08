@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.serialize
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -43,7 +42,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.YangModeledAnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.data.impl.TestUtils;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XMLStreamNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
@@ -54,6 +52,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -86,9 +85,7 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
         myContainer2QName = QName.create(bazModuleQName, "my-container-2");
         myAnyXMLDataBaz = QName.create(bazModuleQName, "my-anyxml-data");
 
-        schemaContext = TestUtils.parseYangSources(
-                new File(getClass().getResource("/anyxml-support/serialization/baz.yang").toURI()), new File(getClass()
-                        .getResource("/anyxml-support/serialization/yang-ext.yang").toURI()));
+        schemaContext = YangParserTestUtils.parseYangSources("/anyxml-support/serialization");
     }
 
     @Test

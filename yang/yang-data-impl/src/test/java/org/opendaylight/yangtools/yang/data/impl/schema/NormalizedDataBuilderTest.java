@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
-import org.opendaylight.yangtools.yang.data.impl.TestUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeSchemaAwareBuilder;
@@ -45,6 +44,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class NormalizedDataBuilderTest {
 
@@ -55,7 +55,7 @@ public class NormalizedDataBuilderTest {
     public void setUp() throws URISyntaxException, FileNotFoundException, ReactorException {
         final File resourceFile = new File(getClass().getResource(
                 "test.yang").toURI());
-        schema = TestUtils.parseYangSources(resourceFile);
+        schema = YangParserTestUtils.parseYangSources(resourceFile);
         containerNode = (ContainerSchemaNode) getSchemaNode(schema, "test", "container");
     }
 

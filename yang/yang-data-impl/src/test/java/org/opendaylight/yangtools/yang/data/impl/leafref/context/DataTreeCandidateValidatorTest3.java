@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
-import org.opendaylight.yangtools.yang.data.impl.TestUtils;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContext;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefDataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefValidatation;
@@ -44,6 +43,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -206,7 +206,7 @@ public class DataTreeCandidateValidatorTest3 {
                 "/leafref-validation/leafref-validation3.yang").toURI());
         final File resourceDir = resourceFile.getParentFile();
 
-        context = TestUtils.parseYangSources(Arrays.asList(resourceDir.listFiles()));
+        context = YangParserTestUtils.parseYangSources(Arrays.asList(resourceDir.listFiles()));
 
         final Set<Module> modules = context.getModules();
         for (final Module module : modules) {

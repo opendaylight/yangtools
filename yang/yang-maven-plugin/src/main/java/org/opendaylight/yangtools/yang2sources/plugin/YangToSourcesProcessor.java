@@ -30,9 +30,8 @@ import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.repo.YangTextSchemaContextResolver;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.ContextHolder;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.YangsInZipsResult;
@@ -119,7 +118,6 @@ class YangToSourcesProcessor {
     }
 
     private ContextHolder processYang() throws MojoExecutionException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         SchemaContext resolveSchemaContext;
         List<Closeable> closeables = new ArrayList<>();
         LOG.info("{} Inspecting {}", LOG_PREFIX, yangFilesRootDir);
@@ -187,7 +185,7 @@ class YangToSourcesProcessor {
                     closeables.addAll(yangStreams);
                 }
 
-                resolveSchemaContext = reactor.buildEffective(all);
+                resolveSchemaContext = YangParserTestUtils.parseYangStreams(all);
 
                 Set<Module> parsedAllYangModules = resolveSchemaContext.getModules();
                 projectYangModules = new HashSet<>();

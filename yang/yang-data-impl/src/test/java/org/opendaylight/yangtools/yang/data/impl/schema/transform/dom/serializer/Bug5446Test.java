@@ -43,12 +43,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.data.impl.TestUtils;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XMLStreamNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -79,7 +79,7 @@ public class Bug5446Test extends XMLTestCase {
         rootQName = QName.create(fooModuleQName, "root");
         ipAddressQName = QName.create(fooModuleQName, "ip-address");
 
-        schemaContext = TestUtils.parseYangSources(new File(getClass().getResource("/bug5446/yang/foo.yang").toURI()));
+        schemaContext = YangParserTestUtils.parseYangSources(new File(getClass().getResource("/bug5446/yang/foo.yang").toURI()));
     }
 
     @Test
