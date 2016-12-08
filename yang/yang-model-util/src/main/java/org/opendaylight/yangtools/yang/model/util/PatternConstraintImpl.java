@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.Objects;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
 /**
@@ -33,20 +35,22 @@ final class PatternConstraintImpl implements PatternConstraint, Immutable {
 
     private final String errorAppTag;
     private final String errorMessage;
+    private final ModifierKind modifier;
 
     PatternConstraintImpl(final String regex, final Optional<String> description, final Optional<String> reference) {
         this(regex, description, reference, "invalid-regular-expression", String.format(
-                "String %s is not valid regular expression.", regex));
+                "String %s is not valid regular expression.", regex), Optional.absent());
     }
 
     PatternConstraintImpl(final String regex, final Optional<String> description, final Optional<String> reference,
-            final String errorAppTag, final String errorMessage) {
+            final String errorAppTag, final String errorMessage, final Optional<ModifierKind> modifier) {
         this.regex = Preconditions.checkNotNull(regex, "regex must not be null.");
         this.description = description.orNull();
         this.reference = reference.orNull();
         this.errorAppTag = errorAppTag != null ? errorAppTag : "invalid-regular-expression";
         this.errorMessage = errorMessage != null ? errorMessage : String.format(
                 "String %s is not valid regular expression.", regex);
+        this.modifier = modifier.orNull();
     }
 
     @Override
@@ -76,14 +80,7 @@ final class PatternConstraintImpl implements PatternConstraint, Immutable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(description);
-        result = prime * result + Objects.hashCode(errorAppTag);
-        result = prime * result + Objects.hashCode(errorMessage);
-        result = prime * result + Objects.hashCode(reference);
-        result = prime * result + regex.hashCode();
-        return result;
+        return Objects.hash(description, errorAppTag, errorMessage, reference, regex, modifier);
     }
 
     @Override
@@ -97,21 +94,13 @@ final class PatternConstraintImpl implements PatternConstraint, Immutable {
         final PatternConstraintImpl other = (PatternConstraintImpl) obj;
         return Objects.equals(description, other.description) && Objects.equals(errorAppTag, other.errorAppTag)
                 && Objects.equals(errorMessage, other.errorMessage) && Objects.equals(reference, other.reference)
-                && Objects.equals(regex, other.regex);
+                && Objects.equals(regex, other.regex) && Objects.equals(modifier, other.modifier);
     }
 
     @Override
     public String toString() {
-        return "PatternConstraintImpl [regex=" +
-                regex +
-                ", description=" +
-                description +
-                ", reference=" +
-                reference +
-                ", errorAppTag=" +
-                errorAppTag +
-                ", errorMessage=" +
-                errorMessage +
-                "]";
+        return MoreObjects.toStringHelper(this).add("regex", regex).add("description", description)
+                .add("reference", reference).add("errorAppTag", errorAppTag).add("errorMessage", errorMessage)
+                .add("modifier", modifier).toString();
     }
 }
