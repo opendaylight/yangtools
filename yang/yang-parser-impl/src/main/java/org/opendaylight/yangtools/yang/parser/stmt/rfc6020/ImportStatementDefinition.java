@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
@@ -54,14 +54,14 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ImportEffec
 public class ImportStatementDefinition extends
         AbstractStatementSupport<String, ImportStatement, EffectiveStatement<String, ImportStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator
-            .builder(Rfc6020Mapping.IMPORT)
-            .addMandatory(Rfc6020Mapping.PREFIX)
-            .addOptional(Rfc6020Mapping.REVISION_DATE)
+            .builder(YangStmtMapping.IMPORT)
+            .addMandatory(YangStmtMapping.PREFIX)
+            .addOptional(YangStmtMapping.REVISION_DATE)
             .addOptional(SupportedExtensionsMapping.SEMANTIC_VERSION)
             .build();
 
     public ImportStatementDefinition() {
-        super(Rfc6020Mapping.IMPORT);
+        super(YangStmtMapping.IMPORT);
     }
 
     @Override

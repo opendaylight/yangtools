@@ -12,7 +12,7 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.BelongsEffe
 public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
         implements BelongsToStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
-            SubstatementValidator.builder(Rfc6020Mapping.BELONGS_TO).addMandatory(Rfc6020Mapping.PREFIX).build();
+            SubstatementValidator.builder(YangStmtMapping.BELONGS_TO).addMandatory(YangStmtMapping.PREFIX).build();
 
     protected BelongsToStatementImpl(final StmtContext<String, BelongsToStatement, ?> context) {
         super(context);
@@ -45,7 +45,7 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
             AbstractStatementSupport<String, BelongsToStatement, EffectiveStatement<String, BelongsToStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.BELONGS_TO);
+            super(YangStmtMapping.BELONGS_TO);
         }
 
         @Override
