@@ -9,6 +9,10 @@ package org.opendaylight.yangtools.yang.common;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 
 /**
@@ -27,6 +31,9 @@ public enum YangVersion {
      */
     VERSION_1_1("1.1", "RFC7950");
 
+    private static final Map<String, YangVersion> YANG_VERSION_MAP = Maps.uniqueIndex(Arrays.asList(values()),
+        YangVersion::toString);
+
     private final String str;
     private String reference;
 
@@ -40,18 +47,10 @@ public enum YangVersion {
      *
      * @param str String to parse
      * @return YANG version
-     * @throws IllegalArgumentException if the string is malformed
      * @throws NullPointerException if the string is null
      */
-    public static YangVersion parse(@Nonnull final String str) {
-        switch (str) {
-            case "1":
-                return VERSION_1;
-            case "1.1":
-                return VERSION_1_1;
-            default:
-                throw new IllegalArgumentException("Invalid YANG version '" + str + "'");
-        }
+    public static Optional<YangVersion> parse(@Nonnull final String str) {
+        return Optional.ofNullable(YANG_VERSION_MAP.get(Preconditions.checkNotNull(str)));
     }
 
     /**

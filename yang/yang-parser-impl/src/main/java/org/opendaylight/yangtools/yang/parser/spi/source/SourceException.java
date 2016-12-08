@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import com.google.common.base.Preconditions;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 
 /**
@@ -112,6 +113,23 @@ public class SourceException extends RuntimeException {
             @Nonnull final String format, final Object... args) {
         throwIf(obj == null, source, format, args);
         return obj;
+    }
+
+    /**
+     * Throw an instance of this exception if an optional is not present. If it is present, this method will return
+     * the unwrapped value.
+     *
+     * @param opt Optional to be checked
+     * @param source Statement source reference
+     * @param format Format string, according to {@link String#format(String, Object...)}.
+     * @param args Format string arguments, according to {@link String#format(String, Object...)}
+     * @return Object unwrapped from the opt optional
+     * @throws SourceException if the optional is not present
+     */
+    @Nonnull public static <T> T unwrap(final Optional<T> opt, @Nonnull final StatementSourceReference source,
+            @Nonnull final String format, final Object... args) {
+        throwIf(!opt.isPresent(), source, format, args);
+        return opt.get();
     }
 
     private static String createMessage(@Nonnull final String message, @Nonnull final StatementSourceReference source) {

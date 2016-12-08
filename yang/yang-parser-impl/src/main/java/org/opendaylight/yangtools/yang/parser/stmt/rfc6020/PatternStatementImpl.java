@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
@@ -56,7 +57,7 @@ public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConst
 
             try {
                 Pattern.compile(pattern);
-            } catch (PatternSyntaxException e) {
+            } catch (final PatternSyntaxException e) {
                 LOG.debug("Pattern \"{}\" failed to compile at {}", pattern, ctx.getStatementSourceReference(), e);
                 return null;
             }
@@ -104,6 +105,11 @@ public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConst
     }
 
     @Override
+    public ModifierStatement getModifierStatement() {
+        return firstDeclared(ModifierStatement.class);
+    }
+
+    @Override
     public ReferenceStatement getReference() {
         return firstDeclared(ReferenceStatement.class);
     }
@@ -113,5 +119,4 @@ public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConst
     public PatternConstraint getValue() {
         return argument();
     }
-
 }

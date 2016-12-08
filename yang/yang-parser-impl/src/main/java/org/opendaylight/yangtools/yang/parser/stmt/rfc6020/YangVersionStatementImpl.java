@@ -37,11 +37,8 @@ public class YangVersionStatementImpl extends AbstractDeclaredStatement<YangVers
 
         @Override
         public YangVersion parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-            try {
-                return YangVersion.parse(value);
-            } catch (IllegalArgumentException e) {
-                throw new SourceException("Unsupported YANG version " + value, ctx.getStatementSourceReference(), e);
-            }
+            return SourceException.unwrap(YangVersion.parse(value), ctx.getStatementSourceReference(),
+                "Unsupported YANG version %s", value);
         }
 
         @Override
