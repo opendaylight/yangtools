@@ -13,6 +13,7 @@ import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -21,6 +22,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.Description
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ErrorAppTagEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ErrorMessageEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ReferenceEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.effective.ModifierEffectiveStatementImpl;
 
 abstract class AbstractConstraintEffectiveStatement<A, D extends DeclaredStatement<A>> extends
         DeclaredEffectiveStatementBase<A, D> {
@@ -28,16 +30,19 @@ abstract class AbstractConstraintEffectiveStatement<A, D extends DeclaredStateme
     private final String reference;
     private final String errorAppTag;
     private final String errorMessage;
+    private final ModifierKind modifier;
     private final A constraints;
 
-    public AbstractConstraintEffectiveStatement(final StmtContext<A, D, ?> ctx, final ConstraintFactory<A> constraintFactory) {
+    public AbstractConstraintEffectiveStatement(final StmtContext<A, D, ?> ctx,
+            final ConstraintFactory<A> constraintFactory) {
         super(ctx);
         String descriptionInit = null;
         String referenceInit = null;
         String errorAppTagInit = null;
         String errorMessageInit = null;
+        ModifierKind modifierInit = null;
 
-        for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
+        for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof DescriptionEffectiveStatementImpl) {
                 descriptionInit = ((DescriptionEffectiveStatementImpl) stmt).argument();
             }
@@ -50,12 +55,16 @@ abstract class AbstractConstraintEffectiveStatement<A, D extends DeclaredStateme
             if (stmt instanceof ErrorMessageEffectiveStatementImpl) {
                 errorMessageInit = ((ErrorMessageEffectiveStatementImpl) stmt).argument();
             }
+            if (stmt instanceof ModifierEffectiveStatementImpl) {
+                modifierInit = ((ModifierEffectiveStatementImpl) stmt).argument();
+            }
         }
 
         this.description = descriptionInit;
         this.reference = referenceInit;
         this.errorAppTag = errorAppTagInit;
         this.errorMessage = errorMessageInit;
+        this.modifier = modifierInit;
         this.constraints = constraintFactory.createConstraints(this, super.argument());
     }
 
@@ -66,11 +75,15 @@ abstract class AbstractConstraintEffectiveStatement<A, D extends DeclaredStateme
 
     public final boolean isCustomizedStatement() {
         return this.description != null || this.reference != null || this.errorAppTag != null
-                || this.errorMessage != null;
+                || this.errorMessage != null || this.modifier != null;
     }
 
     public final String getDescription() {
         return description;
+    }
+
+    public final ModifierKind getModifier() {
+        return modifier;
     }
 
     public final String getReference() {
@@ -92,13 +105,14 @@ abstract class ConstraintFactory<A> {
 
 abstract class ListConstraintFactory<A> extends ConstraintFactory<List<A>> {
     @Override
-    protected List<A> createConstraints(final AbstractConstraintEffectiveStatement<List<A>, ?> stmt, final List<A> argument) {
+    protected List<A> createConstraints(final AbstractConstraintEffectiveStatement<List<A>, ?> stmt,
+            final List<A> argument) {
         if (!stmt.isCustomizedStatement()) {
             return ImmutableList.copyOf(argument);
         }
 
         final List<A> customizedConstraints = new ArrayList<>(argument.size());
-        for (A constraint : argument) {
+        for (final A constraint : argument) {
             customizedConstraints.add(createCustomizedConstraint(constraint, stmt));
         }
         return ImmutableList.copyOf(customizedConstraints);
@@ -127,7 +141,8 @@ final class RangeConstraintFactory extends ListConstraintFactory<RangeConstraint
 
 final class PatternConstraintFactory extends ConstraintFactory<PatternConstraint> {
     @Override
-    protected PatternConstraint createConstraints(final AbstractConstraintEffectiveStatement<PatternConstraint, ?> stmt, final PatternConstraint argument) {
+    protected PatternConstraint createConstraints(
+            final AbstractConstraintEffectiveStatement<PatternConstraint, ?> stmt, final PatternConstraint argument) {
         if (!stmt.isCustomizedStatement()) {
             return argument;
         }
@@ -138,6 +153,6 @@ final class PatternConstraintFactory extends ConstraintFactory<PatternConstraint
     private static PatternConstraint createCustomizedConstraint(final PatternConstraint patternConstraint,
             final AbstractConstraintEffectiveStatement<?, ?> stmt) {
         return new PatternConstraintEffectiveImpl(patternConstraint.getRegularExpression(), stmt.getDescription(),
-                stmt.getReference(), stmt.getErrorAppTag(), stmt.getErrorMessage());
+                stmt.getReference(), stmt.getErrorAppTag(), stmt.getErrorMessage(), stmt.getModifier());
     }
 }
