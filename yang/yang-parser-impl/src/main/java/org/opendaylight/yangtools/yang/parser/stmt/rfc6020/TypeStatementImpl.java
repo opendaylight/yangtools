@@ -11,7 +11,7 @@ import com.google.common.base.Verify;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -61,18 +61,18 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Unsign
 
 public class TypeStatementImpl extends AbstractDeclaredStatement<String>
         implements TypeStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .TYPE)
-            .addOptional(Rfc6020Mapping.BASE)
-            .addAny(Rfc6020Mapping.BIT)
-            .addAny(Rfc6020Mapping.ENUM)
-            .addOptional(Rfc6020Mapping.FRACTION_DIGITS)
-            .addOptional(Rfc6020Mapping.LENGTH)
-            .addOptional(Rfc6020Mapping.PATH)
-            .addAny(Rfc6020Mapping.PATTERN)
-            .addOptional(Rfc6020Mapping.RANGE)
-            .addOptional(Rfc6020Mapping.REQUIRE_INSTANCE)
-            .addAny(Rfc6020Mapping.TYPE)
+            .addOptional(YangStmtMapping.BASE)
+            .addAny(YangStmtMapping.BIT)
+            .addAny(YangStmtMapping.ENUM)
+            .addOptional(YangStmtMapping.FRACTION_DIGITS)
+            .addOptional(YangStmtMapping.LENGTH)
+            .addOptional(YangStmtMapping.PATH)
+            .addAny(YangStmtMapping.PATTERN)
+            .addOptional(YangStmtMapping.RANGE)
+            .addOptional(YangStmtMapping.REQUIRE_INSTANCE)
+            .addAny(YangStmtMapping.TYPE)
             .build();
 
     protected TypeStatementImpl(final StmtContext<String, TypeStatement, ?> context) {
@@ -84,7 +84,7 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
             AbstractStatementSupport<String, TypeStatement, EffectiveStatement<String, TypeStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.TYPE);
+            super(YangStmtMapping.TYPE);
         }
 
         @Override

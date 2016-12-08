@@ -14,7 +14,7 @@ import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Collection;
 import java.util.Map;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
@@ -52,7 +52,7 @@ final class BuiltinTypeStatement implements TypeStatement {
 
     static TypeStatement maybeReplace(final TypeStatementImpl orig) {
         if (orig.declaredSubstatements().isEmpty() && orig.getStatementSource() == StatementSource.DECLARATION &&
-                orig.statementDefinition() == Rfc6020Mapping.TYPE) {
+                orig.statementDefinition() == YangStmtMapping.TYPE) {
             final BuiltinTypeStatement builtin = BUILTINS.get(orig.argument());
             if (builtin != null) {
                 return builtin;
@@ -81,7 +81,7 @@ final class BuiltinTypeStatement implements TypeStatement {
     @Nonnull
     @Override
     public StatementDefinition statementDefinition() {
-        return Rfc6020Mapping.TYPE;
+        return YangStmtMapping.TYPE;
     }
 
     @Nonnull

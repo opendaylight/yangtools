@@ -11,7 +11,7 @@ import com.google.common.base.Optional;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
@@ -29,12 +29,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConstraint> implements PatternStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .PATTERN)
-            .addOptional(Rfc6020Mapping.DESCRIPTION)
-            .addOptional(Rfc6020Mapping.ERROR_APP_TAG)
-            .addOptional(Rfc6020Mapping.ERROR_MESSAGE)
-            .addOptional(Rfc6020Mapping.REFERENCE)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(YangStmtMapping.ERROR_APP_TAG)
+            .addOptional(YangStmtMapping.ERROR_MESSAGE)
+            .addOptional(YangStmtMapping.REFERENCE)
             .build();
     private static final Logger LOG = LoggerFactory.getLogger(PatternStatementImpl.class);
 
@@ -47,7 +47,7 @@ public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConst
             AbstractStatementSupport<PatternConstraint, PatternStatement, EffectiveStatement<PatternConstraint, PatternStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.PATTERN);
+            super(YangStmtMapping.PATTERN);
         }
 
         @Override

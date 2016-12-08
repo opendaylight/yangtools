@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.StatusEffec
 
 public class StatusStatementImpl extends AbstractDeclaredStatement<Status>
         implements StatusStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .STATUS)
             .build();
 
@@ -34,7 +34,7 @@ public class StatusStatementImpl extends AbstractDeclaredStatement<Status>
             AbstractStatementSupport<Status, StatusStatement, EffectiveStatement<Status, StatusStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.STATUS);
+            super(YangStmtMapping.STATUS);
         }
 
         @Override

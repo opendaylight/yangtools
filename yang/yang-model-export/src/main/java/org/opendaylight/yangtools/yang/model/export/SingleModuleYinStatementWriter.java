@@ -23,7 +23,7 @@ import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -69,7 +69,7 @@ class SingleModuleYinStatementWriter implements StatementTextWriter {
         currentStatement = Preconditions.checkNotNull(statement);
         try {
             writeStartXmlElement(statement.getStatementName());
-            if (Rfc6020Mapping.MODULE.equals(statement) || Rfc6020Mapping.SUBMODULE.equals(statement)) {
+            if (YangStmtMapping.MODULE.equals(statement) || YangStmtMapping.SUBMODULE.equals(statement)) {
                 declareXmlNamespaces(prefixToNamespace);
             }
         } catch (final XMLStreamException e) {
@@ -143,7 +143,7 @@ class SingleModuleYinStatementWriter implements StatementTextWriter {
     }
 
     private static boolean isArgumentYinElement(final StatementDefinition currentStatement) {
-        if (currentStatement instanceof Rfc6020Mapping || currentStatement instanceof ExtensionStatement) {
+        if (currentStatement instanceof YangStmtMapping || currentStatement instanceof ExtensionStatement) {
             return currentStatement.isArgumentYinElement();
         }
         return false;
