@@ -26,12 +26,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
-import org.opendaylight.yangtools.yang.data.impl.TestUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug4295Test {
 
@@ -51,7 +51,7 @@ public class Bug4295Test {
     public void init() throws Exception {
         final File resourceFile = new File(Bug4295Test.class.getResource("/bug-4295/foo.yang")
                 .toURI());
-        context = TestUtils.parseYangSources(resourceFile);
+        context = YangParserTestUtils.parseYangSources(resourceFile);
         foo = QNameModule.create(new URI("foo"), SimpleDateFormatUtil.getRevisionFormat().parse("1970-01-01"));
         root = QName.create(foo, "root");
         subRoot = QName.create(foo, "sub-root");

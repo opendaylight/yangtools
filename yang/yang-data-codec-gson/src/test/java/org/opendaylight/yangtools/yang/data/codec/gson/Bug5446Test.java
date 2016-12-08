@@ -38,6 +38,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug5446Test {
 
@@ -53,8 +54,8 @@ public class Bug5446Test {
         rootQName = QName.create(fooModuleQName, "root");
         ipAddressQName = QName.create(fooModuleQName, "ip-address");
 
-        schemaContext = TestUtils.parseYangSources(new File(Bug5446Test.class.getResource("/bug5446/yang/foo.yang")
-                .toURI()));
+        schemaContext = YangParserTestUtils.parseYangSources(
+                new File(Bug5446Test.class.getResource("/bug5446/yang/foo.yang").toURI()));
     }
 
     @Test

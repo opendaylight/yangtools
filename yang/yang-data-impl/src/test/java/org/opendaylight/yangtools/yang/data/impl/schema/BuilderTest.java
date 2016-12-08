@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.OrderedLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
-import org.opendaylight.yangtools.yang.data.impl.TestUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
@@ -64,6 +63,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ContainerEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class BuilderTest {
     private static final QName ROOT_CONTAINER = QName.create("test.namespace.builder.test", "2016-01-01", "root-container");
@@ -92,7 +92,7 @@ public class BuilderTest {
     public void setup() throws FileNotFoundException, ReactorException, URISyntaxException {
         final File leafRefTestYang = new File(getClass().getResource("/builder-test/immutable-ordered-map-node.yang")
                 .toURI());
-        final SchemaContext schema = TestUtils.parseYangSources(leafRefTestYang);
+        final SchemaContext schema = YangParserTestUtils.parseYangSources(leafRefTestYang);
         final Module module = schema.getModules().iterator().next();
         final DataSchemaNode root = module.getDataChildByName(ROOT_CONTAINER);
         list = (ListSchemaNode)((ContainerEffectiveStatementImpl) root).getDataChildByName(LIST_MAIN);

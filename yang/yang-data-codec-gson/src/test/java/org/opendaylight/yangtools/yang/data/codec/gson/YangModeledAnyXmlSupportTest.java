@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadModules;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
 import com.google.gson.JsonElement;
@@ -42,6 +41,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.xml.sax.SAXException;
 
 public class YangModeledAnyXmlSupportTest {
@@ -52,7 +52,7 @@ public class YangModeledAnyXmlSupportTest {
     @BeforeClass
     public static void init() throws IOException, URISyntaxException, ReactorException, SAXException,
             XMLStreamException, ParserConfigurationException {
-        schemaContext = loadModules("/yang-modeled-anyxml/yang");
+        schemaContext = YangParserTestUtils.parseYangSources("/yang-modeled-anyxml/yang");
 
         final InputStream resourceAsStream = YangModeledAnyXmlSupportTest.class.getResourceAsStream(
                 "/yang-modeled-anyxml/xml/baz.xml");

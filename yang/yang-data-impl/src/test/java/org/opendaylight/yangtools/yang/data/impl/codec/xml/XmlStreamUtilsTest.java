@@ -34,7 +34,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.data.impl.TestUtils;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -46,6 +45,7 @@ import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 
 public class XmlStreamUtilsTest {
@@ -58,7 +58,7 @@ public class XmlStreamUtilsTest {
     @BeforeClass
     public static void initialize() throws URISyntaxException, FileNotFoundException, ReactorException {
         final File file = new File(XmlStreamUtils.class.getResource("/leafref-test.yang").toURI());
-        schemaContext = TestUtils.parseYangSources(file);
+        schemaContext = YangParserTestUtils.parseYangSources(file);
         assertNotNull(schemaContext);
         assertEquals(1, schemaContext.getModules().size());
         leafRefModule = schemaContext.getModules().iterator().next();

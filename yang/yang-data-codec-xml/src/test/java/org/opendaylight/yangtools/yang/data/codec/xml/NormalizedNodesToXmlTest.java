@@ -58,9 +58,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWrit
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -124,10 +123,7 @@ public class NormalizedNodesToXmlTest {
     @Test
     public void testNormalizedNodeToXmlSerialization() throws ReactorException, XMLStreamException, IOException,
             SAXException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSource(new YangStatementSourceImpl("/baz.yang", false));
-
-        final SchemaContext schemaContext = reactor.buildEffective();
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangSources(new YangStatementSourceImpl("/baz.yang", false));
 
         final Document doc = loadDocument("/baz.xml");
 

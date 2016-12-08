@@ -23,13 +23,13 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.impl.TestUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -59,8 +59,8 @@ public class Bug2964Test {
 
     @Before
     public void setUp() throws Exception {
-        File leafRefTestYang = new File(getClass().getResource("/leafref-test.yang").toURI());
-        schema = TestUtils.parseYangSources(leafRefTestYang);
+        final File leafRefTestYang = new File(getClass().getResource("/leafref-test.yang").toURI());
+        schema = YangParserTestUtils.parseYangSources(leafRefTestYang);
     }
 
     public static Document readXmlToDocument(final String xmlContent) throws SAXException, IOException {

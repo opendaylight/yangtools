@@ -36,7 +36,8 @@
     <dependencies>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-parser-impl</artifactId>
+            <artifactId>yang-test-util</artifactId>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.argparse4j</groupId>

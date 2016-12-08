@@ -13,7 +13,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -35,7 +34,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.YangModeledAnyXmlNode;
-import org.opendaylight.yangtools.yang.data.impl.TestUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser.DomToNormalizedNodeParserFactory;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
@@ -46,6 +44,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -91,8 +90,7 @@ public class YangModeledAnyXMLDeserializationTest {
         myLeaf3 = QName.create(fooModuleQName, "my-leaf-3");
         myLeaf2 = QName.create(fooModuleQName, "my-leaf-2");
         myAnyXMLDataFoo = QName.create(fooModuleQName, "my-anyxml-data");
-        schemaContext = TestUtils.parseYangSources(new File(getClass().getResource("/anyxml-support/yang/foo.yang")
-                .toURI()), new File(getClass().getResource("/anyxml-support/yang/bar.yang").toURI()), new File(getClass().getResource("/anyxml-support/yang/yang-ext.yang").toURI()));
+        schemaContext = YangParserTestUtils.parseYangSources("/anyxml-support/yang");
     }
 
     @Test
