@@ -62,7 +62,9 @@ import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNa
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.AnydataStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ContainerStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ModifierStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ModuleStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.PatternStatementRfc7950Support;
 
 public final class YangInferencePipeline {
     public static final Set<YangVersion> SUPPORTED_VERSIONS = Sets.immutableEnumSet(VERSION_1, VERSION_1_1);
@@ -143,7 +145,9 @@ public final class YangInferencePipeline {
             .addSupport(new PathStatementImpl.Definition())
             .addSupport(new EnumStatementImpl.Definition())
             .addSupport(new LengthStatementImpl.Definition())
-            .addSupport(new PatternStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1, new PatternStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1_1, new PatternStatementRfc7950Support())
+            .addVersionSpecificSupport(YANG1_1, new ModifierStatementImpl.Definition())
             .addSupport(new RangeStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1, new ContainerStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1_1, new ContainerStatementRfc7950Support())
