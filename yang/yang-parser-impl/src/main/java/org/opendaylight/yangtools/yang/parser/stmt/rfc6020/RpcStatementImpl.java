@@ -11,7 +11,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
@@ -31,16 +31,16 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RpcEffectiv
 
 public class RpcStatementImpl extends AbstractDeclaredStatement<QName>
         implements RpcStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .RPC)
-            .addOptional(Rfc6020Mapping.DESCRIPTION)
-            .addAny(Rfc6020Mapping.GROUPING)
-            .addAny(Rfc6020Mapping.IF_FEATURE)
-            .addOptional(Rfc6020Mapping.INPUT)
-            .addOptional(Rfc6020Mapping.OUTPUT)
-            .addOptional(Rfc6020Mapping.REFERENCE)
-            .addOptional(Rfc6020Mapping.STATUS)
-            .addAny(Rfc6020Mapping.TYPEDEF)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addAny(YangStmtMapping.GROUPING)
+            .addAny(YangStmtMapping.IF_FEATURE)
+            .addOptional(YangStmtMapping.INPUT)
+            .addOptional(YangStmtMapping.OUTPUT)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.STATUS)
+            .addAny(YangStmtMapping.TYPEDEF)
             .build();
 
     protected RpcStatementImpl(final StmtContext<QName, RpcStatement, ?> context) {
@@ -52,7 +52,7 @@ public class RpcStatementImpl extends AbstractDeclaredStatement<QName>
             AbstractStatementSupport<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.RPC);
+            super(YangStmtMapping.RPC);
         }
 
         @Override

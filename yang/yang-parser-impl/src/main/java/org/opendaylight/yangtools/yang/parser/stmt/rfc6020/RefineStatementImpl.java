@@ -9,7 +9,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import javax.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
@@ -22,17 +22,17 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RefineEffectiveStatementImpl;
 
 public class RefineStatementImpl extends AbstractDeclaredStatement<SchemaNodeIdentifier> implements RefineStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .REFINE)
-            .addOptional(Rfc6020Mapping.DEFAULT)
-            .addOptional(Rfc6020Mapping.DESCRIPTION)
-            .addOptional(Rfc6020Mapping.REFERENCE)
-            .addOptional(Rfc6020Mapping.CONFIG)
-            .addOptional(Rfc6020Mapping.MANDATORY)
-            .addOptional(Rfc6020Mapping.PRESENCE)
-            .addAny(Rfc6020Mapping.MUST)
-            .addOptional(Rfc6020Mapping.MIN_ELEMENTS)
-            .addOptional(Rfc6020Mapping.MAX_ELEMENTS)
+            .addOptional(YangStmtMapping.DEFAULT)
+            .addOptional(YangStmtMapping.DESCRIPTION)
+            .addOptional(YangStmtMapping.REFERENCE)
+            .addOptional(YangStmtMapping.CONFIG)
+            .addOptional(YangStmtMapping.MANDATORY)
+            .addOptional(YangStmtMapping.PRESENCE)
+            .addAny(YangStmtMapping.MUST)
+            .addOptional(YangStmtMapping.MIN_ELEMENTS)
+            .addOptional(YangStmtMapping.MAX_ELEMENTS)
             .build();
 
     protected RefineStatementImpl(final StmtContext<SchemaNodeIdentifier, RefineStatement, ?> context) {
@@ -43,7 +43,7 @@ public class RefineStatementImpl extends AbstractDeclaredStatement<SchemaNodeIde
             AbstractStatementSupport<SchemaNodeIdentifier, RefineStatement, EffectiveStatement<SchemaNodeIdentifier, RefineStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.REFINE);
+            super(YangStmtMapping.REFINE);
         }
 
         @Override

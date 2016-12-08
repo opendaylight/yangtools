@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ReferenceEffectiveStatementImpl;
 
 public class ReferenceStatementImpl extends AbstractDeclaredStatement<String> implements ReferenceStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .REFERENCE)
             .build();
 
@@ -29,7 +29,7 @@ public class ReferenceStatementImpl extends AbstractDeclaredStatement<String> im
     public static class Definition extends AbstractStatementSupport<String,ReferenceStatement,EffectiveStatement<String,ReferenceStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.REFERENCE);
+            super(YangStmtMapping.REFERENCE);
         }
 
         @Override
