@@ -52,6 +52,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
@@ -124,6 +125,7 @@ public enum YangStmtMapping implements StatementDefinition {
     MANDATORY(MandatoryStatement.class, "mandatory", "value"),
     MAX_ELEMENTS(MaxElementsStatement.class, "max-elements", "value"),
     MIN_ELEMENTS(MinElementsStatement.class, "min-elements", "value"),
+    MODIFIER(ModifierStatement.class, "modifier", "value"),
     MODULE(ModuleStatement.class, "module", "name"),
     MUST(MustStatement.class, "must", "condition"),
     NAMESPACE(NamespaceStatement.class, "namespace", "uri"),
