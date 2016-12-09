@@ -151,6 +151,11 @@ public final class Builders {
     }
 
     public static DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
+            final MapEntryNode mapEntryNode) {
+        return ImmutableMapEntryNodeBuilder.create(mapEntryNode);
+    }
+
+    public static DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
             final ListSchemaNode schema) {
         return ImmutableMapEntryNodeSchemaAwareBuilder.create(schema);
     }
