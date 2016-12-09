@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a622d24_14b7c987",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/ContextBuilder.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-12-09T08:34:15Z",
+      "side": 1,
+      "message": "if you\u0027re going public, you need to provide Javadoc and explanation would be nice too",
+      "revId": "502ad92865c5eb71accac8a351d565d9e6285f78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
