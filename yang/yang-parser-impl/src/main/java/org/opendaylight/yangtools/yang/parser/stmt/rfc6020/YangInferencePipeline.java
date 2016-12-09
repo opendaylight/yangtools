@@ -58,8 +58,12 @@ import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNa
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.AnydataStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.AugmentStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ContainerStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.GroupingStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ListStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ModuleStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.NotificationStatementRfc7950Support;
 
 public final class YangInferencePipeline {
     public static final SemVer YANG1 = SemVer.create(1);
@@ -146,13 +150,16 @@ public final class YangInferencePipeline {
             .addSupport(new RangeStatementImpl.Definition())
             .addVersionSpecificSupport(YANG1, new ContainerStatementImpl.Definition())
             .addVersionSpecificSupport(YANG1_1, new ContainerStatementRfc7950Support())
-            .addSupport(new GroupingStatementImpl.Definition())
-            .addSupport(new ListStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1, new GroupingStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1_1, new GroupingStatementRfc7950Support())
+            .addVersionSpecificSupport(YANG1, new ListStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1_1, new ListStatementRfc7950Support())
             .addSupport(new UniqueStatementImpl.Definition())
             .addSupport(new RpcStatementImpl.Definition())
             .addSupport(new InputStatementImpl.Definition())
             .addSupport(new OutputStatementImpl.Definition())
-            .addSupport(new NotificationStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1, new NotificationStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1_1, new NotificationStatementRfc7950Support())
             .addSupport(new FractionDigitsStatementImpl.Definition())
             .addSupport(new BaseStatementImpl.Definition())
             .addSupport(global(DerivedIdentitiesNamespace.class))
@@ -183,7 +190,8 @@ public final class YangInferencePipeline {
             .addSupport(new MinElementsStatementImpl.Definition())
             .addSupport(new OrderedByStatementImpl.Definition())
             .addSupport(new WhenStatementImpl.Definition())
-            .addSupport(new AugmentStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1, new AugmentStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1_1, new AugmentStatementRfc7950Support())
             .addSupport(treeScoped(AugmentToChoiceNamespace.class))
             .addSupport(new RefineStatementImpl.Definition())
             .addSupport(new FeatureStatementImpl.Definition())
