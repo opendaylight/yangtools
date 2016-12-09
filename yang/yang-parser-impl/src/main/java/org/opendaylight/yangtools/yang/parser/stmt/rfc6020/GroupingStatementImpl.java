@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
@@ -77,13 +78,16 @@ public class GroupingStatementImpl extends AbstractDeclaredStatement<QName>
         @Override
         public void onFullDefinitionDeclared(final Mutable<QName, GroupingStatement,
                 EffectiveStatement<QName, GroupingStatement>> stmt) {
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
 
             if (stmt != null && stmt.getParentContext() != null) {
                 stmt.getParentContext().addContext(GroupingNamespace.class, stmt.getStatementArgument(), stmt);
             }
         }
 
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
+        }
     }
 
     @Nonnull
@@ -125,4 +129,8 @@ public class GroupingStatementImpl extends AbstractDeclaredStatement<QName>
         return allDeclared(DataDefinitionStatement.class);
     }
 
+    @Override
+    public final Collection<? extends NotificationStatement> getNotifications() {
+        return allDeclared(NotificationStatement.class);
+    }
 }

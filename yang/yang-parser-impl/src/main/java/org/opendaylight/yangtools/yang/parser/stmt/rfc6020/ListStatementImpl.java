@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
@@ -101,7 +102,11 @@ public class ListStatementImpl extends AbstractDeclaredStatement<QName>
         public void onFullDefinitionDeclared(final Mutable<QName, ListStatement,
                 EffectiveStatement<QName, ListStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 
@@ -194,5 +199,10 @@ public class ListStatementImpl extends AbstractDeclaredStatement<QName>
     @Override
     public Collection<? extends UniqueStatement> getUnique() {
         return allDeclared(UniqueStatement.class);
+    }
+
+    @Override
+    public final Collection<? extends NotificationStatement> getNotifications() {
+        return allDeclared(NotificationStatement.class);
     }
 }

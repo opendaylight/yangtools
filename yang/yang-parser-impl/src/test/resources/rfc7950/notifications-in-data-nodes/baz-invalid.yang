@@ -1,0 +1,26 @@
+module baz-invalid {
+    namespace baz-namespace;
+    prefix baz-prefix;
+    yang-version 1.1;
+
+    revision 2016-12-08;
+
+    container my-container {
+        choice my-choice {
+            case first {
+                leaf first-leaf {
+                    type string;
+                }
+            }
+            case second {
+                uses grouping-with-notification;
+            }
+        }
+    }
+
+    grouping grouping-with-notification {
+        notification notification-in-grouping {
+
+        }
+    }
+}

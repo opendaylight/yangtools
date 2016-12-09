@@ -8,29 +8,45 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import java.util.Objects;
+import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class ContainerEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<ContainerStatement>
-        implements
+public final class ContainerEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<ContainerStatement> implements
         DerivableSchemaNode {
-
+    private final Set<NotificationDefinition> notifications;
     private final ContainerSchemaNode original;
 
     public ContainerEffectiveStatementImpl(
             final StmtContext<QName, ContainerStatement, EffectiveStatement<QName, ContainerStatement>> ctx) {
         super(ctx);
-        this.original = ctx.getOriginalCtx() == null ? null : (ContainerSchemaNode) ctx.getOriginalCtx().buildEffective();
+        this.original = ctx.getOriginalCtx() == null ? null : (ContainerSchemaNode) ctx.getOriginalCtx()
+                .buildEffective();
+        final Builder<NotificationDefinition> notificationsBuilder = ImmutableSet.builder();
+        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
+            if (effectiveStatement instanceof NotificationDefinition) {
+                notificationsBuilder.add((NotificationDefinition) effectiveStatement);
+            }
+        }
+        this.notifications = notificationsBuilder.build();
     }
 
     @Override
     public Optional<ContainerSchemaNode> getOriginal() {
         return Optional.fromNullable(original);
+    }
+
+    @Override
+    public Set<NotificationDefinition> getNotifications() {
+        return notifications;
     }
 
     @Override
@@ -53,7 +69,7 @@ public final class ContainerEffectiveStatementImpl extends AbstractEffectiveCont
         if (getClass() != obj.getClass()) {
             return false;
         }
-        ContainerEffectiveStatementImpl other = (ContainerEffectiveStatementImpl) obj;
+        final ContainerEffectiveStatementImpl other = (ContainerEffectiveStatementImpl) obj;
         return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 

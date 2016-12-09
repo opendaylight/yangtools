@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import static org.opendaylight.yangtools.yang.common.YangVersion.VERSION_1;
+import static org.opendaylight.yangtools.yang.common.YangVersion.VERSION_1_1;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.global;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.sourceLocal;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.treeScoped;
@@ -59,12 +61,15 @@ import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNa
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.AnydataStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.AugmentStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ContainerStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.GroupingStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ListStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ModuleStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.NotificationStatementRfc7950Support;
 
 public final class YangInferencePipeline {
-    public static final Set<YangVersion> SUPPORTED_VERSIONS =
-            Sets.immutableEnumSet(YangVersion.VERSION_1, YangVersion.VERSION_1_1);
+    public static final Set<YangVersion> SUPPORTED_VERSIONS = Sets.immutableEnumSet(VERSION_1, VERSION_1_1);
 
     public static final StatementSupportBundle INIT_BUNDLE = StatementSupportBundle
             .builder(SUPPORTED_VERSIONS).addSupport(global(ValidationBundlesNamespace.class))
@@ -73,8 +78,8 @@ public final class YangInferencePipeline {
 
     public static final StatementSupportBundle PRE_LINKAGE_BUNDLE = StatementSupportBundle
             .derivedFrom(INIT_BUNDLE)
-            .addVersionSpecificSupport(YangVersion.VERSION_1, new ModuleStatementSupport())
-            .addVersionSpecificSupport(YangVersion.VERSION_1_1, new ModuleStatementRfc7950Support())
+            .addVersionSpecificSupport(VERSION_1, new ModuleStatementSupport())
+            .addVersionSpecificSupport(VERSION_1_1, new ModuleStatementRfc7950Support())
             .addSupport(new SubmoduleStatementImpl.Definition())
             .addSupport(new NamespaceStatementImpl.Definition())
             .addSupport(new ImportStatementDefinition())
@@ -144,15 +149,18 @@ public final class YangInferencePipeline {
             .addSupport(new LengthStatementImpl.Definition())
             .addSupport(new PatternStatementImpl.Definition())
             .addSupport(new RangeStatementImpl.Definition())
-            .addVersionSpecificSupport(YangVersion.VERSION_1, new ContainerStatementImpl.Definition())
-            .addVersionSpecificSupport(YangVersion.VERSION_1_1, new ContainerStatementRfc7950Support())
-            .addSupport(new GroupingStatementImpl.Definition())
-            .addSupport(new ListStatementImpl.Definition())
+            .addVersionSpecificSupport(VERSION_1, new ContainerStatementImpl.Definition())
+            .addVersionSpecificSupport(VERSION_1_1, new ContainerStatementRfc7950Support())
+            .addVersionSpecificSupport(VERSION_1, new GroupingStatementImpl.Definition())
+            .addVersionSpecificSupport(VERSION_1_1, new GroupingStatementRfc7950Support())
+            .addVersionSpecificSupport(VERSION_1, new ListStatementImpl.Definition())
+            .addVersionSpecificSupport(VERSION_1_1, new ListStatementRfc7950Support())
             .addSupport(new UniqueStatementImpl.Definition())
             .addSupport(new RpcStatementImpl.Definition())
             .addSupport(new InputStatementImpl.Definition())
             .addSupport(new OutputStatementImpl.Definition())
-            .addSupport(new NotificationStatementImpl.Definition())
+            .addVersionSpecificSupport(VERSION_1, new NotificationStatementImpl.Definition())
+            .addVersionSpecificSupport(VERSION_1_1, new NotificationStatementRfc7950Support())
             .addSupport(new FractionDigitsStatementImpl.Definition())
             .addSupport(new BaseStatementImpl.Definition())
             .addSupport(global(DerivedIdentitiesNamespace.class))
@@ -170,7 +178,7 @@ public final class YangInferencePipeline {
             .addSupport(new MustStatementImpl.Definition())
             .addSupport(new MandatoryStatementImpl.Definition())
             .addSupport(new AnyxmlStatementImpl.Definition())
-            .addVersionSpecificSupport(YangVersion.VERSION_1_1, new AnydataStatementImpl.Definition())
+            .addVersionSpecificSupport(VERSION_1_1, new AnydataStatementImpl.Definition())
             .addSupport(new IfFeatureStatementImpl.Definition())
             .addSupport(new UsesStatementImpl.Definition())
             .addSupport(treeScoped(GroupingNamespace.class)) //treeScoped
@@ -183,7 +191,8 @@ public final class YangInferencePipeline {
             .addSupport(new MinElementsStatementImpl.Definition())
             .addSupport(new OrderedByStatementImpl.Definition())
             .addSupport(new WhenStatementImpl.Definition())
-            .addSupport(new AugmentStatementImpl.Definition())
+            .addVersionSpecificSupport(VERSION_1, new AugmentStatementImpl.Definition())
+            .addVersionSpecificSupport(VERSION_1_1, new AugmentStatementRfc7950Support())
             .addSupport(treeScoped(AugmentToChoiceNamespace.class))
             .addSupport(new RefineStatementImpl.Definition())
             .addSupport(new FeatureStatementImpl.Definition())
