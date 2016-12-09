@@ -11,17 +11,20 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.NamespaceRevisionAware;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -38,6 +41,7 @@ public final class AugmentEffectiveStatementImpl extends
     private final URI namespace;
     private final Date revision;
     private final int order;
+    private final Set<NotificationDefinition> notifications;
     private final List<UnknownSchemaNode> unknownNodes;
     private final RevisionAwareXPath whenCondition;
     private final AugmentationSchema copyOf;
@@ -48,24 +52,28 @@ public final class AugmentEffectiveStatementImpl extends
 
         this.targetPath = ctx.getStatementArgument().asSchemaPath();
 
-        QNameModule rootModuleQName = Utils.getRootModuleQName(ctx);
+        final QNameModule rootModuleQName = Utils.getRootModuleQName(ctx);
         this.namespace = rootModuleQName.getNamespace();
         this.revision = rootModuleQName.getRevision();
 
         this.order = ctx.getOrder();
         this.copyOf = ctx.getOriginalCtx() == null ? null : (AugmentationSchema) ctx.getOriginalCtx().buildEffective();
 
-        WhenEffectiveStatementImpl whenStmt = firstEffective(WhenEffectiveStatementImpl.class);
+        final WhenEffectiveStatementImpl whenStmt = firstEffective(WhenEffectiveStatementImpl.class);
         this.whenCondition = (whenStmt == null) ? null : whenStmt.argument();
 
         // initSubstatementCollections
-        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-        ImmutableList.Builder<UnknownSchemaNode> listBuilder = new ImmutableList.Builder<>();
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
-            if (effectiveStatement instanceof UnknownSchemaNode) {
+        final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
+        final ImmutableSet.Builder<NotificationDefinition> notificationsBuilder = ImmutableSet.builder();
+        final ImmutableList.Builder<UnknownSchemaNode> listBuilder = new ImmutableList.Builder<>();
+        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+            if (effectiveStatement instanceof NotificationDefinition) {
+                notificationsBuilder.add((NotificationDefinition) effectiveStatement);
+            } else if (effectiveStatement instanceof UnknownSchemaNode) {
                 listBuilder.add((UnknownSchemaNode) effectiveStatement);
             }
         }
+        this.notifications = notificationsBuilder.build();
         this.unknownNodes = listBuilder.build();
     }
 
@@ -96,6 +104,11 @@ public final class AugmentEffectiveStatementImpl extends
     }
 
     @Override
+    public Set<NotificationDefinition> getNotifications() {
+        return notifications;
+    }
+
+    @Override
     public Date getRevision() {
         return revision;
     }
@@ -121,7 +134,7 @@ public final class AugmentEffectiveStatementImpl extends
         if (getClass() != obj.getClass()) {
             return false;
         }
-        AugmentEffectiveStatementImpl other = (AugmentEffectiveStatementImpl) obj;
+        final AugmentEffectiveStatementImpl other = (AugmentEffectiveStatementImpl) obj;
         if (!Objects.equals(targetPath, other.targetPath)) {
             return false;
         }
@@ -136,20 +149,18 @@ public final class AugmentEffectiveStatementImpl extends
 
     @Override
     public String toString() {
-        return AugmentEffectiveStatementImpl.class.getSimpleName() + "[" +
-                "targetPath=" + targetPath +
-                ", when=" + whenCondition +
-                "]";
+        return AugmentEffectiveStatementImpl.class.getSimpleName() + "[" + "targetPath=" + targetPath + ", when="
+                + whenCondition + "]";
     }
 
     @Override
     public int compareTo(@Nonnull final AugmentEffectiveStatementImpl o) {
         checkNotNull(o);
-        Iterator<QName> thisIt = this.targetPath.getPathFromRoot().iterator();
-        Iterator<QName> otherIt = o.getTargetPath().getPathFromRoot().iterator();
+        final Iterator<QName> thisIt = this.targetPath.getPathFromRoot().iterator();
+        final Iterator<QName> otherIt = o.getTargetPath().getPathFromRoot().iterator();
         while (thisIt.hasNext()) {
             if (otherIt.hasNext()) {
-                int comp = thisIt.next().compareTo(otherIt.next());
+                final int comp = thisIt.next().compareTo(otherIt.next());
                 if (comp != 0) {
                     return comp;
                 }

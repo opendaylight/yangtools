@@ -10,32 +10,27 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ContainerStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.AugmentStatementImpl;
 
 /**
- * Class providing necessary support for processing YANG 1.1 Container
- * statement.
+ * Class providing necessary support for processing YANG 1.1 Augment statement.
  */
 @Beta
-public final class ContainerStatementRfc7950Support extends ContainerStatementImpl.Definition {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
-            .CONTAINER)
+public final class AugmentStatementRfc7950Support extends AugmentStatementImpl.Definition {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator
+            .builder(YangStmtMapping.AUGMENT)
             .addAny(YangStmtMapping.ANYXML)
+            .addAny(YangStmtMapping.CASE)
             .addAny(YangStmtMapping.CHOICE)
-            .addOptional(YangStmtMapping.CONFIG)
             .addAny(YangStmtMapping.CONTAINER)
             .addOptional(YangStmtMapping.DESCRIPTION)
-            .addAny(YangStmtMapping.GROUPING)
             .addAny(YangStmtMapping.IF_FEATURE)
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
-            .addAny(YangStmtMapping.MUST)
             .addAny(YangStmtMapping.NOTIFICATION)
-            .addOptional(YangStmtMapping.PRESENCE)
             .addOptional(YangStmtMapping.REFERENCE)
             .addOptional(YangStmtMapping.STATUS)
-            .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
             .addOptional(YangStmtMapping.WHEN)
             .build();

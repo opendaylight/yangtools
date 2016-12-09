@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -20,6 +22,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
@@ -34,6 +37,7 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
     private final boolean userOrdered;
     private final List<QName> keyDefinition;
     private final ListSchemaNode original;
+    private final Set<NotificationDefinition> notifications;
     private final Collection<UniqueConstraint> uniqueConstraints;
 
     public ListEffectiveStatementImpl(
@@ -42,7 +46,7 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
 
         this.original = ctx.getOriginalCtx() == null ? null : (ListSchemaNode) ctx.getOriginalCtx().buildEffective();
 
-        OrderedByEffectiveStatementImpl orderedByStmt = firstEffective(OrderedByEffectiveStatementImpl.class);
+        final OrderedByEffectiveStatementImpl orderedByStmt = firstEffective(OrderedByEffectiveStatementImpl.class);
         if (orderedByStmt != null && ORDER_BY_USER_KEYWORD.equals(orderedByStmt.argument())) {
             this.userOrdered = true;
         } else {
@@ -50,33 +54,36 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
         }
 
         // initKeyDefinition
-        List<QName> keyDefinitionInit = new LinkedList<>();
-        KeyEffectiveStatementImpl keyEffectiveSubstatement = firstEffective(KeyEffectiveStatementImpl.class);
-
+        final List<QName> keyDefinitionInit = new LinkedList<>();
+        final KeyEffectiveStatementImpl keyEffectiveSubstatement = firstEffective(KeyEffectiveStatementImpl.class);
         if (keyEffectiveSubstatement != null) {
-            Set<QName> possibleLeafQNamesForKey = new HashSet<>();
-
+            final Set<QName> possibleLeafQNamesForKey = new HashSet<>();
             for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
                 if (effectiveStatement instanceof LeafSchemaNode) {
                     possibleLeafQNamesForKey.add(((LeafSchemaNode) effectiveStatement).getQName());
                 }
             }
-
-            for (SchemaNodeIdentifier key : keyEffectiveSubstatement.argument()) {
+            for (final SchemaNodeIdentifier key : keyEffectiveSubstatement.argument()) {
                 final QName keyQName = key.getLastComponent();
 
                 if (!possibleLeafQNamesForKey.contains(keyQName)) {
                     throw new InferenceException(ctx.getStatementSourceReference(),
-                        "Key '%s' misses node '%s' in list '%s'", keyEffectiveSubstatement.getDeclared().rawArgument(),
-                        keyQName.getLocalName(), ctx.getStatementArgument());
+                            "Key '%s' misses node '%s' in list '%s'", keyEffectiveSubstatement.getDeclared()
+                                    .rawArgument(), keyQName.getLocalName(), ctx.getStatementArgument());
                 }
-
                 keyDefinitionInit.add(keyQName);
             }
         }
-
         this.keyDefinition = ImmutableList.copyOf(keyDefinitionInit);
         this.uniqueConstraints = ImmutableList.copyOf(allSubstatementsOfType(UniqueConstraint.class));
+
+        final Builder<NotificationDefinition> notificationsBuilder = ImmutableSet.builder();
+        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
+            if (effectiveStatement instanceof NotificationDefinition) {
+                notificationsBuilder.add((NotificationDefinition) effectiveStatement);
+            }
+        }
+        this.notifications = notificationsBuilder.build();
     }
 
     @Override
@@ -87,6 +94,11 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
     @Override
     public List<QName> getKeyDefinition() {
         return keyDefinition;
+    }
+
+    @Override
+    public Set<NotificationDefinition> getNotifications() {
+        return notifications;
     }
 
     @Override
