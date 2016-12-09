@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -17,6 +18,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
@@ -25,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.IfFeaturePredicates;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.RootStatementContext;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 
@@ -320,5 +323,72 @@ public final class StmtContextUtils {
         default:
             return false;
         }
+    }
+
+    /**
+     * Checks whether at least one ancestor of a StatementContext matches one
+     * from collection of statement definitions.
+     *
+     * @param ctx
+     *            StatementContext to be checked
+     * @param ancestorTypes
+     *            collection of statement definitions
+     *
+     * @return true if at least one ancestor of a StatementContext matches one
+     *         from collection of statement definitions, otherwise false.
+     */
+    public static boolean hasAncestorOfType(final StmtContext<?, ?, ?> ctx,
+            final Collection<StatementDefinition> ancestorTypes) {
+        Preconditions.checkNotNull(ctx);
+        Preconditions.checkNotNull(ancestorTypes);
+        StmtContext<?, ?, ?> current = ctx;
+        while ((current = current.getParentContext()) != null) {
+            if (ancestorTypes.contains(current.getPublicDefinition())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks whether all of StmtContext's ancestors of specified type have a child of specified type
+     *
+     * @param ctx StmtContext to be checked
+     * @param ancestorType type of ancestor to search for
+     * @param ancestorChildType type of child to search for in the specified ancestor type
+     *
+     * @return true if all of StmtContext's ancestors of specified type have a child of specified type, otherwise false
+     */
+    public static <AT, DT extends DeclaredStatement<AT>> boolean hasAncestorOfTypeWithChildOfType(
+            final StmtContext<?, ?, ?> ctx, final StatementDefinition ancestorType,
+            final StatementDefinition ancestorChildType) {
+        Preconditions.checkNotNull(ctx);
+        Preconditions.checkNotNull(ancestorType);
+        Preconditions.checkNotNull(ancestorChildType);
+        StmtContext<?, ?, ?> current = ctx;
+        while (!((current = current.getParentContext()) instanceof RootStatementContext)) {
+            if (current.getPublicDefinition() == ancestorType) {
+                final Class<DT> declaredAncestorChild = (Class<DT>) ancestorChildType.getDeclaredRepresentationClass();
+                if (findFirstSubstatement(current, declaredAncestorChild) == null) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Checks whether the parent of StmtContext is of specified type
+     *
+     * @param ctx StmtContext to be checked
+     * @param parentType type of parent to check
+     *
+     * @return true if the parent of StmtContext is of specified type, otherwise false
+     */
+    public static boolean hasParentOfType(final StmtContext<?, ?, ?> ctx, final StatementDefinition parentType) {
+        Preconditions.checkNotNull(ctx);
+        Preconditions.checkNotNull(parentType);
+        return ctx.getParentContext().getPublicDefinition() == parentType;
     }
 }

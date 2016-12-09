@@ -9,24 +9,27 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.ImmutableSet;
 import java.util.List;
 import java.util.Objects;
 import javax.annotation.Nonnull;
+import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class GroupingEffectiveStatementImpl extends
         AbstractEffectiveDocumentedDataNodeContainer<QName, GroupingStatement> implements GroupingDefinition {
     private final QName qname;
     private final SchemaPath path;
     private final boolean addedByUses;
+    private final Set<NotificationDefinition> notifications;
     private final List<UnknownSchemaNode> unknownNodes;
 
     public GroupingEffectiveStatementImpl(
@@ -38,13 +41,18 @@ public class GroupingEffectiveStatementImpl extends
 
         addedByUses = ctx.getCopyHistory().contains(CopyType.ADDED_BY_USES);
 
-        final Builder<UnknownSchemaNode> b = ImmutableList.builder();
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
+        final ImmutableSet.Builder<NotificationDefinition> notificationsBuilder = ImmutableSet.builder();
+        final ImmutableList.Builder<UnknownSchemaNode> b = ImmutableList.builder();
+        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
+            if (effectiveStatement instanceof NotificationDefinition) {
+                notificationsBuilder.add((NotificationDefinition) effectiveStatement);
+            }
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 b.add((UnknownSchemaNode) effectiveStatement);
             }
         }
 
+        this.notifications = notificationsBuilder.build();
         unknownNodes = b.build();
     }
 
@@ -66,6 +74,11 @@ public class GroupingEffectiveStatementImpl extends
     }
 
     @Nonnull
+    @Override
+    public Set<NotificationDefinition> getNotifications() {
+        return notifications;
+    }
+
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;
@@ -97,8 +110,6 @@ public class GroupingEffectiveStatementImpl extends
 
     @Override
     public String toString() {
-        return GroupingEffectiveStatementImpl.class.getSimpleName() + "[" +
-                "qname=" + qname +
-                "]";
+        return GroupingEffectiveStatementImpl.class.getSimpleName() + "[" + "qname=" + qname + "]";
     }
 }
