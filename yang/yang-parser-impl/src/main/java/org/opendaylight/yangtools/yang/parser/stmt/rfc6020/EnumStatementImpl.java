@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import java.util.Collection;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
@@ -62,7 +64,11 @@ public class EnumStatementImpl extends AbstractDeclaredStatement<String> impleme
         public void onFullDefinitionDeclared(final StmtContext.Mutable<String, EnumStatement,
                 EffectiveStatement<String, EnumStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 
@@ -74,6 +80,12 @@ public class EnumStatementImpl extends AbstractDeclaredStatement<String> impleme
     @Override
     public DescriptionStatement getDescription() {
         return firstDeclared(DescriptionStatement.class);
+    }
+
+    @Nonnull
+    @Override
+    public Collection<? extends IfFeatureStatement> getIfFeatures() {
+        return allDeclared(IfFeatureStatement.class);
     }
 
     @Override

@@ -1,0 +1,8 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+
+    identity foo {
+        if-feature foo-identity;
+    }
+}
