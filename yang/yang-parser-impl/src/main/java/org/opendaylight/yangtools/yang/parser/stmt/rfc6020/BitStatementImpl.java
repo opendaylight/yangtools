@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import java.util.Collection;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
@@ -79,6 +81,12 @@ public class BitStatementImpl extends AbstractDeclaredStatement<QName> implement
     @Override
     public DescriptionStatement getDescription() {
         return firstDeclared(DescriptionStatement.class);
+    }
+
+    @Nonnull
+    @Override
+    public Collection<? extends IfFeatureStatement> getIfFeatures() {
+        return allDeclared(IfFeatureStatement.class);
     }
 
     @Override
