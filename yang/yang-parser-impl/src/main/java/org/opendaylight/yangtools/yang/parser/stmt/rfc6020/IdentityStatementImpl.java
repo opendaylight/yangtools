@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import java.util.Collection;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -14,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
@@ -70,7 +72,11 @@ public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
         public void onFullDefinitionDeclared(final StmtContext.Mutable<QName, IdentityStatement,
                 EffectiveStatement<QName, IdentityStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 
@@ -82,6 +88,12 @@ public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
     @Override
     public DescriptionStatement getDescription() {
         return firstDeclared(DescriptionStatement.class);
+    }
+
+    @Nonnull
+    @Override
+    public Collection<? extends IfFeatureStatement> getIfFeatures() {
+        return allDeclared(IfFeatureStatement.class);
     }
 
     @Override
