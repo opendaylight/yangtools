@@ -15,6 +15,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -267,10 +268,19 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
             final Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode,
             final StatementContextBase<?, ?, ?> targetNodeStmtCtx) {
         for (final StatementContextBase<?, ?, ?> subStmtCtx : usesNode.declaredSubstatements()) {
-            if (StmtContextUtils.producesDeclared(subStmtCtx, RefineStatement.class)) {
+            if (StmtContextUtils.producesDeclared(subStmtCtx, RefineStatement.class)
+                    && areFeaturesSupported(subStmtCtx)) {
                 performRefine(subStmtCtx, targetNodeStmtCtx);
             }
         }
+    }
+
+    private static boolean areFeaturesSupported(final StatementContextBase<?, ?, ?> subStmtCtx) {
+        /*
+         * In case of Yang 1.1, checks whether features are supported.
+         */
+        return !YangVersion.VERSION_1_1.equals(subStmtCtx.getRootVersion()) || StmtContextUtils
+                .areFeaturesSupported(subStmtCtx);
     }
 
     private static void performRefine(final StatementContextBase<?, ?, ?> refineCtx,
