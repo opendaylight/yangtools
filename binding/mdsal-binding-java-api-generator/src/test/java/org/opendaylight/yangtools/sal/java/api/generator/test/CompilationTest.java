@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.sal.java.api.generator.GeneratorJavaFile;
 import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.annotations.RoutingContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
  * Test correct code generation.
@@ -663,7 +664,7 @@ public class CompilationTest extends BaseCompilationTest {
 
     private void generateTestSources(final String resourceDirPath, final File sourcesOutputDir) throws Exception {
         final List<File> sourceFiles = CompilationTestUtils.getSourceFiles(resourceDirPath);
-        final SchemaContext context = TestUtils.parseYangSources(sourceFiles);
+        final SchemaContext context = YangParserTestUtils.parseYangSources(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);
         Collections.sort(types, (o1, o2) -> o2.getName().compareTo(o1.getName()));
         final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));

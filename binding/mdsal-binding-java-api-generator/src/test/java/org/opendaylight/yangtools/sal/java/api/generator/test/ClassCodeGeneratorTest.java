@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.sal.java.api.generator.TOGenerator;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class ClassCodeGeneratorTest {
 
@@ -48,7 +49,7 @@ public class ClassCodeGeneratorTest {
     @Test
     public void compositeKeyClassTest() throws IOException, SourceException, ReactorException {
 
-        final SchemaContext context = TestUtils.parseYangSources(testModels);
+        final SchemaContext context = YangParserTestUtils.parseYangSources(testModels);
 
         assertNotNull(context);
         final BindingGenerator bindingGen = new BindingGeneratorImpl(true);

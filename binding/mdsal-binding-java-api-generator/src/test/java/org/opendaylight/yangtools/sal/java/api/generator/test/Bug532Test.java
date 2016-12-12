@@ -30,6 +30,7 @@ import org.mockito.Mockito;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.java.api.generator.GeneratorJavaFile;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
  * Test correct functionality of copy constructor of generated builder classes.
@@ -61,11 +62,11 @@ public class Bug532Test extends BaseCompilationTest {
         // init default values
         Byte expectedId = Byte.valueOf("5");
         String expectedName = "test-link";
-        Integer expectedSize = Integer.valueOf(10);
+        Integer expectedSize = 10;
 
 
         Object expectedLevel = Mockito.mock(levelClass);
-        Integer expectedLinksId = Integer.valueOf(11);
+        Integer expectedLinksId = 11;
         Object expectedNode = Mockito.mock(nodeClass);
         List<?> expectedNodeList = Lists.newArrayList(Mockito.mock(nodeListClass), Mockito.mock(nodeListClass));
         Constructor<?> keyConstructor = linksKeyClass.getDeclaredConstructor(Byte.class, String.class, Integer.class);
@@ -111,7 +112,7 @@ public class Bug532Test extends BaseCompilationTest {
 
     private void generateTestSources(final String resourceDirPath, final File sourcesOutputDir) throws Exception {
         final List<File> sourceFiles = getSourceFiles(resourceDirPath);
-        final SchemaContext context = TestUtils.parseYangSources(sourceFiles);
+        final SchemaContext context = YangParserTestUtils.parseYangSources(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);
         final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
         generator.generateToFile(sourcesOutputDir);
