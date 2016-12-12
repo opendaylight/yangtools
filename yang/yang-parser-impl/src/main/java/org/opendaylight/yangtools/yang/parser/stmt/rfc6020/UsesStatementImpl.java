@@ -93,7 +93,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                 return;
             }
 
-            ModelActionBuilder usesAction = usesNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
+            final ModelActionBuilder usesAction = usesNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
             final QName groupingName = usesNode.getStatementArgument();
 
             final Prerequisite<StmtContext<?, ?, ?>> sourceGroupingPre = usesAction.requiresCtx(usesNode,
@@ -105,13 +105,13 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
 
                 @Override
                 public void apply() {
-                    StatementContextBase<?, ?, ?> targetNodeStmtCtx = (StatementContextBase<?, ?, ?>) targetNodePre.get();
-                    StatementContextBase<?, ?, ?> sourceGrpStmtCtx = (StatementContextBase<?, ?, ?>) sourceGroupingPre.get();
+                    final StatementContextBase<?, ?, ?> targetNodeStmtCtx = (StatementContextBase<?, ?, ?>) targetNodePre.get();
+                    final StatementContextBase<?, ?, ?> sourceGrpStmtCtx = (StatementContextBase<?, ?, ?>) sourceGroupingPre.get();
 
                     try {
                         copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
                         resolveUsesNode(usesNode, targetNodeStmtCtx);
-                    } catch (SourceException e) {
+                    } catch (final SourceException e) {
                         LOG.warn(e.getMessage(), e);
                         throw e;
                     }
@@ -262,10 +262,19 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
             final Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode,
             final StatementContextBase<?, ?, ?> targetNodeStmtCtx) {
         for (final StatementContextBase<?, ?, ?> subStmtCtx : usesNode.declaredSubstatements()) {
-            if (StmtContextUtils.producesDeclared(subStmtCtx, RefineStatement.class)) {
+            if (StmtContextUtils.producesDeclared(subStmtCtx, RefineStatement.class)
+                    && areFeaturesSupported(subStmtCtx)) {
                 performRefine(subStmtCtx, targetNodeStmtCtx);
             }
         }
+    }
+
+    private static boolean areFeaturesSupported(final StatementContextBase<?, ?, ?> subStmtCtx) {
+        /*
+         * In case of Yang 1.1, checks whether features are supported.
+         */
+        return !YangInferencePipeline.YANG1_1.equals(subStmtCtx.getRootVersion()) || StmtContextUtils
+                .areFeaturesSupported(subStmtCtx);
     }
 
     private static void performRefine(final StatementContextBase<?, ?, ?> refineCtx,
