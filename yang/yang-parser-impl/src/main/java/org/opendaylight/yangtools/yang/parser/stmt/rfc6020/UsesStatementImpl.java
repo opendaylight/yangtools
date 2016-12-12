@@ -267,10 +267,19 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
             final Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode,
             final StatementContextBase<?, ?, ?> targetNodeStmtCtx) {
         for (final StatementContextBase<?, ?, ?> subStmtCtx : usesNode.declaredSubstatements()) {
-            if (StmtContextUtils.producesDeclared(subStmtCtx, RefineStatement.class)) {
+            if (StmtContextUtils.producesDeclared(subStmtCtx, RefineStatement.class)
+                    && areFeaturesSupported(subStmtCtx)) {
                 performRefine(subStmtCtx, targetNodeStmtCtx);
             }
         }
+    }
+
+    private static boolean areFeaturesSupported(final StatementContextBase<?, ?, ?> subStmtCtx) {
+        /*
+         * In case of Yang 1.1, checks whether features are supported.
+         */
+        return !YangInferencePipeline.YANG1_1.equals(subStmtCtx.getRootVersion()) || StmtContextUtils
+                .areFeaturesSupported(subStmtCtx);
     }
 
     private static void performRefine(final StatementContextBase<?, ?, ?> refineCtx,

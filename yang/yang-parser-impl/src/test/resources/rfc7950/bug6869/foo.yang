@@ -1,0 +1,48 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+    yang-version 1.1;
+
+    identity my-identity {
+        if-feature identity-feature;
+    }
+
+    container root {
+        uses grp {
+            refine grp-leaf {
+                if-feature mandatory-leaf;
+                mandatory true;
+            }
+        }
+    }
+
+    grouping grp {
+        leaf grp-leaf {
+            type empty;
+        }
+    }
+
+    typedef my-enum {
+        type enumeration {
+            enum tcp;
+            enum ssh {
+                if-feature ssh;
+            }
+            enum tls {
+                if-feature tls;
+            }
+        }
+    }
+
+    typedef my-bits {
+        type bits {
+            bit one;
+            bit two {
+                if-feature two;
+            }
+            bit three {
+                if-feature three;
+            }
+        }
+    }
+}
