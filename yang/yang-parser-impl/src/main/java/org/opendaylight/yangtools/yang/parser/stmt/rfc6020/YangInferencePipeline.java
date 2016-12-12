@@ -58,8 +58,12 @@ import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNa
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.AnydataStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.BitStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ContainerStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.EnumStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.IdentityStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ModuleStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.RefineStatementRfc7950Support;
 
 public final class YangInferencePipeline {
     public static final SemVer YANG1 = SemVer.create(1);
@@ -131,16 +135,19 @@ public final class YangInferencePipeline {
             .addSupport(global(ExtensionNamespace.class))
             .addSupport(new TypedefStatementImpl.Definition())
             .addSupport(treeScoped(TypeNamespace.class))
-            .addSupport(new IdentityStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1, new IdentityStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1_1, new IdentityStatementRfc7950Support())
             .addSupport(global(IdentityNamespace.class))
             .addSupport(new DefaultStatementImpl.Definition())
             .addSupport(new StatusStatementImpl.Definition())
             .addSupport(new TypeStatementImpl.Definition())
             .addSupport(new UnitsStatementImpl.Definition())
             .addSupport(new RequireInstanceStatementImpl.Definition())
-            .addSupport(new BitStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1, new BitStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1_1, new BitStatementRfc7950Support())
             .addSupport(new PathStatementImpl.Definition())
-            .addSupport(new EnumStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1, new EnumStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1_1, new EnumStatementRfc7950Support())
             .addSupport(new LengthStatementImpl.Definition())
             .addSupport(new PatternStatementImpl.Definition())
             .addSupport(new RangeStatementImpl.Definition())
@@ -185,7 +192,8 @@ public final class YangInferencePipeline {
             .addSupport(new WhenStatementImpl.Definition())
             .addSupport(new AugmentStatementImpl.Definition())
             .addSupport(treeScoped(AugmentToChoiceNamespace.class))
-            .addSupport(new RefineStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1, new RefineStatementImpl.Definition())
+            .addVersionSpecificSupport(YANG1_1, new RefineStatementRfc7950Support())
             .addSupport(new FeatureStatementImpl.Definition())
             .addSupport(new PositionStatementImpl.Definition())
             .addSupport(new ValueStatementImpl.Definition())
