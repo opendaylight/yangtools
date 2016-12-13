@@ -27,10 +27,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.Notificatio
  */
 @Beta
 public final class NotificationStatementRfc7950Support extends NotificationStatementImpl.Definition {
-    // :FIXME add action statement to the set of illegal parents, once bug-6896
-    // will be resolved.
     private static final Set<StatementDefinition> ILLEGAL_PARENTS = ImmutableSet.of(YangStmtMapping.NOTIFICATION,
-            YangStmtMapping.RPC);
+            YangStmtMapping.RPC, YangStmtMapping.ACTION);
 
     @Override
     public EffectiveStatement<QName, NotificationStatement> createEffective(

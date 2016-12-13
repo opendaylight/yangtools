@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableSet.Builder;
 import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
@@ -22,6 +23,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class ContainerEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<ContainerStatement> implements
         DerivableSchemaNode {
+    private final Set<ActionDefinition> actions;
     private final Set<NotificationDefinition> notifications;
     private final ContainerSchemaNode original;
 
@@ -30,18 +32,30 @@ public final class ContainerEffectiveStatementImpl extends AbstractEffectiveCont
         super(ctx);
         this.original = ctx.getOriginalCtx() == null ? null : (ContainerSchemaNode) ctx.getOriginalCtx()
                 .buildEffective();
+        final ImmutableSet.Builder<ActionDefinition> actionsBuilder = ImmutableSet.builder();
         final Builder<NotificationDefinition> notificationsBuilder = ImmutableSet.builder();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
+            if (effectiveStatement instanceof ActionDefinition) {
+                actionsBuilder.add((ActionDefinition) effectiveStatement);
+            }
+
             if (effectiveStatement instanceof NotificationDefinition) {
                 notificationsBuilder.add((NotificationDefinition) effectiveStatement);
             }
         }
+
+        this.actions = actionsBuilder.build();
         this.notifications = notificationsBuilder.build();
     }
 
     @Override
     public Optional<ContainerSchemaNode> getOriginal() {
         return Optional.fromNullable(original);
+    }
+
+    @Override
+    public Set<ActionDefinition> getActions() {
+        return actions;
     }
 
     @Override
