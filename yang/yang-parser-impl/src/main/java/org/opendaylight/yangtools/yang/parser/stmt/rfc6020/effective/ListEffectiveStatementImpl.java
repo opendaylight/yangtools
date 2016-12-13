@@ -19,6 +19,7 @@ import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -37,6 +38,7 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
     private final boolean userOrdered;
     private final List<QName> keyDefinition;
     private final ListSchemaNode original;
+    private final Set<ActionDefinition> actions;
     private final Set<NotificationDefinition> notifications;
     private final Collection<UniqueConstraint> uniqueConstraints;
 
@@ -77,12 +79,19 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
         this.keyDefinition = ImmutableList.copyOf(keyDefinitionInit);
         this.uniqueConstraints = ImmutableList.copyOf(allSubstatementsOfType(UniqueConstraint.class));
 
+        final ImmutableSet.Builder<ActionDefinition> actionsBuilder = ImmutableSet.builder();
         final Builder<NotificationDefinition> notificationsBuilder = ImmutableSet.builder();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
+            if (effectiveStatement instanceof ActionDefinition) {
+                actionsBuilder.add((ActionDefinition) effectiveStatement);
+            }
+
             if (effectiveStatement instanceof NotificationDefinition) {
                 notificationsBuilder.add((NotificationDefinition) effectiveStatement);
             }
         }
+
+        this.actions = actionsBuilder.build();
         this.notifications = notificationsBuilder.build();
     }
 
@@ -94,6 +103,11 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
     @Override
     public List<QName> getKeyDefinition() {
         return keyDefinition;
+    }
+
+    @Override
+    public Set<ActionDefinition> getActions() {
+        return actions;
     }
 
     @Override
