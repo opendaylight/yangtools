@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ListStatementImpl;
 public class ListStatementRfc7950Support extends ListStatementImpl.Definition {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .LIST)
+            .addAny(YangStmtMapping.ACTION)
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.CHOICE)
             .addOptional(YangStmtMapping.CONFIG)

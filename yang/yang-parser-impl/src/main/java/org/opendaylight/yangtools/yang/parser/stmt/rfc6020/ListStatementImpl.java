@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -199,6 +200,12 @@ public class ListStatementImpl extends AbstractDeclaredStatement<QName>
     @Override
     public Collection<? extends UniqueStatement> getUnique() {
         return allDeclared(UniqueStatement.class);
+    }
+
+    @Nonnull
+    @Override
+    public Collection<? extends ActionStatement> getActions() {
+        return allDeclared(ActionStatement.class);
     }
 
     @Override
