@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a622d24_0ba2faad",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/SupportedVersionsBundle.java",
+        "patchSetId": 24
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-12-13T13:09:18Z",
+      "side": 1,
+      "message": "With YangVersion introduce, I think we can remove this class and use Set\u003cYangVersion\u003e in its instead.",
+      "range": {
+        "startLine": 22,
+        "startChar": 13,
+        "endLine": 22,
+        "endChar": 36
+      },
+      "revId": "35fcef23d8c8caf728ee0f536c9fda9a7a1e2ac0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
