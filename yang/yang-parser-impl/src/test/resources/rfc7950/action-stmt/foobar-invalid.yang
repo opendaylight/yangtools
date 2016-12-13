@@ -1,0 +1,23 @@
+module foobar-invalid {
+    namespace foobar-namespace;
+    prefix foobar-prefix;
+    yang-version 1.1;
+
+    revision 2016-12-13;
+
+    uses grouping-with-action;
+
+    grouping grouping-with-action {
+        action my-action {
+            input {
+                container in {
+                }
+            }
+            output {
+                container out {
+                }
+            }
+        }
+    }
+
+}
