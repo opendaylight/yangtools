@@ -12,13 +12,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-final class EffectiveStmtUtils {
+public final class EffectiveStmtUtils {
 
     private EffectiveStmtUtils() {
         throw new UnsupportedOperationException("Utility class");
     }
 
-    static SourceException createNameCollisionSourceException(final StmtContext<?, ?, ?> ctx,
+    public static SourceException createNameCollisionSourceException(final StmtContext<?, ?, ?> ctx,
             final EffectiveStatement<?, ?> effectiveStatement) {
         return new SourceException(ctx.getStatementSourceReference(),
             "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared.",

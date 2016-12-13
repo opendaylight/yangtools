@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ContainerStatementImp
 public class ContainerStatementRfc7950Support extends ContainerStatementImpl.Definition {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .CONTAINER)
+            .addAny(YangStmtMapping.ACTION)
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.CHOICE)
             .addOptional(YangStmtMapping.CONFIG)

@@ -1,0 +1,26 @@
+module foo10 {
+    namespace foo10-namespace;
+    prefix foo10-prefix;
+    yang-version 1;
+
+    revision 2012-12-13;
+
+    container root {
+    }
+
+    list top-list {
+        action top-list-action {
+        }
+    }
+
+    grouping grp {
+        action grp-action {
+        }
+    }
+
+    augment "/root" {
+        uses grp;
+        action aug-action {
+        }
+    }
+}
