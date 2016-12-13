@@ -1,0 +1,23 @@
+module bar-invalid {
+    namespace bar-namespace;
+    prefix bar-prefix;
+    yang-version 1.1;
+
+    revision 2016-12-13;
+
+    list my-unkeyed-list {
+        container my-container {
+            list my-keyed-list {
+                key key-leaf;
+
+                leaf key-leaf {
+                    type string;
+                }
+
+                action my-action {
+
+                }
+            }
+        }
+    }
+}

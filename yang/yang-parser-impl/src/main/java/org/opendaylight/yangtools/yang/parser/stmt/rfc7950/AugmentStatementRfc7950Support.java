@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.AugmentStatementImpl;
 public final class AugmentStatementRfc7950Support extends AugmentStatementImpl.Definition {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator
             .builder(YangStmtMapping.AUGMENT)
+            .addAny(YangStmtMapping.ACTION)
             .addAny(YangStmtMapping.ANYDATA)
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.CASE)

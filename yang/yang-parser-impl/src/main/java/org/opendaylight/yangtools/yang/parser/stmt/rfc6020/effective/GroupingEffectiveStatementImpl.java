@@ -15,6 +15,7 @@ import java.util.Objects;
 import javax.annotation.Nonnull;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -29,6 +30,7 @@ public class GroupingEffectiveStatementImpl extends
     private final QName qname;
     private final SchemaPath path;
     private final boolean addedByUses;
+    private final Set<ActionDefinition> actions;
     private final Set<NotificationDefinition> notifications;
     private final List<UnknownSchemaNode> unknownNodes;
 
@@ -41,17 +43,24 @@ public class GroupingEffectiveStatementImpl extends
 
         addedByUses = ctx.getCopyHistory().contains(CopyType.ADDED_BY_USES);
 
+        final ImmutableSet.Builder<ActionDefinition> actionsBuilder = ImmutableSet.builder();
         final ImmutableSet.Builder<NotificationDefinition> notificationsBuilder = ImmutableSet.builder();
         final ImmutableList.Builder<UnknownSchemaNode> b = ImmutableList.builder();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
+            if (effectiveStatement instanceof ActionDefinition) {
+                actionsBuilder.add((ActionDefinition) effectiveStatement);
+            }
+
             if (effectiveStatement instanceof NotificationDefinition) {
                 notificationsBuilder.add((NotificationDefinition) effectiveStatement);
             }
+
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 b.add((UnknownSchemaNode) effectiveStatement);
             }
         }
 
+        this.actions = actionsBuilder.build();
         this.notifications = notificationsBuilder.build();
         unknownNodes = b.build();
     }
@@ -71,6 +80,11 @@ public class GroupingEffectiveStatementImpl extends
     @Override
     public boolean isAddedByUses() {
         return addedByUses;
+    }
+
+    @Override
+    public Set<ActionDefinition> getActions() {
+        return actions;
     }
 
     @Nonnull

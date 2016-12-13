@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.GroupingStatementImpl
 public final class GroupingStatementRfc7950Support extends GroupingStatementImpl.Definition {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .GROUPING)
+            .addAny(YangStmtMapping.ACTION)
             .addAny(YangStmtMapping.ANYDATA)
             .addAny(YangStmtMapping.ANYXML)
             .addAny(YangStmtMapping.CHOICE)

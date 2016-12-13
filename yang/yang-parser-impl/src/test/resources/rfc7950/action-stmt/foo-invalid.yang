@@ -1,0 +1,27 @@
+module foo-invalid {
+    namespace foo-namespace;
+    prefix foo-prefix;
+    yang-version 1.1;
+
+    revision 2016-12-13;
+
+    rpc my-rpc {
+        input {
+            container in {
+            }
+        }
+        output {
+            container out {
+            }
+        }
+    }
+
+    grouping grouping-with-action {
+        action action-in-grouping {
+        }
+    }
+
+    augment "/my-rpc/input/in" {
+        uses grouping-with-action;
+    }
+}

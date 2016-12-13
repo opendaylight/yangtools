@@ -22,6 +22,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.NamespaceRevisionAware;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
@@ -41,6 +42,7 @@ public final class AugmentEffectiveStatementImpl extends
     private final URI namespace;
     private final Date revision;
     private final int order;
+    private final Set<ActionDefinition> actions;
     private final Set<NotificationDefinition> notifications;
     private final List<UnknownSchemaNode> unknownNodes;
     private final RevisionAwareXPath whenCondition;
@@ -64,15 +66,20 @@ public final class AugmentEffectiveStatementImpl extends
 
         // initSubstatementCollections
         final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
+        final ImmutableSet.Builder<ActionDefinition> actionsBuilder = ImmutableSet.builder();
         final ImmutableSet.Builder<NotificationDefinition> notificationsBuilder = ImmutableSet.builder();
         final ImmutableList.Builder<UnknownSchemaNode> listBuilder = new ImmutableList.Builder<>();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
-            if (effectiveStatement instanceof NotificationDefinition) {
+            if (effectiveStatement instanceof ActionDefinition) {
+                actionsBuilder.add((ActionDefinition) effectiveStatement);
+            } else if (effectiveStatement instanceof NotificationDefinition) {
                 notificationsBuilder.add((NotificationDefinition) effectiveStatement);
             } else if (effectiveStatement instanceof UnknownSchemaNode) {
                 listBuilder.add((UnknownSchemaNode) effectiveStatement);
             }
         }
+
+        this.actions = actionsBuilder.build();
         this.notifications = notificationsBuilder.build();
         this.unknownNodes = listBuilder.build();
     }
@@ -101,6 +108,11 @@ public final class AugmentEffectiveStatementImpl extends
     @Override
     public URI getNamespace() {
         return namespace;
+    }
+
+    @Override
+    public Set<ActionDefinition> getActions() {
+        return actions;
     }
 
     @Override

@@ -60,6 +60,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamesp
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ActionStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.AnydataStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.AugmentStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.CaseStatementRfc7950Support;
@@ -166,6 +167,7 @@ public final class YangInferencePipeline {
             .addVersionSpecificSupport(VERSION_1, new ListStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1_1, new ListStatementRfc7950Support())
             .addSupport(new UniqueStatementImpl.Definition())
+            .addVersionSpecificSupport(VERSION_1_1, new ActionStatementImpl.Definition())
             .addSupport(new RpcStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1, new InputStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1_1, new InputStatementRfc7950Support())
