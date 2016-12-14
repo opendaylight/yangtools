@@ -12,7 +12,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.base.VerifyException;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
@@ -70,7 +69,7 @@ public class SubstatementValidatorTest {
 
     @Test
     public void missingElementException() throws URISyntaxException, ReactorException {
-        expectedEx.expect(VerifyException.class);
+        expectedEx.expect(SomeModifiersUnresolvedException.class);
 
         final Set<Module> modules = TestUtils.loadModules(getClass().getResource(
                 "/substatement-validator/missing-element").toURI());
