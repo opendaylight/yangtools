@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.stmt.yin;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.net.URISyntaxException;
 import java.util.Set;
@@ -63,12 +65,19 @@ public class YinFileStmtTest {
     }
 
     // parsing yin file with duplicate key name in a list statement
-    @Test(expected = IllegalArgumentException.class)
-    public void readAndParseInvalidYinFileTest2() throws ReactorException {
+    public void readAndParseInvalidYinFileTest2() {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         addSources(reactor, INVALID_YIN_FILE_2);
-        EffectiveSchemaContext result = reactor.buildEffective();
-        assertNotNull(result);
+
+        try {
+            reactor.buildEffective();
+            fail("Reactor exception should have been thrown");
+        } catch (ReactorException e) {
+            final Throwable cause = e.getCause();
+            assertTrue(cause instanceof SourceException);
+            assertTrue(cause.getMessage().startsWith(
+                "Key argument 'testing-string testing-string' contains duplicates"));
+        }
     }
 
     @Test

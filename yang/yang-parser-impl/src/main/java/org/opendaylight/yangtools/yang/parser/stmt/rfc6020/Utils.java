@@ -51,6 +51,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -446,9 +447,9 @@ public final class Utils {
             try {
                 final QName qName = Utils.qNameFromArgument(ctx, nodeName);
                 qNames.add(qName);
-            } catch (final Exception e) {
-                throw new IllegalArgumentException(
-                    String.format("Failed to parse node '%s' in path '%s'", nodeName, path), e);
+            } catch (final RuntimeException e) {
+                throw new SourceException(ctx.getStatementSourceReference(), e,
+                        "Failed to parse node '%s' in path '%s'", nodeName, path);
             }
         }
 
@@ -520,9 +521,9 @@ public final class Utils {
             break;
         }
 
-        Preconditions.checkArgument(qNameModule != null,
-                "Error in module '%s': can not resolve QNameModule for '%s'. Statement source at %s",
-                ctx.getRoot().rawStatementArgument(), value, ctx.getStatementSourceReference());
+        qNameModule = InferenceException.throwIfNull(qNameModule, ctx.getStatementSourceReference(),
+            "Cannot resolve QNameModule for '%s'", value);
+
         final QNameModule resultQNameModule;
         if (qNameModule.getRevision() == null) {
             resultQNameModule = QNameModule.create(qNameModule.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV)
@@ -583,9 +584,8 @@ public final class Utils {
     }
 
     public static DeviateKind parseDeviateFromString(final StmtContext<?, ?, ?> ctx, final String deviateKeyword) {
-        return Preconditions.checkNotNull(KEYWORD_TO_DEVIATE_MAP.get(deviateKeyword),
-                "String '%s' is not valid deviate argument. Statement source at %s", deviateKeyword,
-                ctx.getStatementSourceReference());
+        return SourceException.throwIfNull(KEYWORD_TO_DEVIATE_MAP.get(deviateKeyword),
+            ctx.getStatementSourceReference(), "String '%s' is not valid deviate argument", deviateKeyword);
     }
 
     public static Status parseStatus(final String value) {

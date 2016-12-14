@@ -203,21 +203,37 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         return transformEffective();
     }
 
+    private SomeModifiersUnresolvedException propagateException(final SourceSpecificContext source,
+            final RuntimeException cause) throws SomeModifiersUnresolvedException {
+        final SourceIdentifier sourceId = Utils.createSourceIdentifier(source.getRoot());
+        if (!(cause instanceof SourceException)) {
+            /*
+             * This should not be happening as all our processing should provide SourceExceptions.
+             * We will wrap the exception to provide enough information to identify the problematic model,
+             * but also emit a warning so the offending codepath will get fixed.
+             */
+            LOG.warn("Unexpected error processing source {}. Please file an issue with this model attached.",
+                sourceId, cause);
+        }
+
+        throw new SomeModifiersUnresolvedException(currentPhase, sourceId, cause);
+    }
+
     private EffectiveSchemaContext transformEffective() throws ReactorException {
         Preconditions.checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         final List<DeclaredStatement<?>> rootStatements = new ArrayList<>(sources.size());
         final List<EffectiveStatement<?, ?>> rootEffectiveStatements = new ArrayList<>(sources.size());
-        SourceIdentifier sourceId = null;
 
         try {
             for (final SourceSpecificContext source : sources) {
                 final RootStatementContext<?, ?, ?> root = source.getRoot();
-                sourceId = Utils.createSourceIdentifier(root);
-                rootStatements.add(root.buildDeclared());
-                rootEffectiveStatements.add(root.buildEffective());
+                try {
+                    rootStatements.add(root.buildDeclared());
+                    rootEffectiveStatements.add(root.buildEffective());
+                } catch (final RuntimeException ex) {
+                    throw propagateException(source, ex);
+                }
             }
-        } catch (final SourceException ex) {
-            throw new SomeModifiersUnresolvedException(currentPhase, sourceId, ex);
         } finally {
             RecursiveObjectLeaker.cleanup();
         }
@@ -239,9 +255,8 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         for (final SourceSpecificContext source : sources) {
             try {
                 source.loadStatements();
-            } catch (final SourceException ex) {
-                final SourceIdentifier sourceId = Utils.createSourceIdentifier(source.getRoot());
-                throw new SomeModifiersUnresolvedException(currentPhase, sourceId, ex);
+            } catch (final RuntimeException ex) {
+                throw propagateException(source, ex);
             }
         }
     }
@@ -296,35 +311,33 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     private void completePhaseActions() throws ReactorException {
         Preconditions.checkState(currentPhase != null);
         final List<SourceSpecificContext> sourcesToProgress = Lists.newArrayList(sources);
-        SourceIdentifier sourceId = null;
-        try {
-            boolean progressing = true;
-            while (progressing) {
-                // We reset progressing to false.
-                progressing = false;
-                final Iterator<SourceSpecificContext> currentSource = sourcesToProgress.iterator();
-                while (currentSource.hasNext()) {
-                    final SourceSpecificContext nextSourceCtx = currentSource.next();
-                    sourceId = Utils.createSourceIdentifier(nextSourceCtx.getRoot());
+        boolean progressing = true;
+        while (progressing) {
+            // We reset progressing to false.
+            progressing = false;
+            final Iterator<SourceSpecificContext> currentSource = sourcesToProgress.iterator();
+            while (currentSource.hasNext()) {
+                final SourceSpecificContext nextSourceCtx = currentSource.next();
+                try {
                     final PhaseCompletionProgress sourceProgress = nextSourceCtx.tryToCompletePhase(currentPhase);
                     switch (sourceProgress) {
-                    case FINISHED:
-                        currentSource.remove();
-                        // Fallback to progress, since we were able to make
-                        // progress in computation
-                    case PROGRESS:
-                        progressing = true;
-                        break;
-                    case NO_PROGRESS:
-                        // Noop
-                        break;
-                    default:
-                        throw new IllegalStateException("Unsupported phase progress " + sourceProgress);
+                        case FINISHED:
+                            currentSource.remove();
+                            // Fallback to progress, since we were able to make
+                            // progress in computation
+                        case PROGRESS:
+                            progressing = true;
+                            break;
+                        case NO_PROGRESS:
+                            // Noop
+                            break;
+                        default:
+                            throw new IllegalStateException("Unsupported phase progress " + sourceProgress);
                     }
+                } catch (RuntimeException ex) {
+                    throw propagateException(nextSourceCtx, ex);
                 }
             }
-        } catch (final SourceException e) {
-            throw new SomeModifiersUnresolvedException(currentPhase, sourceId, e);
         }
         if (!sourcesToProgress.isEmpty()) {
             final SomeModifiersUnresolvedException buildFailure = addSourceExceptions(sourcesToProgress);

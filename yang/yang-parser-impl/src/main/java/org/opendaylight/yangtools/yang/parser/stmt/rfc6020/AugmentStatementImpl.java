@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
@@ -83,9 +82,10 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
 
         @Override
         public SchemaNodeIdentifier parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-            Preconditions.checkArgument(!PATH_REL_PATTERN1.matcher(value).matches()
-                && !PATH_REL_PATTERN2.matcher(value).matches(),
-                "An argument for augment can be only absolute path; or descendant if used in uses");
+            SourceException.throwIf(PATH_REL_PATTERN1.matcher(value).matches()
+                || PATH_REL_PATTERN2.matcher(value).matches(), ctx.getStatementSourceReference(),
+                "Augment argument \'%s\' is not valid, it can be only absolute path; or descendant if used in uses",
+                value);
 
             return Utils.nodeIdentifierFromPath(ctx, value);
         }
