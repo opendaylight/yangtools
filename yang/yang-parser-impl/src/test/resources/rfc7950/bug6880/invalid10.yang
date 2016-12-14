@@ -1,0 +1,10 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+
+    leaf-list my-leaf-list {
+        type string;
+        default "my-default-value-1";
+        default "my-default-value-2";
+    }
+}

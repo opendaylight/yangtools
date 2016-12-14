@@ -8,6 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
@@ -28,6 +31,7 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
     private final TypeDefinition<?> type;
     private final LeafListSchemaNode original;
     private final boolean userOrdered;
+    private final List<String> defaultValues;
 
     public LeafListEffectiveStatementImpl(
             final StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
@@ -41,14 +45,15 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
 
         final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
             ctx.getSchemaPath().get());
+        final ImmutableList.Builder<String> defaultValuesBuilder = ImmutableList.builder();
         boolean isUserOrdered = false;
-        for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
+        for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof OrderedByEffectiveStatementImpl) {
                 isUserOrdered = ORDER_BY_USER_KEYWORD.equals(stmt.argument());
             }
 
             if (stmt instanceof DefaultEffectiveStatementImpl) {
-                builder.setDefaultValue(stmt.argument());
+                defaultValuesBuilder.add(((DefaultEffectiveStatementImpl) stmt).argument());
             } else if (stmt instanceof DescriptionEffectiveStatementImpl) {
                 builder.setDescription(((DescriptionEffectiveStatementImpl)stmt).argument());
             } else if (stmt instanceof ReferenceEffectiveStatementImpl) {
@@ -60,8 +65,14 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
             }
         }
 
+        defaultValues = defaultValuesBuilder.build();
         type = builder.build();
         userOrdered = isUserOrdered;
+    }
+
+    @Override
+    public Collection<String> getDefaults() {
+        return defaultValues;
     }
 
     @Override
@@ -99,7 +110,7 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
         if (getClass() != obj.getClass()) {
             return false;
         }
-        LeafListEffectiveStatementImpl other = (LeafListEffectiveStatementImpl) obj;
+        final LeafListEffectiveStatementImpl other = (LeafListEffectiveStatementImpl) obj;
         return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 
