@@ -32,4 +32,21 @@ public interface DataTreeTip {
      * @return candidate data tree
      */
     DataTreeCandidate prepare(DataTreeModification modification);
+
+    /**
+     * {@inheritDoc}
+     *
+     * {@link DataTreeTip} implementations must not override the default identity hashCode method.
+     */
+    @Override
+    public int hashCode();
+
+    /**
+     * {@inheritDoc}
+     *
+     * {@link DataTreeTip} implementations must not override the default identity hashCode method, meaning their
+     * equals implementation must result in identity comparison.
+     */
+    @Override
+    public boolean equals(Object o);
 }
