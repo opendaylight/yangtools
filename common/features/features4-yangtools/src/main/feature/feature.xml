@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.2.1" name="features-yangtools">
+    <repository>mvn:org.opendaylight.odlparent/features4-odlparent/1.8.0-SNAPSHOT/xml/features</repository>
+</features>
