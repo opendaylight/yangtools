@@ -8,9 +8,10 @@
 
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -27,7 +28,7 @@ public class KeyTest {
             "/semantic-statement-parser/key-arg-parsing/key-comp-duplicate.yang", false);
 
     @Test
-    public void keySimpleTest() throws SourceException, ReactorException {
+    public void keySimpleTest() throws ReactorException {
 
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         addSources(reactor, KEY_SIMPLE_AND_COMP);
@@ -37,7 +38,7 @@ public class KeyTest {
     }
 
     @Test
-    public void keyCompositeInvalid() throws SourceException, ReactorException {
+    public void keyCompositeInvalid() {
 
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         addSources(reactor, KEY_COMP_DUPLICATE);
@@ -45,8 +46,10 @@ public class KeyTest {
         try {
             reactor.build();
             fail("reactor.process should fail due to duplicate name in key");
-        } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
+        } catch (ReactorException e) {
+            final Throwable cause = e.getCause();
+            assertTrue(cause instanceof SourceException);
+            assertTrue(cause.getMessage().startsWith("Key argument 'key1 key2 key2' contains duplicates"));
         }
     }
 

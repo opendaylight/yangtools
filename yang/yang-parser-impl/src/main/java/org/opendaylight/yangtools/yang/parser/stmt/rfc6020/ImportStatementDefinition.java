@@ -49,6 +49,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToSemVerModule
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ImportEffectiveStatementImpl;
 
 public class ImportStatementDefinition extends
@@ -104,8 +105,10 @@ public class ImportStatementDefinition extends
                 final URI importedModuleNamespace = importedModuleContext.getFromNamespace(ModuleNameToNamespace.class,
                         moduleName);
                 Verify.verifyNotNull(importedModuleNamespace);
-                final String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
-                Verify.verifyNotNull(impPrefix);
+                final String impPrefix = SourceException.throwIfNull(
+                    firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class),
+                    stmt.getStatementSourceReference(), "Missing prefix statement");
+
                 stmt.addToNs(ImpPrefixToNamespace.class, impPrefix, importedModuleNamespace);
             }
 

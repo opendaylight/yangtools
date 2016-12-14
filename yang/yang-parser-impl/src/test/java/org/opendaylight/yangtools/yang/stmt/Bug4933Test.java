@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public class Bug4933Test {
 
     @Test
-    public void test() throws SourceException, ReactorException, FileNotFoundException, URISyntaxException {
+    public void test() throws ReactorException, FileNotFoundException, URISyntaxException {
         SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug4933/correct");
         assertNotNull(context);
 
@@ -33,13 +33,14 @@ public class Bug4933Test {
     }
 
     @Test
-    public void incorrectKeywordTest() throws SourceException, ReactorException, FileNotFoundException,
-            URISyntaxException {
+    public void incorrectKeywordTest() throws FileNotFoundException, URISyntaxException {
         try {
             StmtTestUtils.parseYangSources("/bugs/bug4933/incorrect");
-            fail("NullPointerException should be thrown.");
-        } catch (NullPointerException e) {
-            assertTrue(e.getMessage().startsWith("String 'not_supported' is not valid deviate argument. Statement source at"));
+            fail("ReactorException should be thrown.");
+        } catch (ReactorException e) {
+            final Throwable cause = e.getCause();
+            assertTrue(cause instanceof SourceException);
+            assertTrue(cause.getMessage().startsWith("String 'not_supported' is not valid deviate argument"));
         }
     }
 }
