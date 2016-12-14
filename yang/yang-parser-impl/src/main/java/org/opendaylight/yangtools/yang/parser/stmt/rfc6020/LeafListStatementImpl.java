@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
@@ -128,6 +129,11 @@ public class LeafListStatementImpl extends AbstractDeclaredStatement<QName>
     @Override
     public StatusStatement getStatus() {
         return firstDeclared(StatusStatement.class);
+    }
+
+    @Override
+    public final Collection<? extends DefaultStatement> getDefaults() {
+        return allDeclared(DefaultStatement.class);
     }
 
     @Nullable
