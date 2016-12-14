@@ -37,6 +37,7 @@ public final class QNameModule implements Immutable, Serializable {
     private transient int hash;
 
     private QNameModule(final URI namespace, final Date revision) {
+        // FIXME: 2.0.0: Preconditions.checkNotNull(namespace)
         this.namespace = namespace;
         this.revision = revision;
     }
@@ -95,6 +96,7 @@ public final class QNameModule implements Immutable, Serializable {
      * @return date of the module revision which is specified as argument of
      *         YANG Module <b><font color="#339900">revison</font></b> keyword
      */
+    // FIXME: BUG-4688: should return Optional<Revision>
     public Date getRevision() {
         return revision;
     }
