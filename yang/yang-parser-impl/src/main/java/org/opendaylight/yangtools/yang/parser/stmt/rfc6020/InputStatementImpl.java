@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
@@ -101,5 +102,11 @@ public class InputStatementImpl extends AbstractDeclaredStatement<QName>
     @Override
     public Collection<? extends DataDefinitionStatement> getDataDefinitions() {
         return allDeclared(DataDefinitionStatement.class);
+    }
+
+    @Nonnull
+    @Override
+    public Collection<? extends MustStatement> getMusts() {
+        return allDeclared(MustStatement.class);
     }
 }

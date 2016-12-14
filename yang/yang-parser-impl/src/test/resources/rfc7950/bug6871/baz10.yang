@@ -1,0 +1,14 @@
+module baz10 {
+    namespace baz10-namespace;
+    prefix baz10-prefix;
+    yang-version 1;
+
+    revision 2016-12-14;
+
+    rpc my-rpc {
+        output {
+            must "baz != bar";
+            must "x = y";
+        }
+    }
+}

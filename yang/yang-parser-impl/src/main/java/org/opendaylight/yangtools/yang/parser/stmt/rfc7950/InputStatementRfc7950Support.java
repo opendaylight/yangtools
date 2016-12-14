@@ -27,6 +27,7 @@ public final class InputStatementRfc7950Support extends InputStatementImpl.Defin
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
+            .addAny(YangStmtMapping.MUST)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
             .build();
