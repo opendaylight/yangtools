@@ -49,6 +49,8 @@ public interface ModuleIdentifier {
      *         YANG {@link Module <b><font color="#339900">revison</font></b>}
      *         keyword
      */
+    // FIXME: BUG-4688: should return Revision
+    // FIXME: BUG-4688: should be a default method calling getQNameModule().getRevision().get()
     Date getRevision();
 
     /**
