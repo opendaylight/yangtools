@@ -209,17 +209,27 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         Preconditions.checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         final List<DeclaredStatement<?>> rootStatements = new ArrayList<>(sources.size());
         final List<EffectiveStatement<?, ?>> rootEffectiveStatements = new ArrayList<>(sources.size());
-        SourceIdentifier sourceId = null;
 
         try {
             for (final SourceSpecificContext source : sources) {
                 final RootStatementContext<?, ?, ?> root = source.getRoot();
-                sourceId = Utils.createSourceIdentifier(root);
-                rootStatements.add(root.buildDeclared());
-                rootEffectiveStatements.add(root.buildEffective());
+                try {
+                    rootStatements.add(root.buildDeclared());
+                    rootEffectiveStatements.add(root.buildEffective());
+                } catch (final SourceException ex) {
+                    throw new SomeModifiersUnresolvedException(currentPhase, Utils.createSourceIdentifier(root), ex);
+                } catch (final RuntimeException ex) {
+                    /*
+                     * This should not be happening as all our processing should provide SourceExceptions.
+                     * We will wrap the exception to provide enough information to identify the problematic model,
+                     * but also emit a warning so the offending codepath will get fixed.
+                     */
+                    final SourceIdentifier sourceId = Utils.createSourceIdentifier(root);
+                    LOG.warn("Unexpected error processing source {}. Please file an issue with this model attached.",
+                        sourceId, ex);
+                    throw new SomeModifiersUnresolvedException(currentPhase, sourceId, ex);
+                }
             }
-        } catch (final SourceException ex) {
-            throw new SomeModifiersUnresolvedException(currentPhase, sourceId, ex);
         } finally {
             RecursiveObjectLeaker.cleanup();
         }
