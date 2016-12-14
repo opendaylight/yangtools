@@ -40,6 +40,7 @@ public final class NotificationStatementRfc7950Support extends NotificationState
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
+            .addAny(YangStmtMapping.MUST)
             .addOptional(YangStmtMapping.REFERENCE)
             .addOptional(YangStmtMapping.STATUS)
             .addAny(YangStmtMapping.TYPEDEF)

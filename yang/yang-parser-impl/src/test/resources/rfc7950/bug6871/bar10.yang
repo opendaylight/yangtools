@@ -1,0 +1,14 @@
+module bar10 {
+    namespace bar10-namespace;
+    prefix bar10-prefix;
+    yang-version 1;
+
+    revision 2016-12-14;
+
+    rpc my-rpc {
+        input {
+            must "bar = foo";
+            must "c != d";
+        }
+    }
+}
