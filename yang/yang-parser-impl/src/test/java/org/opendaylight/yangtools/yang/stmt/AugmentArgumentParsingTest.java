@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.Ignore;
@@ -41,7 +42,7 @@ public class AugmentArgumentParsingTest {
             "/semantic-statement-parser/augment-arg-parsing/root-invalid-xpath.yang", false);
 
     @Test
-    public void validAugAbsTest() throws SourceException, ReactorException {
+    public void validAugAbsTest() throws ReactorException {
 
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         addSources(reactor, IMPORTED, VALID_ARGS);
@@ -51,7 +52,7 @@ public class AugmentArgumentParsingTest {
     }
 
     @Test
-    public void invalidAugRel1Test() throws SourceException, ReactorException {
+    public void invalidAugRel1Test() {
 
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         addSources(reactor, INVALID_REL1);
@@ -59,13 +60,13 @@ public class AugmentArgumentParsingTest {
         try {
             reactor.build();
             fail("reactor.process should fail due to invalid relative path");
-        } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
+        } catch (ReactorException e) {
+            assertSourceExceptionCause(e, "Augment argument './aug1/aug11' is not valid");
         }
     }
 
     @Test
-    public void invalidAugRel2Test() throws SourceException, ReactorException {
+    public void invalidAugRel2Test() {
 
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         addSources(reactor, INVALID_REL2);
@@ -73,13 +74,13 @@ public class AugmentArgumentParsingTest {
         try {
             reactor.build();
             fail("reactor.process should fail due to invalid relative path");
-        } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
+        } catch (ReactorException e) {
+            assertSourceExceptionCause(e, "Augment argument '../aug1/aug11' is not valid");
         }
     }
 
     @Test
-    public void invalidAugAbs() throws SourceException, ReactorException {
+    public void invalidAugAbs() {
 
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         addSources(reactor, INVALID_ABS);
@@ -87,13 +88,13 @@ public class AugmentArgumentParsingTest {
         try {
             reactor.build();
             fail("reactor.process should fail due to invalid absolute path");
-        } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
+        } catch (ReactorException e) {
+            assertSourceExceptionCause(e, "Augment argument '//aug1/aug11/aug111' is not valid");
         }
     }
 
     @Test
-    public void invalidAugAbsPrefixedNoImp() throws SourceException, ReactorException {
+    public void invalidAugAbsPrefixedNoImp() {
 
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         addSources(reactor, INVALID_ABS_PREFIXED_NO_IMP);
@@ -101,8 +102,8 @@ public class AugmentArgumentParsingTest {
         try {
             reactor.build();
             fail("reactor.process should fail due to missing import from augment path");
-        } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
+        } catch (ReactorException e) {
+            assertSourceExceptionCause(e, "Failed to parse node 'imp:aug1'");
         }
     }
 
@@ -134,6 +135,12 @@ public class AugmentArgumentParsingTest {
         } catch (Exception e) {
             assertEquals(IllegalArgumentException.class, e.getClass());
         }
+    }
+
+    private static void assertSourceExceptionCause(final Throwable e, final String start) {
+        final Throwable cause = e.getCause();
+        assertTrue(cause instanceof SourceException);
+        assertTrue(cause.getMessage().startsWith(start));
     }
 
     private static void addSources(final BuildAction reactor, final YangStatementSourceImpl... sources) {
