@@ -39,6 +39,7 @@ public interface ModuleIdentifier {
      *
      * @return URI format of the namespace of the module
      */
+    // FIXME: 2.0.0: should be a default method calling getQNameModule().getNamespace()
     URI getNamespace();
 
     /**
@@ -49,6 +50,8 @@ public interface ModuleIdentifier {
      *         YANG {@link Module <b><font color="#339900">revison</font></b>}
      *         keyword
      */
+    // FIXME: BUG-4688: should return Revision
+    // FIXME: BUG-4688: should be a default method calling getQNameModule().getRevision().get()
     Date getRevision();
 
     /**
