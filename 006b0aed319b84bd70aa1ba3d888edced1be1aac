@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a622d24_414faebd",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 369,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-12-14T16:14:25Z",
+      "side": 1,
+      "message": "please do not ever use assignments in flow-control statements",
+      "range": {
+        "startLine": 369,
+        "startChar": 18,
+        "endLine": 369,
+        "endChar": 54
+      },
+      "revId": "006b0aed319b84bd70aa1ba3d888edced1be1aac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_e1687a23",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-12-14T16:14:25Z",
+      "side": 1,
+      "message": "identity compare?",
+      "range": {
+        "startLine": 370,
+        "startChar": 45,
+        "endLine": 370,
+        "endChar": 49
+      },
+      "revId": "006b0aed319b84bd70aa1ba3d888edced1be1aac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_016e562f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-12-14T16:14:25Z",
+      "side": 1,
+      "message": "why do we need identity here?",
+      "range": {
+        "startLine": 392,
+        "startChar": 59,
+        "endLine": 392,
+        "endChar": 63
+      },
+      "revId": "006b0aed319b84bd70aa1ba3d888edced1be1aac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_e1d6bac2",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/AugmentStatementImpl.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-12-14T16:14:25Z",
+      "side": 1,
+      "message": "increased API surface: add javadocs",
+      "range": {
+        "startLine": 192,
+        "startChar": 8,
+        "endLine": 192,
+        "endChar": 68
+      },
+      "revId": "006b0aed319b84bd70aa1ba3d888edced1be1aac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_21e1d29a",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/GroupingStatementImpl.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-12-14T16:14:25Z",
+      "side": 1,
+      "message": "this is the second class to have this: shouldn\u0027t this be an abstract method in AbstractStatementSupport?",
+      "range": {
+        "startLine": 88,
+        "startChar": 0,
+        "endLine": 90,
+        "endChar": 9
+      },
+      "revId": "006b0aed319b84bd70aa1ba3d888edced1be1aac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
