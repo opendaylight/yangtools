@@ -22,6 +22,7 @@ public class OutputStatementRfc7950Support extends OutputStatementImpl.Definitio
             .addAny(YangStmtMapping.LEAF)
             .addAny(YangStmtMapping.LEAF_LIST)
             .addAny(YangStmtMapping.LIST)
+            .addAny(YangStmtMapping.MUST)
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
             .build();

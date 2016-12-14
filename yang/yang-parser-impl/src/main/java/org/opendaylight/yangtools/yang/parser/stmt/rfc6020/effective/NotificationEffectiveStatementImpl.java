@@ -18,6 +18,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -29,6 +30,7 @@ public class NotificationEffectiveStatementImpl extends
         AbstractEffectiveDocumentedDataNodeContainer<QName, NotificationStatement> implements NotificationDefinition {
     private final QName qname;
     private final SchemaPath path;
+    private final ConstraintDefinition constraints;
     private final Set<AugmentationSchema> augmentations;
     private final List<UnknownSchemaNode> unknownNodes;
 
@@ -37,6 +39,8 @@ public class NotificationEffectiveStatementImpl extends
         super(ctx);
         this.qname = ctx.getStatementArgument();
         this.path = ctx.getSchemaPath().get();
+
+        this.constraints = EffectiveConstraintDefinitionImpl.forParent(this);
 
         // initSubstatementCollections
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
@@ -66,6 +70,11 @@ public class NotificationEffectiveStatementImpl extends
     @Override
     public SchemaPath getPath() {
         return path;
+    }
+
+    @Override
+    public ConstraintDefinition getConstraints() {
+        return constraints;
     }
 
     @Override
