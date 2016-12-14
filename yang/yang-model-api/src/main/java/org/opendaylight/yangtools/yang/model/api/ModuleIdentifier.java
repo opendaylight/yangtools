@@ -49,6 +49,7 @@ public interface ModuleIdentifier {
      *         YANG {@link Module <b><font color="#339900">revison</font></b>}
      *         keyword
      */
+    // FIXME: BUG-4688: @Nonnull Revision getRevision()
     Date getRevision();
 
     /**

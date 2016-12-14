@@ -95,6 +95,7 @@ public final class QNameModule implements Immutable, Serializable {
      * @return date of the module revision which is specified as argument of
      *         YANG Module <b><font color="#339900">revison</font></b> keyword
      */
+    // FIXME: BUG-4688:  public Optional<Revision> getRevision();
     public Date getRevision() {
         return revision;
     }
