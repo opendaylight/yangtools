@@ -1,0 +1,12 @@
+module foo10 {
+    namespace foo10-namespace;
+    prefix foo10-prefix;
+    yang-version 1;
+
+    revision 2016-12-14;
+
+    notification my-notification {
+        must "foo != bar";
+        must "a = b";
+    }
+}
