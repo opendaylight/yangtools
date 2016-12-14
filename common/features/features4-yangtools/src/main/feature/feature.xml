@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ Copyright © 2016 Red Hat, Inc. and others.  All rights reserved.
+
+ This program and the accompanying materials are made available under the
+ terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ and is available at http://www.eclipse.org/legal/epl-v10.html
+ -->
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.2.1" name="features-yangtools">
+    <repository>mvn:org.opendaylight.odlparent/features4-odlparent/1.8.0-SNAPSHOT/xml/features</repository>
+</features>
