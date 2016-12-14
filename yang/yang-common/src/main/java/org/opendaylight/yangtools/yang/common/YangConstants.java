@@ -64,6 +64,18 @@ public final class YangConstants {
      */
     public static final QNameModule RFC6020_YIN_MODULE = QNameModule.create(RFC6020_YIN_NAMESPACE, null).intern();
 
+    /**
+     * YANG Library URN, as defined in https://tools.ietf.org/html/rfc7950#section-16.
+     */
+    public static final URI RFC7950_YANG_LIBRARY_NAMESPACE =
+        URI.create("urn:ietf:params:netconf:capability:yang-library:1.0");
+
+    /**
+     * YANG Library URN as a QNameModule.
+     */
+    public static final QNameModule RFC7950_YANG_LIBRARY_MODULE =
+        QNameModule.create(RFC7950_YANG_LIBRARY_NAMESPACE, null).intern();
+
     private YangConstants() {
         throw new UnsupportedOperationException("Utility class");
     }
