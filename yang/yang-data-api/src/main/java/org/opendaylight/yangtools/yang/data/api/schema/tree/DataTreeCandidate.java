@@ -32,4 +32,21 @@ public interface DataTreeCandidate {
      * @return Relative path of the root node
      */
     YangInstanceIdentifier getRootPath();
+
+    /**
+     * {@inheritDoc}
+     *
+     * {@link DataTreeCandidate} implementations must not override the default identity hashCode method.
+     */
+    @Override
+    int hashCode();
+
+    /**
+     * {@inheritDoc}
+     *
+     * {@link DataTreeCandidate} implementations must not override the default identity hashCode method, meaning their
+     * equals implementation must result in identity comparison.
+     */
+    @Override
+    boolean equals(Object o);
 }
