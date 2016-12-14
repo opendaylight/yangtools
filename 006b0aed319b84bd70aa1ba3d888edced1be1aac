@@ -114,6 +114,52 @@
       "revId": "006b0aed319b84bd70aa1ba3d888edced1be1aac",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_e1fd1a3d",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/AugmentEffectiveStatementImpl.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-12-14T16:18:07Z",
+      "side": 1,
+      "message": "Can an effectiveStatement be both?",
+      "range": {
+        "startLine": 72,
+        "startChar": 13,
+        "endLine": 73,
+        "endChar": 14
+      },
+      "revId": "006b0aed319b84bd70aa1ba3d888edced1be1aac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_41fdee39",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc7950/NotificationStatementRfc7950Support.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-12-14T16:18:07Z",
+      "side": 1,
+      "message": "public:\n- missing @Beta\n- missing javadoc\n- should it be final?",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 12
+      },
+      "revId": "006b0aed319b84bd70aa1ba3d888edced1be1aac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
