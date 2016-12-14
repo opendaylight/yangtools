@@ -286,7 +286,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
 
     @Override
     public String getYangVersion() {
-        return yangVersion.toCanonicalString();
+        return yangVersion.toString();
     }
 
     @Override

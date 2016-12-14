@@ -83,6 +83,7 @@ public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIden
      *         argument of YANG {@link Module <b> <font
      *         color="#8b4513">yang-version</font></b>} keyword
      */
+    // FIXME: version 2.0.0: return YangVersion
     String getYangVersion();
 
     /**

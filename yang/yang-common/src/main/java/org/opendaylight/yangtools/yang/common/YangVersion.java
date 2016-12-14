@@ -63,11 +63,8 @@ public enum YangVersion {
         return reference;
     }
 
-    /**
-     * Return the canonical string represetation of this YANG version.
-     * @return Canonical string
-     */
-    @Nonnull public String toCanonicalString() {
+    @Override
+    @Nonnull public String toString() {
         return str;
     }
 }

@@ -14,6 +14,7 @@ import java.net.URISyntaxException;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
@@ -32,7 +33,7 @@ public class YinFileHeaderStmtsTest {
     public void testYinFileHeader() throws URISyntaxException {
         Module testModule = TestUtils.findModule(modules, "config");
 
-        assertEquals("1", testModule.getYangVersion());
+        assertEquals(YangVersion.VERSION_1.toString(), testModule.getYangVersion());
         assertEquals(new URI("urn:opendaylight:params:xml:ns:yang:controller:config"), testModule.getNamespace());
         assertEquals("config", testModule.getPrefix());
     }
