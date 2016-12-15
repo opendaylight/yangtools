@@ -14,13 +14,13 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>odlparent</artifactId>
-        <version>1.7.2-SNAPSHOT</version>
+        <version>1.7.2-Boron-SR2</version>
         <relativePath/>
     </parent>
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>websocket-client</artifactId>
-    <version>1.0.2-SNAPSHOT</version>
+    <version>1.0.2-Boron-SR2</version>
     <packaging>jar</packaging>
 
     <dependencies>
