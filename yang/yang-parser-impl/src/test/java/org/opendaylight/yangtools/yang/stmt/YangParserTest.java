@@ -850,7 +850,7 @@ public class YangParserTest {
         } catch (final Exception e) {
             assertEquals(SomeModifiersUnresolvedException.class, e.getClass());
             assertTrue(e.getCause() instanceof SourceException);
-            assertTrue(e.getCause().getMessage().startsWith("aaa is not a YANG statement or use of extension"));
+            assertTrue(e.getCause().getMessage().startsWith("Malformed statement 'yang-version:'"));
         }
     }
 

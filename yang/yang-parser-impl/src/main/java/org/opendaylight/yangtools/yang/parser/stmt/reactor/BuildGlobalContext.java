@@ -207,7 +207,8 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     private SomeModifiersUnresolvedException propagateException(final SourceSpecificContext source,
             final RuntimeException cause) throws SomeModifiersUnresolvedException {
-        final SourceIdentifier sourceId = Utils.createSourceIdentifier(source.getRoot());
+        final SourceIdentifier sourceId = source.getRoot() != null ? Utils.createSourceIdentifier(source.getRoot())
+                : null;
         if (!(cause instanceof SourceException)) {
             /*
              * This should not be happening as all our processing should provide SourceExceptions.
@@ -336,7 +337,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
                         default:
                             throw new IllegalStateException("Unsupported phase progress " + sourceProgress);
                     }
-                } catch (RuntimeException ex) {
+                } catch (final RuntimeException ex) {
                     throw propagateException(nextSourceCtx, ex);
                 }
             }
