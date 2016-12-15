@@ -632,6 +632,7 @@ public final class Utils {
     }
 
     public static SourceIdentifier createSourceIdentifier(final RootStatementContext<?, ?, ?> root) {
+        Preconditions.checkNotNull(root);
         final QNameModule qNameModule = root.getFromNamespace(ModuleCtxToModuleQName.class, root);
         if (qNameModule != null) {
             // creates SourceIdentifier for a module

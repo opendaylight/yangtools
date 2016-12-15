@@ -15,6 +15,7 @@ import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class Bug6131Test {
@@ -24,7 +25,8 @@ public class Bug6131Test {
             StmtTestUtils.parseYangSources("/bugs/bug6131");
             fail("A NullPointerException should have been thrown.");
         } catch (final Exception e) {
-            assertTrue(e instanceof NullPointerException);
+            assertTrue(e instanceof SomeModifiersUnresolvedException);
+            assertTrue(e.getCause() instanceof NullPointerException);
         }
     }
 }
