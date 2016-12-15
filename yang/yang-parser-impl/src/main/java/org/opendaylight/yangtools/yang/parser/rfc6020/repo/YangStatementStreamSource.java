@@ -22,7 +22,6 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementLexer;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
-import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -40,7 +39,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
  * @author Robert Varga
  */
 @Beta
-public final class YangStatementStreamSource implements Identifiable<SourceIdentifier>, StatementStreamSource {
+public final class YangStatementStreamSource implements StatementStreamSource {
     private static final ParseTreeListener MAKE_IMMUTABLE_LISTENER = new ParseTreeListener() {
         @Override
         public void enterEveryRule(final ParserRuleContext ctx) {

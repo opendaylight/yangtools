@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 
 /**
@@ -52,7 +54,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
  * </ol>
  *
  */
-public interface StatementStreamSource {
+public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
 
     /**
     *
