@@ -65,7 +65,12 @@ public class MandatoryStatementImpl extends AbstractDeclaredStatement<Boolean> i
         public void onFullDefinitionDeclared(StmtContext.Mutable<Boolean, MandatoryStatement,
                 EffectiveStatement<Boolean, MandatoryStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

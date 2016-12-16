@@ -57,7 +57,12 @@ public class PositionStatementImpl extends AbstractDeclaredStatement<Long> imple
         public void onFullDefinitionDeclared(
                 final StmtContext.Mutable<Long, PositionStatement, EffectiveStatement<Long, PositionStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

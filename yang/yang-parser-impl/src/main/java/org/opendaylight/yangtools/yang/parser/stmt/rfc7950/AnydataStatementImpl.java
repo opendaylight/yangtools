@@ -80,7 +80,12 @@ public class AnydataStatementImpl extends AbstractDeclaredStatement<QName> imple
         public void onFullDefinitionDeclared(final Mutable<QName, AnydataStatement,
                 EffectiveStatement<QName, AnydataStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

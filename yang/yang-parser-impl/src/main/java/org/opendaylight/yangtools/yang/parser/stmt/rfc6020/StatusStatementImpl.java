@@ -58,7 +58,12 @@ public class StatusStatementImpl extends AbstractDeclaredStatement<Status>
         public void onFullDefinitionDeclared(StmtContext.Mutable<Status, StatusStatement,
                 EffectiveStatement<Status, StatusStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

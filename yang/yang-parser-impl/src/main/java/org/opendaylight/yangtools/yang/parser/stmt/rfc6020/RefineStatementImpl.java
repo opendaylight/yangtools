@@ -66,7 +66,12 @@ public class RefineStatementImpl extends AbstractDeclaredStatement<SchemaNodeIde
         public void onFullDefinitionDeclared(final StmtContext.Mutable<SchemaNodeIdentifier, RefineStatement,
                 EffectiveStatement<SchemaNodeIdentifier, RefineStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

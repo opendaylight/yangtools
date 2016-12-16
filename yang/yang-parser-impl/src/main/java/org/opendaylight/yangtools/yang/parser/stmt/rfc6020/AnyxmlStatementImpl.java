@@ -80,12 +80,12 @@ public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implem
         @Override
         public EffectiveStatement<QName, AnyxmlStatement> createEffective(
                 final StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx) {
-            Map<StatementDefinition, Mutable<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>, EffectiveStatement<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>>>> schemaLocations = ctx
+            final Map<StatementDefinition, Mutable<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>, EffectiveStatement<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>>>> schemaLocations = ctx
                     .getAllFromCurrentStmtCtxNamespace(AnyxmlSchemaLocationNamespace.class);
             if (schemaLocations != null && !schemaLocations.isEmpty()) {
-                SchemaNodeIdentifier anyXmlSchemaNodeIdentifier = schemaLocations.values().iterator().next()
+                final SchemaNodeIdentifier anyXmlSchemaNodeIdentifier = schemaLocations.values().iterator().next()
                         .getStatementArgument();
-                Optional<ContainerSchemaNode> anyXmlSchema = getAnyXmlSchema(ctx, anyXmlSchemaNodeIdentifier);
+                final Optional<ContainerSchemaNode> anyXmlSchema = getAnyXmlSchema(ctx, anyXmlSchemaNodeIdentifier);
                 if (anyXmlSchema.isPresent()) {
                     return new YangModeledAnyXmlEffectiveStatementImpl(ctx, anyXmlSchema.get());
                 }
@@ -97,7 +97,7 @@ public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implem
         public void onFullDefinitionDeclared(final Mutable<QName, AnyxmlStatement,
                 EffectiveStatement<QName, AnyxmlStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
         }
 
         private Optional<ContainerSchemaNode> getAnyXmlSchema(
@@ -111,6 +111,11 @@ public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implem
                 }
             }
             return Optional.absent();
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

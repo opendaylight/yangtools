@@ -64,7 +64,12 @@ public class LengthStatementImpl extends AbstractDeclaredStatement<List<LengthCo
         public void onFullDefinitionDeclared(final StmtContext.Mutable<List<LengthConstraint>,
                 LengthStatement, EffectiveStatement<List<LengthConstraint>, LengthStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

@@ -52,7 +52,12 @@ public class YinElementStatementImpl extends AbstractDeclaredStatement<Boolean>
         public void onFullDefinitionDeclared(final StmtContext.Mutable<Boolean, YinElementStatement,
                 EffectiveStatement<Boolean, YinElementStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

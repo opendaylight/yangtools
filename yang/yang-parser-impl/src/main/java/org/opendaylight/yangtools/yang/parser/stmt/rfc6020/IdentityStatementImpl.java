@@ -70,7 +70,12 @@ public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
         public void onFullDefinitionDeclared(final StmtContext.Mutable<QName, IdentityStatement,
                 EffectiveStatement<QName, IdentityStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

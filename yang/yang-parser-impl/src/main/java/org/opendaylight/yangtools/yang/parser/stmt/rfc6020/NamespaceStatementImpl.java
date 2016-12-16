@@ -48,7 +48,12 @@ public class NamespaceStatementImpl extends AbstractDeclaredStatement<URI> imple
         public void onFullDefinitionDeclared(StmtContext.Mutable<URI, NamespaceStatement,
                 EffectiveStatement<URI, NamespaceStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

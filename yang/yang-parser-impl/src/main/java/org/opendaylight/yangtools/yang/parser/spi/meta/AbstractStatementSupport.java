@@ -9,10 +9,12 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
@@ -34,7 +36,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
 
     private final StatementDefinition type;
 
-    protected AbstractStatementSupport(StatementDefinition publicDefinition) {
+    protected AbstractStatementSupport(final StatementDefinition publicDefinition) {
         Preconditions.checkArgument(publicDefinition != this);
         this.type = Preconditions.checkNotNull(publicDefinition);
     }
@@ -71,7 +73,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     public abstract A parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) throws SourceException;
 
     @Override
-    public void onStatementAdded(StmtContext.Mutable<A, D, E> stmt) {
+    public void onStatementAdded(final StmtContext.Mutable<A, D, E> stmt) {
         // NOOP for most implementations
     }
 
@@ -85,7 +87,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
      *
      */
     @Override
-    public void onPreLinkageDeclared(StmtContext.Mutable<A, D, E> stmt) {
+    public void onPreLinkageDeclared(final StmtContext.Mutable<A, D, E> stmt) {
         // NOOP for most implementations
     }
 
@@ -99,7 +101,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
      *
      */
     @Override
-    public void onLinkageDeclared(StmtContext.Mutable<A, D, E> stmt) throws SourceException {
+    public void onLinkageDeclared(final StmtContext.Mutable<A, D, E> stmt) throws SourceException {
         // NOOP for most implementations
     }
 
@@ -113,7 +115,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
      *
      */
     @Override
-    public void onStatementDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt) throws SourceException {
+    public void onStatementDefinitionDeclared(final StmtContext.Mutable<A, D, E> stmt) throws SourceException {
         // NOOP for most implementations
     }
 
@@ -127,7 +129,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
      *
      */
     @Override
-    public void onFullDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt) throws SourceException {
+    public void onFullDefinitionDeclared(final StmtContext.Mutable<A, D, E> stmt) throws SourceException {
         // NOOP for most implementations
     }
 
@@ -135,4 +137,13 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     public boolean isArgumentYinElement() {
         return getPublicView().isArgumentYinElement();
     }
+
+    /**
+     * Returns corresponding substatement validator of a statement support
+     *
+     * @return substatement validator or null, if substatement validator is not
+     *         defined
+     */
+    @Nullable
+    protected abstract SubstatementValidator getSubstatementValidator();
 }

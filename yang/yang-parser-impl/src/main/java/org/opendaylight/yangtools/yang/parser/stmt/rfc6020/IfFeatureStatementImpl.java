@@ -58,7 +58,12 @@ public class IfFeatureStatementImpl extends AbstractDeclaredStatement<QName>
         public void onFullDefinitionDeclared(StmtContext.Mutable<QName, IfFeatureStatement,
                 EffectiveStatement<QName, IfFeatureStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 
