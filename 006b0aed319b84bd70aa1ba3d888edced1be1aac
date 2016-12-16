@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1a622d24_fd1bf219",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 369,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-12-16T11:06:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a622d24_414faebd",
+      "range": {
+        "startLine": 369,
+        "startChar": 18,
+        "endLine": 369,
+        "endChar": 54
+      },
+      "revId": "006b0aed319b84bd70aa1ba3d888edced1be1aac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a622d24_e1687a23",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
         "patchSetId": 15
@@ -36,6 +60,30 @@
       "writtenOn": "2016-12-14T16:14:25Z",
       "side": 1,
       "message": "identity compare?",
+      "range": {
+        "startLine": 370,
+        "startChar": 45,
+        "endLine": 370,
+        "endChar": 49
+      },
+      "revId": "006b0aed319b84bd70aa1ba3d888edced1be1aac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_3d160af2",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 370,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-12-16T11:06:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a622d24_e1687a23",
       "range": {
         "startLine": 370,
         "startChar": 45,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "1a622d24_9dd47e21",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 392,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-12-16T11:06:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a622d24_016e562f",
+      "range": {
+        "startLine": 392,
+        "startChar": 59,
+        "endLine": 392,
+        "endChar": 63
+      },
+      "revId": "006b0aed319b84bd70aa1ba3d888edced1be1aac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a622d24_e1d6bac2",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/AugmentStatementImpl.java",
         "patchSetId": 15
@@ -82,6 +154,30 @@
       "writtenOn": "2016-12-14T16:14:25Z",
       "side": 1,
       "message": "increased API surface: add javadocs",
+      "range": {
+        "startLine": 192,
+        "startChar": 8,
+        "endLine": 192,
+        "endChar": 68
+      },
+      "revId": "006b0aed319b84bd70aa1ba3d888edced1be1aac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_7dd7e223",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/AugmentStatementImpl.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 192,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-12-16T11:06:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a622d24_e1d6bac2",
       "range": {
         "startLine": 192,
         "startChar": 8,
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "1a622d24_bde17a00",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/GroupingStatementImpl.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-12-16T11:06:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a622d24_21e1d29a",
+      "range": {
+        "startLine": 88,
+        "startChar": 0,
+        "endLine": 90,
+        "endChar": 9
+      },
+      "revId": "006b0aed319b84bd70aa1ba3d888edced1be1aac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a622d24_e1fd1a3d",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/AugmentEffectiveStatementImpl.java",
         "patchSetId": 15
@@ -140,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "1a622d24_1de86ee1",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/AugmentEffectiveStatementImpl.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-12-16T11:06:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a622d24_e1fd1a3d",
+      "range": {
+        "startLine": 72,
+        "startChar": 13,
+        "endLine": 73,
+        "endChar": 14
+      },
+      "revId": "006b0aed319b84bd70aa1ba3d888edced1be1aac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a622d24_41fdee39",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc7950/NotificationStatementRfc7950Support.java",
         "patchSetId": 15
@@ -151,6 +295,30 @@
       "writtenOn": "2016-12-14T16:18:07Z",
       "side": 1,
       "message": "public:\n- missing @Beta\n- missing javadoc\n- should it be final?",
+      "range": {
+        "startLine": 23,
+        "startChar": 0,
+        "endLine": 23,
+        "endChar": 12
+      },
+      "revId": "006b0aed319b84bd70aa1ba3d888edced1be1aac",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_fde2d2ff",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc7950/NotificationStatementRfc7950Support.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-12-16T11:06:04Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a622d24_41fdee39",
       "range": {
         "startLine": 23,
         "startChar": 0,
