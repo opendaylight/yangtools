@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -21,9 +22,11 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AnyxmlSchem
 @Beta
 public final class AnyxmlSchemaLocationStatementImpl extends AbstractDeclaredStatement<SchemaNodeIdentifier> implements
         UnknownStatement<SchemaNodeIdentifier> {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
+            SupportedExtensionsMapping.ANYXML_SCHEMA_LOCATION).build();
 
     AnyxmlSchemaLocationStatementImpl(
-            StmtContext<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>, ?> context) {
+            final StmtContext<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>, ?> context) {
         super(context);
     }
 
@@ -36,20 +39,21 @@ public final class AnyxmlSchemaLocationStatementImpl extends AbstractDeclaredSta
         }
 
         @Override
-        public SchemaNodeIdentifier parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public SchemaNodeIdentifier parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return Utils.nodeIdentifierFromPath(ctx, value);
         }
 
         @Override
         public void onFullDefinitionDeclared(
-                Mutable<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>, EffectiveStatement<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>>> stmt) {
+                final Mutable<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>, EffectiveStatement<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>>> stmt) {
+            getSubstatementValidator().validate(stmt);
             stmt.getParentContext().addToNs(AnyxmlSchemaLocationNamespace.class,
                     SupportedExtensionsMapping.ANYXML_SCHEMA_LOCATION, stmt);
         }
 
         @Override
         public UnknownStatement<SchemaNodeIdentifier> createDeclared(
-                StmtContext<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>, ?> ctx) {
+                final StmtContext<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>, ?> ctx) {
             return new AnyxmlSchemaLocationStatementImpl(ctx);
         }
 
@@ -57,6 +61,11 @@ public final class AnyxmlSchemaLocationStatementImpl extends AbstractDeclaredSta
         public EffectiveStatement<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>> createEffective(
                 final StmtContext<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>, EffectiveStatement<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>>> ctx) {
             return new AnyxmlSchemaLocationEffectiveStatementImpl(ctx);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

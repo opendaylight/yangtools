@@ -57,7 +57,12 @@ public class ErrorAppTagStatementImpl extends AbstractDeclaredStatement<String>
         public void onFullDefinitionDeclared(StmtContext.Mutable<String, ErrorAppTagStatement,
                 EffectiveStatement<String, ErrorAppTagStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

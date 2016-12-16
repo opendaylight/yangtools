@@ -70,7 +70,12 @@ public class FractionDigitsStatementImpl extends AbstractDeclaredStatement<Integ
         public void onFullDefinitionDeclared(final StmtContext.Mutable<Integer, FractionDigitsStatement,
                 EffectiveStatement<Integer, FractionDigitsStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

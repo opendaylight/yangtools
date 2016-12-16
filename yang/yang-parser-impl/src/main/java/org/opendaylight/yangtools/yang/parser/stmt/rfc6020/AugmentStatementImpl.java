@@ -109,7 +109,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                 return;
             }
 
-            SUBSTATEMENT_VALIDATOR.validate(augmentNode);
+            getSubstatementValidator().validate(augmentNode);
 
             if (StmtContextUtils.isInExtensionBody(augmentNode)) {
                 return;
@@ -353,6 +353,11 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
             // if no allowed target is returned we consider all targets allowed
             return allowedAugmentTargets == null || allowedAugmentTargets.isEmpty()
                     || allowedAugmentTargets.contains(substatementCtx.getPublicDefinition());
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
 
     }

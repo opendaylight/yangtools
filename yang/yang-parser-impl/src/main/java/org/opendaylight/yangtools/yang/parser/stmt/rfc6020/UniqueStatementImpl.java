@@ -65,7 +65,12 @@ public class UniqueStatementImpl extends AbstractDeclaredStatement<Collection<Sc
         public void onFullDefinitionDeclared(StmtContext.Mutable<Collection<Relative>, UniqueStatement,
                 EffectiveStatement<Collection<Relative>, UniqueStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

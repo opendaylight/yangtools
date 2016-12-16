@@ -80,7 +80,12 @@ public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<Stri
         public void onStatementDefinitionDeclared(final StmtContext.Mutable<String, IdentityRefSpecification,
                 EffectiveStatement<String, IdentityRefSpecification>> stmt) {
             super.onStatementDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

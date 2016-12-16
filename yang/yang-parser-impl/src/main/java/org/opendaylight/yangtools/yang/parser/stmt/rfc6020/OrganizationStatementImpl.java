@@ -57,7 +57,12 @@ public class OrganizationStatementImpl extends
         public void onFullDefinitionDeclared(StmtContext.Mutable<String, OrganizationStatement,
                 EffectiveStatement<String, OrganizationStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

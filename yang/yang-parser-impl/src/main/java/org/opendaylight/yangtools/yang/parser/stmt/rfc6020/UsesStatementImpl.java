@@ -87,13 +87,13 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                 return;
             }
 
-            SUBSTATEMENT_VALIDATOR.validate(usesNode);
+            getSubstatementValidator().validate(usesNode);
 
             if (StmtContextUtils.isInExtensionBody(usesNode)) {
                 return;
             }
 
-            ModelActionBuilder usesAction = usesNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
+            final ModelActionBuilder usesAction = usesNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
             final QName groupingName = usesNode.getStatementArgument();
 
             final Prerequisite<StmtContext<?, ?, ?>> sourceGroupingPre = usesAction.requiresCtx(usesNode,
@@ -105,13 +105,13 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
 
                 @Override
                 public void apply() {
-                    StatementContextBase<?, ?, ?> targetNodeStmtCtx = (StatementContextBase<?, ?, ?>) targetNodePre.get();
-                    StatementContextBase<?, ?, ?> sourceGrpStmtCtx = (StatementContextBase<?, ?, ?>) sourceGroupingPre.get();
+                    final StatementContextBase<?, ?, ?> targetNodeStmtCtx = (StatementContextBase<?, ?, ?>) targetNodePre.get();
+                    final StatementContextBase<?, ?, ?> sourceGrpStmtCtx = (StatementContextBase<?, ?, ?>) sourceGroupingPre.get();
 
                     try {
                         copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
                         resolveUsesNode(usesNode, targetNodeStmtCtx);
-                    } catch (SourceException e) {
+                    } catch (final SourceException e) {
                         LOG.warn(e.getMessage(), e);
                         throw e;
                     }
@@ -135,6 +135,11 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
         public EffectiveStatement<QName, UsesStatement> createEffective(
                 final StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
             return new UsesEffectiveStatementImpl(ctx);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
 
     }

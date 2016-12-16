@@ -52,7 +52,12 @@ public class RequireInstanceStatementImpl extends
         public void onFullDefinitionDeclared(final StmtContext.Mutable<Boolean, RequireInstanceStatement,
                 EffectiveStatement<Boolean, RequireInstanceStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

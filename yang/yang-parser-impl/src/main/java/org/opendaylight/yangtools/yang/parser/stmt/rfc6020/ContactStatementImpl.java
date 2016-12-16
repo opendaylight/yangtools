@@ -51,7 +51,12 @@ public class ContactStatementImpl extends AbstractDeclaredStatement<String> impl
         public void onFullDefinitionDeclared(StmtContext.Mutable<String, ContactStatement,
                 EffectiveStatement<String, ContactStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

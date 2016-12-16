@@ -194,7 +194,7 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
         @Override
         public void onFullDefinitionDeclared(
                 final Mutable<String, TypeStatement, EffectiveStatement<String, TypeStatement>> stmt){
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
 
             // if it is yang built-in type, no prerequisite is needed, so simply return
             if (TypeUtils.isYangBuiltInTypeString(stmt.getStatementArgument())) {
@@ -223,6 +223,11 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
                         "Type [%s] was not found.", typeQName);
                 }
             });
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 
