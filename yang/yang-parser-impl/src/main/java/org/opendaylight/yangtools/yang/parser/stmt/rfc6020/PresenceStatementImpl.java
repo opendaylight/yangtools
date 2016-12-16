@@ -54,7 +54,12 @@ public class PresenceStatementImpl extends AbstractDeclaredStatement<String> imp
         public void onFullDefinitionDeclared(StmtContext.Mutable<String, PresenceStatement,
                 EffectiveStatement<String, PresenceStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

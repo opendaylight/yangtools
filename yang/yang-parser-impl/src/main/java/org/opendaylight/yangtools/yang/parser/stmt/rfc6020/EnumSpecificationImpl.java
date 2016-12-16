@@ -58,7 +58,12 @@ public class EnumSpecificationImpl extends AbstractDeclaredStatement<String> imp
         public void onFullDefinitionDeclared(final StmtContext.Mutable<String, EnumSpecification,
                 EffectiveStatement<String, EnumSpecification>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

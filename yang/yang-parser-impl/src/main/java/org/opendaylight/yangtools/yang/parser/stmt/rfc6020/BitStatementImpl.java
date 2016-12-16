@@ -62,7 +62,12 @@ public class BitStatementImpl extends AbstractDeclaredStatement<QName> implement
         public void onFullDefinitionDeclared(final StmtContext.Mutable<QName, BitStatement,
                 EffectiveStatement<QName, BitStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

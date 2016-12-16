@@ -58,7 +58,12 @@ public class BitsSpecificationImpl extends AbstractDeclaredStatement<String> imp
         public void onFullDefinitionDeclared(final StmtContext.Mutable<String, BitsSpecification,
                 EffectiveStatement<String, BitsSpecification>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

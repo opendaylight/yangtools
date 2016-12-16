@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -49,6 +50,11 @@ public class ThirdPartyExtensionStatementImpl extends AbstractDeclaredStatement<
         public EffectiveStatement<String, UnknownStatement<String>> createEffective(
                 final StmtContext<String, UnknownStatement<String>, EffectiveStatement<String, UnknownStatement<String>>> ctx) {
             return new ThirdPartyExtensionEffectiveStatementImpl(ctx);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return null;
         }
     }
 

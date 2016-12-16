@@ -53,7 +53,12 @@ public class DefaultStatementImpl extends AbstractDeclaredStatement<String> impl
         public void onFullDefinitionDeclared(StmtContext.Mutable<String, DefaultStatement,
                 EffectiveStatement<String, DefaultStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

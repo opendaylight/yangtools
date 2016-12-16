@@ -65,7 +65,12 @@ public class YangVersionStatementImpl extends AbstractDeclaredStatement<YangVers
         public void onFullDefinitionDeclared(final StmtContext.Mutable<YangVersion, YangVersionStatement,
                 EffectiveStatement<YangVersion, YangVersionStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 
