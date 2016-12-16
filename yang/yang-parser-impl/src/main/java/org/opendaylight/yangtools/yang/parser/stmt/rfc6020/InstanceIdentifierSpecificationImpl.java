@@ -60,7 +60,12 @@ public class InstanceIdentifierSpecificationImpl extends
         public void onFullDefinitionDeclared(final StmtContext.Mutable<String, InstanceIdentifierSpecification,
                 EffectiveStatement<String, InstanceIdentifierSpecification>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

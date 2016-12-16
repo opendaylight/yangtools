@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
@@ -20,9 +21,11 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.SemanticVer
 @Beta
 public final class SemanticVersionStatementImpl extends AbstractDeclaredStatement<SemVer> implements
         UnknownStatement<SemVer> {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
+            SupportedExtensionsMapping.SEMANTIC_VERSION).build();
 
     SemanticVersionStatementImpl(
-            StmtContext<SemVer, UnknownStatement<SemVer>, ?> context) {
+            final StmtContext<SemVer, UnknownStatement<SemVer>, ?> context) {
         super(context);
     }
 
@@ -35,18 +38,18 @@ public final class SemanticVersionStatementImpl extends AbstractDeclaredStatemen
         }
 
         @Override
-        public SemVer parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public SemVer parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return SemVer.valueOf(value) ;
         }
 
         @Override
-        public void onLinkageDeclared(StmtContext.Mutable<SemVer,UnknownStatement<SemVer>,EffectiveStatement<SemVer,UnknownStatement<SemVer>>> stmt) {
+        public void onLinkageDeclared(final StmtContext.Mutable<SemVer,UnknownStatement<SemVer>,EffectiveStatement<SemVer,UnknownStatement<SemVer>>> stmt) {
             stmt.addToNs(SemanticVersionNamespace.class, stmt.getParentContext(), stmt.getStatementArgument());
         }
 
         @Override
         public UnknownStatement<SemVer> createDeclared(
-                StmtContext<SemVer, UnknownStatement<SemVer>, ?> ctx) {
+                final StmtContext<SemVer, UnknownStatement<SemVer>, ?> ctx) {
             return new SemanticVersionStatementImpl(ctx);
         }
 
@@ -54,6 +57,11 @@ public final class SemanticVersionStatementImpl extends AbstractDeclaredStatemen
         public EffectiveStatement<SemVer, UnknownStatement<SemVer>> createEffective(
                 final StmtContext<SemVer, UnknownStatement<SemVer>, EffectiveStatement<SemVer, UnknownStatement<SemVer>>> ctx) {
             return new SemanticVersionEffectiveStatementImpl(ctx);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

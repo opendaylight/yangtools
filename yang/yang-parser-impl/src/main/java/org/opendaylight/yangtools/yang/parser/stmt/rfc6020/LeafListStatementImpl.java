@@ -92,7 +92,12 @@ public class LeafListStatementImpl extends AbstractDeclaredStatement<QName>
         public void onFullDefinitionDeclared(final Mutable<QName, LeafListStatement,
                 EffectiveStatement<QName, LeafListStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

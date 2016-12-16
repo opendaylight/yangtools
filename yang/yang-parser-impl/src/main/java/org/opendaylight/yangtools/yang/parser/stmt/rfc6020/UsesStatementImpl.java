@@ -137,6 +137,11 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
             return new UsesEffectiveStatementImpl(ctx);
         }
 
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
+        }
+
     }
 
     @Nonnull

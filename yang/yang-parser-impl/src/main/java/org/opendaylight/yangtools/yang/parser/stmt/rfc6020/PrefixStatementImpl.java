@@ -47,7 +47,12 @@ public class PrefixStatementImpl extends AbstractDeclaredStatement<String> imple
         public void onFullDefinitionDeclared(StmtContext.Mutable<String, PrefixStatement,
                 EffectiveStatement<String, PrefixStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+            getSubstatementValidator().validate(stmt);
+        }
+
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
         }
     }
 

@@ -128,7 +128,7 @@ public final class SubstatementValidator {
             ctx.declaredSubstatements(), ctx.effectiveSubstatements());
 
         final Map<StatementDefinition, Integer> stmtDefMap = new HashMap<>();
-        for (StatementContextBase<?, ?, ?> stmtCtx : substatementsInit) {
+        for (final StatementContextBase<?, ?, ?> stmtCtx : substatementsInit) {
             final StatementDefinition definition = stmtCtx.getPublicDefinition();
             if (!stmtDefMap.containsKey(definition)) {
                 stmtDefMap.put(definition, 1);
@@ -145,7 +145,7 @@ public final class SubstatementValidator {
         }
 
         final Map<StatementDefinition, Integer> validatedMap = new HashMap<>();
-        for (Entry<?, ?> entry : stmtDefMap.entrySet()) {
+        for (final Entry<?, ?> entry : stmtDefMap.entrySet()) {
             final StatementDefinition key = (StatementDefinition) entry.getKey();
             if (!cardinalityMap.containsKey(key)) {
                 if (ctx.getFromNamespace(ExtensionNamespace.class, key.getStatementName()) != null) {
@@ -172,7 +172,7 @@ public final class SubstatementValidator {
         }
 
         final MapDifference<StatementDefinition, Object> diff = Maps.difference(validatedMap, cardinalityMap);
-        for (Entry<?, ?> entry : diff.entriesOnlyOnRight().entrySet()) {
+        for (final Entry<?, ?> entry : diff.entriesOnlyOnRight().entrySet()) {
             final int min = ((Cardinality) entry.getValue()).getMin();
             if (min > 0) {
                 throw new MissingSubstatementException(ctx.getStatementSourceReference(),

@@ -355,6 +355,11 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                     || allowedAugmentTargets.contains(substatementCtx.getPublicDefinition());
         }
 
+        @Override
+        protected SubstatementValidator getSubstatementValidator() {
+            return SUBSTATEMENT_VALIDATOR;
+        }
+
     }
 
     @Nonnull
