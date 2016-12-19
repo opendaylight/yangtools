@@ -26,7 +26,6 @@ import org.apache.commons.cli.ParseException;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.IfFeaturePredicates;
-import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
  * Main class of Yang parser system test.
@@ -113,7 +112,7 @@ public class Main {
         final Stopwatch stopWatch = Stopwatch.createStarted();
 
         try {
-            context = YangParserTestUtils.parseYangSources(yangDirs, yangFiles, isFeatureSupported);
+            context = SystemTestUtils.parseYangSources(yangDirs, yangFiles, isFeatureSupported);
         } catch (final Exception e) {
             LOG.log(Level.SEVERE, "Failed to create SchemaContext.", e);
             System.exit(1);
