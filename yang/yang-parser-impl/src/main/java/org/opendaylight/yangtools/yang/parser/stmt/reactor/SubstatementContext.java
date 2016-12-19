@@ -18,8 +18,8 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -51,6 +51,17 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
     private final StatementContextBase<?, ?, ?> parent;
     private final A argument;
+
+    /**
+     * config statements are not all that common which means we are performing a recursive search towards the root
+     * every time {@link #isConfiguration()} is invoked. This is quite expensive because it causes a linear search
+     * for the (usually non-existent) config statement.
+     *
+     * This field maintains a resolution cache, so once we have returned a result, we will keep on returning the same
+     * result without performing any lookups.
+     */
+    private Boolean cachedIsConfiguration = null;
+
     private volatile SchemaPath schemaPath;
 
     SubstatementContext(final StatementContextBase<?, ?, ?> parent, final ContextBuilder<A, D, E> builder) {
@@ -271,36 +282,29 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
     @Override
     public boolean isConfiguration() {
+        if (cachedIsConfiguration != null) {
+            return cachedIsConfiguration;
+        }
+
         final StmtContext<Boolean, ?, ?> configStatement = StmtContextUtils.findFirstSubstatement(this,
-                ConfigStatement.class);
+            ConfigStatement.class);
+        final boolean parentIsConfig = parent.isConfiguration();
 
-        /*
-         * If "config" statement is not specified, the default is the same as
-         * the parent schema node's "config" value.
-         */
-        if (configStatement == null) {
-            return parent.isConfiguration();
+        final boolean isConfig;
+        if (configStatement != null) {
+            isConfig = configStatement.getStatementArgument();
+
+            // Validity check: if parent is config=false this cannot be a config=true
+            InferenceException.throwIf(!parentIsConfig && isConfig, getStatementSourceReference(),
+                    "Parent node has config=false, this node must not be specifed as config=true");
+        } else {
+            // If "config" statement is not specified, the default is the same as the parent's "config" value.
+            isConfig = parentIsConfig;
         }
 
-        /*
-         * If a parent node has "config" set to "true", the node underneath it
-         * can have "config" set to "true" or "false".
-         */
-        if (parent.isConfiguration()) {
-            return configStatement.getStatementArgument();
-        }
-
-        /*
-         * If a parent node has "config" set to "false", no node underneath it
-         * can have "config" set to "true", therefore only "false" is permitted.
-         */
-        if (!configStatement.getStatementArgument()) {
-            return false;
-        }
-
-        throw new InferenceException(
-                "Parent node has config statement set to false, therefore no node underneath it can have config set to true",
-                getStatementSourceReference());
+        // Resolved, make sure we cache this return
+        cachedIsConfiguration = isConfig;
+        return isConfig;
     }
 
     @Override
