@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a622d24_73eb8eb0",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/BuildGlobalContext.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-12-19T12:24:03Z",
+      "side": 1,
+      "message": "this will be problematic for NETCONF to remove the source. At the end of the day it indicates that our ability to report errors needs to start with SourceSpecificContext, which has to be able to identify itself from the moment it is instantiated.",
+      "range": {
+        "startLine": 211,
+        "startChar": 15,
+        "endLine": 211,
+        "endChar": 23
+      },
+      "revId": "2a1e3339feb687a0940e8f29d549377173245067",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
