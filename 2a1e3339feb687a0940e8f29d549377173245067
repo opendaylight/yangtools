@@ -22,6 +22,30 @@
       "revId": "2a1e3339feb687a0940e8f29d549377173245067",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_191cf4c0",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/BuildGlobalContext.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-12-20T13:03:50Z",
+      "side": 1,
+      "message": "Yes, I understand the problem, but I only fixed possible NullPointerException (which occurs e.g. during Bug6131Test). However, there are many situations, when it is not possible to construct SourceIdentifier, because to do that we need to parse at least whole root statement and revision statement successfully. If an error occurs before that (i.e. before or during parsing of these statements), we are not able to construct SourceIdentifier and only information we have is StatementSourceReference in \"cause\" exception.",
+      "parentUuid": "1a622d24_73eb8eb0",
+      "range": {
+        "startLine": 211,
+        "startChar": 15,
+        "endLine": 211,
+        "endChar": 23
+      },
+      "revId": "2a1e3339feb687a0940e8f29d549377173245067",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
