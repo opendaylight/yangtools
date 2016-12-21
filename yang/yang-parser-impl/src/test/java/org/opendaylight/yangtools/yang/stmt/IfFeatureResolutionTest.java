@@ -12,9 +12,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-import java.util.HashSet;
+import com.google.common.collect.ImmutableSet;
 import java.util.Set;
-import java.util.function.Predicate;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -37,105 +36,101 @@ public class IfFeatureResolutionTest {
 
     @Test
     public void testSomeFeaturesSupported() throws ReactorException {
-        Predicate<QName> isFeatureSupported = qName -> {
-            Set<QName> supportedFeatures = new HashSet<>();
-            supportedFeatures.add(QName.create("foo-namespace", "1970-01-01", "test-feature-1"));
-            supportedFeatures.add(QName.create("foo-namespace", "1970-01-01", "test-feature-2"));
-            supportedFeatures.add(QName.create("foo-namespace", "1970-01-01", "test-feature-3"));
-            supportedFeatures.add(QName.create("bar-namespace", "1970-01-01", "imp-feature"));
+        final Set<QName> supportedFeatures = ImmutableSet.of(
+                QName.create("foo-namespace", "1970-01-01", "test-feature-1"),
+                QName.create("foo-namespace", "1970-01-01", "test-feature-2"),
+                QName.create("foo-namespace", "1970-01-01", "test-feature-3"),
+                QName.create("bar-namespace", "1970-01-01", "imp-feature"));
 
-            return supportedFeatures.contains(qName);
-        };
-
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(isFeatureSupported);
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(supportedFeatures);
         reactor.addSources(FOO_MODULE, BAR_MODULE);
 
-        SchemaContext schemaContext = reactor.buildEffective();
+        final SchemaContext schemaContext = reactor.buildEffective();
         assertNotNull(schemaContext);
 
-        Module testModule = schemaContext.findModuleByName("foo", null);
+        final Module testModule = schemaContext.findModuleByName("foo", null);
         assertNotNull(testModule);
 
         assertEquals(9, testModule.getChildNodes().size());
 
-        ContainerSchemaNode testContainerA = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerA = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-a"));
         assertNull(testContainerA);
 
-        ContainerSchemaNode testContainerB = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerB = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-b"));
         assertNotNull(testContainerB);
-        LeafSchemaNode testLeafB = (LeafSchemaNode) testContainerB.getDataChildByName(
+        final LeafSchemaNode testLeafB = (LeafSchemaNode) testContainerB.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-leaf-b"));
         assertNotNull(testLeafB);
 
-        ContainerSchemaNode testContainerC = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerC = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-c"));
         assertNotNull(testContainerC);
-        LeafSchemaNode testLeafC = (LeafSchemaNode) testContainerC.getDataChildByName(
+        final LeafSchemaNode testLeafC = (LeafSchemaNode) testContainerC.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-leaf-c"));
         assertNotNull(testLeafC);
 
-        ContainerSchemaNode testContainerD = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerD = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-d"));
         assertNull(testContainerD);
 
-        ContainerSchemaNode testContainerE = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerE = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-e"));
         assertNotNull(testContainerE);
-        ContainerSchemaNode testSubContainerE = (ContainerSchemaNode) testContainerE.getDataChildByName(
+        final ContainerSchemaNode testSubContainerE = (ContainerSchemaNode) testContainerE.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-subcontainer-e"));
         assertNotNull(testSubContainerE);
-        LeafSchemaNode testLeafE = (LeafSchemaNode) testSubContainerE.getDataChildByName(
+        final LeafSchemaNode testLeafE = (LeafSchemaNode) testSubContainerE.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-leaf-e"));
         assertNull(testLeafE);
 
-        ContainerSchemaNode testContainerF = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerF = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-f"));
         assertNotNull(testContainerF);
-        ContainerSchemaNode testSubContainerF = (ContainerSchemaNode) testContainerF.getDataChildByName(
+        final ContainerSchemaNode testSubContainerF = (ContainerSchemaNode) testContainerF.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-subcontainer-f"));
         assertNull(testSubContainerF);
 
-        ContainerSchemaNode testContainerG = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerG = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-g"));
         assertNotNull(testContainerG);
         assertEquals(1, testContainerG.getAvailableAugmentations().size());
-        LeafSchemaNode testLeafG = (LeafSchemaNode) testContainerG.getDataChildByName(
+        final LeafSchemaNode testLeafG = (LeafSchemaNode) testContainerG.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-leaf-g"));
         assertNotNull(testLeafG);
-        LeafSchemaNode augmentingTestLeafG = (LeafSchemaNode) testContainerG.getDataChildByName(
+        final LeafSchemaNode augmentingTestLeafG = (LeafSchemaNode) testContainerG.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "augmenting-test-leaf-g"));
         assertNull(augmentingTestLeafG);
-        AnyXmlSchemaNode augmentingTestAnyxmlG = (AnyXmlSchemaNode) testContainerG.getDataChildByName(
+        final AnyXmlSchemaNode augmentingTestAnyxmlG = (AnyXmlSchemaNode) testContainerG.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "augmenting-test-anyxml-g"));
         assertNotNull(augmentingTestAnyxmlG);
 
-        ContainerSchemaNode testContainerH = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerH = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-h"));
         assertNotNull(testContainerH);
         assertEquals(0, testContainerH.getChildNodes().size());
         assertEquals(0, testContainerH.getUses().size());
 
-        ContainerSchemaNode testContainerI = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerI = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-i"));
         assertNotNull(testContainerI);
         assertEquals(1, testContainerI.getUses().size());
         ContainerSchemaNode testGroupingSubContainer = (ContainerSchemaNode) testContainerI.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-grouping-subcontainer"));
         assertNotNull(testGroupingSubContainer);
-        LeafSchemaNode testGroupingLeaf = (LeafSchemaNode) testGroupingSubContainer.getDataChildByName(
+        final LeafSchemaNode testGroupingLeaf = (LeafSchemaNode) testGroupingSubContainer.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-grouping-leaf"));
         assertNull(testGroupingLeaf);
 
-        ContainerSchemaNode testContainerJ = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerJ = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-j"));
         assertNotNull(testContainerJ);
-        LeafSchemaNode testLeafJ = (LeafSchemaNode) testContainerJ.getDataChildByName(
+        final LeafSchemaNode testLeafJ = (LeafSchemaNode) testContainerJ.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-leaf-j"));
         assertNotNull(testLeafJ);
 
-        ContainerSchemaNode testContainerK = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerK = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-k"));
         assertNotNull(testContainerK);
         assertEquals(1, testContainerK.getUses().size());
@@ -143,94 +138,94 @@ public class IfFeatureResolutionTest {
                 QName.create(testModule.getQNameModule(), "test-grouping-subcontainer"));
         assertNotNull(testGroupingSubContainer);
         assertEquals(1, testGroupingSubContainer.getAvailableAugmentations().size());
-        LeafSchemaNode augmentingTestGroupingLeaf = (LeafSchemaNode) testGroupingSubContainer.getDataChildByName(
+        final LeafSchemaNode augmentingTestGroupingLeaf = (LeafSchemaNode) testGroupingSubContainer.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "augmenting-test-grouping-leaf"));
         assertNotNull(augmentingTestGroupingLeaf);
-        LeafSchemaNode augmentingTestGroupingLeaf2 = (LeafSchemaNode) testGroupingSubContainer.getDataChildByName(
+        final LeafSchemaNode augmentingTestGroupingLeaf2 = (LeafSchemaNode) testGroupingSubContainer.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "augmenting-test-grouping-leaf-2"));
         assertNull(augmentingTestGroupingLeaf2);
     }
 
     @Test
     public void testAllFeaturesSupported() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(FOO_MODULE, BAR_MODULE);
 
-        SchemaContext schemaContext = reactor.buildEffective();
+        final SchemaContext schemaContext = reactor.buildEffective();
         assertNotNull(schemaContext);
 
-        Module testModule = schemaContext.findModuleByName("foo", null);
+        final Module testModule = schemaContext.findModuleByName("foo", null);
         assertNotNull(testModule);
 
         assertEquals(11, testModule.getChildNodes().size());
 
-        ContainerSchemaNode testContainerA = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerA = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-a"));
         assertNotNull(testContainerA);
-        LeafSchemaNode testLeafA = (LeafSchemaNode) testContainerA.getDataChildByName(
+        final LeafSchemaNode testLeafA = (LeafSchemaNode) testContainerA.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-leaf-a"));
         assertNotNull(testLeafA);
 
 
-        ContainerSchemaNode testContainerB = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerB = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-b"));
         assertNotNull(testContainerB);
-        LeafSchemaNode testLeafB = (LeafSchemaNode) testContainerB.getDataChildByName(
+        final LeafSchemaNode testLeafB = (LeafSchemaNode) testContainerB.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-leaf-b"));
         assertNotNull(testLeafB);
 
-        ContainerSchemaNode testContainerC = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerC = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-c"));
         assertNotNull(testContainerC);
-        LeafSchemaNode testLeafC = (LeafSchemaNode) testContainerC.getDataChildByName(
+        final LeafSchemaNode testLeafC = (LeafSchemaNode) testContainerC.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-leaf-c"));
         assertNotNull(testLeafC);
 
-        ContainerSchemaNode testContainerD = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerD = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-d"));
         assertNotNull(testContainerD);
-        LeafSchemaNode testLeafD = (LeafSchemaNode) testContainerD.getDataChildByName(
+        final LeafSchemaNode testLeafD = (LeafSchemaNode) testContainerD.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-leaf-d"));
         assertNotNull(testLeafD);
 
-        ContainerSchemaNode testContainerE = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerE = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-e"));
         assertNotNull(testContainerE);
-        ContainerSchemaNode testSubContainerE = (ContainerSchemaNode) testContainerE.getDataChildByName(
+        final ContainerSchemaNode testSubContainerE = (ContainerSchemaNode) testContainerE.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-subcontainer-e"));
         assertNotNull(testSubContainerE);
-        LeafSchemaNode testLeafE = (LeafSchemaNode) testSubContainerE.getDataChildByName(
+        final LeafSchemaNode testLeafE = (LeafSchemaNode) testSubContainerE.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-leaf-e"));
         assertNotNull(testLeafE);
 
-        ContainerSchemaNode testContainerF = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerF = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-f"));
         assertNotNull(testContainerF);
-        ContainerSchemaNode testSubContainerF = (ContainerSchemaNode) testContainerF.getDataChildByName(
+        final ContainerSchemaNode testSubContainerF = (ContainerSchemaNode) testContainerF.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-subcontainer-f"));
         assertNotNull(testSubContainerF);
-        ContainerSchemaNode testSubSubContainerF = (ContainerSchemaNode) testSubContainerF.getDataChildByName(
+        final ContainerSchemaNode testSubSubContainerF = (ContainerSchemaNode) testSubContainerF.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-subsubcontainer-f"));
         assertNotNull(testSubSubContainerF);
-        LeafSchemaNode testLeafF = (LeafSchemaNode) testSubSubContainerF.getDataChildByName(
+        final LeafSchemaNode testLeafF = (LeafSchemaNode) testSubSubContainerF.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-leaf-f"));
         assertNotNull(testLeafF);
 
-        ContainerSchemaNode testContainerG = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerG = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-g"));
         assertNotNull(testContainerG);
         assertEquals(2, testContainerG.getAvailableAugmentations().size());
-        LeafSchemaNode testLeafG = (LeafSchemaNode) testContainerG.getDataChildByName(
+        final LeafSchemaNode testLeafG = (LeafSchemaNode) testContainerG.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-leaf-g"));
         assertNotNull(testLeafG);
-        LeafSchemaNode augmentingTestLeafG = (LeafSchemaNode) testContainerG.getDataChildByName(
+        final LeafSchemaNode augmentingTestLeafG = (LeafSchemaNode) testContainerG.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "augmenting-test-leaf-g"));
         assertNotNull(augmentingTestLeafG);
-        AnyXmlSchemaNode augmentingTestAnyxmlG = (AnyXmlSchemaNode) testContainerG.getDataChildByName(
+        final AnyXmlSchemaNode augmentingTestAnyxmlG = (AnyXmlSchemaNode) testContainerG.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "augmenting-test-anyxml-g"));
         assertNotNull(augmentingTestAnyxmlG);
 
-        ContainerSchemaNode testContainerH = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerH = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-h"));
         assertNotNull(testContainerH);
         assertEquals(1, testContainerH.getUses().size());
@@ -241,7 +236,7 @@ public class IfFeatureResolutionTest {
                 QName.create(testModule.getQNameModule(), "test-grouping-leaf"));
         assertNotNull(testGroupingLeaf);
 
-        ContainerSchemaNode testContainerI = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerI = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-i"));
         assertNotNull(testContainerI);
         assertEquals(1, testContainerI.getUses().size());
@@ -252,14 +247,14 @@ public class IfFeatureResolutionTest {
                 QName.create(testModule.getQNameModule(), "test-grouping-leaf"));
         assertNotNull(testGroupingLeaf);
 
-        ContainerSchemaNode testContainerJ = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerJ = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-j"));
         assertNotNull(testContainerJ);
-        LeafSchemaNode testLeafJ = (LeafSchemaNode) testContainerJ.getDataChildByName(
+        final LeafSchemaNode testLeafJ = (LeafSchemaNode) testContainerJ.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-leaf-j"));
         assertNotNull(testLeafJ);
 
-        ContainerSchemaNode testContainerK = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerK = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-k"));
         assertNotNull(testContainerK);
         assertEquals(1, testContainerK.getUses().size());
@@ -267,10 +262,10 @@ public class IfFeatureResolutionTest {
                 QName.create(testModule.getQNameModule(), "test-grouping-subcontainer"));
         assertNotNull(testGroupingSubContainer);
         assertEquals(1, testGroupingSubContainer.getAvailableAugmentations().size());
-        LeafSchemaNode augmentingTestGroupingLeaf = (LeafSchemaNode) testGroupingSubContainer.getDataChildByName(
+        final LeafSchemaNode augmentingTestGroupingLeaf = (LeafSchemaNode) testGroupingSubContainer.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "augmenting-test-grouping-leaf"));
         assertNotNull(augmentingTestGroupingLeaf);
-        LeafSchemaNode augmentingTestGroupingLeaf2 = (LeafSchemaNode) testGroupingSubContainer.getDataChildByName(
+        final LeafSchemaNode augmentingTestGroupingLeaf2 = (LeafSchemaNode) testGroupingSubContainer.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "augmenting-test-grouping-leaf-2"));
         assertNotNull(augmentingTestGroupingLeaf2);
         testGroupingLeaf = (LeafSchemaNode) testGroupingSubContainer.getDataChildByName(
@@ -280,57 +275,57 @@ public class IfFeatureResolutionTest {
 
     @Test
     public void testNoFeaturesSupported() throws ReactorException {
-        Predicate<QName> isFeatureSupported = qName -> false;
+        final Set<QName> supportedFeatures = ImmutableSet.of();
 
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(isFeatureSupported);
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(supportedFeatures);
         reactor.addSources(FOO_MODULE, BAR_MODULE);
 
-        SchemaContext schemaContext = reactor.buildEffective();
+        final SchemaContext schemaContext = reactor.buildEffective();
         assertNotNull(schemaContext);
 
-        Module testModule = schemaContext.findModuleByName("foo", null);
+        final Module testModule = schemaContext.findModuleByName("foo", null);
         assertNotNull(testModule);
 
         assertEquals(6, testModule.getChildNodes().size());
 
-        ContainerSchemaNode testContainerE = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerE = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-e"));
         assertNotNull(testContainerE);
-        ContainerSchemaNode testSubContainerE = (ContainerSchemaNode) testContainerE.getDataChildByName(
+        final ContainerSchemaNode testSubContainerE = (ContainerSchemaNode) testContainerE.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-subcontainer-e"));
         assertNotNull(testSubContainerE);
-        LeafSchemaNode testLeafE = (LeafSchemaNode) testSubContainerE.getDataChildByName(
+        final LeafSchemaNode testLeafE = (LeafSchemaNode) testSubContainerE.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-leaf-e"));
         assertNull(testLeafE);
 
-        ContainerSchemaNode testContainerF = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerF = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-f"));
         assertNotNull(testContainerF);
-        ContainerSchemaNode testSubContainerF = (ContainerSchemaNode) testContainerF.getDataChildByName(
+        final ContainerSchemaNode testSubContainerF = (ContainerSchemaNode) testContainerF.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-subcontainer-f"));
         assertNull(testSubContainerF);
 
-        ContainerSchemaNode testContainerG = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerG = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-g"));
         assertNotNull(testContainerG);
         assertEquals(1, testContainerG.getAvailableAugmentations().size());
-        LeafSchemaNode testLeafG = (LeafSchemaNode) testContainerG.getDataChildByName(
+        final LeafSchemaNode testLeafG = (LeafSchemaNode) testContainerG.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-leaf-g"));
         assertNotNull(testLeafG);
-        LeafSchemaNode augmentingTestLeafG = (LeafSchemaNode) testContainerG.getDataChildByName(
+        final LeafSchemaNode augmentingTestLeafG = (LeafSchemaNode) testContainerG.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "augmenting-test-leaf-g"));
         assertNull(augmentingTestLeafG);
-        AnyXmlSchemaNode augmentingTestAnyxmlG = (AnyXmlSchemaNode) testContainerG.getDataChildByName(
+        final AnyXmlSchemaNode augmentingTestAnyxmlG = (AnyXmlSchemaNode) testContainerG.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "augmenting-test-anyxml-g"));
         assertNotNull(augmentingTestAnyxmlG);
 
-        ContainerSchemaNode testContainerH = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerH = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-h"));
         assertNotNull(testContainerH);
         assertEquals(0, testContainerH.getChildNodes().size());
         assertEquals(0, testContainerH.getUses().size());
 
-        ContainerSchemaNode testContainerI = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerI = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-i"));
         assertNotNull(testContainerI);
         assertEquals(1, testContainerI.getUses().size());
@@ -341,7 +336,7 @@ public class IfFeatureResolutionTest {
                 QName.create(testModule.getQNameModule(), "test-grouping-leaf"));
         assertNull(testGroupingLeaf);
 
-        ContainerSchemaNode testContainerK = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainerK = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container-k"));
         assertNotNull(testContainerK);
         assertEquals(1, testContainerK.getUses().size());
@@ -349,10 +344,10 @@ public class IfFeatureResolutionTest {
                 QName.create(testModule.getQNameModule(), "test-grouping-subcontainer"));
         assertNotNull(testGroupingSubContainer);
         assertEquals(1, testGroupingSubContainer.getAvailableAugmentations().size());
-        LeafSchemaNode augmentingTestGroupingLeaf = (LeafSchemaNode) testGroupingSubContainer.getDataChildByName(
+        final LeafSchemaNode augmentingTestGroupingLeaf = (LeafSchemaNode) testGroupingSubContainer.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "augmenting-test-grouping-leaf"));
         assertNull(augmentingTestGroupingLeaf);
-        LeafSchemaNode augmentingTestGroupingLeaf2 = (LeafSchemaNode) testGroupingSubContainer.getDataChildByName(
+        final LeafSchemaNode augmentingTestGroupingLeaf2 = (LeafSchemaNode) testGroupingSubContainer.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "augmenting-test-grouping-leaf-2"));
         assertNull(augmentingTestGroupingLeaf2);
         testGroupingLeaf = (LeafSchemaNode) testGroupingSubContainer.getDataChildByName(

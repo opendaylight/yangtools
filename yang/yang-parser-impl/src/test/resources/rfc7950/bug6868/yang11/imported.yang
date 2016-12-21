@@ -1,0 +1,9 @@
+module imported {
+    namespace "imp";
+    prefix imp;
+    yang-version 1;
+
+    revision "2017-01-09";
+
+    feature bar;
+}
