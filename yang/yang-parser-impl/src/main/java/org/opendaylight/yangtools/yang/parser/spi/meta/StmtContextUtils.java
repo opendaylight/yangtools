@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import java.util.Collection;
+import java.util.Set;
 import java.util.function.Predicate;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -24,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.IfFeaturePredicates;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.RootStatementContext;
@@ -226,20 +226,24 @@ public final class StmtContextUtils {
             break;
         }
 
-        final Predicate<QName> isFeatureSupported = stmtContext.getFromNamespace(SupportedFeaturesNamespace.class,
+        final Set<QName> supportedFeatureNames = stmtContext.getFromNamespace(SupportedFeaturesNamespace.class,
                 SupportedFeatures.SUPPORTED_FEATURES);
-        if (IfFeaturePredicates.ALL_FEATURES.equals(isFeatureSupported)) {
+        /*
+         * If set of supported features has not been provided, all features are
+         * supported by default.
+         */
+        if (supportedFeatureNames == null) {
             stmtContext.setSupportedByFeatures(true);
             return true;
         }
 
-        final boolean result = checkFeatureSupport(stmtContext, isFeatureSupported);
+        final boolean result = checkFeatureSupport(stmtContext, supportedFeatureNames);
         stmtContext.setSupportedByFeatures(result);
         return result;
     }
 
     private static boolean checkFeatureSupport(final StmtContext.Mutable<?, ?, ?> stmtContext,
-            final Predicate<QName> isFeatureSupported) {
+            final Set<QName> supportedFeatureNames) {
         final Collection<StatementContextBase<?, ?, ?>> substatements = stmtContext.declaredSubstatements();
 
         boolean isSupported = false;
@@ -247,7 +251,7 @@ public final class StmtContextUtils {
         for (final StatementContextBase<?, ?, ?> stmt : substatements) {
             if (stmt.getPublicDefinition().equals(YangStmtMapping.IF_FEATURE)) {
                 containsIfFeature = true;
-                if (isFeatureSupported.test((QName) stmt.getStatementArgument())) {
+                if (((Predicate<Set<QName>>) stmt.getStatementArgument()).test(supportedFeatureNames)) {
                     isSupported = true;
                 } else {
                     isSupported = false;

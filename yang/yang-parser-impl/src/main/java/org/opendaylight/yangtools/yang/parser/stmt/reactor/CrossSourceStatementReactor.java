@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.repo.api.IfFeaturePredicates;
+import org.opendaylight.yangtools.yang.model.repo.api.IfFeatureSets;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -49,7 +49,7 @@ public class CrossSourceStatementReactor {
     }
 
     public final BuildAction newBuild() {
-        return newBuild(StatementParserMode.DEFAULT_MODE, IfFeaturePredicates.ALL_FEATURES);
+        return newBuild(StatementParserMode.DEFAULT_MODE, IfFeatureSets.ALL_FEATURES);
     }
 
     public final BuildAction newBuild(final Predicate<QName> isFeatureSupported) {
@@ -57,7 +57,7 @@ public class CrossSourceStatementReactor {
     }
 
     public final BuildAction newBuild(final StatementParserMode statementParserMode) {
-        return new BuildAction(statementParserMode, IfFeaturePredicates.ALL_FEATURES);
+        return new BuildAction(statementParserMode, IfFeatureSets.ALL_FEATURES);
     }
 
     public final BuildAction newBuild(final StatementParserMode statementParserMode,
@@ -90,11 +90,11 @@ public class CrossSourceStatementReactor {
         private final BuildGlobalContext context;
 
         public BuildAction() {
-            this(StatementParserMode.DEFAULT_MODE, IfFeaturePredicates.ALL_FEATURES);
+            this(StatementParserMode.DEFAULT_MODE, IfFeatureSets.ALL_FEATURES);
         }
 
         public BuildAction(final StatementParserMode statementParserMode) {
-            this(statementParserMode, IfFeaturePredicates.ALL_FEATURES);
+            this(statementParserMode, IfFeatureSets.ALL_FEATURES);
         }
 
         public BuildAction(final Predicate<QName> isFeatureSupported) {

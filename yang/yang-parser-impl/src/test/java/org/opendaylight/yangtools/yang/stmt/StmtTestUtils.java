@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.repo.api.IfFeaturePredicates;
+import org.opendaylight.yangtools.yang.model.repo.api.IfFeatureSets;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -101,7 +101,7 @@ public class StmtTestUtils {
 
     public static SchemaContext parseYangSources(final StatementStreamSource... sources) throws SourceException,
             ReactorException {
-        return parseYangSources(StatementParserMode.DEFAULT_MODE, IfFeaturePredicates.ALL_FEATURES, sources);
+        return parseYangSources(StatementParserMode.DEFAULT_MODE, IfFeatureSets.ALL_FEATURES, sources);
     }
 
     public static SchemaContext parseYangSources(final StatementParserMode statementParserMode, final Predicate<QName> ifFeaturePredicate, final StatementStreamSource... sources)
@@ -115,7 +115,7 @@ public class StmtTestUtils {
 
     public static SchemaContext parseYangSources(final File... files) throws SourceException, ReactorException,
             FileNotFoundException {
-        return parseYangSources(StatementParserMode.DEFAULT_MODE, IfFeaturePredicates.ALL_FEATURES, files);
+        return parseYangSources(StatementParserMode.DEFAULT_MODE, IfFeatureSets.ALL_FEATURES, files);
     }
 
     public static SchemaContext parseYangSources(final StatementParserMode statementParserMode, final Predicate<QName> ifFeaturePredicate, final File... files) throws SourceException,
@@ -137,7 +137,7 @@ public class StmtTestUtils {
 
     public static SchemaContext parseYangSources(final Collection<File> files, final StatementParserMode statementParserMode)
             throws SourceException, ReactorException, FileNotFoundException {
-        return parseYangSources(statementParserMode, IfFeaturePredicates.ALL_FEATURES, files.toArray(new File[files.size()]));
+        return parseYangSources(statementParserMode, IfFeatureSets.ALL_FEATURES, files.toArray(new File[files.size()]));
     }
 
     public static SchemaContext parseYangSources(final String yangSourcesDirectoryPath) throws SourceException,
@@ -147,7 +147,7 @@ public class StmtTestUtils {
 
     public static SchemaContext parseYangSource(final String yangSourcePath) throws SourceException, ReactorException,
             FileNotFoundException, URISyntaxException {
-        return parseYangSource(yangSourcePath, StatementParserMode.DEFAULT_MODE, IfFeaturePredicates.ALL_FEATURES);
+        return parseYangSource(yangSourcePath, StatementParserMode.DEFAULT_MODE, IfFeatureSets.ALL_FEATURES);
     }
 
     public static SchemaContext parseYangSource(final String yangSourcePath, final Predicate<QName> ifFeaturesPredicate)
@@ -169,7 +169,7 @@ public class StmtTestUtils {
         final URL resourceDir = StmtTestUtils.class.getResource(yangSourcesDirectoryPath);
         final File testSourcesDir = new File(resourceDir.toURI());
 
-        return parseYangSources(statementParserMode, IfFeaturePredicates.ALL_FEATURES, testSourcesDir.listFiles(YANG_FILE_FILTER));
+        return parseYangSources(statementParserMode, IfFeatureSets.ALL_FEATURES, testSourcesDir.listFiles(YANG_FILE_FILTER));
     }
 
     public static SchemaContext parseYinSources(final String yinSourcesDirectoryPath, final StatementParserMode statementParserMode)

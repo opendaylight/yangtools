@@ -17,6 +17,7 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Set;
+import java.util.function.Predicate;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
@@ -75,163 +76,163 @@ public class DeclaredStatementsTest {
 
     @Test
     public void testDeclaredAnyXml() throws ReactorException {
-        YangStatementSourceImpl anyxmlStmtModule =
+        final YangStatementSourceImpl anyxmlStmtModule =
                 new YangStatementSourceImpl("/declared-statements-test/anyxml-declared-test.yang", false);
 
-        SchemaContext schemaContext = StmtTestUtils.parseYangSources(anyxmlStmtModule);
+        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(anyxmlStmtModule);
         assertNotNull(schemaContext);
 
-        Module testModule = schemaContext.findModuleByName("anyxml-declared-test", null);
+        final Module testModule = schemaContext.findModuleByName("anyxml-declared-test", null);
         assertNotNull(testModule);
 
-        AnyXmlSchemaNode anyxmlSchemaNode = (AnyXmlSchemaNode) testModule.getDataChildByName(
+        final AnyXmlSchemaNode anyxmlSchemaNode = (AnyXmlSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "foobar"));
         assertNotNull(anyxmlSchemaNode);
-        AnyxmlStatement anyxmlStatement = ((AnyXmlEffectiveStatementImpl) anyxmlSchemaNode).getDeclared();
+        final AnyxmlStatement anyxmlStatement = ((AnyXmlEffectiveStatementImpl) anyxmlSchemaNode).getDeclared();
 
-        QName name = anyxmlStatement.getName();
+        final QName name = anyxmlStatement.getName();
         assertNotNull(name);
 
-        WhenStatement whenStatement = anyxmlStatement.getWhenStatement();
+        final WhenStatement whenStatement = anyxmlStatement.getWhenStatement();
         assertNotNull(whenStatement);
-        RevisionAwareXPath whenRevisionAwareXPath = whenStatement.getCondition();
+        final RevisionAwareXPath whenRevisionAwareXPath = whenStatement.getCondition();
         assertNotNull(whenRevisionAwareXPath);
-        DescriptionStatement whenStatementDescription = whenStatement.getDescription();
+        final DescriptionStatement whenStatementDescription = whenStatement.getDescription();
         assertNotNull(whenStatementDescription);
-        ReferenceStatement whenStatementReference = whenStatement.getReference();
+        final ReferenceStatement whenStatementReference = whenStatement.getReference();
         assertNotNull(whenStatementReference);
 
-        Collection<? extends IfFeatureStatement> ifFeatureStatements = anyxmlStatement.getIfFeatures();
+        final Collection<? extends IfFeatureStatement> ifFeatureStatements = anyxmlStatement.getIfFeatures();
         assertNotNull(ifFeatureStatements);
         assertEquals(1, ifFeatureStatements.size());
-        QName ifFeatureName = ifFeatureStatements.iterator().next().getName();
-        assertNotNull(ifFeatureName);
+        final Predicate<Set<QName>> ifFeaturePredicate = ifFeatureStatements.iterator().next().getIfFeaturePredicate();
+        assertNotNull(ifFeaturePredicate);
 
-        Collection<? extends MustStatement> mustStatements = anyxmlStatement.getMusts();
+        final Collection<? extends MustStatement> mustStatements = anyxmlStatement.getMusts();
         assertNotNull(mustStatements);
         assertEquals(1, mustStatements.size());
-        MustStatement mustStatement = mustStatements.iterator().next();
-        RevisionAwareXPath mustRevisionAwareXPath = mustStatement.getCondition();
+        final MustStatement mustStatement = mustStatements.iterator().next();
+        final RevisionAwareXPath mustRevisionAwareXPath = mustStatement.getCondition();
         assertNotNull(mustRevisionAwareXPath);
-        ErrorAppTagStatement errorAppTagStatement = mustStatement.getErrorAppTagStatement();
+        final ErrorAppTagStatement errorAppTagStatement = mustStatement.getErrorAppTagStatement();
         assertNotNull(errorAppTagStatement);
-        ErrorMessageStatement errorMessageStatement = mustStatement.getErrorMessageStatement();
+        final ErrorMessageStatement errorMessageStatement = mustStatement.getErrorMessageStatement();
         assertNotNull(errorMessageStatement);
-        DescriptionStatement mustStatementDescription = mustStatement.getDescription();
+        final DescriptionStatement mustStatementDescription = mustStatement.getDescription();
         assertNotNull(mustStatementDescription);
-        ReferenceStatement mustStatementReference = mustStatement.getReference();
+        final ReferenceStatement mustStatementReference = mustStatement.getReference();
         assertNotNull(mustStatementReference);
 
-        ConfigStatement configStatement = anyxmlStatement.getConfig();
+        final ConfigStatement configStatement = anyxmlStatement.getConfig();
         assertNotNull(configStatement);
         assertFalse(configStatement.getValue());
 
-        StatusStatement statusStatement = anyxmlStatement.getStatus();
+        final StatusStatement statusStatement = anyxmlStatement.getStatus();
         assertNotNull(statusStatement);
-        Status status = statusStatement.getValue();
+        final Status status = statusStatement.getValue();
         assertNotNull(status);
 
-        DescriptionStatement descriptionStatement = anyxmlStatement.getDescription();
+        final DescriptionStatement descriptionStatement = anyxmlStatement.getDescription();
         assertNotNull(descriptionStatement);
         assertEquals("anyxml description", descriptionStatement.getText());
 
-        ReferenceStatement referenceStatement = anyxmlStatement.getReference();
+        final ReferenceStatement referenceStatement = anyxmlStatement.getReference();
         assertNotNull(referenceStatement);
         assertEquals("anyxml reference", referenceStatement.getText());
 
-        MandatoryStatement mandatoryStatement = anyxmlStatement.getMandatory();
+        final MandatoryStatement mandatoryStatement = anyxmlStatement.getMandatory();
         assertNotNull(mandatoryStatement);
     }
 
     @Test
     public void testDeclaredChoice() throws ReactorException {
-        YangStatementSourceImpl choiceStmtModule =
+        final YangStatementSourceImpl choiceStmtModule =
                 new YangStatementSourceImpl("/declared-statements-test/choice-declared-test.yang", false);
 
-        SchemaContext schemaContext = StmtTestUtils.parseYangSources(choiceStmtModule);
+        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(choiceStmtModule);
         assertNotNull(schemaContext);
 
-        Module testModule = schemaContext.findModuleByName("choice-declared-test", null);
+        final Module testModule = schemaContext.findModuleByName("choice-declared-test", null);
         assertNotNull(testModule);
 
-        ChoiceSchemaNode choiceSchemaNode = (ChoiceSchemaNode) testModule.getDataChildByName(
+        final ChoiceSchemaNode choiceSchemaNode = (ChoiceSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-choice"));
         assertNotNull(choiceSchemaNode);
-        ChoiceStatement choiceStatement = ((ChoiceEffectiveStatementImpl) choiceSchemaNode).getDeclared();
+        final ChoiceStatement choiceStatement = ((ChoiceEffectiveStatementImpl) choiceSchemaNode).getDeclared();
 
-        QName name = choiceStatement.getName();
+        final QName name = choiceStatement.getName();
         assertNotNull(name);
 
-        DefaultStatement defaultStatement = choiceStatement.getDefault();
+        final DefaultStatement defaultStatement = choiceStatement.getDefault();
         assertNotNull(defaultStatement);
         assertEquals("case-two", defaultStatement.getValue());
 
-        ConfigStatement configStatement = choiceStatement.getConfig();
+        final ConfigStatement configStatement = choiceStatement.getConfig();
         assertNotNull(configStatement);
 
-        MandatoryStatement mandatoryStatement = choiceStatement.getMandatory();
+        final MandatoryStatement mandatoryStatement = choiceStatement.getMandatory();
         assertNotNull(mandatoryStatement);
 
-        Collection<? extends CaseStatement> caseStatements = choiceStatement.getCases();
+        final Collection<? extends CaseStatement> caseStatements = choiceStatement.getCases();
         assertNotNull(caseStatements);
         assertEquals(3, caseStatements.size());
-        CaseStatement caseStatement = caseStatements.iterator().next();
-        QName caseStatementName = caseStatement.getName();
+        final CaseStatement caseStatement = caseStatements.iterator().next();
+        final QName caseStatementName = caseStatement.getName();
         assertNotNull(caseStatementName);
-        WhenStatement caseStatementWhen = caseStatement.getWhenStatement();
+        final WhenStatement caseStatementWhen = caseStatement.getWhenStatement();
         assertNotNull(caseStatementWhen);
-        Collection<? extends IfFeatureStatement> caseStatementIfFeatures = caseStatement.getIfFeatures();
+        final Collection<? extends IfFeatureStatement> caseStatementIfFeatures = caseStatement.getIfFeatures();
         assertNotNull(caseStatementIfFeatures);
         assertEquals(1, caseStatementIfFeatures.size());
-        Collection<? extends DataDefinitionStatement> caseStatementDataDefinitions = caseStatement.getDataDefinitions();
+        final Collection<? extends DataDefinitionStatement> caseStatementDataDefinitions = caseStatement.getDataDefinitions();
         assertNotNull(caseStatementDataDefinitions);
         assertEquals(1, caseStatementDataDefinitions.size());
-        StatusStatement caseStatementStatus = caseStatement.getStatus();
+        final StatusStatement caseStatementStatus = caseStatement.getStatus();
         assertNotNull(caseStatementStatus);
-        DescriptionStatement caseStatementDescription = caseStatement.getDescription();
+        final DescriptionStatement caseStatementDescription = caseStatement.getDescription();
         assertNotNull(caseStatementDescription);
-        ReferenceStatement caseStatementReference = caseStatement.getReference();
+        final ReferenceStatement caseStatementReference = caseStatement.getReference();
         assertNotNull(caseStatementReference);
 
-        WhenStatement whenStatement = choiceStatement.getWhenStatement();
+        final WhenStatement whenStatement = choiceStatement.getWhenStatement();
         assertNotNull(whenStatement);
 
-        Collection<? extends IfFeatureStatement> ifFeatureStatements = choiceStatement.getIfFeatures();
+        final Collection<? extends IfFeatureStatement> ifFeatureStatements = choiceStatement.getIfFeatures();
         assertNotNull(ifFeatureStatements);
         assertEquals(1, ifFeatureStatements.size());
 
-        StatusStatement statusStatement = choiceStatement.getStatus();
+        final StatusStatement statusStatement = choiceStatement.getStatus();
         assertNotNull(statusStatement);
 
-        DescriptionStatement descriptionStatement = choiceStatement.getDescription();
+        final DescriptionStatement descriptionStatement = choiceStatement.getDescription();
         assertNotNull(descriptionStatement);
 
-        ReferenceStatement referenceStatement = choiceStatement.getReference();
+        final ReferenceStatement referenceStatement = choiceStatement.getReference();
         assertNotNull(referenceStatement);
     }
 
     @Test
     public void testDeclaredAugment() throws ReactorException {
-        YangStatementSourceImpl augmentStmtModule =
+        final YangStatementSourceImpl augmentStmtModule =
                 new YangStatementSourceImpl("/declared-statements-test/augment-declared-test.yang", false);
 
-        SchemaContext schemaContext = StmtTestUtils.parseYangSources(augmentStmtModule);
+        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(augmentStmtModule);
         assertNotNull(schemaContext);
 
-        Module testModule = schemaContext.findModuleByName("augment-declared-test", null);
+        final Module testModule = schemaContext.findModuleByName("augment-declared-test", null);
         assertNotNull(testModule);
 
-        Set<AugmentationSchema> augmentationSchemas = testModule.getAugmentations();
+        final Set<AugmentationSchema> augmentationSchemas = testModule.getAugmentations();
         assertNotNull(augmentationSchemas);
         assertEquals(1, augmentationSchemas.size());
 
-        AugmentationSchema augmentationSchema = augmentationSchemas.iterator().next();
-        AugmentStatement augmentStatement = ((AugmentEffectiveStatementImpl) augmentationSchema).getDeclared();
+        final AugmentationSchema augmentationSchema = augmentationSchemas.iterator().next();
+        final AugmentStatement augmentStatement = ((AugmentEffectiveStatementImpl) augmentationSchema).getDeclared();
 
-        SchemaNodeIdentifier targetNode = augmentStatement.getTargetNode();
+        final SchemaNodeIdentifier targetNode = augmentStatement.getTargetNode();
         assertNotNull(targetNode);
 
-        Collection<? extends DataDefinitionStatement> augmentStatementDataDefinitions =
+        final Collection<? extends DataDefinitionStatement> augmentStatementDataDefinitions =
                 augmentStatement.getDataDefinitions();
         assertNotNull(augmentStatementDataDefinitions);
         assertEquals(1, augmentStatementDataDefinitions.size());
@@ -239,53 +240,53 @@ public class DeclaredStatementsTest {
 
     @Test
     public void testDeclaredModuleAndSubmodule() throws ReactorException {
-        YangStatementSourceImpl parentModule =
+        final YangStatementSourceImpl parentModule =
                 new YangStatementSourceImpl("/declared-statements-test/parent-module-declared-test.yang", false);
 
-        YangStatementSourceImpl childModule =
+        final YangStatementSourceImpl childModule =
                 new YangStatementSourceImpl("/declared-statements-test/child-module-declared-test.yang", false);
 
-        SchemaContext schemaContext = StmtTestUtils.parseYangSources(parentModule, childModule);
+        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(parentModule, childModule);
         assertNotNull(schemaContext);
 
-        Module testModule = schemaContext.findModuleByName("parent-module-declared-test", null);
+        final Module testModule = schemaContext.findModuleByName("parent-module-declared-test", null);
         assertNotNull(testModule);
 
-        ModuleStatement moduleStatement = ((ModuleEffectiveStatementImpl) testModule).getDeclared();
+        final ModuleStatement moduleStatement = ((ModuleEffectiveStatementImpl) testModule).getDeclared();
 
-        String moduleStatementName = moduleStatement.getName();
+        final String moduleStatementName = moduleStatement.getName();
         assertNotNull(moduleStatementName);
 
-        YangVersionStatement moduleStatementYangVersion = moduleStatement.getYangVersion();
+        final YangVersionStatement moduleStatementYangVersion = moduleStatement.getYangVersion();
         assertNotNull(moduleStatementYangVersion);
         assertNotNull(moduleStatementYangVersion.getValue());
 
-        NamespaceStatement moduleStatementNamspace = moduleStatement.getNamespace();
+        final NamespaceStatement moduleStatementNamspace = moduleStatement.getNamespace();
         assertNotNull(moduleStatementNamspace);
         assertNotNull(moduleStatementNamspace.getUri());
 
-        PrefixStatement moduleStatementPrefix= moduleStatement.getPrefix();
+        final PrefixStatement moduleStatementPrefix= moduleStatement.getPrefix();
         assertNotNull(moduleStatementPrefix);
         assertNotNull(moduleStatementPrefix.getValue());
 
         assertEquals(1, moduleStatement.getIncludes().size());
-        IncludeStatement includeStatement = moduleStatement.getIncludes().iterator().next();
+        final IncludeStatement includeStatement = moduleStatement.getIncludes().iterator().next();
         assertEquals("child-module-declared-test", includeStatement.getModule());
 
-        Set<Module> submodules = testModule.getSubmodules();
+        final Set<Module> submodules = testModule.getSubmodules();
         assertNotNull(submodules);
         assertEquals(1, submodules.size());
 
-        Module submodule = submodules.iterator().next();
-        SubmoduleStatement submoduleStatement = ((SubmoduleEffectiveStatementImpl) submodule).getDeclared();
+        final Module submodule = submodules.iterator().next();
+        final SubmoduleStatement submoduleStatement = ((SubmoduleEffectiveStatementImpl) submodule).getDeclared();
 
-        String submoduleStatementName = submoduleStatement.getName();
+        final String submoduleStatementName = submoduleStatement.getName();
         assertNotNull(submoduleStatementName);
 
-        YangVersionStatement submoduleStatementYangVersion = submoduleStatement.getYangVersion();
+        final YangVersionStatement submoduleStatementYangVersion = submoduleStatement.getYangVersion();
         assertNotNull(submoduleStatementYangVersion);
 
-        BelongsToStatement belongsToStatement = submoduleStatement.getBelongsTo();
+        final BelongsToStatement belongsToStatement = submoduleStatement.getBelongsTo();
         assertNotNull(belongsToStatement);
         assertNotNull(belongsToStatement.getModule());
         assertNotNull(belongsToStatement.getPrefix());
@@ -293,24 +294,24 @@ public class DeclaredStatementsTest {
 
     @Test
     public void testDeclaredModule() throws ReactorException, ParseException {
-        YangStatementSourceImpl rootModule =
+        final YangStatementSourceImpl rootModule =
                 new YangStatementSourceImpl("/declared-statements-test/root-module-declared-test.yang", false);
 
-        YangStatementSourceImpl importedModule =
+        final YangStatementSourceImpl importedModule =
                 new YangStatementSourceImpl("/declared-statements-test/imported-module-declared-test.yang", false);
 
-        SchemaContext schemaContext = StmtTestUtils.parseYangSources(rootModule, importedModule);
+        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(rootModule, importedModule);
         assertNotNull(schemaContext);
 
-        Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2016-09-28");
+        final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2016-09-28");
 
-        Module testModule = schemaContext.findModuleByName("root-module-declared-test", revision);
+        final Module testModule = schemaContext.findModuleByName("root-module-declared-test", revision);
         assertNotNull(testModule);
 
-        ModuleStatement moduleStatement = ((ModuleEffectiveStatementImpl) testModule).getDeclared();
+        final ModuleStatement moduleStatement = ((ModuleEffectiveStatementImpl) testModule).getDeclared();
 
         assertEquals(1, moduleStatement.getImports().size());
-        ImportStatement importStatement = moduleStatement.getImports().iterator().next();
+        final ImportStatement importStatement = moduleStatement.getImports().iterator().next();
         assertEquals("imported-module-declared-test", importStatement.getModule());
         assertEquals("imdt", importStatement.getPrefix().getValue());
         assertEquals(revision, importStatement.getRevisionDate().getDate());
@@ -321,22 +322,22 @@ public class DeclaredStatementsTest {
         assertEquals("test contact", moduleStatement.getContact().getText());
 
         assertEquals(1, moduleStatement.getRevisions().size());
-        RevisionStatement revisionStatement = moduleStatement.getRevisions().iterator().next();
+        final RevisionStatement revisionStatement = moduleStatement.getRevisions().iterator().next();
         assertEquals(revision, revisionStatement.getDate());
         assertEquals("test description", revisionStatement.getDescription().getText());
         assertEquals("test reference", revisionStatement.getReference().getText());
 
         assertEquals(1, moduleStatement.getExtensions().size());
-        ExtensionStatement extensionStatement = moduleStatement.getExtensions().iterator().next();
+        final ExtensionStatement extensionStatement = moduleStatement.getExtensions().iterator().next();
         assertEquals(Status.CURRENT, extensionStatement.getStatus().getValue());
         assertEquals("test description", extensionStatement.getDescription().getText());
         assertEquals("test reference", extensionStatement.getReference().getText());
-        ArgumentStatement argumentStatement = extensionStatement.getArgument();
+        final ArgumentStatement argumentStatement = extensionStatement.getArgument();
         assertEquals("ext-argument", argumentStatement.getName().getLocalName());
         assertTrue(argumentStatement.getYinElement().getValue());
 
         assertEquals(1, moduleStatement.getFeatures().size());
-        FeatureStatement featureStatement = moduleStatement.getFeatures().iterator().next();
+        final FeatureStatement featureStatement = moduleStatement.getFeatures().iterator().next();
         assertEquals(Status.CURRENT, featureStatement.getStatus().getValue());
         assertEquals("test description", featureStatement.getDescription().getText());
         assertEquals("test reference", featureStatement.getReference().getText());
@@ -345,7 +346,7 @@ public class DeclaredStatementsTest {
 
         assertEquals(2, moduleStatement.getIdentities().size());
         IdentityStatement identityStatement = null;
-        for (IdentityStatement identity : moduleStatement.getIdentities()) {
+        for (final IdentityStatement identity : moduleStatement.getIdentities()) {
             if (identity.getName().getLocalName().equals("test-id")) {
                 identityStatement = identity;
             }
@@ -358,7 +359,7 @@ public class DeclaredStatementsTest {
         assertEquals("test-id", identityStatement.getName().getLocalName());
 
         assertEquals(1, moduleStatement.getTypedefs().size());
-        TypedefStatement typedefStatement = moduleStatement.getTypedefs().iterator().next();
+        final TypedefStatement typedefStatement = moduleStatement.getTypedefs().iterator().next();
         assertEquals(Status.CURRENT, typedefStatement.getStatus().getValue());
         assertEquals("test description", typedefStatement.getDescription().getText());
         assertEquals("test reference", typedefStatement.getReference().getText());
@@ -369,59 +370,59 @@ public class DeclaredStatementsTest {
 
     @Test
     public void testDeclaredContainer() throws ReactorException {
-        YangStatementSourceImpl containerStmtModule =
+        final YangStatementSourceImpl containerStmtModule =
                 new YangStatementSourceImpl("/declared-statements-test/container-declared-test.yang", false);
 
-        SchemaContext schemaContext = StmtTestUtils.parseYangSources(containerStmtModule);
+        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(containerStmtModule);
         assertNotNull(schemaContext);
 
-        Module testModule = schemaContext.findModuleByName("container-declared-test", null);
+        final Module testModule = schemaContext.findModuleByName("container-declared-test", null);
         assertNotNull(testModule);
 
-        ContainerSchemaNode containerSchemaNode = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode containerSchemaNode = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container"));
         assertNotNull(containerSchemaNode);
-        ContainerStatement containerStatement = ((ContainerEffectiveStatementImpl) containerSchemaNode).getDeclared();
+        final ContainerStatement containerStatement = ((ContainerEffectiveStatementImpl) containerSchemaNode).getDeclared();
 
-        QName name = containerStatement.getName();
+        final QName name = containerStatement.getName();
         assertNotNull(name);
 
-        WhenStatement containerStatementWhen = containerStatement.getWhenStatement();
+        final WhenStatement containerStatementWhen = containerStatement.getWhenStatement();
         assertNotNull(containerStatementWhen);
 
-        Collection<? extends IfFeatureStatement> containerStatementIfFeatures = containerStatement.getIfFeatures();
+        final Collection<? extends IfFeatureStatement> containerStatementIfFeatures = containerStatement.getIfFeatures();
         assertNotNull(containerStatementIfFeatures);
         assertEquals(1, containerStatementIfFeatures.size());
 
-        Collection<? extends MustStatement> containerStatementMusts = containerStatement.getMusts();
+        final Collection<? extends MustStatement> containerStatementMusts = containerStatement.getMusts();
         assertNotNull(containerStatementMusts);
         assertEquals(1, containerStatementMusts.size());
 
-        PresenceStatement containerStatementPresence = containerStatement.getPresence();
+        final PresenceStatement containerStatementPresence = containerStatement.getPresence();
         assertNotNull(containerStatementPresence);
         assertNotNull(containerStatementPresence.getValue());
 
-        ConfigStatement containerStatementConfig = containerStatement.getConfig();
+        final ConfigStatement containerStatementConfig = containerStatement.getConfig();
         assertNotNull(containerStatementConfig);
 
-        StatusStatement containerStatementStatus = containerStatement.getStatus();
+        final StatusStatement containerStatementStatus = containerStatement.getStatus();
         assertNotNull(containerStatementStatus);
 
-        DescriptionStatement containerStatementDescription = containerStatement.getDescription();
+        final DescriptionStatement containerStatementDescription = containerStatement.getDescription();
         assertNotNull(containerStatementDescription);
 
-        ReferenceStatement containerStatementReference = containerStatement.getReference();
+        final ReferenceStatement containerStatementReference = containerStatement.getReference();
         assertNotNull(containerStatementReference);
 
-        Collection<? extends TypedefStatement> containerStatementTypedefs = containerStatement.getTypedefs();
+        final Collection<? extends TypedefStatement> containerStatementTypedefs = containerStatement.getTypedefs();
         assertNotNull(containerStatementTypedefs);
         assertEquals(1, containerStatementTypedefs.size());
 
-        Collection<? extends GroupingStatement> containerStatementGroupings = containerStatement.getGroupings();
+        final Collection<? extends GroupingStatement> containerStatementGroupings = containerStatement.getGroupings();
         assertNotNull(containerStatementGroupings);
         assertEquals(1, containerStatementGroupings.size());
 
-        Collection<? extends DataDefinitionStatement> containerStatementDataDefinitions =
+        final Collection<? extends DataDefinitionStatement> containerStatementDataDefinitions =
                 containerStatement.getDataDefinitions();
 
         assertNotNull(containerStatementDataDefinitions);

@@ -8,12 +8,12 @@
 
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
-import java.util.function.Predicate;
+import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 public interface SupportedFeaturesNamespace
-        extends IdentifierNamespace<SupportedFeaturesNamespace.SupportedFeatures, Predicate<QName>> {
+        extends IdentifierNamespace<SupportedFeaturesNamespace.SupportedFeatures, Set<QName>> {
 
     enum SupportedFeatures {
         SUPPORTED_FEATURES

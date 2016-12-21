@@ -25,7 +25,7 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.repo.api.IfFeaturePredicates;
+import org.opendaylight.yangtools.yang.model.repo.api.IfFeatureSets;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
@@ -105,7 +105,7 @@ public class Main {
         LOG.log(Level.INFO, "Yang model files: {0} ", yangFiles);
         LOG.log(Level.INFO, "Supported features: {0} ", supportedFeatures);
 
-        final Predicate<QName> isFeatureSupported = supportedFeatures == null ? IfFeaturePredicates.ALL_FEATURES
+        final Predicate<QName> isFeatureSupported = supportedFeatures == null ? IfFeatureSets.ALL_FEATURES
                 : q -> supportedFeatures.contains(q);
         SchemaContext context = null;
 
