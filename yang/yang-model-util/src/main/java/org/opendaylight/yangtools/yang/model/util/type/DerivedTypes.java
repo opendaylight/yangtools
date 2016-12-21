@@ -264,7 +264,7 @@ public final class DerivedTypes {
             @Override
             public LeafrefTypeDefinition build() {
                 return new DerivedLeafrefType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                    getStatus(), getUnits(), getUnknownSchemaNodes(), getBaseType().requireInstance());
             }
         };
     }

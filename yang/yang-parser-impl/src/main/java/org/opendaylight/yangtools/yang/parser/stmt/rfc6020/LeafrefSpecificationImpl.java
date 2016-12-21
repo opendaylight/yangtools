@@ -8,9 +8,11 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
@@ -23,7 +25,6 @@ public class LeafrefSpecificationImpl extends AbstractDeclaredStatement<String>
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .TYPE)
             .addMandatory(YangStmtMapping.PATH)
-            .addOptional(YangStmtMapping.REQUIRE_INSTANCE)
             .build();
 
     protected LeafrefSpecificationImpl(
@@ -79,6 +80,12 @@ public class LeafrefSpecificationImpl extends AbstractDeclaredStatement<String>
     @Override
     public PathStatement getPath() {
         return firstDeclared(PathStatement.class);
+    }
+
+    @Nullable
+    @Override
+    public RequireInstanceStatement getRequireInstance() {
+        return firstDeclared(RequireInstanceStatement.class);
     }
 
 }

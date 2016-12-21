@@ -15,15 +15,25 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
 final class DerivedLeafrefType extends AbstractDerivedType<LeafrefTypeDefinition> implements LeafrefTypeDefinition {
+
+    private final boolean requireInstance;
+
     DerivedLeafrefType(final LeafrefTypeDefinition baseType, final SchemaPath path, final Object defaultValue,
         final String description, final String reference, final Status status, final String units,
-        final Collection<UnknownSchemaNode> unknownSchemaNodes) {
+        final Collection<UnknownSchemaNode> unknownSchemaNodes, final boolean requireInstance) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
+
+        this.requireInstance = requireInstance;
     }
 
     @Override
     public RevisionAwareXPath getPathStatement() {
         return baseType().getPathStatement();
+    }
+
+    @Override
+    public boolean requireInstance() {
+        return requireInstance;
     }
 
     @Override
