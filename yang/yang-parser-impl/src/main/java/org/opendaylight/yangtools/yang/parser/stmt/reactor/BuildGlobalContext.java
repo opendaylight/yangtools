@@ -26,7 +26,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -79,13 +78,13 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     private final Set<YangVersion> supportedVersions;
 
     BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports,
-            final StatementParserMode statementParserMode, final Predicate<QName> isFeatureSupported) {
-        this(supports, ImmutableMap.of(), statementParserMode, isFeatureSupported);
+            final StatementParserMode statementParserMode, final Set<QName> supportedFeatures) {
+        this(supports, ImmutableMap.of(), statementParserMode, supportedFeatures);
     }
 
     BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports,
             final Map<ValidationBundleType, Collection<?>> supportedValidation,
-            final StatementParserMode statementParserMode, final Predicate<QName> isFeatureSupported) {
+            final StatementParserMode statementParserMode, final Set<QName> supportedFeatures) {
         super();
         this.supports = Preconditions.checkNotNull(supports, "BuildGlobalContext#supports cannot be null");
         Preconditions.checkNotNull(statementParserMode, "Statement parser mode must not be null.");
@@ -95,8 +94,12 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
             addToNs(ValidationBundlesNamespace.class, validationBundle.getKey(), validationBundle.getValue());
         }
 
-        addToNs(SupportedFeaturesNamespace.class, SupportedFeatures.SUPPORTED_FEATURES,
-                Preconditions.checkNotNull(isFeatureSupported, "Supported feature predicate must not be null."));
+        if (supportedFeatures != null) {
+            addToNs(SupportedFeaturesNamespace.class, SupportedFeatures.SUPPORTED_FEATURES,
+                    ImmutableSet.copyOf(supportedFeatures));
+        } else {
+            LOG.warn("Set of supported features has not been provided, so all features are supported by default.");
+        }
         this.supportedVersions = ImmutableSet.copyOf(supports.get(ModelProcessingPhase.INIT).getSupportedVersions());
     }
 
@@ -336,7 +339,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
                         default:
                             throw new IllegalStateException("Unsupported phase progress " + sourceProgress);
                     }
-                } catch (RuntimeException ex) {
+                } catch (final RuntimeException ex) {
                     throw propagateException(nextSourceCtx, ex);
                 }
             }

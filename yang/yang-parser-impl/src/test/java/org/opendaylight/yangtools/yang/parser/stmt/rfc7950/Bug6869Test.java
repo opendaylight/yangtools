@@ -15,12 +15,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Predicate;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
@@ -43,7 +43,7 @@ public class Bug6869Test {
     public void identityNoFeaureTest() throws ReactorException, SourceException, FileNotFoundException,
             URISyntaxException {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6869/foo.yang",
-                createIfFeaturesPredicate("no-feature"));
+                ImmutableSet.of());
         assertNotNull(schemaContext);
 
         final Set<IdentitySchemaNode> identities = getIdentities(schemaContext);
@@ -59,7 +59,7 @@ public class Bug6869Test {
     public void identityAllFeauresTest() throws ReactorException, SourceException, FileNotFoundException,
             URISyntaxException {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6869/foo.yang",
-                createIfFeaturesPredicate("identity-feature", "mandatory-leaf", "tls", "ssh", "two", "three"));
+                createFeaturesSet("identity-feature", "mandatory-leaf", "tls", "ssh", "two", "three"));
         assertNotNull(schemaContext);
 
         final Set<IdentitySchemaNode> identities = getIdentities(schemaContext);
@@ -78,15 +78,13 @@ public class Bug6869Test {
         return module.getIdentities();
     }
 
-    private static Predicate<QName> createIfFeaturesPredicate(final String... featureNames) {
-        final Predicate<QName> ifFeaturesPredicate = qName -> {
-            final Set<QName> supportedFeatures = new HashSet<>();
-            for (final String featureName : featureNames) {
-                supportedFeatures.add(QName.create(FOO_NS, FOO_REV, featureName));
-            }
-            return supportedFeatures.contains(qName);
-        };
-        return ifFeaturesPredicate;
+    private static Set<QName> createFeaturesSet(final String... featureNames) {
+        final Set<QName> supportedFeatures = new HashSet<>();
+        for (final String featureName : featureNames) {
+            supportedFeatures.add(QName.create(FOO_NS, FOO_REV, featureName));
+        }
+
+        return ImmutableSet.copyOf(supportedFeatures);
     }
 
     private static SchemaNode findNode(final SchemaContext context, final Iterable<String> localNamesPath) {
