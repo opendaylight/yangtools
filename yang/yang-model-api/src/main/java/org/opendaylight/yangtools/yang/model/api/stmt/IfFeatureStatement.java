@@ -19,26 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  *
  * The "if-feature" statement makes its parent statement conditional.
  */
-// FIXME: IfFeatureStatement should extend DeclaredStatement<Predicate<Set<QName>>> and
-// IfFeatureStatementImpl for Yang1.0 reworked to extend AbstractDeclaredStatement<Predicate<Set<QName>>>.
-public interface IfFeatureStatement extends DeclaredStatement<QName> {
-
+public interface IfFeatureStatement extends DeclaredStatement<Predicate<Set<QName>>> {
     /**
-     * Used in YANG 1.0 (RFC6020) implementation of IfFeatureStatement
-     * where the argument is the name of a feature
-     * as defined by a "feature" statement.
-     *
-     * To be replaced by {@link #getIfFeaturePredicate() getIfFeaturePredicate} method.
-     *
-     * @return QName object for the feature
-     */
-    @Deprecated
-    @Nonnull QName getName();
-
-    /**
-     * This method should be overridden for all Yang 1.1 implementation.
-     * The default implementation is only applicable for Yang 1.0 (RFC6020).
-     *
      * In Yang 1.1 (RFC7950) implementation of IfFeatureStatement, the
      * argument is a boolean expression over feature names defined by
      * "feature" statements. Hence, add implementation to return a
@@ -47,7 +29,6 @@ public interface IfFeatureStatement extends DeclaredStatement<QName> {
      * @return Predicate on a collection of QNames against which to evaluate
      */
     @Beta
-    @Nonnull default Predicate<Set<QName>> getIfFeaturePredicate() {
-        return setQnames -> setQnames.contains(getName());
-    }
+    @Nonnull
+    Predicate<Set<QName>> getIfFeaturePredicate();
 }

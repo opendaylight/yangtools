@@ -15,10 +15,9 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Predicate;
+import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.repo.api.IfFeaturePredicates;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -49,20 +48,20 @@ public class CrossSourceStatementReactor {
     }
 
     public final BuildAction newBuild() {
-        return newBuild(StatementParserMode.DEFAULT_MODE, IfFeaturePredicates.ALL_FEATURES);
+        return newBuild(StatementParserMode.DEFAULT_MODE);
     }
 
-    public final BuildAction newBuild(final Predicate<QName> isFeatureSupported) {
-        return new BuildAction(StatementParserMode.DEFAULT_MODE, isFeatureSupported);
+    public final BuildAction newBuild(final Set<QName> supportedFeatures) {
+        return new BuildAction(StatementParserMode.DEFAULT_MODE, supportedFeatures);
     }
 
     public final BuildAction newBuild(final StatementParserMode statementParserMode) {
-        return new BuildAction(statementParserMode, IfFeaturePredicates.ALL_FEATURES);
+        return new BuildAction(statementParserMode, null);
     }
 
     public final BuildAction newBuild(final StatementParserMode statementParserMode,
-            final Predicate<QName> isFeatureSupported) {
-        return new BuildAction(statementParserMode, isFeatureSupported);
+            final Set<QName> supportedFeatures) {
+        return new BuildAction(statementParserMode, supportedFeatures);
     }
 
     public static class Builder implements org.opendaylight.yangtools.concepts.Builder<CrossSourceStatementReactor> {
@@ -90,20 +89,20 @@ public class CrossSourceStatementReactor {
         private final BuildGlobalContext context;
 
         public BuildAction() {
-            this(StatementParserMode.DEFAULT_MODE, IfFeaturePredicates.ALL_FEATURES);
+            this(StatementParserMode.DEFAULT_MODE);
         }
 
         public BuildAction(final StatementParserMode statementParserMode) {
-            this(statementParserMode, IfFeaturePredicates.ALL_FEATURES);
+            this(statementParserMode, null);
         }
 
-        public BuildAction(final Predicate<QName> isFeatureSupported) {
-            this(StatementParserMode.DEFAULT_MODE, isFeatureSupported);
+        public BuildAction(final Set<QName> supportedFeatures) {
+            this(StatementParserMode.DEFAULT_MODE, supportedFeatures);
         }
 
-        public BuildAction(final StatementParserMode statementParserMode, final Predicate<QName> isFeatureSupported) {
+        public BuildAction(final StatementParserMode statementParserMode, final Set<QName> supportedFeatures) {
             this.context = new BuildGlobalContext(supportedTerminology, supportedValidation, statementParserMode,
-                    isFeatureSupported);
+                    supportedFeatures);
         }
 
         public void addSource(final StatementStreamSource source) {

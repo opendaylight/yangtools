@@ -1,0 +1,39 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+    yang-version 1.1;
+
+    import imported { prefix imp; revision-date 2017-01-09; }
+
+    feature foo;
+    feature bar;
+    feature baz;
+
+    container my-container-1 {
+        if-feature "(not foo) or (bar and baz)";
+    }
+
+    container my-container-2 {
+        if-feature "not foo or bar and baz";
+    }
+
+    container my-container-3 {
+        if-feature "((not foo or bar) and baz)";
+    }
+
+    container foo {
+        if-feature "foo";
+    }
+
+    container not-foo {
+        if-feature "not foo";
+    }
+
+    container imp-bar {
+        if-feature "imp:bar";
+    }
+
+    container imp-bar-2 {
+        if-feature "imp:bar and not bar";
+    }
+}
