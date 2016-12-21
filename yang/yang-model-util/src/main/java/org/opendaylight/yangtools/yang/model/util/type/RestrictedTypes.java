@@ -144,11 +144,15 @@ public final class RestrictedTypes {
         return new InstanceIdentifierTypeBuilder(baseType, path);
     }
 
-    public static TypeBuilder<LeafrefTypeDefinition> newLeafrefBuilder(final LeafrefTypeDefinition baseType, final SchemaPath path) {
-        return new AbstractRestrictedTypeBuilder<LeafrefTypeDefinition>(baseType, path) {
+    public static RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition> newLeafrefBuilder(
+            final LeafrefTypeDefinition baseType, final SchemaPath path) {
+        return new RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition>(baseType, path) {
             @Override
             LeafrefTypeDefinition buildType() {
-                return new RestrictedLeafrefType(getBaseType(), getPath(), getUnknownSchemaNodes());
+                if (getRequireInstance() == getBaseType().requireInstance()) {
+                    return getBaseType();
+                }
+                return new RestrictedLeafrefType(getBaseType(), getPath(), getUnknownSchemaNodes(), getRequireInstance());
             }
         };
     }
