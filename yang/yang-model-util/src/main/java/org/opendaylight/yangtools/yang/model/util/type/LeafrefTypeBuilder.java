@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
-public final class LeafrefTypeBuilder extends TypeBuilder<LeafrefTypeDefinition> {
+public final class LeafrefTypeBuilder extends RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition> {
     private RevisionAwareXPath pathStatement;
 
     LeafrefTypeBuilder(final SchemaPath path) {
@@ -27,7 +27,7 @@ public final class LeafrefTypeBuilder extends TypeBuilder<LeafrefTypeDefinition>
     }
 
     @Override
-    public LeafrefTypeDefinition build() {
-        return new BaseLeafrefType(getPath(), pathStatement, getUnknownSchemaNodes());
+    LeafrefTypeDefinition buildType() {
+        return new BaseLeafrefType(getPath(), pathStatement, getRequireInstance(), getUnknownSchemaNodes());
     }
 }
