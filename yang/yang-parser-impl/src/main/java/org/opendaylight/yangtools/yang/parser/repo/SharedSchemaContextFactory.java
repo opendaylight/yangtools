@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
@@ -69,10 +68,10 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
     @Override
     public CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
             final Collection<SourceIdentifier> requiredSources, final StatementParserMode statementParserMode,
-            final Predicate<QName> isFeatureSupported) {
+            final Set<QName> supportedFeatures) {
         return createSchemaContext(requiredSources,
                 statementParserMode == StatementParserMode.SEMVER_MODE ? this.semVerCache : this.cache,
-                new AssembleSources(isFeatureSupported, statementParserMode));
+                new AssembleSources(supportedFeatures, statementParserMode));
     }
 
     private ListenableFuture<ASTSchemaSource> requestSource(final SourceIdentifier identifier) {
@@ -170,13 +169,13 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
 
     private static final class AssembleSources implements AsyncFunction<List<ASTSchemaSource>, SchemaContext> {
 
-        private final Predicate<QName> isFeatureSupported;
+        private final Set<QName> supportedFeatures;
         private final StatementParserMode statementParserMode;
         private final Function<ASTSchemaSource, SourceIdentifier> getIdentifier;
 
-        private AssembleSources(final Predicate<QName> isFeatureSupported,
+        private AssembleSources(final Set<QName> supportedFeatures,
                 final StatementParserMode statementParserMode) {
-            this.isFeatureSupported = Preconditions.checkNotNull(isFeatureSupported);
+            this.supportedFeatures = supportedFeatures;
             this.statementParserMode = Preconditions.checkNotNull(statementParserMode);
             switch (statementParserMode) {
             case SEMVER_MODE:
@@ -206,7 +205,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
 
             final Map<SourceIdentifier, ParserRuleContext> asts = Maps.transformValues(srcs, ASTSchemaSource::getAST);
             final CrossSourceStatementReactor.BuildAction reactor =
-                    YangInferencePipeline.RFC6020_REACTOR.newBuild(statementParserMode, isFeatureSupported);
+                    YangInferencePipeline.RFC6020_REACTOR.newBuild(statementParserMode, supportedFeatures);
 
             for (final Entry<SourceIdentifier, ParserRuleContext> e : asts.entrySet()) {
                 final ParserRuleContext parserRuleCtx = e.getValue();
@@ -219,7 +218,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
             final SchemaContext schemaContext;
             try {
                 schemaContext = reactor.buildEffective();
-            } catch (ReactorException ex) {
+            } catch (final ReactorException ex) {
                 throw new SchemaResolutionException("Failed to resolve required models", ex.getSourceIdentifier(), ex);
             }
 

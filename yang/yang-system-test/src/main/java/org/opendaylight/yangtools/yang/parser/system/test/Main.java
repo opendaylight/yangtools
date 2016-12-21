@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.cli.BasicParser;
@@ -26,7 +25,6 @@ import org.apache.commons.cli.ParseException;
 import org.apache.log4j.BasicConfigurator;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.repo.api.IfFeaturePredicates;
 
 /**
  * Main class of Yang parser system test.
@@ -107,15 +105,13 @@ public class Main {
         LOG.log(Level.INFO, "Yang model files: {0} ", yangFiles);
         LOG.log(Level.INFO, "Supported features: {0} ", supportedFeatures);
 
-        final Predicate<QName> isFeatureSupported = supportedFeatures == null ? IfFeaturePredicates.ALL_FEATURES
-                : q -> supportedFeatures.contains(q);
         SchemaContext context = null;
 
         printMemoryInfo("start");
         final Stopwatch stopWatch = Stopwatch.createStarted();
 
         try {
-            context = SystemTestUtils.parseYangSources(yangDirs, yangFiles, isFeatureSupported);
+            context = SystemTestUtils.parseYangSources(yangDirs, yangFiles, supportedFeatures);
         } catch (final Exception e) {
             LOG.log(Level.SEVERE, "Failed to create SchemaContext.", e);
             System.exit(1);
