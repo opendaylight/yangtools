@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import java.util.Set;
+import java.util.function.Predicate;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class IfFeatureEffectiveStatementImpl extends DeclaredEffectiveStatementBase<QName, IfFeatureStatement> {
-    public IfFeatureEffectiveStatementImpl(final StmtContext<QName, IfFeatureStatement, ?> ctx) {
+public final class IfFeatureEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Predicate<Set<QName>>, IfFeatureStatement> {
+    public IfFeatureEffectiveStatementImpl(final StmtContext<Predicate<Set<QName>>, IfFeatureStatement, ?> ctx) {
         super(ctx);
     }
 }

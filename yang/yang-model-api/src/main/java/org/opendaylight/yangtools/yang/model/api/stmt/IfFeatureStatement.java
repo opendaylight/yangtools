@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  */
 // FIXME: IfFeatureStatement should extend DeclaredStatement<Predicate<Set<QName>>> and
 // IfFeatureStatementImpl for Yang1.0 reworked to extend AbstractDeclaredStatement<Predicate<Set<QName>>>.
-public interface IfFeatureStatement extends DeclaredStatement<QName> {
+public interface IfFeatureStatement extends DeclaredStatement<Predicate<Set<QName>>> {
 
     /**
      * Used in YANG 1.0 (RFC6020) implementation of IfFeatureStatement
