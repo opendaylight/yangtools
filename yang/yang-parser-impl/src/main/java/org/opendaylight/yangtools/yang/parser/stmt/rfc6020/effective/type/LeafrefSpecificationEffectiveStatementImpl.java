@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.util.type.LeafrefTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PathEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RequireInstanceEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
 public final class LeafrefSpecificationEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, LeafrefSpecification>
@@ -32,8 +33,9 @@ public final class LeafrefSpecificationEffectiveStatementImpl extends DeclaredEf
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof PathEffectiveStatementImpl) {
                 builder.setPathStatement(((PathEffectiveStatementImpl) stmt).argument());
-            }
-            if (stmt instanceof UnknownEffectiveStatementImpl) {
+            } else if(stmt instanceof RequireInstanceEffectiveStatementImpl) {
+                builder.setRequireInstance(((RequireInstanceEffectiveStatementImpl)stmt).argument());
+            } else if (stmt instanceof UnknownEffectiveStatementImpl) {
                 builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl)stmt);
             }
         }

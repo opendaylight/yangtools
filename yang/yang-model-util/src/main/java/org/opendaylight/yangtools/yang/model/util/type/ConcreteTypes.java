@@ -172,7 +172,7 @@ public final class ConcreteTypes {
             @Override
             public LeafrefTypeDefinition buildType() {
                 return new DerivedLeafrefType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                    getStatus(), getUnits(), getUnknownSchemaNodes(), getBaseType().requireInstance());
             }
         };
     }

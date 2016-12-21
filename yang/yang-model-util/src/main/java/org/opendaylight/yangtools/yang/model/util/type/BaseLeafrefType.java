@@ -16,15 +16,23 @@ import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
 final class BaseLeafrefType extends AbstractBaseType<LeafrefTypeDefinition> implements LeafrefTypeDefinition {
     private final RevisionAwareXPath pathStatement;
+    private final boolean requireInstance;
 
-    BaseLeafrefType(final SchemaPath path, final RevisionAwareXPath pathStatement, final List<UnknownSchemaNode> unknownSchemaNodes) {
+    BaseLeafrefType(final SchemaPath path, final RevisionAwareXPath pathStatement, final boolean requireInstance,
+            final List<UnknownSchemaNode> unknownSchemaNodes) {
         super(path, unknownSchemaNodes);
         this.pathStatement = Preconditions.checkNotNull(pathStatement);
+        this.requireInstance = requireInstance;
     }
 
     @Override
     public RevisionAwareXPath getPathStatement() {
         return pathStatement;
+    }
+
+    @Override
+    public boolean requireInstance() {
+        return requireInstance;
     }
 
     @Override
