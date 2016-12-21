@@ -1,0 +1,17 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+    yang-version 1;
+
+    container my-container-1 {
+        if-feature "(not foo) or (bar and baz)";
+    }
+
+    container my-container-2 {
+        if-feature "not foo or bar and baz";
+    }
+
+    container my-container-3 {
+        if-feature "(not foo or bar) and baz)";
+    }
+}

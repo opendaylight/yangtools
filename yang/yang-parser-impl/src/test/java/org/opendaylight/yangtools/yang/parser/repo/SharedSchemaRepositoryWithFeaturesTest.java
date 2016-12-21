@@ -12,11 +12,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.CheckedFuture;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.function.Predicate;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -34,12 +34,7 @@ public class SharedSchemaRepositoryWithFeaturesTest {
 
     @Test
     public void testSharedSchemaRepositoryWithSomeFeaturesSupported() throws Exception {
-        Predicate<QName> isFeatureSupported = qName -> {
-            Set<QName> supportedFeatures = new HashSet<>();
-            supportedFeatures.add(QName.create("foobar-namespace", "1970-01-01", "test-feature-1"));
-
-            return supportedFeatures.contains(qName);
-        };
+        final Set<QName> supportedFeatures = ImmutableSet.of(QName.create("foobar-namespace", "1970-01-01", "test-feature-1"));
 
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
                 "shared-schema-repo-with-features-test");
@@ -53,29 +48,29 @@ public class SharedSchemaRepositoryWithFeaturesTest {
                 .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
 
         final CheckedFuture<SchemaContext, SchemaResolutionException> testSchemaContextFuture =
-                fact.createSchemaContext(Lists.newArrayList(foobar.getId()), isFeatureSupported);
+                fact.createSchemaContext(Lists.newArrayList(foobar.getId()), supportedFeatures);
         assertTrue(testSchemaContextFuture.isDone());
         assertSchemaContext(testSchemaContextFuture.checkedGet(), 1);
 
-        Module module = testSchemaContextFuture.checkedGet().findModuleByName("foobar", null);
+        final Module module = testSchemaContextFuture.checkedGet().findModuleByName("foobar", null);
         assertNotNull(module);
         assertEquals(2, module.getChildNodes().size());
 
-        ContainerSchemaNode testContainerA = (ContainerSchemaNode) module.getDataChildByName(
+        final ContainerSchemaNode testContainerA = (ContainerSchemaNode) module.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-container-a"));
         assertNotNull(testContainerA);
-        LeafSchemaNode testLeafA = (LeafSchemaNode) testContainerA.getDataChildByName(
+        final LeafSchemaNode testLeafA = (LeafSchemaNode) testContainerA.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-leaf-a"));
         assertNotNull(testLeafA);
 
-        ContainerSchemaNode testContainerB = (ContainerSchemaNode) module.getDataChildByName(
+        final ContainerSchemaNode testContainerB = (ContainerSchemaNode) module.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-container-b"));
         assertNull(testContainerB);
 
-        ContainerSchemaNode testContainerC = (ContainerSchemaNode) module.getDataChildByName(
+        final ContainerSchemaNode testContainerC = (ContainerSchemaNode) module.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-container-c"));
         assertNotNull(testContainerC);
-        LeafSchemaNode testLeafC = (LeafSchemaNode) testContainerC.getDataChildByName(
+        final LeafSchemaNode testLeafC = (LeafSchemaNode) testContainerC.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-leaf-c"));
         assertNotNull(testLeafC);
     }
@@ -98,35 +93,35 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         assertTrue(testSchemaContextFuture.isDone());
         assertSchemaContext(testSchemaContextFuture.checkedGet(), 1);
 
-        Module module = testSchemaContextFuture.checkedGet().findModuleByName("foobar", null);
+        final Module module = testSchemaContextFuture.checkedGet().findModuleByName("foobar", null);
         assertNotNull(module);
         assertEquals(3, module.getChildNodes().size());
 
-        ContainerSchemaNode testContainerA = (ContainerSchemaNode) module.getDataChildByName(
+        final ContainerSchemaNode testContainerA = (ContainerSchemaNode) module.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-container-a"));
         assertNotNull(testContainerA);
-        LeafSchemaNode testLeafA = (LeafSchemaNode) testContainerA.getDataChildByName(
+        final LeafSchemaNode testLeafA = (LeafSchemaNode) testContainerA.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-leaf-a"));
         assertNotNull(testLeafA);
 
-        ContainerSchemaNode testContainerB = (ContainerSchemaNode) module.getDataChildByName(
+        final ContainerSchemaNode testContainerB = (ContainerSchemaNode) module.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-container-b"));
         assertNotNull(testContainerB);
-        LeafSchemaNode testLeafB = (LeafSchemaNode) testContainerB.getDataChildByName(
+        final LeafSchemaNode testLeafB = (LeafSchemaNode) testContainerB.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-leaf-b"));
         assertNotNull(testLeafB);
 
-        ContainerSchemaNode testContainerC = (ContainerSchemaNode) module.getDataChildByName(
+        final ContainerSchemaNode testContainerC = (ContainerSchemaNode) module.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-container-c"));
         assertNotNull(testContainerC);
-        LeafSchemaNode testLeafC = (LeafSchemaNode) testContainerC.getDataChildByName(
+        final LeafSchemaNode testLeafC = (LeafSchemaNode) testContainerC.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-leaf-c"));
         assertNotNull(testLeafC);
     }
 
     @Test
     public void testSharedSchemaRepositoryWithNoFeaturesSupported() throws Exception {
-        Predicate<QName> isFeatureSupported = qName -> false;
+        final Set<QName> supportedFeatures = ImmutableSet.of();
 
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
                 "shared-schema-repo-with-features-test");
@@ -140,18 +135,18 @@ public class SharedSchemaRepositoryWithFeaturesTest {
                 .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
 
         final CheckedFuture<SchemaContext, SchemaResolutionException> testSchemaContextFuture = fact
-                .createSchemaContext(Lists.newArrayList(foobar.getId()), isFeatureSupported);
+                .createSchemaContext(Lists.newArrayList(foobar.getId()), supportedFeatures);
         assertTrue(testSchemaContextFuture.isDone());
         assertSchemaContext(testSchemaContextFuture.checkedGet(), 1);
 
-        Module module = testSchemaContextFuture.checkedGet().findModuleByName("foobar", null);
+        final Module module = testSchemaContextFuture.checkedGet().findModuleByName("foobar", null);
         assertNotNull(module);
         assertEquals(1, module.getChildNodes().size());
 
-        ContainerSchemaNode testContainerC = (ContainerSchemaNode) module.getDataChildByName(
+        final ContainerSchemaNode testContainerC = (ContainerSchemaNode) module.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-container-c"));
         assertNotNull(testContainerC);
-        LeafSchemaNode testLeafC = (LeafSchemaNode) testContainerC.getDataChildByName(
+        final LeafSchemaNode testLeafC = (LeafSchemaNode) testContainerC.getDataChildByName(
                 QName.create(module.getQNameModule(), "test-leaf-c"));
         assertNotNull(testLeafC);
     }
