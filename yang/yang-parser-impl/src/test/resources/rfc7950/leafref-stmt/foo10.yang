@@ -1,0 +1,18 @@
+module foo10 {
+    namespace foo10-ns;
+    prefix foo10-prfx;
+    yang-version 1;
+
+    revision 2016-12-20;
+
+    leaf leafref-a {
+        type leafref {
+            path "../leaf-a";
+            require-instance false;
+        }
+    }
+
+    leaf leaf-a {
+        type string;
+    }
+}
