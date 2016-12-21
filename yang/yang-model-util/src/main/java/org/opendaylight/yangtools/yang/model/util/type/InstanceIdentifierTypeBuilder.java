@@ -11,30 +11,18 @@ import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 
-public final class InstanceIdentifierTypeBuilder extends AbstractRestrictedTypeBuilder<InstanceIdentifierTypeDefinition> {
-    private boolean requireInstance;
+public final class InstanceIdentifierTypeBuilder extends RequireInstanceRestrictedTypeBuilder<InstanceIdentifierTypeDefinition> {
 
     InstanceIdentifierTypeBuilder(final InstanceIdentifierTypeDefinition baseType, final SchemaPath path) {
         super(Preconditions.checkNotNull(baseType), path);
-        this.requireInstance = baseType.requireInstance();
-    }
-
-    public InstanceIdentifierTypeBuilder setRequireInstance(final boolean requireInstance) {
-        if (this.requireInstance) {
-            Preconditions.checkArgument(!requireInstance, "Cannot switch require-instance off in type %s", getPath());
-        }
-
-        this.requireInstance = requireInstance;
-        touch();
-        return this;
     }
 
     @Override
     InstanceIdentifierTypeDefinition buildType() {
-        if (requireInstance == getBaseType().requireInstance()) {
+        if (getRequireInstance() == getBaseType().requireInstance()) {
             return getBaseType();
         }
 
-        return new RestrictedInstanceIdentifierType(getBaseType(), getPath(), getUnknownSchemaNodes(), requireInstance);
+        return new RestrictedInstanceIdentifierType(getBaseType(), getPath(), getUnknownSchemaNodes(), getRequireInstance());
     }
 }

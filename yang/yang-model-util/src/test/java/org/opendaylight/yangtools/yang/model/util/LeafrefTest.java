@@ -13,12 +13,15 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
+import org.opendaylight.yangtools.yang.model.util.type.LeafrefTypeBuilder;
 
 public class LeafrefTest {
 
@@ -51,5 +54,34 @@ public class LeafrefTest {
         assertFalse("Objects of type Leafref shouldn't be equal.", leafref.equals(leafref2));
         assertFalse("Objects shouldn't be equal.", leafref.equals(null));
         assertFalse("Objects shouldn't be equal.", leafref.equals("test"));
+    }
+
+    @Test
+    public void testRequireInstanceSubstatement() {
+        final SchemaPath schemaPath = SchemaPath.create(true, QName.create("my-cont"), QName.create("my-leafref"));
+        final RevisionAwareXPathImpl path = new RevisionAwareXPathImpl("../my-leaf", false);
+
+        LeafrefTypeBuilder leafrefTypeBuilder = BaseTypes.leafrefTypeBuilder(schemaPath).setPathStatement(path);
+
+        leafrefTypeBuilder.setRequireInstance(false);
+        LeafrefTypeDefinition leafref = leafrefTypeBuilder.build();
+        assertFalse(leafref.requireInstance());
+
+        leafrefTypeBuilder.setRequireInstance(true);
+        leafref = leafrefTypeBuilder.build();
+        assertTrue(leafref.requireInstance());
+
+        leafrefTypeBuilder.setRequireInstance(true);
+        leafref = leafrefTypeBuilder.build();
+        assertTrue(leafref.requireInstance());
+
+        try {
+            leafrefTypeBuilder.setRequireInstance(false);
+            fail("An IllegalArgumentException should have been thrown.");
+        } catch (IllegalArgumentException ex) {
+            assertEquals("Cannot switch off require-instance in type AbsoluteSchemaPath{path=[my-cont, my-leafref]}",
+                    ex.getMessage());
+        }
+
     }
 }
