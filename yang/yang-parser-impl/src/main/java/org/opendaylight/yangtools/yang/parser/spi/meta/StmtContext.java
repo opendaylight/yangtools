@@ -180,6 +180,15 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          *            of root statement context
          */
         void setRootVersion(YangVersion version);
+
+        /**
+         * Add mutable statement to seal. Each mutable statement must be sealed
+         * as the last step of statement parser processing.
+         *
+         * @param mutableStatement
+         *            mutable statement which should be seal
+         */
+        void addMutableStmtToSeal(MutableStatement mutableStatement);
     }
 
 }

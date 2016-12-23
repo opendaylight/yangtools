@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
@@ -77,6 +78,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     private final boolean enabledSemanticVersions;
     private final Set<YangVersion> supportedVersions;
+    private final List<MutableStatement> mutableStatementsToSeal;
 
     BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports,
             final StatementParserMode statementParserMode, final Predicate<QName> isFeatureSupported) {
@@ -98,6 +100,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         addToNs(SupportedFeaturesNamespace.class, SupportedFeatures.SUPPORTED_FEATURES,
                 Preconditions.checkNotNull(isFeatureSupported, "Supported feature predicate must not be null."));
         this.supportedVersions = ImmutableSet.copyOf(supports.get(ModelProcessingPhase.INIT).getSupportedVersions());
+        this.mutableStatementsToSeal = new ArrayList<>();
     }
 
     boolean isEnabledSemanticVersioning() {
@@ -240,6 +243,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
             RecursiveObjectLeaker.cleanup();
         }
 
+        sealMutableStatements();
         return new EffectiveSchemaContext(rootStatements, rootEffectiveStatements);
     }
 
@@ -336,7 +340,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
                         default:
                             throw new IllegalStateException("Unsupported phase progress " + sourceProgress);
                     }
-                } catch (RuntimeException ex) {
+                } catch (final RuntimeException ex) {
                     throw propagateException(nextSourceCtx, ex);
                 }
             }
@@ -361,5 +365,16 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     public Set<YangVersion> getSupportedVersions() {
         return supportedVersions;
+    }
+
+    void addMutableStmtToSeal(final MutableStatement mutableStatement) {
+        mutableStatementsToSeal.add(mutableStatement);
+    }
+
+    void sealMutableStatements() {
+        for (final MutableStatement mutableStatement : mutableStatementsToSeal) {
+            mutableStatement.seal();
+        }
+        mutableStatementsToSeal.clear();
     }
 }
