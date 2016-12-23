@@ -13,46 +13,67 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedIdentitiesNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public final class IdentityEffectiveStatementImpl extends AbstractEffectiveSchemaNode<IdentityStatement>
-        implements IdentitySchemaNode {
+public final class IdentityEffectiveStatementImpl extends AbstractEffectiveSchemaNode<IdentityStatement> implements
+        IdentitySchemaNode, MutableStatement {
+    private static final Logger LOG = LoggerFactory.getLogger(IdentityEffectiveStatementImpl.class);
+    private boolean sealed;
     private IdentitySchemaNode baseIdentity;
+    private Set<IdentitySchemaNode> baseIdentities;
     private final Set<IdentitySchemaNode> derivedIdentities;
 
     public IdentityEffectiveStatementImpl(
             final StmtContext<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> ctx) {
         super(ctx);
 
+        this.baseIdentities = new HashSet<>();
+
         // initDerivedIdentities
-        Set<IdentitySchemaNode> derivedIdentitiesInit = new HashSet<>();
-        List<StmtContext<?, ?, ?>> derivedIdentitiesCtxList = ctx.getFromNamespace(
+        final Set<IdentitySchemaNode> derivedIdentitiesInit = new HashSet<>();
+        final List<StmtContext<?, ?, ?>> derivedIdentitiesCtxList = ctx.getFromNamespace(
                 DerivedIdentitiesNamespace.class, ctx.getStatementArgument());
         if (derivedIdentitiesCtxList == null) {
             this.derivedIdentities = ImmutableSet.of();
             return;
         }
-        for (StmtContext<?, ?, ?> derivedIdentityCtx : derivedIdentitiesCtxList) {
-            IdentityEffectiveStatementImpl derivedIdentity = (IdentityEffectiveStatementImpl) derivedIdentityCtx
+        for (final StmtContext<?, ?, ?> derivedIdentityCtx : derivedIdentitiesCtxList) {
+            final IdentityEffectiveStatementImpl derivedIdentity = (IdentityEffectiveStatementImpl) derivedIdentityCtx
                     .buildEffective();
-            derivedIdentity.initBaseIdentity(this);
+            derivedIdentity.addBaseIdentity(this);
             derivedIdentitiesInit.add(derivedIdentity);
         }
         this.derivedIdentities = ImmutableSet.copyOf(derivedIdentitiesInit);
+        ((StmtContext.Mutable<?, ?, ?>) ctx).addMutableStmtToSeal(this);
     }
 
-    private void initBaseIdentity(final IdentityEffectiveStatementImpl baseIdentity) {
-        this.baseIdentity = baseIdentity;
+    private void addBaseIdentity(final IdentityEffectiveStatementImpl baseIdentity) {
+        if (!sealed) {
+            this.baseIdentity = baseIdentity;
+            this.baseIdentities.add(baseIdentity);
+        } else {
+            LOG.warn("Attempt to modify sealed identity effective statement {}", getQName());
+        }
     }
 
     @Override
     public IdentitySchemaNode getBaseIdentity() {
         return baseIdentity;
+    }
+
+    @Nonnull
+    @Override
+    public Set<IdentitySchemaNode> getBaseIdentities() {
+        return baseIdentities;
     }
 
     @Override
@@ -80,15 +101,21 @@ public final class IdentityEffectiveStatementImpl extends AbstractEffectiveSchem
         if (getClass() != obj.getClass()) {
             return false;
         }
-        IdentityEffectiveStatementImpl other = (IdentityEffectiveStatementImpl) obj;
+        final IdentityEffectiveStatementImpl other = (IdentityEffectiveStatementImpl) obj;
         return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 
     @Override
     public String toString() {
-        return IdentityEffectiveStatementImpl.class.getSimpleName() + "[" +
-                "base=" + baseIdentity +
-                ", qname=" + getQName() +
-                "]";
+        return IdentityEffectiveStatementImpl.class.getSimpleName() + "[" + "base=" + getBaseIdentity() + ", qname="
+                + getQName() + "]";
+    }
+
+    @Override
+    public void seal() {
+        if (!sealed) {
+            baseIdentities = ImmutableSet.copyOf(baseIdentities);
+            sealed = true;
+        }
     }
 }
