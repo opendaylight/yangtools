@@ -71,6 +71,10 @@ class BuilderTemplate extends BaseTemplate {
     val Set<GeneratedProperty> properties
 
     private static val METHOD_COMPARATOR = new AlphabeticallyTypeMemberComparator<MethodSignature>();
+    private static val APPEND_COMMA = "builder.append(\", \");";
+    private static val APPEND_COMMA_WITH_WS = "\n    "+ APPEND_COMMA + "\n}";
+    private static val APPEND_ENDIF = "    }\n";
+    private static val APPEND_END = "return builder.append(']').toString();";
 
     /**
      * Constructs new instance of this class.
@@ -711,33 +715,29 @@ class BuilderTemplate extends BaseTemplate {
             @Override
             public «String.importedName» toString() {
                 «StringBuilder.importedName» builder = new «StringBuilder.importedName» ("«type.name» [");
-                boolean first = true;
-
-                «FOR property : properties»
+                «FOR property : properties SEPARATOR APPEND_COMMA_WITH_WS AFTER APPEND_ENDIF»
                     if («property.fieldName» != null) {
-                        if (first) {
-                            first = false;
-                        } else {
-                            builder.append(", ");
-                        }
                         builder.append("«property.fieldName»=");
                         «IF property.returnType.name.contains("[")»
                             builder.append(«Arrays.importedName».toString(«property.fieldName»));
                         «ELSE»
                             builder.append(«property.fieldName»);
                         «ENDIF»
-                     }
                 «ENDFOR»
                 «IF augmentField != null»
-                    if (first) {
-                        first = false;
-                    } else {
-                        builder.append(", ");
-                    }
+                    «IF !properties.empty»
+                «APPEND_COMMA»
+                    «ENDIF»
                     builder.append("«augmentField.name»=");
-                    builder.append(«augmentField.name».values());
+                    builder.append(«augmentField.name».values());«"\n"»
+                    «APPEND_END»
+                «ELSE»
+                    «IF properties.empty»
+                    «APPEND_END»
+                    «ELSE»
+            «APPEND_END»
+                    «ENDIF»
                 «ENDIF»
-                return builder.append(']').toString();
             }
         «ENDIF»
     '''
