@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
@@ -246,7 +247,8 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         }
         if (argument instanceof SchemaNodeIdentifier
                 && (StmtContextUtils.producesDeclared(this, AugmentStatement.class) || StmtContextUtils
-                        .producesDeclared(this, RefineStatement.class))) {
+                        .producesDeclared(this, RefineStatement.class) || StmtContextUtils
+                .producesDeclared(this, DeviationStatement.class))) {
 
             return parentPath.createChild(((SchemaNodeIdentifier) argument).getPathFromRoot());
         }
