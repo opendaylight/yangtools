@@ -1,0 +1,19 @@
+module foo10 {
+    namespace foo10-ns;
+    prefix foo10-prfx;
+    yang-version 1;
+
+    revision 2016-12-21;
+
+    identity base-id-a;
+
+    identity base-id-b;
+
+    identity base-id-c;
+
+    identity derived-id {
+        base base-id-a;
+        base base-id-b;
+        base base-id-c;
+    }
+}

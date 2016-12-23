@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -23,11 +24,14 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 public final class IdentityEffectiveStatementImpl extends AbstractEffectiveSchemaNode<IdentityStatement>
         implements IdentitySchemaNode {
     private IdentitySchemaNode baseIdentity;
+    private final Set<IdentitySchemaNode> baseIdentities;
     private final Set<IdentitySchemaNode> derivedIdentities;
 
     public IdentityEffectiveStatementImpl(
             final StmtContext<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> ctx) {
         super(ctx);
+
+        this.baseIdentities = new HashSet<>();
 
         // initDerivedIdentities
         Set<IdentitySchemaNode> derivedIdentitiesInit = new HashSet<>();
@@ -48,11 +52,18 @@ public final class IdentityEffectiveStatementImpl extends AbstractEffectiveSchem
 
     private void initBaseIdentity(final IdentityEffectiveStatementImpl baseIdentity) {
         this.baseIdentity = baseIdentity;
+        this.baseIdentities.add(baseIdentity);
     }
 
     @Override
     public IdentitySchemaNode getBaseIdentity() {
         return baseIdentity;
+    }
+
+    @Nonnull
+    @Override
+    public Set<IdentitySchemaNode> getBaseIdentities() {
+        return baseIdentities;
     }
 
     @Override
