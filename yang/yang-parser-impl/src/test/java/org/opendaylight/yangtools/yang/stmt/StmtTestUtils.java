@@ -157,6 +157,18 @@ public class StmtTestUtils {
         return parseYangSources(statementParserMode, testSourcesDir.listFiles(YANG_FILE_FILTER));
     }
 
+    public static SchemaContext parseYangSource(final String yangSourcePath) throws SourceException, ReactorException,
+            FileNotFoundException, URISyntaxException {
+        return parseYangSource(yangSourcePath, StatementParserMode.DEFAULT_MODE);
+    }
+
+    public static SchemaContext parseYangSource(final String yangSourcePath, final StatementParserMode statementParserMode)
+            throws SourceException, ReactorException, FileNotFoundException, URISyntaxException {
+        final URL source = StmtTestUtils.class.getResource(yangSourcePath);
+        final File sourceFile = new File(source.toURI());
+        return parseYangSources(statementParserMode, sourceFile);
+    }
+
     public static SchemaContext parseYinSources(String yinSourcesDirectoryPath, StatementParserMode statementParserMode)
             throws SourceException, ReactorException, FileNotFoundException, URISyntaxException {
 

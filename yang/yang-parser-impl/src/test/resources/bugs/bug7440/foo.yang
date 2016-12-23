@@ -1,0 +1,18 @@
+module foo {
+    namespace foo-ns;
+    prefix foo-prfx;
+
+    revision 2016-12-23;
+
+    deviation "/test-leaf" {
+        deviate replace {
+            type uint32 {
+                range "5..50";
+            }
+        }
+    }
+
+    leaf test-leaf {
+        type int32;
+    }
+}
