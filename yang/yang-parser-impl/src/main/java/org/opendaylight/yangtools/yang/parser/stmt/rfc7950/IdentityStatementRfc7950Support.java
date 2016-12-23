@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.IdentityStatementImpl
 public final class IdentityStatementRfc7950Support extends IdentityStatementImpl.Definition {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .IDENTITY)
-            .addOptional(YangStmtMapping.BASE)
+            .addAny(YangStmtMapping.BASE)
             .addOptional(YangStmtMapping.DESCRIPTION)
             .addAny(YangStmtMapping.IF_FEATURE)
             .addOptional(YangStmtMapping.REFERENCE)
