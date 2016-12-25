@@ -22,7 +22,7 @@ public class PresenceStatementImpl extends AbstractDeclaredStatement<String> imp
             .PRESENCE)
             .build();
 
-    protected PresenceStatementImpl(StmtContext<String, PresenceStatement, ?> context) {
+    protected PresenceStatementImpl(final StmtContext<String, PresenceStatement, ?> context) {
         super(context);
     }
 
@@ -35,26 +35,19 @@ public class PresenceStatementImpl extends AbstractDeclaredStatement<String> imp
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
         @Override
-        public PresenceStatement createDeclared(StmtContext<String, PresenceStatement, ?> ctx) {
+        public PresenceStatement createDeclared(final StmtContext<String, PresenceStatement, ?> ctx) {
             return new PresenceStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<String, PresenceStatement> createEffective(
-                StmtContext<String, PresenceStatement, EffectiveStatement<String, PresenceStatement>> ctx) {
+                final StmtContext<String, PresenceStatement, EffectiveStatement<String, PresenceStatement>> ctx) {
             return new PresenceEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, PresenceStatement,
-                EffectiveStatement<String, PresenceStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override

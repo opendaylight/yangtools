@@ -77,13 +77,6 @@ public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConst
         }
 
         @Override
-        public void onFullDefinitionDeclared(final StmtContext.Mutable<PatternConstraint, PatternStatement,
-                EffectiveStatement<PatternConstraint, PatternStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
-        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }

@@ -54,13 +54,6 @@ public class Decimal64SpecificationImpl extends AbstractDeclaredStatement<String
         }
 
         @Override
-        public void onFullDefinitionDeclared(final StmtContext.Mutable<String, Decimal64Specification,
-                EffectiveStatement<String, Decimal64Specification>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
-        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }

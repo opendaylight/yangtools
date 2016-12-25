@@ -80,13 +80,6 @@ public final class AnydataStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public void onFullDefinitionDeclared(final Mutable<QName, AnydataStatement,
-                EffectiveStatement<QName, AnydataStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
-        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }

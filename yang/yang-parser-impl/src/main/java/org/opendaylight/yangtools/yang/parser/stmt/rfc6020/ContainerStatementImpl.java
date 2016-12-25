@@ -87,12 +87,6 @@ public class ContainerStatementImpl extends AbstractDeclaredStatement<QName> imp
         }
 
         @Override
-        public void onFullDefinitionDeclared(final Mutable<QName, ContainerStatement,
-                EffectiveStatement<QName, ContainerStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }

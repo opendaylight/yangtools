@@ -194,7 +194,7 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
         @Override
         public void onFullDefinitionDeclared(
                 final Mutable<String, TypeStatement, EffectiveStatement<String, TypeStatement>> stmt) {
-            getSubstatementValidator().validate(stmt);
+            super.onFullDefinitionDeclared(stmt);
 
             // if it is yang built-in type, no prerequisite is needed, so simply return
             if (TypeUtils.isYangBuiltInTypeString(stmt.getStatementArgument())) {

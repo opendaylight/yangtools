@@ -28,13 +28,13 @@ public class StringRestrictionsImpl extends AbstractDeclaredStatement<String> im
             .addAny(YangStmtMapping.PATTERN)
             .build();
 
-    protected StringRestrictionsImpl(final StmtContext<String, TypeStatement.StringRestrictions, ?> context) {
+    protected StringRestrictionsImpl(final StmtContext<String, StringRestrictions, ?> context) {
         super(context);
     }
 
     public static class Definition
             extends
-            AbstractStatementSupport<String, TypeStatement.StringRestrictions, EffectiveStatement<String, TypeStatement.StringRestrictions>> {
+            AbstractStatementSupport<String, StringRestrictions, EffectiveStatement<String, StringRestrictions>> {
 
         public Definition() {
             super(YangStmtMapping.TYPE);
@@ -46,22 +46,14 @@ public class StringRestrictionsImpl extends AbstractDeclaredStatement<String> im
         }
 
         @Override
-        public TypeStatement.StringRestrictions createDeclared(
-                final StmtContext<String, TypeStatement.StringRestrictions, ?> ctx) {
+        public StringRestrictions createDeclared(final StmtContext<String, StringRestrictions, ?> ctx) {
             return new StringRestrictionsImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<String, TypeStatement.StringRestrictions> createEffective(
-                final StmtContext<String, TypeStatement.StringRestrictions, EffectiveStatement<String, TypeStatement.StringRestrictions>> ctx) {
+        public EffectiveStatement<String, StringRestrictions> createEffective(
+                final StmtContext<String, StringRestrictions, EffectiveStatement<String, StringRestrictions>> ctx) {
             return new StringRestrictionsEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(final StmtContext.Mutable<String, StringRestrictions,
-                EffectiveStatement<String, StringRestrictions>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override
@@ -86,5 +78,4 @@ public class StringRestrictionsImpl extends AbstractDeclaredStatement<String> im
     public Collection<? extends PatternStatement> getPatterns() {
         return allDeclared(PatternStatement.class);
     }
-
 }

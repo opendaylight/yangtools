@@ -24,7 +24,7 @@ public class MaxElementsStatementImpl extends AbstractDeclaredStatement<String>
             .build();
 
     protected MaxElementsStatementImpl(
-            StmtContext<String, MaxElementsStatement, ?> context) {
+            final StmtContext<String, MaxElementsStatement, ?> context) {
         super(context);
     }
 
@@ -37,27 +37,20 @@ public class MaxElementsStatementImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
         @Override
         public MaxElementsStatement createDeclared(
-                StmtContext<String, MaxElementsStatement, ?> ctx) {
+                final StmtContext<String, MaxElementsStatement, ?> ctx) {
             return new MaxElementsStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<String, MaxElementsStatement> createEffective(
-                StmtContext<String, MaxElementsStatement, EffectiveStatement<String, MaxElementsStatement>> ctx) {
+                final StmtContext<String, MaxElementsStatement, EffectiveStatement<String, MaxElementsStatement>> ctx) {
             return new MaxElementsEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, MaxElementsStatement,
-                EffectiveStatement<String, MaxElementsStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override

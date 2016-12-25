@@ -24,12 +24,11 @@ public class ErrorAppTagStatementImpl extends AbstractDeclaredStatement<String>
             .build();
 
     protected ErrorAppTagStatementImpl(
-            StmtContext<String, ErrorAppTagStatement, ?> context) {
+            final StmtContext<String, ErrorAppTagStatement, ?> context) {
         super(context);
     }
 
-    public static class Definition
-            extends
+    public static class Definition extends
             AbstractStatementSupport<String, ErrorAppTagStatement, EffectiveStatement<String, ErrorAppTagStatement>> {
 
         public Definition() {
@@ -37,27 +36,20 @@ public class ErrorAppTagStatementImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
         @Override
         public ErrorAppTagStatement createDeclared(
-                StmtContext<String, ErrorAppTagStatement, ?> ctx) {
+                final StmtContext<String, ErrorAppTagStatement, ?> ctx) {
             return new ErrorAppTagStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<String, ErrorAppTagStatement> createEffective(
-                StmtContext<String, ErrorAppTagStatement, EffectiveStatement<String, ErrorAppTagStatement>> ctx) {
+                final StmtContext<String, ErrorAppTagStatement, EffectiveStatement<String, ErrorAppTagStatement>> ctx) {
             return new ErrorAppTagEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, ErrorAppTagStatement,
-                EffectiveStatement<String, ErrorAppTagStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override

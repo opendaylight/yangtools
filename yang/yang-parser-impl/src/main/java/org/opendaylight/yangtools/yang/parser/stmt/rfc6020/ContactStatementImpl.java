@@ -22,36 +22,31 @@ public class ContactStatementImpl extends AbstractDeclaredStatement<String> impl
             .CONTACT)
             .build();
 
-    protected ContactStatementImpl(StmtContext<String, ContactStatement,?> context) {
+    protected ContactStatementImpl(final StmtContext<String, ContactStatement,?> context) {
         super(context);
     }
 
-    public static class Definition extends AbstractStatementSupport<String,ContactStatement,EffectiveStatement<String,ContactStatement>> {
+    public static class Definition extends
+        AbstractStatementSupport<String, ContactStatement,EffectiveStatement<String, ContactStatement>> {
 
         public Definition() {
             super(YangStmtMapping.CONTACT);
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
         @Override
-        public ContactStatement createDeclared(StmtContext<String, ContactStatement, ?> ctx) {
+        public ContactStatement createDeclared(final StmtContext<String, ContactStatement, ?> ctx) {
             return new ContactStatementImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<String, ContactStatement> createEffective(StmtContext<String, ContactStatement, EffectiveStatement<String, ContactStatement>> ctx) {
+        public EffectiveStatement<String, ContactStatement> createEffective(
+                final StmtContext<String, ContactStatement, EffectiveStatement<String, ContactStatement>> ctx) {
             return new ContactEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, ContactStatement,
-                EffectiveStatement<String, ContactStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override

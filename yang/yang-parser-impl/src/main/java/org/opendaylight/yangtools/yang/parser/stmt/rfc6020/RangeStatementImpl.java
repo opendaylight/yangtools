@@ -67,13 +67,6 @@ public class RangeStatementImpl extends AbstractDeclaredStatement<List<RangeCons
         }
 
         @Override
-        public void onFullDefinitionDeclared(final StmtContext.Mutable<List<RangeConstraint>, RangeStatement,
-                EffectiveStatement<List<RangeConstraint>, RangeStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
-        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }

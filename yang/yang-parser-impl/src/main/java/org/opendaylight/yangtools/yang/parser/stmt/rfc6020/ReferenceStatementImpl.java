@@ -49,13 +49,6 @@ public class ReferenceStatementImpl extends AbstractDeclaredStatement<String> im
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, ReferenceStatement,
-                EffectiveStatement<String, ReferenceStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
-        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }

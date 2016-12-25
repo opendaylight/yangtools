@@ -74,13 +74,6 @@ public class InputStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public void onFullDefinitionDeclared(final Mutable<QName, InputStatement,
-                EffectiveStatement<QName, InputStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
-        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }

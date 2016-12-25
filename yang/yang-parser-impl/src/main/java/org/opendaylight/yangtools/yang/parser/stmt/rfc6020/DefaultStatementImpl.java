@@ -24,7 +24,7 @@ public class DefaultStatementImpl extends AbstractDeclaredStatement<String> impl
             .build();
 
     protected DefaultStatementImpl(
-            StmtContext<String, DefaultStatement, ?> context) {
+            final StmtContext<String, DefaultStatement, ?> context) {
         super(context);
     }
 
@@ -34,26 +34,20 @@ public class DefaultStatementImpl extends AbstractDeclaredStatement<String> impl
             super(YangStmtMapping.DEFAULT);
         }
 
-        @Override public String parseArgumentValue(
-                StmtContext<?, ?, ?> ctx, String value) {
+        @Override
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
-        @Override public DefaultStatement createDeclared(
-                StmtContext<String, DefaultStatement, ?> ctx) {
+        @Override
+        public DefaultStatement createDeclared(final StmtContext<String, DefaultStatement, ?> ctx) {
             return new DefaultStatementImpl(ctx);
         }
 
-        @Override public EffectiveStatement<String, DefaultStatement> createEffective(
-                StmtContext<String, DefaultStatement, EffectiveStatement<String, DefaultStatement>> ctx) {
-            return new DefaultEffectiveStatementImpl(ctx);
-        }
-
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, DefaultStatement,
-                EffectiveStatement<String, DefaultStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
+        public EffectiveStatement<String, DefaultStatement> createEffective(
+                final StmtContext<String, DefaultStatement, EffectiveStatement<String, DefaultStatement>> ctx) {
+            return new DefaultEffectiveStatementImpl(ctx);
         }
 
         @Override

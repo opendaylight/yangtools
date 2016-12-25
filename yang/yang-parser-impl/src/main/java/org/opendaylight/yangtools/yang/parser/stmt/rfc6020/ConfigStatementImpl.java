@@ -62,13 +62,6 @@ public class ConfigStatementImpl extends AbstractDeclaredStatement<Boolean> impl
         }
 
         @Override
-        public void onFullDefinitionDeclared(final StmtContext.Mutable<Boolean, ConfigStatement,
-                EffectiveStatement<Boolean, ConfigStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
-        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }

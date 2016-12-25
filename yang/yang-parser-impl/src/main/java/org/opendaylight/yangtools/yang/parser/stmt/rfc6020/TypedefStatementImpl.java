@@ -69,7 +69,7 @@ public class TypedefStatementImpl extends AbstractDeclaredStatement<QName> imple
         public void onFullDefinitionDeclared(final StmtContext.Mutable<QName, TypedefStatement,
                 EffectiveStatement<QName, TypedefStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
+
             if (stmt != null && stmt.getParentContext() != null) {
                 final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> existing = stmt.getParentContext()
                         .getFromNamespace(TypeNamespace.class, stmt.getStatementArgument());

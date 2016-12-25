@@ -77,13 +77,6 @@ public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> imp
         }
 
         @Override
-        public void onFullDefinitionDeclared(final StmtContext.Mutable<QName, ExtensionStatement,
-                EffectiveStatement<QName, ExtensionStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
-        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }

@@ -17,14 +17,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.OrganizationEffectiveStatementImpl;
 
-public class OrganizationStatementImpl extends
-        AbstractDeclaredStatement<String> implements OrganizationStatement {
+public class OrganizationStatementImpl extends AbstractDeclaredStatement<String> implements OrganizationStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .ORGANIZATION)
             .build();
 
     protected OrganizationStatementImpl(
-            StmtContext<String, OrganizationStatement, ?> context) {
+            final StmtContext<String, OrganizationStatement, ?> context) {
         super(context);
     }
 
@@ -37,27 +36,20 @@ public class OrganizationStatementImpl extends
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
         @Override
         public OrganizationStatement createDeclared(
-                StmtContext<String, OrganizationStatement, ?> ctx) {
+                final StmtContext<String, OrganizationStatement, ?> ctx) {
             return new OrganizationStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<String, OrganizationStatement> createEffective(
-                StmtContext<String, OrganizationStatement, EffectiveStatement<String, OrganizationStatement>> ctx) {
+                final StmtContext<String, OrganizationStatement, EffectiveStatement<String, OrganizationStatement>> ctx) {
             return new OrganizationEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, OrganizationStatement,
-                EffectiveStatement<String, OrganizationStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override

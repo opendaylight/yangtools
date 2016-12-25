@@ -114,13 +114,6 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
         }
 
         @Override
-        public void onFullDefinitionDeclared(final Mutable<String, SubmoduleStatement,
-                EffectiveStatement<String, SubmoduleStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
-        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }

@@ -118,7 +118,10 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
      */
     @Override
     public void onFullDefinitionDeclared(final StmtContext.Mutable<A, D, E> stmt) {
-        // NOOP for most implementations
+        final SubstatementValidator validator = getSubstatementValidator();
+        if (validator != null) {
+            validator.validate(stmt);
+        }
     }
 
     @Override

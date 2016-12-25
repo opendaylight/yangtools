@@ -182,12 +182,6 @@ public class ModuleStatementSupport extends
     }
 
     @Override
-    public void onFullDefinitionDeclared(final Mutable<String, ModuleStatement,
-            EffectiveStatement<String, ModuleStatement>> stmt) {
-        super.onFullDefinitionDeclared(stmt);
-        getSubstatementValidator().validate(stmt);
-    }
-
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
     }

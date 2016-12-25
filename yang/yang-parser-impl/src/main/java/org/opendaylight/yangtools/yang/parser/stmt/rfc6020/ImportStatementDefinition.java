@@ -82,13 +82,6 @@ public class ImportStatementDefinition extends
     }
 
     @Override
-    public void onFullDefinitionDeclared(
-            final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt) {
-        super.onFullDefinitionDeclared(stmt);
-        getSubstatementValidator().validate(stmt);
-    }
-
-    @Override
     public void onPreLinkageDeclared(final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt) {
         final String moduleName = stmt.getStatementArgument();
         final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_PRE_LINKAGE);
@@ -130,6 +123,7 @@ public class ImportStatementDefinition extends
         }
     }
 
+    @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
     }

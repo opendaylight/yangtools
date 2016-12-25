@@ -24,7 +24,7 @@ public class MinElementsStatementImpl extends
             .build();
 
     protected MinElementsStatementImpl(
-            StmtContext<Integer, MinElementsStatement, ?> context) {
+            final StmtContext<Integer, MinElementsStatement, ?> context) {
         super(context);
     }
 
@@ -37,27 +37,20 @@ public class MinElementsStatementImpl extends
         }
 
         @Override
-        public Integer parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public Integer parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return Integer.parseInt(value);
         }
 
         @Override
         public MinElementsStatement createDeclared(
-                StmtContext<Integer, MinElementsStatement, ?> ctx) {
+                final StmtContext<Integer, MinElementsStatement, ?> ctx) {
             return new MinElementsStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<Integer, MinElementsStatement> createEffective(
-                StmtContext<Integer, MinElementsStatement, EffectiveStatement<Integer, MinElementsStatement>> ctx) {
+                final StmtContext<Integer, MinElementsStatement, EffectiveStatement<Integer, MinElementsStatement>> ctx) {
             return new MinElementsEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<Integer, MinElementsStatement,
-                EffectiveStatement<Integer, MinElementsStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override

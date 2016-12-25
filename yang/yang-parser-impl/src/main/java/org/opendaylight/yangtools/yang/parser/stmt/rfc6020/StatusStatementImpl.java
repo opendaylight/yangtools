@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
@@ -25,7 +25,7 @@ public class StatusStatementImpl extends AbstractDeclaredStatement<Status>
             .build();
 
     protected StatusStatementImpl(
-            StmtContext<Status, StatusStatement, ?> context) {
+            final StmtContext<Status, StatusStatement, ?> context) {
         super(context);
     }
 
@@ -38,27 +38,20 @@ public class StatusStatementImpl extends AbstractDeclaredStatement<Status>
         }
 
         @Override
-        public Status parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public Status parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return Utils.parseStatus(value);
         }
 
         @Override
         public StatusStatement createDeclared(
-                StmtContext<Status, StatusStatement, ?> ctx) {
+                final StmtContext<Status, StatusStatement, ?> ctx) {
             return new StatusStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<Status, StatusStatement> createEffective(
-                StmtContext<Status, StatusStatement, EffectiveStatement<Status, StatusStatement>> ctx) {
+                final StmtContext<Status, StatusStatement, EffectiveStatement<Status, StatusStatement>> ctx) {
             return new StatusEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<Status, StatusStatement,
-                EffectiveStatement<Status, StatusStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override
