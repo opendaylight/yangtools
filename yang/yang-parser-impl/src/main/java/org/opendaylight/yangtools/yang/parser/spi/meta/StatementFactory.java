@@ -7,13 +7,24 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
-public interface StatementFactory<A,D extends DeclaredStatement<A>,E extends EffectiveStatement<A, D>> {
+public interface StatementFactory<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
+    /**
+     * Create a {@link DeclaredStatement} for specified context.
+     *
+     * @param ctx Statement context
+     * @return A declared statement instance.
+     */
+    @Nonnull D createDeclared(@Nonnull StmtContext<A, D, ?> ctx);
 
-    D createDeclared(StmtContext<A,D,?> ctx);
-
-    E createEffective(StmtContext<A,D,E> ctx);
-
+    /**
+     * Create a {@link EffectiveStatement} for specified context.
+     *
+     * @param ctx Statement context
+     * @return An effective statement instance.
+     */
+    @Nonnull E createEffective(@Nonnull StmtContext<A, D, E> ctx);
 }
