@@ -58,13 +58,6 @@ public class RevisionDateStatementImpl extends AbstractDeclaredStatement<Date> i
         }
 
         @Override
-        public void onFullDefinitionDeclared(
-                final StmtContext.Mutable<Date, RevisionDateStatement, EffectiveStatement<Date, RevisionDateStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
-        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }

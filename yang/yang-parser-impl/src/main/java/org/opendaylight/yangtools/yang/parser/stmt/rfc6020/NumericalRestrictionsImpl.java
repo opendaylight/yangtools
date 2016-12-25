@@ -11,26 +11,25 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.NumericalRestrictions;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.NumericalRestrictionsEffectiveStatementImpl;
 
-public class NumericalRestrictionsImpl extends AbstractDeclaredStatement<String> implements
-        TypeStatement.NumericalRestrictions {
+public class NumericalRestrictionsImpl extends AbstractDeclaredStatement<String> implements NumericalRestrictions {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .TYPE)
             .addMandatory(YangStmtMapping.RANGE)
             .build();
 
-    protected NumericalRestrictionsImpl(final StmtContext<String, TypeStatement.NumericalRestrictions, ?> context) {
+    protected NumericalRestrictionsImpl(final StmtContext<String, NumericalRestrictions, ?> context) {
         super(context);
     }
 
     public static class Definition extends
-            AbstractStatementSupport<String, TypeStatement.NumericalRestrictions, EffectiveStatement<String, TypeStatement.NumericalRestrictions>> {
+            AbstractStatementSupport<String, NumericalRestrictions, EffectiveStatement<String, NumericalRestrictions>> {
 
         public Definition() {
             super(YangStmtMapping.TYPE);
@@ -42,22 +41,14 @@ public class NumericalRestrictionsImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public TypeStatement.NumericalRestrictions createDeclared(
-                final StmtContext<String, TypeStatement.NumericalRestrictions, ?> ctx) {
+        public NumericalRestrictions createDeclared(final StmtContext<String, NumericalRestrictions, ?> ctx) {
             return new NumericalRestrictionsImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<String, TypeStatement.NumericalRestrictions> createEffective(
-                final StmtContext<String, TypeStatement.NumericalRestrictions, EffectiveStatement<String, TypeStatement.NumericalRestrictions>> ctx) {
+        public EffectiveStatement<String, NumericalRestrictions> createEffective(
+                final StmtContext<String, NumericalRestrictions, EffectiveStatement<String, NumericalRestrictions>> ctx) {
             return new NumericalRestrictionsEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(final StmtContext.Mutable<String, NumericalRestrictions,
-                EffectiveStatement<String, NumericalRestrictions>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override

@@ -99,13 +99,6 @@ public class BaseStatementImpl extends AbstractDeclaredStatement<QName> implemen
         }
 
         @Override
-        public void onFullDefinitionDeclared(
-                final Mutable<QName, BaseStatement, EffectiveStatement<QName, BaseStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
-        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }

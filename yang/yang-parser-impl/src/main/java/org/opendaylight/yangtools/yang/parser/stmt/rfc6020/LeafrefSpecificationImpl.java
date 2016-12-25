@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.LeafrefSpecification;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LeafrefSpecificationEffectiveStatementImpl;
 
 public class LeafrefSpecificationImpl extends AbstractDeclaredStatement<String>
-        implements TypeStatement.LeafrefSpecification {
+        implements LeafrefSpecification {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .TYPE)
             .addMandatory(YangStmtMapping.PATH)
@@ -27,13 +27,13 @@ public class LeafrefSpecificationImpl extends AbstractDeclaredStatement<String>
             .build();
 
     protected LeafrefSpecificationImpl(
-            final StmtContext<String, TypeStatement.LeafrefSpecification, ?> context) {
+            final StmtContext<String, LeafrefSpecification, ?> context) {
         super(context);
     }
 
     public static class Definition
             extends
-            AbstractStatementSupport<String, TypeStatement.LeafrefSpecification, EffectiveStatement<String, TypeStatement.LeafrefSpecification>> {
+            AbstractStatementSupport<String, LeafrefSpecification, EffectiveStatement<String, LeafrefSpecification>> {
 
         public Definition() {
             super(YangStmtMapping.TYPE);
@@ -45,22 +45,14 @@ public class LeafrefSpecificationImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public TypeStatement.LeafrefSpecification createDeclared(
-                final StmtContext<String, TypeStatement.LeafrefSpecification, ?> ctx) {
+        public LeafrefSpecification createDeclared(final StmtContext<String, LeafrefSpecification, ?> ctx) {
             return new LeafrefSpecificationImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<String, TypeStatement.LeafrefSpecification> createEffective(
-                final StmtContext<String, TypeStatement.LeafrefSpecification, EffectiveStatement<String, TypeStatement.LeafrefSpecification>> ctx) {
+        public EffectiveStatement<String, LeafrefSpecification> createEffective(
+                final StmtContext<String, LeafrefSpecification, EffectiveStatement<String, LeafrefSpecification>> ctx) {
             return new LeafrefSpecificationEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(final StmtContext.Mutable<String, LeafrefSpecification,
-                EffectiveStatement<String, LeafrefSpecification>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override

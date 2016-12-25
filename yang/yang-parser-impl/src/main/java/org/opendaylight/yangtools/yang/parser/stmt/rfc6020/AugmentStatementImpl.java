@@ -111,7 +111,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                 return;
             }
 
-            getSubstatementValidator().validate(augmentNode);
+            super.onFullDefinitionDeclared(augmentNode);
 
             if (StmtContextUtils.isInExtensionBody(augmentNode)) {
                 return;

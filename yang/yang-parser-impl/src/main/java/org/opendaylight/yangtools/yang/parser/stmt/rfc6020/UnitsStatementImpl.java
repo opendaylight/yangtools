@@ -23,7 +23,7 @@ public class UnitsStatementImpl extends AbstractDeclaredStatement<String>
             .UNITS)
             .build();
 
-    protected UnitsStatementImpl(StmtContext<String, UnitsStatement, ?> context) {
+    protected UnitsStatementImpl(final StmtContext<String, UnitsStatement, ?> context) {
         super(context);
     }
 
@@ -36,27 +36,20 @@ public class UnitsStatementImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
         @Override
         public UnitsStatement createDeclared(
-                StmtContext<String, UnitsStatement, ?> ctx) {
+                final StmtContext<String, UnitsStatement, ?> ctx) {
             return new UnitsStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<String, UnitsStatement> createEffective(
-                StmtContext<String, UnitsStatement, EffectiveStatement<String, UnitsStatement>> ctx) {
+                final StmtContext<String, UnitsStatement, EffectiveStatement<String, UnitsStatement>> ctx) {
             return new UnitsEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, UnitsStatement,
-                EffectiveStatement<String, UnitsStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override

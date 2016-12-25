@@ -22,12 +22,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UniqueEffectiveStatementImpl;
 
-public class UniqueStatementImpl extends AbstractDeclaredStatement<Collection<SchemaNodeIdentifier.Relative>> implements UniqueStatement {
+public class UniqueStatementImpl extends AbstractDeclaredStatement<Collection<SchemaNodeIdentifier.Relative>>
+        implements UniqueStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .UNIQUE)
             .build();
 
-    protected UniqueStatementImpl(StmtContext<Collection<SchemaNodeIdentifier.Relative>, UniqueStatement, ?> context) {
+    protected UniqueStatementImpl(final StmtContext<Collection<SchemaNodeIdentifier.Relative>, UniqueStatement, ?> context) {
         super(context);
     }
 
@@ -41,7 +42,7 @@ public class UniqueStatementImpl extends AbstractDeclaredStatement<Collection<Sc
         }
 
         @Override
-        public Collection<SchemaNodeIdentifier.Relative> parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public Collection<SchemaNodeIdentifier.Relative> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             final Collection<Relative> uniqueConstraints = Utils.parseUniqueConstraintArgument(ctx, value);
             SourceException.throwIf(uniqueConstraints.isEmpty(), ctx.getStatementSourceReference(),
                     "Invalid argument value '%s' of unique statement. The value must contains at least "
@@ -50,22 +51,15 @@ public class UniqueStatementImpl extends AbstractDeclaredStatement<Collection<Sc
         }
 
         @Override
-        public UniqueStatement createDeclared(StmtContext<Collection<Relative>, UniqueStatement, ?> ctx) {
+        public UniqueStatement createDeclared(final StmtContext<Collection<Relative>, UniqueStatement, ?> ctx) {
             return new UniqueStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<Collection<Relative>, UniqueStatement> createEffective
-                (StmtContext<Collection<Relative>, UniqueStatement, EffectiveStatement<Collection<Relative>,
+                (final StmtContext<Collection<Relative>, UniqueStatement, EffectiveStatement<Collection<Relative>,
                         UniqueStatement>> ctx) {
             return new UniqueEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<Collection<Relative>, UniqueStatement,
-                EffectiveStatement<Collection<Relative>, UniqueStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override

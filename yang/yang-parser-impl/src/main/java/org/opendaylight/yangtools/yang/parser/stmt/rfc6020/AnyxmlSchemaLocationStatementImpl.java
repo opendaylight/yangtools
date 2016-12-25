@@ -46,7 +46,7 @@ public final class AnyxmlSchemaLocationStatementImpl extends AbstractDeclaredSta
         @Override
         public void onFullDefinitionDeclared(
                 final Mutable<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>, EffectiveStatement<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>>> stmt) {
-            getSubstatementValidator().validate(stmt);
+            super.onFullDefinitionDeclared(stmt);
             stmt.getParentContext().addToNs(AnyxmlSchemaLocationNamespace.class,
                     SupportedExtensionsMapping.ANYXML_SCHEMA_LOCATION, stmt);
         }

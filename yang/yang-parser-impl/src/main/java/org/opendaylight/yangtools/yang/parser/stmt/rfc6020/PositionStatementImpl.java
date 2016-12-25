@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
@@ -15,6 +14,7 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PositionEffectiveStatementImpl;
 
 public class PositionStatementImpl extends AbstractDeclaredStatement<Long> implements PositionStatement {
@@ -51,13 +51,6 @@ public class PositionStatementImpl extends AbstractDeclaredStatement<Long> imple
         public EffectiveStatement<Long, PositionStatement> createEffective(
                 final StmtContext<Long, PositionStatement, EffectiveStatement<Long, PositionStatement>> ctx) {
             return new PositionEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(
-                final StmtContext.Mutable<Long, PositionStatement, EffectiveStatement<Long, PositionStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override

@@ -111,12 +111,6 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
         }
 
         @Override
-        public void onFullDefinitionDeclared(final Mutable<String, IncludeStatement,
-                EffectiveStatement<String, IncludeStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }
