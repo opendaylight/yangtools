@@ -24,7 +24,7 @@ public class ErrorMessageStatementImpl extends
             .build();
 
     protected ErrorMessageStatementImpl(
-            StmtContext<String, ErrorMessageStatement, ?> context) {
+            final StmtContext<String, ErrorMessageStatement, ?> context) {
         super(context);
     }
 
@@ -37,27 +37,20 @@ public class ErrorMessageStatementImpl extends
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
         @Override
         public ErrorMessageStatement createDeclared(
-                StmtContext<String, ErrorMessageStatement, ?> ctx) {
+                final StmtContext<String, ErrorMessageStatement, ?> ctx) {
             return new ErrorMessageStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<String, ErrorMessageStatement> createEffective(
-                StmtContext<String, ErrorMessageStatement, EffectiveStatement<String, ErrorMessageStatement>> ctx) {
+                final StmtContext<String, ErrorMessageStatement, EffectiveStatement<String, ErrorMessageStatement>> ctx) {
             return new ErrorMessageEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, ErrorMessageStatement,
-                EffectiveStatement<String, ErrorMessageStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override

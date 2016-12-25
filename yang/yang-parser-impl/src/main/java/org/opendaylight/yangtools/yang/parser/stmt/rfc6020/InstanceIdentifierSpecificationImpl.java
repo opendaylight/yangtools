@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.InstanceIdentifierSpecification;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -19,21 +19,20 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.InstanceIdentifierSpecificationEffectiveStatementImpl;
 
 public class InstanceIdentifierSpecificationImpl extends
-        AbstractDeclaredStatement<String> implements
-        TypeStatement.InstanceIdentifierSpecification {
+        AbstractDeclaredStatement<String> implements InstanceIdentifierSpecification {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .TYPE)
             .addOptional(YangStmtMapping.REQUIRE_INSTANCE)
             .build();
 
     protected InstanceIdentifierSpecificationImpl(
-            final StmtContext<String, TypeStatement.InstanceIdentifierSpecification, ?> ctx) {
+            final StmtContext<String, InstanceIdentifierSpecification, ?> ctx) {
         super(ctx);
     }
 
     public static class Definition
             extends
-            AbstractStatementSupport<String, TypeStatement.InstanceIdentifierSpecification, EffectiveStatement<String, TypeStatement.InstanceIdentifierSpecification>> {
+            AbstractStatementSupport<String, InstanceIdentifierSpecification, EffectiveStatement<String, InstanceIdentifierSpecification>> {
 
         public Definition() {
             super(YangStmtMapping.TYPE);
@@ -45,22 +44,15 @@ public class InstanceIdentifierSpecificationImpl extends
         }
 
         @Override
-        public TypeStatement.InstanceIdentifierSpecification createDeclared(
-                final StmtContext<String, TypeStatement.InstanceIdentifierSpecification, ?> ctx) {
+        public InstanceIdentifierSpecification createDeclared(
+                final StmtContext<String, InstanceIdentifierSpecification, ?> ctx) {
             return new InstanceIdentifierSpecificationImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<String, TypeStatement.InstanceIdentifierSpecification> createEffective(
-                final StmtContext<String, TypeStatement.InstanceIdentifierSpecification, EffectiveStatement<String, TypeStatement.InstanceIdentifierSpecification>> ctx) {
+        public EffectiveStatement<String, InstanceIdentifierSpecification> createEffective(
+                final StmtContext<String, InstanceIdentifierSpecification, EffectiveStatement<String, InstanceIdentifierSpecification>> ctx) {
             return new InstanceIdentifierSpecificationEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(final StmtContext.Mutable<String, InstanceIdentifierSpecification,
-                EffectiveStatement<String, InstanceIdentifierSpecification>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override

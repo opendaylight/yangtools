@@ -53,13 +53,6 @@ public class DeviationStatementImpl extends AbstractDeclaredStatement<SchemaNode
         }
 
         @Override
-        public void onFullDefinitionDeclared(final StmtContext.Mutable<SchemaNodeIdentifier, DeviationStatement,
-                EffectiveStatement<SchemaNodeIdentifier, DeviationStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
-        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }

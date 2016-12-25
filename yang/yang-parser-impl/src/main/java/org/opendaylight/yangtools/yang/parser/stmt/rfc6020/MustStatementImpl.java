@@ -60,13 +60,6 @@ public class MustStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
         }
 
         @Override
-        public void onFullDefinitionDeclared(final StmtContext.Mutable<RevisionAwareXPath, MustStatement,
-                EffectiveStatement<RevisionAwareXPath, MustStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
-        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }

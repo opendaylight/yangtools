@@ -16,8 +16,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.SemanticVersionEffectiveStatementImpl;
 
 @Beta
@@ -47,13 +45,6 @@ public final class SemanticVersionStatementImpl extends AbstractDeclaredStatemen
         @Override
         public void onLinkageDeclared(final StmtContext.Mutable<SemVer,UnknownStatement<SemVer>,EffectiveStatement<SemVer,UnknownStatement<SemVer>>> stmt) {
             stmt.addToNs(SemanticVersionNamespace.class, stmt.getParentContext(), stmt.getStatementArgument());
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(
-                final Mutable<SemVer, UnknownStatement<SemVer>, EffectiveStatement<SemVer, UnknownStatement<SemVer>>> stmt)
-                throws SourceException {
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override

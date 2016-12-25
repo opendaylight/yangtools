@@ -71,13 +71,6 @@ public class OutputStatementImpl extends AbstractDeclaredStatement<QName> implem
         }
 
         @Override
-        public void onFullDefinitionDeclared(final Mutable<QName, OutputStatement,
-                EffectiveStatement<QName, OutputStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
-        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }

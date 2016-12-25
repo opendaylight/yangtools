@@ -56,13 +56,6 @@ public class WhenStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
         }
 
         @Override
-        public void onFullDefinitionDeclared(final StmtContext.Mutable<RevisionAwareXPath, WhenStatement,
-                EffectiveStatement<RevisionAwareXPath, WhenStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
-        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }

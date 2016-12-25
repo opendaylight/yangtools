@@ -22,32 +22,27 @@ public class PrefixStatementImpl extends AbstractDeclaredStatement<String> imple
             .PREFIX)
             .build();
 
-    public static class Definition extends AbstractStatementSupport<String,PrefixStatement,EffectiveStatement<String,PrefixStatement>> {
+    public static class Definition
+        extends AbstractStatementSupport<String, PrefixStatement, EffectiveStatement<String, PrefixStatement>> {
 
         public Definition() {
             super(YangStmtMapping.PREFIX);
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?,?> ctx, String value) {
+        public String parseArgumentValue(final StmtContext<?, ?,?> ctx, final String value) {
             return value;
         }
 
         @Override
-        public PrefixStatement createDeclared(StmtContext<String, PrefixStatement,?> ctx) {
+        public PrefixStatement createDeclared(final StmtContext<String, PrefixStatement,?> ctx) {
             return new PrefixStatementImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<String,PrefixStatement> createEffective(StmtContext<String, PrefixStatement,EffectiveStatement<String,PrefixStatement>> ctx) {
+        public EffectiveStatement<String,PrefixStatement> createEffective(
+                final StmtContext<String, PrefixStatement, EffectiveStatement<String, PrefixStatement>> ctx) {
             return new PrefixEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, PrefixStatement,
-                EffectiveStatement<String, PrefixStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override
@@ -56,7 +51,7 @@ public class PrefixStatementImpl extends AbstractDeclaredStatement<String> imple
         }
     }
 
-    PrefixStatementImpl(StmtContext<String, PrefixStatement,?> context) {
+    PrefixStatementImpl(final StmtContext<String, PrefixStatement,?> context) {
         super(context);
     }
 

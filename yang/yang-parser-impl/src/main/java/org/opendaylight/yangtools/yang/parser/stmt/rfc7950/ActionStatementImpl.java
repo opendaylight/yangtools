@@ -48,11 +48,11 @@ public class ActionStatementImpl extends AbstractDeclaredStatement<QName> implem
             .addOptional(YangStmtMapping.STATUS)
             .addAny(YangStmtMapping.TYPEDEF)
             .build();
-    
+
     protected ActionStatementImpl(final StmtContext<QName,ActionStatement, ?> context) {
         super(context);
     }
-    
+
     public static class Definition
             extends AbstractStatementSupport<QName, ActionStatement, EffectiveStatement<QName, ActionStatement>> {
 
@@ -96,13 +96,6 @@ public class ActionStatementImpl extends AbstractDeclaredStatement<QName> implem
                     ctx.getStatementSourceReference(), "Action %s is defined at the top level of a module",
                     ctx.getStatementArgument());
             return new ActionEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(final StmtContext.Mutable<QName, ActionStatement,
-                EffectiveStatement<QName, ActionStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override

@@ -51,13 +51,6 @@ public class PathStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<RevisionAwareXPath, PathStatement,
-                EffectiveStatement<RevisionAwareXPath, PathStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
-        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }

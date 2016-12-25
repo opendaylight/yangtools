@@ -58,13 +58,6 @@ public final class ModifierStatementImpl extends AbstractDeclaredStatement<Modif
         }
 
         @Override
-        public void onFullDefinitionDeclared(
-                final StmtContext.Mutable<ModifierKind, ModifierStatement, EffectiveStatement<ModifierKind, ModifierStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
-        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }

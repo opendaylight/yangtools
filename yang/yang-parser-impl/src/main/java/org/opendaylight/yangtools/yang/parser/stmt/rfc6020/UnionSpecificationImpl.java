@@ -12,6 +12,7 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.UnionSpecification;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -19,18 +20,19 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UnionSpecificationEffectiveStatementImpl;
 
 public class UnionSpecificationImpl extends AbstractDeclaredStatement<String>
-        implements TypeStatement.UnionSpecification {
+        implements UnionSpecification {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .TYPE)
             .addMultiple(YangStmtMapping.TYPE)
             .build();
 
     protected UnionSpecificationImpl(
-            final StmtContext<String, TypeStatement.UnionSpecification, ?> context) {
+            final StmtContext<String, UnionSpecification, ?> context) {
         super(context);
     }
 
-    public static class Definition extends AbstractStatementSupport<String, TypeStatement.UnionSpecification, EffectiveStatement<String, TypeStatement.UnionSpecification>> {
+    public static class Definition extends
+        AbstractStatementSupport<String, UnionSpecification, EffectiveStatement<String, UnionSpecification>> {
 
         public Definition() {
             super(YangStmtMapping.TYPE);
@@ -42,21 +44,14 @@ public class UnionSpecificationImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public TypeStatement.UnionSpecification createDeclared(
-                final StmtContext<String, TypeStatement.UnionSpecification, ?> ctx) {
+        public UnionSpecification createDeclared(final StmtContext<String, UnionSpecification, ?> ctx) {
             return new UnionSpecificationImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<String, TypeStatement.UnionSpecification> createEffective(
-                final StmtContext<String, TypeStatement.UnionSpecification, EffectiveStatement<String, TypeStatement.UnionSpecification>> ctx) {
+        public EffectiveStatement<String, UnionSpecification> createEffective(
+                final StmtContext<String, UnionSpecification, EffectiveStatement<String, UnionSpecification>> ctx) {
             return new UnionSpecificationEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(final StmtContext.Mutable<String, UnionSpecification, EffectiveStatement<String, UnionSpecification>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override

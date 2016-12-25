@@ -93,14 +93,7 @@ public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implem
             return new AnyXmlEffectiveStatementImpl(ctx);
         }
 
-        @Override
-        public void onFullDefinitionDeclared(final Mutable<QName, AnyxmlStatement,
-                EffectiveStatement<QName, AnyxmlStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
-        private Optional<ContainerSchemaNode> getAnyXmlSchema(
+        private static Optional<ContainerSchemaNode> getAnyXmlSchema(
                 final StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx,
                 final SchemaNodeIdentifier contentSchemaPath) {
             final StatementContextBase<?, ?, ?> findNode = Utils.findNode(ctx.getRoot(), contentSchemaPath);
