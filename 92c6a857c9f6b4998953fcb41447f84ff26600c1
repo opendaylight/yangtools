@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a622d24_6891c651",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-12-25T11:31:15Z",
+      "side": 1,
+      "message": "don\u0027t repeat the bug headline, but rather what this patch addresses. I.e.:\n\nFix empty parent in deviate replace",
+      "range": {
+        "startLine": 7,
+        "startChar": 10,
+        "endLine": 8,
+        "endChar": 47
+      },
+      "revId": "92c6a857c9f6b4998953fcb41447f84ff26600c1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
