@@ -591,9 +591,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return definition().getPublicView();
     }
 
-    /**
-     * @return new {@link ModelActionBuilder} for the phase
-     */
     @Override
     public ModelActionBuilder newInferenceAction(final ModelProcessingPhase phase) {
         return getRoot().getSourceContext().newInferenceAction(phase);
