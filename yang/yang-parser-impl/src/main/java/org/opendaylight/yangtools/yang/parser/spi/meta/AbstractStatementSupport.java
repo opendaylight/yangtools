@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  *
@@ -70,21 +69,16 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     }
 
     @Override
-    public abstract A parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) throws SourceException;
-
-    @Override
     public void onStatementAdded(final StmtContext.Mutable<A, D, E> stmt) {
         // NOOP for most implementations
     }
 
     /**
-     *
      * {@inheritDoc}
      *
      * Subclasses of this class may override this method to perform actions on
      * this event or register modification action using
      * {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
-     *
      */
     @Override
     public void onPreLinkageDeclared(final StmtContext.Mutable<A, D, E> stmt) {
@@ -92,44 +86,38 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     }
 
     /**
-     *
      * {@inheritDoc}
      *
      * Subclasses of this class may override this method to perform actions on
      * this event or register modification action using
      * {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
-     *
      */
     @Override
-    public void onLinkageDeclared(final StmtContext.Mutable<A, D, E> stmt) throws SourceException {
+    public void onLinkageDeclared(final StmtContext.Mutable<A, D, E> stmt) {
         // NOOP for most implementations
     }
 
     /**
-     *
      * {@inheritDoc}
      *
      * Subclasses of this class may override this method to perform actions on
      * this event or register modification action using
      * {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
-     *
      */
     @Override
-    public void onStatementDefinitionDeclared(final StmtContext.Mutable<A, D, E> stmt) throws SourceException {
+    public void onStatementDefinitionDeclared(final StmtContext.Mutable<A, D, E> stmt) {
         // NOOP for most implementations
     }
 
     /**
-     *
      * {@inheritDoc}
      *
      * Subclasses of this class may override this method to perform actions on
      * this event or register modification action using
      * {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
-     *
      */
     @Override
-    public void onFullDefinitionDeclared(final StmtContext.Mutable<A, D, E> stmt) throws SourceException {
+    public void onFullDefinitionDeclared(final StmtContext.Mutable<A, D, E> stmt) {
         // NOOP for most implementations
     }
 
