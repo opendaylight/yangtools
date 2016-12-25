@@ -84,8 +84,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  */
 public interface ModelActionBuilder {
 
+    @FunctionalInterface
     interface Prerequisite<T> extends Supplier<T> {
-
         /**
          * Returns associated prerequisite once it is resolved.
          *
@@ -93,8 +93,6 @@ public interface ModelActionBuilder {
          */
         @Override
         T get();
-
-        boolean isDone();
     }
 
     /**
