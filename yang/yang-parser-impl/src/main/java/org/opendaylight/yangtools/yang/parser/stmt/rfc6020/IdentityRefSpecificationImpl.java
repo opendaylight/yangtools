@@ -63,6 +63,9 @@ public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<Stri
         @Override
         public void onFullDefinitionDeclared(final StmtContext.Mutable<String, IdentityRefSpecification,
                 EffectiveStatement<String, IdentityRefSpecification>> stmt) {
+            getSubstatementValidator().validate(stmt);
+            super.onFullDefinitionDeclared(stmt);
+
             final StmtContext<QName, ?, ?> baseStmt = StmtContextUtils.findFirstDeclaredSubstatement(stmt,
                     BaseStatement.class);
             Preconditions.checkArgument(baseStmt != null, "The \"base\" statement, which is a substatement to the " +
@@ -74,13 +77,6 @@ public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<Stri
             Preconditions.checkArgument(stmtCtx != null, "Referenced base identity '%s' doesn't exist " +
                         "in " + "given scope " + "(module, imported submodules), source: '%s'", baseIdentity
                     .getLocalName(), stmt.getStatementSourceReference());
-        }
-
-        @Override
-        public void onStatementDefinitionDeclared(final StmtContext.Mutable<String, IdentityRefSpecification,
-                EffectiveStatement<String, IdentityRefSpecification>> stmt) {
-            super.onStatementDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override
