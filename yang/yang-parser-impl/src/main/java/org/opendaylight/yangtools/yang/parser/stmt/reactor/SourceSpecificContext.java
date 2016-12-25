@@ -219,8 +219,15 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     void startPhase(final ModelProcessingPhase phase) {
         @Nullable final ModelProcessingPhase previousPhase = phase.getPreviousPhase();
-        Preconditions.checkState(Objects.equals(previousPhase, finishedPhase));
-        Preconditions.checkState(modifiers.get(previousPhase).isEmpty());
+        Verify.verify(Objects.equals(previousPhase, finishedPhase),
+            "Phase sequencing violation: previous phase should be %s, source %s has %s", previousPhase, source,
+            finishedPhase);
+
+        final Collection<ModifierImpl> previousModifiers = modifiers.get(previousPhase);
+        Preconditions.checkState(previousModifiers.isEmpty(),
+            "Previous phase %s has unresolved modifiers %s in source %s",
+            previousPhase, previousModifiers, source);
+
         inProgressPhase = phase;
         LOG.debug("Source {} started phase {}", source, phase);
     }
