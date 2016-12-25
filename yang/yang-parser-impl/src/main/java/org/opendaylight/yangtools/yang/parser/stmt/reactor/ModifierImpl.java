@@ -262,8 +262,7 @@ class ModifierImpl implements ModelActionBuilder {
             return value;
         }
 
-        @Override
-        public final boolean isDone() {
+        final boolean isDone() {
             return done;
         }
 
@@ -273,18 +272,8 @@ class ModifierImpl implements ModelActionBuilder {
             return isApplied();
         }
 
-        final <O> Prerequisite<O> transform(final Function<? super T,O> transformation) {
-            return new Prerequisite<O>() {
-                @Override
-                public O get() {
-                    return transformation.apply(AbstractPrerequisite.this.get());
-                }
-
-                @Override
-                public boolean isDone() {
-                    return AbstractPrerequisite.this.isDone();
-                }
-            };
+        final <O> Prerequisite<O> transform(final Function<? super T, O> transformation) {
+            return () -> transformation.apply(get());
         }
 
         @Override
