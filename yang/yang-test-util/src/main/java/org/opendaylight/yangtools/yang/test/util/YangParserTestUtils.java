@@ -9,6 +9,7 @@
 package org.opendaylight.yangtools.yang.test.util;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Preconditions;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
@@ -56,7 +57,10 @@ public final class YangParserTestUtils {
      * @return effective schema context
      *
      * @throws ReactorException if there is an error in one of the parsed YANG sources
+     *
+     * @deprecated Migration method only, do not use.
      */
+    @Deprecated
     public static SchemaContext parseYangSources(final YangStatementSourceImpl... sources) throws ReactorException {
         return parseYangSources(IfFeaturePredicates.ALL_FEATURES, StatementParserMode.DEFAULT_MODE, sources);
     }
@@ -70,7 +74,10 @@ public final class YangParserTestUtils {
      *
      * @return effective schema context
      * @throws ReactorException if there is an error in one of the parsed YANG sources
+     *
+     * @deprecated Migration method only, do not use.
      */
+    @Deprecated
     public static SchemaContext parseYangSources(final Predicate<QName> isFeatureSupported,
             final YangStatementSourceImpl... sources) throws ReactorException {
         return parseYangSources(isFeatureSupported, StatementParserMode.DEFAULT_MODE, sources);
@@ -84,7 +91,10 @@ public final class YangParserTestUtils {
      *
      * @return effective schema context
      * @throws ReactorException if there is an error in one of the parsed YANG sources
+     *
+     * @deprecated Migration method only, do not use.
      */
+    @Deprecated
     public static SchemaContext parseYangSources(final StatementParserMode statementParserMode,
             final YangStatementSourceImpl... sources) throws ReactorException {
         return parseYangSources(IfFeaturePredicates.ALL_FEATURES, statementParserMode, sources);
@@ -102,7 +112,8 @@ public final class YangParserTestUtils {
      * @throws ReactorException if there is an error in one of the parsed YANG sources
      */
     public static SchemaContext parseYangSources(final Predicate<QName> isFeatureSupported,
-            final StatementParserMode statementParserMode, final YangStatementSourceImpl... sources) throws ReactorException {
+            final StatementParserMode statementParserMode, final YangStatementSourceImpl... sources)
+                    throws ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(
                 statementParserMode, isFeatureSupported);
         reactor.addSources(sources);
@@ -261,7 +272,8 @@ public final class YangParserTestUtils {
      */
     public static SchemaContext parseYangSources(final String yangSourcesDirectoryPath) throws ReactorException,
             FileNotFoundException, URISyntaxException {
-        return parseYangSources(yangSourcesDirectoryPath, IfFeaturePredicates.ALL_FEATURES, StatementParserMode.DEFAULT_MODE);
+        return parseYangSources(yangSourcesDirectoryPath, IfFeaturePredicates.ALL_FEATURES,
+            StatementParserMode.DEFAULT_MODE);
     }
 
     /**
@@ -278,7 +290,8 @@ public final class YangParserTestUtils {
      * @throws URISyntaxException if the specified directory does not exist
      */
     public static SchemaContext parseYangSources(final String yangSourcesDirectoryPath,
-            final Predicate<QName> isFeatureSupported) throws ReactorException, FileNotFoundException, URISyntaxException {
+            final Predicate<QName> isFeatureSupported) throws ReactorException, FileNotFoundException,
+            URISyntaxException {
         return parseYangSources(yangSourcesDirectoryPath, isFeatureSupported, StatementParserMode.DEFAULT_MODE);
     }
 
@@ -295,7 +308,8 @@ public final class YangParserTestUtils {
      * @throws URISyntaxException if the specified directory does not exist
      */
     public static SchemaContext parseYangSources(final String yangSourcesDirectoryPath,
-            final StatementParserMode statementParserMode) throws ReactorException, FileNotFoundException, URISyntaxException {
+            final StatementParserMode statementParserMode) throws ReactorException, FileNotFoundException,
+            URISyntaxException {
         return parseYangSources(yangSourcesDirectoryPath, IfFeaturePredicates.ALL_FEATURES, statementParserMode);
     }
 
@@ -313,8 +327,8 @@ public final class YangParserTestUtils {
      * @throws URISyntaxException if the specified directory does not exist
      */
     public static SchemaContext parseYangSources(final String yangSourcesDirectoryPath,
-            final Predicate<QName> isFeatureSupported, final StatementParserMode statementParserMode) throws ReactorException,
-            FileNotFoundException, URISyntaxException {
+            final Predicate<QName> isFeatureSupported, final StatementParserMode statementParserMode)
+                    throws ReactorException, FileNotFoundException, URISyntaxException {
         final URI directoryPath = YangParserTestUtils.class.getResource(yangSourcesDirectoryPath).toURI();
         final File dir = new File(directoryPath);
 
@@ -387,7 +401,8 @@ public final class YangParserTestUtils {
      * @throws URISyntaxException if the specified file does not exist
      */
     public static SchemaContext parseYangSource(final String yangSourcePath, final Predicate<QName> isFeatureSupported,
-            final StatementParserMode statementParserMode) throws ReactorException, FileNotFoundException, URISyntaxException {
+            final StatementParserMode statementParserMode) throws ReactorException, FileNotFoundException,
+            URISyntaxException {
         final URI sourcePath = YangParserTestUtils.class.getResource(yangSourcePath).toURI();
         final File sourceFile = new File(sourcePath);
         return parseYangSources(isFeatureSupported, statementParserMode, sourceFile);
@@ -426,7 +441,8 @@ public final class YangParserTestUtils {
      * @throws URISyntaxException if one of the specified directories or files does not exist
      */
     public static SchemaContext parseYangSources(final List<String> yangDirs, final List<String> yangFiles,
-            final Predicate<QName> isFeatureSupported) throws FileNotFoundException, ReactorException, URISyntaxException {
+            final Predicate<QName> isFeatureSupported) throws FileNotFoundException, ReactorException,
+            URISyntaxException {
         return parseYangSources(yangDirs, yangFiles, isFeatureSupported, StatementParserMode.DEFAULT_MODE);
     }
 
@@ -542,8 +558,9 @@ public final class YangParserTestUtils {
      *
      * @throws ReactorException if there is an error in one of the parsed YANG sources
      */
-    public static SchemaContext parseYangSources(final List<String> filePaths, final Predicate<QName> isFeatureSupported,
-            final StatementParserMode statementParserMode) throws ReactorException {
+    public static SchemaContext parseYangSources(final List<String> filePaths,
+            final Predicate<QName> isFeatureSupported, final StatementParserMode statementParserMode)
+                    throws ReactorException {
         final YangStatementSourceImpl[] sources = new YangStatementSourceImpl[filePaths.size()];
 
         for (int i = 0; i < filePaths.size(); i++) {
@@ -617,6 +634,90 @@ public final class YangParserTestUtils {
     }
 
     /**
+     * Creates a new effective schema context containing the specified YANG sources. Statement parser mode is set to
+     * default mode and all YANG features are supported.
+     *
+     * @param clazz Resource lookup base
+     * @param resources Resource names to be looked up
+     *
+     * @return effective schema context
+     *
+     * @throws ReactorException if there is an error in one of the parsed YANG sources
+     */
+    public static SchemaContext parseYangResources(final Class<?> clazz, final String... resources)
+            throws ReactorException {
+        final List<InputStream> streams = new ArrayList<>(resources.length);
+        for (String r : resources) {
+            final InputStream is = clazz.getResourceAsStream(r);
+            Preconditions.checkArgument(is != null, "Resource %s not found", r);
+            streams.add(is);
+        }
+
+        return parseYangStreams(streams);
+    }
+
+    /**
+     * Creates a new effective schema context containing the specified YANG sources. Statement parser mode is set to
+     * default mode and all YANG features are supported.
+     *
+     * @param streams input streams containing YANG sources to be parsed
+     *
+     * @return effective schema context
+     *
+     * @throws ReactorException if there is an error in one of the parsed YANG sources
+     */
+    public static SchemaContext parseYangStreams(final InputStream... streams) throws ReactorException {
+        return parseYangStreams(Arrays.asList(streams));
+    }
+
+    /**
+     * Creates a new effective schema context containing the specified YANG sources. Statement parser mode is set to
+     * default mode.
+     *
+     * @param isFeatureSupported predicate based on which all if-feature statements in the parsed YANG models are resolved
+     * @param streams input streams containing YANG sources to be parsed
+     *
+     * @return effective schema context
+     *
+     * @throws ReactorException if there is an error in one of the parsed YANG sources
+     */
+    public static SchemaContext parseYangStreams(final Predicate<QName> isFeatureSupported,
+            final InputStream... streams) throws ReactorException {
+        return parseYangStreams(Arrays.asList(streams), isFeatureSupported);
+    }
+
+    /**
+     * Creates a new effective schema context containing the specified YANG sources. All YANG features are supported.
+     *
+     * @param statementParserMode mode of statement parser
+     * @param streams input streams containing YANG sources to be parsed
+     *
+     * @return effective schema context
+     *
+     * @throws ReactorException if there is an error in one of the parsed YANG sources
+     */
+    public static SchemaContext parseYangStreams(final StatementParserMode statementParserMode,
+            final InputStream... streams) throws ReactorException {
+        return parseYangStreams(Arrays.asList(streams), statementParserMode);
+    }
+
+    /**
+     * Creates a new effective schema context containing the specified YANG sources.
+     *
+     * @param isFeatureSupported predicate based on which all if-feature statements in the parsed YANG models are resolved
+     * @param statementParserMode mode of statement parser
+     * @param streams input streams containing YANG sources to be parsed
+     *
+     * @return effective schema context
+     *
+     * @throws ReactorException if there is an error in one of the parsed YANG sources
+     */
+    public static SchemaContext parseYangStreams(final Predicate<QName> isFeatureSupported,
+            final StatementParserMode statementParserMode, final InputStream... streams) throws ReactorException {
+        return parseYangStreams(Arrays.asList(streams), isFeatureSupported, statementParserMode);
+    }
+
+    /**
      * Creates a new effective schema context containing the specified YIN sources. Statement parser mode is set to
      * default mode and all YANG features are supported.
      *
@@ -672,7 +773,8 @@ public final class YangParserTestUtils {
      * @throws ReactorException if there is an error in one of the parsed YIN sources
      */
     public static SchemaContext parseYinSources(final Predicate<QName> isFeatureSupported,
-            final StatementParserMode statementParserMode, final YinStatementStreamSource... sources) throws ReactorException {
+            final StatementParserMode statementParserMode, final YinStatementStreamSource... sources)
+                    throws ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(
                 statementParserMode, isFeatureSupported);
         reactor.addSources(sources);
