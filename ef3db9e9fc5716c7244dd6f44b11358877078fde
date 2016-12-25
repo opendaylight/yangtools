@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a622d24_28b98ee9",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/IdentityEffectiveStatementImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-12-25T11:18:00Z",
+      "side": 1,
+      "message": "mutable collection, which flushes out a problem...",
+      "range": {
+        "startLine": 34,
+        "startChar": 7,
+        "endLine": 34,
+        "endChar": 46
+      },
+      "revId": "ef3db9e9fc5716c7244dd6f44b11358877078fde",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_a8c47e5f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/IdentityEffectiveStatementImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-12-25T11:18:00Z",
+      "side": 1,
+      "message": "The problem is here: we are mutating already-built effective statements, which are supposed to be immutable.\n\nThis should be taken care of by inference actions: in IdentityStatementImpl.Definition#onFullDefinitionDeclared() we should hook an inference action to all base identities\u0027 EFFECTIVE_MODEL.\n\nThat way we proceed to build identities in their dependency order, hence can freely call base.buildEffective() -- making all of this constant and eliminate initBaseIdentity().",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 9
+      },
+      "revId": "ef3db9e9fc5716c7244dd6f44b11358877078fde",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
