@@ -21,10 +21,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
-public class StatementDefinitionContext<A,D extends DeclaredStatement<A>,E extends EffectiveStatement<A,D>> {
-    private final StatementSupport<A,D,E> support;
+public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
+    private final StatementSupport<A, D, E> support;
 
-    public StatementDefinitionContext(final StatementSupport<A,D,E> support) {
+    public StatementDefinitionContext(final StatementSupport<A, D, E> support) {
         this.support = Preconditions.checkNotNull(support);
     }
 
@@ -32,7 +32,7 @@ public class StatementDefinitionContext<A,D extends DeclaredStatement<A>,E exten
         return support;
     }
 
-    public A parseArgumentValue(final StmtContext<A,D,E> context, final String value) {
+    public A parseArgumentValue(final StmtContext<A, D, E> context, final String value) {
         return support.parseArgumentValue(context,value);
     }
 
@@ -44,13 +44,13 @@ public class StatementDefinitionContext<A,D extends DeclaredStatement<A>,E exten
         return support.getPublicView();
     }
 
-    public boolean onStatementAdded(final Mutable<A,D,E> stmt) {
+    public boolean onStatementAdded(final Mutable<A, D, E> stmt) {
         support.onStatementAdded(stmt);
         return false;
     }
 
 
-    public void onDeclarationFinished(final Mutable<A,D,E> statement, final ModelProcessingPhase phase) {
+    public void onDeclarationFinished(final Mutable<A, D, E> statement, final ModelProcessingPhase phase) {
         switch (phase) {
         case SOURCE_PRE_LINKAGE:
             support.onPreLinkageDeclared(statement);
