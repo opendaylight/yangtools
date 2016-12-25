@@ -32,14 +32,14 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
         StatementDefinition, StatementFactory<A, D, E> {
 
     /**
-     * Returns public statement definition, which will be present in builded
+     * Returns public statement definition, which will be present in built
      * statements.
      *
      * Public statement definition may be used to provide different
      * implementation of statement definition, which will not retain any build
      * specific data or context.
      *
-     * @return public statement definition, which will be present in builded
+     * @return public statement definition, which will be present in built
      *         statements.
      */
     StatementDefinition getPublicView();
@@ -59,7 +59,10 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     A parseArgumentValue(StmtContext<?, ?, ?> ctx, String value);
 
     /**
-     * Invoked when statement is added to build context.
+     * Invoked when a statement supported by this instance is added to build context. This allows implementations
+     * of this interface to start tracking the statement and perform any modifications to the build context hierarchy,
+     * accessible via {@link StmtContext#getParentContext()}. One such use is populating the parent's namespaces to
+     * allow it to locate this child statement.
      *
      * @param stmt
      *            Context of added statement. No substatements are available.
