@@ -11,8 +11,8 @@ import com.google.common.base.Verify;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
@@ -193,7 +193,7 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
 
         @Override
         public void onFullDefinitionDeclared(
-                final Mutable<String, TypeStatement, EffectiveStatement<String, TypeStatement>> stmt){
+                final Mutable<String, TypeStatement, EffectiveStatement<String, TypeStatement>> stmt) {
             getSubstatementValidator().validate(stmt);
 
             // if it is yang built-in type, no prerequisite is needed, so simply return
