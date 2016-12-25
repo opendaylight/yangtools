@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.EFFECTIVE_MODEL;
+
 import com.google.common.base.Supplier;
 import java.util.Collection;
 import javax.annotation.Nonnull;
@@ -23,7 +25,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  * declared model into effective model.
  *
  * Since YANG allows forward references, some inference actions
- * needs to be taken at later point, where reference is actually
+ * need to be taken at a later point, where reference is actually
  * resolved. Referenced objects are not retrieved directly
  * but are represented as {@link Prerequisite} (prerequisite) for
  * inference action to be taken.
@@ -85,11 +87,9 @@ public interface ModelActionBuilder {
     @FunctionalInterface
     interface Prerequisite<T> extends Supplier<T> {
         /**
-         *
          * Returns associated prerequisite once it is resolved.
          *
          * @return associated prerequisite once it is resolved.
-         *
          */
         @Override
         T get();
@@ -116,7 +116,7 @@ public interface ModelActionBuilder {
 
         /**
          * Invoked once one of prerequisites was not met,
-         * even after all other satifiable inference actions were processed.
+         * even after all other satisfiable inference actions were processed.
          *
          * Implementors MUST throw {@link InferenceException} if semantic processing
          * of model should be stopped and failed.
@@ -132,29 +132,73 @@ public interface ModelActionBuilder {
         void prerequisiteFailed(Collection<? extends Prerequisite<?>> failed) throws InferenceException;
     }
 
-    @Nonnull <D extends DeclaredStatement<?>> Prerequisite<D> requiresDeclared(StmtContext<?,? extends D,?> context);
+    /**
+     * Action requires that the specified context transition to complete{@link ModelProcessingPhase#FULL_DECLARATION}
+     * phase.
+     *
+     * @param context Statement context which needs to
+     * @return A {@link Prerequisite} returning the declared statement of the specified context.
+     */
+    @Nonnull <D extends DeclaredStatement<?>> Prerequisite<D> requiresDeclared(StmtContext<?, ? extends D, ?> context);
 
-    @Nonnull <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>> Prerequisite<D> requiresDeclared(StmtContext<?,?,?> context,Class<N> namespace, K key);
+    @Nonnull <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+        Prerequisite<StmtContext<A, D, E>> requiresCtx(StmtContext<A, D, E> context, ModelProcessingPhase phase);
 
-    @Nonnull <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>> Prerequisite<StmtContext<?, D, ?>>requiresDeclaredCtx(StmtContext<?,?,?> context,Class<N> namespace, K key);
+    @Nonnull <K, N extends StatementNamespace<K, ?, ? >> Prerequisite<StmtContext<?,?,?>> requiresCtx(
+        StmtContext<?, ?, ?> context, Class<N> namespace, K key, ModelProcessingPhase phase);
 
-    @Nonnull <E extends EffectiveStatement<?,?>> Prerequisite<E> requiresEffective(StmtContext<?,?,? extends E> stmt);
+    default @Nonnull <T extends Mutable<?, ?, ?>> Prerequisite<T> mutatesEffectiveCtx(final T stmt) {
+        return mutatesCtx(stmt, EFFECTIVE_MODEL);
+    }
 
-    @Nonnull <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>> Prerequisite<E> requiresEffective(StmtContext<?,?,?> context,Class<N> namespace, K key);
+    @Nonnull <K, E extends EffectiveStatement<?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>>
+        Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(StmtContext<?, ?, ?> context, Class<N> namespace, K key);
 
-    @Nonnull <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>> Prerequisite<StmtContext<?,?,E>> requiresEffectiveCtx(StmtContext<?,?,?> context,Class<N> namespace, K key);
-
-    @Nonnull <N extends IdentifierNamespace<? ,?>> Prerequisite<Mutable<?,?,?>> mutatesNs(Mutable<?,?, ?> ctx, Class<N> namespace);
-
-    @Nonnull <T extends Mutable<?,?,?>> Prerequisite<T> mutatesEffectiveCtx(T stmt);
-
-    @Nonnull  <K,E extends EffectiveStatement<?,?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>> Prerequisite<Mutable<?,?,E>> mutatesEffectiveCtx(StmtContext<?,?,?> context,Class<N> namespace, K key);
+    @Nonnull <C extends StmtContext.Mutable<?, ?, ?>, CT extends C> Prerequisite<C> mutatesCtx(CT root,
+            ModelProcessingPhase phase);
 
     void apply(InferenceAction action) throws InferenceException;
 
-    @Nonnull <A,D extends DeclaredStatement<A>,E extends EffectiveStatement<A, D>> Prerequisite<StmtContext<A, D, E>> requiresCtx(StmtContext<A, D, E> context, ModelProcessingPhase phase);
+    /**
+     * @deprecated Undocumented method. Use at your own risk.
+     */
+    @Deprecated
+    @Nonnull <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>>
+        Prerequisite<D> requiresDeclared(StmtContext<?, ?, ?> context, Class<N> namespace, K key);
 
-    @Nonnull <K, N extends StatementNamespace<K, ?, ? >> Prerequisite<StmtContext<?,?,?>> requiresCtx(StmtContext<?, ?, ?> context, Class<N> namespace, K key, ModelProcessingPhase phase);
+    /**
+     * @deprecated Undocumented method. Use at your own risk.
+     */
+    @Deprecated
+    @Nonnull <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>>
+        Prerequisite<StmtContext<?, D, ?>> requiresDeclaredCtx(StmtContext<?, ?, ?> context, Class<N> namespace, K key);
 
-    @Nonnull <C extends StmtContext.Mutable<?,?,?>, CT extends C> Prerequisite<C> mutatesCtx(CT root, ModelProcessingPhase phase);
+    /**
+     * @deprecated Undocumented method. Use at your own risk.
+     */
+    @Deprecated
+    @Nonnull <E extends EffectiveStatement<?, ?>> Prerequisite<E> requiresEffective(
+            StmtContext<?, ?, ? extends E> stmt);
+
+    /**
+     * @deprecated Undocumented method. Use at your own risk.
+     */
+    @Deprecated
+    @Nonnull <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>>
+        Prerequisite<E> requiresEffective(StmtContext<?, ?, ?> context, Class<N> namespace, K key);
+
+    /**
+     * @deprecated Undocumented method. Use at your own risk.
+     */
+    @Deprecated
+    @Nonnull <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>>
+    Prerequisite<StmtContext<?, ?, E>> requiresEffectiveCtx(StmtContext<?, ?, ?> context, Class<N> namespace,
+            K key);
+
+    /**
+     * @deprecated Undocumented method. Use at your own risk.
+     */
+    @Deprecated
+    @Nonnull <N extends IdentifierNamespace<?, ?>> Prerequisite<Mutable<?,?,?>> mutatesNs(
+            Mutable<?,?, ?> ctx, Class<N> namespace);
 }
