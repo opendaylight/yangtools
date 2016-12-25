@@ -54,8 +54,9 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      * @param value
      *            String representation of value, as was present in text source.
      * @return Parsed value
+     * @throws SourceException when an inconsistency is detected.
      */
-    A parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) throws SourceException;
+    A parseArgumentValue(StmtContext<?, ?, ?> ctx, String value);
 
     /**
      * Invoked when statement is added to build context.
@@ -90,8 +91,9 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      *
      * @param stmt
      *            Context of added statement.
+     * @throws SourceException when an inconsistency is detected.
      */
-    void onLinkageDeclared(StmtContext.Mutable<A, D, E> stmt) throws SourceException;
+    void onLinkageDeclared(StmtContext.Mutable<A, D, E> stmt);
 
     /**
      * Invoked when statement is closed during
@@ -105,8 +107,9 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      * @param stmt
      *            Context of added statement. Argument and statement parent is
      *            accessible.
+     * @throws SourceException when an inconsistency is detected.
      */
-    void onStatementDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt) throws SourceException;
+    void onStatementDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt);
 
     /**
      * Invoked when statement is closed during
@@ -124,6 +127,7 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      * @param stmt
      *            Context of added statement. Argument and statement parent is
      *            accessible.
+     * @throws SourceException when an inconsistency is detected.
      */
-    void onFullDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt) throws SourceException;
+    void onFullDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt);
 }
