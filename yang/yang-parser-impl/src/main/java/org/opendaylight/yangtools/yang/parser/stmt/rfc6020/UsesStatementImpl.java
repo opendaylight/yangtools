@@ -87,8 +87,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
             if (!StmtContextUtils.areFeaturesSupported(usesNode)) {
                 return;
             }
-
-            getSubstatementValidator().validate(usesNode);
+            super.onFullDefinitionDeclared(usesNode);
 
             if (StmtContextUtils.isInExtensionBody(usesNode)) {
                 return;

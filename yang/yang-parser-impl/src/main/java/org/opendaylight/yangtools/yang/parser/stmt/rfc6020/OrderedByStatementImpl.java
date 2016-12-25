@@ -17,14 +17,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.OrderedByEffectiveStatementImpl;
 
-public class OrderedByStatementImpl extends AbstractDeclaredStatement<String>
-        implements OrderedByStatement {
+public class OrderedByStatementImpl extends AbstractDeclaredStatement<String> implements OrderedByStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .ORDERED_BY)
             .build();
 
     protected OrderedByStatementImpl(
-            StmtContext<String, OrderedByStatement, ?> context) {
+            final StmtContext<String, OrderedByStatement, ?> context) {
         super(context);
     }
 
@@ -37,26 +36,19 @@ public class OrderedByStatementImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
         @Override
-        public OrderedByStatement createDeclared(StmtContext<String, OrderedByStatement, ?> ctx) {
+        public OrderedByStatement createDeclared(final StmtContext<String, OrderedByStatement, ?> ctx) {
             return new OrderedByStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<String, OrderedByStatement> createEffective(
-                StmtContext<String, OrderedByStatement, EffectiveStatement<String, OrderedByStatement>> ctx) {
+                final StmtContext<String, OrderedByStatement, EffectiveStatement<String, OrderedByStatement>> ctx) {
             return new OrderedByEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, OrderedByStatement,
-                EffectiveStatement<String, OrderedByStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override

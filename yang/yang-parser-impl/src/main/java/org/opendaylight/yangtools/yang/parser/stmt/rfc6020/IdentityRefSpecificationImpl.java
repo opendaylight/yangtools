@@ -63,7 +63,6 @@ public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<Stri
         @Override
         public void onFullDefinitionDeclared(final StmtContext.Mutable<String, IdentityRefSpecification,
                 EffectiveStatement<String, IdentityRefSpecification>> stmt) {
-            getSubstatementValidator().validate(stmt);
             super.onFullDefinitionDeclared(stmt);
 
             final StmtContext<QName, ?, ?> baseStmt = StmtContextUtils.findFirstDeclaredSubstatement(stmt,

@@ -67,21 +67,15 @@ public class LeafStatementImpl extends AbstractDeclaredStatement<QName> implemen
             stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
         }
 
-        @Override public LeafStatement createDeclared(
-                final StmtContext<QName, LeafStatement, ?> ctx) {
+        @Override
+        public LeafStatement createDeclared(final StmtContext<QName, LeafStatement, ?> ctx) {
             return new LeafStatementImpl(ctx);
         }
 
-        @Override public EffectiveStatement<QName, LeafStatement> createEffective(
+        @Override
+        public EffectiveStatement<QName, LeafStatement> createEffective(
                 final StmtContext<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
             return new LeafEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(final Mutable<QName, LeafStatement,
-                EffectiveStatement<QName, LeafStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override

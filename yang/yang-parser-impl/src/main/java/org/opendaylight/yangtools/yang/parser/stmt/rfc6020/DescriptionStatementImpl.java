@@ -23,7 +23,7 @@ public class DescriptionStatementImpl extends AbstractDeclaredStatement<String> 
             .build();
 
     protected DescriptionStatementImpl(
-            StmtContext<String, DescriptionStatement, ?> context) {
+            final StmtContext<String, DescriptionStatement, ?> context) {
         super(context);
     }
 
@@ -34,25 +34,18 @@ public class DescriptionStatementImpl extends AbstractDeclaredStatement<String> 
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
         @Override
-        public DescriptionStatement createDeclared(StmtContext<String, DescriptionStatement, ?> ctx) {
+        public DescriptionStatement createDeclared(final StmtContext<String, DescriptionStatement, ?> ctx) {
             return new DescriptionStatementImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<String, DescriptionStatement> createEffective(StmtContext<String, DescriptionStatement, EffectiveStatement<String, DescriptionStatement>> ctx) {
+        public EffectiveStatement<String, DescriptionStatement> createEffective(final StmtContext<String, DescriptionStatement, EffectiveStatement<String, DescriptionStatement>> ctx) {
             return new DescriptionEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, DescriptionStatement,
-                EffectiveStatement<String, DescriptionStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override

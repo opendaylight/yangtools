@@ -70,13 +70,6 @@ public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<Schem
         }
 
         @Override
-        public void onFullDefinitionDeclared(final StmtContext.Mutable<Collection<SchemaNodeIdentifier>, KeyStatement,
-                EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
-        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }

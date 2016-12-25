@@ -104,13 +104,6 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public void onFullDefinitionDeclared(final StmtContext.Mutable<String, BelongsToStatement,
-                EffectiveStatement<String, BelongsToStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
-        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }

@@ -25,7 +25,7 @@ public class IfFeatureStatementImpl extends AbstractDeclaredStatement<QName>
             .build();
 
     protected IfFeatureStatementImpl(
-            StmtContext<QName, IfFeatureStatement, ?> context) {
+            final StmtContext<QName, IfFeatureStatement, ?> context) {
         super(context);
     }
 
@@ -38,27 +38,20 @@ public class IfFeatureStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return Utils.qNameFromArgument(ctx, value);
         }
 
         @Override
         public IfFeatureStatement createDeclared(
-                StmtContext<QName, IfFeatureStatement, ?> ctx) {
+                final StmtContext<QName, IfFeatureStatement, ?> ctx) {
             return new IfFeatureStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<QName, IfFeatureStatement> createEffective(
-                StmtContext<QName, IfFeatureStatement, EffectiveStatement<QName, IfFeatureStatement>> ctx) {
+                final StmtContext<QName, IfFeatureStatement, EffectiveStatement<QName, IfFeatureStatement>> ctx) {
             return new IfFeatureEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<QName, IfFeatureStatement,
-                EffectiveStatement<QName, IfFeatureStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override

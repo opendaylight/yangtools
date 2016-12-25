@@ -30,25 +30,18 @@ public class NamespaceStatementImpl extends AbstractDeclaredStatement<URI> imple
         }
 
         @Override
-        public URI parseArgumentValue(StmtContext<?, ?,?> ctx, String value) {
+        public URI parseArgumentValue(final StmtContext<?, ?,?> ctx, final String value) {
             return URI.create(value);
         }
 
         @Override
-        public NamespaceStatement createDeclared(StmtContext<URI, NamespaceStatement,?> ctx) {
+        public NamespaceStatement createDeclared(final StmtContext<URI, NamespaceStatement,?> ctx) {
             return new NamespaceStatementImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<URI,NamespaceStatement> createEffective(StmtContext<URI, NamespaceStatement,EffectiveStatement<URI,NamespaceStatement>> ctx) {
+        public EffectiveStatement<URI,NamespaceStatement> createEffective(final StmtContext<URI, NamespaceStatement,EffectiveStatement<URI,NamespaceStatement>> ctx) {
             return new NamespaceEffectiveStatementImpl(ctx);
-        }
-
-        @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<URI, NamespaceStatement,
-                EffectiveStatement<URI, NamespaceStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
         }
 
         @Override
@@ -57,7 +50,7 @@ public class NamespaceStatementImpl extends AbstractDeclaredStatement<URI> imple
         }
     }
 
-    NamespaceStatementImpl(StmtContext<URI, NamespaceStatement,?> context) {
+    NamespaceStatementImpl(final StmtContext<URI, NamespaceStatement,?> context) {
         super(context);
     }
 

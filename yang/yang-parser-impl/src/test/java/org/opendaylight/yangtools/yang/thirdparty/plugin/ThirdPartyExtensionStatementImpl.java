@@ -38,6 +38,7 @@ public class ThirdPartyExtensionStatementImpl extends AbstractDeclaredStatement<
         @Override
         public void onFullDefinitionDeclared(
                 final Mutable<String, UnknownStatement<String>, EffectiveStatement<String, UnknownStatement<String>>> stmt) {
+            super.onFullDefinitionDeclared(stmt);
             stmt.addToNs(ThirdPartyNamespace.class, stmt, "Third-party namespace test.");
         }
 

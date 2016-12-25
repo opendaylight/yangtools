@@ -58,13 +58,6 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
         }
 
         @Override
-        public void onFullDefinitionDeclared(final StmtContext.Mutable<DeviateKind, DeviateStatement,
-                EffectiveStatement<DeviateKind, DeviateStatement>> stmt) {
-            super.onFullDefinitionDeclared(stmt);
-            getSubstatementValidator().validate(stmt);
-        }
-
-        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }
