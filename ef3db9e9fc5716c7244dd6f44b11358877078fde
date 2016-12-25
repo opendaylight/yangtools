@@ -45,6 +45,30 @@
       "revId": "ef3db9e9fc5716c7244dd6f44b11358877078fde",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_28b06ef3",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/IdentityEffectiveStatementImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-12-25T11:29:03Z",
+      "side": 1,
+      "message": "... but that will break derived identities -- the set of base and derived identities forms a circular dependency.\n\nThis needs further analysis, because we obviously can only make only one of those sets constant during buildEffective() and need to have a hook, somewhere, which will cause the other set to be frozen after the dust has settled (and before we return those references to the user).\n\nI am not sure if we can make that happen using our current mechanisms, or we need one more ModelProcessingPhase after EFFECTIVE_MODEL.",
+      "parentUuid": "1a622d24_a8c47e5f",
+      "range": {
+        "startLine": 36,
+        "startChar": 0,
+        "endLine": 49,
+        "endChar": 9
+      },
+      "revId": "ef3db9e9fc5716c7244dd6f44b11358877078fde",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
