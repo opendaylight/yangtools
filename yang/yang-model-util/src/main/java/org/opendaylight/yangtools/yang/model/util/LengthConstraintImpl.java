@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
  * <ul>
  * <li>{@link LengthConstraint#getErrorAppTag()} returns
  * <code>length-out-of-specified-bounds</code>
- * <li>{@link LengthConstraint#getErrorMessage() returns <code>The argument is
+ * <li>{@link LengthConstraint#getErrorMessage()} returns <code>The argument is
  * out of bounds &lt;<i>min</i>, <i>max</i> &gt;</code>
  * </ul
  */
