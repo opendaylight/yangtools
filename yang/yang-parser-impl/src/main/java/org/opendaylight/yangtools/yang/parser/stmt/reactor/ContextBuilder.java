@@ -53,10 +53,6 @@ abstract class ContextBuilder<A, D extends DeclaredStatement<A>, E extends Effec
         return definition;
     }
 
-    StatementIdentifier createIdentifier() {
-        return new StatementIdentifier(definition.getStatementName(), rawArg);
-    }
-
     /**
      * {@inheritDoc}
      *
