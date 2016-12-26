@@ -240,12 +240,10 @@ public final class StmtContextUtils {
 
     private static boolean checkFeatureSupport(final StmtContext.Mutable<?, ?, ?> stmtContext,
             final Predicate<QName> isFeatureSupported) {
-        final Collection<StatementContextBase<?, ?, ?>> substatements = stmtContext.declaredSubstatements();
-
         boolean isSupported = false;
         boolean containsIfFeature = false;
-        for (final StatementContextBase<?, ?, ?> stmt : substatements) {
-            if (stmt.getPublicDefinition().equals(YangStmtMapping.IF_FEATURE)) {
+        for (final StatementContextBase<?, ?, ?> stmt : stmtContext.declaredSubstatements()) {
+            if (YangStmtMapping.IF_FEATURE.equals(stmt.getPublicDefinition())) {
                 containsIfFeature = true;
                 if (isFeatureSupported.test((QName) stmt.getStatementArgument())) {
                     isSupported = true;
