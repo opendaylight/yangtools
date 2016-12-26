@@ -23,7 +23,6 @@ import java.util.EnumMap;
 import java.util.EventListener;
 import java.util.Iterator;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -42,7 +41,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.ValueAddedListener;
 
 public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends NamespaceStorageSupport implements StmtContext.Mutable<A, D, E>, Identifiable<StatementIdentifier> {
+        extends NamespaceStorageSupport implements StmtContext.Mutable<A, D, E> {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private final class SubContextBuilder extends ContextBuilder {
@@ -104,8 +103,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     private final StatementDefinitionContext<A, D, E> definition;
-    private final StatementIdentifier identifier;
     private final StatementSourceReference statementDeclSource;
+    private final String rawArgument;
 
     private Multimap<ModelProcessingPhase, OnPhaseFinished> phaseListeners = ImmutableMultimap.of();
     private Multimap<ModelProcessingPhase, ContextMutation> phaseMutation = ImmutableMultimap.of();
@@ -125,18 +124,17 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     StatementContextBase(@Nonnull final ContextBuilder<A, D, E> builder) {
         this.definition = builder.getDefinition();
-        this.identifier = builder.createIdentifier();
         this.statementDeclSource = builder.getStamementSource();
+        this.rawArgument = builder.getRawArgument();
     }
 
     StatementContextBase(final StatementContextBase<A, D, E> original) {
         this.definition = Preconditions.checkNotNull(original.definition,
                 "Statement context definition cannot be null copying from: %s", original.getStatementSourceReference());
-        this.identifier = Preconditions.checkNotNull(original.identifier,
-                "Statement context identifier cannot be null copying from: %s", original.getStatementSourceReference());
         this.statementDeclSource = Preconditions.checkNotNull(original.statementDeclSource,
                 "Statement context statementDeclSource cannot be null copying from: %s",
                 original.getStatementSourceReference());
+        this.rawArgument = original.rawArgument;
     }
 
     @Override
@@ -235,14 +233,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     public abstract RootStatementContext<?, ?, ?> getRoot();
 
     /**
-     * @return statement identifier
-     */
-    @Override
-    public StatementIdentifier getIdentifier() {
-        return identifier;
-    }
-
-    /**
      * @return origin of statement
      */
     @Nonnull
@@ -260,12 +250,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return statementDeclSource;
     }
 
-    /**
-     * @return raw statement argument string
-     */
     @Override
     public String rawStatementArgument() {
-        return identifier.getArgument();
+        return rawArgument;
     }
 
     private static final <T> Collection<T> maybeWrap(final Collection<T> input) {
@@ -659,6 +646,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("definition", definition).add("id", identifier);
+        return toStringHelper.add("definition", definition).add("rawArgument", rawArgument);
     }
 }

@@ -95,8 +95,12 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                     && inProgressPhase == ModelProcessingPhase.SOURCE_LINKAGE) {
                 root = new RootStatementContext(this, SourceSpecificContext.this, root.getRootVersion());
             } else {
-                Preconditions.checkState(root.getIdentifier().equals(createIdentifier()),
-                        "Root statement was already defined as %s.", root.getIdentifier());
+                final QName rootStatement = root.definition().getStatementName();
+                final String rootArgument = root.rawStatementArgument();
+
+                Preconditions.checkState(Objects.equals(getDefinition().getStatementName(), rootStatement)
+                    && Objects.equals(getRawArgument(), rootArgument),
+                    "Root statement was already defined as '%s %s'.", rootStatement, rootArgument);
             }
             root.resetLists();
             return root;
