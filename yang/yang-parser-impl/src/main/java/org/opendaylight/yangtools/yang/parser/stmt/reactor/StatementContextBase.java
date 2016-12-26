@@ -43,37 +43,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWit
 public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends NamespaceStorageSupport implements StmtContext.Mutable<A, D, E> {
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private final class SubContextBuilder extends ContextBuilder {
-        final int childId;
-
-        SubContextBuilder(final int childId, final StatementDefinitionContext def,
-            final StatementSourceReference sourceRef) {
-            super(def, sourceRef);
-            this.childId = childId;
-        }
-
-        @Override
-        public StatementContextBase build() {
-            StatementContextBase<?, ?, ?> potential = substatements.get(childId);
-            if (potential == null) {
-                potential = new SubstatementContext(StatementContextBase.this, this);
-                substatements = substatements.put(childId, potential);
-                getDefinition().onStatementAdded(potential);
-            }
-            potential.resetLists();
-            switch (this.getStamementSource().getStatementSource()) {
-            case DECLARATION:
-                addDeclaredSubstatement(potential);
-                break;
-            case CONTEXT:
-                addEffectiveSubstatement(potential);
-                break;
-            }
-            return potential;
-        }
-    }
-
     /**
      * event listener when an item is added to model namespace
      */
@@ -108,7 +77,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private Multimap<ModelProcessingPhase, OnPhaseFinished> phaseListeners = ImmutableMultimap.of();
     private Multimap<ModelProcessingPhase, ContextMutation> phaseMutation = ImmutableMultimap.of();
-    private Collection<StatementContextBase<?, ?, ?>> declared = ImmutableList.of();
     private Collection<StatementContextBase<?, ?, ?>> effective = ImmutableList.of();
     private Collection<StatementContextBase<?, ?, ?>> effectOfStatement = ImmutableList.of();
     private StatementMap substatements = StatementMap.empty();
@@ -122,10 +90,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private E effectiveInstance;
     private int order = 0;
 
-    StatementContextBase(@Nonnull final ContextBuilder<A, D, E> builder) {
-        this.definition = builder.getDefinition();
-        this.statementDeclSource = builder.getStamementSource();
-        this.rawArgument = builder.getRawArgument();
+    StatementContextBase(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
+            final String rawArgument) {
+        this.definition = Preconditions.checkNotNull(def);
+        this.statementDeclSource = Preconditions.checkNotNull(ref);
+        this.rawArgument = rawArgument;
     }
 
     StatementContextBase(final StatementContextBase<A, D, E> original) {
@@ -251,28 +220,24 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public String rawStatementArgument() {
+    public final String rawStatementArgument() {
         return rawArgument;
-    }
-
-    private static final <T> Collection<T> maybeWrap(final Collection<T> input) {
-        if (input instanceof ImmutableCollection) {
-            return input;
-        }
-
-        return Collections.unmodifiableCollection(input);
     }
 
     @Nonnull
     @Override
     public Collection<StatementContextBase<?, ?, ?>> declaredSubstatements() {
-        return maybeWrap(declared);
+        return substatements.values();
     }
 
     @Nonnull
     @Override
     public Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements() {
-        return maybeWrap(effective);
+        if (effective instanceof ImmutableCollection) {
+            return effective;
+        }
+
+        return Collections.unmodifiableCollection(effective);
     }
 
     public void removeStatementsFromEffectiveSubstatements(final Collection<StatementContextBase<?, ?, ?>> substatements) {
@@ -351,38 +316,35 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     /**
-     * adds declared statement to collection of substatements
+     * Create a new substatement at the specified offset.
      *
-     * @param substatement substatement
-     * @throws IllegalStateException
-     *             if added in effective phase
-     * @throws NullPointerException
-     *             if statement parameter is null
+     * @param offset Substatement offset
+     * @param def definition context
+     * @param ref source reference
+     * @param argument statement argument
+     * @return A new substatement
      */
-    public void addDeclaredSubstatement(final StatementContextBase<?, ?, ?> substatement) {
-
+    final <CA, CD extends DeclaredStatement<CA>, CE extends EffectiveStatement<CA, CD>> StatementContextBase<CA, CD, CE>
+            createSubstatement(final int offset, final StatementDefinitionContext<CA, CD, CE> def,
+                    final StatementSourceReference ref, final String argument) {
         final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
         Preconditions.checkState(inProgressPhase != ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Declared statement cannot be added in effective phase at: %s", getStatementSourceReference());
 
-        if (declared.isEmpty()) {
-            declared = new ArrayList<>(1);
-        }
-        declared.add(Preconditions.checkNotNull(substatement,
-                "StatementContextBase declared substatement cannot be null at: %s", getStatementSourceReference()));
+        final StatementContextBase<CA, CD, CE> ret = new SubstatementContext<>(this, def, ref, argument);
+        substatements = substatements.put(offset, ret);
+        def.onStatementAdded(ret);
+        return ret;
     }
 
     /**
-     * builds a new substatement from statement definition context and statement source reference
+     * Lookup substatement by its offset in this statement.
      *
-     * @param def definition context
-     * @param ref source reference
-     *
-     * @return instance of ContextBuilder
+     * @param offset Substatement offset
+     * @return Substatement, or null if substatement does not exist.
      */
-    ContextBuilder<?, ?, ?> substatementBuilder(final int childId, final StatementDefinitionContext<?, ?, ?> def,
-            final StatementSourceReference ref) {
-        return new SubContextBuilder(childId, def, ref);
+    final StatementContextBase<?, ?, ?> lookupSubstatement(final int offset) {
+        return substatements.get(offset);
     }
 
     /**
@@ -407,21 +369,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             effectiveInstance = definition().getFactory().createEffective(this);
         }
         return effectiveInstance;
-    }
-
-    /**
-     * clears collection of declared substatements
-     *
-     * @throws IllegalStateException
-     *             if invoked in effective build phase
-     */
-    void resetLists() {
-
-        final SourceSpecificContext sourceContext = getRoot().getSourceContext();
-        Preconditions.checkState(sourceContext.getInProgressPhase() != ModelProcessingPhase.EFFECTIVE_MODEL,
-                "Declared statements list cannot be cleared in effective phase at: %s", getStatementSourceReference());
-
-        declared = ImmutableList.of();
     }
 
     /**
@@ -456,7 +403,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             }
         }
 
-        for (final StatementContextBase<?, ?, ?> child : declared) {
+        for (final StatementContextBase<?, ?, ?> child : substatements.values()) {
             finished &= child.tryToCompletePhase(phase);
         }
         for (final StatementContextBase<?, ?, ?> child : effective) {
@@ -471,12 +418,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     /**
-     * occurs on end of {@link ModelProcessingPhase} of source parsing
+     * Occurs on end of {@link ModelProcessingPhase} of source parsing
      *
      * @param phase
      *            that was to be completed (finished)
      * @throws SourceException
-     *             when an error occured in source parsing
+     *             when an error occurred in source parsing
      */
     private void onPhaseCompleted(final ModelProcessingPhase phase) {
         completedPhase = phase;

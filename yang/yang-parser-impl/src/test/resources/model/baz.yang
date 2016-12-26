@@ -188,7 +188,7 @@ module baz {
             type br:my-decimal-type;
         }
         
-        br:opendaylight;
+        br:opendaylight awesome;
     }
 
 }
