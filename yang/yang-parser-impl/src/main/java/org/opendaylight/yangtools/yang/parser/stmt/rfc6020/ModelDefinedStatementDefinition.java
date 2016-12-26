@@ -35,8 +35,8 @@ public final class ModelDefinedStatementDefinition implements StatementDefinitio
     }
 
     @Deprecated
-    public ModelDefinedStatementDefinition(final QName qname) {
-        this(qname, qname, false);
+    public ModelDefinedStatementDefinition(final QName qname, final boolean hasArgument) {
+        this(qname, hasArgument ? qname : null, false);
     }
 
     @Nonnull
