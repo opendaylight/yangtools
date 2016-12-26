@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Storag
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 /**
  * Root statement class for a YANG source. All statements defined in that YANG source are mapped underneath an instance
@@ -49,15 +50,16 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
      */
     private Collection<RootStatementContext<?, ?, ?>> includedContexts = ImmutableList.of();
 
-    RootStatementContext(final ContextBuilder<A, D, E> builder, final SourceSpecificContext sourceContext) {
-        super(builder);
+    RootStatementContext(final SourceSpecificContext sourceContext, final StatementDefinitionContext<A, D, E> def,
+        final StatementSourceReference ref, final String rawArgument) {
+        super(def, ref, rawArgument);
         this.sourceContext = Preconditions.checkNotNull(sourceContext);
-        this.argument = builder.getDefinition().parseArgumentValue(this, builder.getRawArgument());
+        this.argument = def.parseArgumentValue(this, rawArgument);
     }
 
-    RootStatementContext(final ContextBuilder<A, D, E> builder, final SourceSpecificContext sourceContext,
-            final YangVersion version) {
-        this(builder, sourceContext);
+    RootStatementContext(final SourceSpecificContext sourceContext, final StatementDefinitionContext<A, D, E> def,
+        final StatementSourceReference ref, final String rawArgument, final YangVersion version) {
+        this(sourceContext, def, ref, rawArgument);
         this.setRootVersion(version);
     }
 

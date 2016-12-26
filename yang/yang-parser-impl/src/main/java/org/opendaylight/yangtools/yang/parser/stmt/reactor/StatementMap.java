@@ -8,7 +8,13 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.AbstractIterator;
+import com.google.common.collect.ImmutableList;
+import java.util.AbstractCollection;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 
 /**
@@ -26,6 +32,11 @@ abstract class StatementMap {
         @Override
         StatementMap put(final int index, final StatementContextBase<?, ?, ?> object) {
             return index == 0 ? new Singleton(object) : new Regular(index, object);
+        }
+
+        @Override
+        Collection<StatementContextBase<?, ?, ?>> values() {
+            return ImmutableList.of();
         }
     }
 
@@ -64,6 +75,11 @@ abstract class StatementMap {
             elements[index] = Preconditions.checkNotNull(object);
             return this;
         }
+
+        @Override
+        Collection<StatementContextBase<?, ?, ?>> values() {
+            return new NonnullArrayCollection<>(elements);
+        }
     }
 
     private static final class Singleton extends StatementMap {
@@ -83,6 +99,66 @@ abstract class StatementMap {
             Preconditions.checkArgument(index != 0);
             return new Regular(this.object, index, object);
         }
+
+        @Override
+        Collection<StatementContextBase<?, ?, ?>> values() {
+            return ImmutableList.of(object);
+        }
+    }
+
+    private static final class NonnullArrayCollection<T> extends AbstractCollection<T> {
+        private final T[] elements;
+
+        NonnullArrayCollection(final T[] elements) {
+            this.elements = Preconditions.checkNotNull(elements);
+        }
+
+        @Override
+        public void forEach(final Consumer<? super T> action) {
+            for (T e : elements) {
+                if (e != null) {
+                    action.accept(e);
+                }
+            }
+        }
+
+        @Override
+        public boolean isEmpty() {
+            // This has a single-use and when it is instantiated, we know to have at least two items
+            return false;
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new AbstractIterator<T>() {
+                private int nextOffset = 0;
+
+                @Override
+                protected T computeNext() {
+                    while (nextOffset < elements.length) {
+                        final T ret = elements[nextOffset++];
+                        if (ret != null) {
+                            return ret;
+                        }
+                    }
+
+                    return endOfData();
+                }
+            };
+        }
+
+        @Override
+        public int size() {
+            // Optimized for non-sparse case
+            int nulls = 0;
+            for (T e : elements) {
+                if (e == null) {
+                    nulls++;
+                }
+            }
+
+            return elements.length - nulls;
+        }
     }
 
     private static final StatementMap EMPTY = new Empty();
@@ -93,4 +169,5 @@ abstract class StatementMap {
 
     abstract StatementContextBase<?, ?, ?> get(int index);
     abstract @Nonnull StatementMap put(int index, @Nonnull StatementContextBase<?, ?, ?> object);
+    abstract Collection<StatementContextBase<?, ?, ?>> values();
 }
