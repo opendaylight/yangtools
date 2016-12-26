@@ -43,8 +43,8 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
          * Perform an explicit copy, because Collections2.transform() is lazily transformed and retains pointer to
          * original collection, which may contains references to mutable context.
          */
-        final Collection<StatementContextBase<?, ?, ?>> declaredSubstatements = context.declaredSubstatements();
-        substatements = ImmutableList.copyOf(Collections2.transform(declaredSubstatements, StatementContextBase::buildDeclared));
+        substatements = ImmutableList.copyOf(Collections2.transform(context.declaredSubstatements(),
+            StatementContextBase::buildDeclared));
     }
 
     protected final <S extends DeclaredStatement<?>> S firstDeclared(final Class<S> type) {
