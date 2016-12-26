@@ -43,37 +43,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWit
 public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends NamespaceStorageSupport implements StmtContext.Mutable<A, D, E> {
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private final class SubContextBuilder extends ContextBuilder {
-        final int childId;
-
-        SubContextBuilder(final int childId, final StatementDefinitionContext def,
-            final StatementSourceReference sourceRef) {
-            super(def, sourceRef);
-            this.childId = childId;
-        }
-
-        @Override
-        public StatementContextBase build() {
-            StatementContextBase<?, ?, ?> potential = substatements.get(childId);
-            if (potential == null) {
-                potential = new SubstatementContext(StatementContextBase.this, this);
-                substatements = substatements.put(childId, potential);
-                getDefinition().onStatementAdded(potential);
-            }
-            potential.resetLists();
-            switch (this.getStamementSource().getStatementSource()) {
-            case DECLARATION:
-                addDeclaredSubstatement(potential);
-                break;
-            case CONTEXT:
-                addEffectiveSubstatement(potential);
-                break;
-            }
-            return potential;
-        }
-    }
-
     /**
      * event listener when an item is added to model namespace
      */
@@ -122,10 +91,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private E effectiveInstance;
     private int order = 0;
 
-    StatementContextBase(@Nonnull final ContextBuilder<A, D, E> builder) {
-        this.definition = builder.getDefinition();
-        this.statementDeclSource = builder.getStamementSource();
-        this.rawArgument = builder.getRawArgument();
+    StatementContextBase(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
+            final String rawArgument) {
+        this.definition = Preconditions.checkNotNull(def);
+        this.statementDeclSource = Preconditions.checkNotNull(ref);
+        this.rawArgument = rawArgument;
     }
 
     StatementContextBase(final StatementContextBase<A, D, E> original) {
@@ -251,7 +221,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public String rawStatementArgument() {
+    public final String rawStatementArgument() {
         return rawArgument;
     }
 
@@ -373,16 +343,40 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     /**
-     * builds a new substatement from statement definition context and statement source reference
+     * Create a new substatement at the specified offset.
      *
+     * @param offset Substatement offset
      * @param def definition context
      * @param ref source reference
-     *
-     * @return instance of ContextBuilder
+     * @param argument statement argument
+     * @return A new substatement
      */
-    ContextBuilder<?, ?, ?> substatementBuilder(final int childId, final StatementDefinitionContext<?, ?, ?> def,
-            final StatementSourceReference ref) {
-        return new SubContextBuilder(childId, def, ref);
+    final <CA, CD extends DeclaredStatement<CA>, CE extends EffectiveStatement<CA, CD>> StatementContextBase<CA, CD, CE>
+            createSubstatement(final int offset, final StatementDefinitionContext<CA, CD, CE> def,
+                    final StatementSourceReference ref, final String argument) {
+        final StatementContextBase<CA, CD, CE> ret = new SubstatementContext(this, def, ref, argument);
+        substatements = substatements.put(offset, ret);
+        def.onStatementAdded(ret);
+
+        switch (ref.getStatementSource()) {
+        case DECLARATION:
+            addDeclaredSubstatement(ret);
+            break;
+        case CONTEXT:
+            addEffectiveSubstatement(ret);
+            break;
+        }
+        return ret;
+    }
+
+    /**
+     * Lookup substatement by its offset in this statement.
+     *
+     * @param offset Substatement offset
+     * @return Substatement, or null if substatement does not exist.
+     */
+    final StatementContextBase<?, ?, ?> lookupSubstatement(final int offset) {
+        return substatements.get(offset);
     }
 
     /**

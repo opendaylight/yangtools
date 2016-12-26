@@ -77,36 +77,6 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         FINISHED
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private final class RootContextBuilder extends ContextBuilder {
-        RootContextBuilder(final StatementDefinitionContext def, final StatementSourceReference sourceRef) {
-            super(def, sourceRef);
-        }
-
-        @Override
-        public StatementContextBase build() {
-            /*
-             * If root is null or root version is other than default,
-             * we need to create new root.
-             */
-            if (root == null) {
-                root = new RootStatementContext(this, SourceSpecificContext.this);
-            } else if (!RootStatementContext.DEFAULT_VERSION.equals(root.getRootVersion())
-                    && inProgressPhase == ModelProcessingPhase.SOURCE_LINKAGE) {
-                root = new RootStatementContext(this, SourceSpecificContext.this, root.getRootVersion());
-            } else {
-                final QName rootStatement = root.definition().getStatementName();
-                final String rootArgument = root.rawStatementArgument();
-
-                Preconditions.checkState(Objects.equals(getDefinition().getStatementName(), rootStatement)
-                    && Objects.equals(getRawArgument(), rootArgument),
-                    "Root statement was already defined as '%s %s'.", rootStatement, rootArgument);
-            }
-            root.resetLists();
-            return root;
-        }
-    }
-
     private static final Logger LOG = LoggerFactory.getLogger(SourceSpecificContext.class);
     private static final Map<String, StatementSupport<?, ?, ?>> BUILTIN_TYPE_SUPPORTS =
             ImmutableMap.<String, StatementSupport<?, ?, ?>>builder()
@@ -149,8 +119,16 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return inProgressPhase;
     }
 
-    ContextBuilder<?, ?, ?> createDeclaredChild(final StatementContextBase<?, ?, ?> current, final int childId,
+    StatementContextBase<?, ?, ?> createDeclaredChild(final StatementContextBase<?, ?, ?> current, final int childId,
             QName name, final String argument, final StatementSourceReference ref) {
+        if (current != null) {
+            // Fast path: we are entering a statement which was emitted in previous phase
+            final StatementContextBase<?, ?, ?> existing = current.lookupSubstatement(childId);
+            if (existing != null) {
+                return existing;
+            }
+        }
+
         // FIXME: BUG-7038: Refactor/clean up this special case
         if (TYPE.equals(name)) {
             SourceException.throwIfNull(argument, ref, "Type statement requires an argument");
@@ -185,19 +163,35 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 new ModelDefinedStatementDefinition(qName)));
         }
 
-        Preconditions.checkArgument(def != null, "Statement %s does not have type mapping defined.", name);
-        final ContextBuilder<?, ?, ?> ret;
-        if (current == null) {
-            ret = new RootContextBuilder(def, ref);
+        InferenceException.throwIfNull(def, ref, "Statement %s does not have type mapping defined.", name);
+        if (def.hasArgument()) {
+            SourceException.throwIfNull(argument, ref, "Statement %s requires an argument", name);
         } else {
-            ret = current.substatementBuilder(childId, def, ref);
+            SourceException.throwIf(argument != null, ref, "Statement %s does not take argument", name);
         }
 
-        if (argument != null) {
-            ret.setArgument(argument, ref);
+        if (current != null) {
+            return current.createSubstatement(childId, def, ref, argument);
         }
 
-        return ret;
+        /*
+         * If root is null or root version is other than default,
+         * we need to create new root.
+         */
+        if (root == null) {
+            root = new RootStatementContext<>(this, def, ref, argument);
+        } else if (!RootStatementContext.DEFAULT_VERSION.equals(root.getRootVersion())
+                && inProgressPhase == ModelProcessingPhase.SOURCE_LINKAGE) {
+            root = new RootStatementContext<>(this, def, ref, argument, root.getRootVersion());
+        } else {
+            final QName rootStatement = root.definition().getStatementName();
+            final String rootArgument = root.rawStatementArgument();
+
+            Preconditions.checkState(Objects.equals(def.getStatementName(), rootStatement)
+                && Objects.equals(argument, rootArgument),
+                "Root statement was already defined as '%s %s'.", rootStatement, rootArgument);
+        }
+        return root;
     }
 
     RootStatementContext<?, ?, ?> getRoot() {
