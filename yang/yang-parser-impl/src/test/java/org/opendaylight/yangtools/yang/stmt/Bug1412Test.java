@@ -60,17 +60,19 @@ public class Bug1412Test {
         UnknownSchemaNode description = null;
         UnknownSchemaNode actionPoint = null;
         UnknownSchemaNode output = null;
-        for (UnknownSchemaNode un : unknownNodes) {
-            if ("info".equals(un.getNodeType().getLocalName())) {
+        for (final UnknownSchemaNode un : unknownNodes) {
+            final String name = un.getNodeType().getLocalName();
+            if ("info".equals(name)) {
                 info = un;
-            } else if ("description".equals(un.getNodeType().getLocalName())) {
+            } else if ("description".equals(name)) {
                 description = un;
-            } else if ("actionpoint".equals(un.getNodeType().getLocalName())) {
+            } else if ("actionpoint".equals(name)) {
                 actionPoint = un;
-            } else if ("output".equals(un.getNodeType().getLocalName())) {
+            } else if ("output".equals(name)) {
                 output = un;
             }
         }
+
         assertNotNull(info);
         assertNotNull(description);
         assertNotNull(actionPoint);

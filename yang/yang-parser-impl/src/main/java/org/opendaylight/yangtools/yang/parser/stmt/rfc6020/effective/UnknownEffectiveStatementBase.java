@@ -42,7 +42,7 @@ public abstract class UnknownEffectiveStatementBase<A> extends AbstractEffective
 
         if (extensionInit == null) {
             extension = null;
-            nodeType = ctx.getPublicDefinition().getArgumentName();
+            nodeType = ctx.getPublicDefinition().getStatementName();
         } else {
             final EffectiveStatement<QName, ExtensionStatement> effective = extensionInit.buildEffective();
             Preconditions.checkState(effective instanceof ExtensionDefinition,
