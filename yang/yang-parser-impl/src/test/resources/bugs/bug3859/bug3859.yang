@@ -6,7 +6,7 @@ module reference-in-unknown {
     argument test;
   }
 
-  riu:test-extension {
+  riu:test-extension test {
     container cont {
       description
         "This is just a plain text";
