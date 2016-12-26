@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -272,10 +271,8 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                  * b) added to augment body also via uses of a grouping and
                  * such sub-statements are stored in effective sub-statements collection.
                  */
-                for (final StatementContextBase<?, ?, ?> sourceSubStatement : Iterables.concat(
-                        sourceCtx.declaredSubstatements(), sourceCtx.declaredSubstatements())) {
-                    checkForMandatoryNodes(sourceSubStatement);
-                }
+                sourceCtx.declaredSubstatements().forEach(Definition::checkForMandatoryNodes);
+                sourceCtx.effectiveSubstatements().forEach(Definition::checkForMandatoryNodes);
             }
 
             InferenceException.throwIf(StmtContextUtils.isMandatoryNode(sourceCtx),
