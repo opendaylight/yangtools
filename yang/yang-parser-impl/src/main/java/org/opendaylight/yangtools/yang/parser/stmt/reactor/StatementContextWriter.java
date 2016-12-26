@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -18,10 +19,9 @@ final class StatementContextWriter implements StatementWriter {
     private final ModelProcessingPhase phase;
     private final SourceSpecificContext ctx;
 
-    private StatementContextBase<?, ?, ?> parent;
-    private ContextBuilder<?, ?, ?> current;
+    private StatementContextBase<?, ?, ?> current;
 
-    public StatementContextWriter(final SourceSpecificContext ctx, final ModelProcessingPhase phase) {
+    StatementContextWriter(final SourceSpecificContext ctx, final ModelProcessingPhase phase) {
         this.ctx = Preconditions.checkNotNull(ctx);
         this.phase = Preconditions.checkNotNull(phase);
     }
@@ -29,28 +29,19 @@ final class StatementContextWriter implements StatementWriter {
     @Override
     public void startStatement(final int childId, @Nonnull final QName name, final String argument,
             @Nonnull final StatementSourceReference ref) {
-        deferredCreate();
-        current = ctx.createDeclaredChild(parent, childId, name, argument, ref);
+        current = Verify.verifyNotNull(ctx.createDeclaredChild(current, childId, name, argument, ref));
     }
 
     @Override
     public void endStatement(@Nonnull final StatementSourceReference ref) {
-        deferredCreate();
-        Preconditions.checkState(parent != null);
-        parent.endDeclared(ref,phase);
-        parent = parent.getParentContext();
+        Preconditions.checkState(current != null);
+        current.endDeclared(ref, phase);
+        current = current.getParentContext();
     }
 
     @Nonnull
     @Override
     public ModelProcessingPhase getPhase() {
         return phase;
-    }
-
-    private void deferredCreate() {
-        if (current != null) {
-            parent = current.build();
-            current = null;
-        }
     }
 }

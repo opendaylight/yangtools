@@ -40,6 +40,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
@@ -66,10 +67,11 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
     private volatile SchemaPath schemaPath;
 
-    SubstatementContext(final StatementContextBase<?, ?, ?> parent, final ContextBuilder<A, D, E> builder) {
-        super(builder);
+    SubstatementContext(final StatementContextBase<?, ?, ?> parent, final StatementDefinitionContext<A, D, E> def,
+            final StatementSourceReference ref, final String rawArgument) {
+        super(def, ref, rawArgument);
         this.parent = Preconditions.checkNotNull(parent, "Parent must not be null");
-        this.argument = builder.getDefinition().parseArgumentValue(this, builder.getRawArgument());
+        this.argument = def.parseArgumentValue(this, rawArgument);
     }
 
     @SuppressWarnings("unchecked")
