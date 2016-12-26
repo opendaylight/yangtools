@@ -8,11 +8,19 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.AbstractIterator;
+import com.google.common.collect.ImmutableList;
+import java.util.AbstractCollection;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.function.Consumer;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
- * Simple integer-to-StatementContextBase map optimized for size and restricted in scope of operations.
+ * Simple integer-to-StatementContextBase map optimized for size and restricted in scope of operations. It does not
+ * implement {@link java.util.Map} for simplicity's sake.
  *
  * @author Robert Varga
  */
@@ -26,6 +34,11 @@ abstract class StatementMap {
         @Override
         StatementMap put(final int index, final StatementContextBase<?, ?, ?> object) {
             return index == 0 ? new Singleton(object) : new Regular(index, object);
+        }
+
+        @Override
+        Collection<StatementContextBase<?, ?, ?>> values() {
+            return ImmutableList.of();
         }
     }
 
@@ -64,7 +77,68 @@ abstract class StatementMap {
             elements[index] = Preconditions.checkNotNull(object);
             return this;
         }
+
+        @Override
+        Collection<StatementContextBase<?, ?, ?>> values() {
+            return new RegularAsCollection<>(elements);
+        }
     }
+
+    private static final class RegularAsCollection<T> extends AbstractCollection<T> {
+        private final T[] elements;
+
+        RegularAsCollection(final T[] elements) {
+            this.elements = Preconditions.checkNotNull(elements);
+        }
+
+        @Override
+        public void forEach(final Consumer<? super T> action) {
+            for (T e : elements) {
+                if (e != null) {
+                    action.accept(e);
+                }
+            }
+        }
+
+        @Override
+        public boolean isEmpty() {
+            // This has a single-use and when it is instantiated, we know to have at least two items
+            return false;
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            return new AbstractIterator<T>() {
+                private int nextOffset = 0;
+
+                @Override
+                protected T computeNext() {
+                    while (nextOffset < elements.length) {
+                        final T ret = elements[nextOffset++];
+                        if (ret != null) {
+                            return ret;
+                        }
+                    }
+
+                    return endOfData();
+                }
+            };
+        }
+
+        @Override
+        public int size() {
+            // Optimized for non-sparse case
+            int nulls = 0;
+            for (T e : elements) {
+                if (e == null) {
+                    nulls++;
+                }
+            }
+
+            return elements.length - nulls;
+        }
+    }
+
 
     private static final class Singleton extends StatementMap {
         private final StatementContextBase<?, ?, ?> object;
@@ -83,6 +157,11 @@ abstract class StatementMap {
             Preconditions.checkArgument(index != 0);
             return new Regular(this.object, index, object);
         }
+
+        @Override
+        Collection<StatementContextBase<?, ?, ?>> values() {
+            return ImmutableList.of(object);
+        }
     }
 
     private static final StatementMap EMPTY = new Empty();
@@ -91,6 +170,30 @@ abstract class StatementMap {
         return EMPTY;
     }
 
-    abstract StatementContextBase<?, ?, ?> get(int index);
+    /**
+     * Return the statement context at specified index.
+     *
+     * @param index Element index, must be non-negative
+     * @return Requested element or null if there is no element at that index
+     */
+    abstract @Nullable StatementContextBase<?, ?, ?> get(int index);
+
+    /**
+     * Add a statement at specified index.
+     *
+     * @param index Element index, must be non-negative
+     * @param object Object to store
+     * @return New statement map
+     * @throws IllegalArgumentException if the index is already occupied
+     */
     abstract @Nonnull StatementMap put(int index, @Nonnull StatementContextBase<?, ?, ?> object);
+
+    /**
+     * Return a read-only view of the elements in this map. Unlike other maps, this view does not detect concurrent
+     * modification. Iteration is performed in order of increasing offset. In face of concurrent modification, number
+     * of elements returned through iteration may not match the size reported via {@link Collection#size()}.
+     *
+     * @return Read-only view of available statements.
+     */
+    abstract @Nonnull Collection<StatementContextBase<?, ?, ?>> values();
 }
