@@ -30,6 +30,9 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
     @Override
     public abstract NamespaceStorageNode getParentNamespaceStorage();
 
+    /**
+     * @return registry of source context
+     */
     public abstract NamespaceBehaviour.Registry getBehaviourRegistry();
 
     protected void checkLocalNamespaceAllowed(final Class<? extends IdentifierNamespace<?, ?>> type) {

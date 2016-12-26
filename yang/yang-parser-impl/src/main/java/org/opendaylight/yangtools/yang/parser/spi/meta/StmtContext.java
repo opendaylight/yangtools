@@ -35,6 +35,9 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     @Nonnull
     StatementDefinition getPublicDefinition();
 
+    /**
+     * @return context of parent of statement
+     */
     @Nullable
     StmtContext<?, ?, ?> getParentContext();
 

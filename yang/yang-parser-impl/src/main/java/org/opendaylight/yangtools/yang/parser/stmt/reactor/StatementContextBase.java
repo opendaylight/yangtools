@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -225,9 +224,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.completedPhase = completedPhase;
     }
 
-    /**
-     * @return context of parent of statement
-     */
     @Override
     public abstract StatementContextBase<?, ?, ?> getParentContext();
 
@@ -400,14 +396,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     ContextBuilder<?, ?, ?> substatementBuilder(final int childId, final StatementDefinitionContext<?, ?, ?> def,
             final StatementSourceReference ref) {
         return new SubContextBuilder(childId, def, ref);
-    }
-
-    /**
-     * @return local namespace behaviour type {@link NamespaceBehaviour}
-     */
-    @Override
-    public StorageNodeType getStorageNodeType() {
-        return StorageNodeType.STATEMENT_LOCAL;
     }
 
     /**

@@ -100,9 +100,6 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
         return sourceContext;
     }
 
-    /**
-     * @return registry of source context
-     */
     @Override
     public Registry getBehaviourRegistry() {
         return sourceContext;
