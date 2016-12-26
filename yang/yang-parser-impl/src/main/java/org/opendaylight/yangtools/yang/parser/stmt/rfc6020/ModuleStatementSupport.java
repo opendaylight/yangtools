@@ -104,8 +104,7 @@ public class ModuleStatementSupport extends
     public void onPreLinkageDeclared(final Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt) {
         final String moduleName = stmt.getStatementArgument();
 
-        final URI moduleNs = firstAttributeOf(stmt.declaredSubstatements(),
-                NamespaceStatement.class);
+        final URI moduleNs = firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class);
         SourceException.throwIfNull(moduleNs, stmt.getStatementSourceReference(),
             "Namespace of the module [%s] is missing", stmt.getStatementArgument());
         stmt.addToNs(ModuleNameToNamespace.class, moduleName, moduleNs);
