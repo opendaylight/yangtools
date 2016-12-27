@@ -8,13 +8,11 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
@@ -22,6 +20,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Namesp
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 abstract class NamespaceStorageSupport implements NamespaceStorageNode {
 
@@ -36,14 +35,13 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         // NOOP
     }
 
-    protected <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceElementAdded(final Class<N> type, final K key,
-            final V value) {
+    protected <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceElementAdded(final Class<N> type, final K key, final V value) {
         // NOOP
     }
 
     @Nonnull
-    public final <K,V, KT extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(final Class<N> type,
-            final KT key) throws NamespaceNotAvailableException {
+    public final <K,V, KT extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(final Class<N> type, final KT key)
+            throws NamespaceNotAvailableException {
         return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this,key);
     }
 
@@ -52,19 +50,18 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
     }
 
     @SuppressWarnings("unchecked")
-    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromCurrentStmtCtxNamespace(
-            final Class<N> type) {
+    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromCurrentStmtCtxNamespace(final Class<N> type){
         return (Map<K, V>) namespaces.get(type);
     }
 
-    public final <K,V, KT extends K, VT extends V,N extends IdentifierNamespace<K, V>> void addToNs(final Class<N> type,
-            final KT key, final VT value) throws NamespaceNotAvailableException {
+    public final <K,V, KT extends K, VT extends V,N extends IdentifierNamespace<K, V>> void addToNs(final Class<N> type, final KT key, final VT value)
+            throws NamespaceNotAvailableException {
         getBehaviourRegistry().getNamespaceBehaviour(type).addTo(this,key,value);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public final <K, N extends StatementNamespace<K, ?,?>> void addContextToNamespace(final Class<N> type, final K key,
-            final StmtContext<?, ?, ?> value) throws NamespaceNotAvailableException {
+    public final <K, N extends StatementNamespace<K, ?,?>> void addContextToNamespace(final Class<N> type, final K key, final StmtContext<?, ?, ?> value)
+            throws NamespaceNotAvailableException {
         getBehaviourRegistry().getNamespaceBehaviour((Class)type).addTo(this, key, value);
     }
 
@@ -78,20 +75,11 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
             potential = localNamespace.get(key);
         }
 
-        if (potential == null && isModuleIdentifierWithoutSpecifiedRevision(key)) {
+        if (potential == null && Utils.isModuleIdentifierWithoutSpecifiedRevision(key)) {
             potential = getRegardlessOfRevision((ModuleIdentifier)key,(Map<ModuleIdentifier,V>)localNamespace);
         }
 
         return potential;
-    }
-
-    private static boolean isModuleIdentifierWithoutSpecifiedRevision(final Object obj) {
-        if (!(obj instanceof ModuleIdentifier)) {
-            return false;
-        }
-
-        final Date rev = ((ModuleIdentifier) obj).getRevision();
-        return rev == SimpleDateFormatUtil.DEFAULT_DATE_IMP || rev == SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE;
     }
 
     private static <K, V, N extends IdentifierNamespace<K, V>> V getRegardlessOfRevision(final ModuleIdentifier key,
@@ -120,8 +108,7 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(final Class<N> type, final K key,
-            final V value) {
+    public <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(final Class<N> type, final K key, final V value) {
         @SuppressWarnings("unchecked")
         Map<K, V> localNamespace = (Map<K,V>) namespaces.get(type);
         if (localNamespace == null) {

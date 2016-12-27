@@ -13,7 +13,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
+ *
  * Node which can have documentation assigned.
+ *
  */
 public interface DocumentedNode {
 

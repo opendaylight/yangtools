@@ -73,7 +73,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.IdentityStatementRfc7
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ImportStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.IncludeStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.InputStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.LeafListStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ListStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ModifierStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ModuleStatementRfc7950Support;
@@ -212,8 +211,7 @@ public final class YangInferencePipeline {
             .addSupport(treeScoped(GroupingNamespace.class)) //treeScoped
             .addSupport(new ErrorMessageStatementImpl.Definition())
             .addSupport(new ErrorAppTagStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1, new LeafListStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new LeafListStatementRfc7950Support())
+            .addSupport(new LeafListStatementImpl.Definition())
             .addSupport(new PresenceStatementImpl.Definition())
             .addSupport(new KeyStatementImpl.Definition())
             .addSupport(new MaxElementsStatementImpl.Definition())
