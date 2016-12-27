@@ -11,10 +11,13 @@ import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
+ *
  * Contains method for getting data from <code>identityref</code> built-in YANG
  * type.
+ *
  */
 public interface IdentityrefTypeDefinition extends TypeDefinition<IdentityrefTypeDefinition> {
+
     /**
      * Returns identity to which the instance of this type refers.
      *
@@ -22,4 +25,5 @@ public interface IdentityrefTypeDefinition extends TypeDefinition<IdentityrefTyp
      *         statement
      */
     IdentitySchemaNode getIdentity();
+
 }

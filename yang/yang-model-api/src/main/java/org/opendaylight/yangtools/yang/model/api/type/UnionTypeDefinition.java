@@ -8,10 +8,12 @@
 package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.List;
+
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
  * Contains the method which access union item in the union type.
+ *
  */
 public interface UnionTypeDefinition extends TypeDefinition<UnionTypeDefinition> {
 

@@ -569,6 +569,12 @@ public final class Utils {
         return revision;
     }
 
+    public static boolean isModuleIdentifierWithoutSpecifiedRevision(final Object o) {
+        return (o instanceof ModuleIdentifier)
+                && (((ModuleIdentifier) o).getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP || ((ModuleIdentifier) o)
+                        .getRevision() == SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE);
+    }
+
     /**
      * Replaces illegal characters of QName by the name of the character (e.g.
      * '?' is replaced by "QuestionMark" etc.).

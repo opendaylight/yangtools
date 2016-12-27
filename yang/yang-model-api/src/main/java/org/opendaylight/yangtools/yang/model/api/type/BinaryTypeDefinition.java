@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
  * The binary built-in type represents any binary data, i.e., a sequence of
- * octets.
+ * octets. <br>
  * <br>
  * Binary values are encoded with the base64 encoding scheme (see <a
  * href="https://tools.ietf.org/html/rfc4648#section-4">[RFC4648], Section
@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * The canonical form of a binary value follows the rules in <a
  * href="https://tools.ietf.org/html/rfc4648">[RFC4648]</a>.
  *
+ * <br>
  * <br>
  * This interface was modeled according to definition in <a
  * href="https://tools.ietf.org/html/rfc6020#section-9.8">[RFC-6020] The binary

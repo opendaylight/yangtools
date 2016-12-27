@@ -11,6 +11,7 @@ import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
+ *
  * Contains method for getting data from the <code>string</code> YANG built-in
  * type.
  */
