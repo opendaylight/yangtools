@@ -22,6 +22,9 @@ package org.opendaylight.yangtools.triemap;
  *
  * @param <V>
  */
-class None<V> extends Option<V>{
-
+final class None<V> extends Option<V> {
+    @Override
+    boolean nonEmpty() {
+        return false;
+    }
 }

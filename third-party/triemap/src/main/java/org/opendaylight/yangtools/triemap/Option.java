@@ -22,21 +22,21 @@ package org.opendaylight.yangtools.triemap;
  *
  * @param <V>
  */
-@SuppressWarnings({"rawtypes", "unchecked"})
-class Option<V> {
-    static None none = new None();
-    public static <V> Option<V> makeOption(final V o){
-        if(o!=null) {
+abstract class Option<V> {
+    private static final None<?> NONE = new None<>();
+
+    static <V> Option<V> makeOption(final V o) {
+        if (o != null) {
             return new Some<>(o);
-        } else {
-            return none;
         }
+
+        return makeOption();
     }
 
-    public static <V> Option<V> makeOption(){
-        return none;
+    @SuppressWarnings("unchecked")
+    static <V> Option<V> makeOption() {
+        return (Option<V>) NONE;
     }
-    public boolean nonEmpty () {
-        return false;
-    }
+
+    abstract boolean nonEmpty();
 }

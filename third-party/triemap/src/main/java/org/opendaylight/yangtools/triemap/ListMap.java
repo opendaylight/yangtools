@@ -93,7 +93,7 @@ abstract class ListMap<K,V> {
 
         @Override
         public Option<V> get (final K key) {
-            return Option.makeOption (null);
+            return Option.makeOption();
         }
 
         @Override
@@ -207,14 +207,14 @@ abstract class ListMap<K,V> {
         }
 
         @Override
-        public Option<V> get (final K key) {
-            if(key.equals (k)) {
-                return Option.makeOption (v);
+        public Option<V> get(final K key) {
+            if (key.equals(k)) {
+                return Option.makeOption(v);
             }
-            if(next != null) {
-                return next.get (key);
+            if (next != null) {
+                return next.get(key);
             }
-            return Option.makeOption (null);
+            return Option.makeOption();
         }
 
 
