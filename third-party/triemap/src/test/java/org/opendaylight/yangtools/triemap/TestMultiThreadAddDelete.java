@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
 import org.junit.Test;
 
 public class TestMultiThreadAddDelete {
@@ -15,8 +14,8 @@ public class TestMultiThreadAddDelete {
     @Test
     public void testMultiThreadAddDelete () {
         for (int j = 0; j < RETRIES; j++) {
-            final Map<Object, Object> bt = new TrieMap <Object, Object> ();
-            
+            final Map<Object, Object> bt = new TrieMap <> ();
+
             {
                 final ExecutorService es = Executors.newFixedThreadPool (N_THREADS);
                 for (int i = 0; i < N_THREADS; i++) {
@@ -39,10 +38,10 @@ public class TestMultiThreadAddDelete {
                     e.printStackTrace ();
                 }
             }
-            
+
             TestHelper.assertEquals (COUNT, bt.size ());
             TestHelper.assertFalse (bt.isEmpty ());
-            
+
             {
                 final ExecutorService es = Executors.newFixedThreadPool (N_THREADS);
                 for (int i = 0; i < N_THREADS; i++) {
@@ -65,11 +64,11 @@ public class TestMultiThreadAddDelete {
                     e.printStackTrace ();
                 }
             }
-            
-            
+
+
             TestHelper.assertEquals (0, bt.size ());
             TestHelper.assertTrue (bt.isEmpty ());
-            
+
             {
                 final ExecutorService es = Executors.newFixedThreadPool (N_THREADS);
                 for (int i = 0; i < N_THREADS; i++) {
@@ -103,7 +102,7 @@ public class TestMultiThreadAddDelete {
                     e.printStackTrace ();
                 }
             }
-            
+
             TestHelper.assertEquals (0, bt.size ());
             if (!bt.isEmpty ()) {
                 System.out.println ();

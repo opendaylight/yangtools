@@ -18,11 +18,11 @@ abstract class MainNode<K, V> extends BasicNode {
 
     public abstract int cachedSize (Object ct);
 
-    public boolean CAS_PREV (MainNode<K, V> oldval, MainNode<K, V> nval) {
+    public boolean CAS_PREV (final MainNode<K, V> oldval, final MainNode<K, V> nval) {
         return updater.compareAndSet (this, oldval, nval);
     }
 
-    public void WRITE_PREV (MainNode<K, V> nval) {
+    public void WRITE_PREV (final MainNode<K, V> nval) {
         updater.set (this, nval);
     }
 

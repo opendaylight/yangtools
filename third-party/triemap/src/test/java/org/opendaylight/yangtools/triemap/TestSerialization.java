@@ -5,14 +5,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 public class TestSerialization {
     @Test
     public void testSerialization() throws IOException, ClassNotFoundException {
-        TrieMap<String, String> map = new TrieMap<String, String>();
+        TrieMap<String, String> map = new TrieMap<>();
 
         map.put("dude-0", "tom");
         map.put("dude-1", "john");

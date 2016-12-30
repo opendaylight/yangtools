@@ -6,11 +6,9 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.AbstractMap;
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +19,7 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 /***
  * This is a port of Scala's TrieMap class from the Scala Collections library.
- * 
+ *
  * @author Roman Levenstein &lt;romixlev@gmail.com&gt;
  *
  * @param <K>
@@ -51,7 +49,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
      * EntrySet
      */
     private transient final EntrySet entrySet = new EntrySet ();
-    
+
     public static <K,V> TrieMap<K,V> empty () {
         return EMPTY;
     }
@@ -68,16 +66,16 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
 
         static <K,V> INode<K,V> newRootNode () {
             Gen gen = new Gen ();
-            CNode<K, V> cn = new CNode<K, V> (0, new BasicNode[] {}, gen);
-            return new INode<K,V>(cn, gen);
+            CNode<K, V> cn = new CNode<> (0, new BasicNode[] {}, gen);
+            return new INode<>(cn, gen);
         }
 
-        public INode (MainNode<K, V> bn, Gen g) {
+        public INode (final MainNode<K, V> bn, final Gen g) {
             super (g);
             WRITE (bn);
         }
 
-        public INode (Gen g) {
+        public INode (final Gen g) {
             this (null, g);
         }
 
@@ -93,33 +91,35 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
             return GCAS_READ (ct);
         }
 
-        final MainNode<K, V> GCAS_READ (TrieMap<K, V> ct) {
+        final MainNode<K, V> GCAS_READ (final TrieMap<K, V> ct) {
             MainNode<K, V> m = /* READ */mainnode;
             MainNode<K, V> prevval = /* READ */m.prev;
-            if (prevval == null)
+            if (prevval == null) {
                 return m;
-            else
+            } else {
                 return GCAS_Complete (m, ct);
+            }
         }
 
         private MainNode<K, V> GCAS_Complete (MainNode<K, V> m, final TrieMap<K, V> ct) {
             while (true) {
-                if (m == null)
+                if (m == null) {
                     return null;
-                else {
+                } else {
                     // complete the GCAS
                     MainNode<K, V> prev = /* READ */m.prev;
                     INode<K, V> ctr = ct.readRoot (true);
 
-                    if (prev == null)
+                    if (prev == null) {
                         return m;
+                    }
 
                     if (prev instanceof FailedNode) {
                         // try to commit to previous value
                         FailedNode<K, V> fn = (FailedNode<K, V>) prev;
-                        if (CAS (m, fn.prev))
+                        if (CAS (m, fn.prev)) {
                             return fn.prev;
-                        else {
+                        } else {
                             // Tailrec
                             // return GCAS_Complete (/* READ */mainnode, ct);
                             m = /* READ */mainnode;
@@ -140,16 +140,16 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
                         // or both
                         if ((ctr.gen == gen) && ct.nonReadOnly ()) {
                             // try to commit
-                            if (m.CAS_PREV (prev, null))
+                            if (m.CAS_PREV (prev, null)) {
                                 return m;
-                            else {
+                            } else {
                                 // return GCAS_Complete (m, ct);
                                 // tailrec
                                 continue;
                             }
                         } else {
                             // try to abort
-                            m.CAS_PREV (prev, new FailedNode<K, V> (prev));
+                            m.CAS_PREV (prev, new FailedNode<> (prev));
                             return GCAS_Complete (/* READ */mainnode, ct);
                         }
                     }
@@ -163,8 +163,9 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
             if (CAS (old, n)) {
                 GCAS_Complete (n, ct);
                 return /* READ */n.prev == null;
-            } else
+            } else {
                 return false;
+            }
         }
 
         private boolean equal (final K k1, final K k2, final TrieMap<K, V> ct) {
@@ -172,13 +173,13 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
         }
 
         private INode<K, V> inode (final MainNode<K, V> cn) {
-            INode<K, V> nin = new INode<K, V> (gen);
+            INode<K, V> nin = new INode<> (gen);
             nin.WRITE (cn);
             return nin;
         }
 
         final INode<K, V> copyToGen (final Gen ngen, final TrieMap<K, V> ct) {
-            INode<K, V> nin = new INode<K, V> (ngen);
+            INode<K, V> nin = new INode<> (ngen);
             MainNode<K, V> main = GCAS_READ (ct);
             nin.WRITE (main);
             return nin;
@@ -186,7 +187,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
 
         /**
          * Inserts a key value pair, overwriting the old pair if the keys match.
-         * 
+         *
          * @return true if successful, false otherwise
          */
         final boolean rec_insert (final K k, final V v, final int hc, final int lev, final INode<K, V> parent, final Gen startgen, final TrieMap<K, V> ct) {
@@ -206,22 +207,23 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
                         BasicNode cnAtPos = cn.array [pos];
                         if (cnAtPos instanceof INode) {
                             INode<K, V> in = (INode<K, V>) cnAtPos;
-                            if (startgen == in.gen)
+                            if (startgen == in.gen) {
                                 return in.rec_insert (k, v, hc, lev + 5, this, startgen, ct);
-                            else {
+                            } else {
                                 if (GCAS (cn, cn.renewed (startgen, ct), ct)) {
                                     // return rec_insert (k, v, hc, lev, parent,
                                     // startgen, ct);
                                     // tailrec
                                     continue;
-                                } else
+                                } else {
                                     return false;
+                                }
                             }
                         } else if (cnAtPos instanceof SNode) {
                             SNode<K, V> sn = (SNode<K, V>) cnAtPos;
-                            if (sn.hc == hc && equal ((K) sn.k, k, ct))
-                                return GCAS (cn, cn.updatedAt (pos, new SNode<K, V> (k, v, hc), gen), ct);
-                            else {
+                            if (sn.hc == hc && equal (sn.k, k, ct)) {
+                                return GCAS (cn, cn.updatedAt (pos, new SNode<> (k, v, hc), gen), ct);
+                            } else {
                                 CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed (gen, ct);
                                 MainNode<K, V> nn = rn.updatedAt (pos, inode (CNode.dual (sn, sn.hc, new SNode (k, v, hc), hc, lev + 5, gen)), gen);
                                 return GCAS (cn, nn, ct);
@@ -229,7 +231,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
                         }
                     } else {
                         CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed (gen, ct);
-                        MainNode<K, V> ncnode = rn.insertedAt (pos, flag, new SNode<K, V> (k, v, hc), gen);
+                        MainNode<K, V> ncnode = rn.insertedAt (pos, flag, new SNode<> (k, v, hc), gen);
                         return GCAS (cn, ncnode, ct);
                     }
                 } else if (m instanceof TNode) {
@@ -247,11 +249,11 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
 
         /**
          * Inserts a new key value pair, given that a specific condition is met.
-         * 
+         *
          * @param cond
          *            null - don't care if the key was there
          *            KEY_ABSENT - key wasn't there
-         *            KEY_PRESENT - key was there 
+         *            KEY_PRESENT - key was there
          *            other value `v` - key must be bound to `v`
          * @return null if unsuccessful, Option[V] otherwise (indicating
          *         previous value bound to the key)
@@ -274,76 +276,89 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
                         BasicNode cnAtPos = cn.array [pos];
                         if (cnAtPos instanceof INode) {
                             INode<K, V> in = (INode<K, V>) cnAtPos;
-                            if (startgen == in.gen)
+                            if (startgen == in.gen) {
                                 return in.rec_insertif (k, v, hc, cond, lev + 5, this, startgen, ct);
-                            else {
+                            } else {
                                 if (GCAS (cn, cn.renewed (startgen, ct), ct)) {
                                     // return rec_insertif (k, v, hc, cond, lev,
                                     // parent, startgen, ct);
                                     // tailrec
                                     continue;
-                                } else
+                                } else {
                                     return null;
+                                }
                             }
                         } else if (cnAtPos instanceof SNode) {
                             SNode<K, V> sn = (SNode<K, V>) cnAtPos;
                             if (cond == null) {
                                 if (sn.hc == hc && equal (sn.k, k, ct)) {
-                                    if (GCAS (cn, cn.updatedAt (pos, new SNode<K, V> (k, v, hc), gen), ct))
+                                    if (GCAS (cn, cn.updatedAt (pos, new SNode<> (k, v, hc), gen), ct)) {
                                         return Option.makeOption(sn.v);
-                                    else
+                                    } else {
                                         return null;
+                                    }
                                 } else {
                                     CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed (gen, ct);
                                     MainNode<K, V> nn = rn.updatedAt (pos, inode (CNode.dual (sn, sn.hc, new SNode (k, v, hc), hc, lev + 5, gen)), gen);
-                                    if (GCAS (cn, nn, ct))
+                                    if (GCAS (cn, nn, ct)) {
                                         return Option.makeOption(); // None;
-                                    else
+                                    } else {
                                         return null;
+                                    }
                                 }
 
                             } else if (cond == INode.KEY_ABSENT) {
-                                if (sn.hc == hc && equal (sn.k, k, ct))
+                                if (sn.hc == hc && equal (sn.k, k, ct)) {
                                     return Option.makeOption(sn.v);
-                                else {
+                                } else {
                                     CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed (gen, ct);
                                     MainNode<K, V> nn = rn.updatedAt (pos, inode (CNode.dual (sn, sn.hc, new SNode (k, v, hc), hc, lev + 5, gen)), gen);
-                                    if (GCAS (cn, nn, ct))
+                                    if (GCAS (cn, nn, ct)) {
                                         return Option.makeOption (); // None
-                                    else
+                                    } else {
                                         return null;
+                                    }
                                 }
                             } else if (cond == INode.KEY_PRESENT) {
                                 if (sn.hc == hc && equal (sn.k, k, ct)) {
-                                    if (GCAS (cn, cn.updatedAt (pos, new SNode<K, V> (k, v, hc), gen), ct))
+                                    if (GCAS (cn, cn.updatedAt (pos, new SNode<> (k, v, hc), gen), ct)) {
                                         return Option.makeOption (sn.v);
-                                    else
+                                    } else {
                                         return null;
+                                    }
 
-                                } else
+                                }
+                                else {
                                     return Option.makeOption ();// None;
+                                }
                             } else {
                                 if (sn.hc == hc && equal (sn.k, k, ct) && sn.v == cond) {
-                                    if (GCAS (cn, cn.updatedAt (pos, new SNode<K, V> (k, v, hc), gen), ct))
+                                    if (GCAS (cn, cn.updatedAt (pos, new SNode<> (k, v, hc), gen), ct)) {
                                         return Option.makeOption (sn.v);
-                                    else
+                                    } else {
                                         return null;
-                                } else
+                                    }
+                                }
+                                else {
                                     return Option.makeOption (); // None
+                                }
                             }
 
                         }
                     } else if (cond == null || cond == INode.KEY_ABSENT) {
                         CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed (gen, ct);
-                        CNode<K, V> ncnode = rn.insertedAt (pos, flag, new SNode<K, V> (k, v, hc), gen);
-                        if (GCAS (cn, ncnode, ct))
+                        CNode<K, V> ncnode = rn.insertedAt (pos, flag, new SNode<> (k, v, hc), gen);
+                        if (GCAS (cn, ncnode, ct)) {
                             return Option.makeOption ();// None
-                        else
+                        } else {
                             return null;
+                        }
                     } else if (cond == INode.KEY_PRESENT) {
                         return Option.makeOption ();// None;
-                    } else 
+                    }
+                    else {
                         return Option.makeOption (); // None
+                    }
                 } else if (m instanceof TNode) {
                     clean (parent, ct, lev - 5);
                     return null;
@@ -352,39 +367,47 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
                     LNode<K, V> ln = (LNode<K, V>) m;
                     if (cond == null) {
                         Option<V> optv = ln.get (k);
-                        if (insertln (ln, k, v, ct))
+                        if (insertln (ln, k, v, ct)) {
                             return optv;
-                        else
+                        } else {
                             return null;
+                        }
                     } else if (cond == INode.KEY_ABSENT) {
                         Option<V> t = ln.get (k);
                         if (t == null) {
-                            if (insertln (ln, k, v, ct))
+                            if (insertln (ln, k, v, ct)) {
                                 return Option.makeOption ();// None
-                            else
+                            } else {
                                 return null;
-                        } else
+                            }
+                        } else {
                             return t;
+                        }
                     } else if (cond == INode.KEY_PRESENT) {
                         Option<V> t = ln.get (k);
                         if (t != null) {
-                            if (insertln (ln, k, v, ct))
+                            if (insertln (ln, k, v, ct)) {
                                 return t;
-                            else
+                            } else {
                                 return null;
-                        } else
+                            }
+                        }
+                        else {
                             return null; // None
+                        }
                     } else {
                         Option<V> t = ln.get (k);
                         if (t != null) {
                             if (((Some<V>) t).get () == cond) {
-                                if (insertln (ln, k, v, ct))
-                                    return new Some<V> ((V) cond);
-                                else
+                                if (insertln (ln, k, v, ct)) {
+                                    return new Some<> ((V) cond);
+                                } else {
                                     return null;
+                                }
 
-                            } else
+                            } else {
                                 return Option.makeOption ();
+                            }
                         }
                     }
                 }
@@ -400,11 +423,11 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
 
         /**
          * Looks up the value associated with the key.
-         * 
+         *
          * @return null if no value has been found, RESTART if the operation
          *         wasn't successful, or any other value otherwise
          */
-        final Object rec_lookup (final K k, final int hc, int lev, INode<K, V> parent, final Gen startgen, final TrieMap<K, V> ct) {
+        final Object rec_lookup (final K k, final int hc, final int lev, final INode<K, V> parent, final Gen startgen, final TrieMap<K, V> ct) {
             while (true) {
                 MainNode<K, V> m = GCAS_READ (ct); // use -Yinline!
 
@@ -414,32 +437,35 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
                     int idx = (hc >>> lev) & 0x1f;
                     int flag = 1 << idx;
                     int bmp = cn.bitmap;
-                    if ((bmp & flag) == 0)
+                    if ((bmp & flag) == 0) {
                         return null; // 1a) bitmap shows no binding
-                    else { // 1b) bitmap contains a value - descend
+                    } else { // 1b) bitmap contains a value - descend
                         int pos = (bmp == 0xffffffff) ? idx : Integer.bitCount (bmp & (flag - 1));
                         final BasicNode sub = cn.array [pos];
                         if (sub instanceof INode) {
                             INode<K, V> in = (INode<K, V>) sub;
-                            if (ct.isReadOnly () || (startgen == ((INodeBase<K, V>) sub).gen))
+                            if (ct.isReadOnly () || (startgen == ((INodeBase<K, V>) sub).gen)) {
                                 return in.rec_lookup (k, hc, lev + 5, this, startgen, ct);
-                            else {
+                            } else {
                                 if (GCAS (cn, cn.renewed (startgen, ct), ct)) {
                                     // return rec_lookup (k, hc, lev, parent,
                                     // startgen, ct);
                                     // Tailrec
                                     continue;
-                                } else
+                                }
+                                else {
                                     return RESTART; // used to be throw
                                                     // RestartException
+                                }
                             }
                         } else if (sub instanceof SNode) {
                             // 2) singleton node
                             SNode<K, V> sn = (SNode<K, V>) sub;
-                            if (((SNode) sub).hc == hc && equal (sn.k, k, ct))
+                            if (((SNode) sub).hc == hc && equal (sn.k, k, ct)) {
                                 return sn.v;
-                            else
+                            } else {
                                 return null;
+                            }
                         }
                     }
                 } else if (m instanceof TNode) {
@@ -455,21 +481,22 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
             }
         }
 
-        private Object cleanReadOnly (final TNode<K, V> tn, final int lev, final INode<K, V> parent, final TrieMap<K, V> ct, K k, int hc) {
+        private Object cleanReadOnly (final TNode<K, V> tn, final int lev, final INode<K, V> parent, final TrieMap<K, V> ct, final K k, final int hc) {
             if (ct.nonReadOnly ()) {
                 clean (parent, ct, lev - 5);
                 return RESTART; // used to be throw RestartException
             } else {
-                if (tn.hc == hc && equal(tn.k, k, ct))
+                if (tn.hc == hc && equal(tn.k, k, ct)) {
                     return tn.v;
-                else
+                } else {
                     return null;
+                }
             }
         }
 
         /**
          * Removes the key associated with the given value.
-         * 
+         *
          * @param v
          *            if null, will remove the key irregardless of the value;
          *            otherwise removes only if binding contains that exact key
@@ -477,7 +504,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
          * @return null if not successful, an Option[V] indicating the previous
          *         value otherwise
          */
-        final Option<V> rec_remove (K k, V v, int hc, int lev, final INode<K, V> parent, final Gen startgen, final TrieMap<K, V> ct) {
+        final Option<V> rec_remove (final K k, final V v, final int hc, final int lev, final INode<K, V> parent, final Gen startgen, final TrieMap<K, V> ct) {
             MainNode<K, V> m = GCAS_READ (ct); // use -Yinline!
 
             if (m instanceof CNode) {
@@ -485,42 +512,46 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
                 int idx = (hc >>> lev) & 0x1f;
                 int bmp = cn.bitmap;
                 int flag = 1 << idx;
-                if ((bmp & flag) == 0)
+                if ((bmp & flag) == 0) {
                     return Option.makeOption ();
-                else {
+                } else {
                     int pos = Integer.bitCount (bmp & (flag - 1));
                     BasicNode sub = cn.array [pos];
                     Option<V> res = null;
                     if (sub instanceof INode) {
                         INode<K, V> in = (INode<K, V>) sub;
-                        if (startgen == in.gen)
+                        if (startgen == in.gen) {
                             res = in.rec_remove (k, v, hc, lev + 5, this, startgen, ct);
-                        else {
-                            if (GCAS (cn, cn.renewed (startgen, ct), ct))
+                        } else {
+                            if (GCAS (cn, cn.renewed (startgen, ct), ct)) {
                                 res = rec_remove (k, v, hc, lev, parent, startgen, ct);
-                            else
+                            } else {
                                 res = null;
+                            }
                         }
 
                     } else if (sub instanceof SNode) {
                         SNode<K, V> sn = (SNode<K, V>) sub;
                         if (sn.hc == hc && equal (sn.k, k, ct) && (v == null || v.equals(sn.v))) {
                             MainNode<K, V> ncn = cn.removedAt (pos, flag, gen).toContracted (lev);
-                            if (GCAS (cn, ncn, ct))
+                            if (GCAS (cn, ncn, ct)) {
                                 res = Option.makeOption (sn.v);
-                            else
+                            } else {
                                 res = null;
-                        } else
+                            }
+                        } else {
                             res = Option.makeOption ();
+                        }
                     }
 
-                    if (res instanceof None || (res == null))
+                    if (res instanceof None || (res == null)) {
                         return res;
-                    else {
+                    } else {
                         if (parent != null) { // never tomb at root
                             MainNode<K, V> n = GCAS_READ (ct);
-                            if (n instanceof TNode)
+                            if (n instanceof TNode) {
                                 cleanParent (n, parent, ct, hc, lev, startgen);
+                            }
                         }
 
                         return res;
@@ -534,20 +565,22 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
                 if (v == null) {
                     Option<V> optv = ln.get (k);
                     MainNode<K, V> nn = ln.removed (k, ct);
-                    if (GCAS (ln, nn, ct))
+                    if (GCAS (ln, nn, ct)) {
                         return optv;
-                    else
+                    } else {
                         return null;
+                    }
                 } else {
                     Option<V> tmp = ln.get (k);
                     if (tmp instanceof Some) {
                         Some<V> tmp1 = (Some<V>) tmp;
                         if (tmp1.get () == v) {
                             MainNode<K, V> nn = ln.removed (k, ct);
-                            if (GCAS (ln, nn, ct))
+                            if (GCAS (ln, nn, ct)) {
                                 return tmp;
-                            else
+                            } else {
                                 return null;
+                            }
                         }
                     }
                 }
@@ -572,13 +605,14 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
                             if (nonlive instanceof TNode) {
                                 TNode<K, V> tn = (TNode<K, V>) nonlive;
                                 MainNode<K, V> ncn = cn.updatedAt (pos, tn.copyUntombed (), gen).toContracted (lev - 5);
-                                if (!parent.GCAS (cn, ncn, ct))
+                                if (!parent.GCAS (cn, ncn, ct)) {
                                     if (ct.readRoot ().gen == startgen) {
                                         // cleanParent (nonlive, parent, ct, hc,
                                         // lev, startgen);
                                         // tailrec
                                         continue;
                                     }
+                                }
                             }
                         }
                     }
@@ -589,7 +623,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
             }
         }
 
-        private void clean (final INode<K, V> nd, final TrieMap<K, V> ct, int lev) {
+        private void clean (final INode<K, V> nd, final TrieMap<K, V> ct, final int lev) {
             MainNode<K, V> m = nd.GCAS_READ (ct);
             if (m instanceof CNode) {
                 CNode<K, V> cn = (CNode<K, V>) m;
@@ -617,7 +651,8 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
         // case x => "<elem: %s>".format(x)
         // })
 
-        public String string (int lev) {
+        @Override
+        public String string (final int lev) {
             return "INode";
         }
 
@@ -631,14 +666,17 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
             WRITE_PREV (p);
         }
 
-        public String string (int lev) {
+        @Override
+        public String string (final int lev) {
             throw new UnsupportedOperationException ();
         }
 
-        public int cachedSize (Object ct) {
+        @Override
+        public int cachedSize (final Object ct) {
             throw new UnsupportedOperationException ();
         }
 
+        @Override
         public String toString () {
             return String.format ("FailedNode(%s)", p);
         }
@@ -660,22 +698,24 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
         }
 
         final SNode<K, V> copy() {
-            return new SNode<K, V> (k, v, hc);
+            return new SNode<> (k, v, hc);
         }
 
         final TNode<K, V> copyTombed () {
-            return new TNode<K, V> (k, v, hc);
+            return new TNode<> (k, v, hc);
         }
 
         final SNode<K, V> copyUntombed () {
-            return new SNode<K, V> (k, v, hc);
+            return new SNode<> (k, v, hc);
         }
 
+        @Override
         final public Map.Entry<K, V> kvPair () {
-            return new SimpleImmutableEntry<K, V> (k, v);
+            return new SimpleImmutableEntry<> (k, v);
         }
 
-        final public String string (int lev) {
+        @Override
+        final public String string (final int lev) {
             // ("  " * lev) + "SNode(%s, %s, %x)".format(k, v, hc);
             return "SNode";
         }
@@ -693,26 +733,29 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
         }
 
         final TNode<K, V> copy () {
-            return new TNode<K, V> (k, v, hc);
+            return new TNode<> (k, v, hc);
         }
 
         final TNode<K, V> copyTombed () {
-            return new TNode<K, V> (k, v, hc);
+            return new TNode<> (k, v, hc);
         }
 
         final SNode<K, V> copyUntombed () {
-            return new SNode<K, V> (k, v, hc);
+            return new SNode<> (k, v, hc);
         }
 
+        @Override
         final public Map.Entry<K, V> kvPair () {
-            return new SimpleImmutableEntry<K, V> (k, v);
+            return new SimpleImmutableEntry<> (k, v);
         }
 
-        final public int cachedSize (Object ct) {
+        @Override
+        final public int cachedSize (final Object ct) {
             return 1;
         }
 
-        final public String string (int lev) {
+        @Override
+        final public String string (final int lev) {
             // ("  " * lev) + "TNode(%s, %s, %x, !)".format(k, v, hc);
             return "TNode";
         }
@@ -725,39 +768,41 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
             this.listmap = listmap;
         }
 
-        public LNode(K k, V v) {
+        public LNode(final K k, final V v) {
             this (ListMap.map (k, v));
         }
 
-        public LNode (K k1, V v1, K k2, V v2) {
+        public LNode (final K k1, final V v1, final K k2, final V v2) {
             this (ListMap.map (k1, v1, k2, v2));
         }
 
-        LNode<K, V> inserted (K k, V v) {
-            return new LNode<K, V> (listmap.add (k, v));
+        LNode<K, V> inserted (final K k, final V v) {
+            return new LNode<> (listmap.add (k, v));
         }
 
-        MainNode<K, V> removed (K k, final TrieMap<K, V> ct) {
+        MainNode<K, V> removed (final K k, final TrieMap<K, V> ct) {
             ListMap<K, V> updmap = listmap.remove (k);
-            if (updmap.size () > 1)
-                return new LNode<K, V> (updmap);
-            else {
+            if (updmap.size () > 1) {
+                return new LNode<> (updmap);
+            } else {
                 Entry<K, V> kv = updmap.iterator ().next ();
                 // create it tombed so that it gets compressed on subsequent
                 // accesses
-                return new TNode<K, V> (kv.getKey (), kv.getValue (), ct.computeHash (kv.getKey ()));
+                return new TNode<> (kv.getKey (), kv.getValue (), ct.computeHash (kv.getKey ()));
             }
         }
 
-        Option<V> get (K k) {
+        Option<V> get (final K k) {
             return listmap.get (k);
         }
 
-        public int cachedSize (Object ct) {
+        @Override
+        public int cachedSize (final Object ct) {
             return listmap.size ();
         }
 
-        public String string (int lev) {
+        @Override
+        public String string (final int lev) {
             // (" " * lev) + "LNode(%s)".format(listmap.mkString(", "))
             return "LNode";
         }
@@ -776,14 +821,16 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
         }
 
         // this should only be called from within read-only snapshots
-        final public int cachedSize (Object ct) {
+        @Override
+        final public int cachedSize (final Object ct) {
             int currsz = READ_SIZE ();
-            if (currsz != -1)
+            if (currsz != -1) {
                 return currsz;
-            else {
+            } else {
                 int sz = computeSize ((TrieMap<K, V>) ct);
-                while (READ_SIZE () == -1)
+                while (READ_SIZE () == -1) {
                     CAS_SIZE (-1, sz);
+                }
                 return READ_SIZE ();
             }
         }
@@ -807,40 +854,41 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
             while (i < array.length) {
                 int pos = (i + offset) % array.length;
                 BasicNode elem = array [pos];
-                if (elem instanceof SNode)
+                if (elem instanceof SNode) {
                     sz += 1;
-                else if (elem instanceof INode)
+                } else if (elem instanceof INode) {
                     sz += ((INode<K, V>) elem).cachedSize (ct);
+                }
                 i += 1;
             }
             return sz;
         }
 
-        final CNode<K, V> updatedAt (int pos, final BasicNode nn, final Gen gen) {
+        final CNode<K, V> updatedAt (final int pos, final BasicNode nn, final Gen gen) {
             int len = array.length;
             BasicNode[] narr = new BasicNode[len];
             System.arraycopy (array, 0, narr, 0, len);
             narr [pos] = nn;
-            return new CNode<K, V> (bitmap, narr, gen);
+            return new CNode<> (bitmap, narr, gen);
         }
 
-        final CNode<K, V> removedAt (int pos, int flag, final Gen gen) {
+        final CNode<K, V> removedAt (final int pos, final int flag, final Gen gen) {
             BasicNode[] arr = array;
             int len = arr.length;
             BasicNode[] narr = new BasicNode[len - 1];
             System.arraycopy (arr, 0, narr, 0, pos);
             System.arraycopy (arr, pos + 1, narr, pos, len - pos - 1);
-            return new CNode<K, V> (bitmap ^ flag, narr, gen);
+            return new CNode<> (bitmap ^ flag, narr, gen);
         }
 
-        final CNode<K, V> insertedAt (int pos, int flag, final BasicNode nn, final Gen gen) {
+        final CNode<K, V> insertedAt (final int pos, final int flag, final BasicNode nn, final Gen gen) {
             int len = array.length;
             int bmp = bitmap;
             BasicNode[] narr = new BasicNode[len + 1];
             System.arraycopy (array, 0, narr, 0, pos);
             narr [pos] = nn;
             System.arraycopy (array, pos, narr, pos + 1, len - pos);
-            return new CNode<K, V> (bmp | flag, narr, gen);
+            return new CNode<> (bmp | flag, narr, gen);
         }
 
         /**
@@ -857,31 +905,35 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
                 if (elem instanceof INode) {
                     INode<K, V> in = (INode<K, V>) elem;
                     narr [i] = in.copyToGen (ngen, ct);
-                } else if (elem instanceof BasicNode)
+                } else if (elem instanceof BasicNode) {
                     narr [i] = elem;
+                }
                 i += 1;
             }
-            return new CNode<K, V> (bitmap, narr, ngen);
+            return new CNode<> (bitmap, narr, ngen);
         }
 
         private BasicNode resurrect (final INode<K, V> inode, final Object inodemain) {
             if (inodemain instanceof TNode) {
                 TNode<K, V> tn = (TNode<K, V>) inodemain;
                 return tn.copyUntombed ();
-            } else
+            } else {
                 return inode;
+            }
         }
 
-        final MainNode<K, V> toContracted (int lev) {
+        final MainNode<K, V> toContracted (final int lev) {
             if (array.length == 1 && lev > 0) {
                 if (array [0] instanceof SNode) {
                     SNode<K, V> sn = (SNode<K, V>) array [0];
                     return sn.copyTombed ();
-                } else
+                } else {
                     return this;
+                }
 
-            } else
+            } else {
                 return this;
+            }
         }
 
         // - if the branching factor is 1 for this CNode, and the child
@@ -890,7 +942,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
         // returns the version of this node with at least some null-inodes
         // removed (those existing when the op began)
         // - if there are only null-i-nodes below, returns null
-        final MainNode<K, V> toCompressed (final TrieMap<K, V> ct, int lev, Gen gen) {
+        final MainNode<K, V> toCompressed (final TrieMap<K, V> ct, final int lev, final Gen gen) {
             int bmp = bitmap;
             int i = 0;
             BasicNode[] arr = array;
@@ -911,7 +963,8 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
             return new CNode<K, V> (bmp, tmparray, gen).toContracted (lev);
         }
 
-        public String string (int lev) {
+        @Override
+        public String string (final int lev) {
             // "CNode %x\n%s".format(bitmap, array.map(_.string(lev +
             // 1)).mkString("\n"));
             return "CNode";
@@ -941,6 +994,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
         // return null;
         // }
 
+        @Override
         public String toString () {
             // val elems = collectLocalElems
             // "CNode(sz: %d; %s)".format(elems.size,
@@ -948,24 +1002,25 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
             return "CNode";
         }
 
-        static <K, V> MainNode<K,V> dual (final SNode<K, V> x, int xhc, final SNode<K, V> y, int yhc, int lev, Gen gen) {
+        static <K, V> MainNode<K,V> dual (final SNode<K, V> x, final int xhc, final SNode<K, V> y, final int yhc, final int lev, final Gen gen) {
             if (lev < 35) {
                 int xidx = (xhc >>> lev) & 0x1f;
                 int yidx = (yhc >>> lev) & 0x1f;
                 int bmp = (1 << xidx) | (1 << yidx);
 
                 if (xidx == yidx) {
-                    INode<K, V> subinode = new INode<K, V> (gen);// (TrieMap.inodeupdater)
+                    INode<K, V> subinode = new INode<> (gen);// (TrieMap.inodeupdater)
                     subinode.mainnode = dual (x, xhc, y, yhc, lev + 5, gen);
-                    return new CNode<K, V> (bmp, new BasicNode[] { subinode }, gen);
+                    return new CNode<> (bmp, new BasicNode[] { subinode }, gen);
                 } else {
-                    if (xidx < yidx)
-                        return new CNode<K, V> (bmp, new BasicNode[] { x, y }, gen);
-                    else
-                        return new CNode<K, V> (bmp, new BasicNode[] { y, x }, gen);
+                    if (xidx < yidx) {
+                        return new CNode<> (bmp, new BasicNode[] { x, y }, gen);
+                    } else {
+                        return new CNode<> (bmp, new BasicNode[] { y, x }, gen);
+                    }
                 }
             } else {
-                return new LNode<K, V> (x.k, x.v, y.k, y.v);
+                return new LNode<> (x.k, x.v, y.k, y.v);
             }
         }
 
@@ -988,7 +1043,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
     private static class Equiv<K> implements Serializable {
         private static final long serialVersionUID = 1L;
 
-        public boolean equiv (K k1, K k2) {
+        public boolean equiv (final K k1, final K k2) {
             return k1.equals (k2);
         }
 
@@ -1002,7 +1057,8 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
     static class Default<K> implements Hashing<K> {
         private static final long serialVersionUID = 1L;
 
-        public int hash (K k) {
+        @Override
+        public int hash (final K k) {
             int h = k.hashCode ();
             // This function ensures that hashCodes that differ only by
             // constant multiples at each bit position have a bounded
@@ -1033,7 +1089,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
         this.readOnly = readOnly;
     }
 
-    TrieMap (final Object r, final Hashing<K> hashf, final Equiv<K> ef, boolean readOnly) {
+    TrieMap (final Object r, final Hashing<K> hashf, final Equiv<K> ef, final boolean readOnly) {
         this(hashf, ef, readOnly);
         this.root = r;
     }
@@ -1080,7 +1136,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
     // } while (obj != TrieMapSerializationEnd);
     // }
 
-    final boolean CAS_ROOT (Object ov, Object nv) {
+    final boolean CAS_ROOT (final Object ov, final Object nv) {
         if (isReadOnly()) {
             throw new IllegalStateException("Attempted to modify a read-only snapshot");
         }
@@ -1088,7 +1144,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
     }
 
     // FIXME: abort = false by default
-    final INode<K, V> readRoot (boolean abort) {
+    final INode<K, V> readRoot (final boolean abort) {
         return RDCSS_READ_ROOT (abort);
     }
 
@@ -1100,11 +1156,11 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
         return RDCSS_READ_ROOT (false);
     }
 
-    final INode<K, V> RDCSS_READ_ROOT (boolean abort) {
+    final INode<K, V> RDCSS_READ_ROOT (final boolean abort) {
         Object r = /* READ */root;
-        if (r instanceof INode)
+        if (r instanceof INode) {
             return (INode<K, V>) r;
-        else if (r instanceof RDCSS_Descriptor) {
+        } else if (r instanceof RDCSS_Descriptor) {
             return RDCSS_Complete (abort);
         }
         throw new RuntimeException ("Should not happen");
@@ -1113,18 +1169,18 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
     private final INode<K, V> RDCSS_Complete (final boolean abort) {
         while (true) {
             Object v = /* READ */root;
-            if (v instanceof INode)
+            if (v instanceof INode) {
                 return (INode<K, V>) v;
-            else if (v instanceof RDCSS_Descriptor) {
+            } else if (v instanceof RDCSS_Descriptor) {
                 RDCSS_Descriptor<K, V> desc = (RDCSS_Descriptor<K, V>) v;
                 INode<K, V> ov = desc.old;
                 MainNode<K, V> exp = desc.expectedmain;
                 INode<K, V> nv = desc.nv;
 
                 if (abort) {
-                    if (CAS_ROOT (desc, ov))
+                    if (CAS_ROOT (desc, ov)) {
                         return ov;
-                    else {
+                    } else {
                         // return RDCSS_Complete (abort);
                         // tailrec
                         continue;
@@ -1141,9 +1197,9 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
                             continue;
                         }
                     } else {
-                        if (CAS_ROOT (desc, ov))
+                        if (CAS_ROOT (desc, ov)) {
                             return ov;
-                        else {
+                        } else {
                             // return RDCSS_Complete (abort);
                             // tailrec
                             continue;
@@ -1158,12 +1214,13 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
     }
 
     private boolean RDCSS_ROOT (final INode<K, V> ov, final MainNode<K, V> expectedmain, final INode<K, V> nv) {
-        RDCSS_Descriptor<K, V> desc = new RDCSS_Descriptor<K, V> (ov, expectedmain, nv);
+        RDCSS_Descriptor<K, V> desc = new RDCSS_Descriptor<> (ov, expectedmain, nv);
         if (CAS_ROOT (ov, desc)) {
             RDCSS_Complete (false);
             return /* READ */desc.committed;
-        } else
+        } else {
             return false;
+        }
     }
 
     private void inserthc (final K k, final int hc, final V v) {
@@ -1187,8 +1244,9 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
                 // return insertifhc (k, hc, v, cond);
                 // tailrec
                 continue;
-            } else
+            } else {
                 return ret;
+            }
         }
     }
 
@@ -1200,8 +1258,9 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
                 // return lookuphc (k, hc);
                 // tailrec
                 continue;
-            } else
+            } else {
                 return res;
+            }
         }
     }
 
@@ -1209,9 +1268,9 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
         while (true) {
             INode<K, V> r = RDCSS_READ_ROOT ();
             Option<V> res = r.rec_remove (k, v, hc, 0, null, r.gen, this);
-            if (res != null)
+            if (res != null) {
                 return res;
-            else {
+            } else {
                 // return removehc (k, v, hc);
                 // tailrec
                 continue;
@@ -1257,7 +1316,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
     /**
      * Returns a snapshot of this TrieMap. This operation is lock-free and
      * linearizable.
-     * 
+     *
      * The snapshot is lazily updated - the first time some branch in the
      * snapshot or this TrieMap are accessed, they are rewritten. This means
      * that the work of rebuilding both the snapshot and this TrieMap is
@@ -1269,9 +1328,9 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
         while (true) {
             INode<K, V> r = RDCSS_READ_ROOT ();
             final MainNode<K, V> expmain = r.gcasRead (this);
-            if (RDCSS_ROOT (r, expmain, r.copyToGen (new Gen (), this)))
-                return new TrieMap<K, V> (r.copyToGen (new Gen (), this), hashing (), equality (), readOnly);
-            else {
+            if (RDCSS_ROOT (r, expmain, r.copyToGen (new Gen (), this))) {
+                return new TrieMap<> (r.copyToGen (new Gen (), this), hashing (), equality (), readOnly);
+            } else {
                 // return snapshot ();
                 // tailrec
                 continue;
@@ -1282,33 +1341,35 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
     /**
      * Returns a read-only snapshot of this TrieMap. This operation is lock-free
      * and linearizable.
-     * 
+     *
      * The snapshot is lazily updated - the first time some branch of this
      * TrieMap are accessed, it is rewritten. The work of creating the snapshot
      * is thus distributed across subsequent updates and accesses on this
      * TrieMap by all threads. Note that the snapshot itself is never rewritten
      * unlike when calling the `snapshot` method, but the obtained snapshot
      * cannot be modified.
-     * 
+     *
      * This method is used by other methods such as `size` and `iterator`.
      */
     final public TrieMap<K, V> readOnlySnapshot () {
         // Is it a snapshot of a read-only snapshot?
-        if(!nonReadOnly ())
+        if(!nonReadOnly ()) {
             return this;
-        
+        }
+
         while (true) {
             INode<K, V> r = RDCSS_READ_ROOT ();
             MainNode<K, V> expmain = r.gcasRead (this);
-            if (RDCSS_ROOT (r, expmain, r.copyToGen (new Gen (), this)))
-                return new TrieMap<K, V> (r, hashing (), equality (), true);
-            else {
+            if (RDCSS_ROOT (r, expmain, r.copyToGen (new Gen (), this))) {
+                return new TrieMap<> (r, hashing (), equality (), true);
+            } else {
                 // return readOnlySnapshot ();
                 continue;
             }
         }
     }
 
+    @Override
     final public void clear () {
         while (true) {
             INode<K, V> r = RDCSS_READ_ROOT ();
@@ -1321,29 +1382,31 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
     }
 
     // @inline
-    int computeHash (K k) {
+    int computeHash (final K k) {
         return hashingobj.hash (k);
     }
 
-    final V lookup (K k) {
+    final V lookup (final K k) {
         int hc = computeHash (k);
 //        return (V) lookuphc (k, hc);
         Object o = lookuphc (k, hc);
         if(o instanceof Some) {
             return ((Some<V>)o).get ();
-        } else if(o instanceof None) 
+        } else if(o instanceof None) {
             return null;
-        else
+        } else {
             return (V)o;
+        }
     }
 
-    final V apply (K k) {
+    final V apply (final K k) {
         int hc = computeHash (k);
         Object res = lookuphc (k, hc);
-        if (res == null)
+        if (res == null) {
             throw new NoSuchElementException ();
-        else
+        } else {
             return (V) res;
+        }
     }
 
 //    final public Option<V> get (K k) {
@@ -1351,135 +1414,142 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
 //        return Option.makeOption ((V)lookuphc (k, hc));
 //    }
 
-    final public V get (Object k) {
+    @Override
+    final public V get (final Object k) {
         return lookup((K)k);
     }
-    
-    final public Option<V> putOpt(Object key, Object value) {
+
+    final public Option<V> putOpt(final Object key, final Object value) {
         int hc = computeHash ((K)key);
         return insertifhc ((K)key, hc, (V)value, null);
     }
 
     @Override
-    final public V put (Object key, Object value) {
+    final public V put (final Object key, final Object value) {
         ensureReadWrite();
         int hc = computeHash ((K)key);
         Option<V> ov = insertifhc ((K)key, hc, (V)value, null);
         if(ov instanceof Some) {
             Some<V> sv = (Some<V>)ov;
             return sv.get ();
-        } else 
+        } else {
             return null;
+        }
     }
-    
-    final public void update (K k, V v) {
+
+    final public void update (final K k, final V v) {
         int hc = computeHash (k);
         inserthc (k, hc, v);
     }
 
-    final public TrieMap<K, V> add (K k, V v) {
+    final public TrieMap<K, V> add (final K k, final V v) {
         update (k, v);
         return this;
     }
 
-    final Option<V> removeOpt (K k) {
+    final Option<V> removeOpt (final K k) {
         int hc = computeHash (k);
         return removehc (k, (V) null, hc);
     }
 
     @Override
-    final public V remove (Object k) {
+    final public V remove (final Object k) {
         ensureReadWrite();
         int hc = computeHash ((K)k);
         Option<V> ov = removehc ((K)k, (V) null, hc);
         if(ov instanceof Some) {
             Some<V> sv = (Some<V>)ov;
             return sv.get();
-        } else 
+        } else {
             return null;
+        }
     }
-    
+
 //    final public TrieMap<K, V> remove (Object k) {
 //        removeOpt ((K)k);
 //        return this;
 //    }
 
-    final public Option<V> putIfAbsentOpt (K k, V v) {
+    final public Option<V> putIfAbsentOpt (final K k, final V v) {
         int hc = computeHash (k);
         return insertifhc (k, hc, v, INode.KEY_ABSENT);
     }
 
     @Override
-    final public V putIfAbsent (Object k, Object v) {
+    final public V putIfAbsent (final Object k, final Object v) {
         ensureReadWrite();
         int hc = computeHash ((K)k);
         Option<V> ov = insertifhc ((K)k, hc, (V)v, INode.KEY_ABSENT);
         if(ov instanceof Some) {
             Some<V> sv = (Some<V>)ov;
             return sv.get();
-        } else 
+        } else {
             return null;
+        }
     }
-    
+
     @Override
-    public boolean remove (Object k, Object v) {
+    public boolean remove (final Object k, final Object v) {
         ensureReadWrite();
         int hc = computeHash ((K)k);
         return removehc ((K)k, (V)v, hc).nonEmpty ();
     }
 
     @Override
-    public boolean replace (K k, V oldvalue, V newvalue) {
+    public boolean replace (final K k, final V oldvalue, final V newvalue) {
         ensureReadWrite();
         int hc = computeHash (k);
-        return insertifhc (k, hc, newvalue, (Object) oldvalue).nonEmpty ();
+        return insertifhc (k, hc, newvalue, oldvalue).nonEmpty ();
     }
 
-    public Option<V> replaceOpt (K k, V v) {
+    public Option<V> replaceOpt (final K k, final V v) {
         int hc = computeHash (k);
         return insertifhc (k, hc, v, INode.KEY_PRESENT);
     }
 
     @Override
-    public V replace (Object k, Object v) {
+    public V replace (final Object k, final Object v) {
         ensureReadWrite();
         int hc = computeHash ((K)k);
         Option<V> ov = insertifhc ((K)k, hc, (V)v, INode.KEY_PRESENT);
         if(ov instanceof Some) {
             Some<V> sv = (Some<V>)ov;
             return sv.get();
-        } else 
+        } else {
             return null;
+        }
     }
-    
+
     /***
      * Return an iterator over a TrieMap.
-     * 
+     *
      * If this is a read-only snapshot, it would return a read-only iterator.
-     * 
+     *
      * If it is the original TrieMap or a non-readonly snapshot, it would return
      * an iterator that would allow for updates.
-     * 
+     *
      * @return
      */
     public Iterator<Map.Entry<K, V>> iterator () {
-        if (!nonReadOnly ())
+        if (!nonReadOnly ()) {
             return readOnlySnapshot ().readOnlyIterator ();
-        else
-            return new TrieMapIterator<K, V> (0, this);
+        } else {
+            return new TrieMapIterator<> (0, this);
+        }
     }
 
     /***
      * Return an iterator over a TrieMap.
      * This is a read-only iterator.
-     * 
+     *
      * @return
      */
     public Iterator<Map.Entry<K, V>> readOnlyIterator () {
-        if (nonReadOnly ())
+        if (nonReadOnly ()) {
             return readOnlySnapshot ().readOnlyIterator ();
-        else
-            return new TrieMapReadOnlyIterator<K, V> (0, this);
+        } else {
+            return new TrieMapReadOnlyIterator<> (0, this);
+        }
     }
 
     private int cachedSize () {
@@ -1487,11 +1557,13 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
         return r.cachedSize (this);
     }
 
+    @Override
     public int size () {
-        if (nonReadOnly ())
+        if (nonReadOnly ()) {
             return readOnlySnapshot ().size ();
-        else
+        } else {
             return cachedSize ();
+        }
     }
 
     String stringPrefix () {
@@ -1501,61 +1573,67 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
     /***
      * This iterator is a read-only one and does not allow for any update
      * operations on the underlying data structure.
-     * 
+     *
      * @param <K>
      * @param <V>
      */
     private static class TrieMapReadOnlyIterator<K, V> extends TrieMapIterator<K, V> {
-        TrieMapReadOnlyIterator (int level, final TrieMap<K, V> ct, boolean mustInit) {
+        TrieMapReadOnlyIterator (final int level, final TrieMap<K, V> ct, final boolean mustInit) {
             super (level, ct, mustInit);
         }
 
-        TrieMapReadOnlyIterator (int level, TrieMap<K, V> ct) {
+        TrieMapReadOnlyIterator (final int level, final TrieMap<K, V> ct) {
             this (level, ct, true);
-        }        
+        }
+        @Override
         void initialize () {
             assert (ct.isReadOnly ());
             super.initialize ();
         }
-        
+
+        @Override
         public void remove () {
             throw new UnsupportedOperationException ("Operation not supported for read-only iterators");
         }
-        
+
+        @Override
         Map.Entry<K, V> nextEntry(final Map.Entry<K, V> rr) {
             // Return non-updatable entry
             return rr;
         }
     }
-    
+
     private static class TrieMapIterator<K, V> implements java.util.Iterator<Map.Entry<K, V>> {
         private int level;
         protected TrieMap<K, V> ct;
         private final boolean mustInit;
-        private BasicNode[][] stack = new BasicNode[7][];
-        private int[] stackpos = new int[7];
+        private final BasicNode[][] stack = new BasicNode[7][];
+        private final int[] stackpos = new int[7];
         private int depth = -1;
         private Iterator<Map.Entry<K, V>> subiter = null;
         private KVNode<K, V> current = null;
         private Map.Entry<K, V> lastReturned = null;
 
-        TrieMapIterator (int level, final TrieMap<K, V> ct, boolean mustInit) {
+        TrieMapIterator (final int level, final TrieMap<K, V> ct, final boolean mustInit) {
             this.level = level;
             this.ct = ct;
             this.mustInit = mustInit;
-            if (this.mustInit)
+            if (this.mustInit) {
                 initialize ();
+            }
         }
 
-        TrieMapIterator (int level, TrieMap<K, V> ct) {
+        TrieMapIterator (final int level, final TrieMap<K, V> ct) {
             this (level, ct, true);
         }
 
 
+        @Override
         public boolean hasNext () {
             return (current != null) || (subiter != null);
         }
 
+        @Override
         public Map.Entry<K, V> next () {
             if (hasNext ()) {
                 Map.Entry<K, V> r = null;
@@ -1566,10 +1644,10 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
                     r = current.kvPair ();
                     advance ();
                 }
-                
+
                 lastReturned = r;
                 if(r instanceof Map.Entry) {
-                    final Map.Entry<K, V> rr = (Map.Entry<K, V>)r;
+                    final Map.Entry<K, V> rr = r;
                     return nextEntry(rr);
                 }
                 return r;
@@ -1578,7 +1656,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
                 return null;
             }
         }
-        
+
         Map.Entry<K, V> nextEntry(final Map.Entry<K, V> rr) {
             return new Map.Entry<K, V>() {
                 private V updated = null;
@@ -1594,14 +1672,14 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
                 }
 
                 @Override
-                public V setValue (V value) {
+                public V setValue (final V value) {
                     updated = value;
                     return ct.replace (getKey (), value);
                 }
-            };            
+            };
         }
 
-        private void readin (INode<K, V> in) {
+        private void readin (final INode<K, V> in) {
             MainNode<K, V> m = in.gcasRead (ct);
             if (m instanceof CNode) {
                 CNode<K, V> cn = (CNode<K, V>) m;
@@ -1649,15 +1727,16 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
                     depth -= 1;
                     advance ();
                 }
-            } else
+            } else {
                 current = null;
+            }
         }
 
-        protected TrieMapIterator<K, V> newIterator (int _lev, TrieMap<K, V> _ct, boolean _mustInit) {
-            return new TrieMapIterator<K, V> (_lev, _ct, _mustInit);
+        protected TrieMapIterator<K, V> newIterator (final int _lev, final TrieMap<K, V> _ct, final boolean _mustInit) {
+            return new TrieMapIterator<> (_lev, _ct, _mustInit);
         }
 
-        protected void dupTo (TrieMapIterator<K, V> it) {
+        protected void dupTo (final TrieMapIterator<K, V> it) {
             it.level = this.level;
             it.ct = this.ct;
             it.depth = this.depth;
@@ -1668,9 +1747,9 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
             System.arraycopy (this.stackpos, 0, it.stackpos, 0, 7);
 
             // this one needs to be evaluated
-            if (this.subiter == null)
+            if (this.subiter == null) {
                 it.subiter = null;
-            else {
+            } else {
                 List<Map.Entry<K, V>> lst = toList (this.subiter);
                 this.subiter = lst.iterator ();
                 it.subiter = lst.iterator ();
@@ -1714,8 +1793,8 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
         // Seq(this)
         // }
 
-        private List<Entry<K, V>> toList (Iterator<Entry<K, V>> it) {
-            ArrayList<Entry<K, V>> list = new ArrayList<Map.Entry<K, V>> ();
+        private List<Entry<K, V>> toList (final Iterator<Entry<K, V>> it) {
+            ArrayList<Entry<K, V>> list = new ArrayList<> ();
             while (it.hasNext ()) {
                 list.add (it.next ());
             }
@@ -1735,8 +1814,9 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
             if (lastReturned != null) {
                 ct.remove (lastReturned.getKey ());
                 lastReturned = null;
-            } else 
+            } else {
                 throw new IllegalStateException();
+            }
         }
 
     }
@@ -1746,7 +1826,8 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
     private static long TrieMapSerializationEnd = 0L - 7237891413820527142L;
 
 
-    public boolean containsKey (Object key) {
+    @Override
+    public boolean containsKey (final Object key) {
         return lookup ((K) key) != null;
     }
 
@@ -1761,7 +1842,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
      *
      */
     final class EntrySet extends AbstractSet<Map.Entry<K, V>> {
-        
+
         @Override
         public Iterator<Map.Entry<K, V>> iterator () {
             return TrieMap.this.iterator ();
@@ -1803,7 +1884,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
         }
     }
 
-    private void readObject(ObjectInputStream inputStream) throws IOException, ClassNotFoundException {
+    private void readObject(final ObjectInputStream inputStream) throws IOException, ClassNotFoundException {
         inputStream.defaultReadObject();
         this.root = INode.newRootNode();
 
@@ -1823,7 +1904,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
         }
     }
 
-    private void writeObject(ObjectOutputStream outputStream) throws IOException {
+    private void writeObject(final ObjectOutputStream outputStream) throws IOException {
         outputStream.defaultWriteObject();
 
         final Map<K, V> ro = readOnlySnapshot();
