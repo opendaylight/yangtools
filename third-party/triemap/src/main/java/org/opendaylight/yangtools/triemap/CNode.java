@@ -117,7 +117,7 @@ final class CNode<K, V> extends CNodeBase<K, V> {
             if (elem instanceof INode) {
                 INode<K, V> in = (INode<K, V>) elem;
                 narr [i] = in.copyToGen(ngen, ct);
-            } else if (elem instanceof BasicNode) {
+            } else if (elem != null) {
                 narr [i] = elem;
             }
             i += 1;
