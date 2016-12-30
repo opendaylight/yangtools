@@ -668,7 +668,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
                 }
 
                 lastReturned = r;
-                if(r instanceof Map.Entry) {
+                if (r != null) {
                     final Map.Entry<K, V> rr = r;
                     return nextEntry(rr);
                 }
