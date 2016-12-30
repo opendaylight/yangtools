@@ -3,7 +3,6 @@ package org.opendaylight.yangtools.triemap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
 import org.junit.Test;
 
 public class TestMultiThreadInserts {
@@ -11,7 +10,7 @@ public class TestMultiThreadInserts {
     public void testMultiThreadInserts () {
         final int nThreads = 2;
         final ExecutorService es = Executors.newFixedThreadPool (nThreads);
-        final TrieMap<Object, Object> bt = new TrieMap<Object, Object> ();
+        final TrieMap<Object, Object> bt = new TrieMap<> ();
         for (int i = 0; i < nThreads; i++) {
             final int threadNo = i;
             es.execute (new Runnable () {
@@ -32,7 +31,7 @@ public class TestMultiThreadInserts {
         } catch (final InterruptedException e) {
             e.printStackTrace ();
         }
-        
+
         for (int j = 0; j < 500 * 1000; j++) {
             final Object lookup = bt.lookup (Integer.valueOf (j));
             TestHelper.assertEquals (Integer.valueOf (j), lookup);

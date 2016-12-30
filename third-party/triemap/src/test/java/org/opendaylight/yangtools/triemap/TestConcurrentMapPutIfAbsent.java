@@ -1,7 +1,6 @@
 package org.opendaylight.yangtools.triemap;
 
 import java.util.concurrent.ConcurrentMap;
-
 import org.junit.Test;
 
 public class TestConcurrentMapPutIfAbsent {
@@ -9,8 +8,8 @@ public class TestConcurrentMapPutIfAbsent {
 
     @Test
     public void testConcurrentMapPutIfAbsent () {
-        final ConcurrentMap<Object, Object> map = new TrieMap<Object, Object> ();
-        
+        final ConcurrentMap<Object, Object> map = new TrieMap<> ();
+
         for (int i = 0; i < COUNT; i++) {
             TestHelper.assertTrue (null == map.putIfAbsent (i, i));
             TestHelper.assertTrue (Integer.valueOf (i).equals (map.putIfAbsent (i, i)));

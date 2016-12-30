@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
-
 import org.junit.Test;
 
 public class TestMapIterator {
@@ -14,12 +13,12 @@ public class TestMapIterator {
     public void testMapIterator () {
         for (int i = 0; i < 60 * 1000; i+= 400 + new Random ().nextInt (400)) {
             System.out.println (i);
-            final Map<Integer, Integer> bt = new TrieMap <Integer, Integer> ();
+            final Map<Integer, Integer> bt = new TrieMap <> ();
             for (int j = 0; j < i; j++) {
                 TestHelper.assertEquals (null, bt.put (Integer.valueOf (j), Integer.valueOf (j)));
             }
             int count = 0;
-            final Set<Integer> set = new HashSet<Integer> ();
+            final Set<Integer> set = new HashSet<> ();
             for (final Map.Entry<Integer, Integer> e : bt.entrySet ()) {
                 set.add (e.getKey ());
                 count++;
@@ -33,9 +32,8 @@ public class TestMapIterator {
 
             TestHelper.assertEquals (i, count);
             TestHelper.assertEquals (i, bt.size ());
-            
-            for (final Iterator<Map.Entry<Integer, Integer>> iter = bt.entrySet ().iterator (); iter.hasNext ();) {
-                final Entry<Integer, Integer> e = iter.next ();
+
+            for (Entry<Integer, Integer> e : bt.entrySet ()) {
                 TestHelper.assertTrue (e.getValue () == bt.get (e.getKey ()));
                 e.setValue (e.getValue () + 1);
                 TestHelper.assertTrue (e.getValue () == e.getKey () + 1);
@@ -49,7 +47,7 @@ public class TestMapIterator {
                 iter.remove ();
                 TestHelper.assertFalse (bt.containsKey (k));
             }
-            
+
             TestHelper.assertEquals (0, bt.size ());
             TestHelper.assertTrue (bt.isEmpty ());
         }

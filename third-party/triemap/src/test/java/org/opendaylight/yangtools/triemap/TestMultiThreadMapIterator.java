@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-
 import org.junit.Test;
 
 public class TestMultiThreadMapIterator {
@@ -17,7 +16,7 @@ public class TestMultiThreadMapIterator {
 
     @Test
     public void testMultiThreadMapIterator () {
-        final Map<Object, Object> bt = new TrieMap<Object, Object> ();
+        final Map<Object, Object> bt = new TrieMap<> ();
         for (int j = 0; j < 50 * 1000; j++) {
             final Object[] objects = getObjects (j);
             for (final Object o : objects) {
@@ -25,7 +24,7 @@ public class TestMultiThreadMapIterator {
             }
         }
 
-      System.out.println ("Size of initialized map is " + bt.size ());  
+      System.out.println ("Size of initialized map is " + bt.size ());
       int count = 0;
         {
             final ExecutorService es = Executors.newFixedThreadPool (NTHREADS);
@@ -34,10 +33,9 @@ public class TestMultiThreadMapIterator {
                 es.execute (new Runnable () {
                     @Override
                     public void run () {
-                        for (final Iterator<Map.Entry<Object, Object>> i = bt.entrySet ().iterator (); i.hasNext ();) {
-                            final Entry<Object, Object> e = i.next ();
+                        for (Entry<Object, Object> e : bt.entrySet ()) {
                             if (accepts (threadNo, NTHREADS, e.getKey ())) {
-                                String newValue = "TEST:" + threadNo; 
+                                String newValue = "TEST:" + threadNo;
                                 e.setValue (newValue);
                             }
                         }
@@ -55,13 +53,13 @@ public class TestMultiThreadMapIterator {
 
         count = 0;
         for (final Map.Entry<Object, Object> kv : bt.entrySet ()) {
-            Object value = kv.getValue (); 
+            Object value = kv.getValue ();
             TestHelper.assertTrue (value instanceof String);
             count++;
         }
         TestHelper.assertEquals (50000 + 2000 + 1000 + 100, count);
-        
-        final ConcurrentHashMap<Object, Object> removed = new ConcurrentHashMap<Object, Object> ();
+
+        final ConcurrentHashMap<Object, Object> removed = new ConcurrentHashMap<> ();
 
         {
             final ExecutorService es = Executors.newFixedThreadPool (NTHREADS);
@@ -112,11 +110,12 @@ public class TestMultiThreadMapIterator {
     }
 
     protected static boolean accepts (final int threadNo, final int nThreads, final Object key) {
-        int val = getKeyValue (key); 
-        if(val>=0)
+        int val = getKeyValue (key);
+        if(val>=0) {
             return val % nThreads == threadNo;
-        else
+        } else {
             return false;
+        }
     }
 
     private static int getKeyValue (final Object key) {
@@ -132,13 +131,14 @@ public class TestMultiThreadMapIterator {
         }
         else if (key instanceof Byte) {
             val = ((Byte) key).intValue () + 3;
-        } else 
+        } else {
             return -1;
+        }
         return val;
     }
 
     static Object[] getObjects (final int j) {
-        final Collection<Object> results = new LinkedList<Object> ();
+        final Collection<Object> results = new LinkedList<> ();
         results.add (Integer.valueOf (j));
         if (j < 2000) {
             results.add (Character.valueOf ((char) j));

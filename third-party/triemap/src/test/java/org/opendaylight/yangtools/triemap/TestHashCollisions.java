@@ -6,13 +6,13 @@ import org.junit.Test;
 public class TestHashCollisions {
     @Test
     public void testHashCollisions () {
-        final TrieMap<Object, Object> bt = new TrieMap<Object, Object> ();
+        final TrieMap<Object, Object> bt = new TrieMap<> ();
 
         insertStrings (bt);
         insertChars (bt);
         insertInts (bt);
         insertBytes (bt);
-        
+
         removeStrings (bt);
         removeChars (bt);
         removeInts (bt);
