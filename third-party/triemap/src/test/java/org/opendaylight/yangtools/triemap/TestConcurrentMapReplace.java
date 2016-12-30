@@ -1,7 +1,6 @@
 package org.opendaylight.yangtools.triemap;
 
 import java.util.concurrent.ConcurrentMap;
-
 import org.junit.Test;
 
 public class TestConcurrentMapReplace {
@@ -9,8 +8,8 @@ public class TestConcurrentMapReplace {
 
     @Test
     public void testConcurrentMapReplace () {
-        final ConcurrentMap<Object, Object> map = new TrieMap<Object, Object> ();
-        
+        final ConcurrentMap<Object, Object> map = new TrieMap<> ();
+
         for (int i = 0; i < COUNT; i++) {
             TestHelper.assertTrue (null == map.replace (i, "lol"));
             TestHelper.assertFalse (map.replace (i, i, "lol2"));
