@@ -15,17 +15,14 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import java.util.Iterator;
 import java.util.Map.Entry;
 
-final class LNode<K, V> extends MainNode<K, V> {
-    final ListMap<K, V> listmap;
+final class LNode<K, V> extends MainNode<K, V> implements Iterable<Entry<K, V>> {
+    private final ListMap<K, V> listmap;
 
-    LNode(final ListMap<K, V> listmap) {
+    private LNode(final ListMap<K, V> listmap) {
         this.listmap = listmap;
-    }
-
-    LNode(final K k, final V v) {
-        this(ListMap.map(k, v));
     }
 
     LNode(final K k1, final V v1, final K k2, final V v2) {
@@ -33,13 +30,13 @@ final class LNode<K, V> extends MainNode<K, V> {
     }
 
     LNode<K, V> inserted(final K k, final V v) {
-        return new LNode<> (listmap.add (k, v));
+        return new LNode<>(listmap.add(k, v));
     }
 
-    MainNode<K, V> removed (final K k, final TrieMap<K, V> ct) {
-        ListMap<K, V> updmap = listmap.remove(k);
-        if (updmap.size () > 1) {
-            return new LNode<> (updmap);
+    MainNode<K, V> removed(final K k, final TrieMap<K, V> ct) {
+        final ListMap<K, V> updmap = listmap.remove(k);
+        if (updmap.size() > 1) {
+            return new LNode<>(updmap);
         }
 
         final Entry<K, V> kv = updmap.iterator().next();
@@ -60,5 +57,10 @@ final class LNode<K, V> extends MainNode<K, V> {
     String string(final int lev) {
         // (" " * lev) + "LNode(%s)".format(listmap.mkString(", "))
         return "LNode";
+    }
+
+    @Override
+    public Iterator<Entry<K, V>> iterator() {
+        return listmap.iterator();
     }
 }
