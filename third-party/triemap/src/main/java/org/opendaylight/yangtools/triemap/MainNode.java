@@ -18,26 +18,23 @@ package org.opendaylight.yangtools.triemap;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 abstract class MainNode<K, V> extends BasicNode {
+    @SuppressWarnings("rawtypes")
+    private static final AtomicReferenceFieldUpdater<MainNode, MainNode> PREV_UPDATER =
+        AtomicReferenceFieldUpdater.newUpdater(MainNode.class, MainNode.class, "prev");
 
-    public static final AtomicReferenceFieldUpdater<MainNode, MainNode> updater = AtomicReferenceFieldUpdater.newUpdater (MainNode.class, MainNode.class, "prev");
-
-    public volatile MainNode<K, V> prev = null;
+    private volatile MainNode<K, V> prev = null;
 
     abstract int cachedSize(TrieMap<K, V> ct);
 
-    public boolean CAS_PREV (final MainNode<K, V> oldval, final MainNode<K, V> nval) {
-        return updater.compareAndSet (this, oldval, nval);
+    final boolean CAS_PREV(final MainNode<K, V> oldval, final MainNode<K, V> nval) {
+        return PREV_UPDATER.compareAndSet(this, oldval, nval);
     }
 
-    public void WRITE_PREV (final MainNode<K, V> nval) {
-        updater.set (this, nval);
+    final void WRITE_PREV(final MainNode<K, V> nval) {
+        prev = nval;
     }
 
-    // do we need this? unclear in the javadocs...
-    // apparently not - volatile reads are supposed to be safe
-    // regardless of whether there are concurrent ARFU updates
-    public MainNode<K, V> READ_PREV () {
-        return updater.get (this);
+    final MainNode<K, V> READ_PREV() {
+        return prev;
     }
-
 }
