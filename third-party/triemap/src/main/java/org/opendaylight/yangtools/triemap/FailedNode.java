@@ -19,8 +19,8 @@ final class FailedNode<K, V> extends MainNode<K, V> {
     private final MainNode<K, V> p;
 
     FailedNode(final MainNode<K, V> p) {
+        super(p);
         this.p = p;
-        WRITE_PREV(p);
     }
 
     @Override
