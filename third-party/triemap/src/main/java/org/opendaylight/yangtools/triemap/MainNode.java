@@ -22,7 +22,15 @@ abstract class MainNode<K, V> extends BasicNode {
     private static final AtomicReferenceFieldUpdater<MainNode, MainNode> PREV_UPDATER =
         AtomicReferenceFieldUpdater.newUpdater(MainNode.class, MainNode.class, "prev");
 
-    private volatile MainNode<K, V> prev = null;
+    private volatile MainNode<K, V> prev;
+
+    MainNode() {
+        this.prev = null;
+    }
+
+    MainNode(final MainNode<K, V> prev) {
+        this.prev = prev;
+    }
 
     abstract int cachedSize(TrieMap<K, V> ct);
 
