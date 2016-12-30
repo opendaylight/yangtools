@@ -18,21 +18,17 @@ package org.opendaylight.yangtools.triemap;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 abstract class CNodeBase<K, V> extends MainNode<K, V> {
+    @SuppressWarnings("rawtypes")
+    private static final AtomicIntegerFieldUpdater<CNodeBase> CSIZE_UPDATER =
+            AtomicIntegerFieldUpdater.newUpdater(CNodeBase.class, "csize");
 
-    public static final AtomicIntegerFieldUpdater<CNodeBase> updater = AtomicIntegerFieldUpdater.newUpdater(CNodeBase.class, "csize");
+    private volatile int csize = -1;
 
-    public volatile int csize = -1;
-
-    public boolean CAS_SIZE(final int oldval, final int nval) {
-        return updater.compareAndSet(this, oldval, nval);
+    final boolean CAS_SIZE(final int oldval, final int nval) {
+        return CSIZE_UPDATER.compareAndSet(this, oldval, nval);
     }
 
-    public void WRITE_SIZE(final int nval) {
-        updater.set(this, nval);
+    final int READ_SIZE() {
+        return csize;
     }
-
-    public int READ_SIZE() {
-        return updater.get(this);
-    }
-
 }
