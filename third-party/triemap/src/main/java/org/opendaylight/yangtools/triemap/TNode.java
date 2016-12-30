@@ -47,7 +47,7 @@ final class TNode<K, V> extends MainNode<K, V> implements KVNode<K, V> {
     }
 
     @Override
-    public int cachedSize(final Object ct) {
+    int cachedSize(final TrieMap<K, V> ct) {
         return 1;
     }
 
