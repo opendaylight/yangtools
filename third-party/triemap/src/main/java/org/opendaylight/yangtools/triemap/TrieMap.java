@@ -709,7 +709,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
             } else if (m instanceof TNode) {
                 current = (TNode<K, V>) m;
             } else if (m instanceof LNode) {
-                subiter = ((LNode<K, V>) m).listmap.iterator ();
+                subiter = ((LNode<K, V>) m).iterator();
                 checkSubiter ();
             } else if (m == null) {
                 current = null;
