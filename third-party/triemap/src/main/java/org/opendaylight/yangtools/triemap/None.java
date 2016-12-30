@@ -2,7 +2,7 @@ package org.opendaylight.yangtools.triemap;
 
 /**
  * Mimic None in Scala
- *  
+ *
  * @author Roman Levenstein <romixlev@gmail.com>
  *
  * @param <V>
