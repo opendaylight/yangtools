@@ -48,7 +48,7 @@ final class INode<K, V> extends INodeBase<K, V> {
 
     MainNode<K, V> GCAS_READ(final TrieMap<K, V> ct) {
         MainNode<K, V> m = /* READ */mainnode;
-        MainNode<K, V> prevval = /* READ */m.prev;
+        MainNode<K, V> prevval = /* READ */ m.READ_PREV();
         if (prevval == null) {
             return m;
         } else {
@@ -62,7 +62,7 @@ final class INode<K, V> extends INodeBase<K, V> {
                 return null;
             } else {
                 // complete the GCAS
-                MainNode<K, V> prev = /* READ */m.prev;
+                MainNode<K, V> prev = /* READ */ m.READ_PREV();
                 INode<K, V> ctr = ct.readRoot(true);
 
                 if (prev == null) {
@@ -72,8 +72,8 @@ final class INode<K, V> extends INodeBase<K, V> {
                 if (prev instanceof FailedNode) {
                     // try to commit to previous value
                     FailedNode<K, V> fn = (FailedNode<K, V>) prev;
-                    if (CAS(m, fn.prev)) {
-                        return fn.prev;
+                    if (CAS(m, fn.READ_PREV())) {
+                        return fn.READ_PREV();
                     } else {
                         // Tailrec
                         // return GCAS_Complete (/* READ */mainnode, ct);
@@ -117,7 +117,7 @@ final class INode<K, V> extends INodeBase<K, V> {
         n.WRITE_PREV (old);
         if (CAS (old, n)) {
             GCAS_Complete (n, ct);
-            return /* READ */n.prev == null;
+            return /* READ */ n.READ_PREV() == null;
         } else {
             return false;
         }

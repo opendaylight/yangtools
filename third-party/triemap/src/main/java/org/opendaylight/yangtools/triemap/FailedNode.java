@@ -18,9 +18,9 @@ package org.opendaylight.yangtools.triemap;
 final class FailedNode<K, V> extends MainNode<K, V> {
     private final MainNode<K, V> p;
 
-    FailedNode (final MainNode<K, V> p) {
+    FailedNode(final MainNode<K, V> p) {
         this.p = p;
-        WRITE_PREV (p);
+        WRITE_PREV(p);
     }
 
     @Override
