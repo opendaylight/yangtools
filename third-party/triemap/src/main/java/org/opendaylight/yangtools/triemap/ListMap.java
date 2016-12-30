@@ -1,6 +1,7 @@
 package org.opendaylight.yangtools.triemap;
 
 import java.util.Iterator;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -210,7 +211,7 @@ abstract class ListMap<K,V> {
             public Entry<K, V> next () {
                 if (n instanceof Node) {
                     Node<K, V> nn = (Node<K, V>) n;
-                    Pair<K, V> res = new Pair<K, V> (nn.k, nn.v);
+                    Entry<K, V> res = new SimpleImmutableEntry<K, V> (nn.k, nn.v);
                     n = n.next;
                     return res;
                 } else {
