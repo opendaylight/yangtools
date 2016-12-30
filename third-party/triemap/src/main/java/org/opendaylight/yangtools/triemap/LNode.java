@@ -52,7 +52,7 @@ final class LNode<K, V> extends MainNode<K, V> {
     }
 
     @Override
-    public int cachedSize(final Object ct) {
+    int cachedSize(final TrieMap<K, V> ct) {
         return listmap.size();
     }
 

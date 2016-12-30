@@ -29,13 +29,13 @@ final class CNode<K, V> extends CNodeBase<K, V> {
 
     // this should only be called from within read-only snapshots
     @Override
-    public int cachedSize(final Object ct) {
+    int cachedSize(final TrieMap<K, V> ct) {
         final int currsz = READ_SIZE();
         if (currsz != -1) {
             return currsz;
         }
 
-        final int sz = computeSize((TrieMap<K, V>) ct);
+        final int sz = computeSize(ct);
         while (READ_SIZE () == -1) {
             CAS_SIZE (-1, sz);
         }
