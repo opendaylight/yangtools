@@ -114,7 +114,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
     }
 
     public TrieMap (final Hashing<K> hashf, final Equiv<K> ef) {
-        this(INode.newRootNode(), hashf, ef, false);
+        this(newRootNode(), hashf, ef, false);
     }
 
     public TrieMap () {
@@ -154,6 +154,13 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
     // }
     // } while (obj != TrieMapSerializationEnd);
     // }
+
+
+    private static <K,V> INode<K,V> newRootNode() {
+        final Gen gen = new Gen();
+        final CNode<K, V> cn = new CNode<>(0, new BasicNode[] {}, gen);
+        return new INode<>(gen, cn);
+    }
 
     final boolean CAS_ROOT (final Object ov, final Object nv) {
         if (isReadOnly()) {
@@ -390,7 +397,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
     final public void clear () {
         while (true) {
             INode<K, V> r = RDCSS_READ_ROOT ();
-            if (!RDCSS_ROOT (r, r.gcasRead (this), INode.<K, V>newRootNode ())) {
+            if (!RDCSS_ROOT(r, r.gcasRead(this), newRootNode())) {
                 continue;
             }else{
                 return;
@@ -903,7 +910,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
 
     private void readObject(final ObjectInputStream inputStream) throws IOException, ClassNotFoundException {
         inputStream.defaultReadObject();
-        this.root = INode.newRootNode();
+        this.root = newRootNode();
 
         final boolean ro = inputStream.readBoolean();
         final int size = inputStream.readInt();
