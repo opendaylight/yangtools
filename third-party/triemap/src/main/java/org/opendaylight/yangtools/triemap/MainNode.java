@@ -23,7 +23,7 @@ abstract class MainNode<K, V> extends BasicNode {
 
     public volatile MainNode<K, V> prev = null;
 
-    public abstract int cachedSize (Object ct);
+    abstract int cachedSize(TrieMap<K, V> ct);
 
     public boolean CAS_PREV (final MainNode<K, V> oldval, final MainNode<K, V> nval) {
         return updater.compareAndSet (this, oldval, nval);
