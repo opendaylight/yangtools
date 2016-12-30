@@ -155,11 +155,9 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
     // } while (obj != TrieMapSerializationEnd);
     // }
 
-
     private static <K,V> INode<K,V> newRootNode() {
         final Gen gen = new Gen();
-        final CNode<K, V> cn = new CNode<>(0, new BasicNode[] {}, gen);
-        return new INode<>(gen, cn);
+        return new INode<>(gen, new CNode<>(gen));
     }
 
     final boolean CAS_ROOT (final Object ov, final Object nv) {
