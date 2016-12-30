@@ -5,7 +5,7 @@ import org.junit.Test;
 public class TestInsert {
     @Test
     public void testInsert () {
-        final TrieMap<Object, Object> bt = new TrieMap<Object, Object> ();
+        final TrieMap<Object, Object> bt = new TrieMap<> ();
         TestHelper.assertEquals (null, bt.put ("a", "a"));
         TestHelper.assertEquals (null, bt.put ("b", "b"));
         TestHelper.assertEquals (null, bt.put ("c", "b"));
