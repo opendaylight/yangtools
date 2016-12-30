@@ -67,7 +67,7 @@ final class INode<K, V> extends INodeBase<K, V> {
                         m = /* READ */ READ();
                         continue;
                     }
-                } else if (prev instanceof MainNode) {
+                } else if (prev != null) {
                     // Assume that you've read the root from the generation
                     // G.
                     // Assume that the snapshot algorithm is correct.
@@ -413,7 +413,7 @@ final class INode<K, V> extends INodeBase<K, V> {
             } else if (m instanceof LNode) {
                 // 5) an l-node
                 Option<V> tmp = ((LNode<K, V>) m).get (k);
-                return (tmp instanceof Option) ? ((Option<V>) tmp) : null;
+                return (tmp != null) ? ((Option<V>) tmp) : null;
             }
 
             throw new RuntimeException ("Should not happen");
