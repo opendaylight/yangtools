@@ -16,12 +16,17 @@
 package org.opendaylight.yangtools.triemap;
 
 final class CNode<K, V> extends CNodeBase<K, V> {
+    private static final BasicNode[] EMPTY_ARRAY = new BasicNode[0];
 
     final int bitmap;
     final BasicNode[] array;
     final Gen gen;
 
-    CNode(final int bitmap, final BasicNode[] array, final Gen gen) {
+    CNode(final Gen gen) {
+        this(gen, 0, EMPTY_ARRAY);
+    }
+
+    private CNode(final Gen gen, final int bitmap, final BasicNode... array) {
         this.bitmap = bitmap;
         this.array = array;
         this.gen = gen;
@@ -76,7 +81,7 @@ final class CNode<K, V> extends CNodeBase<K, V> {
         BasicNode[] narr = new BasicNode[len];
         System.arraycopy(array, 0, narr, 0, len);
         narr[pos] = nn;
-        return new CNode<>(bitmap, narr, gen);
+        return new CNode<>(gen, bitmap, narr);
     }
 
     CNode<K, V> removedAt(final int pos, final int flag, final Gen gen) {
@@ -85,7 +90,7 @@ final class CNode<K, V> extends CNodeBase<K, V> {
         BasicNode[] narr = new BasicNode[len - 1];
         System.arraycopy(arr, 0, narr, 0, pos);
         System.arraycopy(arr, pos + 1, narr, pos, len - pos - 1);
-        return new CNode<>(bitmap ^ flag, narr, gen);
+        return new CNode<>(gen, bitmap ^ flag, narr);
     }
 
     CNode<K, V> insertedAt(final int pos, final int flag, final BasicNode nn, final Gen gen) {
@@ -95,7 +100,7 @@ final class CNode<K, V> extends CNodeBase<K, V> {
         System.arraycopy(array, 0, narr, 0, pos);
         narr [pos] = nn;
         System.arraycopy(array, pos, narr, pos + 1, len - pos);
-        return new CNode<>(bmp | flag, narr, gen);
+        return new CNode<>(gen, bmp | flag, narr);
     }
 
     /**
@@ -117,7 +122,7 @@ final class CNode<K, V> extends CNodeBase<K, V> {
             }
             i += 1;
         }
-        return new CNode<>(bitmap, narr, ngen);
+        return new CNode<>(ngen, bitmap, narr);
     }
 
     private BasicNode resurrect(final INode<K, V> inode, final Object inodemain) {
@@ -166,7 +171,7 @@ final class CNode<K, V> extends CNodeBase<K, V> {
             i += 1;
         }
 
-        return new CNode<K, V> (bmp, tmparray, gen).toContracted (lev);
+        return new CNode<K, V>(gen, bmp, tmparray).toContracted(lev);
     }
 
     @Override
@@ -217,12 +222,12 @@ final class CNode<K, V> extends CNodeBase<K, V> {
 
             if (xidx == yidx) {
                 INode<K, V> subinode = new INode<>(gen, dual(x, xhc, y, yhc, lev + 5, gen));
-                return new CNode<>(bmp, new BasicNode[] { subinode }, gen);
+                return new CNode<>(gen, bmp, subinode);
             } else {
                 if (xidx < yidx) {
-                    return new CNode<>(bmp, new BasicNode[] { x, y }, gen);
+                    return new CNode<>(gen, bmp, x, y);
                 } else {
-                    return new CNode<>(bmp, new BasicNode[] { y, x }, gen);
+                    return new CNode<>(gen, bmp, y, x);
                 }
             }
         } else {
