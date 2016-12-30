@@ -19,27 +19,20 @@ final class INode<K, V> extends INodeBase<K, V> {
     static final Object KEY_PRESENT = new Object ();
     static final Object KEY_ABSENT = new Object ();
 
+    /**
+     * Virtual result for lookup methods indicating that the lookup needs to be restarted. This is a faster version
+     * of throwing a checked exception to control the restart.
+     */
+    static final Object RESTART = new Object();
+
     static <K,V> INode<K,V> newRootNode() {
         Gen gen = new Gen ();
         CNode<K, V> cn = new CNode<> (0, new BasicNode[] {}, gen);
-        return new INode<>(cn, gen);
+        return new INode<>(gen, cn);
     }
 
-    private INode(final MainNode<K, V> bn, final Gen g) {
-        super(g);
-        WRITE(bn);
-    }
-
-    INode(final Gen g) {
-        this(null, g);
-    }
-
-    void WRITE(final MainNode<K, V> nval) {
-        INodeBase.updater.set(this, nval);
-    }
-
-    boolean CAS(final MainNode<K, V> old, final MainNode<K, V> n) {
-        return INodeBase.updater.compareAndSet(this, old, n);
+    INode(final Gen gen, final MainNode<K, V> bn) {
+        super(gen, bn);
     }
 
     MainNode<K, V> gcasRead(final TrieMap<K, V> ct) {
@@ -47,7 +40,7 @@ final class INode<K, V> extends INodeBase<K, V> {
     }
 
     MainNode<K, V> GCAS_READ(final TrieMap<K, V> ct) {
-        MainNode<K, V> m = /* READ */mainnode;
+        MainNode<K, V> m = /* READ */ READ();
         MainNode<K, V> prevval = /* READ */ m.READ_PREV();
         if (prevval == null) {
             return m;
@@ -77,7 +70,7 @@ final class INode<K, V> extends INodeBase<K, V> {
                     } else {
                         // Tailrec
                         // return GCAS_Complete (/* READ */mainnode, ct);
-                        m = /* READ */mainnode;
+                        m = /* READ */ READ();
                         continue;
                     }
                 } else if (prev instanceof MainNode) {
@@ -105,7 +98,7 @@ final class INode<K, V> extends INodeBase<K, V> {
                     } else {
                         // try to abort
                         m.CAS_PREV(prev, new FailedNode<>(prev));
-                        return GCAS_Complete(/* READ */mainnode, ct);
+                        return GCAS_Complete(/* READ */ READ(), ct);
                     }
                 }
             }
@@ -128,16 +121,11 @@ final class INode<K, V> extends INodeBase<K, V> {
     }
 
     private INode<K, V> inode(final MainNode<K, V> cn) {
-        INode<K, V> nin = new INode<>(gen);
-        nin.WRITE(cn);
-        return nin;
+        return new INode<>(gen, cn);
     }
 
     INode<K, V> copyToGen(final Gen ngen, final TrieMap<K, V> ct) {
-        INode<K, V> nin = new INode<>(ngen);
-        MainNode<K, V> main = GCAS_READ(ct);
-        nin.WRITE(main);
-        return nin;
+        return new INode<>(ngen, GCAS_READ(ct));
     }
 
     /**
@@ -412,8 +400,7 @@ final class INode<K, V> extends INodeBase<K, V> {
                                 // Tailrec
                                 continue;
                             } else {
-                                return RESTART; // used to be throw
-                                // RestartException
+                                return RESTART; // used to be throw RestartException
                             }
                         }
                     } else if (sub instanceof SNode) {
