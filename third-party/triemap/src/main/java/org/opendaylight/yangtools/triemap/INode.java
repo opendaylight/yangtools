@@ -25,12 +25,6 @@ final class INode<K, V> extends INodeBase<K, V> {
      */
     static final Object RESTART = new Object();
 
-    static <K,V> INode<K,V> newRootNode() {
-        Gen gen = new Gen ();
-        CNode<K, V> cn = new CNode<> (0, new BasicNode[] {}, gen);
-        return new INode<>(gen, cn);
-    }
-
     INode(final Gen gen, final MainNode<K, V> bn) {
         super(gen, bn);
     }
