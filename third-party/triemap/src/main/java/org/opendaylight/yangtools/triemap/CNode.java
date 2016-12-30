@@ -216,8 +216,7 @@ final class CNode<K, V> extends CNodeBase<K, V> {
             int bmp = (1 << xidx) | (1 << yidx);
 
             if (xidx == yidx) {
-                INode<K, V> subinode = new INode<>(gen);// (TrieMap.inodeupdater)
-                subinode.mainnode = dual (x, xhc, y, yhc, lev + 5, gen);
+                INode<K, V> subinode = new INode<>(gen, dual(x, xhc, y, yhc, lev + 5, gen));
                 return new CNode<>(bmp, new BasicNode[] { subinode }, gen);
             } else {
                 if (xidx < yidx) {

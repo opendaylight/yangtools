@@ -19,20 +19,24 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 abstract class INodeBase<K, V> extends BasicNode {
 
-    public static final AtomicReferenceFieldUpdater<INodeBase, MainNode> updater = AtomicReferenceFieldUpdater.newUpdater(INodeBase.class, MainNode.class, "mainnode");
-
-    public static final Object RESTART = new Object();
-
-    public volatile MainNode<K, V> mainnode = null;
+    @SuppressWarnings("rawtypes")
+    private static final AtomicReferenceFieldUpdater<INodeBase, MainNode> MAINNODE_UPDATER =
+            AtomicReferenceFieldUpdater.newUpdater(INodeBase.class, MainNode.class, "mainnode");
 
     public final Gen gen;
 
-    public INodeBase(final Gen generation) {
-    gen = generation;
+    private volatile MainNode<K, V> mainnode;
+
+    INodeBase(final Gen generation, final MainNode<K, V> mainnode) {
+        gen = generation;
+        this.mainnode = mainnode;
     }
 
-    public BasicNode prev() {
-    return null;
+    final boolean CAS(final MainNode<K, V> old, final MainNode<K, V> n) {
+        return MAINNODE_UPDATER.compareAndSet(this, old, n);
     }
 
+    final MainNode<K, V> READ() {
+        return mainnode;
+    }
 }
