@@ -269,17 +269,15 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
         }
     }
 
-    private Object lookuphc (final K k, final int hc) {
+    private Object lookuphc(final K k, final int hc) {
         while (true) {
-            INode<K, V> r = RDCSS_READ_ROOT ();
-            Object res = r.rec_lookup (k, hc, 0, null, r.gen, this);
-            if (res == INodeBase.RESTART) {
-                // return lookuphc (k, hc);
-                // tailrec
-                continue;
-            } else {
+            final INode<K, V> r = RDCSS_READ_ROOT ();
+            final Object res = r.rec_lookup(k, hc, 0, null, r.gen, this);
+            if (!INode.RESTART.equals(res)) {
                 return res;
             }
+
+            // Tail recursion: lookuphc(k, hc)
         }
     }
 
