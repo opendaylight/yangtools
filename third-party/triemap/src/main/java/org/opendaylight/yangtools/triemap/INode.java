@@ -47,55 +47,50 @@ final class INode<K, V> extends INodeBase<K, V> {
         while (true) {
             if (m == null) {
                 return null;
-            } else {
-                // complete the GCAS
-                final MainNode<K, V> prev = /* READ */ m.READ_PREV();
-                INode<K, V> ctr = ct.readRoot(true);
+            }
 
-                if (prev == null) {
+            // complete the GCAS
+            final MainNode<K, V> prev = /* READ */ m.READ_PREV();
+            final INode<K, V> ctr = ct.readRoot(true);
+            if (prev == null) {
+                return m;
+            }
+
+            if (prev instanceof FailedNode) {
+                // try to commit to previous value
+                FailedNode<K, V> fn = (FailedNode<K, V>) prev;
+                if (CAS(m, fn.READ_PREV())) {
+                    return fn.READ_PREV();
+                }
+
+                // Tail recursion: return GCAS_Complete (/* READ */ READ(), ct);
+                m = /* READ */ READ();
+                continue;
+            }
+
+            // Assume that you've read the root from the generation G.
+            // Assume that the snapshot algorithm is correct.
+            // ==> you can only reach nodes in generations <= G.
+            // ==> `gen` is <= G.
+            // We know that `ctr.gen` is >= G.
+            // ==> if `ctr.gen` = `gen` then they are both equal to G.
+            // ==> otherwise, we know that either `ctr.gen` > G, `gen` < G,
+            // or both
+            if ((ctr.gen == gen) && ct.nonReadOnly()) {
+                // try to commit
+                if (m.CAS_PREV(prev, null)) {
                     return m;
                 }
 
-                if (prev instanceof FailedNode) {
-                    // try to commit to previous value
-                    FailedNode<K, V> fn = (FailedNode<K, V>) prev;
-                    if (CAS(m, fn.READ_PREV())) {
-                        return fn.READ_PREV();
-                    } else {
-                        // Tailrec
-                        // return GCAS_Complete (/* READ */mainnode, ct);
-                        m = /* READ */ READ();
-                        continue;
-                    }
-                } else {
-                    // Assume that you've read the root from the generation
-                    // G.
-                    // Assume that the snapshot algorithm is correct.
-                    // ==> you can only reach nodes in generations <= G.
-                    // ==> `gen` is <= G.
-                    // We know that `ctr.gen` is >= G.
-                    // ==> if `ctr.gen` = `gen` then they are both equal to
-                    // G.
-                    // ==> otherwise, we know that either `ctr.gen` > G,
-                    // `gen` <
-                    // G,
-                    // or both
-                    if ((ctr.gen == gen) && ct.nonReadOnly()) {
-                        // try to commit
-                        if (m.CAS_PREV(prev, null)) {
-                            return m;
-                        } else {
-                            // return GCAS_Complete (m, ct);
-                            // tailrec
-                            continue;
-                        }
-                    } else {
-                        // try to abort
-                        m.CAS_PREV(prev, new FailedNode<>(prev));
-                        return GCAS_Complete(/* READ */ READ(), ct);
-                    }
-                }
+                // Tail recursion: return GCAS_Complete (m, ct);
+                continue;
             }
+
+            // try to abort
+            m.CAS_PREV(prev, new FailedNode<>(prev));
+
+            // Tail recursion: return GCAS_Complete(/* READ */ READ(), ct);
+            m = /* READ */ READ();
         }
     }
 
