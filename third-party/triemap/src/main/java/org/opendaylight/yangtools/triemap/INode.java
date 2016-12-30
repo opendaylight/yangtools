@@ -49,7 +49,7 @@ final class INode<K, V> extends INodeBase<K, V> {
                 return null;
             } else {
                 // complete the GCAS
-                MainNode<K, V> prev = /* READ */ m.READ_PREV();
+                final MainNode<K, V> prev = /* READ */ m.READ_PREV();
                 INode<K, V> ctr = ct.readRoot(true);
 
                 if (prev == null) {
@@ -67,7 +67,7 @@ final class INode<K, V> extends INodeBase<K, V> {
                         m = /* READ */ READ();
                         continue;
                     }
-                } else if (prev != null) {
+                } else {
                     // Assume that you've read the root from the generation
                     // G.
                     // Assume that the snapshot algorithm is correct.
@@ -96,7 +96,6 @@ final class INode<K, V> extends INodeBase<K, V> {
                     }
                 }
             }
-            throw new RuntimeException ("Should not happen");
         }
     }
 
