@@ -17,6 +17,7 @@ package org.opendaylight.yangtools.triemap;
 
 import static org.junit.Assert.assertFalse;
 
+import java.util.Optional;
 import org.junit.Test;
 
 public class ListMapTest {
@@ -33,8 +34,8 @@ public class ListMapTest {
             map = map.add(i, Boolean.TRUE);
         }
 
-        final Option<Boolean> ret = map.get(0);
-        assertFalse(ret.nonEmpty());
+        final Optional<Boolean> ret = map.get(0);
+        assertFalse(ret.isPresent());
     }
 
 }
