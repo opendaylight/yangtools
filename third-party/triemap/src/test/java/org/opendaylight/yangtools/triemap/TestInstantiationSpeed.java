@@ -27,7 +27,7 @@ public class TestInstantiationSpeed {
         final long start = System.nanoTime();
 
         for (int i = 0; i < COUNT; ++i) {
-            maps[i] = TrieMap.empty();
+            maps[i] = new TrieMap<>();
         }
 
         final long stop = System.nanoTime();
