@@ -17,8 +17,8 @@ package org.opendaylight.yangtools.triemap;
 
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 
 /**
  * Mimic immutable ListMap in Scala
@@ -27,232 +27,105 @@ import java.util.Map.Entry;
  *
  * @param <V>
  */
-abstract class ListMap<K,V> {
+final class ListMap<K, V> {
+    private final K k;
+    private final V v;
 
-    ListMap<K,V> next;
+    // Modified during remove0 only
+    private ListMap<K, V> next;
 
-    static <K,V> ListMap<K, V> map(final K k, final V v, final ListMap<K, V> tail){
-        return new Node<> (k, v, tail);
+    private ListMap(final K k, final V v) {
+        this(k, v, null);
     }
 
-    static <K,V> ListMap<K, V> map(final K k, final V v){
-        return new Node<> (k, v, null);
+    private ListMap(final K k, final V v, final ListMap<K, V> next) {
+        this.k = k;
+        this.v = v;
+        this.next = next;
     }
 
-    static <K,V> ListMap<K, V> map(final K k1, final V v1, final K k2, final V v2){
-        return new Node<> (k1, v1, new Node<>(k2,v2, null));
+    static <K,V> ListMap<K, V> map(final K k1, final V v1, final K k2, final V v2) {
+        return new ListMap<>(k1, v1, new ListMap<>(k2, v2));
     }
 
-    public abstract int size ();
+    int size() {
+        return next == null ? 1 : next.size() + 1;
+    }
 
-    public abstract boolean isEmpty() ;
-
-    abstract public boolean contains(K k, V v);
-
-    abstract public boolean contains(K key);
-
-    abstract public Option<V> get (K key);
-
-    abstract public ListMap<K, V> add (K key, V value);
-
-    abstract public ListMap<K, V> remove (K key);
-
-    abstract public Iterator<Map.Entry<K, V>> iterator();
-
-
-    static class EmptyListMap<K,V> extends ListMap<K, V> {
-        @Override
-        public ListMap<K,V> add (final K key, final V value) {
-            return ListMap.map(key, value, null);
+    Option<V> get(final K key) {
+        if (key.equals(k)) {
+            return Option.makeOption(v);
         }
+        return next == null ? Option.makeOption() : next.get(key);
+    }
 
-        @Override
-        public boolean contains(final K k, final V v) {
-            return false;
-        }
+    ListMap<K,V> add(final K key, final V value) {
+        return new ListMap<>(key, value, remove(key));
+    }
 
-        @Override
-        public boolean contains(final K k) {
-            return false;
-        }
-
-        @Override
-        public ListMap<K,V> remove(final K key) {
+    ListMap<K, V> remove(final K key) {
+         if (!contains(key)) {
             return this;
         }
 
-        @Override
-        public int size () {
-            return 0;
-        }
+        return remove0(key);
+    }
 
-        @Override
-        public boolean isEmpty () {
+    private boolean contains(final K key) {
+        if (key.equals(this.k)) {
             return true;
         }
 
-        @Override
-        public Option<V> get (final K key) {
-            return Option.makeOption();
-        }
-
-        @Override
-        public Iterator<Entry<K, V>> iterator () {
-            return new EmptyListMapIterator<> ();
-        }
-
-        static class EmptyListMapIterator<K,V> implements Iterator<Entry<K, V>> {
-
-            @Override
-            public boolean hasNext () {
-                return false;
-            }
-
-            @Override
-            public Entry<K, V> next () {
-                return null;
-            }
-
-            @Override
-            public void remove () {
-                throw new RuntimeException("Operation not supported");
-            }
-
-        }
+        return next != null && next.contains(key);
     }
 
-    static class Node<K,V> extends ListMap<K, V> {
-        final K k;
-        final V v;
-
-        Node(final K k, final V v, final ListMap<K,V> next) {
-            this.k = k;
-            this.v = v;
-            this.next = next;
-        }
-
-        @Override
-        public ListMap<K,V> add (final K key, final V value) {
-            return ListMap.map(key, value, remove (key));
-        }
-
-        @Override
-        public boolean contains(final K k, final V v) {
-            if(k.equals (this.k) && v.equals (this.v)) {
-                return true;
-            } else if(next != null) {
-                return next.contains (k, v);
-            }
-            return false;
-        }
-
-        @Override
-        public boolean contains(final K k) {
-            if(k.equals (this.k)) {
-                return true;
-            } else if(next != null) {
-                return next.contains (k);
-            }
-            return false;
-        }
-
-        @Override
-        public ListMap<K,V> remove(final K key) {
-            if(!contains(key)) {
-                return this;
-            } else {
-                return remove0(key);
-            }
-        }
-
-        private ListMap<K, V> remove0 (final K key) {
-            ListMap<K, V> n = this;
-            ListMap<K, V> newN = null;
-            ListMap<K, V> lastN = null;
-            while (n != null) {
-                if(n instanceof EmptyListMap) {
-                    newN.next = n;
-                    break;
-                }
-                Node<K, V> nn = (Node<K, V>)n;
-                if (key.equals (nn.k)) {
-                    n = n.next;
-                    continue;
-                } else {
-                    if (newN != null) {
-                        lastN.next = ListMap.map (nn.k, nn.v, null);
-                        lastN = lastN.next;
-                    } else {
-                        newN = ListMap.map (nn.k, nn.v, null);
-                        lastN = newN;
-                    }
-                }
+    private ListMap<K, V> remove0(final K key) {
+        ListMap<K, V> n = this;
+        ListMap<K, V> ret = null;
+        ListMap<K, V> lastN = null;
+        while (n != null) {
+            if (key.equals(n.k)) {
                 n = n.next;
+                continue;
             }
-            return newN;
-        }
 
-        @Override
-        public int size () {
-            if(next == null) {
-                return 1;
+            if (ret != null) {
+                lastN.next = new ListMap<>(n.k, n.v);
+                lastN = lastN.next;
             } else {
-                return 1+next.size ();
+                ret = new ListMap<>(n.k, n.v);
+                lastN = ret;
             }
+            n = n.next;
+        }
+        return ret;
+    }
+
+    Iterator<Entry<K, V>> iterator() {
+        return new NodeIterator<>(this);
+    }
+
+    static final class NodeIterator<K,V> implements Iterator<Entry<K, V>> {
+        private ListMap<K, V> n;
+
+        NodeIterator(final ListMap<K, V> n) {
+            this.n = n;
         }
 
         @Override
-        public boolean isEmpty () {
-            return false;
+        public boolean hasNext() {
+            return n != null;
         }
 
         @Override
-        public Option<V> get(final K key) {
-            if (key.equals(k)) {
-                return Option.makeOption(v);
-            }
-            if (next != null) {
-                return next.get(key);
-            }
-            return Option.makeOption();
-        }
-
-
-        @Override
-        public Iterator<Entry<K, V>> iterator () {
-            return new NodeIterator<> (this);
-        }
-
-        static class NodeIterator<K,V> implements Iterator<Entry<K, V>> {
-            ListMap<K, V> n;
-
-            public NodeIterator (final Node<K, V> n) {
-                this.n = n;
+        public Entry<K, V> next() {
+            if (n == null) {
+                throw new NoSuchElementException();
             }
 
-            @Override
-            public boolean hasNext () {
-//                return n!= null && n.next != null && !(n.next instanceof EmptyListMap);
-                return n!= null && !(n instanceof EmptyListMap);
-            }
-
-            @Override
-            public Entry<K, V> next () {
-                if (n instanceof Node) {
-                    Node<K, V> nn = (Node<K, V>) n;
-                    Entry<K, V> res = new SimpleImmutableEntry<> (nn.k, nn.v);
-                    n = n.next;
-                    return res;
-                } else {
-                    return null;
-                }
-            }
-
-            @Override
-            public void remove () {
-                throw new RuntimeException("Operation not supported");
-            }
-
+            final Entry<K, V> res = new SimpleImmutableEntry<>(n.k, n.v);
+            n = n.next;
+            return res;
         }
     }
 }
