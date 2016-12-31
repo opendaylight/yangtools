@@ -15,6 +15,11 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import org.junit.Test;
 
@@ -23,16 +28,37 @@ public class TestConcurrentMapRemove {
 
     @Test
     public void testConcurrentMapRemove () {
-        final ConcurrentMap<Object, Object> map = new TrieMap<> ();
+        final ConcurrentMap<Integer, Object> map = new TrieMap<>();
 
         for (int i = 128; i < COUNT; i++) {
-            TestHelper.assertFalse (map.remove (i, i));
-            TestHelper.assertTrue (null == map.put (i, i));
-            TestHelper.assertFalse (map.remove (i, "lol"));
-            TestHelper.assertTrue (map.containsKey (i));
-            TestHelper.assertTrue (map.remove (i, i));
-            TestHelper.assertFalse (map.containsKey (i));
-            TestHelper.assertTrue (null == map.put (i, i));
+            assertFalse(map.remove(i, i));
+            assertNull(map.put(i, i));
+            assertFalse(map.remove(i, "lol"));
+            assertTrue(map.containsKey(i));
+            assertTrue(map.remove(i, i));
+            assertFalse(map.containsKey(i));
+            assertNull(map.put(i, i));
         }
+    }
+
+    @Test
+    public void testConflictingHash() {
+        final ZeroHashInt k1 = new ZeroHashInt(1);
+        final ZeroHashInt k2 = new ZeroHashInt(2);
+        final ZeroHashInt k3 = new ZeroHashInt(3);
+        final ZeroHashInt k3dup = new ZeroHashInt(3);
+        final ZeroHashInt v1 = new ZeroHashInt(4);
+        final ZeroHashInt v2 = new ZeroHashInt(5);
+        final ZeroHashInt v3 = new ZeroHashInt(6);
+        final ZeroHashInt v3dup = new ZeroHashInt(6);
+
+        final Map<ZeroHashInt, ZeroHashInt> map = new TrieMap<>();
+        // Pre-populate an LNode
+        assertNull(map.putIfAbsent(k1, v1));
+        assertNull(map.putIfAbsent(k2, v2));
+        assertNull(map.putIfAbsent(k3, v3));
+
+        assertFalse(map.remove(k3, v2));
+        assertTrue(map.remove(k3dup, v3dup));
     }
 }
