@@ -22,14 +22,32 @@ final class CNode<K, V> extends CNodeBase<K, V> {
     final BasicNode[] array;
     final Gen gen;
 
-    CNode(final Gen gen) {
-        this(gen, 0, EMPTY_ARRAY);
-    }
-
     private CNode(final Gen gen, final int bitmap, final BasicNode... array) {
         this.bitmap = bitmap;
         this.array = array;
         this.gen = gen;
+    }
+
+    CNode(final Gen gen) {
+        this(gen, 0, EMPTY_ARRAY);
+    }
+
+    static <K, V> MainNode<K,V> dual(final SNode<K, V> x, final int xhc, final SNode<K, V> y, final int yhc,
+            final int lev, final Gen gen) {
+        if (lev >= 35) {
+            return new LNode<>(x.k, x.v, y.k, y.v);
+        }
+
+        final int xidx = (xhc >>> lev) & 0x1f;
+        final int yidx = (yhc >>> lev) & 0x1f;
+        final int bmp = (1 << xidx) | (1 << yidx);
+
+        if (xidx == yidx) {
+            INode<K, V> subinode = new INode<>(gen, dual(x, xhc, y, yhc, lev + 5, gen));
+            return new CNode<>(gen, bmp, subinode);
+        }
+
+        return xidx < yidx ? new CNode<>(gen, bmp, x, y) : new CNode<>(gen, bmp, y, x);
     }
 
     // this should only be called from within read-only snapshots
@@ -136,15 +154,14 @@ final class CNode<K, V> extends CNodeBase<K, V> {
 
     MainNode<K, V> toContracted(final int lev) {
         if (array.length == 1 && lev > 0) {
-            if (array [0] instanceof SNode) {
-                SNode<K, V> sn = (SNode<K, V>) array[0];
+            if (array[0] instanceof SNode) {
+                final SNode<K, V> sn = (SNode<K, V>) array[0];
                 return sn.copyTombed();
-            } else {
-                return this;
             }
-        } else {
             return this;
         }
+
+        return this;
     }
 
     // - if the branching factor is 1 for this CNode, and the child
@@ -211,27 +228,5 @@ final class CNode<K, V> extends CNodeBase<K, V> {
         // "CNode(sz: %d; %s)".format(elems.size,
         // elems.sorted.mkString(", "))
         return "CNode";
-    }
-
-    static <K, V> MainNode<K,V> dual(final SNode<K, V> x, final int xhc, final SNode<K, V> y, final int yhc,
-            final int lev, final Gen gen) {
-        if (lev < 35) {
-            int xidx = (xhc >>> lev) & 0x1f;
-            int yidx = (yhc >>> lev) & 0x1f;
-            int bmp = (1 << xidx) | (1 << yidx);
-
-            if (xidx == yidx) {
-                INode<K, V> subinode = new INode<>(gen, dual(x, xhc, y, yhc, lev + 5, gen));
-                return new CNode<>(gen, bmp, subinode);
-            } else {
-                if (xidx < yidx) {
-                    return new CNode<>(gen, bmp, x, y);
-                } else {
-                    return new CNode<>(gen, bmp, y, x);
-                }
-            }
-        } else {
-            return new LNode<>(x.k, x.v, y.k, y.v);
-        }
     }
 }
