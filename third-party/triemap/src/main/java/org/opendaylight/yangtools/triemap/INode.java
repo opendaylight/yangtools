@@ -38,9 +38,9 @@ final class INode<K, V> extends INodeBase<K, V> {
         MainNode<K, V> prevval = /* READ */ m.READ_PREV();
         if (prevval == null) {
             return m;
-        } else {
-            return GCAS_Complete(m, ct);
         }
+
+        return GCAS_Complete(m, ct);
     }
 
     private MainNode<K, V> GCAS_Complete(MainNode<K, V> m, final TrieMap<K, V> ct) {
@@ -94,14 +94,14 @@ final class INode<K, V> extends INodeBase<K, V> {
         }
     }
 
-    boolean GCAS(final MainNode<K, V> old, final MainNode<K, V> n, final TrieMap<K, V> ct) {
-        n.WRITE_PREV (old);
-        if (CAS (old, n)) {
-            GCAS_Complete (n, ct);
+    private boolean GCAS(final MainNode<K, V> old, final MainNode<K, V> n, final TrieMap<K, V> ct) {
+        n.WRITE_PREV(old);
+        if (CAS(old, n)) {
+            GCAS_Complete(n, ct);
             return /* READ */ n.READ_PREV() == null;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     private boolean equal(final K k1, final K k2, final TrieMap<K, V> ct) {
@@ -124,46 +124,43 @@ final class INode<K, V> extends INodeBase<K, V> {
     boolean rec_insert(final K k, final V v, final int hc, final int lev, final INode<K, V> parent, final Gen startgen,
             final TrieMap<K, V> ct) {
         while (true) {
-            MainNode<K, V> m = GCAS_READ (ct); // use -Yinline!
+            final MainNode<K, V> m = GCAS_READ (ct); // use -Yinline!
 
             if (m instanceof CNode) {
                 // 1) a multiway node
-                CNode<K, V> cn = (CNode<K, V>) m;
-                int idx = (hc >>> lev) & 0x1f;
-                int flag = 1 << idx;
-                int bmp = cn.bitmap;
-                int mask = flag - 1;
-                int pos = Integer.bitCount(bmp & mask);
+                final CNode<K, V> cn = (CNode<K, V>) m;
+                final int idx = (hc >>> lev) & 0x1f;
+                final int flag = 1 << idx;
+                final int bmp = cn.bitmap;
+                final int mask = flag - 1;
+                final int pos = Integer.bitCount(bmp & mask);
                 if ((bmp & flag) != 0) {
                     // 1a) insert below
-                    BasicNode cnAtPos = cn.array[pos];
+                    final BasicNode cnAtPos = cn.array[pos];
                     if (cnAtPos instanceof INode) {
-                        INode<K, V> in = (INode<K, V>) cnAtPos;
+                        final INode<K, V> in = (INode<K, V>) cnAtPos;
                         if (startgen == in.gen) {
                             return in.rec_insert(k, v, hc, lev + 5, this, startgen, ct);
-                        } else {
-                            if (GCAS (cn, cn.renewed(startgen, ct), ct)) {
-                                // return rec_insert (k, v, hc, lev, parent,
-                                // startgen, ct);
-                                // tailrec
-                                continue;
-                            } else {
-                                return false;
-                            }
                         }
+                        if (GCAS(cn, cn.renewed(startgen, ct), ct)) {
+                            // Tail recursion: return rec_insert (k, v, hc, lev, parent, startgen, ct);
+                            continue;
+                        }
+
+                        return false;
                     } else if (cnAtPos instanceof SNode) {
-                        SNode<K, V> sn = (SNode<K, V>) cnAtPos;
+                        final SNode<K, V> sn = (SNode<K, V>) cnAtPos;
                         if (sn.hc == hc && equal(sn.k, k, ct)) {
-                            return GCAS (cn, cn.updatedAt(pos, new SNode<>(k, v, hc), gen), ct);
-                        } else {
-                            CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
-                            MainNode<K, V> nn = rn.updatedAt(pos, inode(CNode.dual(sn, sn.hc, new SNode<>(k, v, hc),
-                                hc, lev + 5, gen)), gen);
-                            return GCAS (cn, nn, ct);
+                            return GCAS(cn, cn.updatedAt(pos, new SNode<>(k, v, hc), gen), ct);
                         }
+
+                        final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
+                        final MainNode<K, V> nn = rn.updatedAt(pos, inode(CNode.dual(sn, sn.hc, new SNode<>(k, v, hc),
+                                hc, lev + 5, gen)), gen);
+                        return GCAS (cn, nn, ct);
                     }
                 } else {
-                    CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed (gen, ct);
+                    CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
                     MainNode<K, V> ncnode = rn.insertedAt(pos, flag, new SNode<> (k, v, hc), gen);
                     return GCAS (cn, ncnode, ct);
                 }
@@ -194,101 +191,93 @@ final class INode<K, V> extends INodeBase<K, V> {
     Option<V> rec_insertif(final K k, final V v, final int hc, final Object cond, final int lev,
             final INode<K, V> parent, final Gen startgen, final TrieMap<K, V> ct) {
         while (true) {
-            MainNode<K, V> m = GCAS_READ(ct); // use -Yinline!
+            final MainNode<K, V> m = GCAS_READ(ct); // use -Yinline!
 
             if (m instanceof CNode) {
                 // 1) a multiway node
-                CNode<K, V> cn = (CNode<K, V>) m;
-                int idx = (hc >>> lev) & 0x1f;
-                int flag = 1 << idx;
-                int bmp = cn.bitmap;
-                int mask = flag - 1;
-                int pos = Integer.bitCount(bmp & mask);
+                final CNode<K, V> cn = (CNode<K, V>) m;
+                final int idx = (hc >>> lev) & 0x1f;
+                final int flag = 1 << idx;
+                final int bmp = cn.bitmap;
+                final int mask = flag - 1;
+                final int pos = Integer.bitCount(bmp & mask);
 
                 if ((bmp & flag) != 0) {
                     // 1a) insert below
-                    BasicNode cnAtPos = cn.array [pos];
+                    final BasicNode cnAtPos = cn.array[pos];
                     if (cnAtPos instanceof INode) {
-                        INode<K, V> in = (INode<K, V>) cnAtPos;
+                        final INode<K, V> in = (INode<K, V>) cnAtPos;
                         if (startgen == in.gen) {
                             return in.rec_insertif(k, v, hc, cond, lev + 5, this, startgen, ct);
-                        } else {
-                            if (GCAS(cn, cn.renewed(startgen, ct), ct)) {
-                                // return rec_insertif (k, v, hc, cond, lev,
-                                // parent, startgen, ct);
-                                // tailrec
-                                continue;
-                            } else {
-                                return null;
-                            }
                         }
+
+                        if (GCAS(cn, cn.renewed(startgen, ct), ct)) {
+                            // Tail recursion: return rec_insertif (k, v, hc, cond, lev, parent, startgen, ct);
+                            continue;
+                        }
+
+                        return null;
                     } else if (cnAtPos instanceof SNode) {
-                        SNode<K, V> sn = (SNode<K, V>) cnAtPos;
+                        final SNode<K, V> sn = (SNode<K, V>) cnAtPos;
                         if (cond == null) {
                             if (sn.hc == hc && equal(sn.k, k, ct)) {
-                                if (GCAS(cn, cn.updatedAt(pos, new SNode<> (k, v, hc), gen), ct)) {
-                                    return Option.makeOption(sn.v);
-                                } else {
-                                    return null;
-                                }
-                            } else {
-                                CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
-                                MainNode<K, V> nn = rn.updatedAt(pos, inode (CNode.dual(sn, sn.hc,
-                                    new SNode<>(k, v, hc), hc, lev + 5, gen)), gen);
-                                if (GCAS(cn, nn, ct)) {
-                                    return Option.makeOption(); // None;
-                                } else {
-                                    return null;
-                                }
-                            }
-
-                        } else if (cond == INode.KEY_ABSENT) {
-                            if (sn.hc == hc && equal (sn.k, k, ct)) {
-                                return Option.makeOption(sn.v);
-                            } else {
-                                CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed (gen, ct);
-                                MainNode<K, V> nn = rn.updatedAt(pos, inode (CNode.dual(sn, sn.hc,
-                                    new SNode<>(k, v, hc), hc, lev + 5, gen)), gen);
-                                if (GCAS(cn, nn, ct)) {
-                                    return Option.makeOption(); // None
-                                } else {
-                                    return null;
-                                }
-                            }
-                        } else if (cond == INode.KEY_PRESENT) {
-                            if (sn.hc == hc && equal (sn.k, k, ct)) {
                                 if (GCAS(cn, cn.updatedAt(pos, new SNode<>(k, v, hc), gen), ct)) {
                                     return Option.makeOption(sn.v);
-                                } else {
-                                    return null;
                                 }
 
+                                return null;
                             }
-                            else {
-                                return Option.makeOption();// None;
+
+                            final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
+                            final MainNode<K, V> nn = rn.updatedAt(pos, inode (CNode.dual(sn, sn.hc,
+                                    new SNode<>(k, v, hc), hc, lev + 5, gen)), gen);
+                            if (GCAS(cn, nn, ct)) {
+                                return Option.makeOption(); // None;
                             }
-                        } else {
-                            if (sn.hc == hc && equal (sn.k, k, ct) && sn.v == cond) {
-                                if (GCAS(cn, cn.updatedAt (pos, new SNode<>(k, v, hc), gen), ct)) {
-                                    return Option.makeOption(sn.v);
-                                } else {
-                                    return null;
-                                }
+
+                            return null;
+                        } else if (cond == INode.KEY_ABSENT) {
+                            if (sn.hc == hc && equal(sn.k, k, ct)) {
+                                return Option.makeOption(sn.v);
                             }
-                            else {
+
+                            final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
+                            final MainNode<K, V> nn = rn.updatedAt(pos, inode (CNode.dual(sn, sn.hc,
+                                new SNode<>(k, v, hc), hc, lev + 5, gen)), gen);
+                            if (GCAS(cn, nn, ct)) {
                                 return Option.makeOption(); // None
                             }
-                        }
 
+                            return null;
+                        } else if (cond == INode.KEY_PRESENT) {
+                            if (sn.hc == hc && equal(sn.k, k, ct)) {
+                                if (GCAS(cn, cn.updatedAt(pos, new SNode<>(k, v, hc), gen), ct)) {
+                                    return Option.makeOption(sn.v);
+                                }
+                                return null;
+                            }
+
+                            return Option.makeOption();// None;
+                        } else {
+                            if (sn.hc == hc && equal(sn.k, k, ct) && sn.v == cond) {
+                                if (GCAS(cn, cn.updatedAt(pos, new SNode<>(k, v, hc), gen), ct)) {
+                                    return Option.makeOption(sn.v);
+                                }
+
+                                return null;
+                            }
+
+                            return Option.makeOption(); // None
+                        }
                     }
                 } else if (cond == null || cond == INode.KEY_ABSENT) {
-                    CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
-                    CNode<K, V> ncnode = rn.insertedAt (pos, flag, new SNode<>(k, v, hc), gen);
+                    final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
+                    final CNode<K, V> ncnode = rn.insertedAt (pos, flag, new SNode<>(k, v, hc), gen);
                     if (GCAS(cn, ncnode, ct)) {
                         return Option.makeOption(); // None
-                    } else {
-                        return null;
                     }
+
+                    return null;
                 } else if (cond == INode.KEY_PRESENT) {
                     return Option.makeOption(); // None;
                 }
@@ -300,48 +289,42 @@ final class INode<K, V> extends INodeBase<K, V> {
                 return null;
             } else if (m instanceof LNode) {
                 // 3) an l-node
-                LNode<K, V> ln = (LNode<K, V>) m;
+                final LNode<K, V> ln = (LNode<K, V>) m;
                 if (cond == null) {
-                    Option<V> optv = ln.get(k);
+                    final Option<V> optv = ln.get(k);
                     if (insertln(ln, k, v, ct)) {
                         return optv;
-                    } else {
-                        return null;
                     }
+                    return null;
                 } else if (cond == INode.KEY_ABSENT) {
-                    Option<V> t = ln.get(k);
-                    if (t == null) {
-                        if (insertln(ln, k, v, ct)) {
-                            return Option.makeOption();// None
-                        } else {
-                            return null;
-                        }
-                    } else {
+                    final Option<V> t = ln.get(k);
+                    if (t != null) {
                         return t;
                     }
+                    if (insertln(ln, k, v, ct)) {
+                        return Option.makeOption();// None
+                    }
+                    return null;
                 } else if (cond == INode.KEY_PRESENT) {
-                    Option<V> t = ln.get(k);
-                    if (t != null) {
-                        if (insertln(ln, k, v, ct)) {
-                            return t;
-                        } else {
-                            return null;
-                        }
-                    } else {
+                    final Option<V> t = ln.get(k);
+                    if (t == null) {
                         return null; // None
                     }
+                    if (insertln(ln, k, v, ct)) {
+                        return t;
+                    }
+                    return null;
                 } else {
-                    Option<V> t = ln.get (k);
+                    final Option<V> t = ln.get(k);
                     if (t != null) {
                         if (((Some<V>) t).get() == cond) {
                             if (insertln(ln, k, v, ct)) {
                                 return new Some<>((V) cond);
-                            } else {
-                                return null;
                             }
-                        } else {
-                            return Option.makeOption ();
+
+                            return null;
                         }
+                        return Option.makeOption();
                     }
                 }
             }
@@ -351,8 +334,8 @@ final class INode<K, V> extends INodeBase<K, V> {
     }
 
     boolean insertln(final LNode<K, V> ln, final K k, final V v, final TrieMap<K, V> ct) {
-        LNode<K, V> nn = ln.inserted (k, v);
-        return GCAS (ln, nn, ct);
+        final LNode<K, V> nn = ln.inserted (k, v);
+        return GCAS(ln, nn, ct);
     }
 
     /**
@@ -364,50 +347,50 @@ final class INode<K, V> extends INodeBase<K, V> {
     Object rec_lookup(final K k, final int hc, final int lev, final INode<K, V> parent, final Gen startgen,
             final TrieMap<K, V> ct) {
         while (true) {
-            MainNode<K, V> m = GCAS_READ(ct); // use -Yinline!
+            final MainNode<K, V> m = GCAS_READ(ct); // use -Yinline!
 
             if (m instanceof CNode) {
                 // 1) a multinode
                 final CNode<K, V> cn = (CNode<K, V>) m;
-                int idx = (hc >>> lev) & 0x1f;
-                int flag = 1 << idx;
-                int bmp = cn.bitmap;
+                final int idx = (hc >>> lev) & 0x1f;
+                final int flag = 1 << idx;
+                final int bmp = cn.bitmap;
                 if ((bmp & flag) == 0) {
-                    return null; // 1a) bitmap shows no binding
-                } else { // 1b) bitmap contains a value - descend
-                    int pos = (bmp == 0xffffffff) ? idx : Integer.bitCount(bmp & (flag - 1));
-                    final BasicNode sub = cn.array[pos];
-                    if (sub instanceof INode) {
-                        INode<K, V> in = (INode<K, V>) sub;
-                        if (ct.isReadOnly() || (startgen == ((INodeBase<K, V>) sub).gen)) {
-                            return in.rec_lookup(k, hc, lev + 5, this, startgen, ct);
-                        } else {
-                            if (GCAS(cn, cn.renewed(startgen, ct), ct)) {
-                                // return rec_lookup (k, hc, lev, parent,
-                                // startgen, ct);
-                                // Tailrec
-                                continue;
-                            } else {
-                                return RESTART; // used to be throw RestartException
-                            }
-                        }
-                    } else if (sub instanceof SNode) {
-                        // 2) singleton node
-                        SNode<K, V> sn = (SNode<K, V>) sub;
-                        if (((SNode) sub).hc == hc && equal (sn.k, k, ct)) {
-                            return sn.v;
-                        } else {
-                            return null;
-                        }
+                    // 1a) bitmap shows no binding
+                    return null;
+                }
+
+                // 1b) bitmap contains a value - descend
+                final int pos = (bmp == 0xffffffff) ? idx : Integer.bitCount(bmp & (flag - 1));
+                final BasicNode sub = cn.array[pos];
+                if (sub instanceof INode) {
+                    final INode<K, V> in = (INode<K, V>) sub;
+                    if (ct.isReadOnly() || (startgen == in.gen)) {
+                        return in.rec_lookup(k, hc, lev + 5, this, startgen, ct);
                     }
+
+                    if (GCAS(cn, cn.renewed(startgen, ct), ct)) {
+                        // Tail recursion: return rec_lookup(k, hc, lev, parent, startgen, ct);
+                        continue;
+                    }
+
+                    // used to be throw RestartException
+                    return RESTART;
+                } else if (sub instanceof SNode) {
+                    // 2) singleton node
+                    final SNode<K, V> sn = (SNode<K, V>) sub;
+                    if (sn.hc == hc && equal(sn.k, k, ct)) {
+                        return sn.v;
+                    }
+
+                    return null;
                 }
             } else if (m instanceof TNode) {
                 // 3) non-live node
                 return cleanReadOnly((TNode<K, V>) m, lev, parent, ct, k, hc);
             } else if (m instanceof LNode) {
                 // 5) an l-node
-                Option<V> tmp = ((LNode<K, V>) m).get (k);
-                return (tmp != null) ? ((Option<V>) tmp) : null;
+                return ((LNode<K, V>) m).get(k);
             }
 
             throw new RuntimeException ("Should not happen");
@@ -417,22 +400,23 @@ final class INode<K, V> extends INodeBase<K, V> {
     private Object cleanReadOnly(final TNode<K, V> tn, final int lev, final INode<K, V> parent,
             final TrieMap<K, V> ct, final K k, final int hc) {
         if (ct.nonReadOnly()) {
+         // used to be throw RestartException
             clean(parent, ct, lev - 5);
-            return RESTART; // used to be throw RestartException
-        } else {
-            if (tn.hc == hc && equal(tn.k, k, ct)) {
-                return tn.v;
-            } else {
-                return null;
-            }
+            return RESTART;
         }
+
+        if (tn.hc == hc && equal(tn.k, k, ct)) {
+            return tn.v;
+        }
+
+        return null;
     }
 
     /**
      * Removes the key associated with the given value.
      *
      * @param v
-     *            if null, will remove the key irregardless of the value;
+     *            if null, will remove the key regardless of the value;
      *            otherwise removes only if binding contains that exact key
      *            and value
      * @return null if not successful, an Option[V] indicating the previous
@@ -440,135 +424,132 @@ final class INode<K, V> extends INodeBase<K, V> {
      */
     Option<V> rec_remove(final K k, final V v, final int hc, final int lev, final INode<K, V> parent,
             final Gen startgen, final TrieMap<K, V> ct) {
-        MainNode<K, V> m = GCAS_READ(ct); // use -Yinline!
+        final MainNode<K, V> m = GCAS_READ(ct); // use -Yinline!
 
         if (m instanceof CNode) {
-            CNode<K, V> cn = (CNode<K, V>) m;
-            int idx = (hc >>> lev) & 0x1f;
-            int bmp = cn.bitmap;
-            int flag = 1 << idx;
+            final CNode<K, V> cn = (CNode<K, V>) m;
+            final int idx = (hc >>> lev) & 0x1f;
+            final int bmp = cn.bitmap;
+            final int flag = 1 << idx;
             if ((bmp & flag) == 0) {
                 return Option.makeOption();
-            } else {
-                int pos = Integer.bitCount(bmp & (flag - 1));
-                BasicNode sub = cn.array [pos];
-                Option<V> res = null;
-                if (sub instanceof INode) {
-                    INode<K, V> in = (INode<K, V>) sub;
-                    if (startgen == in.gen) {
-                        res = in.rec_remove(k, v, hc, lev + 5, this, startgen, ct);
-                    } else {
-                        if (GCAS(cn, cn.renewed (startgen, ct), ct)) {
-                            res = rec_remove(k, v, hc, lev, parent, startgen, ct);
-                        } else {
-                            res = null;
-                        }
-                    }
+            }
 
-                } else if (sub instanceof SNode) {
-                    SNode<K, V> sn = (SNode<K, V>) sub;
-                    if (sn.hc == hc && equal(sn.k, k, ct) && (v == null || v.equals(sn.v))) {
-                        MainNode<K, V> ncn = cn.removedAt(pos, flag, gen).toContracted(lev);
-                        if (GCAS(cn, ncn, ct)) {
-                            res = Option.makeOption(sn.v);
-                        } else {
-                            res = null;
-                        }
+            final int pos = Integer.bitCount(bmp & (flag - 1));
+            final BasicNode sub = cn.array[pos];
+            Option<V> res = null;
+            if (sub instanceof INode) {
+                final INode<K, V> in = (INode<K, V>) sub;
+                if (startgen == in.gen) {
+                    res = in.rec_remove(k, v, hc, lev + 5, this, startgen, ct);
+                } else {
+                    if (GCAS(cn, cn.renewed (startgen, ct), ct)) {
+                        res = rec_remove(k, v, hc, lev, parent, startgen, ct);
                     } else {
-                        res = Option.makeOption ();
+                        res = null;
                     }
                 }
 
-                if (res instanceof None || (res == null)) {
-                    return res;
-                } else {
-                    if (parent != null) { // never tomb at root
-                        MainNode<K, V> n = GCAS_READ(ct);
-                        if (n instanceof TNode) {
-                            cleanParent(n, parent, ct, hc, lev, startgen);
-                        }
+            } else if (sub instanceof SNode) {
+                final SNode<K, V> sn = (SNode<K, V>) sub;
+                if (sn.hc == hc && equal(sn.k, k, ct) && (v == null || v.equals(sn.v))) {
+                    final MainNode<K, V> ncn = cn.removedAt(pos, flag, gen).toContracted(lev);
+                    if (GCAS(cn, ncn, ct)) {
+                        res = Option.makeOption(sn.v);
+                    } else {
+                        res = null;
                     }
-
-                    return res;
+                } else {
+                    res = Option.makeOption ();
                 }
             }
+
+            if (res instanceof None || (res == null)) {
+                return res;
+            }
+
+            if (parent != null) {
+                // never tomb at root
+                final MainNode<K, V> n = GCAS_READ(ct);
+                if (n instanceof TNode) {
+                    cleanParent(n, parent, ct, hc, lev, startgen);
+                }
+            }
+
+            return res;
         } else if (m instanceof TNode) {
             clean(parent, ct, lev - 5);
             return null;
         } else if (m instanceof LNode) {
-            LNode<K, V> ln = (LNode<K, V>) m;
+            final LNode<K, V> ln = (LNode<K, V>) m;
             if (v == null) {
-                Option<V> optv = ln.get(k);
-                MainNode<K, V> nn = ln.removed(k, ct);
-                if (GCAS (ln, nn, ct)) {
+                final Option<V> optv = ln.get(k);
+                final MainNode<K, V> nn = ln.removed(k, ct);
+                if (GCAS(ln, nn, ct)) {
                     return optv;
-                } else {
-                    return null;
                 }
-            } else {
-                Option<V> tmp = ln.get(k);
-                if (tmp instanceof Some) {
-                    Some<V> tmp1 = (Some<V>) tmp;
-                    if (tmp1.get () == v) {
-                        MainNode<K, V> nn = ln.removed(k, ct);
-                        if (GCAS(ln, nn, ct)) {
-                            return tmp;
-                        } else {
-                            return null;
-                        }
+
+                return null;
+            }
+
+            final Option<V> tmp = ln.get(k);
+            if (tmp instanceof Some) {
+                final Some<V> tmp1 = (Some<V>) tmp;
+                if (tmp1.get() == v) {
+                    final MainNode<K, V> nn = ln.removed(k, ct);
+                    if (GCAS(ln, nn, ct)) {
+                        return tmp;
                     }
+
+                    return null;
                 }
             }
         }
         throw new RuntimeException ("Should not happen");
     }
 
-    void cleanParent(final Object nonlive, final INode<K, V> parent, final TrieMap<K, V> ct, final int hc,
+    private void cleanParent(final Object nonlive, final INode<K, V> parent, final TrieMap<K, V> ct, final int hc,
             final int lev, final Gen startgen) {
         while (true) {
-            MainNode<K, V> pm = parent.GCAS_READ(ct);
-            if (pm instanceof CNode) {
-                CNode<K, V> cn = (CNode<K, V>) pm;
-                int idx = (hc >>> (lev - 5)) & 0x1f;
-                int bmp = cn.bitmap;
-                int flag = 1 << idx;
-                if ((bmp & flag) == 0) {
-                    // somebody already removed this i-node, we're done
-                } else {
-                    int pos = Integer.bitCount(bmp & (flag - 1));
-                    BasicNode sub = cn.array[pos];
-                    if (sub == this) {
-                        if (nonlive instanceof TNode) {
-                            TNode<K, V> tn = (TNode<K, V>) nonlive;
-                            MainNode<K, V> ncn = cn.updatedAt(pos, tn.copyUntombed (), gen).toContracted (lev - 5);
-                            if (!parent.GCAS(cn, ncn, ct)) {
-                                if (ct.readRoot().gen == startgen) {
-                                    // cleanParent (nonlive, parent, ct, hc,
-                                    // lev, startgen);
-                                    // tailrec
-                                    continue;
-                                }
-                            }
+            final MainNode<K, V> pm = parent.GCAS_READ(ct);
+            if ((!(pm instanceof CNode))) {
+                // parent is no longer a cnode, we're done
+                return;
+            }
+
+            final CNode<K, V> cn = (CNode<K, V>) pm;
+            final int idx = (hc >>> (lev - 5)) & 0x1f;
+            final int bmp = cn.bitmap;
+            final int flag = 1 << idx;
+            if ((bmp & flag) == 0) {
+                // somebody already removed this i-node, we're done
+                return;
+            }
+
+            final int pos = Integer.bitCount(bmp & (flag - 1));
+            final BasicNode sub = cn.array[pos];
+            if (sub == this) {
+                if (nonlive instanceof TNode) {
+                    final TNode<K, V> tn = (TNode<K, V>) nonlive;
+                    MainNode<K, V> ncn = cn.updatedAt(pos, tn.copyUntombed(), gen).toContracted(lev - 5);
+                    if (!parent.GCAS(cn, ncn, ct)) {
+                        if (ct.readRoot().gen == startgen) {
+                            // Tail recursion: cleanParent(nonlive, parent, ct, hc, lev, startgen);
+                            continue;
                         }
                     }
                 }
-            } else {
-                // parent is no longer a cnode, we're done
             }
             break;
         }
     }
 
     private void clean(final INode<K, V> nd, final TrieMap<K, V> ct, final int lev) {
-        MainNode<K, V> m = nd.GCAS_READ(ct);
+        final MainNode<K, V> m = nd.GCAS_READ(ct);
         if (m instanceof CNode) {
-            CNode<K, V> cn = (CNode<K, V>) m;
+            final CNode<K, V> cn = (CNode<K, V>) m;
             nd.GCAS(cn, cn.toCompressed(ct, lev, gen), ct);
         }
-    }
-
-    boolean isNullInode(final TrieMap<K, V> ct) {
-        return GCAS_READ(ct) == null;
     }
 
     int cachedSize(final TrieMap<K, V> ct) {
