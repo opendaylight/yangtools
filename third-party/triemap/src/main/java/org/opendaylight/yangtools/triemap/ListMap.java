@@ -56,7 +56,15 @@ final class ListMap<K, V> {
         if (key.equals(k)) {
             return Option.makeOption(v);
         }
-        return next == null ? Option.makeOption() : next.get(key);
+
+        // We do not perform recursion on purpose here, so we do not run out of stack if the key hashing fails.
+        for (ListMap<K, V> m = next; m != null; m = m.next) {
+            if (key.equals(m.k)) {
+                return Option.makeOption(m.v);
+            }
+        }
+
+        return Option.makeOption();
     }
 
     ListMap<K,V> add(final K key, final V value) {
@@ -72,11 +80,18 @@ final class ListMap<K, V> {
     }
 
     private boolean contains(final K key) {
-        if (key.equals(this.k)) {
+        if (key.equals(k)) {
             return true;
         }
 
-        return next != null && next.contains(key);
+        // We do not perform recursion on purpose here, so we do not run out of stack if the key hashing fails.
+        for (ListMap<K, V> m = next; m != null; m = m.next) {
+            if (key.equals(m.k)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private ListMap<K, V> remove0(final K key) {
