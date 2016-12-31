@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
@@ -186,10 +187,10 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
         }
     }
 
-    private Option<V> insertifhc(final K k, final int hc, final V v, final Object cond) {
+    private Optional<V> insertifhc(final K k, final int hc, final V v, final Object cond) {
         while (true) {
             final INode<K, V> r = RDCSS_READ_ROOT();
-            final Option<V> ret = r.rec_insertif(k, v, hc, cond, 0, null, r.gen, this);
+            final Optional<V> ret = r.rec_insertif(k, v, hc, cond, 0, null, r.gen, this);
             if (ret != null) {
                 return ret;
             }
@@ -210,10 +211,10 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
         }
     }
 
-    private Option<V> removehc(final K k, final V v, final int hc) {
+    private Optional<V> removehc(final K k, final V v, final int hc) {
         while (true) {
             final INode<K, V> r = RDCSS_READ_ROOT();
-            final Option<V> res = r.rec_remove(k, v, hc, 0, null, r.gen, this);
+            final Optional<V> res = r.rec_remove(k, v, hc, 0, null, r.gen, this);
             if (res != null) {
                 return res;
             }
@@ -316,13 +317,11 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
         final int hc = computeHash (k);
 //        return (V) lookuphc (k, hc);
         final Object o = lookuphc (k, hc);
-        if (o instanceof Some) {
-            return ((Some<V>)o).get ();
-        } else if (o instanceof None) {
-            return null;
-        } else {
-            return (V)o;
+        if (o instanceof Optional) {
+            return ((Optional<V>) o).orElse(null);
         }
+
+        return (V)o;
     }
 
     @Override
@@ -334,13 +333,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
     public V put(final K key, final V value) {
         ensureReadWrite();
         final int hc = computeHash(key);
-        final Option<V> ov = insertifhc (key, hc, value, null);
-        if (ov instanceof Some) {
-            Some<V> sv = (Some<V>)ov;
-            return sv.get ();
-        }
-
-        return null;
+        return insertifhc (key, hc, value, null).orElse(null);
     }
 
     TrieMap<K, V> add(final K k, final V v) {
@@ -353,53 +346,35 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
     public V remove(final Object k) {
         ensureReadWrite();
         final int hc = computeHash ((K)k);
-        final Option<V> ov = removehc ((K)k, (V) null, hc);
-        if (ov instanceof Some) {
-            Some<V> sv = (Some<V>)ov;
-            return sv.get();
-        }
-
-        return null;
+        return removehc ((K)k, (V) null, hc).orElse(null);
     }
 
     @Override
     public V putIfAbsent(final K k, final V v) {
         ensureReadWrite();
         final int hc = computeHash (k);
-        final Option<V> ov = insertifhc (k, hc, v, INode.KEY_ABSENT);
-        if (ov instanceof Some) {
-            Some<V> sv = (Some<V>)ov;
-            return sv.get();
-        }
-
-        return null;
+        return insertifhc (k, hc, v, INode.KEY_ABSENT).orElse(null);
     }
 
     @Override
     public boolean remove(final Object k, final Object v) {
         ensureReadWrite();
         final int hc = computeHash ((K)k);
-        return removehc((K)k, (V)v, hc).nonEmpty();
+        return removehc((K)k, (V)v, hc).isPresent();
     }
 
     @Override
     public boolean replace(final K k, final V oldvalue, final V newvalue) {
         ensureReadWrite();
         final int hc = computeHash (k);
-        return insertifhc (k, hc, newvalue, oldvalue).nonEmpty();
+        return insertifhc (k, hc, newvalue, oldvalue).isPresent();
     }
 
     @Override
     public V replace(final K k, final V v) {
         ensureReadWrite();
         final int hc = computeHash (k);
-        final Option<V> ov = insertifhc (k, hc, v, INode.KEY_PRESENT);
-        if (ov instanceof Some) {
-            Some<V> sv = (Some<V>)ov;
-            return sv.get();
-        }
-
-        return null;
+        return insertifhc (k, hc, v, INode.KEY_PRESENT).orElse(null);
     }
 
     /***
