@@ -19,6 +19,7 @@ import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 /**
  * Mimic immutable ListMap in Scala
@@ -52,9 +53,9 @@ final class ListMap<K, V> {
         return next == null ? 1 : next.size() + 1;
     }
 
-    Option<V> get(final K key) {
+    Optional<V> get(final K key) {
         if (key.equals(k)) {
-            return Option.makeOption(v);
+            return Optional.of(v);
         }
 
         // We do not perform recursion on purpose here, so we do not run out of stack if the key hashing fails.
@@ -62,11 +63,11 @@ final class ListMap<K, V> {
         //        a certain threshold.
         for (ListMap<K, V> m = next; m != null; m = m.next) {
             if (key.equals(m.k)) {
-                return Option.makeOption(m.v);
+                return Optional.of(m.v);
             }
         }
 
-        return Option.makeOption();
+        return Optional.empty();
     }
 
     ListMap<K,V> add(final K key, final V value) {

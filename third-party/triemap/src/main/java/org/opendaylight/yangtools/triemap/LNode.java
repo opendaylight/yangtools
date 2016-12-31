@@ -17,6 +17,7 @@ package org.opendaylight.yangtools.triemap;
 
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 final class LNode<K, V> extends MainNode<K, V> {
     private final ListMap<K, V> listmap;
@@ -46,7 +47,7 @@ final class LNode<K, V> extends MainNode<K, V> {
         return new TNode<>(kv.getKey(), kv.getValue(), ct.computeHash(kv.getKey()));
     }
 
-    Option<V> get(final K k) {
+    Optional<V> get(final K k) {
         return listmap.get(k);
     }
 
