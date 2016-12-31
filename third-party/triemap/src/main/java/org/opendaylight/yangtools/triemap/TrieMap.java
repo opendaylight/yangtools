@@ -87,37 +87,20 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
         }
     }
 
-    private final Hashing<K> hashingobj;
-    private final Equiv<K> equalityobj;
-
-    Hashing<K> hashing () {
-        return hashingobj;
-    }
-
-    Equiv<K> equality () {
-        return equalityobj;
-    }
+    private final Equivalence<? super K> equiv;
 
     private transient volatile Object root;
     private final transient boolean readOnly;
 
-    TrieMap (final Hashing<K> hashf, final Equiv<K> ef, final boolean readOnly) {
-        this.hashingobj = hashf;
-        this.equalityobj = ef;
-        this.readOnly = readOnly;
-    }
-
-    TrieMap (final Object r, final Hashing<K> hashf, final Equiv<K> ef, final boolean readOnly) {
-        this(hashf, ef, readOnly);
+    TrieMap (final Object r, final Equivalence<? super K> equiv, final boolean readOnly) {
         this.root = r;
+        this.equiv = equiv;
+        this.readOnly = readOnly;
+
     }
 
-    public TrieMap (final Hashing<K> hashf, final Equiv<K> ef) {
-        this(newRootNode(), hashf, ef, false);
-    }
-
-    public TrieMap () {
-        this (new Hashing.Default<K>(), Equiv.universal);
+    public TrieMap() {
+        this(newRootNode(), Equivalence.equals(), false);
     }
 
     /* internal methods */
@@ -350,7 +333,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
             INode<K, V> r = RDCSS_READ_ROOT ();
             final MainNode<K, V> expmain = r.gcasRead (this);
             if (RDCSS_ROOT (r, expmain, r.copyToGen (new Gen (), this))) {
-                return new TrieMap<> (r.copyToGen (new Gen (), this), hashing (), equality (), readOnly);
+                return new TrieMap<> (r.copyToGen (new Gen (), this), equiv, readOnly);
             } else {
                 // return snapshot ();
                 // tailrec
@@ -382,7 +365,7 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
             INode<K, V> r = RDCSS_READ_ROOT ();
             MainNode<K, V> expmain = r.gcasRead (this);
             if (RDCSS_ROOT (r, expmain, r.copyToGen (new Gen (), this))) {
-                return new TrieMap<> (r, hashing (), equality (), true);
+                return new TrieMap<> (r, equiv, true);
             } else {
                 // return readOnlySnapshot ();
                 continue;
@@ -402,9 +385,12 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
         }
     }
 
-    // @inline
-    int computeHash (final K k) {
-        return hashingobj.hash (k);
+    int computeHash(final K k) {
+        return equiv.hash(k);
+    }
+
+    boolean equal(final K k1, final K k2) {
+        return equiv.equivalent(k1, k2);
     }
 
     final V lookup (final K k) {
