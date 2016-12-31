@@ -15,43 +15,64 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 public class TestDelete {
     @Test
     public void testDelete () {
-        final TrieMap<Object, Object> bt = new TrieMap<> ();
+        final TrieMap<Integer, Integer> bt = new TrieMap<> ();
 
         for (int i = 0; i < 10000; i++) {
-            TestHelper.assertEquals (null, bt.put (Integer.valueOf (i), Integer.valueOf (i)));
-            final Object lookup = bt.lookup (Integer.valueOf (i));
-            TestHelper.assertEquals (Integer.valueOf (i), lookup);
+            assertNull(bt.put(Integer.valueOf(i), Integer.valueOf(i)));
+            assertEquals(Integer.valueOf(i), bt.lookup(Integer.valueOf(i)));
         }
 
-        checkAddInsert (bt, 536);
-        checkAddInsert (bt, 4341);
-        checkAddInsert (bt, 8437);
+        checkAddInsert(bt, 536);
+        checkAddInsert(bt, 4341);
+        checkAddInsert(bt, 8437);
 
         for (int i = 0; i < 10000; i++) {
-            boolean removed = null != bt.remove(Integer.valueOf (i));
-            TestHelper.assertEquals (Boolean.TRUE, Boolean.valueOf (removed));
-            final Object lookup = bt.lookup (Integer.valueOf (i));
-            TestHelper.assertEquals (null, lookup);
+            boolean removed = null != bt.remove(Integer.valueOf(i));
+            assertTrue(removed);
+            final Object lookup = bt.lookup (Integer.valueOf(i));
+            assertNull(lookup);
         }
 
         bt.toString ();
     }
 
-    private static void checkAddInsert (final TrieMap<Object, Object> bt, final int k) {
-        final Integer v = Integer.valueOf (k);
-        bt.remove (v);
-        Object foundV = bt.lookup (v);
-        TestHelper.assertEquals (null, foundV);
-        TestHelper.assertEquals (null, bt.put (v, v));
-        foundV = bt.lookup (v);
-        TestHelper.assertEquals (v, foundV);
+    /**
+     * Test if the Map.remove(Object, Object) method works correctly for hash collisions, which are handled by LNode.
+     */
+    @Test
+    public void testRemoveObjectLNode() {
+        final TrieMap<ZeroHashInt, ZeroHashInt> bt = new TrieMap<> ();
 
-        TestHelper.assertEquals (v, bt.put (v, Integer.valueOf (-1)));
-        TestHelper.assertEquals (Integer.valueOf (-1), bt.put (v, v));
+        for (int i = 0; i < 100; i++) {
+            final ZeroHashInt v = new ZeroHashInt(i);
+            assertNull(bt.put(v, v));
+        }
+
+        for (int i = 0; i < 100; i++) {
+            final ZeroHashInt v = new ZeroHashInt(i);
+            assertTrue(bt.remove(v, v));
+        }
+    }
+
+    private static void checkAddInsert (final TrieMap<Integer, Integer> bt, final int k) {
+        final Integer v = Integer.valueOf(k);
+        bt.remove (v);
+        Object foundV = bt.lookup(v);
+        assertNull(foundV);
+        assertNull(bt.put (v, v));
+        foundV = bt.lookup(v);
+        assertEquals(v, foundV);
+
+        assertEquals(v, bt.put(v, Integer.valueOf(-1)));
+        assertEquals(Integer.valueOf(-1), bt.put(v, v));
     }
 }
