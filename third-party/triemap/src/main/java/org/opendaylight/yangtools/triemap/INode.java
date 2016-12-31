@@ -104,10 +104,6 @@ final class INode<K, V> extends INodeBase<K, V> {
         return false;
     }
 
-    private static <K, V> boolean equal(final K k1, final K k2, final TrieMap<K, V> ct) {
-        return ct.equality().equiv(k1, k2);
-    }
-
     private INode<K, V> inode(final MainNode<K, V> cn) {
         return new INode<>(gen, cn);
     }
@@ -150,7 +146,7 @@ final class INode<K, V> extends INodeBase<K, V> {
                         return false;
                     } else if (cnAtPos instanceof SNode) {
                         final SNode<K, V> sn = (SNode<K, V>) cnAtPos;
-                        if (sn.hc == hc && equal(sn.k, k, ct)) {
+                        if (sn.hc == hc && ct.equal(sn.k, k)) {
                             return GCAS(cn, cn.updatedAt(pos, new SNode<>(k, v, hc), gen), ct);
                         }
 
@@ -220,7 +216,7 @@ final class INode<K, V> extends INodeBase<K, V> {
                     } else if (cnAtPos instanceof SNode) {
                         final SNode<K, V> sn = (SNode<K, V>) cnAtPos;
                         if (cond == null) {
-                            if (sn.hc == hc && equal(sn.k, k, ct)) {
+                            if (sn.hc == hc && ct.equal(sn.k, k)) {
                                 if (GCAS(cn, cn.updatedAt(pos, new SNode<>(k, v, hc), gen), ct)) {
                                     return Option.makeOption(sn.v);
                                 }
@@ -237,7 +233,7 @@ final class INode<K, V> extends INodeBase<K, V> {
 
                             return null;
                         } else if (cond == INode.KEY_ABSENT) {
-                            if (sn.hc == hc && equal(sn.k, k, ct)) {
+                            if (sn.hc == hc && ct.equal(sn.k, k)) {
                                 return Option.makeOption(sn.v);
                             }
 
@@ -250,7 +246,7 @@ final class INode<K, V> extends INodeBase<K, V> {
 
                             return null;
                         } else if (cond == INode.KEY_PRESENT) {
-                            if (sn.hc == hc && equal(sn.k, k, ct)) {
+                            if (sn.hc == hc && ct.equal(sn.k, k)) {
                                 if (GCAS(cn, cn.updatedAt(pos, new SNode<>(k, v, hc), gen), ct)) {
                                     return Option.makeOption(sn.v);
                                 }
@@ -259,7 +255,7 @@ final class INode<K, V> extends INodeBase<K, V> {
 
                             return Option.makeOption();// None;
                         } else {
-                            if (sn.hc == hc && equal(sn.k, k, ct) && sn.v == cond) {
+                            if (sn.hc == hc && ct.equal(sn.k, k) && sn.v == cond) {
                                 if (GCAS(cn, cn.updatedAt(pos, new SNode<>(k, v, hc), gen), ct)) {
                                     return Option.makeOption(sn.v);
                                 }
@@ -379,7 +375,7 @@ final class INode<K, V> extends INodeBase<K, V> {
                 } else if (sub instanceof SNode) {
                     // 2) singleton node
                     final SNode<K, V> sn = (SNode<K, V>) sub;
-                    if (sn.hc == hc && equal(sn.k, k, ct)) {
+                    if (sn.hc == hc && ct.equal(sn.k, k)) {
                         return sn.v;
                     }
 
@@ -405,7 +401,7 @@ final class INode<K, V> extends INodeBase<K, V> {
             return RESTART;
         }
 
-        if (tn.hc == hc && equal(tn.k, k, ct)) {
+        if (tn.hc == hc && ct.equal(tn.k, k)) {
             return tn.v;
         }
 
@@ -452,7 +448,7 @@ final class INode<K, V> extends INodeBase<K, V> {
 
             } else if (sub instanceof SNode) {
                 final SNode<K, V> sn = (SNode<K, V>) sub;
-                if (sn.hc == hc && equal(sn.k, k, ct) && (v == null || v.equals(sn.v))) {
+                if (sn.hc == hc && ct.equal(sn.k, k) && (v == null || v.equals(sn.v))) {
                     final MainNode<K, V> ncn = cn.removedAt(pos, flag, gen).toContracted(lev);
                     if (GCAS(cn, ncn, ct)) {
                         res = Option.makeOption(sn.v);
