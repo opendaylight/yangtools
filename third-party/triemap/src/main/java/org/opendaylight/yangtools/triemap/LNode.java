@@ -18,7 +18,7 @@ package org.opendaylight.yangtools.triemap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-final class LNode<K, V> extends MainNode<K, V> implements Iterable<Entry<K, V>> {
+final class LNode<K, V> extends MainNode<K, V> {
     private final ListMap<K, V> listmap;
 
     private LNode(final ListMap<K, V> listmap) {
@@ -34,6 +34,8 @@ final class LNode<K, V> extends MainNode<K, V> implements Iterable<Entry<K, V>> 
     }
 
     MainNode<K, V> removed(final K k, final TrieMap<K, V> ct) {
+        // We only ever create ListMaps with two or more entries,  and remove them as soon as they reach one element
+        // (below), so we cannot observe a null return here.
         final ListMap<K, V> updmap = listmap.remove(k);
         if (updmap.size() > 1) {
             return new LNode<>(updmap);
@@ -59,8 +61,7 @@ final class LNode<K, V> extends MainNode<K, V> implements Iterable<Entry<K, V>> 
         return "LNode";
     }
 
-    @Override
-    public Iterator<Entry<K, V>> iterator() {
+    Iterator<Entry<K, V>> iterator() {
         return listmap.iterator();
     }
 }
