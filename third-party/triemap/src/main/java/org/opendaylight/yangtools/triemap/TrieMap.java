@@ -27,7 +27,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
@@ -420,21 +419,6 @@ public class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,
             return (V)o;
         }
     }
-
-    final V apply (final K k) {
-        int hc = computeHash (k);
-        Object res = lookuphc (k, hc);
-        if (res == null) {
-            throw new NoSuchElementException ();
-        } else {
-            return (V) res;
-        }
-    }
-
-//    final public Option<V> get (K k) {
-//        int hc = computeHash (k);
-//        return Option.makeOption ((V)lookuphc (k, hc));
-//    }
 
     @Override
     final public V get (final Object k) {
