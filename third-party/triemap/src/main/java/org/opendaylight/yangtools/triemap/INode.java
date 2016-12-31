@@ -491,7 +491,7 @@ final class INode<K, V> extends INodeBase<K, V> {
             final Option<V> tmp = ln.get(k);
             if (tmp instanceof Some) {
                 final Some<V> tmp1 = (Some<V>) tmp;
-                if (tmp1.get() == v) {
+                if (v.equals(tmp1.get())) {
                     final MainNode<K, V> nn = ln.removed(k, ct);
                     if (GCAS(ln, nn, ct)) {
                         return tmp;
@@ -500,6 +500,9 @@ final class INode<K, V> extends INodeBase<K, V> {
                     return null;
                 }
             }
+
+            // Key not found or value does not match: we have not removed anything
+            return Option.makeOption();
         }
         throw new RuntimeException ("Should not happen");
     }
