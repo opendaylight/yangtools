@@ -104,7 +104,7 @@ final class INode<K, V> extends INodeBase<K, V> {
         return false;
     }
 
-    private boolean equal(final K k1, final K k2, final TrieMap<K, V> ct) {
+    private static <K, V> boolean equal(final K k1, final K k2, final TrieMap<K, V> ct) {
         return ct.equality().equiv(k1, k2);
     }
 
