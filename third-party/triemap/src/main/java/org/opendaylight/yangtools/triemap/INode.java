@@ -167,6 +167,8 @@ final class INode<K, V> extends INodeBase<K, V> {
                 LNode<K, V> ln = (LNode<K, V>) m;
                 MainNode<K, V> nn = ln.inserted(k, v);
                 return GCAS(ln, nn, ct);
+            } else {
+                throw new IllegalStateException("Unhandled node " + m);
             }
 
             throw new RuntimeException ("Should not happen");
@@ -255,7 +257,7 @@ final class INode<K, V> extends INodeBase<K, V> {
 
                             return Option.makeOption();// None;
                         } else {
-                            if (sn.hc == hc && ct.equal(sn.k, k) && sn.v == cond) {
+                            if (sn.hc == hc && ct.equal(sn.k, k) && cond.equals(sn.v)) {
                                 if (GCAS(cn, cn.updatedAt(pos, new SNode<>(k, v, hc), gen), ct)) {
                                     return Option.makeOption(sn.v);
                                 }
@@ -276,8 +278,7 @@ final class INode<K, V> extends INodeBase<K, V> {
                     return null;
                 } else if (cond == INode.KEY_PRESENT) {
                     return Option.makeOption(); // None;
-                }
-                else {
+                } else {
                     return Option.makeOption(); // None
                 }
             } else if (m instanceof TNode) {
@@ -294,7 +295,7 @@ final class INode<K, V> extends INodeBase<K, V> {
                     return null;
                 } else if (cond == INode.KEY_ABSENT) {
                     final Option<V> t = ln.get(k);
-                    if (t != null) {
+                    if (t.nonEmpty()) {
                         return t;
                     }
                     if (insertln(ln, k, v, ct)) {
@@ -303,8 +304,8 @@ final class INode<K, V> extends INodeBase<K, V> {
                     return null;
                 } else if (cond == INode.KEY_PRESENT) {
                     final Option<V> t = ln.get(k);
-                    if (t == null) {
-                        return null; // None
+                    if (!t.nonEmpty()) {
+                        return t;
                     }
                     if (insertln(ln, k, v, ct)) {
                         return t;
@@ -312,20 +313,26 @@ final class INode<K, V> extends INodeBase<K, V> {
                     return null;
                 } else {
                     final Option<V> t = ln.get(k);
-                    if (t != null) {
-                        if (((Some<V>) t).get() == cond) {
+                    if (t instanceof Some) {
+                        final Some<V> s = (Some<V>) t;
+                        if (cond.equals(s.get())) {
                             if (insertln(ln, k, v, ct)) {
-                                return new Some<>((V) cond);
+                                // Difference from Scala: we choose to reuse the object returned from LNode,
+                                // as the identity of the value does not matter in this call graph.
+                                return t;
                             }
 
                             return null;
                         }
-                        return Option.makeOption();
                     }
+
+                    return Option.makeOption();
                 }
+            } else {
+                throw new IllegalStateException("Unhandled node " + m);
             }
 
-            //                throw new RuntimeException ("Should not happen");
+            throw new RuntimeException("Should never happen");
         }
     }
 
@@ -387,6 +394,8 @@ final class INode<K, V> extends INodeBase<K, V> {
             } else if (m instanceof LNode) {
                 // 5) an l-node
                 return ((LNode<K, V>) m).get(k);
+            } else {
+                throw new IllegalStateException("Unhandled node " + m);
             }
 
             throw new RuntimeException ("Should not happen");
@@ -491,7 +500,7 @@ final class INode<K, V> extends INodeBase<K, V> {
             final Option<V> tmp = ln.get(k);
             if (tmp instanceof Some) {
                 final Some<V> tmp1 = (Some<V>) tmp;
-                if (tmp1.get() == v) {
+                if (v.equals(tmp1.get())) {
                     final MainNode<K, V> nn = ln.removed(k, ct);
                     if (GCAS(ln, nn, ct)) {
                         return tmp;
@@ -500,8 +509,12 @@ final class INode<K, V> extends INodeBase<K, V> {
                     return null;
                 }
             }
+
+            // Key not found or value does not match: we have not removed anything
+            return Option.makeOption();
+        } else {
+            throw new IllegalStateException("Unhandled node " + m);
         }
-        throw new RuntimeException ("Should not happen");
     }
 
     private void cleanParent(final Object nonlive, final INode<K, V> parent, final TrieMap<K, V> ct, final int hc,
