@@ -15,6 +15,12 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
 import org.junit.Test;
 
@@ -23,15 +29,58 @@ public class TestConcurrentMapReplace {
 
     @Test
     public void testConcurrentMapReplace () {
-        final ConcurrentMap<Object, Object> map = new TrieMap<> ();
+        final ConcurrentMap<Integer, Object> map = new TrieMap<>();
 
         for (int i = 0; i < COUNT; i++) {
-            TestHelper.assertTrue (null == map.replace (i, "lol"));
-            TestHelper.assertFalse (map.replace (i, i, "lol2"));
-            TestHelper.assertTrue (null == map.put (i, i));
-            TestHelper.assertTrue (Integer.valueOf (i).equals (map.replace (i, "lol")));
-            TestHelper.assertFalse (map.replace (i, i, "lol2"));
-            TestHelper.assertTrue (map.replace (i, "lol", i));
+            assertNull(map.replace(i, "lol"));
+            assertFalse(map.replace(i, i, "lol2"));
+            assertNull(map.put(i, i));
+            assertEquals(Integer.valueOf(i), map.replace(i, "lol"));
+            assertFalse(map.replace(i, i, "lol2"));
+            assertTrue(map.replace(i, "lol", i));
         }
+    }
+
+    @Test
+    public void testConflictingHash() {
+        final ZeroHashInt k1 = new ZeroHashInt(1);
+        final ZeroHashInt k2 = new ZeroHashInt(2);
+        final ZeroHashInt k3 = new ZeroHashInt(3);
+        final ZeroHashInt k3dup = new ZeroHashInt(3);
+        final ZeroHashInt v1 = new ZeroHashInt(4);
+        final ZeroHashInt v2 = new ZeroHashInt(5);
+        final ZeroHashInt v3 = new ZeroHashInt(6);
+        final ZeroHashInt v3dup = new ZeroHashInt(6);
+        final ZeroHashInt k4 = new ZeroHashInt(7);
+
+        final Map<ZeroHashInt, ZeroHashInt> map = new TrieMap<>();
+        assertNull(map.put(k3, v3));
+
+        // First check for SNode
+        assertNull(map.replace(k1, v1));
+        assertFalse(map.replace(k1, v1, v2));
+        assertFalse(map.replace(k3, v1, v3));
+        assertFalse(map.replace(k3dup, v1, v3dup));
+        assertTrue(map.replace(k3dup, v3dup, v1));
+        assertTrue(map.replace(k3dup, v1, v3));
+
+        // Bump up to LNode
+        assertNull(map.put(k1, v1));
+        assertNull(map.put(k2, v2));
+
+        // Completely mismatched
+        assertFalse(map.replace(k1, v2, v3));
+
+        // Identical value match
+        assertTrue(map.replace(k2, v2, v3));
+        // Equivalent value match
+        assertTrue(map.replace(k2, v3dup, v2));
+
+        // Equivalent match
+        assertTrue(map.replace(k3dup, v3dup, v2));
+
+        // No match
+        assertNull(map.replace(k4, v1));
+        assertFalse(map.replace(k4, v1, v2));
     }
 }
