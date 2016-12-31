@@ -15,6 +15,8 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import java.util.Optional;
+
 final class INode<K, V> extends INodeBase<K, V> {
     static final Object KEY_PRESENT = new Object ();
     static final Object KEY_ABSENT = new Object ();
@@ -184,7 +186,7 @@ final class INode<K, V> extends INodeBase<K, V> {
      * @return null if unsuccessful, Option[V] otherwise (indicating
      *         previous value bound to the key)
      */
-    Option<V> rec_insertif(final K k, final V v, final int hc, final Object cond, final int lev,
+    Optional<V> rec_insertif(final K k, final V v, final int hc, final Object cond, final int lev,
             final INode<K, V> parent, final Gen startgen, final TrieMap<K, V> ct) {
         while (true) {
             final MainNode<K, V> m = GCAS_READ(ct); // use -Yinline!
@@ -218,7 +220,7 @@ final class INode<K, V> extends INodeBase<K, V> {
                         if (cond == null) {
                             if (sn.hc == hc && ct.equal(sn.k, k)) {
                                 if (GCAS(cn, cn.updatedAt(pos, new SNode<>(k, v, hc), gen), ct)) {
-                                    return Option.makeOption(sn.v);
+                                    return Optional.of(sn.v);
                                 }
 
                                 return null;
@@ -228,57 +230,56 @@ final class INode<K, V> extends INodeBase<K, V> {
                             final MainNode<K, V> nn = rn.updatedAt(pos, inode (CNode.dual(sn, sn.hc,
                                     new SNode<>(k, v, hc), hc, lev + 5, gen)), gen);
                             if (GCAS(cn, nn, ct)) {
-                                return Option.makeOption(); // None;
+                                return Optional.empty();
                             }
 
                             return null;
                         } else if (cond == INode.KEY_ABSENT) {
                             if (sn.hc == hc && ct.equal(sn.k, k)) {
-                                return Option.makeOption(sn.v);
+                                return Optional.of(sn.v);
                             }
 
                             final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
                             final MainNode<K, V> nn = rn.updatedAt(pos, inode (CNode.dual(sn, sn.hc,
                                 new SNode<>(k, v, hc), hc, lev + 5, gen)), gen);
                             if (GCAS(cn, nn, ct)) {
-                                return Option.makeOption(); // None
+                                return Optional.empty();
                             }
 
                             return null;
                         } else if (cond == INode.KEY_PRESENT) {
                             if (sn.hc == hc && ct.equal(sn.k, k)) {
                                 if (GCAS(cn, cn.updatedAt(pos, new SNode<>(k, v, hc), gen), ct)) {
-                                    return Option.makeOption(sn.v);
+                                    return Optional.of(sn.v);
                                 }
                                 return null;
                             }
 
-                            return Option.makeOption();// None;
+                            return Optional.empty();
                         } else {
                             if (sn.hc == hc && ct.equal(sn.k, k) && sn.v == cond) {
                                 if (GCAS(cn, cn.updatedAt(pos, new SNode<>(k, v, hc), gen), ct)) {
-                                    return Option.makeOption(sn.v);
+                                    return Optional.of(sn.v);
                                 }
 
                                 return null;
                             }
 
-                            return Option.makeOption(); // None
+                            return Optional.empty();
                         }
                     }
                 } else if (cond == null || cond == INode.KEY_ABSENT) {
                     final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
                     final CNode<K, V> ncnode = rn.insertedAt (pos, flag, new SNode<>(k, v, hc), gen);
                     if (GCAS(cn, ncnode, ct)) {
-                        return Option.makeOption(); // None
+                        return Optional.empty();
                     }
 
                     return null;
                 } else if (cond == INode.KEY_PRESENT) {
-                    return Option.makeOption(); // None;
-                }
-                else {
-                    return Option.makeOption(); // None
+                    return Optional.empty();
+                } else {
+                    return Optional.empty();
                 }
             } else if (m instanceof TNode) {
                 clean(parent, ct, lev - 5);
@@ -287,22 +288,22 @@ final class INode<K, V> extends INodeBase<K, V> {
                 // 3) an l-node
                 final LNode<K, V> ln = (LNode<K, V>) m;
                 if (cond == null) {
-                    final Option<V> optv = ln.get(k);
+                    final Optional<V> optv = ln.get(k);
                     if (insertln(ln, k, v, ct)) {
                         return optv;
                     }
                     return null;
                 } else if (cond == INode.KEY_ABSENT) {
-                    final Option<V> t = ln.get(k);
+                    final Optional<V> t = ln.get(k);
                     if (t != null) {
                         return t;
                     }
                     if (insertln(ln, k, v, ct)) {
-                        return Option.makeOption();// None
+                        return Optional.empty();
                     }
                     return null;
                 } else if (cond == INode.KEY_PRESENT) {
-                    final Option<V> t = ln.get(k);
+                    final Optional<V> t = ln.get(k);
                     if (t == null) {
                         return null; // None
                     }
@@ -311,21 +312,21 @@ final class INode<K, V> extends INodeBase<K, V> {
                     }
                     return null;
                 } else {
-                    final Option<V> t = ln.get(k);
-                    if (t != null) {
-                        if (((Some<V>) t).get() == cond) {
+                    final Optional<V> t = ln.get(k);
+                    if (t.isPresent()) {
+                        if (t.get().equals(cond)) {
                             if (insertln(ln, k, v, ct)) {
-                                return new Some<>((V) cond);
+                                return t;
                             }
 
                             return null;
                         }
-                        return Option.makeOption();
                     }
+                    return Optional.empty();
                 }
             }
 
-            //                throw new RuntimeException ("Should not happen");
+            throw new RuntimeException ("Should not happen");
         }
     }
 
@@ -418,7 +419,7 @@ final class INode<K, V> extends INodeBase<K, V> {
      * @return null if not successful, an Option[V] indicating the previous
      *         value otherwise
      */
-    Option<V> rec_remove(final K k, final V v, final int hc, final int lev, final INode<K, V> parent,
+    Optional<V> rec_remove(final K k, final V v, final int hc, final int lev, final INode<K, V> parent,
             final Gen startgen, final TrieMap<K, V> ct) {
         final MainNode<K, V> m = GCAS_READ(ct); // use -Yinline!
 
@@ -428,12 +429,12 @@ final class INode<K, V> extends INodeBase<K, V> {
             final int bmp = cn.bitmap;
             final int flag = 1 << idx;
             if ((bmp & flag) == 0) {
-                return Option.makeOption();
+                return Optional.empty();
             }
 
             final int pos = Integer.bitCount(bmp & (flag - 1));
             final BasicNode sub = cn.array[pos];
-            Option<V> res = null;
+            Optional<V> res = null;
             if (sub instanceof INode) {
                 final INode<K, V> in = (INode<K, V>) sub;
                 if (startgen == in.gen) {
@@ -451,16 +452,16 @@ final class INode<K, V> extends INodeBase<K, V> {
                 if (sn.hc == hc && ct.equal(sn.k, k) && (v == null || v.equals(sn.v))) {
                     final MainNode<K, V> ncn = cn.removedAt(pos, flag, gen).toContracted(lev);
                     if (GCAS(cn, ncn, ct)) {
-                        res = Option.makeOption(sn.v);
+                        res = Optional.of(sn.v);
                     } else {
                         res = null;
                     }
                 } else {
-                    res = Option.makeOption ();
+                    res = Optional.empty();
                 }
             }
 
-            if (res instanceof None || (res == null)) {
+            if (res == null || !res.isPresent()) {
                 return res;
             }
 
@@ -479,7 +480,7 @@ final class INode<K, V> extends INodeBase<K, V> {
         } else if (m instanceof LNode) {
             final LNode<K, V> ln = (LNode<K, V>) m;
             if (v == null) {
-                final Option<V> optv = ln.get(k);
+                final Optional<V> optv = ln.get(k);
                 final MainNode<K, V> nn = ln.removed(k, ct);
                 if (GCAS(ln, nn, ct)) {
                     return optv;
@@ -488,10 +489,9 @@ final class INode<K, V> extends INodeBase<K, V> {
                 return null;
             }
 
-            final Option<V> tmp = ln.get(k);
-            if (tmp instanceof Some) {
-                final Some<V> tmp1 = (Some<V>) tmp;
-                if (v.equals(tmp1.get())) {
+            final Optional<V> tmp = ln.get(k);
+            if (tmp.isPresent()) {
+                if (v.equals(tmp.get())) {
                     final MainNode<K, V> nn = ln.removed(k, ct);
                     if (GCAS(ln, nn, ct)) {
                         return tmp;
@@ -499,12 +499,15 @@ final class INode<K, V> extends INodeBase<K, V> {
 
                     return null;
                 }
+
+                return tmp;
             }
 
             // Key not found or value does not match: we have not removed anything
-            return Option.makeOption();
+            return Optional.empty();
+        } else {
+            throw new IllegalStateException("Unsupported node " + m);
         }
-        throw new RuntimeException ("Should not happen");
     }
 
     private void cleanParent(final Object nonlive, final INode<K, V> parent, final TrieMap<K, V> ct, final int hc,
