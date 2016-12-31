@@ -72,12 +72,12 @@ public class TestDelete {
     public void testRemoveObjectLNode() {
         final TrieMap<ConstantHashString, ConstantHashString> bt = new TrieMap<> ();
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10000; i++) {
             final ConstantHashString v = new ConstantHashString(i);
             assertNull(bt.put(v, v));
         }
 
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10000; i++) {
             final ConstantHashString v = new ConstantHashString(i);
             assertTrue(bt.remove(v, v));
         }
