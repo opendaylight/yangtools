@@ -15,29 +15,32 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Map;
 import org.junit.Test;
 
 public class TestHashCollisionsRemove {
+    private static final int COUNT = 50000;
+
     @Test
     public void  testHashCollisionsRemove() {
-        final Map<Object, Object> bt = new TrieMap<> ();
-        int count = 50000;
-        for (int j = 0; j < count; j++) {
-            final Object[] objects = TestMultiThreadMapIterator.getObjects (j);
-            for (final Object o : objects) {
-                bt.put (o, o);
+        final Map<Object, Object> bt = new TrieMap<>();
+
+        for (int j = 0; j < COUNT; j++) {
+            for (final Object o : TestMultiThreadMapIterator.getObjects(j)) {
+                bt.put(o, o);
             }
         }
 
-        for (int j = 0; j < count; j++) {
-            final Object[] objects = TestMultiThreadMapIterator.getObjects (j);
-            for (final Object o : objects) {
-                bt.remove (o);
+        for (int j = 0; j < COUNT; j++) {
+            for (final Object o : TestMultiThreadMapIterator.getObjects(j)) {
+                bt.remove(o);
             }
         }
 
-        TestHelper.assertEquals (0, bt.size ());
-        TestHelper.assertTrue (bt.isEmpty ());
+        assertEquals(0, bt.size());
+        assertTrue(bt.isEmpty());
     }
 }
