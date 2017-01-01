@@ -33,7 +33,7 @@ public class TestMultiThreadInserts {
             es.execute (() -> {
                 for (int j = 0; j < 500 * 1000; j++) {
                     if (j % nThreads == threadNo) {
-                        bt.put (Integer.valueOf (j), Integer.valueOf (j));
+                        bt.put (Integer.valueOf(j), Integer.valueOf(j));
                     }
                 }
             });
@@ -43,7 +43,7 @@ public class TestMultiThreadInserts {
         es.awaitTermination(5, TimeUnit.MINUTES);
 
         for (int j = 0; j < 500 * 1000; j++) {
-            final Object lookup = bt.lookup (Integer.valueOf (j));
+            final Object lookup = bt.get(Integer.valueOf(j));
             assertEquals(Integer.valueOf(j), lookup);
         }
     }

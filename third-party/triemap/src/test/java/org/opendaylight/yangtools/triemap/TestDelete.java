@@ -28,7 +28,7 @@ public class TestDelete {
 
         for (int i = 0; i < 10000; i++) {
             assertNull(bt.put(Integer.valueOf(i), Integer.valueOf(i)));
-            assertEquals(Integer.valueOf(i), bt.lookup(Integer.valueOf(i)));
+            assertEquals(Integer.valueOf(i), bt.get(Integer.valueOf(i)));
         }
 
         checkAddInsert(bt, 536);
@@ -38,7 +38,7 @@ public class TestDelete {
         for (int i = 0; i < 10000; i++) {
             boolean removed = null != bt.remove(Integer.valueOf(i));
             assertTrue(removed);
-            final Object lookup = bt.lookup (Integer.valueOf(i));
+            final Object lookup = bt.get(Integer.valueOf(i));
             assertNull(lookup);
         }
 
@@ -66,10 +66,10 @@ public class TestDelete {
     private static void checkAddInsert (final TrieMap<Integer, Integer> bt, final int k) {
         final Integer v = Integer.valueOf(k);
         bt.remove (v);
-        Object foundV = bt.lookup(v);
+        Integer foundV = bt.get(v);
         assertNull(foundV);
         assertNull(bt.put (v, v));
-        foundV = bt.lookup(v);
+        foundV = bt.get(v);
         assertEquals(v, foundV);
 
         assertEquals(v, bt.put(v, Integer.valueOf(-1)));

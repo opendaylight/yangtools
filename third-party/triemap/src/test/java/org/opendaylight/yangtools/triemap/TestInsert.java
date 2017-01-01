@@ -32,7 +32,7 @@ public class TestInsert {
 
         for (int i = 0; i < 10000; i++) {
             assertNull(bt.put(Integer.valueOf (i), Integer.valueOf(i)));
-            final Object lookup = bt.lookup(Integer.valueOf(i));
+            final Object lookup = bt.get(Integer.valueOf(i));
             assertEquals(Integer.valueOf(i), lookup);
         }
 

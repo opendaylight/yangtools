@@ -394,7 +394,7 @@ final class INode<K, V> extends INodeBase<K, V> {
                 return cleanReadOnly((TNode<K, V>) m, lev, parent, ct, k, hc);
             } else if (m instanceof LNode) {
                 // 5) an l-node
-                return ((LNode<K, V>) m).get(k);
+                return ((LNode<K, V>) m).get(k).orElse(null);
             } else {
                 throw new IllegalStateException("Unhandled node " + m);
             }
@@ -406,7 +406,7 @@ final class INode<K, V> extends INodeBase<K, V> {
     private Object cleanReadOnly(final TNode<K, V> tn, final int lev, final INode<K, V> parent,
             final TrieMap<K, V> ct, final K k, final int hc) {
         if (ct.nonReadOnly()) {
-         // used to be throw RestartException
+            // used to be throw RestartException
             clean(parent, ct, lev - 5);
             return RESTART;
         }
