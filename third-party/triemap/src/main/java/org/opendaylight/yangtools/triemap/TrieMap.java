@@ -313,14 +313,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
     }
 
     V lookup(final K k) {
-        final int hc = computeHash (k);
-//        return (V) lookuphc (k, hc);
-        final Object o = lookuphc (k, hc);
-        if (o instanceof Optional) {
-            return ((Optional<V>) o).orElse(null);
-        }
-
-        return (V)o;
+        return (V) lookuphc(k, computeHash(k));
     }
 
     @Override
