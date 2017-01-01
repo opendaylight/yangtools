@@ -49,6 +49,10 @@ final class ListMap<K, V> {
         return new ListMap<>(k1, v1, new ListMap<>(k2, v2));
     }
 
+    Optional<Entry<K, V>> maybeSingleton() {
+        return next != null ? Optional.empty() : Optional.of(new SimpleImmutableEntry<>(k, v));
+    }
+
     int size() {
         return next == null ? 1 : next.size() + 1;
     }
