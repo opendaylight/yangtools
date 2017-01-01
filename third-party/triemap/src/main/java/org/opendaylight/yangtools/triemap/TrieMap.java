@@ -15,6 +15,7 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -88,10 +89,8 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
         return new INode<>(gen, new CNode<>(gen));
     }
 
-    final boolean CAS_ROOT (final Object ov, final Object nv) {
-        if (isReadOnly()) {
-            throw new IllegalStateException("Attempted to modify a read-only snapshot");
-        }
+    final boolean CAS_ROOT(final Object ov, final Object nv) {
+        Preconditions.checkState(!readOnly, "Attempted to modify a read-only snapshot");
         return ROOT_UPDATER.compareAndSet (this, ov, nv);
     }
 
@@ -227,17 +226,13 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
      * otherwise. Used by Map-type methods for quick check.
      */
     private void ensureReadWrite() {
-        if (isReadOnly()) {
+        if (readOnly) {
             throw new UnsupportedOperationException("Attempted to modify a read-only view");
         }
     }
 
     boolean isReadOnly() {
         return readOnly;
-    }
-
-    boolean nonReadOnly() {
-        return !readOnly;
     }
 
     /* public methods */
@@ -279,7 +274,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
      */
     public TrieMap<K, V> readOnlySnapshot() {
         // Is it a snapshot of a read-only snapshot?
-        if (isReadOnly()) {
+        if (readOnly) {
             return this;
         }
 
@@ -379,12 +374,8 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
      *
      * @return
      */
-    Iterator<Entry<K, V>> iterator () {
-        if (!nonReadOnly()) {
-            return readOnlySnapshot().readOnlyIterator();
-        }
-
-        return new TrieMapIterator<> (0, this);
+    Iterator<Entry<K, V>> iterator() {
+        return readOnly ? new TrieMapReadOnlyIterator<>(0, this) : new TrieMapIterator<>(0, this);
     }
 
     /***
@@ -393,12 +384,8 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
      *
      * @return
      */
-    Iterator<Entry<K, V>> readOnlyIterator () {
-        if (nonReadOnly()) {
-            return readOnlySnapshot().readOnlyIterator();
-        }
-
-        return new TrieMapReadOnlyIterator<>(0, this);
+    Iterator<Entry<K, V>> readOnlyIterator() {
+        return new TrieMapReadOnlyIterator<>(0, readOnly ? this : readOnlySnapshot());
     }
 
     private int cachedSize() {
@@ -408,11 +395,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
 
     @Override
     public int size() {
-        if (nonReadOnly()) {
-            return readOnlySnapshot().size ();
-        }
-
-        return cachedSize();
+        return readOnly ? cachedSize() : readOnlySnapshot().size();
     }
 
     @Override
@@ -759,7 +742,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
         outputStream.defaultWriteObject();
 
         final Map<K, V> ro = readOnlySnapshot();
-        outputStream.writeBoolean(isReadOnly());
+        outputStream.writeBoolean(readOnly);
         outputStream.writeInt(ro.size());
 
         for (Entry<K, V> e : ro.entrySet()) {
