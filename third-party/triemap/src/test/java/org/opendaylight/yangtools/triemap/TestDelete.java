@@ -22,6 +22,35 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 public class TestDelete {
+    @Test(expected = NullPointerException.class)
+    public void testNullSimple() {
+        new TrieMap<>().remove(null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testNullKey() {
+        new TrieMap<>().remove(null, "");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testNullValue() {
+        new TrieMap<>().remove("", null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testNullBoth() {
+        new TrieMap<>().remove(null, null);
+    }
+
+    @Test
+    public void testClear() {
+        final TrieMap<Integer, Integer> bt = new TrieMap<>();
+        bt.put(1, 1);
+        bt.clear();
+        assertTrue(bt.isEmpty());
+        assertEquals(0, bt.size());
+    }
+
     @Test
     public void testDelete () {
         final TrieMap<Integer, Integer> bt = new TrieMap<> ();

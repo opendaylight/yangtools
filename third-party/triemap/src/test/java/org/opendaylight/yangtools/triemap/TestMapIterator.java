@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Random;
 import java.util.Set;
 import org.junit.Test;
@@ -74,5 +75,25 @@ public class TestMapIterator {
             assertEquals(0, bt.size ());
             assertTrue(bt.isEmpty ());
         }
+    }
+
+    private static void failAdvance(final Iterator<?> it) {
+        assertFalse(it.hasNext());
+        it.next();
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void testEmptyIterator() {
+        failAdvance(new TrieMap<>().iterator());
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void testEmptyReadOnlyIterator() {
+        failAdvance(new TrieMap<>().readOnlyIterator());
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void testEmptyReadOnlySnapshotIterator() {
+        failAdvance(new TrieMap<>().readOnlySnapshot().iterator());
     }
 }

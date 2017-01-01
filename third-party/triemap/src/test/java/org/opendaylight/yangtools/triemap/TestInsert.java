@@ -38,4 +38,19 @@ public class TestInsert {
 
         bt.toString();
     }
+
+    @Test(expected = NullPointerException.class)
+    public void testNullKey() {
+        new TrieMap<>().put(null, "");
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testNullValue() {
+        new TrieMap<>().put("", null);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void testNullBoth() {
+        new TrieMap<>().put(null, null);
+    }
 }
