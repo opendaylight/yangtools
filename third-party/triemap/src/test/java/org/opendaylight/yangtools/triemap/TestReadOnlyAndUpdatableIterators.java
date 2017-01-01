@@ -15,6 +15,9 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.util.Iterator;
 import java.util.Map.Entry;
 import org.junit.Before;
@@ -27,118 +30,78 @@ import org.junit.Test;
  *
  */
 public class TestReadOnlyAndUpdatableIterators {
-    TrieMap<Integer, Integer> bt;
     private static final int MAP_SIZE = 200;
+
+    private TrieMap<Integer, Integer> bt;
 
     @Before
     public void setUp() {
-        bt = new TrieMap <> ();
+        bt = new TrieMap<>();
         for (int j = 0; j < MAP_SIZE; j++) {
-            TestHelper.assertEquals (null, bt.put (Integer.valueOf (j), Integer.valueOf (j)));
+            assertNull(bt.put(Integer.valueOf(j), Integer.valueOf(j)));
         }
     }
 
-    @Test
-    public void testReadOnlyIterator () {
-        Iterator<Entry<Integer, Integer>> it = bt.readOnlyIterator ();
-        try {
-            it.next().setValue (0);
-            // It should have generated an exception, because it is a read-only iterator
-            TestHelper.assertFalse (true);
-        } catch (Exception e) {
-
-        }
-        try {
-            it.remove ();
-            // It should have generated an exception, because it is a read-only iterator
-            TestHelper.assertFalse (true);
-        } catch (Exception e) {
-
-        }
+    private static void trySet(final Iterator<Entry<Integer, Integer>> it) {
+        it.next().setValue(0);
     }
 
-    @Test
-    public void testReadOnlySnapshotReadOnlyIterator () {
-        TrieMap<Integer, Integer> roSnapshot = bt.readOnlySnapshot ();
-        Iterator<Entry<Integer, Integer>> it = roSnapshot.readOnlyIterator ();
-        try {
-            it.next().setValue (0);
-            // It should have generated an exception, because it is a read-only iterator
-            TestHelper.assertFalse (true);
-        } catch (Exception e) {
-
-        }
-        try {
-            it.remove ();
-            // It should have generated an exception, because it is a read-only iterator
-            TestHelper.assertFalse (true);
-        } catch (Exception e) {
-
-        }
+    private static void tryRemove(final Iterator<?> it) {
+        it.next();
+        it.remove();
     }
 
-    @Test
-    public void testReadOnlySnapshotIterator () {
-        TrieMap<Integer, Integer> roSnapshot = bt.readOnlySnapshot ();
-        Iterator<Entry<Integer, Integer>> it = roSnapshot.iterator ();
-        try {
-            it.next().setValue (0);
-            // It should have generated an exception, because it is a read-only iterator
-            TestHelper.assertFalse (true);
-        } catch (Exception e) {
+    @Test(expected = UnsupportedOperationException.class)
+    public void testReadOnlyIteratorSet() {
+        trySet(bt.readOnlyIterator());
+    }
 
-        }
-        try {
-            it.remove ();
-            // It should have generated an exception, because it is a read-only iterator
-            TestHelper.assertFalse (true);
-        } catch (Exception e) {
+    @Test(expected = UnsupportedOperationException.class)
+    public void testReadOnlyIteratorRemove() {
+        tryRemove(bt.readOnlyIterator());
+    }
 
-        }
+    @Test(expected = UnsupportedOperationException.class)
+    public void testReadOnlySnapshotReadOnlyIteratorSet() {
+        trySet(bt.readOnlySnapshot().readOnlyIterator());
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testReadOnlySnapshotReadOnlyIteratorRemove() {
+        tryRemove(bt.readOnlySnapshot().readOnlyIterator());
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testReadOnlySnapshotIteratorSet() {
+        trySet(bt.readOnlySnapshot().iterator());
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testReadOnlySnapshotIteratorRemove() {
+        tryRemove(bt.readOnlySnapshot().iterator());
     }
 
     @Test
     public void testIterator () {
-        Iterator<Entry<Integer, Integer>> it = bt.iterator ();
-        try {
-            it.next().setValue (0);
-        } catch (Exception e) {
-            // It should not have generated an exception, because it is a non read-only iterator
-            TestHelper.assertFalse (true);
-        }
-
-        try {
-            it.remove ();
-        } catch (Exception e) {
-            // It should not have generated an exception, because it is a non read-only iterator
-            TestHelper.assertFalse (true);
-        }
+        Iterator<Entry<Integer, Integer>> it = bt.iterator();
+        it.next().setValue (0);
+        it.remove();
 
         // All changes are done on the original map
-        TestHelper.assertEquals (MAP_SIZE - 1, bt.size ());
+        assertEquals(MAP_SIZE - 1, bt.size());
     }
 
     @Test
     public void testSnapshotIterator () {
-        TrieMap<Integer, Integer> snapshot = bt.snapshot ();
-        Iterator<Entry<Integer, Integer>> it = snapshot.iterator ();
-        try {
-            it.next().setValue (0);
-        } catch (Exception e) {
-            // It should not have generated an exception, because it is a non read-only iterator
-            TestHelper.assertFalse (true);
-        }
-        try {
-            it.remove ();
-        } catch (Exception e) {
-            // It should not have generated an exception, because it is a non read-only iterator
-            TestHelper.assertFalse (true);
-        }
+        TrieMap<Integer, Integer> snapshot = bt.snapshot();
+        Iterator<Entry<Integer, Integer>> it = snapshot.iterator();
+        it.next().setValue(0);
+        it.remove();
 
         // All changes are done on the snapshot, not on the original map
         // Map size should remain unchanged
-        TestHelper.assertEquals (MAP_SIZE, bt.size ());
+        assertEquals(MAP_SIZE, bt.size ());
         // snapshot size was changed
-        TestHelper.assertEquals (MAP_SIZE-1, snapshot.size ());
+        assertEquals(MAP_SIZE-1, snapshot.size ());
     }
 }
