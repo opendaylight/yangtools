@@ -17,6 +17,9 @@ package org.opendaylight.yangtools.triemap;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static org.opendaylight.yangtools.triemap.LookupResult.RESTART;
+import static org.opendaylight.yangtools.triemap.PresencePredicate.ABSENT;
+import static org.opendaylight.yangtools.triemap.PresencePredicate.PRESENT;
 
 import com.google.common.base.Equivalence;
 import com.google.common.base.Verify;
@@ -186,7 +189,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
         do {
             // Keep looping as long as RESTART is being indicated
             res = RDCSS_READ_ROOT().rec_lookup(k, hc, 0, null, this);
-        } while (INode.RESTART.equals(res));
+        } while (res == RESTART);
 
         return (V) res;
     }
@@ -315,7 +318,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
     public V putIfAbsent(final K key, final V value) {
         ensureReadWrite();
         final K k = checkNotNull(key);
-        return insertifhc(k, computeHash(k), checkNotNull(value), INode.KEY_ABSENT).orElse(null);
+        return insertifhc(k, computeHash(k), checkNotNull(value), ABSENT).orElse(null);
     }
 
     @Override
@@ -336,7 +339,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
     public V replace(final K key, final V value) {
         ensureReadWrite();
         final K k = checkNotNull(key);
-        return insertifhc (k, computeHash(k), checkNotNull(value), INode.KEY_PRESENT).orElse(null);
+        return insertifhc (k, computeHash(k), checkNotNull(value), PRESENT).orElse(null);
     }
 
     /***
