@@ -16,8 +16,9 @@
 package org.opendaylight.yangtools.triemap;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
-final class INode<K, V> extends INodeBase<K, V> {
+final class INode<K, V> extends BasicNode {
     static final Object KEY_PRESENT = new Object ();
     static final Object KEY_ABSENT = new Object ();
 
@@ -27,8 +28,17 @@ final class INode<K, V> extends INodeBase<K, V> {
      */
     static final Object RESTART = new Object();
 
-    INode(final Gen gen, final MainNode<K, V> bn) {
-        super(gen, bn);
+    @SuppressWarnings("rawtypes")
+    private static final AtomicReferenceFieldUpdater<INode, MainNode> MAINNODE_UPDATER =
+            AtomicReferenceFieldUpdater.newUpdater(INode.class, MainNode.class, "mainnode");
+
+    public final Gen gen;
+
+    private volatile MainNode<K, V> mainnode;
+
+    INode(final Gen gen, final MainNode<K, V> mainnode) {
+        this.gen = gen;
+        this.mainnode = mainnode;
     }
 
     MainNode<K, V> gcasRead(final TrieMap<K, V> ct) {
@@ -36,7 +46,7 @@ final class INode<K, V> extends INodeBase<K, V> {
     }
 
     MainNode<K, V> GCAS_READ(final TrieMap<K, V> ct) {
-        MainNode<K, V> m = /* READ */ READ();
+        MainNode<K, V> m = /* READ */ mainnode;
         MainNode<K, V> prevval = /* READ */ m.READ_PREV();
         if (prevval == null) {
             return m;
@@ -61,12 +71,12 @@ final class INode<K, V> extends INodeBase<K, V> {
             if (prev instanceof FailedNode) {
                 // try to commit to previous value
                 FailedNode<K, V> fn = (FailedNode<K, V>) prev;
-                if (CAS(m, fn.READ_PREV())) {
+                if (MAINNODE_UPDATER.compareAndSet(this, m, fn.READ_PREV())) {
                     return fn.READ_PREV();
                 }
 
-                // Tail recursion: return GCAS_Complete (/* READ */ READ(), ct);
-                m = /* READ */ READ();
+                // Tail recursion: return GCAS_Complete (/* READ */ mainnode, ct);
+                m = /* READ */ mainnode;
                 continue;
             }
 
@@ -91,14 +101,14 @@ final class INode<K, V> extends INodeBase<K, V> {
             // try to abort
             m.CAS_PREV(prev, new FailedNode<>(prev));
 
-            // Tail recursion: return GCAS_Complete(/* READ */ READ(), ct);
-            m = /* READ */ READ();
+            // Tail recursion: return GCAS_Complete(/* READ */ mainnode, ct);
+            m = /* READ */ mainnode;
         }
     }
 
     private boolean GCAS(final MainNode<K, V> old, final MainNode<K, V> n, final TrieMap<K, V> ct) {
         n.WRITE_PREV(old);
-        if (CAS(old, n)) {
+        if (MAINNODE_UPDATER.compareAndSet(this, old, n)) {
             GCAS_Complete(n, ct);
             return /* READ */ n.READ_PREV() == null;
         }
