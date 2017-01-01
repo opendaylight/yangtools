@@ -15,8 +15,11 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.base.Equivalence;
-import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterators;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.AbstractMap;
@@ -25,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -80,7 +84,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
     }
 
     final boolean CAS_ROOT(final Object ov, final Object nv) {
-        Preconditions.checkState(!readOnly, "Attempted to modify a read-only snapshot");
+        checkState(!readOnly, "Attempted to modify a read-only snapshot");
         return ROOT_UPDATER.compareAndSet (this, ov, nv);
     }
 
@@ -101,46 +105,26 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
         final Object r = /* READ */root;
         if (r instanceof INode) {
             return (INode<K, V>) r;
-        } else if (r instanceof RDCSS_Descriptor) {
-            return RDCSS_Complete (abort);
-        } else {
-            throw new IllegalStateException("Unhandled root " + r);
         }
+
+        checkState(r instanceof RDCSS_Descriptor, "Unhandled root %s", r);
+        return RDCSS_Complete(abort);
     }
 
     private INode<K, V> RDCSS_Complete(final boolean abort) {
         while (true) {
-            final Object v = /* READ */root;
-            if (v instanceof INode) {
-                return (INode<K, V>) v;
+            final Object r = /* READ */root;
+            if (r instanceof INode) {
+                return (INode<K, V>) r;
             }
 
-            if (v instanceof RDCSS_Descriptor) {
-                final RDCSS_Descriptor<K, V> desc = (RDCSS_Descriptor<K, V>) v;
-                final INode<K, V> ov = desc.old;
-                final MainNode<K, V> exp = desc.expectedmain;
-                final INode<K, V> nv = desc.nv;
+            checkState(r instanceof RDCSS_Descriptor, "Unhandled root %s", r);
+            final RDCSS_Descriptor<K, V> desc = (RDCSS_Descriptor<K, V>) r;
+            final INode<K, V> ov = desc.old;
+            final MainNode<K, V> exp = desc.expectedmain;
+            final INode<K, V> nv = desc.nv;
 
-                if (abort) {
-                    if (CAS_ROOT(desc, ov)) {
-                        return ov;
-                    }
-
-                    // Tail recursion: return RDCSS_Complete(abort);
-                    continue;
-                }
-
-                final MainNode<K, V> oldmain = ov.gcasRead(this);
-                if (oldmain == exp) {
-                    if (CAS_ROOT(desc, nv)) {
-                        desc.committed = true;
-                        return nv;
-                    }
-
-                    // Tail recursion: return RDCSS_Complete(abort);
-                    continue;
-                }
-
+            if (abort) {
                 if (CAS_ROOT(desc, ov)) {
                     return ov;
                 }
@@ -149,7 +133,22 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
                 continue;
             }
 
-            throw new IllegalStateException("Unexpected root " + v);
+            final MainNode<K, V> oldmain = ov.gcasRead(this);
+            if (oldmain == exp) {
+                if (CAS_ROOT(desc, nv)) {
+                    desc.committed = true;
+                    return nv;
+                }
+
+                // Tail recursion: return RDCSS_Complete(abort);
+                continue;
+            }
+
+            if (CAS_ROOT(desc, ov)) {
+                return ov;
+            }
+
+            // Tail recursion: return RDCSS_Complete(abort);
         }
     }
 
@@ -297,59 +296,57 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
         return equiv.equivalent(k1, k2);
     }
 
-    V lookup(final K k) {
-        return (V) lookuphc(k, computeHash(k));
-    }
-
     @Override
-    public V get(final Object k) {
-        return lookup((K)k);
+    public V get(final Object key) {
+        final K k = (K) checkNotNull(key);
+        return (V) lookuphc(k, computeHash(k));
     }
 
     @Override
     public V put(final K key, final V value) {
         ensureReadWrite();
-        final int hc = computeHash(key);
-        return insertifhc (key, hc, value, null).orElse(null);
+        final K k = checkNotNull(key);
+        return insertifhc(k, computeHash(k), checkNotNull(value), null).orElse(null);
     }
 
-    void add(final K k, final V v) {
-        inserthc(k, computeHash(k), v);
-    }
-
-    @Override
-    public V remove(final Object k) {
-        ensureReadWrite();
-        final int hc = computeHash ((K)k);
-        return removehc ((K)k, (V) null, hc).orElse(null);
+    void add(final K key, final V value) {
+        final K k = checkNotNull(key);
+        inserthc(k, computeHash(k), checkNotNull(value));
     }
 
     @Override
-    public V putIfAbsent(final K k, final V v) {
+    public V remove(final Object key) {
         ensureReadWrite();
-        final int hc = computeHash (k);
-        return insertifhc (k, hc, v, INode.KEY_ABSENT).orElse(null);
+        final K k = (K) checkNotNull(key);
+        return removehc(k, (V) null, computeHash(k)).orElse(null);
     }
 
     @Override
-    public boolean remove(final Object k, final Object v) {
+    public V putIfAbsent(final K key, final V value) {
         ensureReadWrite();
-        final int hc = computeHash ((K)k);
-        return removehc((K)k, (V)v, hc).isPresent();
+        final K k = checkNotNull(key);
+        return insertifhc(k, computeHash(k), checkNotNull(value), INode.KEY_ABSENT).orElse(null);
     }
 
     @Override
-    public boolean replace(final K k, final V oldvalue, final V newvalue) {
+    public boolean remove(final Object key, final Object v) {
         ensureReadWrite();
-        final int hc = computeHash (k);
-        return insertifhc (k, hc, newvalue, oldvalue).isPresent();
+        final K k = (K) checkNotNull(key);
+        return removehc(k, (V) checkNotNull(v), computeHash(k)).isPresent();
     }
 
     @Override
-    public V replace(final K k, final V v) {
+    public boolean replace(final K key, final V oldValue, final V newValue) {
         ensureReadWrite();
-        final int hc = computeHash (k);
-        return insertifhc (k, hc, v, INode.KEY_PRESENT).orElse(null);
+        final K k = checkNotNull(key);
+        return insertifhc(k, computeHash(k), checkNotNull(newValue), checkNotNull(oldValue)).isPresent();
+    }
+
+    @Override
+    public V replace(final K key, final V value) {
+        ensureReadWrite();
+        final K k = checkNotNull(key);
+        return insertifhc (k, computeHash(k), checkNotNull(value), INode.KEY_PRESENT).orElse(null);
     }
 
     /***
@@ -388,7 +385,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
 
     @Override
     public boolean containsKey(final Object key) {
-        return lookup((K) key) != null;
+        return get(key) != null;
     }
 
     @Override
@@ -472,32 +469,31 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
 
 
         @Override
-        public boolean hasNext () {
+        public boolean hasNext() {
             return (current != null) || (subiter != null);
         }
 
         @Override
-        public Entry<K, V> next () {
-            if (hasNext ()) {
-                Entry<K, V> r = null;
-                if (subiter != null) {
-                    r = subiter.next ();
-                    checkSubiter ();
-                } else {
-                    r = current.kvPair ();
-                    advance ();
-                }
-
-                lastReturned = r;
-                if (r != null) {
-                    final Entry<K, V> rr = r;
-                    return nextEntry(rr);
-                }
-                return r;
-            } else {
-                // return Iterator.empty ().next ();
-                return null;
+        public Entry<K, V> next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
             }
+
+            Entry<K, V> r = null;
+            if (subiter != null) {
+                r = subiter.next ();
+                checkSubiter ();
+            } else {
+                r = current.kvPair ();
+                advance ();
+            }
+
+            lastReturned = r;
+            if (r != null) {
+                final Entry<K, V> rr = r;
+                return nextEntry(rr);
+            }
+            return r;
         }
 
         Entry<K, V> nextEntry(final Entry<K, V> rr) {
@@ -511,7 +507,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
 
                 @Override
                 public V getValue () {
-                    return (updated == null)?rr.getValue (): updated;
+                    return (updated == null) ? rr.getValue (): updated;
                 }
 
                 @Override
@@ -639,7 +635,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
         private List<Entry<K, V>> toList (final Iterator<Entry<K, V>> it) {
             ArrayList<Entry<K, V>> list = new ArrayList<> ();
             while (it.hasNext ()) {
-                list.add (it.next ());
+                list.add (it.next());
             }
             return list;
         }
@@ -653,55 +649,57 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
         }
 
         @Override
-        public void remove () {
-            if (lastReturned != null) {
-                ct.remove (lastReturned.getKey ());
-                lastReturned = null;
-            } else {
-                throw new IllegalStateException();
-            }
+        public void remove() {
+            checkState(lastReturned != null);
+            ct.remove(lastReturned.getKey());
+            lastReturned = null;
         }
-
     }
 
     /***
      * Support for EntrySet operations required by the Map interface
      */
     private final class EntrySet extends AbstractSet<Entry<K, V>> {
-
         @Override
-        public Iterator<Entry<K, V>> iterator () {
+        public Iterator<Entry<K, V>> iterator() {
             return TrieMap.this.iterator ();
         }
 
         @Override
-        public final boolean contains (final Object o) {
+        public final boolean contains(final Object o) {
             if (!(o instanceof Entry)) {
                 return false;
             }
-            final Entry<K, V> e = (Entry<K, V>) o;
-            final K k = e.getKey ();
-            final V v = lookup (k);
-            return v != null;
+
+            final Entry<?, ?> e = (Entry<?, ?>) o;
+            if (e.getKey() == null) {
+                return false;
+            }
+            final V v = get(e.getKey());
+            return v != null && v.equals(e.getValue());
         }
 
         @Override
-        public final boolean remove (final Object o) {
+        public final boolean remove(final Object o) {
             if (!(o instanceof Entry)) {
                 return false;
             }
-            final Entry<K, V> e = (Entry<K, V>) o;
-            final K k = e.getKey();
-            return null != TrieMap.this.remove(k);
+            final Entry<?, ?> e = (Entry<K, V>) o;
+            final Object key = e.getKey();
+            if (key == null) {
+                return false;
+            }
+            final Object value = e.getValue();
+            if (value == null) {
+                return false;
+            }
+
+            return TrieMap.this.remove(key, value);
         }
 
         @Override
         public final int size () {
-            int size = 0;
-            for (final Iterator<?> i = iterator (); i.hasNext (); i.next ()) {
-                size++;
-            }
-            return size;
+            return Iterators.size(iterator());
         }
 
         @Override
@@ -709,5 +707,4 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
             TrieMap.this.clear ();
         }
     }
-
 }
