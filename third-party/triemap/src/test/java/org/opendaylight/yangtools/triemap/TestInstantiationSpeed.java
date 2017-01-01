@@ -15,40 +15,53 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import com.google.common.base.Stopwatch;
+import java.util.concurrent.TimeUnit;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TestInstantiationSpeed {
+    private static final Logger LOG = LoggerFactory.getLogger(TestInstantiationSpeed.class);
     private static final int COUNT = 1000000;
     private static final int ITERATIONS = 10;
-    private static final int WARMUP = 20;
+    private static final int WARMUP = 10;
 
-    private static long runIteration() {
+    private static Stopwatch runIteration() {
         final TrieMap<?, ?>[] maps = new TrieMap<?, ?>[COUNT];
-        final long start = System.nanoTime();
 
+        final Stopwatch watch = Stopwatch.createStarted();
         for (int i = 0; i < COUNT; ++i) {
             maps[i] = new TrieMap<>();
         }
+        watch.stop();
 
-        final long stop = System.nanoTime();
-        return stop - start;
+        // Do not allow optimizations
+        LOG.trace("Maps: {}", (Object) maps);
+        return watch;
     }
 
+    private static long elapsedToNs(final Stopwatch watch) {
+        return watch.elapsed(TimeUnit.NANOSECONDS) / COUNT;
+    }
+
+    @Ignore
     @Test
     public void testInstantiation() {
 
         for (int i = 0; i < WARMUP; ++i) {
-            final long time = runIteration();
-            System.out.println(String.format("Warmup %s took %sns (%sns)", i, time, time / COUNT));
+            final Stopwatch time = runIteration();
+            LOG.debug("Warmup {} took {} ({} ns)", i, time, elapsedToNs(time));
         }
 
         long acc = 0;
         for (int i = 0; i < ITERATIONS; ++i) {
-            final long time = runIteration();
-            System.out.println(String.format("Iteration %s took %sns (%sns)", i, time, time / COUNT));
-            acc += time;
+            final Stopwatch time = runIteration();
+            LOG.debug("Iteration {} took {} ({} ns)", i, time, elapsedToNs(time));
+            acc += time.elapsed(TimeUnit.NANOSECONDS);
         }
 
-        System.out.println("Instantiation cost " + acc / ITERATIONS / COUNT + "ns");
+        LOG.info("Instantiation cost {} ns", acc / ITERATIONS / COUNT);
     }
 }
