@@ -15,6 +15,9 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -23,23 +26,24 @@ import java.util.Map.Entry;
 import org.junit.Test;
 
 public class TestHashCollisionsRemoveIterator {
+    private static final int COUNT = 50000;
+
     @Test
     public void testHashCollisionsRemoveIterator () {
-        final Map<Object, Object> bt = new TrieMap<> ();
-        int count = 50000;
-        for (int j = 0; j < count; j++) {
-            bt.put (Integer.valueOf (j), Integer.valueOf (j));
+        final Map<Object, Object> bt = new TrieMap<>();
+        for (int j = 0; j < COUNT; j++) {
+            bt.put(Integer.valueOf(j), Integer.valueOf(j));
         }
 
-        final Collection<Object> list = new ArrayList <> ();
-        for (final Iterator<Map.Entry<Object, Object>> i = bt.entrySet ().iterator (); i.hasNext ();) {
-            final Entry<Object, Object> e = i.next ();
-            final Object key = e.getKey ();
-            list.add (key);
-            i.remove ();
+        final Collection<Object> list = new ArrayList<>(COUNT);
+        final Iterator<Entry<Object, Object>> it = bt.entrySet().iterator();
+        while (it.hasNext()) {
+            list.add(it.next().getKey());
+            it.remove();
         }
 
-        TestHelper.assertEquals (0, bt.size ());
-        TestHelper.assertTrue (bt.isEmpty ());
+        assertEquals(0, bt.size());
+        assertTrue(bt.isEmpty());
+        assertEquals(COUNT, list.size());
     }
 }
