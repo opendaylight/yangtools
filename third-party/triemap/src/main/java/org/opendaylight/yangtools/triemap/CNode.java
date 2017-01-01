@@ -15,12 +15,21 @@
  */
 package org.opendaylight.yangtools.triemap;
 
-final class CNode<K, V> extends CNodeBase<K, V> {
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
+
+final class CNode<K, V> extends MainNode<K, V> {
+    @SuppressWarnings("rawtypes")
+    private static final AtomicIntegerFieldUpdater<CNode> CSIZE_UPDATER = AtomicIntegerFieldUpdater.newUpdater(
+        CNode.class, "csize");
+
     private static final BasicNode[] EMPTY_ARRAY = new BasicNode[0];
+    private static final int NO_SIZE = -1;
 
     final int bitmap;
     final BasicNode[] array;
     final Gen gen;
+
+    private volatile int csize = NO_SIZE;
 
     private CNode(final Gen gen, final int bitmap, final BasicNode... array) {
         this.bitmap = bitmap;
@@ -53,16 +62,17 @@ final class CNode<K, V> extends CNodeBase<K, V> {
     // this should only be called from within read-only snapshots
     @Override
     int cachedSize(final TrieMap<K, V> ct) {
-        final int currsz = READ_SIZE();
-        if (currsz != -1) {
-            return currsz;
+        int sz = csize;
+        if (sz == NO_SIZE) {
+            // We have not computed the size yet, do that now
+            sz = computeSize(ct);
+            if (!CSIZE_UPDATER.compareAndSet(this, NO_SIZE, sz)) {
+                // We have been pre-empted by some else: read the result
+                sz = csize;
+            }
         }
 
-        final int sz = computeSize(ct);
-        while (READ_SIZE () == -1) {
-            CAS_SIZE (-1, sz);
-        }
-        return READ_SIZE ();
+        return sz;
     }
 
     // lends itself towards being parallelizable by choosing
@@ -87,7 +97,7 @@ final class CNode<K, V> extends CNodeBase<K, V> {
             if (elem instanceof SNode) {
                 sz += 1;
             } else if (elem instanceof INode) {
-                sz += ((INode<K, V>) elem).cachedSize (ct);
+                sz += ((INode<K, V>) elem).cachedSize(ct);
             }
             i += 1;
         }
