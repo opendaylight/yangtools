@@ -15,20 +15,14 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import static org.opendaylight.yangtools.triemap.LookupResult.RESTART;
+import static org.opendaylight.yangtools.triemap.PresencePredicate.ABSENT;
+import static org.opendaylight.yangtools.triemap.PresencePredicate.PRESENT;
+
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 final class INode<K, V> extends BasicNode {
-
-    static final Object KEY_PRESENT = new Object ();
-    static final Object KEY_ABSENT = new Object ();
-
-    /**
-     * Virtual result for lookup methods indicating that the lookup needs to be restarted. This is a faster version
-     * of throwing a checked exception to control the restart.
-     */
-    static final Object RESTART = new Object();
-
     @SuppressWarnings("rawtypes")
     private static final AtomicReferenceFieldUpdater<INode, MainNode> MAINNODE_UPDATER =
             AtomicReferenceFieldUpdater.newUpdater(INode.class, MainNode.class, "mainnode");
@@ -257,7 +251,7 @@ final class INode<K, V> extends BasicNode {
                             }
 
                             return null;
-                        } else if (cond == INode.KEY_ABSENT) {
+                        } else if (cond == ABSENT) {
                             if (sn.hc == hc && ct.equal(sn.k, k)) {
                                 return Optional.of(sn.v);
                             }
@@ -270,7 +264,7 @@ final class INode<K, V> extends BasicNode {
                             }
 
                             return null;
-                        } else if (cond == INode.KEY_PRESENT) {
+                        } else if (cond == PRESENT) {
                             if (sn.hc == hc && ct.equal(sn.k, k)) {
                                 if (GCAS(cn, cn.updatedAt(pos, new SNode<>(k, v, hc), gen), ct)) {
                                     return Optional.of(sn.v);
@@ -291,7 +285,7 @@ final class INode<K, V> extends BasicNode {
                             return Optional.empty();
                         }
                     }
-                } else if (cond == null || cond == INode.KEY_ABSENT) {
+                } else if (cond == null || cond == ABSENT) {
                     final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
                     final CNode<K, V> ncnode = rn.insertedAt (pos, flag, new SNode<>(k, v, hc), gen);
                     if (GCAS(cn, ncnode, ct)) {
@@ -299,8 +293,6 @@ final class INode<K, V> extends BasicNode {
                     }
 
                     return null;
-                } else if (cond == INode.KEY_PRESENT) {
-                    return Optional.empty();
                 } else {
                     return Optional.empty();
                 }
@@ -316,7 +308,7 @@ final class INode<K, V> extends BasicNode {
                         return optv;
                     }
                     return null;
-                } else if (cond == INode.KEY_ABSENT) {
+                } else if (cond == ABSENT) {
                     final Optional<V> t = ln.get(k);
                     if (t.isPresent()) {
                         return t;
@@ -325,7 +317,7 @@ final class INode<K, V> extends BasicNode {
                         return Optional.empty();
                     }
                     return null;
-                } else if (cond == INode.KEY_PRESENT) {
+                } else if (cond == PRESENT) {
                     final Optional<V> t = ln.get(k);
                     if (!t.isPresent()) {
                         return t;
@@ -403,7 +395,6 @@ final class INode<K, V> extends BasicNode {
                         continue;
                     }
 
-                    // used to be throw RestartException
                     return RESTART;
                 } else if (sub instanceof SNode) {
                     // 2) singleton node
@@ -438,7 +429,6 @@ final class INode<K, V> extends BasicNode {
             return null;
         }
 
-        // used to be throw RestartException
         clean(parent, ct, lev - 5);
         return RESTART;
     }
