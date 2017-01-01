@@ -122,11 +122,11 @@ public class TestHashCollisions {
     }
 
     private static void removeChars (final TrieMap<Object, Object> bt) {
-        assertNotNull(bt.lookup('a'));
-        assertNotNull(bt.lookup('b'));
-        assertNotNull(bt.lookup('c'));
-        assertNotNull(bt.lookup('d'));
-        assertNotNull(bt.lookup('e'));
+        assertNotNull(bt.get('a'));
+        assertNotNull(bt.get('b'));
+        assertNotNull(bt.get('c'));
+        assertNotNull(bt.get('d'));
+        assertNotNull(bt.get('e'));
 
         assertNotNull(bt.remove('a'));
         assertNotNull(bt.remove('b'));
@@ -140,19 +140,19 @@ public class TestHashCollisions {
         assertNull(bt.remove('d'));
         assertNull(bt.remove('e'));
 
-        assertNull(bt.lookup('a'));
-        assertNull(bt.lookup('b'));
-        assertNull(bt.lookup('c'));
-        assertNull(bt.lookup('d'));
-        assertNull(bt.lookup('e'));
+        assertNull(bt.get('a'));
+        assertNull(bt.get('b'));
+        assertNull(bt.get('c'));
+        assertNull(bt.get('d'));
+        assertNull(bt.get('e'));
     }
 
     private static void removeStrings (final TrieMap<Object, Object> bt) {
-        assertNotNull(bt.lookup("a"));
-        assertNotNull(bt.lookup("b"));
-        assertNotNull(bt.lookup("c"));
-        assertNotNull(bt.lookup("d"));
-        assertNotNull(bt.lookup("e"));
+        assertNotNull(bt.get("a"));
+        assertNotNull(bt.get("b"));
+        assertNotNull(bt.get("c"));
+        assertNotNull(bt.get("d"));
+        assertNotNull(bt.get("e"));
 
         assertNotNull(bt.remove("a"));
         assertNotNull(bt.remove("b"));
@@ -166,30 +166,30 @@ public class TestHashCollisions {
         assertNull(bt.remove("d"));
         assertNull(bt.remove("e"));
 
-        assertNull(bt.lookup("a"));
-        assertNull(bt.lookup("b"));
-        assertNull(bt.lookup("c"));
-        assertNull(bt.lookup("d"));
-        assertNull(bt.lookup("e"));
+        assertNull(bt.get("a"));
+        assertNull(bt.get("b"));
+        assertNull(bt.get("c"));
+        assertNull(bt.get("d"));
+        assertNull(bt.get("e"));
     }
 
     private static void removeInts (final TrieMap<Object, Object> bt) {
         for (int i = 0; i < 128; i++) {
-            final Integer bigI = Integer.valueOf (i);
-            assertNotNull(bt.lookup(bigI));
+            final Integer bigI = Integer.valueOf(i);
+            assertNotNull(bt.get(bigI));
             assertNotNull(bt.remove(bigI));
             assertNull(bt.remove(bigI));
-            assertNull(bt.lookup(bigI));
+            assertNull(bt.get(bigI));
         }
     }
 
     private static void removeBytes (final TrieMap<Object, Object> bt) {
         for (byte i = 0; i < 128 && i >= 0; i++) {
-            final Byte bigB = Byte.valueOf (i);
-            assertNotNull(bt.lookup(bigB));
+            final Byte bigB = Byte.valueOf(i);
+            assertNotNull(bt.get(bigB));
             assertNotNull(bt.remove(bigB));
             assertNull(bt.remove(bigB));
-            assertNull(bt.lookup(bigB));
+            assertNull(bt.get(bigB));
         }
     }
 }
