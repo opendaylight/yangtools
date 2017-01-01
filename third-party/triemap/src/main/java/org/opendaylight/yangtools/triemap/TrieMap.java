@@ -17,18 +17,14 @@ package org.opendaylight.yangtools.triemap;
 
 import com.google.common.base.Equivalence;
 import com.google.common.base.Preconditions;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.ObjectStreamException;
 import java.io.Serializable;
-import java.lang.reflect.Field;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -48,42 +44,35 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
     private static final AtomicReferenceFieldUpdater<TrieMap, Object> ROOT_UPDATER =
             AtomicReferenceFieldUpdater.newUpdater(TrieMap.class, Object.class, "root");
     private static final long serialVersionUID = 1L;
-    private static final Field READONLY_FIELD;
-
-    static {
-        final Field f;
-        try {
-            f = TrieMap.class.getDeclaredField("readOnly");
-        } catch (NoSuchFieldException e) {
-            throw new ExceptionInInitializerError(e);
-        } catch (SecurityException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-        f.setAccessible(true);
-        READONLY_FIELD = f;
-    }
 
     /**
      * EntrySet
      */
-    private transient final EntrySet entrySet = new EntrySet ();
-
+    private final EntrySet entrySet = new EntrySet();
     private final Equivalence<? super K> equiv;
+    private final boolean readOnly;
 
-    private transient volatile Object root;
-    private final transient boolean readOnly;
+    private volatile Object root;
 
-    TrieMap(final INode<K, V> r, final Equivalence<? super K> equiv, final boolean readOnly) {
+    private TrieMap(final INode<K, V> r, final Equivalence<? super K> equiv, final boolean readOnly) {
         this.root = r;
         this.equiv = equiv;
         this.readOnly = readOnly;
     }
 
+    TrieMap(final Equivalence<? super K> equiv) {
+        this(newRootNode(), equiv, false);
+    }
+
     public TrieMap() {
-        this(newRootNode(), Equivalence.equals(), false);
+        this(Equivalence.equals());
     }
 
     /* internal methods */
+
+    final Equivalence<? super K> equiv() {
+        return equiv;
+    }
 
     private static <K,V> INode<K, V> newRootNode() {
         final Gen gen = new Gen();
@@ -324,10 +313,8 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
         return insertifhc (key, hc, value, null).orElse(null);
     }
 
-    TrieMap<K, V> add(final K k, final V v) {
-        final int hc = computeHash (k);
-        inserthc (k, hc, v);
-        return this;
+    void add(final K k, final V v) {
+        inserthc(k, computeHash(k), v);
     }
 
     @Override
@@ -407,6 +394,10 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
     @Override
     public Set<Entry<K, V>> entrySet() {
         return entrySet;
+    }
+
+    private Object writeReplace() throws ObjectStreamException {
+        return new ExternalForm(this);
     }
 
     private static final class RDCSS_Descriptor<K, V> {
@@ -719,36 +710,4 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
         }
     }
 
-    private void readObject(final ObjectInputStream inputStream) throws IOException, ClassNotFoundException {
-        inputStream.defaultReadObject();
-        this.root = newRootNode();
-
-        final boolean ro = inputStream.readBoolean();
-        final int size = inputStream.readInt();
-        for (int i = 0; i < size; ++i) {
-            final K key = (K)inputStream.readObject();
-            final V value = (V)inputStream.readObject();
-            add(key, value);
-        }
-
-        // Propagate the read-only bit
-        try {
-            READONLY_FIELD.setBoolean(this, ro);
-        } catch (IllegalAccessException e) {
-            throw new IOException("Failed to set read-only flag", e);
-        }
-    }
-
-    private void writeObject(final ObjectOutputStream outputStream) throws IOException {
-        outputStream.defaultWriteObject();
-
-        final Map<K, V> ro = readOnlySnapshot();
-        outputStream.writeBoolean(readOnly);
-        outputStream.writeInt(ro.size());
-
-        for (Entry<K, V> e : ro.entrySet()) {
-            outputStream.writeObject(e.getKey());
-            outputStream.writeObject(e.getValue());
-        }
-    }
 }
