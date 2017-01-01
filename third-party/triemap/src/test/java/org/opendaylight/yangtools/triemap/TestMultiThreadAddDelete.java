@@ -15,6 +15,10 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -24,65 +28,51 @@ import org.junit.Test;
 public class TestMultiThreadAddDelete {
     private static final int RETRIES = 1;
     private static final int N_THREADS = 7;
-    private static final int COUNT =  50 * 1000;
+    private static final int COUNT = 50 * 1000;
 
     @Test
-    public void testMultiThreadAddDelete () {
+    public void testMultiThreadAddDelete () throws InterruptedException {
         for (int j = 0; j < RETRIES; j++) {
-            final Map<Object, Object> bt = new TrieMap <> ();
+            final Map<Object, Object> bt = new TrieMap<>();
 
             {
-                final ExecutorService es = Executors.newFixedThreadPool (N_THREADS);
+                final ExecutorService es = Executors.newFixedThreadPool(N_THREADS);
                 for (int i = 0; i < N_THREADS; i++) {
                     final int threadNo = i;
-                    es.execute (new Runnable () {
-                        @Override
-                        public void run () {
-                            for (int j = 0; j < COUNT; j++) {
-                                if (j % N_THREADS == threadNo) {
-                                    bt.put (Integer.valueOf (j), Integer.valueOf (j));
-                                }
+                    es.execute(() -> {
+                        for (int k = 0; k < COUNT; k++) {
+                            if (k % N_THREADS == threadNo) {
+                                bt.put(Integer.valueOf(k), Integer.valueOf(k));
                             }
                         }
                     });
                 }
                 es.shutdown ();
-                try {
-                    es.awaitTermination (3600L, TimeUnit.SECONDS);
-                } catch (final InterruptedException e) {
-                    e.printStackTrace ();
-                }
+                es.awaitTermination(5, TimeUnit.MINUTES);
             }
 
-            TestHelper.assertEquals (COUNT, bt.size ());
-            TestHelper.assertFalse (bt.isEmpty ());
+            assertEquals(COUNT, bt.size());
+            assertFalse(bt.isEmpty());
 
             {
-                final ExecutorService es = Executors.newFixedThreadPool (N_THREADS);
+                final ExecutorService es = Executors.newFixedThreadPool(N_THREADS);
                 for (int i = 0; i < N_THREADS; i++) {
                     final int threadNo = i;
-                    es.execute (new Runnable () {
-                        @Override
-                        public void run () {
-                            for (int j = 0; j < COUNT; j++) {
-                                if (j % N_THREADS == threadNo) {
-                                    bt.remove (Integer.valueOf (j));
-                                }
+                    es.execute (() -> {
+                        for (int k = 0; k < COUNT; k++) {
+                            if (k % N_THREADS == threadNo) {
+                                bt.remove (Integer.valueOf (k));
                             }
                         }
                     });
                 }
                 es.shutdown ();
-                try {
-                    es.awaitTermination (3600L, TimeUnit.SECONDS);
-                } catch (final InterruptedException e) {
-                    e.printStackTrace ();
-                }
+                es.awaitTermination(5, TimeUnit.MINUTES);
             }
 
 
-            TestHelper.assertEquals (0, bt.size ());
-            TestHelper.assertTrue (bt.isEmpty ());
+            assertEquals(0, bt.size ());
+            assertTrue(bt.isEmpty());
 
             {
                 final ExecutorService es = Executors.newFixedThreadPool (N_THREADS);
@@ -111,18 +101,11 @@ public class TestMultiThreadAddDelete {
                     });
                 }
                 es.shutdown ();
-                try {
-                    es.awaitTermination (3600L, TimeUnit.SECONDS);
-                } catch (final InterruptedException e) {
-                    e.printStackTrace ();
-                }
+                es.awaitTermination(5, TimeUnit.MINUTES);
             }
 
-            TestHelper.assertEquals (0, bt.size ());
-            if (!bt.isEmpty ()) {
-                System.out.println ();
-            }
-            TestHelper.assertTrue (bt.isEmpty ());
+            assertEquals(0, bt.size());
+            assertTrue(bt.isEmpty());
         }
     }
 }

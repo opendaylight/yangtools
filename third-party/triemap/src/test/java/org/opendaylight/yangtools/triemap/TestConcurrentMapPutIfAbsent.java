@@ -15,6 +15,7 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
@@ -27,11 +28,11 @@ public class TestConcurrentMapPutIfAbsent {
 
     @Test
     public void testConcurrentMapPutIfAbsent () {
-        final ConcurrentMap<Object, Object> map = new TrieMap<> ();
+        final ConcurrentMap<Object, Object> map = new TrieMap<>();
 
         for (int i = 0; i < COUNT; i++) {
-            TestHelper.assertTrue (null == map.putIfAbsent (i, i));
-            TestHelper.assertTrue (Integer.valueOf (i).equals (map.putIfAbsent (i, i)));
+            assertNull(map.putIfAbsent (i, i));
+            assertEquals(Integer.valueOf(i), map.putIfAbsent(i, i));
         }
     }
 
