@@ -32,7 +32,7 @@ final class INode<K, V> extends BasicNode {
     private static final AtomicReferenceFieldUpdater<INode, MainNode> MAINNODE_UPDATER =
             AtomicReferenceFieldUpdater.newUpdater(INode.class, MainNode.class, "mainnode");
 
-    public final Gen gen;
+    private final Gen gen;
 
     private volatile MainNode<K, V> mainnode;
 
@@ -129,8 +129,13 @@ final class INode<K, V> extends BasicNode {
      *
      * @return true if successful, false otherwise
      */
-    boolean rec_insert(final K k, final V v, final int hc, final int lev, final INode<K, V> parent, final Gen startgen,
+    boolean rec_insert(final K k, final V v, final int hc, final int lev, final INode<K, V> parent,
             final TrieMap<K, V> ct) {
+        return rec_insert(k, v, hc, lev, parent, gen, ct);
+    }
+
+    private boolean rec_insert(final K k, final V v, final int hc, final int lev, final INode<K, V> parent,
+            final Gen startgen, final TrieMap<K, V> ct) {
         while (true) {
             final MainNode<K, V> m = GCAS_READ (ct); // use -Yinline!
 
@@ -199,6 +204,11 @@ final class INode<K, V> extends BasicNode {
      *         previous value bound to the key)
      */
     Optional<V> rec_insertif(final K k, final V v, final int hc, final Object cond, final int lev,
+            final INode<K, V> parent, final TrieMap<K, V> ct) {
+        return rec_insertif(k, v, hc, cond, lev, parent, gen, ct);
+    }
+
+    private Optional<V> rec_insertif(final K k, final V v, final int hc, final Object cond, final int lev,
             final INode<K, V> parent, final Gen startgen, final TrieMap<K, V> ct) {
         while (true) {
             final MainNode<K, V> m = GCAS_READ(ct); // use -Yinline!
@@ -358,7 +368,11 @@ final class INode<K, V> extends BasicNode {
      * @return null if no value has been found, RESTART if the operation
      *         wasn't successful, or any other value otherwise
      */
-    Object rec_lookup(final K k, final int hc, final int lev, final INode<K, V> parent, final Gen startgen,
+    Object rec_lookup(final K k, final int hc, final int lev, final INode<K, V> parent, final TrieMap<K, V> ct) {
+        return rec_lookup(k, hc, lev, parent, gen, ct);
+    }
+
+    private Object rec_lookup(final K k, final int hc, final int lev, final INode<K, V> parent, final Gen startgen,
             final TrieMap<K, V> ct) {
         while (true) {
             final MainNode<K, V> m = GCAS_READ(ct); // use -Yinline!
@@ -439,6 +453,11 @@ final class INode<K, V> extends BasicNode {
      *         value otherwise
      */
     Optional<V> rec_remove(final K k, final V v, final int hc, final int lev, final INode<K, V> parent,
+            final TrieMap<K, V> ct) {
+        return rec_remove(k, v, hc, lev, parent, gen, ct);
+    }
+
+    private Optional<V> rec_remove(final K k, final V v, final int hc, final int lev, final INode<K, V> parent,
             final Gen startgen, final TrieMap<K, V> ct) {
         final MainNode<K, V> m = GCAS_READ(ct); // use -Yinline!
 
