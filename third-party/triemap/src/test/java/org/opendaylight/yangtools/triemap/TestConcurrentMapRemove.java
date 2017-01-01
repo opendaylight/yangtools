@@ -15,6 +15,10 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.concurrent.ConcurrentMap;
 import org.junit.Test;
 
@@ -23,16 +27,16 @@ public class TestConcurrentMapRemove {
 
     @Test
     public void testConcurrentMapRemove () {
-        final ConcurrentMap<Object, Object> map = new TrieMap<> ();
+        final ConcurrentMap<Integer, Integer> map = new TrieMap<>();
 
         for (int i = 128; i < COUNT; i++) {
-            TestHelper.assertFalse (map.remove (i, i));
-            TestHelper.assertTrue (null == map.put (i, i));
-            TestHelper.assertFalse (map.remove (i, "lol"));
-            TestHelper.assertTrue (map.containsKey (i));
-            TestHelper.assertTrue (map.remove (i, i));
-            TestHelper.assertFalse (map.containsKey (i));
-            TestHelper.assertTrue (null == map.put (i, i));
+            assertFalse(map.remove(i, i));
+            assertNull(map.put(i, i));
+            assertFalse(map.remove(i, "lol"));
+            assertTrue(map.containsKey(i));
+            assertTrue(map.remove(i, i));
+            assertFalse(map.containsKey (i));
+            assertNull(map.put (i, i));
         }
     }
 }

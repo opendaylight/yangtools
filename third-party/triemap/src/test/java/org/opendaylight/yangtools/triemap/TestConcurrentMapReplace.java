@@ -15,6 +15,11 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.concurrent.ConcurrentMap;
 import org.junit.Test;
 
@@ -23,15 +28,15 @@ public class TestConcurrentMapReplace {
 
     @Test
     public void testConcurrentMapReplace () {
-        final ConcurrentMap<Object, Object> map = new TrieMap<> ();
+        final ConcurrentMap<Integer, Object> map = new TrieMap<> ();
 
         for (int i = 0; i < COUNT; i++) {
-            TestHelper.assertTrue (null == map.replace (i, "lol"));
-            TestHelper.assertFalse (map.replace (i, i, "lol2"));
-            TestHelper.assertTrue (null == map.put (i, i));
-            TestHelper.assertTrue (Integer.valueOf (i).equals (map.replace (i, "lol")));
-            TestHelper.assertFalse (map.replace (i, i, "lol2"));
-            TestHelper.assertTrue (map.replace (i, "lol", i));
+            assertNull(map.replace(i, "lol"));
+            assertFalse(map.replace(i, i, "lol2"));
+            assertNull(map.put(i, i));
+            assertEquals(Integer.valueOf(i), map.replace (i, "lol"));
+            assertFalse(map.replace(i, i, "lol2"));
+            assertTrue(map.replace(i, "lol", i));
         }
     }
 }
