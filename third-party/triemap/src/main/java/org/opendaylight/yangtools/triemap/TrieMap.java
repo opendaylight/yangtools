@@ -165,7 +165,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
     private void inserthc(final K k, final int hc, final V v) {
         while (true) {
             final INode<K, V> r = RDCSS_READ_ROOT();
-            if (r.rec_insert(k, v, hc, 0, null, r.gen, this)) {
+            if (r.rec_insert(k, v, hc, 0, null, this)) {
                 // Successful, we are done
                 return;
             }
@@ -177,7 +177,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
     private Optional<V> insertifhc(final K k, final int hc, final V v, final Object cond) {
         while (true) {
             final INode<K, V> r = RDCSS_READ_ROOT();
-            final Optional<V> ret = r.rec_insertif(k, v, hc, cond, 0, null, r.gen, this);
+            final Optional<V> ret = r.rec_insertif(k, v, hc, cond, 0, null, this);
             if (ret != null) {
                 return ret;
             }
@@ -188,8 +188,8 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
 
     private Object lookuphc(final K k, final int hc) {
         while (true) {
-            final INode<K, V> r = RDCSS_READ_ROOT ();
-            final Object res = r.rec_lookup(k, hc, 0, null, r.gen, this);
+            final INode<K, V> r = RDCSS_READ_ROOT();
+            final Object res = r.rec_lookup(k, hc, 0, null, this);
             if (!INode.RESTART.equals(res)) {
                 return res;
             }
@@ -201,7 +201,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
     private Optional<V> removehc(final K k, final V v, final int hc) {
         while (true) {
             final INode<K, V> r = RDCSS_READ_ROOT();
-            final Optional<V> res = r.rec_remove(k, v, hc, 0, null, r.gen, this);
+            final Optional<V> res = r.rec_remove(k, v, hc, 0, null, this);
             if (res != null) {
                 return res;
             }
