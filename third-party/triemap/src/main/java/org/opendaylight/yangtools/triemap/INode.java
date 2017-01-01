@@ -88,7 +88,7 @@ final class INode<K, V> extends BasicNode {
             // ==> if `ctr.gen` = `gen` then they are both equal to G.
             // ==> otherwise, we know that either `ctr.gen` > G, `gen` < G,
             // or both
-            if ((ctr.gen == gen) && ct.nonReadOnly()) {
+            if (ctr.gen == gen && !ct.isReadOnly()) {
                 // try to commit
                 if (m.CAS_PREV(prev, null)) {
                     return m;
@@ -415,17 +415,17 @@ final class INode<K, V> extends BasicNode {
 
     private Object cleanReadOnly(final TNode<K, V> tn, final int lev, final INode<K, V> parent,
             final TrieMap<K, V> ct, final K k, final int hc) {
-        if (ct.nonReadOnly()) {
-            // used to be throw RestartException
-            clean(parent, ct, lev - 5);
-            return RESTART;
+        if (ct.isReadOnly()) {
+            if (tn.hc == hc && ct.equal(tn.k, k)) {
+                return tn.v;
+            }
+
+            return null;
         }
 
-        if (tn.hc == hc && ct.equal(tn.k, k)) {
-            return tn.v;
-        }
-
-        return null;
+        // used to be throw RestartException
+        clean(parent, ct, lev - 5);
+        return RESTART;
     }
 
     /**
