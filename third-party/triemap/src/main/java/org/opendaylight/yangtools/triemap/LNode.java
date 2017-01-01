@@ -34,17 +34,19 @@ final class LNode<K, V> extends MainNode<K, V> {
         return new LNode<>(listmap.add(k, v));
     }
 
+    // FIXME: can we also get the hashcode ?
     MainNode<K, V> removed(final K k, final TrieMap<K, V> ct) {
         // We only ever create ListMaps with two or more entries,  and remove them as soon as they reach one element
         // (below), so we cannot observe a null return here.
-        final ListMap<K, V> updmap = listmap.remove(k);
-        if (updmap.size() > 1) {
-            return new LNode<>(updmap);
+        final ListMap<K, V> map = listmap.remove(k);
+        final Optional<Entry<K, V>> maybeKv = map.maybeSingleton();
+        if (maybeKv.isPresent()) {
+            final Entry<K, V> kv = maybeKv.get();
+            // create it tombed so that it gets compressed on subsequent accesses
+            return new TNode<>(kv.getKey(), kv.getValue(), ct.computeHash(kv.getKey()));
         }
 
-        final Entry<K, V> kv = updmap.iterator().next();
-        // create it tombed so that it gets compressed on subsequent accesses
-        return new TNode<>(kv.getKey(), kv.getValue(), ct.computeHash(kv.getKey()));
+        return new LNode<>(map);
     }
 
     Optional<V> get(final K k) {
