@@ -19,6 +19,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 final class INode<K, V> extends BasicNode {
+
     static final Object KEY_PRESENT = new Object ();
     static final Object KEY_ABSENT = new Object ();
 
