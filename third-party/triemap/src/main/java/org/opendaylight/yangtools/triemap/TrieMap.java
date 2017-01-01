@@ -19,6 +19,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.base.Equivalence;
+import com.google.common.base.Verify;
 import com.google.common.collect.Iterators;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
@@ -163,51 +164,41 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
     }
 
     private void inserthc(final K k, final int hc, final V v) {
-        while (true) {
-            final INode<K, V> r = RDCSS_READ_ROOT();
-            if (r.rec_insert(k, v, hc, 0, null, this)) {
-                // Successful, we are done
-                return;
-            }
-
-            // Tail recursion: inserthc(k, hc, v);
-        }
+        // TODO: this is called from serialization only, which means we should not be observing any races,
+        //       hence we should not need to pass down the entire tree, just equality (I think).
+        final INode<K, V> r = RDCSS_READ_ROOT();
+        final boolean success = r.rec_insert(k, v, hc, 0, null, this);
+        Verify.verify(success, "Concurrent modification during serialization of map %s", this);
     }
 
     private Optional<V> insertifhc(final K k, final int hc, final V v, final Object cond) {
-        while (true) {
-            final INode<K, V> r = RDCSS_READ_ROOT();
-            final Optional<V> ret = r.rec_insertif(k, v, hc, cond, 0, null, this);
-            if (ret != null) {
-                return ret;
-            }
+        Optional<V> res;
+        do {
+            // Keep looping as long as we do not get a reply
+            res = RDCSS_READ_ROOT().rec_insertif(k, v, hc, cond, 0, null, this);
+        } while (res == null);
 
-            // Tail recursion: return insertifhc(k, hc, v, cond);
-        }
+        return res;
     }
 
-    private Object lookuphc(final K k, final int hc) {
-        while (true) {
-            final INode<K, V> r = RDCSS_READ_ROOT();
-            final Object res = r.rec_lookup(k, hc, 0, null, this);
-            if (!INode.RESTART.equals(res)) {
-                return res;
-            }
+    private V lookuphc(final K k, final int hc) {
+        Object res;
+        do {
+            // Keep looping as long as RESTART is being indicated
+            res = RDCSS_READ_ROOT().rec_lookup(k, hc, 0, null, this);
+        } while (INode.RESTART.equals(res));
 
-            // Tail recursion: lookuphc(k, hc)
-        }
+        return (V) res;
     }
 
     private Optional<V> removehc(final K k, final V v, final int hc) {
-        while (true) {
-            final INode<K, V> r = RDCSS_READ_ROOT();
-            final Optional<V> res = r.rec_remove(k, v, hc, 0, null, this);
-            if (res != null) {
-                return res;
-            }
+        Optional<V> res;
+        do {
+            // Keep looping as long as we do not get a reply
+            res = RDCSS_READ_ROOT().rec_remove(k, v, hc, 0, null, this);
+        } while (res == null);
 
-            // Tail recursion: return removehc(k, v, hc);
-        }
+        return res;
     }
 
     /**
@@ -280,12 +271,11 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
 
     @Override
     public void clear() {
-        while (true) {
+        boolean success;
+        do {
             final INode<K, V> r = RDCSS_READ_ROOT();
-            if (RDCSS_ROOT(r, r.gcasRead(this), newRootNode())) {
-                return;
-            }
-        }
+            success = RDCSS_ROOT(r, r.gcasRead(this), newRootNode());
+        } while (!success);
     }
 
     int computeHash(final K k) {
@@ -299,7 +289,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
     @Override
     public V get(final Object key) {
         final K k = (K) checkNotNull(key);
-        return (V) lookuphc(k, computeHash(k));
+        return lookuphc(k, computeHash(k));
     }
 
     @Override
