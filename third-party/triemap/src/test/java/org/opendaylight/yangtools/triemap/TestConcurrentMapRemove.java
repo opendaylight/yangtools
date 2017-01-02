@@ -28,7 +28,7 @@ public class TestConcurrentMapRemove {
 
     @Test
     public void testConcurrentMapRemove () {
-        final ConcurrentMap<Integer, Object> map = new TrieMap<>();
+        final ConcurrentMap<Integer, Object> map = TrieMap.create();
 
         for (int i = 128; i < COUNT; i++) {
             assertFalse(map.remove(i, i));
@@ -52,7 +52,7 @@ public class TestConcurrentMapRemove {
         final ZeroHashInt v3 = new ZeroHashInt(6);
         final ZeroHashInt v3dup = new ZeroHashInt(6);
 
-        final Map<ZeroHashInt, ZeroHashInt> map = new TrieMap<>();
+        final Map<ZeroHashInt, ZeroHashInt> map = TrieMap.create();
         // Pre-populate an LNode
         assertNull(map.putIfAbsent(k1, v1));
         assertNull(map.putIfAbsent(k2, v2));
