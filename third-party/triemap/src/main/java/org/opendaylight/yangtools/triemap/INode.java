@@ -301,13 +301,13 @@ final class INode<K, V> extends BasicNode {
 
                 if (cond == null) {
                     if (entry != null) {
-                        return replaceln(ln, entry, v, ct) ? Optional.of(entry.value()) : null;
+                        return replaceln(ln, entry, v, ct) ? Optional.of(entry.getValue()) : null;
                     }
 
                     return insertln(ln, k, v, ct) ? Optional.empty() : null;
                 } else if (cond == ABSENT) {
                     if (entry != null) {
-                        return Optional.of(entry.value());
+                        return Optional.of(entry.getValue());
                     }
 
                     return insertln(ln, k, v, ct) ? Optional.empty() : null;
@@ -316,13 +316,13 @@ final class INode<K, V> extends BasicNode {
                         return Optional.empty();
                     }
 
-                    return replaceln(ln, entry, v, ct) ? Optional.of(entry.value()) : null;
+                    return replaceln(ln, entry, v, ct) ? Optional.of(entry.getValue()) : null;
                 } else {
-                    if (entry == null || !cond.equals(entry.value())) {
+                    if (entry == null || !cond.equals(entry.getValue())) {
                         return Optional.empty();
                     }
 
-                    return replaceln(ln, entry, v, ct) ? Optional.of(entry.value()) : null;
+                    return replaceln(ln, entry, v, ct) ? Optional.of(entry.getValue()) : null;
                 }
             } else {
                 throw new IllegalStateException("Unhandled node " + m);
@@ -397,7 +397,7 @@ final class INode<K, V> extends BasicNode {
             } else if (m instanceof LNode) {
                 // 5) an l-node
                 final LNodeEntry<K, V> entry = ((LNode<K, V>) m).get(ct.equiv(), k);
-                return entry != null ? entry.value() : null;
+                return entry != null ? entry.getValue() : null;
             } else {
                 throw new IllegalStateException("Unhandled node " + m);
             }
@@ -501,7 +501,7 @@ final class INode<K, V> extends BasicNode {
                 return Optional.empty();
             }
 
-            final V value = entry.value();
+            final V value = entry.getValue();
             if (cond != null && !cond.equals(value)) {
                 // Value does not match
                 return Optional.empty();
