@@ -24,7 +24,7 @@ import org.junit.Test;
 public class TestCNodeFlagCollision {
     @Test
     public void testCNodeFlagCollision () {
-        final Map<Integer, Object> map = new TrieMap<>();
+        final Map<Integer, Object> map = TrieMap.create();
         final Integer z15169 = Integer.valueOf(15169);
         final Integer z28336 = Integer.valueOf(28336);
 
