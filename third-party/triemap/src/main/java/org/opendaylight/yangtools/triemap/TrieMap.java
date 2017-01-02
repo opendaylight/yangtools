@@ -28,7 +28,6 @@ import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -46,8 +45,8 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
  */
-@SuppressWarnings({"unchecked", "rawtypes", "unused"})
 public final class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,V>, Serializable {
+    @SuppressWarnings("rawtypes")
     private static final AtomicReferenceFieldUpdater<TrieMap, Object> ROOT_UPDATER =
             AtomicReferenceFieldUpdater.newUpdater(TrieMap.class, Object.class, "root");
     private static final long serialVersionUID = 1L;
@@ -86,9 +85,13 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
         return new INode<>(gen, new CNode<>(gen));
     }
 
-    final boolean CAS_ROOT(final Object ov, final Object nv) {
+    private boolean CAS_ROOT(final Object ov, final Object nv) {
         checkState(!readOnly, "Attempted to modify a read-only snapshot");
-        return ROOT_UPDATER.compareAndSet (this, ov, nv);
+        return ROOT_UPDATER.compareAndSet(this, ov, nv);
+    }
+
+    final INode<K, V> readRoot() {
+        return RDCSS_READ_ROOT(false);
     }
 
     // FIXME: abort = false by default
@@ -96,16 +99,12 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
         return RDCSS_READ_ROOT(abort);
     }
 
-    final INode<K, V> readRoot() {
+    private final INode<K, V> RDCSS_READ_ROOT() {
         return RDCSS_READ_ROOT(false);
     }
 
-    final INode<K, V> RDCSS_READ_ROOT() {
-        return RDCSS_READ_ROOT(false);
-    }
-
-    final INode<K, V> RDCSS_READ_ROOT(final boolean abort) {
-        final Object r = /* READ */root;
+    private final INode<K, V> RDCSS_READ_ROOT(final boolean abort) {
+        final Object r = /* READ */ root;
         if (r instanceof INode) {
             return (INode<K, V>) r;
         }
@@ -116,12 +115,13 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
 
     private INode<K, V> RDCSS_Complete(final boolean abort) {
         while (true) {
-            final Object r = /* READ */root;
+            final Object r = /* READ */ root;
             if (r instanceof INode) {
                 return (INode<K, V>) r;
             }
 
             checkState(r instanceof RDCSS_Descriptor, "Unhandled root %s", r);
+            @SuppressWarnings("unchecked")
             final RDCSS_Descriptor<K, V> desc = (RDCSS_Descriptor<K, V>) r;
             final INode<K, V> ov = desc.old;
             final MainNode<K, V> exp = desc.expectedmain;
@@ -168,9 +168,13 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
     private void inserthc(final K k, final int hc, final V v) {
         // TODO: this is called from serialization only, which means we should not be observing any races,
         //       hence we should not need to pass down the entire tree, just equality (I think).
-        final INode<K, V> r = RDCSS_READ_ROOT();
-        final boolean success = r.rec_insert(k, v, hc, 0, null, this);
+        final boolean success = RDCSS_READ_ROOT().rec_insert(k, v, hc, 0, null, this);
         Verify.verify(success, "Concurrent modification during serialization of map %s", this);
+    }
+
+    void add(final K key, final V value) {
+        final K k = checkNotNull(key);
+        inserthc(k, computeHash(k), checkNotNull(value));
     }
 
     private Optional<V> insertifhc(final K k, final int hc, final V v, final Object cond) {
@@ -183,6 +187,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
         return res;
     }
 
+    @SuppressWarnings("unchecked")
     private V lookuphc(final K k, final int hc) {
         Object res;
         do {
@@ -193,11 +198,11 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
         return (V) res;
     }
 
-    private Optional<V> removehc(final K k, final V v, final int hc) {
+    private Optional<V> removehc(final K k, final Object cond, final int hc) {
         Optional<V> res;
         do {
             // Keep looping as long as we do not get a reply
-            res = RDCSS_READ_ROOT().rec_remove(k, v, hc, 0, null, this);
+            res = RDCSS_READ_ROOT().rec_remove(k, cond, hc, 0, null, this);
         } while (res == null);
 
         return res;
@@ -290,41 +295,44 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
 
     @Override
     public V get(final Object key) {
+        @SuppressWarnings("unchecked")
         final K k = (K) checkNotNull(key);
         return lookuphc(k, computeHash(k));
+    }
+
+    @SuppressWarnings("null")
+    private static <V> V toNullable(final Optional<V> opt) {
+        return opt.orElse(null);
     }
 
     @Override
     public V put(final K key, final V value) {
         ensureReadWrite();
         final K k = checkNotNull(key);
-        return insertifhc(k, computeHash(k), checkNotNull(value), null).orElse(null);
-    }
-
-    void add(final K key, final V value) {
-        final K k = checkNotNull(key);
-        inserthc(k, computeHash(k), checkNotNull(value));
+        return toNullable(insertifhc(k, computeHash(k), checkNotNull(value), null));
     }
 
     @Override
     public V remove(final Object key) {
         ensureReadWrite();
+        @SuppressWarnings("unchecked")
         final K k = (K) checkNotNull(key);
-        return removehc(k, (V) null, computeHash(k)).orElse(null);
+        return toNullable(removehc(k, null, computeHash(k)));
     }
 
     @Override
     public V putIfAbsent(final K key, final V value) {
         ensureReadWrite();
         final K k = checkNotNull(key);
-        return insertifhc(k, computeHash(k), checkNotNull(value), ABSENT).orElse(null);
+        return toNullable(insertifhc(k, computeHash(k), checkNotNull(value), ABSENT));
     }
 
     @Override
     public boolean remove(final Object key, final Object v) {
         ensureReadWrite();
+        @SuppressWarnings("unchecked")
         final K k = (K) checkNotNull(key);
-        return removehc(k, (V) checkNotNull(v), computeHash(k)).isPresent();
+        return removehc(k, checkNotNull(v), computeHash(k)).isPresent();
     }
 
     @Override
@@ -338,7 +346,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
     public V replace(final K key, final V value) {
         ensureReadWrite();
         final K k = checkNotNull(key);
-        return insertifhc (k, computeHash(k), checkNotNull(value), PRESENT).orElse(null);
+        return toNullable(insertifhc(k, computeHash(k), checkNotNull(value), PRESENT));
     }
 
     /***
@@ -366,8 +374,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
     }
 
     private int cachedSize() {
-        INode<K, V> r = RDCSS_READ_ROOT ();
-        return r.cachedSize (this);
+        return RDCSS_READ_ROOT().cachedSize (this);
     }
 
     @Override
@@ -471,13 +478,13 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
                 throw new NoSuchElementException();
             }
 
-            Entry<K, V> r = null;
+            final Entry<K, V> r;
             if (subiter != null) {
-                r = subiter.next ();
-                checkSubiter ();
+                r = subiter.next();
+                checkSubiter();
             } else {
                 r = current;
-                advance ();
+                advance();
             }
 
             lastReturned = r;
@@ -490,6 +497,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
 
         Entry<K, V> nextEntry(final Entry<K, V> rr) {
             return new Entry<K, V>() {
+                @SuppressWarnings("null")
                 private V updated = null;
 
                 @Override
@@ -539,8 +547,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
         // @inline
         void initialize () {
 //            assert (ct.isReadOnly ());
-            INode<K, V> r = ct.RDCSS_READ_ROOT ();
-            readin (r);
+            readin(ct.RDCSS_READ_ROOT());
         }
 
         void advance () {
@@ -563,11 +570,11 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
             }
         }
 
-        protected TrieMapIterator<K, V> newIterator (final int _lev, final TrieMap<K, V> _ct, final boolean _mustInit) {
+        protected TrieMapIterator<K, V> newIterator(final int _lev, final TrieMap<K, V> _ct, final boolean _mustInit) {
             return new TrieMapIterator<> (_lev, _ct, _mustInit);
         }
 
-        protected void dupTo (final TrieMapIterator<K, V> it) {
+        protected void dupTo(final TrieMapIterator<K, V> it) {
             it.level = this.level;
             it.ct = this.ct;
             it.depth = this.depth;
@@ -632,14 +639,6 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
             return list;
         }
 
-        void printDebug () {
-            System.out.println ("ctrie iterator");
-            System.out.println (Arrays.toString (stackpos));
-            System.out.println ("depth: " + depth);
-            System.out.println ("curr.: " + current);
-            // System.out.println(stack.mkString("\n"));
-        }
-
         @Override
         public void remove() {
             checkState(lastReturned != null);
@@ -676,7 +675,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
             if (!(o instanceof Entry)) {
                 return false;
             }
-            final Entry<?, ?> e = (Entry<K, V>) o;
+            final Entry<?, ?> e = (Entry<?, ?>) o;
             final Object key = e.getKey();
             if (key == null) {
                 return false;

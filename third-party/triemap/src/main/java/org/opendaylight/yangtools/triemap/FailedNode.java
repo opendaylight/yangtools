@@ -29,7 +29,7 @@ final class FailedNode<K, V> extends MainNode<K, V> {
     }
 
     @Override
-    int cachedSize(final TrieMap<K, V> ct) {
+    int cachedSize(final TrieMap<?, ?> ct) {
         throw new UnsupportedOperationException();
     }
 
