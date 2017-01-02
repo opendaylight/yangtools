@@ -444,7 +444,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
         private final int[] stackpos = new int[7];
         private int depth = -1;
         private Iterator<Entry<K, V>> subiter = null;
-        private KVNode<K, V> current = null;
+        private EntryNode<K, V> current = null;
         private Entry<K, V> lastReturned = null;
 
         TrieMapIterator (final int level, final TrieMap<K, V> ct, final boolean mustInit) {
@@ -477,7 +477,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
                 r = subiter.next ();
                 checkSubiter ();
             } else {
-                r = current.kvPair ();
+                r = current;
                 advance ();
             }
 
