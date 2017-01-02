@@ -28,14 +28,14 @@ public class ListMapTest {
      */
     @Test
     public void testGetOverflow() {
-        ListMap<Integer, Boolean> map = ListMap.map(1, Boolean.TRUE, 2, Boolean.TRUE);
+        LNodeEntries<Integer, Boolean> map = LNodeEntries.map(1, Boolean.TRUE, 2, Boolean.TRUE);
 
         // 30K seems to be enough to trigger the problem locally
         for (int i = 3; i < 30000; ++i) {
-            map = map.add(Equivalence.equals(), i, Boolean.TRUE);
+            map = map.insert(i, Boolean.TRUE);
         }
 
-        final Optional<Boolean> ret = map.get(Equivalence.equals(), 0);
+        final Optional<LNodeEntry<Integer, Boolean>> ret = map.findEntry(Equivalence.equals(), 0);
         assertFalse(ret.isPresent());
     }
 
