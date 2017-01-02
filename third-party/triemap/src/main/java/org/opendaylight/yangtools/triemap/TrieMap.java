@@ -18,11 +18,8 @@ package org.opendaylight.yangtools.triemap;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opendaylight.yangtools.triemap.LookupResult.RESTART;
-import static org.opendaylight.yangtools.triemap.PresencePredicate.ABSENT;
-import static org.opendaylight.yangtools.triemap.PresencePredicate.PRESENT;
 
-import com.google.common.base.Verify;
-import com.google.common.collect.Iterators;
+import com.google.common.annotations.Beta;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.AbstractMap;
@@ -34,21 +31,20 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 /***
  * This is a port of Scala's TrieMap class from the Scala Collections library. This implementation does not support
  * null keys nor null values.
  *
- * @author Roman Levenstein &lt;romixlev@gmail.com&gt;
+ * @author Aleksandar Prokopec (original Scala implementation)
+ * @author Roman Levenstein (original Java 6 port)
+ * @author Robert Varga
  *
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
  */
-public final class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,V>, Serializable {
-    @SuppressWarnings("rawtypes")
-    private static final AtomicReferenceFieldUpdater<TrieMap, Object> ROOT_UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(TrieMap.class, Object.class, "root");
+@Beta
+public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,V>, Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -56,173 +52,14 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
      */
     private final EntrySet entrySet = new EntrySet();
     private final Equivalence<? super K> equiv;
-    private final boolean readOnly;
-
-    private volatile Object root;
-
-    private TrieMap(final INode<K, V> r, final Equivalence<? super K> equiv, final boolean readOnly) {
-        this.root = r;
-        this.equiv = equiv;
-        this.readOnly = readOnly;
-    }
 
     TrieMap(final Equivalence<? super K> equiv) {
-        this(newRootNode(), equiv, false);
+        this.equiv = equiv;
     }
 
-    public TrieMap() {
-        this(Equivalence.equals());
+    public static <K, V> TrieMap<K, V> create() {
+        return new MutableTrieMap<>(Equivalence.equals());
     }
-
-    /* internal methods */
-
-    final Equivalence<? super K> equiv() {
-        return equiv;
-    }
-
-    private static <K,V> INode<K, V> newRootNode() {
-        final Gen gen = new Gen();
-        return new INode<>(gen, new CNode<>(gen));
-    }
-
-    private boolean CAS_ROOT(final Object ov, final Object nv) {
-        checkState(!readOnly, "Attempted to modify a read-only snapshot");
-        return ROOT_UPDATER.compareAndSet(this, ov, nv);
-    }
-
-    final INode<K, V> readRoot() {
-        return RDCSS_READ_ROOT(false);
-    }
-
-    // FIXME: abort = false by default
-    final INode<K, V> readRoot(final boolean abort) {
-        return RDCSS_READ_ROOT(abort);
-    }
-
-    private final INode<K, V> RDCSS_READ_ROOT() {
-        return RDCSS_READ_ROOT(false);
-    }
-
-    private final INode<K, V> RDCSS_READ_ROOT(final boolean abort) {
-        final Object r = /* READ */ root;
-        if (r instanceof INode) {
-            return (INode<K, V>) r;
-        }
-
-        checkState(r instanceof RDCSS_Descriptor, "Unhandled root %s", r);
-        return RDCSS_Complete(abort);
-    }
-
-    private INode<K, V> RDCSS_Complete(final boolean abort) {
-        while (true) {
-            final Object r = /* READ */ root;
-            if (r instanceof INode) {
-                return (INode<K, V>) r;
-            }
-
-            checkState(r instanceof RDCSS_Descriptor, "Unhandled root %s", r);
-            @SuppressWarnings("unchecked")
-            final RDCSS_Descriptor<K, V> desc = (RDCSS_Descriptor<K, V>) r;
-            final INode<K, V> ov = desc.old;
-            final MainNode<K, V> exp = desc.expectedmain;
-            final INode<K, V> nv = desc.nv;
-
-            if (abort) {
-                if (CAS_ROOT(desc, ov)) {
-                    return ov;
-                }
-
-                // Tail recursion: return RDCSS_Complete(abort);
-                continue;
-            }
-
-            final MainNode<K, V> oldmain = ov.gcasRead(this);
-            if (oldmain == exp) {
-                if (CAS_ROOT(desc, nv)) {
-                    desc.committed = true;
-                    return nv;
-                }
-
-                // Tail recursion: return RDCSS_Complete(abort);
-                continue;
-            }
-
-            if (CAS_ROOT(desc, ov)) {
-                return ov;
-            }
-
-            // Tail recursion: return RDCSS_Complete(abort);
-        }
-    }
-
-    private boolean RDCSS_ROOT(final INode<K, V> ov, final MainNode<K, V> expectedmain, final INode<K, V> nv) {
-        final RDCSS_Descriptor<K, V> desc = new RDCSS_Descriptor<> (ov, expectedmain, nv);
-        if (CAS_ROOT(ov, desc)) {
-            RDCSS_Complete(false);
-            return /* READ */desc.committed;
-        }
-
-        return false;
-    }
-
-    private void inserthc(final K k, final int hc, final V v) {
-        // TODO: this is called from serialization only, which means we should not be observing any races,
-        //       hence we should not need to pass down the entire tree, just equality (I think).
-        final boolean success = RDCSS_READ_ROOT().rec_insert(k, v, hc, 0, null, this);
-        Verify.verify(success, "Concurrent modification during serialization of map %s", this);
-    }
-
-    void add(final K key, final V value) {
-        final K k = checkNotNull(key);
-        inserthc(k, computeHash(k), checkNotNull(value));
-    }
-
-    private Optional<V> insertifhc(final K k, final int hc, final V v, final Object cond) {
-        Optional<V> res;
-        do {
-            // Keep looping as long as we do not get a reply
-            res = RDCSS_READ_ROOT().rec_insertif(k, v, hc, cond, 0, null, this);
-        } while (res == null);
-
-        return res;
-    }
-
-    @SuppressWarnings("unchecked")
-    private V lookuphc(final K k, final int hc) {
-        Object res;
-        do {
-            // Keep looping as long as RESTART is being indicated
-            res = RDCSS_READ_ROOT().rec_lookup(k, hc, 0, null, this);
-        } while (res == RESTART);
-
-        return (V) res;
-    }
-
-    private Optional<V> removehc(final K k, final Object cond, final int hc) {
-        Optional<V> res;
-        do {
-            // Keep looping as long as we do not get a reply
-            res = RDCSS_READ_ROOT().rec_remove(k, cond, hc, 0, null, this);
-        } while (res == null);
-
-        return res;
-    }
-
-    /**
-     * Ensure this instance is read-write, throw UnsupportedOperationException
-     * otherwise. Used by Map-type methods for quick check.
-     */
-    private void ensureReadWrite() {
-        if (readOnly) {
-            throw new UnsupportedOperationException("Attempted to modify a read-only view");
-        }
-    }
-
-    boolean isReadOnly() {
-        return readOnly;
-    }
-
-    /* public methods */
 
     /**
      * Returns a snapshot of this TrieMap. This operation is lock-free and
@@ -234,17 +71,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
      * distributed across all the threads doing updates or accesses subsequent
      * to the snapshot creation.
      */
-    public TrieMap<K, V> snapshot() {
-        while (true) {
-            final INode<K, V> r = RDCSS_READ_ROOT();
-            final MainNode<K, V> expmain = r.gcasRead(this);
-            if (RDCSS_ROOT(r, expmain, r.copyToGen(new Gen(), this))) {
-                return new TrieMap<> (r.copyToGen(new Gen(), this), equiv, readOnly);
-            }
-
-            // Tail recursion: return snapshot();
-        }
-    }
+    public abstract TrieMap<K, V> mutableSnapshot();
 
     /**
      * Returns a read-only snapshot of this TrieMap. This operation is lock-free
@@ -259,97 +86,112 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
      *
      * This method is used by other methods such as `size` and `iterator`.
      */
-    public TrieMap<K, V> readOnlySnapshot() {
-        // Is it a snapshot of a read-only snapshot?
-        if (readOnly) {
-            return this;
-        }
+    public abstract ImmutableTrieMap<K, V> immutableSnapshot();
 
-        while (true) {
-            final INode<K, V> r = RDCSS_READ_ROOT();
-            final MainNode<K, V> expmain = r.gcasRead(this);
-            if (RDCSS_ROOT(r, expmain, r.copyToGen (new Gen(), this))) {
-                return new TrieMap<>(r, equiv, true);
-            }
-
-            // Tail recursion: return readOnlySnapshot();
-        }
+    @Override
+    public final boolean containsKey(final Object key) {
+        return get(key) != null;
     }
 
     @Override
-    public void clear() {
-        boolean success;
-        do {
-            final INode<K, V> r = RDCSS_READ_ROOT();
-            success = RDCSS_ROOT(r, r.gcasRead(this), newRootNode());
-        } while (!success);
-    }
-
-    int computeHash(final K k) {
-        return equiv.hash(k);
-    }
-
-    boolean equal(final K k1, final K k2) {
-        return equiv.equivalent(k1, k2);
+    public final boolean containsValue(final Object value) {
+        return super.containsValue(checkNotNull(value));
     }
 
     @Override
-    public V get(final Object key) {
+    public final Set<Entry<K, V>> entrySet() {
+        return entrySet;
+    }
+
+    @Override
+    public final V get(final Object key) {
         @SuppressWarnings("unchecked")
         final K k = (K) checkNotNull(key);
         return lookuphc(k, computeHash(k));
     }
 
+    @Override
+    public abstract void clear();
+
+    @Override
+    public abstract V put(K key, V value);
+
+    @Override
+    public abstract V putIfAbsent(K key, V value);
+
+    @Override
+    public abstract V remove(Object key);
+
+    @Override
+    public abstract boolean remove(Object key, Object value);
+
+    @Override
+    public abstract boolean replace(K key, V oldValue, V newValue);
+
+    @Override
+    public abstract V replace(K key, V value);
+
+    @Override
+    public abstract int size();
+
+    /* internal methods implemented by subclasses */
+
+    abstract boolean isReadOnly();
+
+    abstract INode<K, V> RDCSS_READ_ROOT(boolean abort);
+
+    /* internal methods provided for subclasses */
+
     @SuppressWarnings("null")
-    private static <V> V toNullable(final Optional<V> opt) {
+    static <V> V toNullable(final Optional<V> opt) {
         return opt.orElse(null);
     }
 
-    @Override
-    public V put(final K key, final V value) {
-        ensureReadWrite();
-        final K k = checkNotNull(key);
-        return toNullable(insertifhc(k, computeHash(k), checkNotNull(value), null));
+    final int computeHash(final K k) {
+        return equiv.hash(k);
     }
 
-    @Override
-    public V remove(final Object key) {
-        ensureReadWrite();
-        @SuppressWarnings("unchecked")
-        final K k = (K) checkNotNull(key);
-        return toNullable(removehc(k, null, computeHash(k)));
+    final Object writeReplace() throws ObjectStreamException {
+        return new SerializationProxy(immutableSnapshot(), isReadOnly());
     }
 
-    @Override
-    public V putIfAbsent(final K key, final V value) {
-        ensureReadWrite();
-        final K k = checkNotNull(key);
-        return toNullable(insertifhc(k, computeHash(k), checkNotNull(value), ABSENT));
+    /* package-protected utility methods */
+
+    final Equivalence<? super K> equiv() {
+        return equiv;
     }
 
-    @Override
-    public boolean remove(final Object key, final Object v) {
-        ensureReadWrite();
-        @SuppressWarnings("unchecked")
-        final K k = (K) checkNotNull(key);
-        return removehc(k, checkNotNull(v), computeHash(k)).isPresent();
+    final INode<K, V> readRoot() {
+        return RDCSS_READ_ROOT(false);
     }
 
-    @Override
-    public boolean replace(final K key, final V oldValue, final V newValue) {
-        ensureReadWrite();
-        final K k = checkNotNull(key);
-        return insertifhc(k, computeHash(k), checkNotNull(newValue), checkNotNull(oldValue)).isPresent();
+    // FIXME: abort = false by default
+    final INode<K, V> readRoot(final boolean abort) {
+        return RDCSS_READ_ROOT(abort);
     }
 
-    @Override
-    public V replace(final K key, final V value) {
-        ensureReadWrite();
-        final K k = checkNotNull(key);
-        return toNullable(insertifhc(k, computeHash(k), checkNotNull(value), PRESENT));
+    final INode<K, V> RDCSS_READ_ROOT() {
+        return RDCSS_READ_ROOT(false);
     }
 
-    /***
+    final boolean equal(final K k1, final K k2) {
+        return equiv.equivalent(k1, k2);
+    }
+
+    /* private implementation methods */
+
+    @SuppressWarnings("unchecked")
+    private V lookuphc(final K k, final int hc) {
+        Object res;
+        do {
+            // Keep looping as long as RESTART is being indicated
+            res = RDCSS_READ_ROOT().rec_lookup(k, hc, 0, null, this);
+        } while (res == RESTART);
+
+        return (V) res;
+    }
+
+    /**
      * Return an iterator over a TrieMap.
      *
      * If this is a read-only snapshot, it would return a read-only iterator.
@@ -360,56 +202,21 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
      * @return
      */
     Iterator<Entry<K, V>> iterator() {
-        return readOnly ? new TrieMapReadOnlyIterator<>(0, this) : new TrieMapIterator<>(0, this);
+        // FIXME: it would be nice to have a ReadWriteTrieMap with read-only iterator
+        return isReadOnly() ? new TrieMapReadOnlyIterator<>(0, this) : new TrieMapIterator<>(0, this);
     }
 
-    /***
+    /**
      * Return an iterator over a TrieMap.
      * This is a read-only iterator.
      *
      * @return
      */
-    Iterator<Entry<K, V>> readOnlyIterator() {
-        return new TrieMapReadOnlyIterator<>(0, readOnly ? this : readOnlySnapshot());
+    final Iterator<Entry<K, V>> readOnlyIterator() {
+        return new TrieMapReadOnlyIterator<>(0, immutableSnapshot());
     }
 
-    private int cachedSize() {
-        return RDCSS_READ_ROOT().cachedSize (this);
-    }
-
-    @Override
-    public int size() {
-        return readOnly ? cachedSize() : readOnlySnapshot().size();
-    }
-
-    @Override
-    public boolean containsKey(final Object key) {
-        return get(key) != null;
-    }
-
-    @Override
-    public Set<Entry<K, V>> entrySet() {
-        return entrySet;
-    }
-
-    private Object writeReplace() throws ObjectStreamException {
-        return new ExternalForm(this);
-    }
-
-    private static final class RDCSS_Descriptor<K, V> {
-        INode<K, V> old;
-        MainNode<K, V> expectedmain;
-        INode<K, V> nv;
-        volatile boolean committed = false;
-
-        RDCSS_Descriptor (final INode<K, V> old, final MainNode<K, V> expectedmain, final INode<K, V> nv) {
-            this.old = old;
-            this.expectedmain = expectedmain;
-            this.nv = nv;
-        }
-    }
-
-    /***
+    /**
      * This iterator is a read-only one and does not allow for any update
      * operations on the underlying data structure.
      *
@@ -690,7 +497,7 @@ public final class TrieMap<K, V> extends AbstractMap<K, V> implements Concurrent
 
         @Override
         public final int size () {
-            return Iterators.size(iterator());
+            return TrieMap.this.size();
         }
 
         @Override

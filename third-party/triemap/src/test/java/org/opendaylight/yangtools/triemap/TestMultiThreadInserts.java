@@ -27,7 +27,7 @@ public class TestMultiThreadInserts {
     public void testMultiThreadInserts () throws InterruptedException{
         final int nThreads = 2;
         final ExecutorService es = Executors.newFixedThreadPool(nThreads);
-        final TrieMap<Object, Object> bt = new TrieMap<>();
+        final TrieMap<Object, Object> bt = TrieMap.create();
         for (int i = 0; i < nThreads; i++) {
             final int threadNo = i;
             es.execute (() -> {

@@ -28,7 +28,7 @@ public class TestConcurrentMapPutIfAbsent {
 
     @Test
     public void testConcurrentMapPutIfAbsent () {
-        final ConcurrentMap<Object, Object> map = new TrieMap<>();
+        final ConcurrentMap<Object, Object> map = TrieMap.create();
 
         for (int i = 0; i < COUNT; i++) {
             assertNull(map.putIfAbsent (i, i));
@@ -46,7 +46,7 @@ public class TestConcurrentMapPutIfAbsent {
         final ZeroHashInt v2 = new ZeroHashInt(5);
         final ZeroHashInt v3 = new ZeroHashInt(6);
 
-        final Map<ZeroHashInt, ZeroHashInt> map = new TrieMap<>();
+        final Map<ZeroHashInt, ZeroHashInt> map = TrieMap.create();
         // Pre-populate an LNode
         assertNull(map.putIfAbsent(k1, v1));
         assertNull(map.putIfAbsent(k2, v2));
