@@ -61,7 +61,7 @@ final class CNode<K, V> extends MainNode<K, V> {
 
     // this should only be called from within read-only snapshots
     @Override
-    int cachedSize(final TrieMap<K, V> ct) {
+    int cachedSize(final TrieMap<?, ?> ct) {
         int sz = csize;
         if (sz == NO_SIZE) {
             // We have not computed the size yet, do that now
@@ -80,7 +80,7 @@ final class CNode<K, V> extends MainNode<K, V> {
     // => if there are concurrent size computations, they start
     // at different positions, so they are more likely to
     // to be independent
-    private int computeSize(final TrieMap<K, V> ct) {
+    private int computeSize(final TrieMap<?, ?> ct) {
         int i = 0;
         int sz = 0;
         // final int offset = (array.length > 0) ?
@@ -97,7 +97,7 @@ final class CNode<K, V> extends MainNode<K, V> {
             if (elem instanceof SNode) {
                 sz += 1;
             } else if (elem instanceof INode) {
-                sz += ((INode<K, V>) elem).cachedSize(ct);
+                sz += ((INode<?, ?>) elem).cachedSize(ct);
             }
             i += 1;
         }
@@ -143,8 +143,7 @@ final class CNode<K, V> extends MainNode<K, V> {
         while (i < len) {
             BasicNode elem = arr[i];
             if (elem instanceof INode) {
-                INode<K, V> in = (INode<K, V>) elem;
-                narr [i] = in.copyToGen(ngen, ct);
+                narr [i] = ((INode<?, ?>) elem).copyToGen(ngen, ct);
             } else if (elem != null) {
                 narr [i] = elem;
             }
@@ -153,20 +152,10 @@ final class CNode<K, V> extends MainNode<K, V> {
         return new CNode<>(ngen, bitmap, narr);
     }
 
-    private BasicNode resurrect(final INode<K, V> inode, final Object inodemain) {
-        if (inodemain instanceof TNode) {
-            TNode<K, V> tn = (TNode<K, V>) inodemain;
-            return tn.copyUntombed();
-        }
-
-        return inode;
-    }
-
     MainNode<K, V> toContracted(final int lev) {
         if (array.length == 1 && lev > 0) {
             if (array[0] instanceof SNode) {
-                final SNode<K, V> sn = (SNode<K, V>) array[0];
-                return sn.copyTombed();
+                return ((SNode<K, V>) array[0]).copyTombed();
             }
             return this;
         }
@@ -180,7 +169,7 @@ final class CNode<K, V> extends MainNode<K, V> {
     // returns the version of this node with at least some null-inodes
     // removed (those existing when the op began)
     // - if there are only null-i-nodes below, returns null
-    MainNode<K, V> toCompressed(final TrieMap<K, V> ct, final int lev, final Gen gen) {
+    MainNode<K, V> toCompressed(final TrieMap<?, ?> ct, final int lev, final Gen gen) {
         int bmp = bitmap;
         int i = 0;
         BasicNode[] arr = array;
@@ -188,10 +177,10 @@ final class CNode<K, V> extends MainNode<K, V> {
         while (i < arr.length) { // construct new bitmap
             BasicNode sub = arr[i];
             if (sub instanceof INode) {
-                INode<K, V> in = (INode<K, V>) sub;
-                MainNode<K, V> inodemain = in.gcasRead (ct);
+                final INode<?, ?> in = (INode<?, ?>) sub;
+                final MainNode<?, ?> inodemain = in.gcasRead(ct);
                 assert (inodemain != null);
-                tmparray [i] = resurrect (in, inodemain);
+                tmparray [i] = resurrect(in, inodemain);
             } else if (sub instanceof SNode) {
                 tmparray [i] = sub;
             }
@@ -199,6 +188,10 @@ final class CNode<K, V> extends MainNode<K, V> {
         }
 
         return new CNode<K, V>(gen, bmp, tmparray).toContracted(lev);
+    }
+
+    private static BasicNode resurrect(final INode<?, ?> inode, final MainNode<?, ?> inodemain) {
+        return inodemain instanceof TNode ? ((TNode<?, ?>) inodemain).copyUntombed() : inode;
     }
 
     @Override
