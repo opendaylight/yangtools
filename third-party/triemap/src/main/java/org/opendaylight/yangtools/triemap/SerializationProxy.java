@@ -15,7 +15,9 @@
  */
 package org.opendaylight.yangtools.triemap;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Verify;
 import java.io.Externalizable;
 import java.io.IOException;
@@ -30,20 +32,20 @@ import java.util.Map.Entry;
  *
  * @author Robert Varga
  */
-final class ExternalForm implements Externalizable {
+final class SerializationProxy implements Externalizable {
     private static final long serialVersionUID = 1L;
 
     private TrieMap<Object, Object> map;
     private boolean readOnly;
 
-    public ExternalForm() {
+    public SerializationProxy() {
         // For Externalizable
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    ExternalForm(final TrieMap<?, ?> map) {
-        this.map = ((TrieMap)map).readOnlySnapshot();
-        this.readOnly = map.isReadOnly();
+    SerializationProxy(final ImmutableTrieMap<?, ?> map, final boolean readOnly) {
+        this.map = (TrieMap) checkNotNull(map);
+        this.readOnly = readOnly;
     }
 
     @Override
@@ -61,18 +63,20 @@ final class ExternalForm implements Externalizable {
     public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
         @SuppressWarnings("unchecked")
         final Equivalence<Object> equiv = (Equivalence<Object>) in.readObject();
-        Preconditions.checkArgument(equiv != null);
-        map = new TrieMap<>(equiv);
+        checkArgument(equiv != null);
 
+        final MutableTrieMap<Object, Object> tmp = new MutableTrieMap<>(equiv);
         final int size = in.readInt();
+        checkArgument(size >= 0);
+
         for (int i = 0; i < size; ++i) {
-            map.add(in.readObject(), in.readObject());
+            tmp.add(in.readObject(), in.readObject());
         }
 
-        readOnly = in.readBoolean();
+        map = in.readBoolean() ? tmp.immutableSnapshot() : tmp;
     }
 
     private Object readResolve() throws ObjectStreamException {
-        return Verify.verifyNotNull(readOnly ? map.readOnlySnapshot() : map);
+        return Verify.verifyNotNull(map);
     }
 }

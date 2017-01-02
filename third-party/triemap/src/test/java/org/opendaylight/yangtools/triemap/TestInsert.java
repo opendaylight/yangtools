@@ -23,7 +23,7 @@ import org.junit.Test;
 public class TestInsert {
     @Test
     public void testInsert () {
-        final TrieMap<Object, Object> bt = new TrieMap<>();
+        final TrieMap<Object, Object> bt = TrieMap.create();
         assertNull(bt.put("a", "a"));
         assertNull(bt.put("b", "b"));
         assertNull(bt.put("c", "b"));
@@ -41,16 +41,16 @@ public class TestInsert {
 
     @Test(expected = NullPointerException.class)
     public void testNullKey() {
-        new TrieMap<>().put(null, "");
+        TrieMap.create().put(null, "");
     }
 
     @Test(expected = NullPointerException.class)
     public void testNullValue() {
-        new TrieMap<>().put("", null);
+        TrieMap.create().put("", null);
     }
 
     @Test(expected = NullPointerException.class)
     public void testNullBoth() {
-        new TrieMap<>().put(null, null);
+        TrieMap.create().put(null, null);
     }
 }
