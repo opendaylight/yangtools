@@ -17,7 +17,6 @@ package org.opendaylight.yangtools.triemap;
 
 import java.util.Iterator;
 import java.util.Map.Entry;
-import java.util.Optional;
 
 final class LNode<K, V> extends MainNode<K, V> {
     private final LNodeEntries<K, V> listmap;
@@ -38,11 +37,9 @@ final class LNode<K, V> extends MainNode<K, V> {
         // We only ever create ListMaps with two or more entries,  and remove them as soon as they reach one element
         // (below), so we cannot observe a null return here.
         final LNodeEntries<K, V> map = listmap.remove(entry);
-        final Optional<Entry<K, V>> maybeKv = map.maybeSingleton();
-        if (maybeKv.isPresent()) {
-            final Entry<K, V> kv = maybeKv.get();
+        if (map.isSingle()) {
             // create it tombed so that it gets compressed on subsequent accesses
-            return new TNode<>(kv.getKey(), kv.getValue(), hc);
+            return new TNode<>(map.getKey(), map.getValue(), hc);
         }
 
         return new LNode<>(map);
@@ -70,6 +67,4 @@ final class LNode<K, V> extends MainNode<K, V> {
     Iterator<Entry<K, V>> iterator() {
         return listmap.iterator();
     }
-
-
 }
