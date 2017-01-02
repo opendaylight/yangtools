@@ -16,6 +16,7 @@
 package org.opendaylight.yangtools.triemap;
 
 import com.google.common.base.Verify;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 final class CNode<K, V> extends MainNode<K, V> {
@@ -86,27 +87,33 @@ final class CNode<K, V> extends MainNode<K, V> {
     // at different positions, so they are more likely to
     // to be independent
     private int computeSize(final TrieMap<?, ?> ct) {
-        int i = 0;
-        int sz = 0;
-        // final int offset = (array.length > 0) ?
-        // // util.Random.nextInt(array.length) /* <-- benchmarks show that
-        // // this causes observable contention */
-        // scala.concurrent.forkjoin.ThreadLocalRandom.current.nextInt (0,
-        // array.length)
-        // : 0;
-
-        final int offset = 0;
-        while (i < array.length) {
-            int pos = (i + offset) % array.length;
-            BasicNode elem = array [pos];
-            if (elem instanceof SNode) {
-                sz += 1;
-            } else if (elem instanceof INode) {
-                sz += ((INode<?, ?>) elem).cachedSize(ct);
-            }
-            i += 1;
+        final int len = array.length;
+        switch (len) {
+            case 0:
+                return 0;
+            case 1:
+                return elementSize(array[0], ct);
+            default:
+                final int offset = ThreadLocalRandom.current().nextInt(len);
+                int sz = 0;
+                for (int i = offset; i < len; ++i) {
+                    sz += elementSize(array[i], ct);
+                }
+                for (int i = 0; i < offset; ++i) {
+                    sz += elementSize(array[i], ct);
+                }
+                return sz;
         }
-        return sz;
+    }
+
+    private static int elementSize(final BasicNode elem, final TrieMap<?, ?> ct) {
+        if (elem instanceof SNode) {
+            return 1;
+        } else if (elem instanceof INode) {
+            return ((INode<?, ?>) elem).cachedSize(ct);
+        } else {
+            throw new IllegalStateException("Unhandled element " + elem);
+        }
     }
 
     CNode<K, V> updatedAt(final int pos, final BasicNode nn, final Gen gen) {
