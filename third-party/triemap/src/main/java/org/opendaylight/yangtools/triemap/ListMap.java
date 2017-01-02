@@ -15,6 +15,7 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import com.google.common.base.Equivalence;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -57,44 +58,41 @@ final class ListMap<K, V> {
         return next == null ? 1 : next.size() + 1;
     }
 
-    Optional<V> get(final K key) {
-        if (key.equals(k)) {
-            return Optional.of(v);
-        }
-
+    Optional<V> get(final Equivalence<? super K> equiv, final K key) {
         // We do not perform recursion on purpose here, so we do not run out of stack if the key hashing fails.
-        for (ListMap<K, V> m = next; m != null; m = m.next) {
-            if (key.equals(m.k)) {
-                return Optional.of(m.v);
+        ListMap<K, V> head = this;
+        do {
+            if (equiv.equivalent(head.k, key)) {
+                return Optional.of(head.v);
             }
-        }
+
+            head = head.next;
+        } while (head != null);
 
         return Optional.empty();
     }
 
-    ListMap<K,V> add(final K key, final V value) {
-        return new ListMap<>(key, value, remove(key));
+    ListMap<K,V> add(final Equivalence<? super K> equiv, final K key, final V value) {
+        return new ListMap<>(key, value, remove(equiv, key));
     }
 
-    ListMap<K, V> remove(final K key) {
-         if (!contains(key)) {
+    ListMap<K, V> remove(final Equivalence<? super K> equiv, final K key) {
+         if (!contains(equiv, key)) {
             return this;
         }
 
         return remove0(key);
     }
 
-    private boolean contains(final K key) {
-        if (key.equals(k)) {
-            return true;
-        }
-
+    private boolean contains(final Equivalence<? super K> equiv, final K key) {
         // We do not perform recursion on purpose here, so we do not run out of stack if the key hashing fails.
-        for (ListMap<K, V> m = next; m != null; m = m.next) {
-            if (key.equals(m.k)) {
+        ListMap<K, V> head = this;
+        do {
+            if (equiv.equivalent(head.k, key)) {
                 return true;
             }
-        }
+            head = head.next;
+        } while (head != null);
 
         return false;
     }
