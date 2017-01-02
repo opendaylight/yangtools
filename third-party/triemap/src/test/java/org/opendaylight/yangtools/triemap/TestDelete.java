@@ -24,27 +24,27 @@ import org.junit.Test;
 public class TestDelete {
     @Test(expected = NullPointerException.class)
     public void testNullSimple() {
-        new TrieMap<>().remove(null);
+        TrieMap.create().remove(null);
     }
 
     @Test(expected = NullPointerException.class)
     public void testNullKey() {
-        new TrieMap<>().remove(null, "");
+        TrieMap.create().remove(null, "");
     }
 
     @Test(expected = NullPointerException.class)
     public void testNullValue() {
-        new TrieMap<>().remove("", null);
+        TrieMap.create().remove("", null);
     }
 
     @Test(expected = NullPointerException.class)
     public void testNullBoth() {
-        new TrieMap<>().remove(null, null);
+        TrieMap.create().remove(null, null);
     }
 
     @Test
     public void testClear() {
-        final TrieMap<Integer, Integer> bt = new TrieMap<>();
+        final TrieMap<Integer, Integer> bt = TrieMap.create();
         bt.put(1, 1);
         bt.clear();
         assertTrue(bt.isEmpty());
@@ -53,7 +53,7 @@ public class TestDelete {
 
     @Test
     public void testDelete () {
-        final TrieMap<Integer, Integer> bt = new TrieMap<> ();
+        final TrieMap<Integer, Integer> bt = TrieMap.create();
 
         for (int i = 0; i < 10000; i++) {
             assertNull(bt.put(Integer.valueOf(i), Integer.valueOf(i)));
@@ -79,7 +79,7 @@ public class TestDelete {
      */
     @Test
     public void testRemoveObjectLNode() {
-        final TrieMap<ZeroHashInt, ZeroHashInt> bt = new TrieMap<> ();
+        final TrieMap<ZeroHashInt, ZeroHashInt> bt = TrieMap.create();
 
         for (int i = 0; i < 100; i++) {
             final ZeroHashInt v = new ZeroHashInt(i);

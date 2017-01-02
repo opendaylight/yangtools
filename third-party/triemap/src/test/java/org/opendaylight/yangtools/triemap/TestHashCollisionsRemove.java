@@ -26,7 +26,7 @@ public class TestHashCollisionsRemove {
 
     @Test
     public void  testHashCollisionsRemove() {
-        final Map<Object, Object> bt = new TrieMap<>();
+        final Map<Object, Object> bt = TrieMap.create();
 
         for (int j = 0; j < COUNT; j++) {
             for (final Object o : TestMultiThreadMapIterator.getObjects(j)) {
