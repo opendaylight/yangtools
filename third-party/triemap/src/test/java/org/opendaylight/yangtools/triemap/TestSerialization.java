@@ -26,14 +26,14 @@ import org.junit.Test;
 public class TestSerialization {
     @Test
     public void testSerialization() throws IOException, ClassNotFoundException {
-        TrieMap<String, String> map = new TrieMap<>();
+        TrieMap<String, String> map = TrieMap.create();
 
         map.put("dude-0", "tom");
         map.put("dude-1", "john");
         map.put("dude-3", "ravi");
         map.put("dude-4", "alex");
 
-        TrieMap<String, String> expected = map.readOnlySnapshot();
+        TrieMap<String, String> expected = map.immutableSnapshot();
 
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
         final ObjectOutputStream oos = new ObjectOutputStream(bos);
