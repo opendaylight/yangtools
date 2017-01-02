@@ -42,7 +42,12 @@ final class CNode<K, V> extends MainNode<K, V> {
         this(gen, 0, EMPTY_ARRAY);
     }
 
-    static <K, V> MainNode<K,V> dual(final SNode<K, V> x, final int xhc, final SNode<K, V> y, final int yhc,
+    static <K, V> MainNode<K,V> dual(final SNode<K, V> x, final K k, final V v, final int hc, final int lev,
+            final Gen gen) {
+        return dual(x, x.hc, new SNode<>(k, v, hc), hc, lev, gen);
+    }
+
+    private static <K, V> MainNode<K,V> dual(final SNode<K, V> x, final int xhc, final SNode<K, V> y, final int yhc,
             final int lev, final Gen gen) {
         if (lev >= 35) {
             return new LNode<>(x.k, x.v, y.k, y.v);
@@ -53,8 +58,7 @@ final class CNode<K, V> extends MainNode<K, V> {
         final int bmp = (1 << xidx) | (1 << yidx);
 
         if (xidx == yidx) {
-            INode<K, V> subinode = new INode<>(gen, dual(x, xhc, y, yhc, lev + 5, gen));
-            return new CNode<>(gen, bmp, subinode);
+            return new CNode<>(gen, bmp, new INode<>(gen, dual(x, xhc, y, yhc, lev + 5, gen)));
         }
 
         return xidx < yidx ? new CNode<>(gen, bmp, x, y) : new CNode<>(gen, bmp, y, x);
