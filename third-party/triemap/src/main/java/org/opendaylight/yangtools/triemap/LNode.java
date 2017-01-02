@@ -21,24 +21,24 @@ import java.util.Map.Entry;
 import java.util.Optional;
 
 final class LNode<K, V> extends MainNode<K, V> {
-    private final ListMap<K, V> listmap;
+    private final LNodeEntries<K, V> listmap;
 
-    private LNode(final ListMap<K, V> listmap) {
+    private LNode(final LNodeEntries<K, V> listmap) {
         this.listmap = listmap;
     }
 
     LNode(final K k1, final V v1, final K k2, final V v2) {
-        this(ListMap.map(k1, v1, k2, v2));
+        this(LNodeEntries.map(k1, v1, k2, v2));
     }
 
-    LNode<K, V> addChild(final Equivalence<? super K> equiv, final K k, final V v) {
-        return new LNode<>(listmap.add(equiv, k, v));
+    LNode<K, V> insertChild( final K k, final V v) {
+        return new LNode<>(listmap.insert(k, v));
     }
 
-    MainNode<K, V> removeChild(final Equivalence<? super K> equiv, final K k, final int hc) {
+    MainNode<K, V> removeChild(final LNodeEntry<K, V> entry, final int hc) {
         // We only ever create ListMaps with two or more entries,  and remove them as soon as they reach one element
         // (below), so we cannot observe a null return here.
-        final ListMap<K, V> map = listmap.remove(equiv, k);
+        final LNodeEntries<K, V> map = listmap.remove(entry);
         final Optional<Entry<K, V>> maybeKv = map.maybeSingleton();
         if (maybeKv.isPresent()) {
             final Entry<K, V> kv = maybeKv.get();
@@ -49,8 +49,12 @@ final class LNode<K, V> extends MainNode<K, V> {
         return new LNode<>(map);
     }
 
-    Optional<V> get(final Equivalence<? super K> equiv, final K k) {
-        return listmap.get(equiv, k);
+    MainNode<K, V> replaceChild(final LNodeEntry<K, V> entry, final V v) {
+        return new LNode<>(listmap.replace(entry, v));
+    }
+
+    Optional<LNodeEntry<K, V>> get(final Equivalence<? super K> equiv, final K k) {
+        return listmap.findEntry(equiv, k);
     }
 
     @Override
@@ -67,4 +71,6 @@ final class LNode<K, V> extends MainNode<K, V> {
     Iterator<Entry<K, V>> iterator() {
         return listmap.iterator();
     }
+
+
 }
