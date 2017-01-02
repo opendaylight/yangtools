@@ -15,10 +15,7 @@
  */
 package org.opendaylight.yangtools.triemap;
 
-import java.util.AbstractMap.SimpleImmutableEntry;
-import java.util.Map.Entry;
-
-final class SNode<K, V> extends BasicNode implements KVNode<K, V> {
+final class SNode<K, V> extends BasicNode implements EntryNode<K, V> {
     final K k;
     final V v;
     final int hc;
@@ -42,13 +39,33 @@ final class SNode<K, V> extends BasicNode implements KVNode<K, V> {
     }
 
     @Override
-    public Entry<K, V> kvPair() {
-        return new SimpleImmutableEntry<>(k, v);
-    }
-
-    @Override
     String string(final int lev) {
         // ("  " * lev) + "SNode(%s, %s, %x)".format(k, v, hc);
         return "SNode";
+    }
+
+    @Override
+    public K getKey() {
+        return k;
+    }
+
+    @Override
+    public V getValue() {
+        return v;
+    }
+
+    @Override
+    public int hashCode() {
+        return EntryUtil.hash(k, v);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        return EntryUtil.equal(o, k, v);
+    }
+
+    @Override
+    public String toString() {
+        return EntryUtil.string(k, v);
     }
 }
