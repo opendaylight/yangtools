@@ -20,7 +20,7 @@ import static org.junit.Assert.assertNull;
 import com.google.common.base.Equivalence;
 import org.junit.Test;
 
-public class ListMapTest {
+public class LNodeEntriesTest {
     /**
      * Test if Listmap.get() does not cause stack overflow.
      */
