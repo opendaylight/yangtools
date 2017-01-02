@@ -164,8 +164,7 @@ final class INode<K, V> extends BasicNode {
                         }
 
                         final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
-                        final MainNode<K, V> nn = rn.updatedAt(pos, inode(CNode.dual(sn, sn.hc, new SNode<>(k, v, hc),
-                                hc, lev + 5, gen)), gen);
+                        final MainNode<K, V> nn = rn.updatedAt(pos, inode(CNode.dual(sn, k, v, hc, lev + 5, gen)), gen);
                         return GCAS (cn, nn, ct);
                     }
                 } else {
@@ -207,8 +206,7 @@ final class INode<K, V> extends BasicNode {
     private Optional<V> insertDual(final TrieMap<K, V> ct, final CNode<K, V> cn, final int pos, final SNode<K, V> sn,
             final K k, final V v, final int hc, final int lev) {
         final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
-        final MainNode<K, V> nn = rn.updatedAt(pos, inode(CNode.dual(sn, sn.hc, new SNode<>(k, v, hc),
-            hc, lev + 5, gen)), gen);
+        final MainNode<K, V> nn = rn.updatedAt(pos, inode(CNode.dual(sn, k, v, hc, lev + 5, gen)), gen);
         return GCAS(cn, nn, ct) ? Optional.empty() : null;
     }
 
