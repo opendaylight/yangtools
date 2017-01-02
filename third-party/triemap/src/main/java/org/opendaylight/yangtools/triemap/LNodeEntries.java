@@ -15,11 +15,9 @@
  */
 package org.opendaylight.yangtools.triemap;
 
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 
 /**
  * Similar to Scala's ListMap. Stores a linked set of entries, guaranteed to contain unique entry keys.
@@ -30,7 +28,7 @@ import java.util.Optional;
  * @param <V> the type of values
  */
 final class LNodeEntries<K, V> extends LNodeEntry<K, V> {
-    // Modified during remove0 only
+    // Modified during remove only
     private LNodeEntries<K, V> next;
 
     private LNodeEntries(final K k, final V v) {
@@ -46,8 +44,8 @@ final class LNodeEntries<K, V> extends LNodeEntry<K, V> {
         return new LNodeEntries<>(k1, v1, new LNodeEntries<>(k2, v2));
     }
 
-    Optional<Entry<K, V>> maybeSingleton() {
-        return next != null ? Optional.empty() : Optional.of(new SimpleImmutableEntry<>(key(), value()));
+    boolean isSingle() {
+        return next == null;
     }
 
     int size() {
@@ -60,14 +58,14 @@ final class LNodeEntries<K, V> extends LNodeEntry<K, V> {
 
     LNodeEntry<K, V> findEntry(final Equivalence<? super K> equiv, final K key) {
         // We do not perform recursion on purpose here, so we do not run out of stack if the key hashing fails.
-        LNodeEntries<K, V> head = this;
+        LNodeEntries<K, V> entry = this;
         do {
-            if (equiv.equivalent(head.key(), key)) {
-                return head;
+            if (equiv.equivalent(entry.getKey(), key)) {
+                return entry;
             }
 
-            head = head.next;
-        } while (head != null);
+            entry = entry.next;
+        } while (entry != null);
 
         return null;
     }
@@ -77,7 +75,7 @@ final class LNodeEntries<K, V> extends LNodeEntry<K, V> {
     }
 
     LNodeEntries<K, V> replace(final LNodeEntry<K, V> entry, final V v) {
-        return new LNodeEntries<>(entry.key(), v, remove(entry));
+        return new LNodeEntries<>(entry.getKey(), v, remove(entry));
     }
 
     LNodeEntries<K, V> remove(final LNodeEntry<K, V> entry) {
@@ -85,22 +83,24 @@ final class LNodeEntries<K, V> extends LNodeEntry<K, V> {
             return next;
         }
 
-        final LNodeEntries<K, V> ret = new LNodeEntries<>(key(), value());
+        final LNodeEntries<K, V> ret = new LNodeEntries<>(getKey(), getValue());
 
         LNodeEntries<K, V> last = ret;
         LNodeEntries<K, V> cur = next;
         while (cur != null) {
-            if (entry.equals(cur)) {
+            // We cannot use equals() here, as it is wired to key/value equality,
+            // which we really do not want.
+            if (entry == cur) {
                 last.next = cur.next;
                 return ret;
             }
 
-            last.next = new LNodeEntries<>(cur.key(), cur.value());
+            last.next = new LNodeEntries<>(cur.getKey(), cur.getValue());
             last = last.next;
             cur = cur.next;
         }
 
-        throw new IllegalStateException("Entry " + entry + " not found in entries " + this);
+        throw new IllegalStateException(String.format("Entry %s not found", entry));
     }
 
     Iterator<Entry<K, V>> iterator() {
@@ -125,7 +125,7 @@ final class LNodeEntries<K, V> extends LNodeEntry<K, V> {
                 throw new NoSuchElementException();
             }
 
-            final Entry<K, V> res = new SimpleImmutableEntry<>(n.key(), n.value());
+            final Entry<K, V> res = n;
             n = n.next;
             return res;
         }
