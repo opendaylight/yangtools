@@ -36,7 +36,7 @@ public class TestReadOnlyAndUpdatableIterators {
 
     @Before
     public void setUp() {
-        bt = new TrieMap<>();
+        bt = TrieMap.create();
         for (int j = 0; j < MAP_SIZE; j++) {
             assertNull(bt.put(Integer.valueOf(j), Integer.valueOf(j)));
         }
@@ -63,22 +63,22 @@ public class TestReadOnlyAndUpdatableIterators {
 
     @Test(expected = UnsupportedOperationException.class)
     public void testReadOnlySnapshotReadOnlyIteratorSet() {
-        trySet(bt.readOnlySnapshot().readOnlyIterator());
+        trySet(bt.immutableSnapshot().readOnlyIterator());
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testReadOnlySnapshotReadOnlyIteratorRemove() {
-        tryRemove(bt.readOnlySnapshot().readOnlyIterator());
+        tryRemove(bt.immutableSnapshot().readOnlyIterator());
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testReadOnlySnapshotIteratorSet() {
-        trySet(bt.readOnlySnapshot().iterator());
+        trySet(bt.immutableSnapshot().iterator());
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testReadOnlySnapshotIteratorRemove() {
-        tryRemove(bt.readOnlySnapshot().iterator());
+        tryRemove(bt.immutableSnapshot().iterator());
     }
 
     @Test
@@ -93,7 +93,7 @@ public class TestReadOnlyAndUpdatableIterators {
 
     @Test
     public void testSnapshotIterator () {
-        TrieMap<Integer, Integer> snapshot = bt.snapshot();
+        TrieMap<Integer, Integer> snapshot = bt.mutableSnapshot();
         Iterator<Entry<Integer, Integer>> it = snapshot.iterator();
         it.next().setValue(0);
         it.remove();

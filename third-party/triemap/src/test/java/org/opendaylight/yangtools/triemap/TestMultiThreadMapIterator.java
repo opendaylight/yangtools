@@ -34,7 +34,7 @@ public class TestMultiThreadMapIterator {
 
     @Test
     public void testMultiThreadMapIterator () throws InterruptedException {
-        final Map<Object, Object> bt = new TrieMap<>();
+        final Map<Object, Object> bt = TrieMap.create();
         for (int j = 0; j < 50 * 1000; j++) {
             for (final Object o : getObjects(j)) {
                 bt.put (o, o);

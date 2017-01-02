@@ -30,7 +30,7 @@ public class TestHashCollisionsRemoveIterator {
 
     @Test
     public void testHashCollisionsRemoveIterator () {
-        final Map<Object, Object> bt = new TrieMap<>();
+        final Map<Object, Object> bt = TrieMap.create();
         for (int j = 0; j < COUNT; j++) {
             bt.put(Integer.valueOf(j), Integer.valueOf(j));
         }
