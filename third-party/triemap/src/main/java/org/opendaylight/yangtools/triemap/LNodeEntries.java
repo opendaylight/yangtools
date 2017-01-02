@@ -27,36 +27,61 @@ import java.util.NoSuchElementException;
  * @param <K> the type of keys
  * @param <V> the type of values
  */
-final class LNodeEntries<K, V> extends LNodeEntry<K, V> {
-    // Modified during remove only
-    private LNodeEntries<K, V> next;
+abstract class LNodeEntries<K, V> extends LNodeEntry<K, V> {
+    private static final class Single<K, V> extends LNodeEntries<K, V> {
+        Single(final K k, final V v) {
+            super(k, v);
+        }
 
-    private LNodeEntries(final K k, final V v) {
-        this(k, v, null);
+        @Override
+        boolean isSingle() {
+            return true;
+        }
+
+        @Override
+        LNodeEntries<K, V> next() {
+            return null;
+        }
     }
 
-    private LNodeEntries(final K k, final V v, final LNodeEntries<K, V> next) {
+    private static final class Multiple<K, V> extends LNodeEntries<K, V> {
+        // Modified during remove only
+        LNodeEntries<K, V> next;
+
+        // Used in remove() only
+        Multiple(final LNodeEntries<K, V> e) {
+            this(e.getKey(), e.getValue(), null);
+        }
+
+        Multiple(final K k, final V v, final LNodeEntries<K, V> next) {
+            super(k, v);
+            this.next = next;
+        }
+
+        @Override
+        boolean isSingle() {
+            return next == null;
+        }
+
+        @Override
+        LNodeEntries<K, V> next() {
+            return next;
+        }
+    }
+
+    LNodeEntries(final K k, final V v) {
         super(k, v);
-        this.next = next;
     }
 
     static <K,V> LNodeEntries<K, V> map(final K k1, final V v1, final K k2, final V v2) {
-        return new LNodeEntries<>(k1, v1, new LNodeEntries<>(k2, v2));
+        return new Multiple<>(k1, v1, new Single<>(k2, v2));
     }
 
-    boolean isSingle() {
-        return next == null;
-    }
+    abstract boolean isSingle();
 
-    int size() {
-        int sz = 1;
-        for (LNodeEntries<?, ?> wlk = next; wlk != null; wlk = wlk.next) {
-            sz++;
-        }
-        return sz;
-    }
+    abstract LNodeEntries<K, V> next();
 
-    LNodeEntry<K, V> findEntry(final Equivalence<? super K> equiv, final K key) {
+    final LNodeEntry<K, V> findEntry(final Equivalence<? super K> equiv, final K key) {
         // We do not perform recursion on purpose here, so we do not run out of stack if the key hashing fails.
         LNodeEntries<K, V> entry = this;
         do {
@@ -64,46 +89,58 @@ final class LNodeEntries<K, V> extends LNodeEntry<K, V> {
                 return entry;
             }
 
-            entry = entry.next;
+            entry = entry.next();
         } while (entry != null);
 
         return null;
     }
 
-    LNodeEntries<K,V> insert(final K key, final V value) {
-        return new LNodeEntries<>(key, value, this);
+    final LNodeEntries<K,V> insert(final K key, final V value) {
+        return new Multiple<>(key, value, this);
     }
 
-    LNodeEntries<K, V> replace(final LNodeEntry<K, V> entry, final V v) {
-        return new LNodeEntries<>(entry.getKey(), v, remove(entry));
+    final LNodeEntries<K, V> replace(final LNodeEntry<K, V> entry, final V v) {
+        final LNodeEntries<K, V> removed = remove(entry);
+        return removed == null ? new Single<>(entry.getKey(), v) : new Multiple<>(entry.getKey(), v, removed);
     }
 
-    LNodeEntries<K, V> remove(final LNodeEntry<K, V> entry) {
+    final LNodeEntries<K, V> remove(final LNodeEntry<K, V> entry) {
         if (entry == this) {
-            return next;
+            return next();
         }
 
-        final LNodeEntries<K, V> ret = new LNodeEntries<>(getKey(), getValue());
+        final Multiple<K, V> ret = new Multiple<>(this);
 
-        LNodeEntries<K, V> last = ret;
-        LNodeEntries<K, V> cur = next;
+        Multiple<K, V> last = ret;
+        LNodeEntries<K, V> cur = next();
         while (cur != null) {
             // We cannot use equals() here, as it is wired to key/value equality,
             // which we really do not want.
             if (entry == cur) {
-                last.next = cur.next;
+                last.next = cur.next();
                 return ret;
             }
 
-            last.next = new LNodeEntries<>(cur.getKey(), cur.getValue());
-            last = last.next;
-            cur = cur.next;
+            final Multiple<K, V> tmp = new Multiple<>(cur);
+            last.next = tmp;
+            last = tmp;
+            cur = cur.next();
         }
 
         throw new IllegalStateException(String.format("Entry %s not found", entry));
     }
 
-    Iterator<Entry<K, V>> iterator() {
+    // No need to specialize these two methods, as they are invoked only from a stable LNode, at which point it is
+    // guaranteed to be a Multiple.
+    final int size() {
+        int sz = 1;
+        for (LNodeEntries<?, ?> wlk = next(); wlk != null; wlk = wlk.next()) {
+            sz++;
+        }
+        return sz;
+    }
+
+    final Iterator<Entry<K, V>> iterator() {
         return new NodeIterator<>(this);
     }
 
@@ -126,7 +163,7 @@ final class LNodeEntries<K, V> extends LNodeEntry<K, V> {
             }
 
             final Entry<K, V> res = n;
-            n = n.next;
+            n = n.next();
             return res;
         }
     }
