@@ -15,29 +15,27 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import java.io.ObjectStreamException;
+import java.util.AbstractMap.SimpleImmutableEntry;
+
 /**
- * A single entry in {@link LNodeEntries}.
+ * A single entry in {@link LNodeEntries}, subclasses {@link SimpleImmutableEntry} in order to prevent instantiation
+ * of objects for iteration.
  *
  * @author Robert Varga
  *
  * @param <K> the type of key
  * @param <V> the type of value
  */
-abstract class LNodeEntry<K, V> {
-    private final V value;
-    private final K key;
+abstract class LNodeEntry<K, V> extends SimpleImmutableEntry<K, V> {
+    private static final long serialVersionUID = 6244088850530903763L;
 
     LNodeEntry(final K key, final V value) {
-        this.value = value;
-        this.key = key;
+        super(key, value);
     }
 
-    final K key() {
-        return key;
+    final Object writeReplace() throws ObjectStreamException {
+        // Do not leak this implementation or its subclasses
+        return new SimpleImmutableEntry<>(this);
     }
-
-    final V value() {
-        return value;
-    }
-
 }
