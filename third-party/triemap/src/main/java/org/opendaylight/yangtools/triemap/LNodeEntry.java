@@ -15,29 +15,53 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import java.util.Map.Entry;
+
 /**
- * A single entry in {@link LNodeEntries}.
+ * A single entry in {@link LNodeEntries}, implements {@link Entry} in order to prevent instantiation of objects for
+ * iteration.
  *
  * @author Robert Varga
  *
  * @param <K> the type of key
  * @param <V> the type of value
  */
-abstract class LNodeEntry<K, V> {
-    private final V value;
+abstract class LNodeEntry<K, V> implements Entry<K, V> {
     private final K key;
+    private final V value;
 
     LNodeEntry(final K key, final V value) {
-        this.value = value;
         this.key = key;
+        this.value = value;
     }
 
-    final K key() {
+    @Override
+    public final K getKey() {
         return key;
     }
 
-    final V value() {
+    @Override
+    public final V getValue() {
         return value;
     }
 
+    @Override
+    public final V setValue(final V value) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final int hashCode() {
+        return EntryUtil.hash(key, value);
+    }
+
+    @Override
+    public final boolean equals(final Object o) {
+        return EntryUtil.equal(o, key, value);
+    }
+
+    @Override
+    public final String toString() {
+        return EntryUtil.string(key, value);
+    }
 }
