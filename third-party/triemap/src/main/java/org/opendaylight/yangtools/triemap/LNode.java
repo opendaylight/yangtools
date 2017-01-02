@@ -30,12 +30,11 @@ final class LNode<K, V> extends MainNode<K, V> {
         this(ListMap.map(k1, v1, k2, v2));
     }
 
-    LNode<K, V> inserted(final K k, final V v) {
+    LNode<K, V> addChild(final K k, final V v) {
         return new LNode<>(listmap.add(k, v));
     }
 
-    // FIXME: can we also get the hashcode ?
-    MainNode<K, V> removed(final K k, final TrieMap<K, V> ct) {
+    MainNode<K, V> removeChild(final K k, final int hc, final TrieMap<K, V> ct) {
         // We only ever create ListMaps with two or more entries,  and remove them as soon as they reach one element
         // (below), so we cannot observe a null return here.
         final ListMap<K, V> map = listmap.remove(k);
@@ -43,7 +42,7 @@ final class LNode<K, V> extends MainNode<K, V> {
         if (maybeKv.isPresent()) {
             final Entry<K, V> kv = maybeKv.get();
             // create it tombed so that it gets compressed on subsequent accesses
-            return new TNode<>(kv.getKey(), kv.getValue(), ct.computeHash(kv.getKey()));
+            return new TNode<>(kv.getKey(), kv.getValue(), hc);
         }
 
         return new LNode<>(map);
