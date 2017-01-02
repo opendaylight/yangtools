@@ -36,7 +36,7 @@ public class TestMapIterator {
         final Random random = new Random();
 
         for (int i = 0; i < 60 * 1000; i+= 400 + random.nextInt(400)) {
-            final Map<Integer, Integer> bt = new TrieMap <>();
+            final Map<Integer, Integer> bt = TrieMap.create();
             for (int j = 0; j < i; j++) {
                 assertNull(bt.put(Integer.valueOf(j), Integer.valueOf(j)));
             }
@@ -84,16 +84,16 @@ public class TestMapIterator {
 
     @Test(expected = NoSuchElementException.class)
     public void testEmptyIterator() {
-        failAdvance(new TrieMap<>().iterator());
+        failAdvance(TrieMap.create().iterator());
     }
 
     @Test(expected = NoSuchElementException.class)
     public void testEmptyReadOnlyIterator() {
-        failAdvance(new TrieMap<>().readOnlyIterator());
+        failAdvance(TrieMap.create().readOnlyIterator());
     }
 
     @Test(expected = NoSuchElementException.class)
     public void testEmptyReadOnlySnapshotIterator() {
-        failAdvance(new TrieMap<>().readOnlySnapshot().iterator());
+        failAdvance( TrieMap.create().immutableSnapshot().iterator());
     }
 }

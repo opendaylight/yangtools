@@ -33,7 +33,7 @@ public class TestInstantiationSpeed {
 
         final Stopwatch watch = Stopwatch.createStarted();
         for (int i = 0; i < COUNT; ++i) {
-            maps[i] = new TrieMap<>();
+            maps[i] = TrieMap.create();
         }
         watch.stop();
 

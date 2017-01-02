@@ -29,7 +29,7 @@ public class TestConcurrentMapReplace {
 
     @Test
     public void testConcurrentMapReplace () {
-        final ConcurrentMap<Integer, Object> map = new TrieMap<>();
+        final ConcurrentMap<Integer, Object> map = TrieMap.create();
 
         for (int i = 0; i < COUNT; i++) {
             assertNull(map.replace(i, "lol"));
@@ -53,7 +53,7 @@ public class TestConcurrentMapReplace {
         final ZeroHashInt v3dup = new ZeroHashInt(6);
         final ZeroHashInt k4 = new ZeroHashInt(7);
 
-        final Map<ZeroHashInt, ZeroHashInt> map = new TrieMap<>();
+        final Map<ZeroHashInt, ZeroHashInt> map = TrieMap.create();
         assertNull(map.put(k3, v3));
 
         // First check for SNode
