@@ -44,8 +44,8 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
  *
  * @author Roman Levenstein &lt;romixlev@gmail.com&gt;
  *
- * @param <K>
- * @param <V>
+ * @param <K> the type of keys maintained by this map
+ * @param <V> the type of mapped values
  */
 @SuppressWarnings({"unchecked", "rawtypes", "unused"})
 public final class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,V>, Serializable {
