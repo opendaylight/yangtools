@@ -33,7 +33,7 @@ public class TestMultiThreadAddDelete {
     @Test
     public void testMultiThreadAddDelete () throws InterruptedException {
         for (int j = 0; j < RETRIES; j++) {
-            final Map<Object, Object> bt = new TrieMap<>();
+            final Map<Object, Object> bt = TrieMap.create();
 
             {
                 final ExecutorService es = Executors.newFixedThreadPool(N_THREADS);
