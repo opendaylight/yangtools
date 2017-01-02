@@ -30,14 +30,14 @@ final class LNode<K, V> extends MainNode<K, V> {
         this(ListMap.map(k1, v1, k2, v2));
     }
 
-    LNode<K, V> addChild(final K k, final V v) {
-        return new LNode<>(listmap.add(k, v));
+    LNode<K, V> addChild(final Equivalence<? super K> equiv, final K k, final V v) {
+        return new LNode<>(listmap.add(equiv, k, v));
     }
 
-    MainNode<K, V> removeChild(final K k, final int hc, final TrieMap<K, V> ct) {
+    MainNode<K, V> removeChild(final Equivalence<? super K> equiv, final K k, final int hc) {
         // We only ever create ListMaps with two or more entries,  and remove them as soon as they reach one element
         // (below), so we cannot observe a null return here.
-        final ListMap<K, V> map = listmap.remove(k);
+        final ListMap<K, V> map = listmap.remove(equiv, k);
         final Optional<Entry<K, V>> maybeKv = map.maybeSingleton();
         if (maybeKv.isPresent()) {
             final Entry<K, V> kv = maybeKv.get();
@@ -48,8 +48,8 @@ final class LNode<K, V> extends MainNode<K, V> {
         return new LNode<>(map);
     }
 
-    Optional<V> get(final K k) {
-        return listmap.get(k);
+    Optional<V> get(final Equivalence<? super K> equiv, final K k) {
+        return listmap.get(equiv, k);
     }
 
     @Override

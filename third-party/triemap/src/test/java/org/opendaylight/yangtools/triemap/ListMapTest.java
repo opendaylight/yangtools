@@ -31,10 +31,10 @@ public class ListMapTest {
 
         // 30K seems to be enough to trigger the problem locally
         for (int i = 3; i < 30000; ++i) {
-            map = map.add(i, Boolean.TRUE);
+            map = map.add(Equivalence.equals(), i, Boolean.TRUE);
         }
 
-        final Optional<Boolean> ret = map.get(0);
+        final Optional<Boolean> ret = map.get(Equivalence.equals(), 0);
         assertFalse(ret.isPresent());
     }
 
