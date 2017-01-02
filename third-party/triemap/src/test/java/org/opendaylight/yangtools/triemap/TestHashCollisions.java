@@ -24,7 +24,7 @@ import org.junit.Test;
 public class TestHashCollisions {
     @Test
     public void testHashCollisions () {
-        final TrieMap<Object, Object> bt = new TrieMap<>();
+        final TrieMap<Object, Object> bt = TrieMap.create();
 
         insertStrings(bt);
         insertChars(bt);
