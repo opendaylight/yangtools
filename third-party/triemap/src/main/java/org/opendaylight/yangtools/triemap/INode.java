@@ -36,11 +36,11 @@ final class INode<K, V> extends BasicNode {
         this.mainnode = mainnode;
     }
 
-    MainNode<K, V> gcasRead(final TrieMap<K, V> ct) {
+    MainNode<K, V> gcasRead(final TrieMap<?, ?> ct) {
         return GCAS_READ(ct);
     }
 
-    MainNode<K, V> GCAS_READ(final TrieMap<K, V> ct) {
+    private MainNode<K, V> GCAS_READ(final TrieMap<?, ?> ct) {
         MainNode<K, V> m = /* READ */ mainnode;
         MainNode<K, V> prevval = /* READ */ m.READ_PREV();
         if (prevval == null) {
@@ -50,7 +50,7 @@ final class INode<K, V> extends BasicNode {
         return GCAS_Complete(m, ct);
     }
 
-    private MainNode<K, V> GCAS_Complete(MainNode<K, V> m, final TrieMap<K, V> ct) {
+    private MainNode<K, V> GCAS_Complete(MainNode<K, V> m, final TrieMap<?, ?> ct) {
         while (true) {
             if (m == null) {
                 return null;
@@ -58,7 +58,7 @@ final class INode<K, V> extends BasicNode {
 
             // complete the GCAS
             final MainNode<K, V> prev = /* READ */ m.READ_PREV();
-            final INode<K, V> ctr = ct.readRoot(true);
+            final Gen rdgen = ct.readRoot(true).gen;
             if (prev == null) {
                 return m;
             }
@@ -83,7 +83,7 @@ final class INode<K, V> extends BasicNode {
             // ==> if `ctr.gen` = `gen` then they are both equal to G.
             // ==> otherwise, we know that either `ctr.gen` > G, `gen` < G,
             // or both
-            if (ctr.gen == gen && !ct.isReadOnly()) {
+            if (rdgen == gen && !ct.isReadOnly()) {
                 // try to commit
                 if (m.CAS_PREV(prev, null)) {
                     return m;
@@ -101,7 +101,7 @@ final class INode<K, V> extends BasicNode {
         }
     }
 
-    private boolean GCAS(final MainNode<K, V> old, final MainNode<K, V> n, final TrieMap<K, V> ct) {
+    private boolean GCAS(final MainNode<K, V> old, final MainNode<K, V> n, final TrieMap<?, ?> ct) {
         n.WRITE_PREV(old);
         if (MAINNODE_UPDATER.compareAndSet(this, old, n)) {
             GCAS_Complete(n, ct);
@@ -115,7 +115,7 @@ final class INode<K, V> extends BasicNode {
         return new INode<>(gen, cn);
     }
 
-    INode<K, V> copyToGen(final Gen ngen, final TrieMap<K, V> ct) {
+    INode<K, V> copyToGen(final Gen ngen, final TrieMap<?, ?> ct) {
         return new INode<>(ngen, GCAS_READ(ct));
     }
 
@@ -168,8 +168,8 @@ final class INode<K, V> extends BasicNode {
                         return GCAS (cn, nn, ct);
                     }
                 } else {
-                    CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
-                    MainNode<K, V> ncnode = rn.insertedAt(pos, flag, new SNode<> (k, v, hc), gen);
+                    final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
+                    final MainNode<K, V> ncnode = rn.insertedAt(pos, flag, new SNode<>(k, v, hc), gen);
                     return GCAS (cn, ncnode, ct);
                 }
             } else if (m instanceof TNode) {
@@ -427,19 +427,19 @@ final class INode<K, V> extends BasicNode {
     /**
      * Removes the key associated with the given value.
      *
-     * @param v
+     * @param cond
      *            if null, will remove the key regardless of the value;
      *            otherwise removes only if binding contains that exact key
      *            and value
-     * @return null if not successful, an Option[V] indicating the previous
+     * @return null if not successful, an Optional indicating the previous
      *         value otherwise
      */
-    Optional<V> rec_remove(final K k, final V v, final int hc, final int lev, final INode<K, V> parent,
+    Optional<V> rec_remove(final K k, final Object cond, final int hc, final int lev, final INode<K, V> parent,
             final TrieMap<K, V> ct) {
-        return rec_remove(k, v, hc, lev, parent, gen, ct);
+        return rec_remove(k, cond, hc, lev, parent, gen, ct);
     }
 
-    private Optional<V> rec_remove(final K k, final V v, final int hc, final int lev, final INode<K, V> parent,
+    private Optional<V> rec_remove(final K k, final Object cond, final int hc, final int lev, final INode<K, V> parent,
             final Gen startgen, final TrieMap<K, V> ct) {
         final MainNode<K, V> m = GCAS_READ(ct); // use -Yinline!
 
@@ -458,10 +458,10 @@ final class INode<K, V> extends BasicNode {
             if (sub instanceof INode) {
                 final INode<K, V> in = (INode<K, V>) sub;
                 if (startgen == in.gen) {
-                    res = in.rec_remove(k, v, hc, lev + 5, this, startgen, ct);
+                    res = in.rec_remove(k, cond, hc, lev + 5, this, startgen, ct);
                 } else {
                     if (GCAS(cn, cn.renewed (startgen, ct), ct)) {
-                        res = rec_remove(k, v, hc, lev, parent, startgen, ct);
+                        res = rec_remove(k, cond, hc, lev, parent, startgen, ct);
                     } else {
                         res = null;
                     }
@@ -469,7 +469,7 @@ final class INode<K, V> extends BasicNode {
 
             } else if (sub instanceof SNode) {
                 final SNode<K, V> sn = (SNode<K, V>) sub;
-                if (sn.hc == hc && ct.equal(sn.k, k) && (v == null || v.equals(sn.v))) {
+                if (sn.hc == hc && ct.equal(sn.k, k) && (cond == null || cond.equals(sn.v))) {
                     final MainNode<K, V> ncn = cn.removedAt(pos, flag, gen).toContracted(lev);
                     if (GCAS(cn, ncn, ct)) {
                         res = Optional.of(sn.v);
@@ -506,7 +506,7 @@ final class INode<K, V> extends BasicNode {
             }
 
             final V value = entry.value();
-            if (v != null && !v.equals(value)) {
+            if (cond != null && !cond.equals(value)) {
                 // Value does not match
                 return Optional.empty();
             }
@@ -539,8 +539,8 @@ final class INode<K, V> extends BasicNode {
             final BasicNode sub = cn.array[pos];
             if (sub == this) {
                 if (nonlive instanceof TNode) {
-                    final TNode<K, V> tn = (TNode<K, V>) nonlive;
-                    MainNode<K, V> ncn = cn.updatedAt(pos, tn.copyUntombed(), gen).toContracted(lev - 5);
+                    final TNode<?, ?> tn = (TNode<?, ?>) nonlive;
+                    final MainNode<K, V> ncn = cn.updatedAt(pos, tn.copyUntombed(), gen).toContracted(lev - 5);
                     if (!parent.GCAS(cn, ncn, ct)) {
                         if (ct.readRoot().gen == startgen) {
                             // Tail recursion: cleanParent(nonlive, parent, ct, hc, lev, startgen);
@@ -561,9 +561,8 @@ final class INode<K, V> extends BasicNode {
         }
     }
 
-    int cachedSize(final TrieMap<K, V> ct) {
-        MainNode<K, V> m = GCAS_READ(ct);
-        return m.cachedSize(ct);
+    int cachedSize(final TrieMap<?, ?> ct) {
+        return GCAS_READ(ct).cachedSize(ct);
     }
 
     // /* this is a quiescent method! */
