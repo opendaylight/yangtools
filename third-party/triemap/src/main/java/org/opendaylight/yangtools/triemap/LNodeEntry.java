@@ -15,23 +15,29 @@
  */
 package org.opendaylight.yangtools.triemap;
 
-import static org.junit.Assert.assertNull;
+/**
+ * A single entry in {@link LNodeEntries}.
+ *
+ * @author Robert Varga
+ *
+ * @param <K> the type of key
+ * @param <V> the type of value
+ */
+abstract class LNodeEntry<K, V> {
+    private final V value;
+    private final K key;
 
-import org.junit.Test;
-
-public class ListMapTest {
-    /**
-     * Test if Listmap.get() does not cause stack overflow.
-     */
-    @Test
-    public void testGetOverflow() {
-        LNodeEntries<Integer, Boolean> map = LNodeEntries.map(1, Boolean.TRUE, 2, Boolean.TRUE);
-
-        // 30K seems to be enough to trigger the problem locally
-        for (int i = 3; i < 30000; ++i) {
-            map = map.insert(i, Boolean.TRUE);
-        }
-
-        assertNull(map.findEntry(Equivalence.equals(), 0));
+    LNodeEntry(final K key, final V value) {
+        this.value = value;
+        this.key = key;
     }
+
+    final K key() {
+        return key;
+    }
+
+    final V value() {
+        return value;
+    }
+
 }
