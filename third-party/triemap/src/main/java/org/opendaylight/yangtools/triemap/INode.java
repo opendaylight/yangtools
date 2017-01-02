@@ -142,6 +142,7 @@ final class INode<K, V> extends BasicNode {
                 final int bmp = cn.bitmap;
                 final int mask = flag - 1;
                 final int pos = Integer.bitCount(bmp & mask);
+
                 if ((bmp & flag) != 0) {
                     // 1a) insert below
                     final BasicNode cnAtPos = cn.array[pos];
@@ -203,6 +204,14 @@ final class INode<K, V> extends BasicNode {
         return rec_insertif(k, v, hc, cond, lev, parent, gen, ct);
     }
 
+    private Optional<V> insertDual(final TrieMap<K, V> ct, final CNode<K, V> cn, final int pos, final SNode<K, V> sn,
+            final K k, final V v, final int hc, final int lev) {
+        final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
+        final MainNode<K, V> nn = rn.updatedAt(pos, inode(CNode.dual(sn, sn.hc, new SNode<>(k, v, hc),
+            hc, lev + 5, gen)), gen);
+        return GCAS(cn, nn, ct) ? Optional.empty() : null;
+    }
+
     private Optional<V> rec_insertif(final K k, final V v, final int hc, final Object cond, final int lev,
             final INode<K, V> parent, final Gen startgen, final TrieMap<K, V> ct) {
         while (true) {
@@ -243,27 +252,13 @@ final class INode<K, V> extends BasicNode {
                                 return null;
                             }
 
-                            final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
-                            final MainNode<K, V> nn = rn.updatedAt(pos, inode (CNode.dual(sn, sn.hc,
-                                    new SNode<>(k, v, hc), hc, lev + 5, gen)), gen);
-                            if (GCAS(cn, nn, ct)) {
-                                return Optional.empty();
-                            }
-
-                            return null;
+                            return insertDual(ct, cn, pos, sn, k, v, hc, lev);
                         } else if (cond == ABSENT) {
                             if (sn.hc == hc && ct.equal(sn.k, k)) {
                                 return Optional.of(sn.v);
                             }
 
-                            final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
-                            final MainNode<K, V> nn = rn.updatedAt(pos, inode (CNode.dual(sn, sn.hc,
-                                new SNode<>(k, v, hc), hc, lev + 5, gen)), gen);
-                            if (GCAS(cn, nn, ct)) {
-                                return Optional.empty();
-                            }
-
-                            return null;
+                            return insertDual(ct, cn, pos, sn, k, v, hc, lev);
                         } else if (cond == PRESENT) {
                             if (sn.hc == hc && ct.equal(sn.k, k)) {
                                 if (GCAS(cn, cn.updatedAt(pos, new SNode<>(k, v, hc), gen), ct)) {
@@ -366,6 +361,7 @@ final class INode<K, V> extends BasicNode {
                 final int idx = (hc >>> lev) & 0x1f;
                 final int flag = 1 << idx;
                 final int bmp = cn.bitmap;
+
                 if ((bmp & flag) == 0) {
                     // 1a) bitmap shows no binding
                     return null;
