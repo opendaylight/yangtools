@@ -176,9 +176,7 @@ final class INode<K, V> extends BasicNode {
                 clean(parent, ct, lev - 5);
                 return false;
             } else if (m instanceof LNode) {
-                LNode<K, V> ln = (LNode<K, V>) m;
-                MainNode<K, V> nn = ln.inserted(k, v);
-                return GCAS(ln, nn, ct);
+                return insertln((LNode<K, V>) m, k, v, ct);
             } else {
                 throw new IllegalStateException("Unhandled node " + m);
             }
@@ -350,9 +348,8 @@ final class INode<K, V> extends BasicNode {
         }
     }
 
-    boolean insertln(final LNode<K, V> ln, final K k, final V v, final TrieMap<K, V> ct) {
-        final LNode<K, V> nn = ln.inserted (k, v);
-        return GCAS(ln, nn, ct);
+    private boolean insertln(final LNode<K, V> ln, final K k, final V v, final TrieMap<K, V> ct) {
+        return GCAS(ln, ln.addChild(k, v), ct);
     }
 
     /**
@@ -508,28 +505,19 @@ final class INode<K, V> extends BasicNode {
             return null;
         } else if (m instanceof LNode) {
             final LNode<K, V> ln = (LNode<K, V>) m;
-            if (v == null) {
-                final Optional<V> optv = ln.get(k);
-                final MainNode<K, V> nn = ln.removed(k, ct);
-                if (GCAS(ln, nn, ct)) {
-                    return optv;
-                }
+            final Optional<V> optv = ln.get(k);
 
-                return null;
+            if (!optv.isPresent()) {
+                // Key was not found, hence no modification is needed
+                return Optional.empty();
             }
 
-            final Optional<V> tmp = ln.get(k);
-            if (tmp.isPresent() && v.equals(tmp.get())) {
-                final MainNode<K, V> nn = ln.removed(k, ct);
-                if (GCAS(ln, nn, ct)) {
-                    return tmp;
-                }
-
-                return null;
+            if (v != null && !v.equals(optv.get())) {
+                // Value does not match
+                return Optional.empty();
             }
 
-            // Key not found or value does not match: we have not removed anything
-            return Optional.empty();
+            return GCAS(ln, ln.removeChild(k, hc, ct), ct) ? optv : null;
         } else {
             throw new IllegalStateException("Unhandled node " + m);
         }
