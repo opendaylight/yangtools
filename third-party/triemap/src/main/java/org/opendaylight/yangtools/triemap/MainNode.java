@@ -32,7 +32,7 @@ abstract class MainNode<K, V> extends BasicNode {
         this.prev = prev;
     }
 
-    abstract int cachedSize(TrieMap<K, V> ct);
+    abstract int cachedSize(TrieMap<?, ?> ct);
 
     final boolean CAS_PREV(final MainNode<K, V> oldval, final MainNode<K, V> nval) {
         return PREV_UPDATER.compareAndSet(this, oldval, nval);
