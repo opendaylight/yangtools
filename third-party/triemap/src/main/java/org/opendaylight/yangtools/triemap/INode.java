@@ -301,13 +301,13 @@ final class INode<K, V> extends BasicNode {
                 // 3) an l-node
                 final LNode<K, V> ln = (LNode<K, V>) m;
                 if (cond == null) {
-                    final Optional<V> optv = ln.get(k);
+                    final Optional<V> optv = ln.get(ct.equiv(), k);
                     if (insertln(ln, k, v, ct)) {
                         return optv;
                     }
                     return null;
                 } else if (cond == ABSENT) {
-                    final Optional<V> t = ln.get(k);
+                    final Optional<V> t = ln.get(ct.equiv(),k);
                     if (t.isPresent()) {
                         return t;
                     }
@@ -316,7 +316,7 @@ final class INode<K, V> extends BasicNode {
                     }
                     return null;
                 } else if (cond == PRESENT) {
-                    final Optional<V> t = ln.get(k);
+                    final Optional<V> t = ln.get(ct.equiv(),k);
                     if (!t.isPresent()) {
                         return t;
                     }
@@ -325,7 +325,7 @@ final class INode<K, V> extends BasicNode {
                     }
                     return null;
                 } else {
-                    final Optional<V> t = ln.get(k);
+                    final Optional<V> t = ln.get(ct.equiv(),k);
                     if (t.isPresent()) {
                         if (cond.equals(t.get())) {
                             if (insertln(ln, k, v, ct)) {
@@ -349,7 +349,7 @@ final class INode<K, V> extends BasicNode {
     }
 
     private boolean insertln(final LNode<K, V> ln, final K k, final V v, final TrieMap<K, V> ct) {
-        return GCAS(ln, ln.addChild(k, v), ct);
+        return GCAS(ln, ln.addChild(ct.equiv(), k, v), ct);
     }
 
     /**
@@ -407,7 +407,7 @@ final class INode<K, V> extends BasicNode {
                 return cleanReadOnly((TNode<K, V>) m, lev, parent, ct, k, hc);
             } else if (m instanceof LNode) {
                 // 5) an l-node
-                return ((LNode<K, V>) m).get(k).orElse(null);
+                return ((LNode<K, V>) m).get(ct.equiv(), k).orElse(null);
             } else {
                 throw new IllegalStateException("Unhandled node " + m);
             }
@@ -505,7 +505,7 @@ final class INode<K, V> extends BasicNode {
             return null;
         } else if (m instanceof LNode) {
             final LNode<K, V> ln = (LNode<K, V>) m;
-            final Optional<V> optv = ln.get(k);
+            final Optional<V> optv = ln.get(ct.equiv(), k);
 
             if (!optv.isPresent()) {
                 // Key was not found, hence no modification is needed
@@ -517,7 +517,7 @@ final class INode<K, V> extends BasicNode {
                 return Optional.empty();
             }
 
-            return GCAS(ln, ln.removeChild(k, hc, ct), ct) ? optv : null;
+            return GCAS(ln, ln.removeChild(ct.equiv(), k, hc), ct) ? optv : null;
         } else {
             throw new IllegalStateException("Unhandled node " + m);
         }
