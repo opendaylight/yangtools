@@ -132,7 +132,7 @@ final class INode<K, V> extends BasicNode {
     private boolean rec_insert(final K k, final V v, final int hc, final int lev, final INode<K, V> parent,
             final Gen startgen, final TrieMap<K, V> ct) {
         while (true) {
-            final MainNode<K, V> m = GCAS_READ (ct); // use -Yinline!
+            final MainNode<K, V> m = GCAS_READ(ct); // use -Yinline!
 
             if (m instanceof CNode) {
                 // 1) a multiway node
@@ -176,7 +176,9 @@ final class INode<K, V> extends BasicNode {
                 clean(parent, ct, lev - 5);
                 return false;
             } else if (m instanceof LNode) {
-                return insertln((LNode<K, V>) m, k, v, ct);
+                final LNode<K, V> ln = (LNode<K, V>) m;
+                final LNodeEntry<K, V> entry = ln.get(ct.equiv(), k);
+                return entry != null ? replaceln(ln, entry, v, ct) : insertln(ln, k, v, ct);
             } else {
                 throw new IllegalStateException("Unhandled node " + m);
             }
@@ -300,45 +302,32 @@ final class INode<K, V> extends BasicNode {
             } else if (m instanceof LNode) {
                 // 3) an l-node
                 final LNode<K, V> ln = (LNode<K, V>) m;
+                final LNodeEntry<K, V> entry = ln.get(ct.equiv(), k);
+
                 if (cond == null) {
-                    final Optional<V> optv = ln.get(ct.equiv(), k);
-                    if (insertln(ln, k, v, ct)) {
-                        return optv;
+                    if (entry != null) {
+                        return replaceln(ln, entry, v, ct) ? Optional.of(entry.value()) : null;
                     }
-                    return null;
+
+                    return insertln(ln, k, v, ct) ? Optional.empty() : null;
                 } else if (cond == ABSENT) {
-                    final Optional<V> t = ln.get(ct.equiv(),k);
-                    if (t.isPresent()) {
-                        return t;
+                    if (entry != null) {
+                        return Optional.of(entry.value());
                     }
-                    if (insertln(ln, k, v, ct)) {
+
+                    return insertln(ln, k, v, ct) ? Optional.empty() : null;
+                } else if (cond == PRESENT) {
+                    if (entry == null) {
                         return Optional.empty();
                     }
-                    return null;
-                } else if (cond == PRESENT) {
-                    final Optional<V> t = ln.get(ct.equiv(),k);
-                    if (!t.isPresent()) {
-                        return t;
-                    }
-                    if (insertln(ln, k, v, ct)) {
-                        return t;
-                    }
-                    return null;
+
+                    return replaceln(ln, entry, v, ct) ? Optional.of(entry.value()) : null;
                 } else {
-                    final Optional<V> t = ln.get(ct.equiv(),k);
-                    if (t.isPresent()) {
-                        if (cond.equals(t.get())) {
-                            if (insertln(ln, k, v, ct)) {
-                                // Difference from Scala: we choose to reuse the object returned from LNode,
-                                // as the identity of the value does not matter in this call graph.
-                                return t;
-                            }
-
-                            return null;
-                        }
+                    if (entry == null || !cond.equals(entry.value())) {
+                        return Optional.empty();
                     }
 
-                    return Optional.empty();
+                    return replaceln(ln, entry, v, ct) ? Optional.of(entry.value()) : null;
                 }
             } else {
                 throw new IllegalStateException("Unhandled node " + m);
@@ -349,7 +338,11 @@ final class INode<K, V> extends BasicNode {
     }
 
     private boolean insertln(final LNode<K, V> ln, final K k, final V v, final TrieMap<K, V> ct) {
-        return GCAS(ln, ln.addChild(ct.equiv(), k, v), ct);
+        return GCAS(ln, ln.insertChild(k, v), ct);
+    }
+
+    private boolean replaceln(final LNode<K, V> ln, final LNodeEntry<K, V> entry, final V v, final TrieMap<K, V> ct) {
+        return GCAS(ln, ln.replaceChild(entry, v), ct);
     }
 
     /**
@@ -407,7 +400,8 @@ final class INode<K, V> extends BasicNode {
                 return cleanReadOnly((TNode<K, V>) m, lev, parent, ct, k, hc);
             } else if (m instanceof LNode) {
                 // 5) an l-node
-                return ((LNode<K, V>) m).get(ct.equiv(), k).orElse(null);
+                final LNodeEntry<K, V> entry = ((LNode<K, V>) m).get(ct.equiv(), k);
+                return entry != null ? entry.value() : null;
             } else {
                 throw new IllegalStateException("Unhandled node " + m);
             }
@@ -505,19 +499,19 @@ final class INode<K, V> extends BasicNode {
             return null;
         } else if (m instanceof LNode) {
             final LNode<K, V> ln = (LNode<K, V>) m;
-            final Optional<V> optv = ln.get(ct.equiv(), k);
-
-            if (!optv.isPresent()) {
+            final LNodeEntry<K, V> entry = ln.get(ct.equiv(), k);
+            if (entry == null) {
                 // Key was not found, hence no modification is needed
                 return Optional.empty();
             }
 
-            if (v != null && !v.equals(optv.get())) {
+            final V value = entry.value();
+            if (v != null && !v.equals(value)) {
                 // Value does not match
                 return Optional.empty();
             }
 
-            return GCAS(ln, ln.removeChild(ct.equiv(), k, hc), ct) ? optv : null;
+            return GCAS(ln, ln.removeChild(entry, hc), ct) ? Optional.of(value) : null;
         } else {
             throw new IllegalStateException("Unhandled node " + m);
         }
