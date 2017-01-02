@@ -15,6 +15,7 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import com.google.common.base.Verify;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 final class CNode<K, V> extends MainNode<K, V> {
@@ -137,15 +138,15 @@ final class CNode<K, V> extends MainNode<K, V> {
      */
     CNode<K, V> renewed(final Gen ngen, final TrieMap<K, V> ct) {
         int i = 0;
-        BasicNode[] arr = array;
-        int len = arr.length;
-        BasicNode[] narr = new BasicNode[len];
+        final BasicNode[] arr = array;
+        final int len = arr.length;
+        final BasicNode[] narr = new BasicNode[len];
         while (i < len) {
-            BasicNode elem = arr[i];
+            final BasicNode elem = arr[i];
             if (elem instanceof INode) {
-                narr [i] = ((INode<?, ?>) elem).copyToGen(ngen, ct);
+                narr[i] = ((INode<?, ?>) elem).copyToGen(ngen, ct);
             } else if (elem != null) {
-                narr [i] = elem;
+                narr[i] = elem;
             }
             i += 1;
         }
@@ -178,8 +179,7 @@ final class CNode<K, V> extends MainNode<K, V> {
             BasicNode sub = arr[i];
             if (sub instanceof INode) {
                 final INode<?, ?> in = (INode<?, ?>) sub;
-                final MainNode<?, ?> inodemain = in.gcasRead(ct);
-                assert (inodemain != null);
+                final MainNode<?, ?> inodemain = Verify.verifyNotNull(in.gcasRead(ct));
                 tmparray [i] = resurrect(in, inodemain);
             } else if (sub instanceof SNode) {
                 tmparray [i] = sub;
