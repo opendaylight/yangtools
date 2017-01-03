@@ -15,6 +15,7 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Map.Entry;
 
 /**
@@ -55,6 +56,7 @@ abstract class LNodeEntry<K, V> implements Entry<K, V> {
         return EntryUtil.hash(key, value);
     }
 
+    @SuppressFBWarnings(value = "EQ_UNUSUAL",  justification = "Equality handled by utility methods")
     @Override
     public final boolean equals(final Object o) {
         return EntryUtil.equal(o, key, value);

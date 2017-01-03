@@ -15,6 +15,8 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 final class SNode<K, V> extends BasicNode implements EntryNode<K, V> {
     final K k;
     final V v;
@@ -59,6 +61,7 @@ final class SNode<K, V> extends BasicNode implements EntryNode<K, V> {
         return EntryUtil.hash(k, v);
     }
 
+    @SuppressFBWarnings(value = "EQ_UNUSUAL",  justification = "Equality handled by utility methods")
     @Override
     public boolean equals(final Object o) {
         return EntryUtil.equal(o, k, v);
