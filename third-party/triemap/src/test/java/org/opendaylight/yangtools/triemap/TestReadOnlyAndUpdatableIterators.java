@@ -53,22 +53,22 @@ public class TestReadOnlyAndUpdatableIterators {
 
     @Test(expected = UnsupportedOperationException.class)
     public void testReadOnlyIteratorSet() {
-        trySet(bt.readOnlyIterator());
+        trySet(bt.immutableIterator());
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testReadOnlyIteratorRemove() {
-        tryRemove(bt.readOnlyIterator());
+        tryRemove(bt.immutableIterator());
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testReadOnlySnapshotReadOnlyIteratorSet() {
-        trySet(bt.immutableSnapshot().readOnlyIterator());
+        trySet(bt.immutableSnapshot().immutableIterator());
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testReadOnlySnapshotReadOnlyIteratorRemove() {
-        tryRemove(bt.immutableSnapshot().readOnlyIterator());
+        tryRemove(bt.immutableSnapshot().immutableIterator());
     }
 
     @Test(expected = UnsupportedOperationException.class)
