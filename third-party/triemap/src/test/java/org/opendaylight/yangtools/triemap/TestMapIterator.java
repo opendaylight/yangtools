@@ -32,7 +32,7 @@ import org.junit.Test;
 
 public class TestMapIterator {
     @Test
-    public void testMapIterator () {
+    public void testMapIterator() {
         final Random random = new Random();
 
         for (int i = 0; i < 60 * 1000; i+= 400 + random.nextInt(400)) {
@@ -74,6 +74,33 @@ public class TestMapIterator {
 
             assertEquals(0, bt.size ());
             assertTrue(bt.isEmpty ());
+        }
+    }
+
+    @Test
+    public void testMapImmutableIterator() {
+        final Random random = new Random();
+
+        for (int i = 0; i < 60 * 1000; i+= 400 + random.nextInt(400)) {
+            final Map<Integer, Integer> bt = TrieMap.create();
+            for (int j = 0; j < i; j++) {
+                assertNull(bt.put(Integer.valueOf(j), Integer.valueOf(j)));
+            }
+            int count = 0;
+            final Set<Integer> set = new HashSet<>();
+            for (final Entry<Integer, Integer> e : bt.entrySet()) {
+                set.add(e.getKey());
+                count++;
+            }
+            for (final Integer j : set) {
+                assertTrue(bt.containsKey(j));
+            }
+            for (final Integer j : bt.keySet()) {
+                assertTrue(set.contains(j));
+            }
+
+            assertEquals(i, count);
+            assertEquals(i, bt.size());
         }
     }
 
