@@ -45,6 +45,7 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
     private final Equivalence<? super K> equiv;
 
     private AbstractEntrySet<K, V> entrySet;
+    private AbstractKeySet<K> keySet;
 
     TrieMap(final Equivalence<? super K> equiv) {
         this.equiv = equiv;
@@ -101,6 +102,15 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
     }
 
     @Override
+    public final Set<K> keySet() {
+        AbstractKeySet<K> ret = keySet;
+        if (ret == null) {
+            keySet = ret = createKeySet();
+        }
+        return ret;
+    }
+
+    @Override
     public final V get(final Object key) {
         @SuppressWarnings("unchecked")
         final K k = (K) checkNotNull(key);
@@ -134,6 +144,8 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
     /* internal methods implemented by subclasses */
 
     abstract AbstractEntrySet<K, V> createEntrySet();
+
+    abstract AbstractKeySet<K> createKeySet();
 
     abstract boolean isReadOnly();
 
