@@ -141,6 +141,11 @@ final class MutableTrieMap<K, V> extends TrieMap<K, V> {
     }
 
     @Override
+    MutableKeySet<K> createKeySet() {
+        return new MutableKeySet<>(this);
+    }
+
+    @Override
     MutableIterator<K, V> iterator() {
         return new MutableIterator<>(this);
     }
