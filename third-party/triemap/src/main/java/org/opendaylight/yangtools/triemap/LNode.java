@@ -16,8 +16,6 @@
 package org.opendaylight.yangtools.triemap;
 
 import com.google.common.base.Equivalence;
-import java.util.Iterator;
-import java.util.Map.Entry;
 
 final class LNode<K, V> extends MainNode<K, V> {
     private final LNodeEntries<K, V> listmap;
@@ -54,6 +52,10 @@ final class LNode<K, V> extends MainNode<K, V> {
         return listmap.findEntry(equiv, k);
     }
 
+    LNodeEntries<K, V> entries() {
+        return listmap;
+    }
+
     @Override
     int cachedSize(final TrieMap<?, ?> ct) {
         return listmap.size();
@@ -63,9 +65,5 @@ final class LNode<K, V> extends MainNode<K, V> {
     String string(final int lev) {
         // (" " * lev) + "LNode(%s)".format(listmap.mkString(", "))
         return "LNode";
-    }
-
-    Iterator<Entry<K, V>> iterator() {
-        return listmap.iterator();
     }
 }
