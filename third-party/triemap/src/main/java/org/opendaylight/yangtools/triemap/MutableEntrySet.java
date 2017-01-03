@@ -15,9 +15,8 @@
  */
 package org.opendaylight.yangtools.triemap;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.AbstractSet;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
@@ -27,30 +26,30 @@ import java.util.Map.Entry;
  * @param <K> the type of keys
  * @param <V> the type of values
  */
-final class EntrySet<K, V> extends AbstractSet<Entry<K, V>> {
-    private final TrieMap<K, V> map;
+final class MutableEntrySet<K, V> extends AbstractEntrySet<K, V> {
+    MutableEntrySet(final TrieMap<K, V> map) {
+        super(map);
+    }
 
-    EntrySet(final TrieMap<K, V> map) {
-        this.map = checkNotNull(map);
+    @Override
+    public boolean add(final Entry<K, V> e) {
+        final K k = e.getKey();
+        checkArgument(k != null);
+        final V v = e.getValue();
+        checkArgument(v != null);
+
+        final V prev = map().putIfAbsent(k, v);
+        return prev == null || !v.equals(prev);
+    }
+
+    @Override
+    public void clear() {
+        map().clear();
     }
 
     @Override
     public Iterator<Entry<K, V>> iterator() {
-        return map.iterator();
-    }
-
-    @Override
-    public boolean contains(final Object o) {
-        if (!(o instanceof Entry)) {
-            return false;
-        }
-
-        final Entry<?, ?> e = (Entry<?, ?>) o;
-        if (e.getKey() == null) {
-            return false;
-        }
-        final V v = map.get(e.getKey());
-        return v != null && v.equals(e.getValue());
+        return map().iterator();
     }
 
     @Override
@@ -69,16 +68,6 @@ final class EntrySet<K, V> extends AbstractSet<Entry<K, V>> {
             return false;
         }
 
-        return map.remove(key, value);
-    }
-
-    @Override
-    public final int size() {
-        return map.size();
-    }
-
-    @Override
-    public final void clear() {
-        map.clear();
+        return map().remove(key, value);
     }
 }
