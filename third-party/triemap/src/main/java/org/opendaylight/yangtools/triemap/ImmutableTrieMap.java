@@ -19,6 +19,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Equivalence;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -33,6 +34,9 @@ import java.util.function.Function;
  */
 @Beta
 public final class ImmutableTrieMap<K, V> extends TrieMap<K, V> {
+    private static final long serialVersionUID = 1L;
+
+    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "Handled by SerializationProxy")
     private final INode<K, V> root;
 
     ImmutableTrieMap(final INode<K, V> root, final Equivalence<? super K> equiv) {
