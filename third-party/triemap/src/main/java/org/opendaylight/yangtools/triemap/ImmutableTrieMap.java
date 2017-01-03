@@ -124,6 +124,11 @@ public final class ImmutableTrieMap<K, V> extends TrieMap<K, V> {
     }
 
     @Override
+    ImmutableKeySet<K> createKeySet() {
+        return new ImmutableKeySet<>(this);
+    }
+
+    @Override
     boolean isReadOnly() {
         return true;
     }
