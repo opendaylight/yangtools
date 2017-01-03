@@ -23,6 +23,7 @@ import static org.opendaylight.yangtools.triemap.PresencePredicate.PRESENT;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Equivalence;
 import com.google.common.base.Verify;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
@@ -36,6 +37,8 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
  */
 @Beta
 final class MutableTrieMap<K, V> extends TrieMap<K, V> {
+    private static final long serialVersionUID = 1L;
+
     @SuppressWarnings("rawtypes")
     private static final AtomicReferenceFieldUpdater<MutableTrieMap, Object> ROOT_UPDATER =
             AtomicReferenceFieldUpdater.newUpdater(MutableTrieMap.class, Object.class, "root");
@@ -79,6 +82,8 @@ final class MutableTrieMap<K, V> extends TrieMap<K, V> {
         return toNullable(removehc(k, null, computeHash(k)));
     }
 
+    @SuppressFBWarnings(value = "NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE",
+            justification = "API contract allows null value, but we are not")
     @Override
     public boolean remove(final Object key, final Object value) {
         @SuppressWarnings("unchecked")
