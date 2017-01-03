@@ -23,6 +23,7 @@ import static org.opendaylight.yangtools.triemap.PresencePredicate.PRESENT;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Verify;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
@@ -131,6 +132,13 @@ final class MutableTrieMap<K, V> extends TrieMap<K, V> {
 
             // Tail recursion: return snapshot();
         }
+    }
+
+    @Override
+    MutableEntrySet<K, V> createEntrySet() {
+        // FIXME: it would be nice to have a ReadWriteTrieMap with read-only iterator
+        //        if (readOnlyEntrySet) return ImmutableEntrySet(this);
+        return new MutableEntrySet<>(this);
     }
 
     @Override
@@ -254,5 +262,10 @@ final class MutableTrieMap<K, V> extends TrieMap<K, V> {
             this.expectedmain = expectedmain;
             this.nv = nv;
         }
+    }
+
+    @Override
+    Iterator<Entry<K, V>> iterator() {
+        return new TrieMapIterator<>(0, this);
     }
 }
