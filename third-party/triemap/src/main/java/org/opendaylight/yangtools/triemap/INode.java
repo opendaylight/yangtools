@@ -19,6 +19,7 @@ import static org.opendaylight.yangtools.triemap.LookupResult.RESTART;
 import static org.opendaylight.yangtools.triemap.PresencePredicate.ABSENT;
 import static org.opendaylight.yangtools.triemap.PresencePredicate.PRESENT;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
@@ -203,6 +204,8 @@ final class INode<K, V> extends BasicNode {
         return rec_insertif(k, v, hc, cond, lev, parent, gen, ct);
     }
 
+    @SuppressFBWarnings(value = "NP_OPTIONAL_RETURN_NULL",
+            justification = "Returning null Optional indicates the need to restart.")
     private Optional<V> insertDual(final TrieMap<K, V> ct, final CNode<K, V> cn, final int pos, final SNode<K, V> sn,
             final K k, final V v, final int hc, final int lev) {
         final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
@@ -210,6 +213,8 @@ final class INode<K, V> extends BasicNode {
         return GCAS(cn, nn, ct) ? Optional.empty() : null;
     }
 
+    @SuppressFBWarnings(value = "NP_OPTIONAL_RETURN_NULL",
+            justification = "Returning null Optional indicates the need to restart.")
     private Optional<V> rec_insertif(final K k, final V v, final int hc, final Object cond, final int lev,
             final INode<K, V> parent, final Gen startgen, final TrieMap<K, V> ct) {
         while (true) {
@@ -433,6 +438,8 @@ final class INode<K, V> extends BasicNode {
         return rec_remove(k, cond, hc, lev, parent, gen, ct);
     }
 
+    @SuppressFBWarnings(value = "NP_OPTIONAL_RETURN_NULL",
+            justification = "Returning null Optional indicates the need to restart.")
     private Optional<V> rec_remove(final K k, final Object cond, final int hc, final int lev, final INode<K, V> parent,
             final Gen startgen, final TrieMap<K, V> ct) {
         final MainNode<K, V> m = GCAS_READ(ct); // use -Yinline!
