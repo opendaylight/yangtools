@@ -15,56 +15,59 @@
  */
 package org.opendaylight.yangtools.triemap;
 
-import java.util.Iterator;
-import java.util.Map.Entry;
-
 final class LNode<K, V> extends MainNode<K, V> {
-    private final LNodeEntries<K, V> listmap;
+    // Internally-linked single list of of entries
+    private final LNodeEntries<K, V> entries;
+    private final int size;
 
-    private LNode(final LNodeEntries<K, V> listmap) {
-        this.listmap = listmap;
+    private LNode(final LNodeEntries<K, V> entries, final int size) {
+        this.entries = entries;
+        this.size = size;
     }
 
     LNode(final K k1, final V v1, final K k2, final V v2) {
-        this(LNodeEntries.map(k1, v1, k2, v2));
+        this(LNodeEntries.map(k1, v1, k2, v2), 2);
     }
 
     LNode<K, V> insertChild( final K k, final V v) {
-        return new LNode<>(listmap.insert(k, v));
+        return new LNode<>(entries.insert(k, v), size + 1);
     }
 
     MainNode<K, V> removeChild(final LNodeEntry<K, V> entry, final int hc) {
-        // We only ever create ListMaps with two or more entries,  and remove them as soon as they reach one element
-        // (below), so we cannot observe a null return here.
-        final LNodeEntries<K, V> map = listmap.remove(entry);
-        if (map.isSingle()) {
+        // While remove() can return null, that case will never happen here, as we are starting off with two entries
+        // so we cannot observe a null return here.
+        final LNodeEntries<K, V> map = entries.remove(entry);
+
+        // If the returned LNode would have only one element, we turn it into a TNode, hence above null return from
+        // remove() can never happen.
+        if (size == 2) {
             // create it tombed so that it gets compressed on subsequent accesses
             return new TNode<>(map.getKey(), map.getValue(), hc);
         }
 
-        return new LNode<>(map);
+        return new LNode<>(map, size - 1);
     }
 
     MainNode<K, V> replaceChild(final LNodeEntry<K, V> entry, final V v) {
-        return new LNode<>(listmap.replace(entry, v));
+        return new LNode<>(entries.replace(entry, v), size);
     }
 
     LNodeEntry<K, V> get(final Equivalence<? super K> equiv, final K k) {
-        return listmap.findEntry(equiv, k);
+        return entries.findEntry(equiv, k);
+    }
+
+    LNodeEntries<K, V> entries() {
+        return entries;
     }
 
     @Override
     int cachedSize(final TrieMap<?, ?> ct) {
-        return listmap.size();
+        return size;
     }
 
     @Override
     String string(final int lev) {
         // (" " * lev) + "LNode(%s)".format(listmap.mkString(", "))
         return "LNode";
-    }
-
-    Iterator<Entry<K, V>> iterator() {
-        return listmap.iterator();
     }
 }

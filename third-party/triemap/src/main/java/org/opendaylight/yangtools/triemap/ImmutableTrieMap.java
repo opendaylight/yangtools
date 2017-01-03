@@ -19,7 +19,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.annotations.Beta;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -130,16 +129,16 @@ public final class ImmutableTrieMap<K, V> extends TrieMap<K, V> {
     }
 
     @Override
+    ImmutableIterator<K, V> iterator() {
+        return immutableIterator();
+    }
+
+    @Override
     INode<K, V> RDCSS_READ_ROOT(final boolean abort) {
         return root;
     }
 
     static UnsupportedOperationException unsupported() {
         return new UnsupportedOperationException("Attempted to modify a read-only view");
-    }
-
-    @Override
-    Iterator<Entry<K, V>> iterator() {
-        return immutableIterator();
     }
 }

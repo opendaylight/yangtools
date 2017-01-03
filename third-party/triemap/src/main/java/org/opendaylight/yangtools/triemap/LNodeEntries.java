@@ -15,12 +15,9 @@
  */
 package org.opendaylight.yangtools.triemap;
 
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.NoSuchElementException;
-
 /**
- * Similar to Scala's ListMap. Stores a linked set of entries, guaranteed to contain unique entry keys.
+ * Similar to Scala's ListMap, this is a single-linked list of set of map entries. Aside from the Set contract, this
+ * class fulfills the requirements for an immutable map entryset.
  *
  * @author Robert Varga
  *
@@ -34,18 +31,13 @@ abstract class LNodeEntries<K, V> extends LNodeEntry<K, V> {
         }
 
         @Override
-        boolean isSingle() {
-            return true;
-        }
-
-        @Override
         LNodeEntries<K, V> next() {
             return null;
         }
     }
 
     private static final class Multiple<K, V> extends LNodeEntries<K, V> {
-        // Modified during remove only
+        // Modified during remove only, otherwise final
         LNodeEntries<K, V> next;
 
         // Used in remove() only
@@ -56,11 +48,6 @@ abstract class LNodeEntries<K, V> extends LNodeEntry<K, V> {
         Multiple(final K k, final V v, final LNodeEntries<K, V> next) {
             super(k, v);
             this.next = next;
-        }
-
-        @Override
-        boolean isSingle() {
-            return next == null;
         }
 
         @Override
@@ -77,8 +64,12 @@ abstract class LNodeEntries<K, V> extends LNodeEntry<K, V> {
         return new Multiple<>(k1, v1, new Single<>(k2, v2));
     }
 
-    abstract boolean isSingle();
-
+    /**
+     * Return the remainder of this list. Useful for implementing Iterator-like contract. Null indicates there are no
+     * more entries.
+     *
+     * @return Remainder of this list, or null if nothing remains
+     */
     abstract LNodeEntries<K, V> next();
 
     final LNodeEntry<K, V> findEntry(final Equivalence<? super K> equiv, final K key) {
@@ -100,8 +91,9 @@ abstract class LNodeEntries<K, V> extends LNodeEntry<K, V> {
     }
 
     final LNodeEntries<K, V> replace(final LNodeEntry<K, V> entry, final V v) {
-        final LNodeEntries<K, V> removed = remove(entry);
-        return removed == null ? new Single<>(entry.getKey(), v) : new Multiple<>(entry.getKey(), v, removed);
+        final LNodeEntries<K, V> removed;
+        return (removed = remove(entry)) == null ? new Single<>(entry.getKey(), v)
+                : new Multiple<>(entry.getKey(), v, removed);
     }
 
     final LNodeEntries<K, V> remove(final LNodeEntry<K, V> entry) {
@@ -109,13 +101,16 @@ abstract class LNodeEntries<K, V> extends LNodeEntry<K, V> {
             return next();
         }
 
+        // This will result in a list with a long tail, i.e last entry storing explicit null. Overhead is amortized
+        // against the number of entries. We do not retain chains shorter than two, so the worst-case overhead is
+        // half-a-reference for an entry.
         final Multiple<K, V> ret = new Multiple<>(this);
 
         Multiple<K, V> last = ret;
         LNodeEntries<K, V> cur = next();
         while (cur != null) {
-            // We cannot use equals() here, as it is wired to key/value equality,
-            // which we really do not want.
+            // We cannot use equals() here, as it is wired to key equality and we must never compare entries based on
+            // that property. This method is intended to remove a known reference, so identity is what we want.
             if (entry == cur) {
                 last.next = cur.next();
                 return ret;
@@ -128,43 +123,5 @@ abstract class LNodeEntries<K, V> extends LNodeEntry<K, V> {
         }
 
         throw new IllegalStateException(String.format("Entry %s not found", entry));
-    }
-
-    // No need to specialize these two methods, as they are invoked only from a stable LNode, at which point it is
-    // guaranteed to be a Multiple.
-    final int size() {
-        int sz = 1;
-        for (LNodeEntries<?, ?> wlk = next(); wlk != null; wlk = wlk.next()) {
-            sz++;
-        }
-        return sz;
-    }
-
-    final Iterator<Entry<K, V>> iterator() {
-        return new NodeIterator<>(this);
-    }
-
-    static final class NodeIterator<K,V> implements Iterator<Entry<K, V>> {
-        private LNodeEntries<K, V> n;
-
-        NodeIterator(final LNodeEntries<K, V> n) {
-            this.n = n;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return n != null;
-        }
-
-        @Override
-        public Entry<K, V> next() {
-            if (n == null) {
-                throw new NoSuchElementException();
-            }
-
-            final Entry<K, V> res = n;
-            n = n.next();
-            return res;
-        }
     }
 }
