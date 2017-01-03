@@ -15,6 +15,7 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import static org.opendaylight.yangtools.triemap.Constants.LEVEL_BITS;
 import static org.opendaylight.yangtools.triemap.LookupResult.RESTART;
 import static org.opendaylight.yangtools.triemap.PresencePredicate.ABSENT;
 import static org.opendaylight.yangtools.triemap.PresencePredicate.PRESENT;
@@ -150,7 +151,7 @@ final class INode<K, V> extends BasicNode {
                     if (cnAtPos instanceof INode) {
                         final INode<K, V> in = (INode<K, V>) cnAtPos;
                         if (startgen == in.gen) {
-                            return in.rec_insert(k, v, hc, lev + 5, this, startgen, ct);
+                            return in.rec_insert(k, v, hc, lev + LEVEL_BITS, this, startgen, ct);
                         }
                         if (GCAS(cn, cn.renewed(startgen, ct), ct)) {
                             // Tail recursion: return rec_insert (k, v, hc, lev, parent, startgen, ct);
@@ -165,7 +166,7 @@ final class INode<K, V> extends BasicNode {
                         }
 
                         final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
-                        final MainNode<K, V> nn = rn.updatedAt(pos, inode(CNode.dual(sn, k, v, hc, lev + 5, gen)), gen);
+                        final MainNode<K, V> nn = rn.updatedAt(pos, inode(CNode.dual(sn, k, v, hc, lev + LEVEL_BITS, gen)), gen);
                         return GCAS (cn, nn, ct);
                     }
                 } else {
@@ -174,7 +175,7 @@ final class INode<K, V> extends BasicNode {
                     return GCAS (cn, ncnode, ct);
                 }
             } else if (m instanceof TNode) {
-                clean(parent, ct, lev - 5);
+                clean(parent, ct, lev - LEVEL_BITS);
                 return false;
             } else if (m instanceof LNode) {
                 final LNode<K, V> ln = (LNode<K, V>) m;
@@ -209,7 +210,7 @@ final class INode<K, V> extends BasicNode {
     private Optional<V> insertDual(final TrieMap<K, V> ct, final CNode<K, V> cn, final int pos, final SNode<K, V> sn,
             final K k, final V v, final int hc, final int lev) {
         final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
-        final MainNode<K, V> nn = rn.updatedAt(pos, inode(CNode.dual(sn, k, v, hc, lev + 5, gen)), gen);
+        final MainNode<K, V> nn = rn.updatedAt(pos, inode(CNode.dual(sn, k, v, hc, lev + LEVEL_BITS, gen)), gen);
         return GCAS(cn, nn, ct) ? Optional.empty() : null;
     }
 
@@ -235,7 +236,7 @@ final class INode<K, V> extends BasicNode {
                     if (cnAtPos instanceof INode) {
                         final INode<K, V> in = (INode<K, V>) cnAtPos;
                         if (startgen == in.gen) {
-                            return in.rec_insertif(k, v, hc, cond, lev + 5, this, startgen, ct);
+                            return in.rec_insertif(k, v, hc, cond, lev + LEVEL_BITS, this, startgen, ct);
                         }
 
                         if (GCAS(cn, cn.renewed(startgen, ct), ct)) {
@@ -295,7 +296,7 @@ final class INode<K, V> extends BasicNode {
                     return Optional.empty();
                 }
             } else if (m instanceof TNode) {
-                clean(parent, ct, lev - 5);
+                clean(parent, ct, lev - LEVEL_BITS);
                 return null;
             } else if (m instanceof LNode) {
                 // 3) an l-node
@@ -376,7 +377,7 @@ final class INode<K, V> extends BasicNode {
                 if (sub instanceof INode) {
                     final INode<K, V> in = (INode<K, V>) sub;
                     if (ct.isReadOnly() || (startgen == in.gen)) {
-                        return in.rec_lookup(k, hc, lev + 5, this, startgen, ct);
+                        return in.rec_lookup(k, hc, lev + LEVEL_BITS, this, startgen, ct);
                     }
 
                     if (GCAS(cn, cn.renewed(startgen, ct), ct)) {
@@ -419,7 +420,7 @@ final class INode<K, V> extends BasicNode {
             return null;
         }
 
-        clean(parent, ct, lev - 5);
+        clean(parent, ct, lev - LEVEL_BITS);
         return RESTART;
     }
 
@@ -459,7 +460,7 @@ final class INode<K, V> extends BasicNode {
             if (sub instanceof INode) {
                 final INode<K, V> in = (INode<K, V>) sub;
                 if (startgen == in.gen) {
-                    res = in.rec_remove(k, cond, hc, lev + 5, this, startgen, ct);
+                    res = in.rec_remove(k, cond, hc, lev + LEVEL_BITS, this, startgen, ct);
                 } else {
                     if (GCAS(cn, cn.renewed (startgen, ct), ct)) {
                         res = rec_remove(k, cond, hc, lev, parent, startgen, ct);
@@ -496,7 +497,7 @@ final class INode<K, V> extends BasicNode {
 
             return res;
         } else if (m instanceof TNode) {
-            clean(parent, ct, lev - 5);
+            clean(parent, ct, lev - LEVEL_BITS);
             return null;
         } else if (m instanceof LNode) {
             final LNode<K, V> ln = (LNode<K, V>) m;
@@ -528,7 +529,7 @@ final class INode<K, V> extends BasicNode {
             }
 
             final CNode<K, V> cn = (CNode<K, V>) pm;
-            final int idx = (hc >>> (lev - 5)) & 0x1f;
+            final int idx = (hc >>> (lev - LEVEL_BITS)) & 0x1f;
             final int bmp = cn.bitmap;
             final int flag = 1 << idx;
             if ((bmp & flag) == 0) {
@@ -541,7 +542,7 @@ final class INode<K, V> extends BasicNode {
             if (sub == this) {
                 if (nonlive instanceof TNode) {
                     final TNode<?, ?> tn = (TNode<?, ?>) nonlive;
-                    final MainNode<K, V> ncn = cn.updatedAt(pos, tn.copyUntombed(), gen).toContracted(lev - 5);
+                    final MainNode<K, V> ncn = cn.updatedAt(pos, tn.copyUntombed(), gen).toContracted(lev - LEVEL_BITS);
                     if (!parent.GCAS(cn, ncn, ct)) {
                         if (ct.readRoot().gen == startgen) {
                             // Tail recursion: cleanParent(nonlive, parent, ct, hc, lev, startgen);
