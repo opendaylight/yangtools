@@ -89,7 +89,7 @@ public class TestMapIterator {
 
     @Test(expected = NoSuchElementException.class)
     public void testEmptyReadOnlyIterator() {
-        failAdvance(TrieMap.create().readOnlyIterator());
+        failAdvance(TrieMap.create().immutableIterator());
     }
 
     @Test(expected = NoSuchElementException.class)
