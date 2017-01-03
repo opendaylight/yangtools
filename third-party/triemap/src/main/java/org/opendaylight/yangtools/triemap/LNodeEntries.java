@@ -16,9 +16,6 @@
 package org.opendaylight.yangtools.triemap;
 
 import com.google.common.base.Equivalence;
-import java.util.Iterator;
-import java.util.Map.Entry;
-import java.util.NoSuchElementException;
 
 /**
  * Similar to Scala's ListMap. Stores a linked set of entries, guaranteed to contain unique entry keys.
@@ -139,33 +136,5 @@ abstract class LNodeEntries<K, V> extends LNodeEntry<K, V> {
             sz++;
         }
         return sz;
-    }
-
-    final Iterator<Entry<K, V>> iterator() {
-        return new NodeIterator<>(this);
-    }
-
-    static final class NodeIterator<K,V> implements Iterator<Entry<K, V>> {
-        private LNodeEntries<K, V> n;
-
-        NodeIterator(final LNodeEntries<K, V> n) {
-            this.n = n;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return n != null;
-        }
-
-        @Override
-        public Entry<K, V> next() {
-            if (n == null) {
-                throw new NoSuchElementException();
-            }
-
-            final Entry<K, V> res = n;
-            n = n.next();
-            return res;
-        }
     }
 }
