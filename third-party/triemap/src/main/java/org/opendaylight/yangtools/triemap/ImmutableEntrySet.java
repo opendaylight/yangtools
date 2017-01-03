@@ -15,46 +15,47 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import static org.opendaylight.yangtools.triemap.ImmutableTrieMap.unsupported;
+
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-/***
- * Support for EntrySet operations required by the Map interface
+/**
+ * {@link AbstractEntrySet} implementation guarding against attempts to mutate the underlying map.
  *
- * @param <K> the type of keys
- * @param <V> the type of values
+ * @author Robert Varga
+ *
+ * @param <K> the type of entry keys
+ * @param <V> the type of entry values
  */
-final class EntrySet<K, V> extends AbstractEntrySet<K, V> {
-    EntrySet(final TrieMap<K, V> map) {
+final class ImmutableEntrySet<K, V> extends AbstractEntrySet<K, V> {
+    ImmutableEntrySet(final TrieMap<K, V> map) {
         super(map);
     }
 
     @Override
+    public void clear() {
+        throw unsupported();
+    }
+
+    @Override
     public Iterator<Entry<K, V>> iterator() {
-        return map().iterator();
+        return map().immutableIterator();
     }
 
     @Override
     public boolean remove(final Object o) {
-        if (!(o instanceof Entry)) {
-            return false;
-        }
-
-        final Entry<?, ?> e = (Entry<?, ?>) o;
-        final Object key = e.getKey();
-        if (key == null) {
-            return false;
-        }
-        final Object value = e.getValue();
-        if (value == null) {
-            return false;
-        }
-
-        return map().remove(key, value);
+        throw unsupported();
     }
 
     @Override
-    public final void clear() {
-        map().clear();
+    public boolean removeAll(final Collection<?> c) {
+        throw unsupported();
+    }
+
+    @Override
+    public boolean retainAll(final Collection<?> c) {
+        throw unsupported();
     }
 }

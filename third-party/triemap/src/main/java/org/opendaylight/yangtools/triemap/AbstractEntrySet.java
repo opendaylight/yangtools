@@ -15,27 +15,32 @@
  */
 package org.opendaylight.yangtools.triemap;
 
-import java.util.Iterator;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.AbstractSet;
 import java.util.Map.Entry;
 
-/***
- * Support for EntrySet operations required by the Map interface
+/**
+ * Abstract base class for implementing {@link TrieMap} entry sets.
  *
- * @param <K> the type of keys
- * @param <V> the type of values
+ * @author Robert Varga
+ *
+ * @param <K> the type of entry keys
+ * @param <V> the type of entry values
  */
-final class EntrySet<K, V> extends AbstractEntrySet<K, V> {
-    EntrySet(final TrieMap<K, V> map) {
-        super(map);
+abstract class AbstractEntrySet<K, V> extends AbstractSet<Entry<K, V>> {
+    private final TrieMap<K, V> map;
+
+    AbstractEntrySet(final TrieMap<K, V> map) {
+        this.map = checkNotNull(map);
+    }
+
+    final TrieMap<K, V> map() {
+        return map;
     }
 
     @Override
-    public Iterator<Entry<K, V>> iterator() {
-        return map().iterator();
-    }
-
-    @Override
-    public boolean remove(final Object o) {
+    public final boolean contains(final Object o) {
         if (!(o instanceof Entry)) {
             return false;
         }
@@ -45,16 +50,13 @@ final class EntrySet<K, V> extends AbstractEntrySet<K, V> {
         if (key == null) {
             return false;
         }
-        final Object value = e.getValue();
-        if (value == null) {
-            return false;
-        }
 
-        return map().remove(key, value);
+        final V v = map.get(key);
+        return v != null && v.equals(e.getValue());
     }
 
     @Override
-    public final void clear() {
-        map().clear();
+    public final int size() {
+        return map.size();
     }
 }

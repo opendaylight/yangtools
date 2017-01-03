@@ -43,10 +43,7 @@ import java.util.concurrent.ConcurrentMap;
 public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,V>, Serializable {
     private static final long serialVersionUID = 1L;
 
-    /**
-     * EntrySet
-     */
-    private final EntrySet<K, V> entrySet = new EntrySet<>(this);
+    private Set<Entry<K, V>> entrySet;
     private final Equivalence<? super K> equiv;
 
     TrieMap(final Equivalence<? super K> equiv) {
@@ -91,7 +88,11 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
 
     @Override
     public final Set<Entry<K, V>> entrySet() {
-        return entrySet;
+        Set<Entry<K, V>> ret = entrySet;
+        if (ret == null) {
+            entrySet = ret = createEntrySet();
+        }
+        return ret;
     }
 
     @Override
@@ -127,11 +128,35 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
 
     /* internal methods implemented by subclasses */
 
+    abstract Set<Entry<K, V>> createEntrySet();
+
     abstract boolean isReadOnly();
 
     abstract INode<K, V> RDCSS_READ_ROOT(boolean abort);
 
+    /**
+     * Return an iterator over a TrieMap.
+     *
+     * If this is a read-only snapshot, it would return a read-only iterator.
+     *
+     * If it is the original TrieMap or a non-readonly snapshot, it would return
+     * an iterator that would allow for updates.
+     *
+     * @return
+     */
+    abstract Iterator<Entry<K, V>> iterator();
+
     /* internal methods provided for subclasses */
+
+    /**
+     * Return an iterator over a TrieMap.
+     * This is a read-only iterator.
+     *
+     * @return
+     */
+    final Iterator<Entry<K, V>> immutableIterator() {
+        return new TrieMapReadOnlyIterator<>(0, immutableSnapshot());
+    }
 
     @SuppressWarnings("null")
     static <V> V toNullable(final Optional<V> opt) {
@@ -180,30 +205,5 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
         } while (res == RESTART);
 
         return (V) res;
-    }
-
-    /**
-     * Return an iterator over a TrieMap.
-     *
-     * If this is a read-only snapshot, it would return a read-only iterator.
-     *
-     * If it is the original TrieMap or a non-readonly snapshot, it would return
-     * an iterator that would allow for updates.
-     *
-     * @return
-     */
-    final Iterator<Entry<K, V>> iterator() {
-        // FIXME: it would be nice to have a ReadWriteTrieMap with read-only iterator
-        return isReadOnly() ? new TrieMapReadOnlyIterator<>(0, this) : new TrieMapIterator<>(0, this);
-    }
-
-    /**
-     * Return an iterator over a TrieMap.
-     * This is a read-only iterator.
-     *
-     * @return
-     */
-    final Iterator<Entry<K, V>> readOnlyIterator() {
-        return new TrieMapReadOnlyIterator<>(0, immutableSnapshot());
     }
 }
