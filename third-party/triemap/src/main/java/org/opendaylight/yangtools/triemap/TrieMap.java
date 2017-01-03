@@ -22,7 +22,6 @@ import com.google.common.annotations.Beta;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.util.AbstractMap;
-import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -149,7 +148,7 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
      *
      * @return
      */
-    abstract Iterator<Entry<K, V>> iterator();
+    abstract AbstractIterator<K, V> iterator();
 
     /* internal methods provided for subclasses */
 
@@ -159,8 +158,8 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
      *
      * @return
      */
-    final Iterator<Entry<K, V>> immutableIterator() {
-        return new TrieMapReadOnlyIterator<>(0, immutableSnapshot());
+    final ImmutableIterator<K, V> immutableIterator() {
+        return new ImmutableIterator<>(immutableSnapshot());
     }
 
     @SuppressWarnings("null")
