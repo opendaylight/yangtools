@@ -24,7 +24,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Equivalence;
 import com.google.common.base.Verify;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.util.Iterator;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
@@ -140,6 +139,11 @@ final class MutableTrieMap<K, V> extends TrieMap<K, V> {
         // FIXME: it would be nice to have a ReadWriteTrieMap with read-only iterator
         //        if (readOnlyEntrySet) return ImmutableEntrySet(this);
         return new MutableEntrySet<>(this);
+    }
+
+    @Override
+    MutableIterator<K, V> iterator() {
+        return new MutableIterator<>(this);
     }
 
     @Override
@@ -263,10 +267,5 @@ final class MutableTrieMap<K, V> extends TrieMap<K, V> {
             this.expectedmain = expectedmain;
             this.nv = nv;
         }
-    }
-
-    @Override
-    Iterator<Entry<K, V>> iterator() {
-        return new TrieMapIterator<>(0, this);
     }
 }
