@@ -16,6 +16,7 @@
 package org.opendaylight.yangtools.triemap;
 
 import static com.google.common.base.Preconditions.checkState;
+import static org.opendaylight.yangtools.triemap.Constants.MAX_DEPTH;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,8 +28,8 @@ class TrieMapIterator<K, V> implements Iterator<Entry<K, V>> {
     private int level;
     protected TrieMap<K, V> ct;
     private final boolean mustInit;
-    private final BasicNode[][] stack = new BasicNode[7][];
-    private final int[] stackpos = new int[7];
+    private final BasicNode[][] stack = new BasicNode[MAX_DEPTH][];
+    private final int[] stackpos = new int[MAX_DEPTH];
     private int depth = -1;
     private Iterator<Entry<K, V>> subiter = null;
     private EntryNode<K, V> current = null;

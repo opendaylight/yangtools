@@ -15,6 +15,9 @@
  */
 package org.opendaylight.yangtools.triemap;
 
+import static org.opendaylight.yangtools.triemap.Constants.HASH_BITS;
+import static org.opendaylight.yangtools.triemap.Constants.LEVEL_BITS;
+
 import com.google.common.base.Verify;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
@@ -50,7 +53,7 @@ final class CNode<K, V> extends MainNode<K, V> {
 
     private static <K, V> MainNode<K,V> dual(final SNode<K, V> x, final int xhc, final SNode<K, V> y, final int yhc,
             final int lev, final Gen gen) {
-        if (lev >= 35) {
+        if (lev >= HASH_BITS) {
             return new LNode<>(x.k, x.v, y.k, y.v);
         }
 
@@ -59,7 +62,7 @@ final class CNode<K, V> extends MainNode<K, V> {
         final int bmp = (1 << xidx) | (1 << yidx);
 
         if (xidx == yidx) {
-            return new CNode<>(gen, bmp, new INode<>(gen, dual(x, xhc, y, yhc, lev + 5, gen)));
+            return new CNode<>(gen, bmp, new INode<>(gen, dual(x, xhc, y, yhc, lev + LEVEL_BITS, gen)));
         }
 
         return xidx < yidx ? new CNode<>(gen, bmp, x, y) : new CNode<>(gen, bmp, y, x);
