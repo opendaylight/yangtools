@@ -144,6 +144,11 @@ final class MutableTrieMap<K, V> extends TrieMap<K, V> {
     }
 
     @Override
+    Iterator<Entry<K, V>> iterator() {
+        return new MutableIterator<>(this);
+    }
+
+    @Override
     boolean isReadOnly() {
         return false;
     }
@@ -264,10 +269,5 @@ final class MutableTrieMap<K, V> extends TrieMap<K, V> {
             this.expectedmain = expectedmain;
             this.nv = nv;
         }
-    }
-
-    @Override
-    Iterator<Entry<K, V>> iterator() {
-        return new TrieMapIterator<>(0, this);
     }
 }

@@ -155,7 +155,7 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
      * @return
      */
     final Iterator<Entry<K, V>> immutableIterator() {
-        return new TrieMapReadOnlyIterator<>(0, immutableSnapshot());
+        return new ImmutableIterator<>(immutableSnapshot());
     }
 
     @SuppressWarnings("null")
