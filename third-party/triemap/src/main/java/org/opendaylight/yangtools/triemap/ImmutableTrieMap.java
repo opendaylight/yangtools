@@ -19,6 +19,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.annotations.Beta;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -119,6 +120,11 @@ public final class ImmutableTrieMap<K, V> extends TrieMap<K, V> {
     }
 
     @Override
+    ImmutableEntrySet<K, V> createEntrySet() {
+        return new ImmutableEntrySet<>(this);
+    }
+
+    @Override
     boolean isReadOnly() {
         return true;
     }
@@ -128,7 +134,12 @@ public final class ImmutableTrieMap<K, V> extends TrieMap<K, V> {
         return root;
     }
 
-    private static UnsupportedOperationException unsupported() {
+    static UnsupportedOperationException unsupported() {
         return new UnsupportedOperationException("Attempted to modify a read-only view");
+    }
+
+    @Override
+    Iterator<Entry<K, V>> iterator() {
+        return immutableIterator();
     }
 }
