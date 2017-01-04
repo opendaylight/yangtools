@@ -18,10 +18,12 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -77,7 +79,6 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -258,7 +259,7 @@ public class NormalizedNodeXmlTranslationTest {
     }
 
     public NormalizedNodeXmlTranslationTest(final String yangPath, final String xmlPath,
-                                            final ContainerNode expectedNode) throws ReactorException {
+            final ContainerNode expectedNode) throws ReactorException, FileNotFoundException, URISyntaxException {
         this.schema = parseTestSchema(yangPath);
         this.xmlPath = xmlPath;
         this.containerNode = (ContainerSchemaNode) getSchemaNode(schema, "test", "container");
@@ -269,8 +270,9 @@ public class NormalizedNodeXmlTranslationTest {
     private final ContainerSchemaNode containerNode;
     private final String xmlPath;
 
-    private SchemaContext parseTestSchema(final String yangPath) throws ReactorException {
-        return YangParserTestUtils.parseYangSources(new YangStatementSourceImpl(yangPath, false));
+    private SchemaContext parseTestSchema(final String yangPath) throws ReactorException, FileNotFoundException,
+            URISyntaxException {
+        return YangParserTestUtils.parseYangSource(yangPath);
     }
 
     @Test

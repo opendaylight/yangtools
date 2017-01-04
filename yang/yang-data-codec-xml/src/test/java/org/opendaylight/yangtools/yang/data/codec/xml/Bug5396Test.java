@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug5396Test {
@@ -44,7 +43,7 @@ public class Bug5396Test {
     public void Init() throws Exception {
         fooModuleQName = QNameModule.create(new URI("foo"), SimpleDateFormatUtil.getRevisionFormat().parse("2016-03-22"));
 
-        schemaContext = YangParserTestUtils.parseYangSources(new YangStatementSourceImpl("/bug5396/yang/foo.yang", false));
+        schemaContext = YangParserTestUtils.parseYangSource("/bug5396/yang/foo.yang");
     }
 
     @Test

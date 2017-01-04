@@ -47,7 +47,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeS
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.xml.sax.SAXException;
 
@@ -110,7 +109,7 @@ public class XmlToNormalizedNodesTest {
     @Test
     public void testComplexXmlParsing() throws IOException, URISyntaxException, ReactorException, XMLStreamException,
             ParserConfigurationException, SAXException {
-        SchemaContext schemaContext = YangParserTestUtils.parseYangSources(new YangStatementSourceImpl("/baz.yang", false));
+        SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/baz.yang");
 
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/baz.xml");
 
@@ -138,7 +137,7 @@ public class XmlToNormalizedNodesTest {
     @Test
     public void testSimpleXmlParsing() throws IOException, URISyntaxException, ReactorException, XMLStreamException,
             ParserConfigurationException, SAXException {
-        SchemaContext schemaContext = YangParserTestUtils.parseYangSources(new YangStatementSourceImpl("/foo.yang", false));
+        SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/foo.yang");
 
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/foo.xml");
 
@@ -158,7 +157,7 @@ public class XmlToNormalizedNodesTest {
     @Test
     public void shouldFailOnDuplicateLeaf() throws ReactorException, XMLStreamException, IOException,
             ParserConfigurationException, SAXException, URISyntaxException {
-        SchemaContext schemaContext = YangParserTestUtils.parseYangSources(new YangStatementSourceImpl("/foo.yang", false));
+        SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/foo.yang");
 
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-foo.xml");
 
@@ -181,7 +180,7 @@ public class XmlToNormalizedNodesTest {
     @Test
     public void shouldFailOnDuplicateAnyXml() throws ReactorException, XMLStreamException, IOException,
             ParserConfigurationException, SAXException, URISyntaxException {
-        SchemaContext schemaContext = YangParserTestUtils.parseYangSources(new YangStatementSourceImpl("/foo.yang", false));
+        SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/foo.yang");
 
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-foo-2.xml");
 
@@ -203,7 +202,7 @@ public class XmlToNormalizedNodesTest {
     @Test
     public void shouldFailOnDuplicateContainer() throws ReactorException, XMLStreamException, IOException,
             ParserConfigurationException, SAXException, URISyntaxException {
-        SchemaContext schemaContext = YangParserTestUtils.parseYangSources(new YangStatementSourceImpl("/foo.yang", false));
+        SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/foo.yang");
 
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-foo-3.xml");
 
@@ -225,7 +224,7 @@ public class XmlToNormalizedNodesTest {
     @Test
     public void shouldFailOnUnterminatedLeafElement() throws ReactorException, XMLStreamException, IOException,
             ParserConfigurationException, SAXException, URISyntaxException {
-        SchemaContext schemaContext = YangParserTestUtils.parseYangSources(new YangStatementSourceImpl("/baz.yang", false));
+        SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/baz.yang");
 
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz.xml");
 
@@ -248,7 +247,7 @@ public class XmlToNormalizedNodesTest {
     @Test
     public void shouldFailOnUnterminatedLeafElement2() throws ReactorException, XMLStreamException, IOException,
             ParserConfigurationException, SAXException, URISyntaxException {
-        SchemaContext schemaContext = YangParserTestUtils.parseYangSources(new YangStatementSourceImpl("/baz.yang", false));
+        SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/baz.yang");
 
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz-2.xml");
 
@@ -271,7 +270,7 @@ public class XmlToNormalizedNodesTest {
     @Test
     public void shouldFailOnUnterminatedContainerElement() throws ReactorException, XMLStreamException, IOException,
             ParserConfigurationException, SAXException, URISyntaxException {
-        SchemaContext schemaContext = YangParserTestUtils.parseYangSources(new YangStatementSourceImpl("/baz.yang", false));
+        SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/baz.yang");
 
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz-4.xml");
 
@@ -294,7 +293,7 @@ public class XmlToNormalizedNodesTest {
     @Test
     public void shouldFailOnUnexistingContainerElement() throws ReactorException, XMLStreamException, IOException,
             ParserConfigurationException, SAXException, URISyntaxException {
-        SchemaContext schemaContext = YangParserTestUtils.parseYangSources(new YangStatementSourceImpl("/baz.yang", false));
+        SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/baz.yang");
 
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz-3.xml");
 

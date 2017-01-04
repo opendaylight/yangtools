@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
@@ -27,7 +28,7 @@ public class LeafNodeDomSerializerTest {
 
     @Test
     public void leafNodeDomSerializerTest() throws ReactorException, IOException, YangSyntaxErrorException,
-            ParseException {
+            ParseException, URISyntaxException {
         final DataSchemaNode currentContainer = DomSerializerTestUtils.getSchemaContext().findModuleByName
                 ("serializer-test", null).getDataChildByName(DomSerializerTestUtils.generateQname("root"));
         final LeafSchemaNode currentLeaf = (LeafSchemaNode) ((ContainerEffectiveStatementImpl) currentContainer)

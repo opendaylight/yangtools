@@ -9,6 +9,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.serializer;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -26,13 +27,14 @@ public class LeafSetDomSerializerTest {
     private LeafSetEntryNode<?> tempLeafList;
 
     @Test
-    public void leafSetDomSerializerTest() throws IOException, YangSyntaxErrorException, ParseException, ReactorException {
+    public void leafSetDomSerializerTest() throws IOException, YangSyntaxErrorException, ParseException,
+            ReactorException, URISyntaxException {
         leafSetEntryNodeDomSerializerTest();
         leafSetNodeDomSerializerTest();
     }
 
     private void leafSetEntryNodeDomSerializerTest() throws ReactorException, IOException, YangSyntaxErrorException,
-            ParseException {
+            ParseException, URISyntaxException {
         final ContainerSchemaNode currentContainer = (ContainerSchemaNode) DomSerializerTestUtils.getSchemaContext()
                 .findModuleByName("serializer-test", null)
                 .getDataChildByName(DomSerializerTestUtils.generateQname("root"));

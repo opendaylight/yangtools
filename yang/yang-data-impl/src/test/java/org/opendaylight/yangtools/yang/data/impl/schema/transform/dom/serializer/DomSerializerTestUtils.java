@@ -13,6 +13,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -31,7 +32,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serialize
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -47,9 +47,9 @@ public class DomSerializerTestUtils {
         throw new UnsupportedOperationException("Utility class");
     }
 
-    public static SchemaContext getSchemaContext() throws ReactorException, IOException, YangSyntaxErrorException {
-        final YangStatementSourceImpl source = new YangStatementSourceImpl("/dom-serializer-test/serializer-test.yang", false);
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSources(source);
+    public static SchemaContext getSchemaContext() throws ReactorException, IOException, YangSyntaxErrorException,
+            URISyntaxException {
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/dom-serializer-test/serializer-test.yang");
 
         assertNotNull("Schema context must not be null.", schemaContext);
         return schemaContext;

@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
@@ -21,17 +23,14 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Element;
 
 public class DomToNormalizedNodeParserFactoryTest {
 
     @Test
-    public void testFactoryInstantiation() throws ReactorException {
-        YangStatementSourceImpl foo = new YangStatementSourceImpl("/foo.yang", false);
-
-        SchemaContext schemaContext = YangParserTestUtils.parseYangSources(foo);
+    public void testFactoryInstantiation() throws ReactorException, FileNotFoundException, URISyntaxException {
+        SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/foo.yang");
 
         DomToNormalizedNodeParserFactory factory = DomToNormalizedNodeParserFactory.getInstance(
                 DomUtils.defaultValueCodecProvider(), schemaContext,

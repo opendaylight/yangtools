@@ -45,7 +45,6 @@ import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 
@@ -58,7 +57,7 @@ public class XmlStreamUtilsTest {
 
     @BeforeClass
     public static void initialize() throws URISyntaxException, FileNotFoundException, ReactorException {
-        schemaContext = YangParserTestUtils.parseYangSources(new YangStatementSourceImpl("/leafref-test.yang", false));
+        schemaContext = YangParserTestUtils.parseYangSource("/leafref-test.yang");
         assertNotNull(schemaContext);
         assertEquals(1, schemaContext.getModules().size());
         leafRefModule = schemaContext.getModules().iterator().next();

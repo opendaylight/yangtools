@@ -46,7 +46,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWrit
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -78,7 +77,7 @@ public class Bug5446Test extends XMLTestCase {
         rootQName = QName.create(fooModuleQName, "root");
         ipAddressQName = QName.create(fooModuleQName, "ip-address");
 
-        schemaContext = YangParserTestUtils.parseYangSources(new YangStatementSourceImpl("/bug5446/yang/foo.yang", false));
+        schemaContext = YangParserTestUtils.parseYangSource("/bug5446/yang/foo.yang");
     }
 
     @Test

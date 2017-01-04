@@ -10,8 +10,10 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
 import com.google.common.base.Optional;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Before;
@@ -40,11 +42,9 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMa
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug4454Test {
-    private static final YangStatementSourceImpl source = new YangStatementSourceImpl("/bug-4454-test.yang", false);
 
     private static final QName MASTER_CONTAINER_QNAME = QName
             .create("urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model", "2015-02-02",
@@ -107,7 +107,7 @@ public class Bug4454Test {
     private InMemoryDataTree inMemoryDataTree;
 
     @Before
-    public void prepare() throws IOException, YangSyntaxErrorException, ReactorException {
+    public void prepare() throws IOException, YangSyntaxErrorException, ReactorException, URISyntaxException {
         SchemaContext schemaContext = createTestContext();
         assertNotNull("Schema context must not be null.", schemaContext);
         inMemoryDataTree =  (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL);
@@ -120,8 +120,9 @@ public class Bug4454Test {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(modificationTree));
     }
 
-    public static SchemaContext createTestContext() throws IOException, YangSyntaxErrorException, ReactorException {
-        return YangParserTestUtils.parseYangSources(source);
+    public static SchemaContext createTestContext() throws IOException, YangSyntaxErrorException, ReactorException,
+            URISyntaxException {
+        return YangParserTestUtils.parseYangSource("/bug-4454-test.yang");
     }
 
     @Test

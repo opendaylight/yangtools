@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.getCodec;
 
+import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
@@ -21,13 +22,12 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.data.api.codec.StringCodec;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
-import org.opendaylight.yangtools.yang.data.api.codec.StringCodec;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,12 +35,11 @@ import org.slf4j.LoggerFactory;
 public class StringPatternCheckingCodecTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(StringPatternCheckingCodecTest.class);
-    private static final YangStatementSourceImpl TEST_MODULE = new YangStatementSourceImpl
-            ("/string-pattern-checking-codec-test.yang", false);
 
     @Test
-    public void testStringPatternCheckingCodec() throws ReactorException, ParseException, URISyntaxException {
-        SchemaContext schemaContext = YangParserTestUtils.parseYangSources(TEST_MODULE);
+    public void testStringPatternCheckingCodec() throws ReactorException, ParseException, URISyntaxException,
+            FileNotFoundException {
+        SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/string-pattern-checking-codec-test.yang");
         assertNotNull(schemaContext);
 
         QNameModule testModuleQName = QNameModule.create(new URI("string-pattern-checking-codec-test"),
