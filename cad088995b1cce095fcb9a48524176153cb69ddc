@@ -16,6 +16,24 @@
       "revId": "cad088995b1cce095fcb9a48524176153cb69ddc",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a622d24_b03b339b",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/StatementContextBase.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 595,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-01-04T08:54:37Z",
+      "side": 0,
+      "message": "Sry, javadoc is in StmtContext interface.",
+      "parentUuid": "1a622d24_d0ea2f0e",
+      "revId": "cad088995b1cce095fcb9a48524176153cb69ddc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
