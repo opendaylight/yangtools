@@ -41,7 +41,12 @@ final class TNode<K, V> extends MainNode<K, V> implements EntryNode<K, V> {
     }
 
     @Override
-    int cachedSize(final TrieMap<?, ?> ct) {
+    int trySize() {
+        return 1;
+    }
+
+    @Override
+    int size(final ImmutableTrieMap<?, ?> ct) {
         return 1;
     }
 
