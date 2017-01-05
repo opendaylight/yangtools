@@ -20,20 +20,15 @@ import static org.opendaylight.yangtools.triemap.Constants.LEVEL_BITS;
 
 import com.google.common.base.Verify;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 final class CNode<K, V> extends MainNode<K, V> {
-    @SuppressWarnings("rawtypes")
-    private static final AtomicIntegerFieldUpdater<CNode> CSIZE_UPDATER = AtomicIntegerFieldUpdater.newUpdater(
-        CNode.class, "csize");
-
     private static final BasicNode[] EMPTY_ARRAY = new BasicNode[0];
-    private static final int NO_SIZE = -1;
 
     final int bitmap;
     final BasicNode[] array;
     final Gen gen;
 
+    // Since concurrent computation should lead to same results we can update this field without any synchronization.
     private volatile int csize = NO_SIZE;
 
     private CNode(final Gen gen, final int bitmap, final BasicNode... array) {
@@ -68,20 +63,15 @@ final class CNode<K, V> extends MainNode<K, V> {
         return xidx < yidx ? new CNode<>(gen, bmp, x, y) : new CNode<>(gen, bmp, y, x);
     }
 
-    // this should only be called from within read-only snapshots
     @Override
-    int cachedSize(final TrieMap<?, ?> ct) {
-        int sz = csize;
-        if (sz == NO_SIZE) {
-            // We have not computed the size yet, do that now
-            sz = computeSize(ct);
-            if (!CSIZE_UPDATER.compareAndSet(this, NO_SIZE, sz)) {
-                // We have been pre-empted by some else: read the result
-                sz = csize;
-            }
-        }
+    int trySize() {
+        return csize;
+    }
 
-        return sz;
+    @Override
+    int size(final ImmutableTrieMap<?, ?> ct) {
+        int sz;
+        return (sz = csize) != NO_SIZE ? sz : (csize = computeSize(ct));
     }
 
     // lends itself towards being parallelizable by choosing
@@ -89,7 +79,7 @@ final class CNode<K, V> extends MainNode<K, V> {
     // => if there are concurrent size computations, they start
     // at different positions, so they are more likely to
     // to be independent
-    private int computeSize(final TrieMap<?, ?> ct) {
+    private int computeSize(final ImmutableTrieMap<?, ?> ct) {
         final int len = array.length;
         switch (len) {
             case 0:
@@ -109,11 +99,11 @@ final class CNode<K, V> extends MainNode<K, V> {
         }
     }
 
-    private static int elementSize(final BasicNode elem, final TrieMap<?, ?> ct) {
+    private static int elementSize(final BasicNode elem, final ImmutableTrieMap<?, ?> ct) {
         if (elem instanceof SNode) {
             return 1;
         } else if (elem instanceof INode) {
-            return ((INode<?, ?>) elem).cachedSize(ct);
+            return ((INode<?, ?>) elem).size(ct);
         } else {
             throw new IllegalStateException("Unhandled element " + elem);
         }
