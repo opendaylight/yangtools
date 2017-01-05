@@ -19,6 +19,7 @@ import static org.opendaylight.yangtools.triemap.Constants.HASH_BITS;
 import static org.opendaylight.yangtools.triemap.Constants.LEVEL_BITS;
 
 import com.google.common.base.Verify;
+import com.google.common.base.VerifyException;
 import java.util.concurrent.ThreadLocalRandom;
 
 final class CNode<K, V> extends MainNode<K, V> {
@@ -74,6 +75,10 @@ final class CNode<K, V> extends MainNode<K, V> {
         return (sz = csize) != NO_SIZE ? sz : (csize = computeSize(ct));
     }
 
+    static VerifyException invalidElement(final BasicNode elem) {
+        throw new VerifyException("A CNode can contain only CNodes and SNodes, not " + elem);
+    }
+
     // lends itself towards being parallelizable by choosing
     // a random starting offset in the array
     // => if there are concurrent size computations, they start
@@ -105,7 +110,7 @@ final class CNode<K, V> extends MainNode<K, V> {
         } else if (elem instanceof INode) {
             return ((INode<?, ?>) elem).size(ct);
         } else {
-            throw new IllegalStateException("Unhandled element " + elem);
+            throw invalidElement(elem);
         }
     }
 
