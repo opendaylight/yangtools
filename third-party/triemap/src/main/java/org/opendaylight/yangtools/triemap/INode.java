@@ -20,6 +20,7 @@ import static org.opendaylight.yangtools.triemap.LookupResult.RESTART;
 import static org.opendaylight.yangtools.triemap.PresencePredicate.ABSENT;
 import static org.opendaylight.yangtools.triemap.PresencePredicate.PRESENT;
 
+import com.google.common.base.VerifyException;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
@@ -168,12 +169,14 @@ final class INode<K, V> extends BasicNode {
                         final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
                         final MainNode<K, V> nn = rn.updatedAt(pos, inode(CNode.dual(sn, k, v, hc, lev + LEVEL_BITS, gen)), gen);
                         return GCAS (cn, nn, ct);
+                    } else {
+                        throw CNode.invalidElement(cnAtPos);
                     }
-                } else {
-                    final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
-                    final MainNode<K, V> ncnode = rn.insertedAt(pos, flag, new SNode<>(k, v, hc), gen);
-                    return GCAS (cn, ncnode, ct);
                 }
+
+                final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
+                final MainNode<K, V> ncnode = rn.insertedAt(pos, flag, new SNode<>(k, v, hc), gen);
+                return GCAS (cn, ncnode, ct);
             } else if (m instanceof TNode) {
                 clean(parent, ct, lev - LEVEL_BITS);
                 return false;
@@ -182,11 +185,13 @@ final class INode<K, V> extends BasicNode {
                 final LNodeEntry<K, V> entry = ln.get(ct.equiv(), k);
                 return entry != null ? replaceln(ln, entry, v, ct) : insertln(ln, k, v, ct);
             } else {
-                throw new IllegalStateException("Unhandled node " + m);
+                throw invalidElement(m);
             }
-
-            throw new RuntimeException ("Should not happen");
         }
+    }
+
+    private static VerifyException invalidElement(final BasicNode elem) {
+        throw new VerifyException("An INode can host only a CNode, a TNode or an LNode, not " + elem);
     }
 
     /**
@@ -283,6 +288,8 @@ final class INode<K, V> extends BasicNode {
 
                             return Optional.empty();
                         }
+                    } else {
+                        throw CNode.invalidElement(cnAtPos);
                     }
                 } else if (cond == null || cond == ABSENT) {
                     final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
@@ -329,10 +336,8 @@ final class INode<K, V> extends BasicNode {
                     return replaceln(ln, entry, v, ct) ? Optional.of(entry.getValue()) : null;
                 }
             } else {
-                throw new IllegalStateException("Unhandled node " + m);
+                throw invalidElement(m);
             }
-
-            throw new RuntimeException("Should never happen");
         }
     }
 
@@ -394,6 +399,8 @@ final class INode<K, V> extends BasicNode {
                     }
 
                     return null;
+                } else {
+                    throw CNode.invalidElement(sub);
                 }
             } else if (m instanceof TNode) {
                 // 3) non-live node
@@ -403,10 +410,8 @@ final class INode<K, V> extends BasicNode {
                 final LNodeEntry<K, V> entry = ((LNode<K, V>) m).get(ct.equiv(), k);
                 return entry != null ? entry.getValue() : null;
             } else {
-                throw new IllegalStateException("Unhandled node " + m);
+                throw invalidElement(m);
             }
-
-            throw new RuntimeException ("Should not happen");
         }
     }
 
@@ -456,19 +461,18 @@ final class INode<K, V> extends BasicNode {
 
             final int pos = Integer.bitCount(bmp & (flag - 1));
             final BasicNode sub = cn.array[pos];
-            Optional<V> res = null;
+            final Optional<V> res;
             if (sub instanceof INode) {
                 final INode<K, V> in = (INode<K, V>) sub;
                 if (startgen == in.gen) {
                     res = in.rec_remove(k, cond, hc, lev + LEVEL_BITS, this, startgen, ct);
                 } else {
-                    if (GCAS(cn, cn.renewed (startgen, ct), ct)) {
+                    if (GCAS(cn, cn.renewed(startgen, ct), ct)) {
                         res = rec_remove(k, cond, hc, lev, parent, startgen, ct);
                     } else {
                         res = null;
                     }
                 }
-
             } else if (sub instanceof SNode) {
                 final SNode<K, V> sn = (SNode<K, V>) sub;
                 if (sn.hc == hc && ct.equal(sn.k, k) && (cond == null || cond.equals(sn.v))) {
@@ -481,6 +485,8 @@ final class INode<K, V> extends BasicNode {
                 } else {
                     res = Optional.empty();
                 }
+            } else {
+                throw CNode.invalidElement(sub);
             }
 
             if (res == null || !res.isPresent()) {
@@ -515,7 +521,7 @@ final class INode<K, V> extends BasicNode {
 
             return GCAS(ln, ln.removeChild(entry, hc), ct) ? Optional.of(value) : null;
         } else {
-            throw new IllegalStateException("Unhandled node " + m);
+            throw invalidElement(m);
         }
     }
 
