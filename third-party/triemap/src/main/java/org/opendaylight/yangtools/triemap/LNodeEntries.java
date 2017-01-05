@@ -16,6 +16,7 @@
 package org.opendaylight.yangtools.triemap;
 
 import com.google.common.base.Equivalence;
+import com.google.common.base.VerifyException;
 
 /**
  * Similar to Scala's ListMap, this is a single-linked list of set of map entries. Aside from the Set<> contract, this
@@ -124,6 +125,6 @@ abstract class LNodeEntries<K, V> extends LNodeEntry<K, V> {
             cur = cur.next();
         }
 
-        throw new IllegalStateException(String.format("Entry %s not found", entry));
+        throw new VerifyException(String.format("Failed to find entry %s", entry));
     }
 }
