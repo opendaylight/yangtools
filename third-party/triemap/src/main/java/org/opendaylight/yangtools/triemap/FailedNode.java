@@ -29,7 +29,12 @@ final class FailedNode<K, V> extends MainNode<K, V> {
     }
 
     @Override
-    int cachedSize(final TrieMap<?, ?> ct) {
+    int trySize() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    int size(final ImmutableTrieMap<?, ?> ct) {
         throw new UnsupportedOperationException();
     }
 
@@ -37,4 +42,5 @@ final class FailedNode<K, V> extends MainNode<K, V> {
     public String toString() {
         return "FailedNode(" + p + ")";
     }
+
 }
