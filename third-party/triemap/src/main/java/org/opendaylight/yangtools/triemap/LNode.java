@@ -61,7 +61,12 @@ final class LNode<K, V> extends MainNode<K, V> {
     }
 
     @Override
-    int cachedSize(final TrieMap<?, ?> ct) {
+    int trySize() {
+        return size;
+    }
+
+    @Override
+    int size(final ImmutableTrieMap<?, ?> ct) {
         return size;
     }
 
