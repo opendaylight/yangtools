@@ -18,6 +18,8 @@ package org.opendaylight.yangtools.triemap;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 abstract class MainNode<K, V> extends BasicNode {
+    static final int NO_SIZE = -1;
+
     @SuppressWarnings("rawtypes")
     private static final AtomicReferenceFieldUpdater<MainNode, MainNode> PREV_UPDATER =
         AtomicReferenceFieldUpdater.newUpdater(MainNode.class, MainNode.class, "prev");
@@ -32,7 +34,19 @@ abstract class MainNode<K, V> extends BasicNode {
         this.prev = prev;
     }
 
-    abstract int cachedSize(TrieMap<?, ?> ct);
+    /**
+     * Return the number of entries in this node, or {@link #NO_SIZE} if it is not known.
+     */
+    abstract int trySize();
+
+    /**
+     * Return the number of entries in this node, traversing it if need be. This method should be invoked only
+     * on immutable snapshots.
+     *
+     * @param ct TrieMap reference
+     * @return The actual number of entries.
+     */
+    abstract int size(ImmutableTrieMap<?, ?> ct);
 
     final boolean CAS_PREV(final MainNode<K, V> oldval, final MainNode<K, V> nval) {
         return PREV_UPDATER.compareAndSet(this, oldval, nval);
