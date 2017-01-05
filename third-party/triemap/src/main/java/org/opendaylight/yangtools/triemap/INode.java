@@ -563,8 +563,8 @@ final class INode<K, V> extends BasicNode {
         }
     }
 
-    int cachedSize(final TrieMap<?, ?> ct) {
-        return GCAS_READ(ct).cachedSize(ct);
+    int size(final ImmutableTrieMap<?, ?> ct) {
+        return GCAS_READ(ct).size(ct);
     }
 
     // /* this is a quiescent method! */
