@@ -73,7 +73,7 @@ final class INode<K, V> extends BasicNode {
                     return fn.READ_PREV();
                 }
 
-                // Tail recursion: return GCAS_Complete (/* READ */ mainnode, ct);
+                // Tail recursion: return GCAS_Complete(/* READ */ mainnode, ct);
                 m = /* READ */ mainnode;
                 continue;
             }
@@ -92,7 +92,7 @@ final class INode<K, V> extends BasicNode {
                     return m;
                 }
 
-                // Tail recursion: return GCAS_Complete (m, ct);
+                // Tail recursion: return GCAS_Complete(m, ct);
                 continue;
             }
 
@@ -127,9 +127,9 @@ final class INode<K, V> extends BasicNode {
      *
      * @return true if successful, false otherwise
      */
-    boolean rec_insert(final K k, final V v, final int hc, final int lev, final INode<K, V> parent,
+    boolean rec_insert(final K key, final V value, final int hc, final int lev, final INode<K, V> parent,
             final TrieMap<K, V> ct) {
-        return rec_insert(k, v, hc, lev, parent, gen, ct);
+        return rec_insert(key, value, hc, lev, parent, gen, ct);
     }
 
     private boolean rec_insert(final K k, final V v, final int hc, final int lev, final INode<K, V> parent,
@@ -155,7 +155,7 @@ final class INode<K, V> extends BasicNode {
                             return in.rec_insert(k, v, hc, lev + LEVEL_BITS, this, startgen, ct);
                         }
                         if (GCAS(cn, cn.renewed(startgen, ct), ct)) {
-                            // Tail recursion: return rec_insert (k, v, hc, lev, parent, startgen, ct);
+                            // Tail recursion: return rec_insert(k, v, hc, lev, parent, startgen, ct);
                             continue;
                         }
 
@@ -167,8 +167,9 @@ final class INode<K, V> extends BasicNode {
                         }
 
                         final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
-                        final MainNode<K, V> nn = rn.updatedAt(pos, inode(CNode.dual(sn, k, v, hc, lev + LEVEL_BITS, gen)), gen);
-                        return GCAS (cn, nn, ct);
+                        final MainNode<K, V> nn = rn.updatedAt(pos, inode(
+                            CNode.dual(sn, k, v, hc, lev + LEVEL_BITS, gen)), gen);
+                        return GCAS(cn, nn, ct);
                     } else {
                         throw CNode.invalidElement(cnAtPos);
                     }
@@ -176,7 +177,7 @@ final class INode<K, V> extends BasicNode {
 
                 final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
                 final MainNode<K, V> ncnode = rn.insertedAt(pos, flag, new SNode<>(k, v, hc), gen);
-                return GCAS (cn, ncnode, ct);
+                return GCAS(cn, ncnode, ct);
             } else if (m instanceof TNode) {
                 clean(parent, ct, lev - LEVEL_BITS);
                 return false;
@@ -194,6 +195,15 @@ final class INode<K, V> extends BasicNode {
         throw new VerifyException("An INode can host only a CNode, a TNode or an LNode, not " + elem);
     }
 
+    @SuppressFBWarnings(value = "NP_OPTIONAL_RETURN_NULL",
+            justification = "Returning null Optional indicates the need to restart.")
+    private Optional<V> insertDual(final TrieMap<K, V> ct, final CNode<K, V> cn, final int pos, final SNode<K, V> sn,
+            final K k, final V v, final int hc, final int lev) {
+        final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
+        final MainNode<K, V> nn = rn.updatedAt(pos, inode(CNode.dual(sn, k, v, hc, lev + LEVEL_BITS, gen)), gen);
+        return GCAS(cn, nn, ct) ? Optional.empty() : null;
+    }
+
     /**
      * Inserts a new key value pair, given that a specific condition is met.
      *
@@ -208,15 +218,6 @@ final class INode<K, V> extends BasicNode {
     Optional<V> rec_insertif(final K k, final V v, final int hc, final Object cond, final int lev,
             final INode<K, V> parent, final TrieMap<K, V> ct) {
         return rec_insertif(k, v, hc, cond, lev, parent, gen, ct);
-    }
-
-    @SuppressFBWarnings(value = "NP_OPTIONAL_RETURN_NULL",
-            justification = "Returning null Optional indicates the need to restart.")
-    private Optional<V> insertDual(final TrieMap<K, V> ct, final CNode<K, V> cn, final int pos, final SNode<K, V> sn,
-            final K k, final V v, final int hc, final int lev) {
-        final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
-        final MainNode<K, V> nn = rn.updatedAt(pos, inode(CNode.dual(sn, k, v, hc, lev + LEVEL_BITS, gen)), gen);
-        return GCAS(cn, nn, ct) ? Optional.empty() : null;
     }
 
     @SuppressFBWarnings(value = "NP_OPTIONAL_RETURN_NULL",
@@ -245,7 +246,7 @@ final class INode<K, V> extends BasicNode {
                         }
 
                         if (GCAS(cn, cn.renewed(startgen, ct), ct)) {
-                            // Tail recursion: return rec_insertif (k, v, hc, cond, lev, parent, startgen, ct);
+                            // Tail recursion: return rec_insertif(k, v, hc, cond, lev, parent, startgen, ct);
                             continue;
                         }
 
@@ -293,7 +294,7 @@ final class INode<K, V> extends BasicNode {
                     }
                 } else if (cond == null || cond == ABSENT) {
                     final CNode<K, V> rn = (cn.gen == gen) ? cn : cn.renewed(gen, ct);
-                    final CNode<K, V> ncnode = rn.insertedAt (pos, flag, new SNode<>(k, v, hc), gen);
+                    final CNode<K, V> ncnode = rn.insertedAt(pos, flag, new SNode<>(k, v, hc), gen);
                     if (GCAS(cn, ncnode, ct)) {
                         return Optional.empty();
                     }
