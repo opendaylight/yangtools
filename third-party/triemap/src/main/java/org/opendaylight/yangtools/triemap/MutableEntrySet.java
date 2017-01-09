@@ -20,8 +20,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-/***
- * Support for EntrySet operations required by the Map interface
+/**
+ * Support for EntrySet operations required by the Map interface.
  *
  * @param <K> the type of keys
  * @param <V> the type of values

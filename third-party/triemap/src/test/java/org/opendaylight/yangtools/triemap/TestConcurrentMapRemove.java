@@ -24,10 +24,10 @@ import java.util.concurrent.ConcurrentMap;
 import org.junit.Test;
 
 public class TestConcurrentMapRemove {
-    private static final int COUNT = 50*1000;
+    private static final int COUNT = 50 * 1000;
 
     @Test
-    public void testConcurrentMapRemove () {
+    public void testConcurrentMapRemove() {
         final ConcurrentMap<Integer, Object> map = TrieMap.create();
 
         for (int i = 128; i < COUNT; i++) {

@@ -35,7 +35,7 @@ public class TestMapIterator {
     public void testMapIterator() {
         final Random random = new Random();
 
-        for (int i = 0; i < 60 * 1000; i+= 400 + random.nextInt(400)) {
+        for (int i = 0; i < 60 * 1000; i += 400 + random.nextInt(400)) {
             final Map<Integer, Integer> bt = TrieMap.create();
             for (int j = 0; j < i; j++) {
                 assertNull(bt.put(Integer.valueOf(j), Integer.valueOf(j)));
@@ -59,21 +59,21 @@ public class TestMapIterator {
             for (Entry<Integer, Integer> e : bt.entrySet()) {
                 assertSame(e.getValue(), bt.get(e.getKey()));
                 e.setValue(e.getValue() + 1);
-                assertEquals((Object)e.getValue(), e.getKey () + 1);
+                assertEquals((Object)e.getValue(), e.getKey() + 1);
                 assertEquals(e.getValue(), bt.get(e.getKey()));
                 e.setValue(e.getValue() - 1);
             }
 
             final Iterator<Integer> it = bt.keySet().iterator();
-            while(it.hasNext()) {
-                final Integer k = it.next ();
+            while (it.hasNext()) {
+                final Integer k = it.next();
                 assertTrue(bt.containsKey(k));
                 it.remove();
                 assertFalse(bt.containsKey(k));
             }
 
-            assertEquals(0, bt.size ());
-            assertTrue(bt.isEmpty ());
+            assertEquals(0, bt.size());
+            assertTrue(bt.isEmpty());
         }
     }
 
@@ -81,7 +81,7 @@ public class TestMapIterator {
     public void testMapImmutableIterator() {
         final Random random = new Random();
 
-        for (int i = 0; i < 60 * 1000; i+= 400 + random.nextInt(400)) {
+        for (int i = 0; i < 60 * 1000; i += 400 + random.nextInt(400)) {
             final Map<Integer, Integer> bt = TrieMap.create();
             for (int j = 0; j < i; j++) {
                 assertNull(bt.put(Integer.valueOf(j), Integer.valueOf(j)));

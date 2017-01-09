@@ -44,15 +44,14 @@ final class Constants {
      * Number of hash bits consumed in each CNode level.
      */
     static final int LEVEL_BITS = 5;
-    static {
-        verify(LEVEL_BITS == IntMath.log2(BITMAP_BITS, RoundingMode.UNNECESSARY));
-    }
 
     /**
      * Maximum depth of a TrieMap.
      */
     static final int MAX_DEPTH = 7;
+
     static {
+        verify(LEVEL_BITS == IntMath.log2(BITMAP_BITS, RoundingMode.UNNECESSARY));
         verify(MAX_DEPTH == IntMath.divide(HASH_BITS, LEVEL_BITS, RoundingMode.CEILING));
     }
 }

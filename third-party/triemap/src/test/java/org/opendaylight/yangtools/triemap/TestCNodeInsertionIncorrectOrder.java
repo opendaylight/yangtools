@@ -23,7 +23,7 @@ import org.junit.Test;
 public class TestCNodeInsertionIncorrectOrder {
 
     @Test
-    public void testCNodeInsertionIncorrectOrder () {
+    public void testCNodeInsertionIncorrectOrder() {
         final Map<Integer, Integer> map = TrieMap.create();
         final Integer z3884 = Integer.valueOf(3884);
         final Integer z4266 = Integer.valueOf(4266);

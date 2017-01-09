@@ -29,7 +29,7 @@ public class TestHashCollisionsRemoveIterator {
     private static final int COUNT = 50000;
 
     @Test
-    public void testHashCollisionsRemoveIterator () {
+    public void testHashCollisionsRemoveIterator() {
         final Map<Object, Object> bt = TrieMap.create();
         for (int j = 0; j < COUNT; j++) {
             bt.put(Integer.valueOf(j), Integer.valueOf(j));

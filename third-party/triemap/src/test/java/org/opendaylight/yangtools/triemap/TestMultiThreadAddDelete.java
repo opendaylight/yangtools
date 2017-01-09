@@ -31,7 +31,7 @@ public class TestMultiThreadAddDelete {
     private static final int COUNT = 50 * 1000;
 
     @Test
-    public void testMultiThreadAddDelete () throws InterruptedException {
+    public void testMultiThreadAddDelete() throws InterruptedException {
         for (int j = 0; j < RETRIES; j++) {
             final Map<Object, Object> bt = TrieMap.create();
 
@@ -47,7 +47,7 @@ public class TestMultiThreadAddDelete {
                         }
                     });
                 }
-                es.shutdown ();
+                es.shutdown();
                 es.awaitTermination(5, TimeUnit.MINUTES);
             }
 
@@ -58,49 +58,45 @@ public class TestMultiThreadAddDelete {
                 final ExecutorService es = Executors.newFixedThreadPool(N_THREADS);
                 for (int i = 0; i < N_THREADS; i++) {
                     final int threadNo = i;
-                    es.execute (() -> {
+                    es.execute(() -> {
                         for (int k = 0; k < COUNT; k++) {
                             if (k % N_THREADS == threadNo) {
-                                bt.remove (Integer.valueOf (k));
+                                bt.remove(Integer.valueOf(k));
                             }
                         }
                     });
                 }
-                es.shutdown ();
+                es.shutdown();
                 es.awaitTermination(5, TimeUnit.MINUTES);
             }
 
 
-            assertEquals(0, bt.size ());
+            assertEquals(0, bt.size());
             assertTrue(bt.isEmpty());
 
             {
-                final ExecutorService es = Executors.newFixedThreadPool (N_THREADS);
+                final ExecutorService es = Executors.newFixedThreadPool(N_THREADS);
                 for (int i = 0; i < N_THREADS; i++) {
                     final int threadNo = i;
-                    es.execute (new Runnable () {
+                    es.execute(new Runnable() {
                         @Override
-                        public void run () {
+                        public void run() {
                             for (int j = 0; j < COUNT; j++) {
                                 if (j % N_THREADS == threadNo) {
-                                    try {
-                                        bt.put (Integer.valueOf (j), Integer.valueOf (j));
-                                        if (!bt.containsKey (Integer.valueOf (j))) {
-                                            System.out.println (j);
-                                        }
-                                        bt.remove (Integer.valueOf (j));
-                                        if (bt.containsKey (Integer.valueOf (j))) {
-                                            System.out.println (-j);
-                                        }
-                                    } catch (Throwable t) {
-                                        t.printStackTrace ();
+                                    bt.put(Integer.valueOf(j), Integer.valueOf(j));
+                                    if (!bt.containsKey(Integer.valueOf(j))) {
+                                        System.out.println(j);
+                                    }
+                                    bt.remove(Integer.valueOf(j));
+                                    if (bt.containsKey(Integer.valueOf(j))) {
+                                        System.out.println(-j);
                                     }
                                 }
                             }
                         }
                     });
                 }
-                es.shutdown ();
+                es.shutdown();
                 es.awaitTermination(5, TimeUnit.MINUTES);
             }
 

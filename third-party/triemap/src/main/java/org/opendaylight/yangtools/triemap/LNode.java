@@ -29,8 +29,8 @@ final class LNode<K, V> extends MainNode<K, V> {
         this(LNodeEntries.map(k1, v1, k2, v2), 2);
     }
 
-    LNode<K, V> insertChild( final K k, final V v) {
-        return new LNode<>(entries.insert(k, v), size + 1);
+    LNode<K, V> insertChild( final K key, final V value) {
+        return new LNode<>(entries.insert(key, value), size + 1);
     }
 
     MainNode<K, V> removeChild(final LNodeEntry<K, V> entry, final int hc) {
@@ -48,12 +48,12 @@ final class LNode<K, V> extends MainNode<K, V> {
         return new LNode<>(map, size - 1);
     }
 
-    MainNode<K, V> replaceChild(final LNodeEntry<K, V> entry, final V v) {
-        return new LNode<>(entries.replace(entry, v), size);
+    MainNode<K, V> replaceChild(final LNodeEntry<K, V> entry, final V value) {
+        return new LNode<>(entries.replace(entry, value), size);
     }
 
-    LNodeEntry<K, V> get(final Equivalence<? super K> equiv, final K k) {
-        return entries.findEntry(equiv, k);
+    LNodeEntry<K, V> get(final Equivalence<? super K> equiv, final K key) {
+        return entries.findEntry(equiv, key);
     }
 
     LNodeEntries<K, V> entries() {
