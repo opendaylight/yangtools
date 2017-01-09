@@ -22,9 +22,9 @@ final class SNode<K, V> extends BasicNode implements EntryNode<K, V> {
     final V v;
     final int hc;
 
-    SNode(final K k, final V v, final int hc) {
-        this.k = k;
-        this.v = v;
+    SNode(final K key, final V value, final int hc) {
+        this.k = key;
+        this.v = value;
         this.hc = hc;
     }
 

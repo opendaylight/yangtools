@@ -22,7 +22,7 @@ import org.junit.Test;
 
 public class TestInsert {
     @Test
-    public void testInsert () {
+    public void testInsert() {
         final TrieMap<Object, Object> bt = TrieMap.create();
         assertNull(bt.put("a", "a"));
         assertNull(bt.put("b", "b"));
@@ -31,7 +31,7 @@ public class TestInsert {
         assertNull(bt.put("e", "b"));
 
         for (int i = 0; i < 10000; i++) {
-            assertNull(bt.put(Integer.valueOf (i), Integer.valueOf(i)));
+            assertNull(bt.put(Integer.valueOf(i), Integer.valueOf(i)));
             final Object lookup = bt.get(Integer.valueOf(i));
             assertEquals(Integer.valueOf(i), lookup);
         }
