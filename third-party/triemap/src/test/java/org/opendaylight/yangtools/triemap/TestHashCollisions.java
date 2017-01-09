@@ -23,7 +23,7 @@ import org.junit.Test;
 
 public class TestHashCollisions {
     @Test
-    public void testHashCollisions () {
+    public void testHashCollisions() {
         final TrieMap<Object, Object> bt = TrieMap.create();
 
         insertStrings(bt);
@@ -77,7 +77,7 @@ public class TestHashCollisions {
         removeChars(bt);
     }
 
-    private static void insertChars (final TrieMap<Object, Object> bt) {
+    private static void insertChars(final TrieMap<Object, Object> bt) {
         assertNull(bt.put('a', 'a'));
         assertNull(bt.put('b', 'b'));
         assertNull(bt.put('c', 'c'));
@@ -91,7 +91,7 @@ public class TestHashCollisions {
         assertEquals('e', bt.put('e', 'e'));
     }
 
-    private static void insertStrings (final TrieMap<Object, Object> bt) {
+    private static void insertStrings(final TrieMap<Object, Object> bt) {
         assertNull(bt.put("a", "a"));
         assertNull(bt.put("b", "b"));
         assertNull(bt.put("c", "c"));
@@ -105,7 +105,7 @@ public class TestHashCollisions {
         assertEquals("e", bt.put("e", "e"));
     }
 
-    private static void insertBytes (final TrieMap<Object, Object> bt) {
+    private static void insertBytes(final TrieMap<Object, Object> bt) {
         for (byte i = 0; i < 128 && i >= 0; i++) {
             final Byte bigB = Byte.valueOf(i);
             assertNull(bt.put(bigB, bigB));
@@ -113,7 +113,7 @@ public class TestHashCollisions {
         }
     }
 
-    private static void insertInts (final TrieMap<Object, Object> bt) {
+    private static void insertInts(final TrieMap<Object, Object> bt) {
         for (int i = 0; i < 128; i++) {
             final Integer bigI = Integer.valueOf(i);
             assertNull(bt.put(bigI, bigI));
@@ -121,7 +121,7 @@ public class TestHashCollisions {
         }
     }
 
-    private static void removeChars (final TrieMap<Object, Object> bt) {
+    private static void removeChars(final TrieMap<Object, Object> bt) {
         assertNotNull(bt.get('a'));
         assertNotNull(bt.get('b'));
         assertNotNull(bt.get('c'));
@@ -147,7 +147,7 @@ public class TestHashCollisions {
         assertNull(bt.get('e'));
     }
 
-    private static void removeStrings (final TrieMap<Object, Object> bt) {
+    private static void removeStrings(final TrieMap<Object, Object> bt) {
         assertNotNull(bt.get("a"));
         assertNotNull(bt.get("b"));
         assertNotNull(bt.get("c"));
@@ -173,7 +173,7 @@ public class TestHashCollisions {
         assertNull(bt.get("e"));
     }
 
-    private static void removeInts (final TrieMap<Object, Object> bt) {
+    private static void removeInts(final TrieMap<Object, Object> bt) {
         for (int i = 0; i < 128; i++) {
             final Integer bigI = Integer.valueOf(i);
             assertNotNull(bt.get(bigI));
@@ -183,7 +183,7 @@ public class TestHashCollisions {
         }
     }
 
-    private static void removeBytes (final TrieMap<Object, Object> bt) {
+    private static void removeBytes(final TrieMap<Object, Object> bt) {
         for (byte i = 0; i < 128 && i >= 0; i++) {
             final Byte bigB = Byte.valueOf(i);
             assertNotNull(bt.get(bigB));

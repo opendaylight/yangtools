@@ -18,8 +18,8 @@ package org.opendaylight.yangtools.triemap;
 import com.google.common.base.VerifyException;
 
 /**
- * Similar to Scala's ListMap, this is a single-linked list of set of map entries. Aside from the Set contract, this
- * class fulfills the requirements for an immutable map entryset.
+ * Similar to Scala&apos;s ListMap, this is a single-linked list of set of map entries. Aside from the java.util.Set
+ * contract, this class fulfills the requirements for an immutable map entryset.
  *
  * @author Robert Varga
  *
@@ -28,8 +28,8 @@ import com.google.common.base.VerifyException;
  */
 abstract class LNodeEntries<K, V> extends LNodeEntry<K, V> {
     private static final class Single<K, V> extends LNodeEntries<K, V> {
-        Single(final K k, final V v) {
-            super(k, v);
+        Single(final K key, final V value) {
+            super(key, value);
         }
 
         @Override
@@ -43,12 +43,12 @@ abstract class LNodeEntries<K, V> extends LNodeEntry<K, V> {
         LNodeEntries<K, V> next;
 
         // Used in remove() only
-        Multiple(final LNodeEntries<K, V> e) {
-            this(e.getKey(), e.getValue(), null);
+        Multiple(final LNodeEntries<K, V> entry) {
+            this(entry.getKey(), entry.getValue(), null);
         }
 
-        Multiple(final K k, final V v, final LNodeEntries<K, V> next) {
-            super(k, v);
+        Multiple(final K key, final V value, final LNodeEntries<K, V> next) {
+            super(key, value);
             this.next = next;
         }
 
@@ -58,8 +58,8 @@ abstract class LNodeEntries<K, V> extends LNodeEntry<K, V> {
         }
     }
 
-    LNodeEntries(final K k, final V v) {
-        super(k, v);
+    LNodeEntries(final K key, final V value) {
+        super(key, value);
     }
 
     static <K,V> LNodeEntries<K, V> map(final K k1, final V v1, final K k2, final V v2) {
@@ -92,10 +92,10 @@ abstract class LNodeEntries<K, V> extends LNodeEntry<K, V> {
         return new Multiple<>(key, value, this);
     }
 
-    final LNodeEntries<K, V> replace(final LNodeEntry<K, V> entry, final V v) {
+    final LNodeEntries<K, V> replace(final LNodeEntry<K, V> entry, final V value) {
         final LNodeEntries<K, V> removed;
-        return (removed = remove(entry)) == null ? new Single<>(entry.getKey(), v)
-                : new Multiple<>(entry.getKey(), v, removed);
+        return (removed = remove(entry)) == null ? new Single<>(entry.getKey(), value)
+                : new Multiple<>(entry.getKey(), value, removed);
     }
 
     final LNodeEntries<K, V> remove(final LNodeEntry<K, V> entry) {

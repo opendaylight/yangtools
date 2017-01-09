@@ -24,22 +24,22 @@ import org.junit.Test;
 
 public class TestMultiThreadInserts {
     @Test
-    public void testMultiThreadInserts () throws InterruptedException{
+    public void testMultiThreadInserts() throws InterruptedException {
         final int nThreads = 2;
         final ExecutorService es = Executors.newFixedThreadPool(nThreads);
         final TrieMap<Object, Object> bt = TrieMap.create();
         for (int i = 0; i < nThreads; i++) {
             final int threadNo = i;
-            es.execute (() -> {
+            es.execute(() -> {
                 for (int j = 0; j < 500 * 1000; j++) {
                     if (j % nThreads == threadNo) {
-                        bt.put (Integer.valueOf(j), Integer.valueOf(j));
+                        bt.put(Integer.valueOf(j), Integer.valueOf(j));
                     }
                 }
             });
         }
 
-        es.shutdown ();
+        es.shutdown();
         es.awaitTermination(5, TimeUnit.MINUTES);
 
         for (int j = 0; j < 500 * 1000; j++) {

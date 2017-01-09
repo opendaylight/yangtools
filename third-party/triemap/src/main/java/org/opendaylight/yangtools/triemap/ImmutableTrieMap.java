@@ -24,7 +24,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
- * An immutable TrieMap
+ * An immutable TrieMap.
  *
  * @author Robert Varga
  *
@@ -109,7 +109,7 @@ public final class ImmutableTrieMap<K, V> extends TrieMap<K, V> {
     }
 
     @Override
-    public final TrieMap<K, V> mutableSnapshot() {
+    public TrieMap<K, V> mutableSnapshot() {
         return new MutableTrieMap<>(equiv(), new INode<>(new Gen(), root.gcasRead(this)));
     }
 
