@@ -46,12 +46,22 @@
     <build>
         <plugins>
             <plugin>
-                <!-- This project has a different license -->
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <configuration>
-                    <skip>true</skip>
                     <propertyExpansion>checkstyle.violationSeverity=warning</propertyExpansion>
                 </configuration>
+                <executions>
+                    <execution>
+                        <id>check-license</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <!-- This project has a different license -->
+                            <skip>true</skip>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
