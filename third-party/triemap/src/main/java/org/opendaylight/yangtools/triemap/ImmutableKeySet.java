@@ -48,6 +48,7 @@ final class ImmutableKeySet<K> extends AbstractKeySet<K> {
     public boolean remove(final Object o) {
         throw unsupported();
     }
+
     @Override
     public boolean retainAll(final Collection<?> c) {
         throw unsupported();

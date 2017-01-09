@@ -23,7 +23,7 @@ import org.junit.Test;
 
 public class TestCNodeFlagCollision {
     @Test
-    public void testCNodeFlagCollision () {
+    public void testCNodeFlagCollision() {
         final Map<Integer, Object> map = TrieMap.create();
         final Integer z15169 = Integer.valueOf(15169);
         final Integer z28336 = Integer.valueOf(28336);
@@ -35,16 +35,16 @@ public class TestCNodeFlagCollision {
         assertSame(z15169, map.get(z15169));
         assertNull(map.get(z28336));
 
-        map.put (z28336, z28336);
+        map.put(z28336, z28336);
         assertSame(z15169, map.get(z15169));
         assertSame(z28336, map.get(z28336));
 
-        map.remove (z15169);
+        map.remove(z15169);
 
         assertNull(map.get(z15169));
         assertSame(z28336, map.get(z28336));
 
-        map.remove (z28336);
+        map.remove(z28336);
 
         assertNull(map.get(z15169));
         assertNull(map.get(z28336));

@@ -42,9 +42,9 @@ final class CNode<K, V> extends MainNode<K, V> {
         this(gen, 0, EMPTY_ARRAY);
     }
 
-    static <K, V> MainNode<K,V> dual(final SNode<K, V> x, final K k, final V v, final int hc, final int lev,
+    static <K, V> MainNode<K,V> dual(final SNode<K, V> x, final K key, final V value, final int hc, final int lev,
             final Gen gen) {
-        return dual(x, x.hc, new SNode<>(k, v, hc), hc, lev, gen);
+        return dual(x, x.hc, new SNode<>(key, value, hc), hc, lev, gen);
     }
 
     private static <K, V> MainNode<K,V> dual(final SNode<K, V> x, final int xhc, final SNode<K, V> y, final int yhc,
@@ -133,12 +133,11 @@ final class CNode<K, V> extends MainNode<K, V> {
 
     CNode<K, V> insertedAt(final int pos, final int flag, final BasicNode nn, final Gen gen) {
         int len = array.length;
-        int bmp = bitmap;
         BasicNode[] narr = new BasicNode[len + 1];
         System.arraycopy(array, 0, narr, 0, pos);
         narr [pos] = nn;
         System.arraycopy(array, pos, narr, pos + 1, len - pos);
-        return new CNode<>(gen, bmp | flag, narr);
+        return new CNode<>(gen, bitmap | flag, narr);
     }
 
     /**
@@ -235,7 +234,7 @@ final class CNode<K, V> extends MainNode<K, V> {
     // }
 
     @Override
-    public String toString () {
+    public String toString() {
         // val elems = collectLocalElems
         // "CNode(sz: %d; %s)".format(elems.size,
         // elems.sorted.mkString(", "))
