@@ -21,7 +21,7 @@ import java.util.AbstractSet;
 import java.util.Collection;
 
 /**
- * Abstract base class for key set views of a TrieMap
+ * Abstract base class for key set views of a TrieMap.
  *
  * @author Robert Varga
  *

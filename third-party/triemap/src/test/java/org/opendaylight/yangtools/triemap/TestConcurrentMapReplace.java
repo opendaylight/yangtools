@@ -25,10 +25,10 @@ import java.util.concurrent.ConcurrentMap;
 import org.junit.Test;
 
 public class TestConcurrentMapReplace {
-    private static final int COUNT = 50*1000;
+    private static final int COUNT = 50 * 1000;
 
     @Test
-    public void testConcurrentMapReplace () {
+    public void testConcurrentMapReplace() {
         final ConcurrentMap<Integer, Object> map = TrieMap.create();
 
         for (int i = 0; i < COUNT; i++) {

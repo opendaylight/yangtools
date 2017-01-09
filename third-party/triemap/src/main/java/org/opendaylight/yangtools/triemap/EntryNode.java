@@ -27,7 +27,7 @@ import java.util.Map.Entry;
  */
 interface EntryNode<K, V> extends Entry<K, V> {
     @Override
-    default public V setValue(final V value) {
+    default V setValue(final V value) {
         throw new UnsupportedOperationException();
     }
 }

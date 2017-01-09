@@ -23,11 +23,9 @@ import java.util.Map.Entry;
 import org.junit.Before;
 import org.junit.Test;
 
-/***
- *
+/**
  * Test that read-only iterators do not allow for any updates.
  * Test that non read-only iterators allow for updates.
- *
  */
 public class TestReadOnlyAndUpdatableIterators {
     private static final int MAP_SIZE = 200;
@@ -82,9 +80,9 @@ public class TestReadOnlyAndUpdatableIterators {
     }
 
     @Test
-    public void testIterator () {
+    public void testIterator() {
         Iterator<Entry<Integer, Integer>> it = bt.iterator();
-        it.next().setValue (0);
+        it.next().setValue(0);
         it.remove();
 
         // All changes are done on the original map
@@ -92,7 +90,7 @@ public class TestReadOnlyAndUpdatableIterators {
     }
 
     @Test
-    public void testSnapshotIterator () {
+    public void testSnapshotIterator() {
         TrieMap<Integer, Integer> snapshot = bt.mutableSnapshot();
         Iterator<Entry<Integer, Integer>> it = snapshot.iterator();
         it.next().setValue(0);
@@ -100,8 +98,8 @@ public class TestReadOnlyAndUpdatableIterators {
 
         // All changes are done on the snapshot, not on the original map
         // Map size should remain unchanged
-        assertEquals(MAP_SIZE, bt.size ());
+        assertEquals(MAP_SIZE, bt.size());
         // snapshot size was changed
-        assertEquals(MAP_SIZE-1, snapshot.size ());
+        assertEquals(MAP_SIZE - 1, snapshot.size());
     }
 }
