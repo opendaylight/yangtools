@@ -33,15 +33,15 @@ public class TestMultiThreadMapIterator {
     private static final int NTHREADS = 7;
 
     @Test
-    public void testMultiThreadMapIterator () throws InterruptedException {
+    public void testMultiThreadMapIterator() throws InterruptedException {
         final Map<Object, Object> bt = TrieMap.create();
         for (int j = 0; j < 50 * 1000; j++) {
             for (final Object o : getObjects(j)) {
-                bt.put (o, o);
+                bt.put(o, o);
             }
         }
 
-        // System.out.println ("Size of initialized map is " + bt.size ());
+        // System.out.println("Size of initialized map is " + bt.size());
         int count = 0;
         {
             final ExecutorService es = Executors.newFixedThreadPool(NTHREADS);
@@ -73,19 +73,19 @@ public class TestMultiThreadMapIterator {
             final ExecutorService es = Executors.newFixedThreadPool(NTHREADS);
             for (int i = 0; i < NTHREADS; i++) {
                 final int threadNo = i;
-                es.execute (() -> {
-                    for (final Iterator<Map.Entry<Object, Object>> it = bt.entrySet ().iterator(); it.hasNext();) {
+                es.execute(() -> {
+                    for (final Iterator<Map.Entry<Object, Object>> it = bt.entrySet().iterator(); it.hasNext();) {
                         final Entry<Object, Object> e = it.next();
-                        Object key = e.getKey ();
-                        if (accepts (threadNo, NTHREADS, key)) {
-                            if (null == bt.get (key)) {
-                                // System.out.println (key);
+                        Object key = e.getKey();
+                        if (accepts(threadNo, NTHREADS, key)) {
+                            if (null == bt.get(key)) {
+                                // System.out.println(key);
                             }
                             it.remove();
-                            if (null != bt.get (key)) {
-                                // System.out.println (key);
+                            if (null != bt.get(key)) {
+                                // System.out.println(key);
                             }
-                            removed.put (key, key);
+                            removed.put(key, key);
                         }
                     }
                 });
@@ -95,27 +95,27 @@ public class TestMultiThreadMapIterator {
             es.awaitTermination(5, TimeUnit.MINUTES);
         }
 
-      count = 0;
-      for (final Object value : bt.keySet ()) {
-          value.toString ();
-          count++;
-      }
-      for (final Object o : bt.keySet ()) {
-          if (!removed.contains (bt.get (o))) {
-              System.out.println ("Not removed: " + o);
-          }
-      }
-      assertEquals(0, count);
-      assertEquals(0, bt.size ());
-      assertTrue(bt.isEmpty ());
+        count = 0;
+        for (final Object value : bt.keySet()) {
+            value.toString();
+            count++;
+        }
+        for (final Object o : bt.keySet()) {
+            if (!removed.contains(bt.get(o))) {
+                System.out.println("Not removed: " + o);
+            }
+        }
+        assertEquals(0, count);
+        assertEquals(0, bt.size());
+        assertTrue(bt.isEmpty());
     }
 
-    protected static boolean accepts (final int threadNo, final int nThreads, final Object key) {
+    protected static boolean accepts(final int threadNo, final int nrThreads, final Object key) {
         final int val = getKeyValue(key);
-        return val >= 0 ? val % nThreads == threadNo : false;
+        return val >= 0 ? val % nrThreads == threadNo : false;
     }
 
-    private static int getKeyValue (final Object key) {
+    private static int getKeyValue(final Object key) {
         if (key instanceof Integer) {
             return ((Integer) key).intValue();
         } else if (key instanceof Character) {

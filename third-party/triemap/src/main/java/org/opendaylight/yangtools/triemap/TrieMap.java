@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
-/***
+/**
  * This is a port of Scala's TrieMap class from the Scala Collections library. This implementation does not support
  * null keys nor null values.
  *
@@ -58,6 +58,7 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
      * Returns a snapshot of this TrieMap. This operation is lock-free and
      * linearizable.
      *
+     * <p>
      * The snapshot is lazily updated - the first time some branch in the
      * snapshot or this TrieMap are accessed, they are rewritten. This means
      * that the work of rebuilding both the snapshot and this TrieMap is
@@ -70,6 +71,7 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
      * Returns a read-only snapshot of this TrieMap. This operation is lock-free
      * and linearizable.
      *
+     * <p>
      * The snapshot is lazily updated - the first time some branch of this
      * TrieMap are accessed, it is rewritten. The work of creating the snapshot
      * is thus distributed across subsequent updates and accesses on this
@@ -77,6 +79,7 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
      * unlike when calling the `snapshot` method, but the obtained snapshot
      * cannot be modified.
      *
+     * <p>
      * This method is used by other methods such as `size` and `iterator`.
      */
     public abstract ImmutableTrieMap<K, V> immutableSnapshot();
@@ -153,22 +156,23 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
     /**
      * Return an iterator over a TrieMap.
      *
+     * <p>
      * If this is a read-only snapshot, it would return a read-only iterator.
      *
+     * <p>
      * If it is the original TrieMap or a non-readonly snapshot, it would return
      * an iterator that would allow for updates.
      *
-     * @return
+     * @return An iterator.
      */
     abstract AbstractIterator<K, V> iterator();
 
     /* internal methods provided for subclasses */
 
     /**
-     * Return an iterator over a TrieMap.
-     * This is a read-only iterator.
+     * Return an iterator over a TrieMap. This is a read-only iterator.
      *
-     * @return
+     * @return A read-only iterator.
      */
     final ImmutableIterator<K, V> immutableIterator() {
         return new ImmutableIterator<>(immutableSnapshot());
@@ -179,8 +183,8 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
         return opt.orElse(null);
     }
 
-    final int computeHash(final K k) {
-        return equiv.hash(k);
+    final int computeHash(final K key) {
+        return equiv.hash(key);
     }
 
     final Object writeReplace() throws ObjectStreamException {
@@ -213,11 +217,11 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
     /* private implementation methods */
 
     @SuppressWarnings("unchecked")
-    private V lookuphc(final K k, final int hc) {
+    private V lookuphc(final K key, final int hc) {
         Object res;
         do {
             // Keep looping as long as RESTART is being indicated
-            res = RDCSS_READ_ROOT().rec_lookup(k, hc, 0, null, this);
+            res = RDCSS_READ_ROOT().rec_lookup(key, hc, 0, null, this);
         } while (res == RESTART);
 
         return (V) res;

@@ -52,7 +52,7 @@ public class TestDelete {
     }
 
     @Test
-    public void testDelete () {
+    public void testDelete() {
         final TrieMap<Integer, Integer> bt = TrieMap.create();
 
         for (int i = 0; i < 10000; i++) {
@@ -71,7 +71,7 @@ public class TestDelete {
             assertNull(lookup);
         }
 
-        bt.toString ();
+        bt.toString();
     }
 
     /**
@@ -92,12 +92,12 @@ public class TestDelete {
         }
     }
 
-    private static void checkAddInsert (final TrieMap<Integer, Integer> bt, final int k) {
+    private static void checkAddInsert(final TrieMap<Integer, Integer> bt, final int k) {
         final Integer v = Integer.valueOf(k);
-        bt.remove (v);
+        bt.remove(v);
         Integer foundV = bt.get(v);
         assertNull(foundV);
-        assertNull(bt.put (v, v));
+        assertNull(bt.put(v, v));
         foundV = bt.get(v);
         assertEquals(v, foundV);
 

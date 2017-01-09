@@ -24,14 +24,14 @@ import java.util.concurrent.ConcurrentMap;
 import org.junit.Test;
 
 public class TestConcurrentMapPutIfAbsent {
-    private static final int COUNT = 50*1000;
+    private static final int COUNT = 50 * 1000;
 
     @Test
-    public void testConcurrentMapPutIfAbsent () {
+    public void testConcurrentMapPutIfAbsent() {
         final ConcurrentMap<Object, Object> map = TrieMap.create();
 
         for (int i = 0; i < COUNT; i++) {
-            assertNull(map.putIfAbsent (i, i));
+            assertNull(map.putIfAbsent(i, i));
             assertEquals(Integer.valueOf(i), map.putIfAbsent(i, i));
         }
     }
