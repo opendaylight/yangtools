@@ -54,7 +54,7 @@ public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D ext
     @Override
     public CheckedFuture<D, SchemaSourceException> getSource(final SourceIdentifier sourceIdentifier) {
         final CheckedFuture<S, SchemaSourceException> f = provider.getSchemaSource(sourceIdentifier, srcClass);
-        return Futures.makeChecked(Futures.transform(f, function), MAPPER);
+        return Futures.makeChecked(Futures.transformAsync(f, function), MAPPER);
     }
 
     @Override
