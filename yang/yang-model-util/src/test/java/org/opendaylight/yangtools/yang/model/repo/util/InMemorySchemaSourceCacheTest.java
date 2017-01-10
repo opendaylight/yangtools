@@ -12,7 +12,7 @@ import static org.mockito.Mockito.doReturn;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
-import com.google.common.util.concurrent.CheckedFuture;
+import com.google.common.util.concurrent.ListenableFuture;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +26,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangSchemaSourceRepresentation;
@@ -78,8 +77,8 @@ public class InMemorySchemaSourceCacheTest {
         final YangTextSchemaSource source = new TestingYangSource("test", "2012-12-12", content);
         inMemorySchemaSourceCache.offer(source);
         final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test", "2012-12-12");
-        final CheckedFuture<? extends YangSchemaSourceRepresentation, SchemaSourceException> checkedSource =
-            inMemorySchemaSourceCache.getSource(sourceIdentifier);
+        final ListenableFuture<? extends YangSchemaSourceRepresentation> checkedSource = inMemorySchemaSourceCache
+                .getSource(sourceIdentifier);
         Assert.assertNotNull(checkedSource);
         final YangSchemaSourceRepresentation yangSchemaSourceRepresentation = checkedSource.get();
         Assert.assertNotNull(yangSchemaSourceRepresentation);
@@ -92,7 +91,7 @@ public class InMemorySchemaSourceCacheTest {
         final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache =
             InMemorySchemaSourceCache.createSoftCache(this.registry, REPRESENTATION);
         final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test", "2012-12-12");
-        final CheckedFuture<? extends YangSchemaSourceRepresentation, SchemaSourceException> checkedSource =
+        final ListenableFuture<? extends YangSchemaSourceRepresentation> checkedSource =
             inMemorySchemaSourceCache.getSource(sourceIdentifier);
         Assert.assertNotNull(checkedSource);
         checkedSource.get();
@@ -112,9 +111,9 @@ public class InMemorySchemaSourceCacheTest {
         inMemorySchemaSourceCache2.offer(source);
 
         final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test", "2012-12-12");
-        final CheckedFuture<? extends YangSchemaSourceRepresentation, SchemaSourceException> checkedSource =
+        final ListenableFuture<? extends YangSchemaSourceRepresentation> checkedSource =
             inMemorySchemaSourceCache.getSource(sourceIdentifier);
-        final CheckedFuture<? extends SchemaSourceRepresentation, SchemaSourceException> checkedSource2 =
+        final ListenableFuture<? extends SchemaSourceRepresentation> checkedSource2 =
             inMemorySchemaSourceCache2.getSource(sourceIdentifier);
         Assert.assertNotNull(checkedSource);
         Assert.assertNotNull(checkedSource2);
