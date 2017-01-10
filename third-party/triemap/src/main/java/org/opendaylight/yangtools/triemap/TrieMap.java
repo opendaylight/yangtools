@@ -96,20 +96,14 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
 
     @Override
     public final Set<Entry<K, V>> entrySet() {
-        AbstractEntrySet<K, V> ret = entrySet;
-        if (ret == null) {
-            entrySet = ret = createEntrySet();
-        }
-        return ret;
+        final AbstractEntrySet<K, V> ret;
+        return (ret = entrySet) != null ? ret : (entrySet = createEntrySet());
     }
 
     @Override
     public final Set<K> keySet() {
-        AbstractKeySet<K> ret = keySet;
-        if (ret == null) {
-            keySet = ret = createKeySet();
-        }
-        return ret;
+        final AbstractKeySet<K> ret;
+        return (ret = keySet) != null ? ret : (keySet = createKeySet());
     }
 
     @Override
