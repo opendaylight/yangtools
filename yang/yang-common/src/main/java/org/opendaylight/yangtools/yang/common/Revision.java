@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.common;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Throwables;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -96,7 +95,7 @@ public abstract class Revision implements Comparable<Revision>, Serializable {
             try {
                 return Revision.forString(str);
             } catch (ParseException e) {
-                throw Throwables.propagate(e);
+                throw new RuntimeException(e);
             }
         }
     }

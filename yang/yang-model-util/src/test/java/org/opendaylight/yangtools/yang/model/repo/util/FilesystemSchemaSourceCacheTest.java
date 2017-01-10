@@ -24,6 +24,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Collections2;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.CheckedFuture;
+import com.google.common.util.concurrent.ListenableFuture;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -82,9 +83,9 @@ public class FilesystemSchemaSourceCacheTest {
 
         assertThat(fileNames, both(hasItem("test2")).and(hasItem("test@2012-12-12")));
 
-        assertThat(Files.toString(storedFiles.get(0), StandardCharsets.UTF_8),
+        assertThat(Files.asCharSource(storedFiles.get(0), StandardCharsets.UTF_8).read(),
             either(containsString(content)).or(containsString(content2)));
-        assertThat(Files.toString(storedFiles.get(1), StandardCharsets.UTF_8),
+        assertThat(Files.asCharSource(storedFiles.get(1), StandardCharsets.UTF_8).read(),
             either(containsString(content)).or(containsString(content2)));
 
         verify(this.registry, times(2)).registerSchemaSource(any(SchemaSourceProvider.class),
@@ -214,8 +215,7 @@ public class FilesystemSchemaSourceCacheTest {
         final YangTextSchemaSource source = new TestingYangSource("test", "2013-12-12", content);
         cache.offer(source);
         final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test1", "2012-12-12");
-        final CheckedFuture<? extends YangTextSchemaSource, SchemaSourceException> checked = cache
-                .getSource(sourceIdentifier);
+        final ListenableFuture<? extends YangTextSchemaSource> checked = cache.getSource(sourceIdentifier);
         Assert.assertNotNull(checked);
         checked.get();
     }

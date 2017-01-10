@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.repo.util;
 
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.CheckedFuture;
+import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Arrays;
 import java.util.concurrent.Future;
 import javax.annotation.Nonnull;
@@ -96,12 +97,11 @@ public class SchemaSourceTransformerTest {
         final PotentialSchemaSource<?>[] potList = { foo.getPotentialSchemSource() };
         final Iterable<PotentialSchemaSource<?>> sources = Arrays.asList(potList);
         listener.schemaSourceRegistered(sources);
-        final CheckedFuture<YinXmlSchemaSource, SchemaSourceException> source = this.schema.getSource(sourceIdentifier);
+        final ListenableFuture<YinXmlSchemaSource> source = this.schema.getSource(sourceIdentifier);
         Assert.assertNotNull(source);
 
         listener.schemaSourceUnregistered(foo.getPotentialSchemSource());
-        final CheckedFuture<YinXmlSchemaSource, SchemaSourceException> source2 = this.schema
-                .getSource(sourceIdentifier);
+        final ListenableFuture<YinXmlSchemaSource> source2 = this.schema.getSource(sourceIdentifier);
         Assert.assertNotNull(source2);
     }
 
