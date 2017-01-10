@@ -40,7 +40,7 @@
     <dependencies>
         <dependency>
             <groupId>org.opendaylight.odlparent</groupId>
-            <artifactId>odl4-guava-18</artifactId>
+            <artifactId>odl4-guava-21</artifactId>
             <version>[1.7.0,2.0.0)</version>
             <type>xml</type>
             <classifier>features</classifier>
