@@ -101,7 +101,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         sf = Futures.transform(sf, new SourceIdMismatchDetector(uniqueSourceIdentifiers));
 
         // Assemble sources into a schema context
-        final ListenableFuture<SchemaContext> cf = Futures.transform(sf, assembleSources);
+        final ListenableFuture<SchemaContext> cf = Futures.transformAsync(sf, assembleSources);
 
         // Populate cache when successful
         Futures.addCallback(cf, new FutureCallback<SchemaContext>() {
