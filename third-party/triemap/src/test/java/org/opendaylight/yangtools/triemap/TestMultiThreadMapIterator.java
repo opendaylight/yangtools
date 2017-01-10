@@ -28,8 +28,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TestMultiThreadMapIterator {
+    private static final Logger LOG = LoggerFactory.getLogger(TestMultiThreadMapIterator.class);
     private static final int NTHREADS = 7;
 
     @Test
@@ -41,7 +44,7 @@ public class TestMultiThreadMapIterator {
             }
         }
 
-        // System.out.println("Size of initialized map is " + bt.size());
+        LOG.debug("Size of initialized map is {}", bt.size());
         int count = 0;
         {
             final ExecutorService es = Executors.newFixedThreadPool(NTHREADS);
@@ -79,11 +82,11 @@ public class TestMultiThreadMapIterator {
                         Object key = e.getKey();
                         if (accepts(threadNo, NTHREADS, key)) {
                             if (null == bt.get(key)) {
-                                // System.out.println(key);
+                                LOG.error("Key {} is not present", key);
                             }
                             it.remove();
                             if (null != bt.get(key)) {
-                                // System.out.println(key);
+                                LOG.error("Key {} is still present", key);
                             }
                             removed.put(key, key);
                         }
@@ -102,7 +105,7 @@ public class TestMultiThreadMapIterator {
         }
         for (final Object o : bt.keySet()) {
             if (!removed.contains(bt.get(o))) {
-                System.out.println("Not removed: " + o);
+                LOG.error("Not removed: {}", o);
             }
         }
         assertEquals(0, count);
