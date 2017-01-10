@@ -24,8 +24,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TestMultiThreadAddDelete {
+    private static final Logger LOG = LoggerFactory.getLogger(TestMultiThreadAddDelete.class);
     private static final int RETRIES = 1;
     private static final int N_THREADS = 7;
     private static final int COUNT = 50 * 1000;
@@ -85,11 +88,11 @@ public class TestMultiThreadAddDelete {
                                 if (j % N_THREADS == threadNo) {
                                     bt.put(Integer.valueOf(j), Integer.valueOf(j));
                                     if (!bt.containsKey(Integer.valueOf(j))) {
-                                        System.out.println(j);
+                                        LOG.error("Key {} not present", j);
                                     }
                                     bt.remove(Integer.valueOf(j));
                                     if (bt.containsKey(Integer.valueOf(j))) {
-                                        System.out.println(-j);
+                                        LOG.error("Key {} is still present", j);
                                     }
                                 }
                             }
