@@ -12,9 +12,9 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.ArrayList;
@@ -72,16 +72,16 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
         @SuppressWarnings("unchecked")
         final CheckedFuture<? extends T, SchemaSourceException> f = ((SchemaSourceProvider<T>)reg.getProvider()).getSource(id);
 
-        return Futures.makeChecked(Futures.withFallback(f, new FutureFallback<T>() {
+        return Futures.makeChecked(Futures.catchingAsync(f, Throwable.class, new AsyncFunction<Throwable, T>() {
             @Override
-            public ListenableFuture<T> create(@Nonnull final Throwable t) throws SchemaSourceException {
-                LOG.debug("Failed to acquire source from {}", reg, t);
+            public ListenableFuture<T> apply(final Throwable input) throws Exception {
+                LOG.debug("Failed to acquire source from {}", reg, input);
 
                 if (it.hasNext()) {
                     return fetchSource(id, it);
                 }
 
-                throw new MissingSchemaSourceException("All available providers exhausted", id, t);
+                throw new MissingSchemaSourceException("All available providers exhausted", id, input);
             }
         }), FETCH_MAPPER);
     }
