@@ -31,6 +31,8 @@ import com.google.common.io.Files;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -238,17 +240,16 @@ public class SharedSchemaRepositoryTest {
         sharedSchemaRepository.registerSchemaSourceListener(listener);
 
         final File test = new File(storageDir, "test.yang");
-        Files.write("content-test", test, StandardCharsets.UTF_8);
+        Files.asCharSink(test, StandardCharsets.UTF_8).write("content-test");
 
         final File test2 = new File(storageDir, "test@2012-12-12.yang");
-        Files.write("content-test-2012", test2, StandardCharsets.UTF_8);
+        Files.asCharSink(test2, StandardCharsets.UTF_8).write("content-test-2012");
 
         final File test3 = new File(storageDir, "test@2013-12-12.yang");
-        Files.write("content-test-2013", test3, StandardCharsets.UTF_8);
+        Files.asCharSink(test3, StandardCharsets.UTF_8).write("content-test-2013");
 
         final File test4 = new File(storageDir, "module@2010-12-12.yang");
-        Files.write("content-module-2010", test4, StandardCharsets.UTF_8);
-
+        Files.asCharSink(test4, StandardCharsets.UTF_8).write("content-module-2010");
 
         final FilesystemSchemaSourceCache<YangTextSchemaSource> cache = new FilesystemSchemaSourceCache<>(
                 sharedSchemaRepository, YangTextSchemaSource.class, storageDir);
@@ -297,7 +298,7 @@ public class SharedSchemaRepositoryTest {
         sharedSchemaRepository.registerSchemaSourceListener(transformer);
 
         // Request schema to make repository notify the cache
-        final CheckedFuture<SchemaContext, SchemaResolutionException> schemaFuture = sharedSchemaRepository
+        final ListenableFuture<SchemaContext> schemaFuture = sharedSchemaRepository
                 .createSchemaContextFactory(ALWAYS_ACCEPT).createSchemaContext(ImmutableList.of(runningId));
         Futures.addCallback(schemaFuture, new FutureCallback<SchemaContext>() {
             @Override
@@ -313,7 +314,7 @@ public class SharedSchemaRepositoryTest {
                 assertEquals(1, cachedSchemas.size());
                 assertEquals(Files.getNameWithoutExtension(cachedSchemas.get(0).getName()), "running@2012-12-12");
             }
-        });
+        }, MoreExecutors.directExecutor());
 
         try {
             schemaFuture.get();

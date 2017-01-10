@@ -23,7 +23,7 @@
     </feature>
 
     <feature name='odl-yangtools-common' version='${project.version}' description='OpenDaylight :: Yangtools :: Common'>
-        <feature version="[1.7.0, 2.0.0)" dependency="true">odl-guava-18</feature>
+        <feature version="[1.7.0, 2.0.0)" dependency="true">odl-guava-21</feature>
         <feature version="[1.7.0, 2.0.0)" dependency="true">odl-triemap-0.2</feature>
         <bundle>mvn:org.opendaylight.yangtools/concepts/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-common/{{VERSION}}</bundle>

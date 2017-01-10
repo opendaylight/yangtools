@@ -44,7 +44,9 @@ public final class SharedCodecCache<T> extends CodecCache<T> {
         try {
             return complexCodecs.get(schema, () -> codec);
         } catch (ExecutionException e) {
-            throw Throwables.propagate(e.getCause());
+            final Throwable cause = e.getCause();
+            Throwables.throwIfUnchecked(cause);
+            throw new RuntimeException(e);
         }
     }
 
@@ -53,7 +55,9 @@ public final class SharedCodecCache<T> extends CodecCache<T> {
         try {
             return simpleCodecs.get(type, () -> codec);
         } catch (ExecutionException e) {
-            throw Throwables.propagate(e.getCause());
+            final Throwable cause = e.getCause();
+            Throwables.throwIfUnchecked(cause);
+            throw new RuntimeException(e);
         }
     }
 }

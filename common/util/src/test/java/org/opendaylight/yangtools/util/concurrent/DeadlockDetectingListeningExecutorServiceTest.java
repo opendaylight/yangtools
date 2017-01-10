@@ -21,6 +21,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -129,7 +130,7 @@ public class DeadlockDetectingListeningExecutorServiceTest {
                 caughtEx.set(t);
                 futureCompletedLatch.countDown();
             }
-        });
+        }, MoreExecutors.directExecutor());
 
         initialInvoker.invokeExecutor(executor, task);
 
