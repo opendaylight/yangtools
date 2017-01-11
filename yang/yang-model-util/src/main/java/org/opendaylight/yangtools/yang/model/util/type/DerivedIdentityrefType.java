@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
+import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -24,6 +25,11 @@ final class DerivedIdentityrefType extends AbstractDerivedType<IdentityrefTypeDe
     @Override
     public IdentitySchemaNode getIdentity() {
         return baseType().getIdentity();
+    }
+
+    @Override
+    public Set<IdentitySchemaNode> getIdentities() {
+        return baseType().getIdentities();
     }
 
     @Override
