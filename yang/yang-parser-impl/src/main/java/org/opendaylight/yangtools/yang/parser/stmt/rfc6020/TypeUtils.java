@@ -10,16 +10,23 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.util.UnresolvedNumber;
@@ -27,6 +34,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IfFeatureEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EnumEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LengthConstraintEffectiveImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeConstraintEffectiveImpl;
 
@@ -96,7 +106,7 @@ public final class TypeUtils {
 
         try {
             return new BigInteger(value);
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             throw new SourceException(String.format("Value %s is not a valid integer", value),
                     ctx.getStatementSourceReference(), e);
         }
@@ -112,7 +122,7 @@ public final class TypeUtils {
 
         try {
             return value.indexOf('.') != -1 ? new BigDecimal(value) : new BigInteger(value);
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             throw new SourceException(String.format("Value %s is not a valid decimal number", value),
                     ctx.getStatementSourceReference(), e);
         }
@@ -121,10 +131,10 @@ public final class TypeUtils {
     public static List<RangeConstraint> parseRangeListFromString(final StmtContext<?, ?, ?> ctx,
                                                                  final String rangeArgument) {
 
-        Optional<String> description = Optional.absent();
-        Optional<String> reference = Optional.absent();
+        final Optional<String> description = Optional.absent();
+        final Optional<String> reference = Optional.absent();
 
-        List<RangeConstraint> rangeConstraints = new ArrayList<>();
+        final List<RangeConstraint> rangeConstraints = new ArrayList<>();
 
         for (final String singleRange : PIPE_SPLITTER.split(rangeArgument)) {
             final Iterator<String> boundaries = TWO_DOTS_SPLITTER.splitToList(singleRange).iterator();
@@ -158,10 +168,10 @@ public final class TypeUtils {
 
     public static List<LengthConstraint> parseLengthListFromString(final StmtContext<?, ?, ?> ctx,
             final String lengthArgument) {
-        Optional<String> description = Optional.absent();
-        Optional<String> reference = Optional.absent();
+        final Optional<String> description = Optional.absent();
+        final Optional<String> reference = Optional.absent();
 
-        List<LengthConstraint> lengthConstraints = new ArrayList<>();
+        final List<LengthConstraint> lengthConstraints = new ArrayList<>();
 
         for (final String singleRange : PIPE_SPLITTER.split(lengthArgument)) {
             final Iterator<String> boundaries = TWO_DOTS_SPLITTER.splitToList(singleRange).iterator();
@@ -212,5 +222,52 @@ public final class TypeUtils {
         final QName qname = stmtCtx.getFromNamespace(QNameCacheNamespace.class,
             QName.create(parentQName, path.getLastComponent().getLocalName()));
         return parent.createChild(qname);
+    }
+
+    public static boolean hasDefaultValueMarkedWithIfFeature(final YangVersion yangVersion,
+            final TypeEffectiveStatement<?> typeStmt, final Set<String> defaultValues) {
+        return !defaultValues.isEmpty()
+                && yangVersion == YangVersion.VERSION_1_1
+                && (typeStmt.getTypeDefinition() instanceof EnumTypeDefinition || typeStmt.getTypeDefinition() instanceof BitsTypeDefinition)
+                && isAnyDefaultValueMarkedWithIfFeature(typeStmt, defaultValues);
+    }
+
+    public static boolean hasDefaultValueMarkedWithIfFeature(final YangVersion yangVersion,
+            final TypeEffectiveStatement<?> typeStmt, final String defaultValue) {
+        return !Strings.isNullOrEmpty(defaultValue)
+                && yangVersion == YangVersion.VERSION_1_1
+                && (typeStmt.getTypeDefinition() instanceof EnumTypeDefinition || typeStmt.getTypeDefinition() instanceof BitsTypeDefinition)
+                && isAnyDefaultValueMarkedWithIfFeature(typeStmt, ImmutableSet.of(defaultValue));
+    }
+
+    private static boolean isAnyDefaultValueMarkedWithIfFeature(final TypeEffectiveStatement<?> typeStmt,
+            final Set<String> defaultValues) {
+        final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = typeStmt.effectiveSubstatements();
+        for (final EffectiveStatement<?, ?> effectiveSubstatement : effectiveSubstatements) {
+            if (effectiveSubstatement instanceof BitEffectiveStatementImpl
+                    && defaultValues.contains(((QName) effectiveSubstatement.argument()).getLocalName())
+                    && containsIfFeature(effectiveSubstatement)) {
+                return true;
+            } else if (effectiveSubstatement instanceof EnumEffectiveStatementImpl
+                    && defaultValues.contains(effectiveSubstatement.argument())
+                    && containsIfFeature(effectiveSubstatement)) {
+                return true;
+            } else if (effectiveSubstatement instanceof TypeEffectiveStatement) {
+                return isAnyDefaultValueMarkedWithIfFeature((TypeEffectiveStatement<?>) effectiveSubstatement,
+                        defaultValues);
+            }
+        }
+        return false;
+    }
+
+    private static boolean containsIfFeature(final EffectiveStatement<?, ?> effectiveStatement) {
+        final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveStatement
+                .effectiveSubstatements();
+        for (final EffectiveStatement<?, ?> effectiveSubstatement : effectiveSubstatements) {
+            if (effectiveSubstatement instanceof IfFeatureEffectiveStatementImpl) {
+                return true;
+            }
+        }
+        return false;
     }
 }

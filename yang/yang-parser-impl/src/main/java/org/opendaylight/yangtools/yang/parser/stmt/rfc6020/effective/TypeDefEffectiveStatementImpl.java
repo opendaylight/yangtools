@@ -11,8 +11,8 @@ import java.util.Collection;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -24,6 +24,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.util.type.DerivedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.DerivedTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,9 +41,11 @@ public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchema
         final TypeEffectiveStatement<?> typeEffectiveStmt = firstSubstatementOfType(TypeEffectiveStatement.class);
         final DerivedTypeBuilder<?> builder = DerivedTypes.derivedTypeBuilder(typeEffectiveStmt.getTypeDefinition(),
             ctx.getSchemaPath().get());
-        for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
+        String defaultValue = null;
+        for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof DefaultEffectiveStatementImpl) {
-                builder.setDefaultValue(stmt.argument());
+                defaultValue = ((DefaultEffectiveStatementImpl) stmt).argument();
+                builder.setDefaultValue(defaultValue);
             } else if (stmt instanceof DescriptionEffectiveStatementImpl) {
                 builder.setDescription(((DescriptionEffectiveStatementImpl)stmt).argument());
             } else if (stmt instanceof ReferenceEffectiveStatementImpl) {
@@ -59,6 +63,12 @@ public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchema
                 }
             }
         }
+
+        SourceException.throwIf(
+                TypeUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeEffectiveStmt, defaultValue),
+                ctx.getStatementSourceReference(),
+                "Typedef '%s' has default value '%s' marked with an if-feature statement.", ctx.getStatementArgument(),
+                defaultValue);
 
         typeDefinition = builder.build();
     }
@@ -103,8 +113,7 @@ public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchema
         @Nonnull
         @Override
         public Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-            // FIXME: this is tricky
-            throw new UnsupportedOperationException("Not implemented yet");
+            return TypeDefEffectiveStatementImpl.this.effectiveSubstatements();
         }
 
         @Nonnull
