@@ -11,8 +11,8 @@ import java.util.Collection;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -39,7 +39,7 @@ public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchema
         final TypeEffectiveStatement<?> typeEffectiveStmt = firstSubstatementOfType(TypeEffectiveStatement.class);
         final DerivedTypeBuilder<?> builder = DerivedTypes.derivedTypeBuilder(typeEffectiveStmt.getTypeDefinition(),
             ctx.getSchemaPath().get());
-        for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
+        for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof DefaultEffectiveStatementImpl) {
                 builder.setDefaultValue(stmt.argument());
             } else if (stmt instanceof DescriptionEffectiveStatementImpl) {
@@ -103,8 +103,7 @@ public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchema
         @Nonnull
         @Override
         public Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-            // FIXME: this is tricky
-            throw new UnsupportedOperationException("Not implemented yet");
+            return TypeDefEffectiveStatementImpl.this.effectiveSubstatements();
         }
 
         @Nonnull

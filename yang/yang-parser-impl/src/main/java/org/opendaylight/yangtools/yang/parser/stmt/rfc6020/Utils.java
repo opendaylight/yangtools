@@ -41,12 +41,14 @@ import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
@@ -63,6 +65,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.RootStatementContext;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EnumEffectiveStatementImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -638,5 +642,30 @@ public final class Utils {
                 .orElse(SimpleDateFormatUtil.DEFAULT_DATE_REV);
         final String formattedRevision = SimpleDateFormatUtil.getRevisionFormat().format(revision);
         return RevisionSourceIdentifier.create((String) root.getStatementArgument(), formattedRevision);
+    }
+
+    public static boolean isDefaultValueMarkedWithIfFeature(final TypeEffectiveStatement<?> typeStmt, final String dflt) {
+        final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = typeStmt.effectiveSubstatements();
+        for (final EffectiveStatement<?, ?> effectiveSubstatement : effectiveSubstatements) {
+            if (effectiveSubstatement instanceof BitEffectiveStatementImpl) {
+
+            } else if (effectiveSubstatement instanceof EnumEffectiveStatementImpl
+                    && effectiveSubstatement.argument().equals(dflt) && containsIfFeature(effectiveSubstatement)) {
+                return true;
+            } else if (effectiveSubstatement instanceof TypeEffectiveStatement) {
+                return isDefaultValueMarkedWithIfFeature((TypeEffectiveStatement<?>) effectiveSubstatement, dflt);
+            }
+        }
+        return false;
+    }
+
+    public static boolean containsIfFeature(final EffectiveStatement<?, ?> effectiveStatement) {
+        final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveStatement
+                .effectiveSubstatements();
+        for (final EffectiveStatement<?, ?> effectiveSubstatement : effectiveSubstatements) {
+
+        }
+
+        return false;
     }
 }
