@@ -36,11 +36,11 @@ public final class IdentityRefSpecificationEffectiveStatementImpl extends
         final IdentityrefTypeBuilder builder = BaseTypes.identityrefTypeBuilder(ctx.getSchemaPath().get());
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof BaseEffectiveStatementImpl) {
-                final BaseEffectiveStatementImpl base = firstEffective(BaseEffectiveStatementImpl.class);
+                final BaseEffectiveStatementImpl base = (BaseEffectiveStatementImpl) stmt;
                 final QName identityQName = base.argument();
                 final StmtContext<?, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> identityCtx =
                         ctx.getFromNamespace(IdentityNamespace.class, identityQName);
-                builder.setIdentity((IdentitySchemaNode) identityCtx.buildEffective());
+                builder.addIdentity((IdentitySchemaNode) identityCtx.buildEffective());
             }
             if (stmt instanceof UnknownEffectiveStatementImpl) {
                 builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl)stmt);

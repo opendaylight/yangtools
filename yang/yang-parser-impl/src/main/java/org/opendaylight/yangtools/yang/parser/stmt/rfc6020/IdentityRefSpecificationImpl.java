@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import com.google.common.base.Preconditions;
+import java.util.Collection;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -65,17 +66,17 @@ public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<Stri
                 EffectiveStatement<String, IdentityRefSpecification>> stmt) {
             super.onFullDefinitionDeclared(stmt);
 
-            final StmtContext<QName, ?, ?> baseStmt = StmtContextUtils.findFirstDeclaredSubstatement(stmt,
-                    BaseStatement.class);
-            Preconditions.checkArgument(baseStmt != null, "The \"base\" statement, which is a substatement to the " +
-                    "\"type\"\n statement, MUST be present if the type is \"identityref\" in source '%s'", stmt
-                    .getStatementSourceReference());
-            final QName baseIdentity = baseStmt.getStatementArgument();
-            final StmtContext<?, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> stmtCtx = stmt
-                    .getFromNamespace(IdentityNamespace.class, baseIdentity);
-            Preconditions.checkArgument(stmtCtx != null, "Referenced base identity '%s' doesn't exist " +
-                        "in " + "given scope " + "(module, imported submodules), source: '%s'", baseIdentity
-                    .getLocalName(), stmt.getStatementSourceReference());
+            final Collection<StmtContext<QName, BaseStatement, ?>> baseStatements =
+                    StmtContextUtils.<QName, BaseStatement>findAllDeclaredSubstatements(stmt, BaseStatement.class);
+
+            for (StmtContext<QName, BaseStatement, ?> baseStmt : baseStatements) {
+                final QName baseIdentity = baseStmt.getStatementArgument();
+                final StmtContext<?, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> stmtCtx =
+                        stmt.getFromNamespace(IdentityNamespace.class, baseIdentity);
+                Preconditions.checkArgument(stmtCtx != null, "Referenced base identity '%s' doesn't exist " +
+                        "in given scope (module, imported modules, submodules), source: '%s'",
+                        baseIdentity.getLocalName(), stmt.getStatementSourceReference());
+            }
         }
 
         @Override
@@ -94,6 +95,12 @@ public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<Stri
     @Override
     public BaseStatement getBase() {
         return firstDeclared(BaseStatement.class);
+    }
+
+    @Nonnull
+    @Override
+    public Collection<? extends BaseStatement> getBases() {
+        return allDeclared(BaseStatement.class);
     }
 
 }
