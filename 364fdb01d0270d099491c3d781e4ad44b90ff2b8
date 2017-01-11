@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a622d24_08f1fc6a",
+        "filename": "third-party/triemap/src/main/java/org/opendaylight/yangtools/triemap/TrieMap.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2017-01-11T14:24:40Z",
+      "side": 1,
+      "message": "Perhaps add a comment line with \"Shave off a few instructions by using expressions rather than verbose assignment.\" equivalent, to let contributors known performance is of importance here.",
+      "range": {
+        "startLine": 99,
+        "startChar": 40,
+        "endLine": 99,
+        "endChar": 41
+      },
+      "revId": "364fdb01d0270d099491c3d781e4ad44b90ff2b8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
