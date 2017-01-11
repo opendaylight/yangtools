@@ -1,0 +1,29 @@
+module invalid-foo-union {
+    namespace "foo";
+    prefix foo;
+    yang-version 1.1;
+
+    feature f;
+
+    typedef enum-typedef {
+        type enumeration {
+            enum one;
+            enum two {
+                if-feature f;
+            }
+            enum three;
+        }
+    }
+
+    typedef union-typedef {
+        type union {
+            type enum-typedef;
+            type int16;
+        }
+    }
+
+    leaf union-leaf {
+        type union-typedef;
+        default two;
+    }
+}

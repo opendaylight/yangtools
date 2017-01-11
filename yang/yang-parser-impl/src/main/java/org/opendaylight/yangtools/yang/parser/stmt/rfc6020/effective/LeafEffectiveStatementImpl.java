@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafStatement> implements
         LeafSchemaNode, DerivableSchemaNode {
@@ -40,7 +41,7 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
         String units = null;
         final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
             ctx.getSchemaPath().get());
-        for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
+        for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof DefaultEffectiveStatementImpl) {
                 dflt = ((DefaultEffectiveStatementImpl)stmt).argument();
                 builder.setDefaultValue(stmt.argument());
@@ -54,6 +55,16 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
                 units = ((UnitsEffectiveStatementImpl)stmt).argument();
                 builder.setUnits(units);
             }
+        }
+
+        try {
+            SourceException.throwIf(TypeUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeStmt, dflt),
+                    ctx.getStatementSourceReference(),
+                    "Leaf '%s' has default value '%s' marked with an if-feature statement.",
+                    ctx.getStatementArgument(), dflt);
+        } catch (final IllegalStateException e) {
+            throw new SourceException(ctx.getStatementSourceReference(), e,
+                    "Unable to find a default value for leaf '%s'", ctx.getStatementArgument());
         }
 
         defaultStr = dflt;
@@ -98,7 +109,7 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
         if (!(obj instanceof LeafEffectiveStatementImpl)) {
             return false;
         }
-        LeafEffectiveStatementImpl other = (LeafEffectiveStatementImpl) obj;
+        final LeafEffectiveStatementImpl other = (LeafEffectiveStatementImpl) obj;
         return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 
