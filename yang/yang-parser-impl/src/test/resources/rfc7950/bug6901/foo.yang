@@ -1,0 +1,45 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+    yang-version 1.1;
+
+    feature f;
+
+    typedef enum-typedef {
+        type enumeration {
+            enum one;
+            enum two {
+                if-feature f;
+            }
+            enum three;
+        }
+    }
+
+    typedef enum-typedef-2 {
+        type enum-typedef;
+    }
+
+    leaf enum-leaf {
+        type enum-typedef-2;
+        default three;
+    }
+
+    typedef bits-typedef {
+        type bits {
+            bit one;
+            bit two {
+                if-feature f;
+            }
+            bit three;
+        }
+    }
+
+    typedef bits-typedef-2 {
+        type bits-typedef;
+        default three;
+    }
+
+    leaf bit-leaf {
+        type bits-typedef-2;
+    }
+}

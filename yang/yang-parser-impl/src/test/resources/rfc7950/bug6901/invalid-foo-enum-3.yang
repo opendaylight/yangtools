@@ -1,0 +1,28 @@
+module invalid-foo-enum-3 {
+    namespace "foo";
+    prefix foo;
+    yang-version 1.1;
+
+    feature f;
+
+    typedef enum-typedef {
+        type enumeration {
+            enum one;
+            enum two {
+                if-feature f;
+            }
+            enum three;
+        }
+        description "enum-typedef desc";
+    }
+
+    typedef enum-typedef-2 {
+        type enum-typedef;
+        description "enum-typedef-2 desc";
+    }
+
+    leaf enum-leaf {
+        type enum-typedef-2;
+        default two;
+    }
+}

@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafListStatement> implements
         LeafListSchemaNode, DerivableSchemaNode {
@@ -31,7 +32,7 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
     private final TypeDefinition<?> type;
     private final LeafListSchemaNode original;
     private final boolean userOrdered;
-    private final List<String> defaultValues;
+    private final Set<String> defaultValues;
 
     public LeafListEffectiveStatementImpl(
             final StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
@@ -45,7 +46,7 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
 
         final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
             ctx.getSchemaPath().get());
-        final ImmutableList.Builder<String> defaultValuesBuilder = ImmutableList.builder();
+        final ImmutableSet.Builder<String> defaultValuesBuilder = ImmutableSet.builder();
         boolean isUserOrdered = false;
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof OrderedByEffectiveStatementImpl) {
@@ -66,6 +67,17 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
         }
 
         defaultValues = defaultValuesBuilder.build();
+        try {
+            SourceException.throwIf(
+                    TypeUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeStmt, defaultValues),
+                    ctx.getStatementSourceReference(),
+                    "Leaf-list '%s' has one of its default values '%s' marked with an if-feature statement.",
+                    ctx.getStatementArgument(), defaultValues);
+        } catch (final IllegalStateException e) {
+            throw new SourceException(ctx.getStatementSourceReference(), e,
+                    "Unable to find a default value for leaf-list '%s'", ctx.getStatementArgument());
+        }
+
         type = builder.build();
         userOrdered = isUserOrdered;
     }
