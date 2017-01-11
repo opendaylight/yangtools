@@ -97,10 +97,10 @@ public class TypeTest {
     public void identityrefTypeTest() {
         final IdentityrefTypeBuilder identityrefTypeBuilder1 = BaseTypes.identityrefTypeBuilder(SCHEMA_PATH);
         final IdentitySchemaNode identitySchemaNode = mock(IdentitySchemaNode.class);
-        identityrefTypeBuilder1.setIdentity(identitySchemaNode);
+        identityrefTypeBuilder1.addIdentity(identitySchemaNode);
         final IdentityrefTypeDefinition identityrefTypeDefinition1 = identityrefTypeBuilder1.build();
         final IdentityrefTypeBuilder identityrefTypeBuilder2 = BaseTypes.identityrefTypeBuilder(SCHEMA_PATH);
-        identityrefTypeBuilder2.setIdentity(identitySchemaNode);
+        identityrefTypeBuilder2.addIdentity(identitySchemaNode);
         final IdentityrefTypeDefinition identityrefTypeDefinition2 = identityrefTypeBuilder2.build();
         hashCodeEqualsToStringTest(identityrefTypeDefinition1, identityrefTypeDefinition2);
 
