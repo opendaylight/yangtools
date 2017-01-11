@@ -1,0 +1,13 @@
+module bar {
+    namespace "bar";
+    prefix bar;
+    yang-version 1.1;
+
+    revision 2017-01-11;
+
+    container augment-target {
+        leaf my-leaf {
+            type string;
+        }
+    }
+}

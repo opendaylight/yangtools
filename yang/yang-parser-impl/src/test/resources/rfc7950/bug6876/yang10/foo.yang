@@ -1,0 +1,14 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+
+    import bar { prefix bar; revision-date 2017-01-11; }
+
+    augment "/bar:augment-target" {
+        when "bar:my-leaf='x'";
+        leaf mandatory-leaf {
+            mandatory true;
+            type string;
+        }
+    }
+}

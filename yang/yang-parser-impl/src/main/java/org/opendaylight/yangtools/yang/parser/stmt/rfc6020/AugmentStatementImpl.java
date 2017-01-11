@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
@@ -203,6 +204,12 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
             final CopyType typeOfCopy = UsesStatement.class.equals(sourceCtx.getParentContext().getPublicDefinition()
                     .getDeclaredRepresentationClass()) ? CopyType.ADDED_BY_USES_AUGMENTATION
                     : CopyType.ADDED_BY_AUGMENTATION;
+            /*
+             * Since Yang 1.1, if an augmentation is made conditional with a
+             * "when" statement, it is allowed to add mandatory nodes.
+             */
+            final boolean skipCheckOfMandatoryNodes = YangVersion.VERSION_1_1.equals(sourceCtx.getRootVersion())
+                    && isConditionalAugmentStmt(sourceCtx);
 
             final Collection<StatementContextBase<?, ?, ?>> declared = sourceCtx.declaredSubstatements();
             final Collection<StatementContextBase<?, ?, ?>> effective = sourceCtx.effectiveSubstatements();
@@ -210,21 +217,36 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
 
             for (final StatementContextBase<?, ?, ?> originalStmtCtx : declared) {
                 if (StmtContextUtils.areFeaturesSupported(originalStmtCtx)) {
-                    copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer);
+                    copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer, skipCheckOfMandatoryNodes);
                 }
             }
             for (final StatementContextBase<?, ?, ?> originalStmtCtx : effective) {
-                copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer);
+                copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer, skipCheckOfMandatoryNodes);
             }
 
             targetCtx.addEffectiveSubstatements(buffer);
         }
 
+        /**
+         * Checks whether supplied statement context is conditional augment
+         * statement.
+         *
+         * @param ctx
+         *            statement context to be checked
+         *
+         * @return true if supplied statement context is conditional augment
+         *         statement, otherwise false
+         */
+        private static boolean isConditionalAugmentStmt(final StatementContextBase<?, ?, ?> ctx) {
+            return ctx.getPublicDefinition() == YangStmtMapping.AUGMENT
+                    && StmtContextUtils.findFirstSubstatement(ctx, WhenStatement.class) != null;
+        }
+
         private static void copyStatement(final StatementContextBase<?, ?, ?> original,
                 final StatementContextBase<?, ?, ?> target, final CopyType typeOfCopy,
-                final Collection<StatementContextBase<?, ?, ?>> buffer) {
+                final Collection<StatementContextBase<?, ?, ?>> buffer, final boolean skipCheckOfMandatoryNodes) {
             if (needToCopyByAugment(original)) {
-                validateNodeCanBeCopiedByAugment(original, target, typeOfCopy);
+                validateNodeCanBeCopiedByAugment(original, target, typeOfCopy, skipCheckOfMandatoryNodes);
 
                 final StatementContextBase<?, ?, ?> copy = original.createCopy(target, typeOfCopy);
                 buffer.add(copy);
@@ -234,13 +256,14 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
         }
 
         private static void validateNodeCanBeCopiedByAugment(final StatementContextBase<?, ?, ?> sourceCtx,
-                final StatementContextBase<?, ?, ?> targetCtx, final CopyType typeOfCopy) {
+                final StatementContextBase<?, ?, ?> targetCtx, final CopyType typeOfCopy, final boolean skipCheckOfMandatoryNodes) {
 
             if (WhenStatement.class.equals(sourceCtx.getPublicDefinition().getDeclaredRepresentationClass())) {
                 return;
             }
 
-            if (typeOfCopy == CopyType.ADDED_BY_AUGMENTATION && reguiredCheckOfMandatoryNodes(sourceCtx, targetCtx)) {
+            if (!skipCheckOfMandatoryNodes && typeOfCopy == CopyType.ADDED_BY_AUGMENTATION
+                    && reguiredCheckOfMandatoryNodes(sourceCtx, targetCtx)) {
                 checkForMandatoryNodes(sourceCtx);
             }
 
