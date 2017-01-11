@@ -53,15 +53,12 @@ final class INode<K, V> extends BasicNode {
         return GCAS_Complete(m, ct);
     }
 
-    private MainNode<K, V> GCAS_Complete(MainNode<K, V> m, final TrieMap<?, ?> ct) {
-        while (true) {
-            if (m == null) {
-                return null;
-            }
-
+    private MainNode<K, V> GCAS_Complete(final MainNode<K, V> oldmain, final TrieMap<?, ?> ct) {
+        MainNode<K, V> m = oldmain;
+        while (m != null) {
             // complete the GCAS
             final MainNode<K, V> prev = /* READ */ m.READ_PREV();
-            final Gen rdgen = ct.readRoot(true).gen;
+            final INode<?, ?> ctr = ct.readRoot(true);
             if (prev == null) {
                 return m;
             }
@@ -86,7 +83,7 @@ final class INode<K, V> extends BasicNode {
             // ==> if `ctr.gen` = `gen` then they are both equal to G.
             // ==> otherwise, we know that either `ctr.gen` > G, `gen` < G,
             // or both
-            if (rdgen == gen && !ct.isReadOnly()) {
+            if (ctr.gen == gen && !ct.isReadOnly()) {
                 // try to commit
                 if (m.CAS_PREV(prev, null)) {
                     return m;
@@ -102,6 +99,8 @@ final class INode<K, V> extends BasicNode {
             // Tail recursion: return GCAS_Complete(/* READ */ mainnode, ct);
             m = /* READ */ mainnode;
         }
+
+        return null;
     }
 
     private boolean GCAS(final MainNode<K, V> old, final MainNode<K, V> n, final TrieMap<?, ?> ct) {
