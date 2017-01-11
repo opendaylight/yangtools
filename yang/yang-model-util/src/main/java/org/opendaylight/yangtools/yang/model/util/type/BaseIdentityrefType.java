@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.base.Preconditions;
 import java.util.List;
+import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -16,15 +17,23 @@ import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
 final class BaseIdentityrefType extends AbstractBaseType<IdentityrefTypeDefinition> implements IdentityrefTypeDefinition {
     private final IdentitySchemaNode identity;
+    private final Set<IdentitySchemaNode> identities;
 
-    BaseIdentityrefType(final SchemaPath path, final List<UnknownSchemaNode> unknownSchemaNodes, final IdentitySchemaNode identity) {
+    BaseIdentityrefType(final SchemaPath path, final List<UnknownSchemaNode> unknownSchemaNodes,
+            final IdentitySchemaNode identity, final Set<IdentitySchemaNode> identities) {
         super(path, unknownSchemaNodes);
         this.identity = Preconditions.checkNotNull(identity);
+        this.identities = Preconditions.checkNotNull(identities);
     }
 
     @Override
     public IdentitySchemaNode getIdentity() {
         return identity;
+    }
+
+    @Override
+    public Set<IdentitySchemaNode> getIdentities() {
+        return identities;
     }
 
     @Override

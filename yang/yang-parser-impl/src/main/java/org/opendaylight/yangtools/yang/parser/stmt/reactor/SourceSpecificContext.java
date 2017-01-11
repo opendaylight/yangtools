@@ -67,6 +67,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnionSpecificationImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.IdentityrefSpecificationRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.LeafrefSpecificationRfc7950Support;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,6 +90,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             .put(YangVersion.VERSION_1_1, TypeUtils.LEAF_REF, new LeafrefSpecificationRfc7950Support())
             .put(YangVersion.VERSION_1, TypeUtils.BITS, new BitsSpecificationImpl.Definition())
             .put(YangVersion.VERSION_1, TypeUtils.IDENTITY_REF, new IdentityRefSpecificationImpl.Definition())
+            .put(YangVersion.VERSION_1_1, TypeUtils.IDENTITY_REF, new IdentityrefSpecificationRfc7950Support())
             .put(YangVersion.VERSION_1, TypeUtils.INSTANCE_IDENTIFIER, new InstanceIdentifierSpecificationImpl.Definition())
                     .build();
 
