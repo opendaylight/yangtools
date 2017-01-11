@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.IfFeaturePredicates;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
@@ -394,5 +395,20 @@ public final class StmtContextUtils {
         Preconditions.checkNotNull(parentType);
         final StmtContext<?, ?, ?> parentContext = ctx.getParentContext();
         return parentContext != null ? parentType.equals(parentContext.getPublicDefinition()) : false;
+    }
+
+    /**
+     * Checks whether supplied statement context is conditional augment
+     * statement.
+     *
+     * @param ctx
+     *            statement context to be checked
+     *
+     * @return true if supplied statement context is conditional augment
+     *         statement, otherwise false
+     */
+    public static boolean isConditionalAugmentStmt(final StatementContextBase<?, ?, ?> ctx) {
+        return ctx.getPublicDefinition() == YangStmtMapping.AUGMENT
+                && findFirstSubstatement(ctx, WhenStatement.class) != null;
     }
 }
