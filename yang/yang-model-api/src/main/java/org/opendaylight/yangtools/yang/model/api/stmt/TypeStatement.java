@@ -73,7 +73,18 @@ public interface TypeStatement extends DeclaredStatement<String> {
     @Rfc6020AbnfRule("identityref-specification")
     interface IdentityRefSpecification extends TypeStatement {
 
-        @Nonnull BaseStatement getBase();
+        /**
+         * @deprecated use {@link #getBases()} instead
+         *
+         * @return base statement
+         */
+        @Deprecated @Nonnull BaseStatement getBase();
+
+        /**
+         * @return collection of base statements (in YANG 1.1 models) or a collection containing just one base statement
+         * (in YANG 1.0 models)
+         */
+        @Nonnull Collection<? extends BaseStatement> getBases();
     }
 
     @Rfc6020AbnfRule("bits-specification")

@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
+import java.util.Set;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -18,8 +20,17 @@ public interface IdentityrefTypeDefinition extends TypeDefinition<IdentityrefTyp
     /**
      * Returns identity to which the instance of this type refers.
      *
+     * @deprecated use {@link #getIdentities()} instead
+     *
      * @return identity which is specified with the <code>identity</code> YANG
      *         statement
      */
+    @Deprecated
     IdentitySchemaNode getIdentity();
+
+    /**
+     * @return set of identities to which the instance of this type refers (in YANG 1.1 models) or a set containing
+     *         just one identity (in YANG 1.0 models)
+     */
+    @Nonnull Set<IdentitySchemaNode> getIdentities();
 }
