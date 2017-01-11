@@ -1,0 +1,26 @@
+module invalid-foo-bit {
+    namespace "foo";
+    prefix foo;
+    yang-version 1.1;
+
+    feature f;
+
+    typedef bits-typedef {
+        type bits {
+            bit one;
+            bit two {
+                if-feature f;
+            }
+            bit three;
+        }
+    }
+
+    typedef bits-typedef-2 {
+        type bits-typedef;
+        default two;
+    }
+
+    leaf bit-leaf {
+        type bits-typedef-2;
+    }
+}
