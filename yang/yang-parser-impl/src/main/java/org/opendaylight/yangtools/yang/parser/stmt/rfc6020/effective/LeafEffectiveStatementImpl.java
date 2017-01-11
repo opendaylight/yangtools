@@ -10,16 +10,20 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import com.google.common.base.Optional;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafStatement> implements
         LeafSchemaNode, DerivableSchemaNode {
@@ -40,7 +44,7 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
         String units = null;
         final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
             ctx.getSchemaPath().get());
-        for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
+        for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof DefaultEffectiveStatementImpl) {
                 dflt = ((DefaultEffectiveStatementImpl)stmt).argument();
                 builder.setDefaultValue(stmt.argument());
@@ -54,6 +58,14 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
                 units = ((UnitsEffectiveStatementImpl)stmt).argument();
                 builder.setUnits(units);
             }
+        }
+
+        if (ctx.getRootVersion() == YangVersion.VERSION_1_1
+                && (typeStmt.getTypeDefinition() instanceof EnumTypeDefinition || typeStmt.getTypeDefinition() instanceof BitsTypeDefinition)) {
+            SourceException.throwIf(Utils.isDefaultValueMarkedWithIfFeature(typeStmt, dflt),
+                    ctx.getStatementSourceReference(),
+                    "Leaf %s has default value marked with an if-feature statement.",
+                    getQName());
         }
 
         defaultStr = dflt;
@@ -98,7 +110,7 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
         if (!(obj instanceof LeafEffectiveStatementImpl)) {
             return false;
         }
-        LeafEffectiveStatementImpl other = (LeafEffectiveStatementImpl) obj;
+        final LeafEffectiveStatementImpl other = (LeafEffectiveStatementImpl) obj;
         return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 

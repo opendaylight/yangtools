@@ -11,8 +11,9 @@ import java.util.Collection;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -21,9 +22,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.DerivedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.DerivedTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +44,9 @@ public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchema
         final TypeEffectiveStatement<?> typeEffectiveStmt = firstSubstatementOfType(TypeEffectiveStatement.class);
         final DerivedTypeBuilder<?> builder = DerivedTypes.derivedTypeBuilder(typeEffectiveStmt.getTypeDefinition(),
             ctx.getSchemaPath().get());
-        for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
+        for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof DefaultEffectiveStatementImpl) {
+                checkDefaultValue(ctx, typeEffectiveStmt, (String) stmt.argument());
                 builder.setDefaultValue(stmt.argument());
             } else if (stmt instanceof DescriptionEffectiveStatementImpl) {
                 builder.setDescription(((DescriptionEffectiveStatementImpl)stmt).argument());
@@ -61,6 +67,15 @@ public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchema
         }
 
         typeDefinition = builder.build();
+    }
+
+    private void checkDefaultValue(final StmtContext<?, ?, ?> ctx, final TypeEffectiveStatement<?> typeStmt, final String dflt) {
+        if (ctx.getRootVersion() == YangVersion.VERSION_1_1
+                && (typeStmt.getTypeDefinition() instanceof EnumTypeDefinition || typeStmt.getTypeDefinition() instanceof BitsTypeDefinition)) {
+            SourceException.throwIf(Utils.isDefaultValueMarkedWithIfFeature(typeStmt, dflt),
+                    ctx.getStatementSourceReference(),
+                    "Typedef %s has default value marked with an if-feature statement.", getQName());
+        }
     }
 
     @Nonnull
@@ -103,8 +118,7 @@ public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchema
         @Nonnull
         @Override
         public Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
-            // FIXME: this is tricky
-            throw new UnsupportedOperationException("Not implemented yet");
+            return TypeDefEffectiveStatementImpl.this.effectiveSubstatements();
         }
 
         @Nonnull
