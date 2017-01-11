@@ -1,0 +1,19 @@
+module foo {
+    namespace foo-ns;
+    prefix foo-prfx;
+    yang-version 1.1;
+
+    revision 2017-01-11;
+
+    identity id-a;
+    identity id-b;
+    identity id-c;
+
+    leaf idref-leaf {
+        type identityref {
+            base id-a;
+            base id-b;
+            base id-c;
+        }
+    }
+}
