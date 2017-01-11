@@ -1,0 +1,25 @@
+module invalid-foo-10-enum {
+    namespace "foo";
+    prefix foo;
+
+    feature f;
+
+    typedef enum-typedef {
+        type enumeration {
+            enum one;
+            enum two {
+                if-feature f;
+            }
+            enum three;
+        }
+    }
+
+    typedef enum-typedef-2 {
+        type enum-typedef;
+    }
+
+    leaf enum-leaf {
+        type enum-typedef-2;
+        default three;
+    }
+}
