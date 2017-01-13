@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a622d24_893864d4",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/type/BaseIdentityrefType.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-01-13T13:17:06Z",
+      "side": 1,
+      "message": "- Preconditions.checkNotNull(identities) \n- consider ImmutableSet.copyOf(..) ?",
+      "range": {
+        "startLine": 26,
+        "startChar": 26,
+        "endLine": 26,
+        "endChar": 36
+      },
+      "revId": "a27ddc31ea5f74f1357ad79a2bcf4cc04473d977",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
