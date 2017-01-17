@@ -39,24 +39,24 @@ public class StringPatternCheckingCodecTest {
     @Test
     public void testStringPatternCheckingCodec() throws ReactorException, ParseException, URISyntaxException,
             FileNotFoundException {
-        SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/string-pattern-checking-codec-test.yang");
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/string-pattern-checking-codec-test.yang");
         assertNotNull(schemaContext);
 
-        QNameModule testModuleQName = QNameModule.create(new URI("string-pattern-checking-codec-test"),
+        final QNameModule testModuleQName = QNameModule.create(new URI("string-pattern-checking-codec-test"),
                 SimpleDateFormatUtil.getRevisionFormat().parse("1970-01-01"));
 
-        Module testModule = schemaContext.findModuleByName("string-pattern-checking-codec-test", null);
+        final Module testModule = schemaContext.findModuleByName("string-pattern-checking-codec-test", null);
         assertNotNull(testModule);
 
-        ContainerSchemaNode testContainer = (ContainerSchemaNode) testModule.getDataChildByName(
+        final ContainerSchemaNode testContainer = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModuleQName, "test-container"));
         assertNotNull(testContainer);
 
-        LeafSchemaNode testLeaf = (LeafSchemaNode) testContainer.getDataChildByName(
+        final LeafSchemaNode testLeaf = (LeafSchemaNode) testContainer.getDataChildByName(
                 QName.create(testModuleQName, "string-leaf-with-valid-pattern"));
         assertNotNull(testLeaf);
 
-        StringCodec<String> codec = getCodec(testLeaf.getType(), StringCodec.class);
+        final StringCodec<String> codec = getCodec(testLeaf.getType(), StringCodec.class);
         assertNotNull(codec);
         assertEquals("ABCD", codec.serialize("ABCD"));
         assertEquals("ABCD", codec.deserialize("ABCD"));
@@ -64,9 +64,9 @@ public class StringPatternCheckingCodecTest {
         try {
             codec.deserialize("abcd");
             fail("Exception should have been thrown.");
-        } catch (IllegalArgumentException ex) {
+        } catch (final IllegalArgumentException ex) {
             LOG.debug("IllegalArgumentException was thrown as expected: {}", ex);
-            assertTrue(ex.getMessage().contains("is not valid regular expression. [abcd]"));
+            assertTrue(ex.getMessage().contains("Supplied value does not match the regular expression ^[A-Z]+$. [abcd]"));
         }
     }
 }

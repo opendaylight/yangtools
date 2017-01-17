@@ -38,8 +38,7 @@ final class PatternConstraintImpl implements PatternConstraint, Immutable {
     private final ModifierKind modifier;
 
     PatternConstraintImpl(final String regex, final Optional<String> description, final Optional<String> reference) {
-        this(regex, description, reference, "invalid-regular-expression", String.format(
-                "String %s is not valid regular expression.", regex), Optional.absent());
+        this(regex, description, reference, null, null, Optional.absent());
     }
 
     PatternConstraintImpl(final String regex, final Optional<String> description, final Optional<String> reference,
@@ -49,7 +48,7 @@ final class PatternConstraintImpl implements PatternConstraint, Immutable {
         this.reference = reference.orNull();
         this.errorAppTag = errorAppTag != null ? errorAppTag : "invalid-regular-expression";
         this.errorMessage = errorMessage != null ? errorMessage : String.format(
-                "String %s is not valid regular expression.", regex);
+                "Supplied value does not match the regular expression %s.", regex);
         this.modifier = modifier.orNull();
     }
 

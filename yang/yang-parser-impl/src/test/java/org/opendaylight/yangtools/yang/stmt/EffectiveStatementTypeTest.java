@@ -413,27 +413,27 @@ public class EffectiveStatementTypeTest {
         currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(),
                 "leaf-length-pattern"));
         assertNotNull(currentLeaf.getType());
-        final PatternConstraintEffectiveImpl lengthConstraint = (PatternConstraintEffectiveImpl) ((StringTypeDefinition) (currentLeaf
+        final PatternConstraintEffectiveImpl patternConstraint = (PatternConstraintEffectiveImpl) ((StringTypeDefinition) (currentLeaf
                 .getType())).getPatternConstraints().get(0);
-        final PatternConstraintEffectiveImpl lengthConstraintThird = (PatternConstraintEffectiveImpl) ((StringTypeDefinition) (currentLeaf
+        final PatternConstraintEffectiveImpl patternConstraintThird = (PatternConstraintEffectiveImpl) ((StringTypeDefinition) (currentLeaf
                 .getType())).getPatternConstraints().get(0);
         currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(),
                 "leaf-length-pattern-second"));
         assertNotNull(currentLeaf.getType());
-        final PatternConstraintEffectiveImpl lengthConstraintSecond = (PatternConstraintEffectiveImpl) ((StringTypeDefinition) (currentLeaf
+        final PatternConstraintEffectiveImpl patternConstraintSecond = (PatternConstraintEffectiveImpl) ((StringTypeDefinition) (currentLeaf
                 .getType())).getPatternConstraints().get(0);
 
-        assertEquals("^[0-9a-fA-F]*$", lengthConstraint.getRegularExpression());
-        assertNull(lengthConstraint.getReference());
-        assertNull(lengthConstraint.getDescription());
-        assertEquals("String ^[0-9a-fA-F]*$ is not valid regular expression.", lengthConstraint.getErrorMessage());
-        assertEquals("invalid-regular-expression", lengthConstraint.getErrorAppTag());
-        assertNotNull(lengthConstraint.toString());
-        assertNotNull(lengthConstraint.hashCode());
-        assertFalse(lengthConstraint.equals(null));
-        assertFalse(lengthConstraint.equals("test"));
-        assertFalse(lengthConstraint.equals(lengthConstraintSecond));
-        assertTrue(lengthConstraint.equals(lengthConstraintThird));
+        assertEquals("^[0-9a-fA-F]*$", patternConstraint.getRegularExpression());
+        assertNull(patternConstraint.getReference());
+        assertNull(patternConstraint.getDescription());
+        assertEquals("Supplied value does not match the regular expression ^[0-9a-fA-F]*$.", patternConstraint.getErrorMessage());
+        assertEquals("invalid-regular-expression", patternConstraint.getErrorAppTag());
+        assertNotNull(patternConstraint.toString());
+        assertNotNull(patternConstraint.hashCode());
+        assertFalse(patternConstraint.equals(null));
+        assertFalse(patternConstraint.equals("test"));
+        assertFalse(patternConstraint.equals(patternConstraintSecond));
+        assertTrue(patternConstraint.equals(patternConstraintThird));
     }
 
     @Test
