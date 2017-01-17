@@ -25,8 +25,7 @@ public class PatternConstraintEffectiveImpl implements PatternConstraint {
 
     public PatternConstraintEffectiveImpl(final String regex, final Optional<String> description,
             final Optional<String> reference) {
-        this(regex, description.orNull(), reference.orNull(), "invalid-regular-expression", String.format(
-                "String %s is not valid regular expression.", regex), null);
+        this(regex, description.orNull(), reference.orNull(), null, null, null);
     }
 
     public PatternConstraintEffectiveImpl(final String regex, final String description, final String reference,
@@ -37,7 +36,7 @@ public class PatternConstraintEffectiveImpl implements PatternConstraint {
         this.reference = reference;
         this.errorAppTag = errorAppTag != null ? errorAppTag : "invalid-regular-expression";
         this.errorMessage = errorMessage != null ? errorMessage : String.format(
-                "String %s is not valid regular expression.", regex);
+                "Supplied value does not match the regular expression %s.", regex);
         this.modifier = modifier;
     }
 
