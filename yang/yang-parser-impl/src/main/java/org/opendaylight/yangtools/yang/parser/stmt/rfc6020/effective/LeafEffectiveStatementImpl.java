@@ -17,6 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -58,7 +60,15 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
             }
         }
 
-        if (YangVersion.VERSION_1_1.equals(ctx.getRootVersion())) {
+        if ((typeStmt.getTypeDefinition() instanceof EnumTypeDefinition ||
+                typeStmt.getTypeDefinition() instanceof BitsTypeDefinition)
+                && YangVersion.VERSION_1_1.equals(ctx.getRootVersion())) {
+//            EnumTypeDefinition enumType = (EnumTypeDefinition) typeStmt;
+//            List<EnumPair> values = enumType.getValues();
+//            EnumPair
+//            for (EnumPair enumPair : values) {
+//                if
+//            }
             SourceException.throwIf(Utils.isDefaultValueMarkedWithIfFeature(typeStmt, dflt),
                     ctx.getStatementSourceReference(),
                     "Leaf %s has default value marked with an if-feature statement, which is invalid since Yang 1.1",
