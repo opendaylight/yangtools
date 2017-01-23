@@ -8,9 +8,14 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import com.google.common.annotations.Beta;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ListStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.effective.ListEffectiveStatementRfc7950Impl;
 
 /**
  * Class providing necessary support for processing YANG 1.1 List statement.
@@ -48,5 +53,11 @@ public final class ListStatementRfc7950Support extends ListStatementImpl.Definit
     @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
+    }
+
+    @Override
+    public EffectiveStatement<QName, ListStatement> createEffective(
+            final StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
+        return new ListEffectiveStatementRfc7950Impl(ctx);
     }
 }
