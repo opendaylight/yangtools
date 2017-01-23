@@ -84,10 +84,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>concepts</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
