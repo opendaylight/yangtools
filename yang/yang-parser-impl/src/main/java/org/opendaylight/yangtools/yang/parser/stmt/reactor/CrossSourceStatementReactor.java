@@ -115,6 +115,13 @@ public class CrossSourceStatementReactor {
             }
         }
 
+
+        public void addLibSources(final StatementStreamSource[] libSources) {
+            for (final StatementStreamSource libSource : libSources) {
+                context.addLibSource(libSource);
+            }
+        }
+
         /**
          * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException
          * @throws ReactorException

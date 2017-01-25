@@ -322,6 +322,12 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return hasProgressed ? PhaseCompletionProgress.PROGRESS : PhaseCompletionProgress.NO_PROGRESS;
     }
 
+    void completePhaseHard(final ModelProcessingPhase phase) {
+        finishedPhase = phase;
+        modifiers.removeAll(phase);
+        LOG.debug("Source {} finished phase {} hard", source, phase);
+    }
+
     private static boolean tryToProgress(final Collection<ModifierImpl> currentPhaseModifiers) {
         boolean hasProgressed = false;
 

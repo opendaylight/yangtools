@@ -29,6 +29,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -44,6 +45,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
@@ -70,6 +74,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     private final Map<ModelProcessingPhase, StatementSupportBundle> supports;
     private final Set<SourceSpecificContext> sources = new HashSet<>();
+    private final Set<SourceSpecificContext> libSources = new HashSet<>();
 
     private ModelProcessingPhase currentPhase = ModelProcessingPhase.INIT;
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
@@ -113,6 +118,10 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     void addSource(@Nonnull final StatementStreamSource source) {
         sources.add(new SourceSpecificContext(this, source));
+    }
+
+    public void addLibSource(@Nonnull final StatementStreamSource libSource) {
+        libSources.add(new SourceSpecificContext(this, libSource));
     }
 
     @Override
@@ -251,6 +260,13 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         for (final SourceSpecificContext source : sources) {
             source.startPhase(phase);
         }
+
+        if (phase == ModelProcessingPhase.SOURCE_LINKAGE || phase == ModelProcessingPhase.SOURCE_PRE_LINKAGE) {
+            for (final SourceSpecificContext libSource : libSources) {
+                libSource.startPhase(phase);
+            }
+        }
+
         currentPhase = phase;
         LOG.debug("Global phase {} started", phase);
     }
@@ -262,6 +278,16 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
                 source.loadStatements();
             } catch (final RuntimeException ex) {
                 throw propagateException(source, ex);
+            }
+        }
+
+        if (currentPhase == ModelProcessingPhase.SOURCE_LINKAGE || currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE) {
+            for (final SourceSpecificContext libSource : libSources) {
+                try {
+                    libSource.loadStatements();
+                } catch (final RuntimeException ex) {
+                    throw propagateException(libSource, ex);
+                }
             }
         }
     }
@@ -316,6 +342,10 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     private void completePhaseActions() throws ReactorException {
         Preconditions.checkState(currentPhase != null);
         final List<SourceSpecificContext> sourcesToProgress = Lists.newArrayList(sources);
+        if (currentPhase == ModelProcessingPhase.SOURCE_LINKAGE
+                || currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE) {
+            sourcesToProgress.addAll(libSources);
+        }
         boolean progressing = true;
         while (progressing) {
             // We reset progressing to false.
@@ -344,6 +374,19 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
                 }
             }
         }
+
+        final Iterator<SourceSpecificContext> invalidSources = sourcesToProgress.iterator();
+        while (invalidSources.hasNext()) {
+            final SourceSpecificContext invalidSource = invalidSources.next();
+            if (libSources.contains(invalidSource)) {
+                LOG.warn("Yang library source {} failed to complete phase {} successfully", invalidSource, currentPhase);
+                if(currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE) {
+                    invalidSource.completePhaseHard(currentPhase);
+                }
+                invalidSources.remove();
+            }
+        }
+
         if (!sourcesToProgress.isEmpty()) {
             final SomeModifiersUnresolvedException buildFailure = addSourceExceptions(sourcesToProgress);
             if (buildFailure != null) {
@@ -354,8 +397,44 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     private void endPhase(final ModelProcessingPhase phase) {
         Preconditions.checkState(currentPhase == phase);
+
+        if (!libSources.isEmpty() && phase == ModelProcessingPhase.SOURCE_LINKAGE) {
+            final Set<SourceSpecificContext> requiredLibs = new HashSet<>();
+            for (final SourceSpecificContext source : sources) {
+                 addRequiredImportsFromLibs(requiredLibs, source);
+            }
+            sources.addAll(requiredLibs);
+            libSources.clear();
+        }
+
         finishedPhase = currentPhase;
         LOG.debug("Global phase {} finished", phase);
+    }
+
+    private void addRequiredImportsFromLibs(final Set<SourceSpecificContext> requiredLibs,
+            final SourceSpecificContext source) {
+        final Set<StmtContext<?, ?, ?>> imports = getImportsSet(source);
+        final Set<StmtContext<?, ?, ?>> includes = getIncludesSet(source);
+        //:FIXME change this loop - iterate over imports and includes ..
+        for (final SourceSpecificContext libSource : libSources) {
+            if (imports.contains(libSource.getRoot()) || includes.contains(libSource.getRoot())) {
+                if (requiredLibs.add(libSource)) {
+                    addRequiredImportsFromLibs(requiredLibs, libSource);
+                }
+            }
+        }
+    }
+
+    private Set<StmtContext<?, ?, ?>> getIncludesSet(final SourceSpecificContext source) {
+        final Map<ModuleIdentifier, StmtContext<?, ?, ?>> includeMap = source
+                .getAllFromLocalStorage(IncludedModuleContext.class);
+        return includeMap == null ? ImmutableSet.of() : new HashSet<>(includeMap.values());
+    }
+
+    private Set<StmtContext<?, ?, ?>> getImportsSet(final SourceSpecificContext source) {
+        final Map<ModuleIdentifier, StmtContext<?, ?, ?>> importMap = source
+                .getAllFromLocalStorage(ImportedModuleContext.class);
+        return importMap == null ? ImmutableSet.of() : new HashSet<>(importMap.values());
     }
 
     Set<SourceSpecificContext> getSources() {
