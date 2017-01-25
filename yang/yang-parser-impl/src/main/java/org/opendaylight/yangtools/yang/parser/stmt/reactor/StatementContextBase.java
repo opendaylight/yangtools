@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
@@ -415,6 +414,26 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             return true;
         }
         return false;
+    }
+
+    boolean completePhaseHard(final ModelProcessingPhase phase) {
+        Preconditions.checkArgument(phase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
+                "Hard completition is allowwed only in %s phase, but was %s", ModelProcessingPhase.SOURCE_PRE_LINKAGE,
+                phase);
+
+        if (!phaseMutation.isEmpty()) {
+            phaseMutation.removeAll(phase);
+            if (phaseMutation.isEmpty()) {
+                phaseMutation = ImmutableMultimap.of();
+            }
+        }
+
+        for (final StatementContextBase<?, ?, ?> child : substatements.values()) {
+            child.completePhaseHard(phase);
+        }
+
+        onPhaseCompleted(phase);
+        return true;
     }
 
     /**

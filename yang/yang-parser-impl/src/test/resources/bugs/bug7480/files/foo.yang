@@ -1,0 +1,16 @@
+module foo {
+    namespace foo;
+    prefix foo;
+    yang-version 1;
+
+    import foo-imp-1 { prefix foo-imp-1; revision-date 2017-01-23; }
+    import foo-imp-2 { prefix foo-imp-2; revision-date 2017-01-23; }
+    include sub-foo {
+        revision-date 2017-01-20;
+    }
+
+    revision 2017-01-24;
+
+    container root {
+    }
+}
