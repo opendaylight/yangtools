@@ -105,13 +105,43 @@ public class CrossSourceStatementReactor {
                     supportedFeatures);
         }
 
+        /**
+         * Add main source. All main sources are present in resulting
+         * SchemaContext.
+         *
+         * @param source
+         *            which should be added into main sources
+         */
         public void addSource(final StatementStreamSource source) {
             context.addSource(source);
         }
 
+        /**
+         * Add main sources. All main sources are present in resulting
+         * SchemaContext.
+         *
+         * @param sources
+         *            which should be added into main sources
+         */
         public void addSources(final StatementStreamSource... sources) {
             for (final StatementStreamSource source : sources) {
                 context.addSource(source);
+            }
+        }
+
+        /**
+         * Add library sources. Only library sources required by main sources
+         * are present in resulting SchemaContext. Any other library sources are
+         * ignored and this also applies to errors reporting.
+         *
+         * Library sources are not supported in semantic version mode currently.
+         *
+         * @param libSources
+         *            yang sources which should be added into library sources
+         */
+        public void addLibSources(final StatementStreamSource... libSources) {
+            for (final StatementStreamSource libSource : libSources) {
+                context.addLibSource(libSource);
             }
         }
 

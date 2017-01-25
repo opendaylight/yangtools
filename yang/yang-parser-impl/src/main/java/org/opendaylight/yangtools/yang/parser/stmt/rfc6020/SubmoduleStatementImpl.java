@@ -91,26 +91,36 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
         }
 
         @Override
+        public void onPreLinkageDeclared(
+                final Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> stmt) {
+            stmt.setRootIdentifier(getSubmoduleIdentifier(stmt));
+        }
+
+        @Override
         public void onLinkageDeclared(
+                final Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> stmt) {
+            final ModuleIdentifier submoduleIdentifier = getSubmoduleIdentifier(stmt);
+            stmt.addContext(SubmoduleNamespace.class, submoduleIdentifier, stmt);
+
+            final String belongsToModuleName = firstAttributeOf(stmt.declaredSubstatements(), BelongsToStatement.class);
+            final StmtContext<?, ?, ?> prefixSubStmtCtx = findFirstDeclaredSubstatement(stmt, 0,
+                    BelongsToStatement.class, PrefixStatement.class);
+            SourceException.throwIfNull(prefixSubStmtCtx, stmt.getStatementSourceReference(),
+                    "Prefix of belongsTo statement is missing in submodule [%s]", stmt.getStatementArgument());
+
+            final String prefix = (String) prefixSubStmtCtx.getStatementArgument();
+
+            stmt.addToNs(BelongsToPrefixToModuleName.class, prefix, belongsToModuleName);
+        }
+
+        private ModuleIdentifier getSubmoduleIdentifier(
                 final Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> stmt) {
             final Date maybeDate = Utils.getLatestRevision(stmt.declaredSubstatements());
             final Optional<Date> revisionDate = maybeDate != null ? Optional.of(maybeDate) : DEFAULT_REVISION;
 
             final ModuleIdentifier submoduleIdentifier = ModuleIdentifierImpl.create(stmt.getStatementArgument(),
-                Optional.empty(), revisionDate);
-
-            stmt.addContext(SubmoduleNamespace.class, submoduleIdentifier, stmt);
-
-            final String belongsToModuleName = firstAttributeOf(
-                    stmt.declaredSubstatements(), BelongsToStatement.class);
-            final StmtContext<?, ?, ?> prefixSubStmtCtx = findFirstDeclaredSubstatement(
-                    stmt, 0, BelongsToStatement.class, PrefixStatement.class);
-            SourceException.throwIfNull(prefixSubStmtCtx, stmt.getStatementSourceReference(),
-                "Prefix of belongsTo statement is missing in submodule [%s]", stmt.getStatementArgument());
-
-            final String prefix = (String) prefixSubStmtCtx.getStatementArgument();
-
-            stmt.addToNs(BelongsToPrefixToModuleName.class, prefix, belongsToModuleName);
+                    Optional.empty(), revisionDate);
+            return submoduleIdentifier;
         }
 
         @Override

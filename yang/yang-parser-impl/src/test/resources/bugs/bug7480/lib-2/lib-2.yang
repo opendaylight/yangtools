@@ -1,0 +1,9 @@
+module lib-2 {
+    namespace lib-2;
+    prefix lib-2;
+
+    revision 2000-01-01;
+
+    container root {
+    }
+}
