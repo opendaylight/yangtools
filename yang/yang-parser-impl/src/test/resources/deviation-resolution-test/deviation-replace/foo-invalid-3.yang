@@ -1,0 +1,17 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    revision 2017-01-20;
+
+    deviation "/my-leaf" {
+        deviate replace {
+            must "a != b";
+        }
+    }
+
+    leaf my-leaf {
+        type int32;
+        must "a != b";
+    }
+}

@@ -115,10 +115,22 @@ public final class StmtContextUtils {
         return null;
     }
 
+    /**
+     * Searches for the first substatement of the specified type in the specified statement context.
+     * First, it tries to find the substatement in the effective substatements of the statement context.
+     * If it was not found, then it proceeds to search in the declared substatements. If it still was not found,
+     * the method returns null.
+     *
+     * @param stmtContext statement context to search in
+     * @param declaredType substatement type to search for
+     * @param <AT> statement argument type
+     * @param <DT> declared statement type
+     * @return statement context that was searched for or null if was not found
+     */
     public static <AT, DT extends DeclaredStatement<AT>> StmtContext<AT, ?, ?> findFirstSubstatement(
             final StmtContext<?, ?, ?> stmtContext, final Class<DT> declaredType) {
-        final StmtContext<AT, ?, ?> declaredSubstatement = findFirstDeclaredSubstatement(stmtContext, declaredType);
-        return declaredSubstatement != null ? declaredSubstatement : findFirstEffectiveSubstatement(stmtContext,
+        final StmtContext<AT, ?, ?> effectiveSubstatement = findFirstEffectiveSubstatement(stmtContext, declaredType);
+        return effectiveSubstatement != null ? effectiveSubstatement : findFirstDeclaredSubstatement(stmtContext,
                 declaredType);
     }
 
