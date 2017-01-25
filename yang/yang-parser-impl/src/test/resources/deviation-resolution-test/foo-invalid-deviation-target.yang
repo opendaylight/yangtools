@@ -1,0 +1,16 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    revision 2017-01-20;
+
+    deviation "/my-cont" {
+        deviate add {
+            max-elements 5;
+        }
+    }
+
+    container my-cont {
+
+    }
+}

@@ -15,13 +15,13 @@ module foo {
         deviate add {
             default "added-def-val";
             config false;
+            mandatory true;
         }
     }
 
     deviation "/test-container/test-leaf-list" {
         deviate add {
             max-elements 12;
-            mandatory true;
         }
 
         deviate replace {
@@ -56,6 +56,7 @@ module foo {
             type int32;
             min-elements 3;
             must "daytime or time";
+            must "time or daytime";
             units minutes;
         }
 
