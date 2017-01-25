@@ -460,4 +460,12 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     public Set<YangVersion> getSupportedVersions() {
         return currentContext.getSupportedVersions();
     }
+
+    Collection<ModuleIdentifier> getRequiredModules() {
+        return root.getRequiredModules();
+    }
+
+    ModuleIdentifier getRootIdentifier() {
+        return root.getRootIdentifier();
+    }
 }
