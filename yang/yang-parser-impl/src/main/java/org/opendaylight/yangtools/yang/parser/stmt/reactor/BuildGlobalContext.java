@@ -29,6 +29,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -70,6 +71,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     private final Map<ModelProcessingPhase, StatementSupportBundle> supports;
     private final Set<SourceSpecificContext> sources = new HashSet<>();
+    private Set<SourceSpecificContext> libSources = new HashSet<>();
 
     private ModelProcessingPhase currentPhase = ModelProcessingPhase.INIT;
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
@@ -113,6 +115,10 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     void addSource(@Nonnull final StatementStreamSource source) {
         sources.add(new SourceSpecificContext(this, source));
+    }
+
+    public void addLibSource(@Nonnull final StatementStreamSource libSource) {
+        libSources.add(new SourceSpecificContext(this, libSource));
     }
 
     @Override
@@ -248,15 +254,30 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     private void startPhase(final ModelProcessingPhase phase) {
         Preconditions.checkState(Objects.equals(finishedPhase, phase.getPreviousPhase()));
-        for (final SourceSpecificContext source : sources) {
-            source.startPhase(phase);
+        startPhaseFor(phase, sources);
+        if (phase == ModelProcessingPhase.SOURCE_PRE_LINKAGE) {
+            startPhaseFor(phase, libSources);
         }
+
         currentPhase = phase;
         LOG.debug("Global phase {} started", phase);
     }
 
+    private void startPhaseFor(final ModelProcessingPhase phase, final Set<SourceSpecificContext> sources) {
+        for (final SourceSpecificContext source : sources) {
+            source.startPhase(phase);
+        }
+    }
+
     private void loadPhaseStatements() throws ReactorException {
         Preconditions.checkState(currentPhase != null);
+        loadPhaseStatementsFor(sources);
+        if (currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE) {
+            loadPhaseStatementsFor(libSources);
+        }
+    }
+
+    private void loadPhaseStatementsFor(final Set<SourceSpecificContext> sources) throws ReactorException {
         for (final SourceSpecificContext source : sources) {
             try {
                 source.loadStatements();
@@ -316,6 +337,15 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     private void completePhaseActions() throws ReactorException {
         Preconditions.checkState(currentPhase != null);
         final List<SourceSpecificContext> sourcesToProgress = Lists.newArrayList(sources);
+        if (!libSources.isEmpty()) {
+            Preconditions
+                    .checkState(
+                            currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
+                            "Yang library sources should be empty after ModelProcessingPhase.SOURCE_PRE_LINKAGE, but current phase was %s",
+                            currentPhase);
+            sourcesToProgress.addAll(libSources);
+        }
+
         boolean progressing = true;
         while (progressing) {
             // We reset progressing to false.
@@ -344,10 +374,52 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
                 }
             }
         }
+
+        if (!libSources.isEmpty()) {
+            final Set<SourceSpecificContext> requiredLibs = getRequiredSourcesFromLib();
+            sources.addAll(requiredLibs);
+            libSources = ImmutableSet.of();
+            /*
+             * We need to report only relevant sources failures, any others we should remove.
+             */
+            sourcesToProgress.retainAll(sources);
+        }
+
         if (!sourcesToProgress.isEmpty()) {
             final SomeModifiersUnresolvedException buildFailure = addSourceExceptions(sourcesToProgress);
             if (buildFailure != null) {
                 throw buildFailure;
+            }
+        }
+    }
+
+    private Set<SourceSpecificContext> getRequiredSourcesFromLib() {
+        Preconditions
+                .checkState(
+                        currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
+                        "Library yang sources can be adden only in ModelProcessingPhase.SOURCE_PRE_LINKAGE phase, but current phase was %s",
+                        currentPhase);
+        final Set<SourceSpecificContext> requiredLibs = new HashSet<>();
+
+        final Map<ModuleIdentifier, SourceSpecificContext> libSourcesMap = new HashMap<>();
+        for (final SourceSpecificContext libSource : libSources) {
+            libSourcesMap.put(libSource.getRootIdentifier(), libSource);
+        }
+
+        for (final SourceSpecificContext source : sources) {
+            collectRequiredSourcesFromLib(libSourcesMap, requiredLibs, source);
+        }
+        return requiredLibs;
+    }
+
+    //:FIXME need to resolve imports and includes with DEFAULT_REV_DATE
+    private void collectRequiredSourcesFromLib(final Map<ModuleIdentifier, SourceSpecificContext> libSourcesMap,
+            final Set<SourceSpecificContext> requiredLibs, final SourceSpecificContext source) {
+        final Collection<ModuleIdentifier> requiredModules = source.getRequiredModules();
+        for (final ModuleIdentifier requiredModule : requiredModules) {
+            final SourceSpecificContext libSource = libSourcesMap.get(requiredModule);
+            if (libSource != null && requiredLibs.add(libSource)) {
+                collectRequiredSourcesFromLib(libSourcesMap, requiredLibs, libSource);
             }
         }
     }

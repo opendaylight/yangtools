@@ -14,6 +14,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -180,6 +181,11 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          *            of root statement context
          */
         void setRootVersion(YangVersion version);
-    }
 
+        void addRequiredModule(ModuleIdentifier dependency);
+
+        void setRootIdentifier(ModuleIdentifier identifier);
+
+        ModuleIdentifier getRootIdentifier();
+    }
 }

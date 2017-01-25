@@ -11,13 +11,16 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -44,6 +47,8 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     private final A argument;
 
     private YangVersion version;
+    private Collection<ModuleIdentifier> requiredModules = ImmutableSet.of();
+    private ModuleIdentifier identifier;
 
     /**
      * References to RootStatementContext of submodules which are included in this source.
@@ -241,5 +246,28 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
         Preconditions.checkState(this.version == null, "Version of root %s has been already set to %s", argument,
                 this.version);
         this.version = Preconditions.checkNotNull(version);
+    }
+
+    @Override
+    public void addRequiredModule(final ModuleIdentifier dependency) {
+        if (requiredModules.isEmpty()) {
+            requiredModules = new HashSet<>();
+        }
+        requiredModules.add(dependency);
+    }
+
+    Collection<ModuleIdentifier> getRequiredModules() {
+        return requiredModules;
+    }
+
+    @Override
+    public void setRootIdentifier(final ModuleIdentifier identifier) {
+        Preconditions.checkNotNull(identifier);
+        this.identifier = identifier;
+    }
+
+    @Override
+    public ModuleIdentifier getRootIdentifier() {
+        return identifier;
     }
 }
