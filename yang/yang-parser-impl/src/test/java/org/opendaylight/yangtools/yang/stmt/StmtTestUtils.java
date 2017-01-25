@@ -218,4 +218,45 @@ public class StmtTestUtils {
                 requestedModuleImport.getRevision());
         return importedModule;
     }
+
+    public static SchemaContext parseYangSources(final String yangFilesDirectoryPath, final String yangLibsDirectoryPath)
+            throws URISyntaxException, FileNotFoundException, ReactorException {
+        return parseYangSources(yangFilesDirectoryPath, yangLibsDirectoryPath, null);
+    }
+
+    public static SchemaContext parseYangSources(final String yangFilesDirectoryPath,
+            final String yangLibsDirectoryPath, final Set<QName> supportedFeatures) throws URISyntaxException,
+            FileNotFoundException, ReactorException {
+        final File yangsDir = new File(StmtTestUtils.class.getResource(yangFilesDirectoryPath).toURI());
+        final File libsDir = new File(StmtTestUtils.class.getResource(yangLibsDirectoryPath).toURI());
+
+        return parseYangSources(yangsDir.listFiles(YANG_FILE_FILTER), libsDir.listFiles(YANG_FILE_FILTER),
+                supportedFeatures);
+    }
+
+    public static SchemaContext parseYangSources(final File[] yangFiles, final File[] libFiles,
+            final Set<QName> supportedFeatures) throws FileNotFoundException, ReactorException {
+        final StatementStreamSource[] yangSources = new StatementStreamSource[yangFiles.length];
+        for (int i = 0; i < yangFiles.length; i++) {
+            yangSources[i] = new YangStatementSourceImpl(new NamedFileInputStream(yangFiles[i], yangFiles[i].getPath()));
+        }
+
+        final StatementStreamSource[] libSources = new StatementStreamSource[libFiles.length];
+        for (int i = 0; i < libFiles.length; i++) {
+            libSources[i] = new YangStatementSourceImpl(new NamedFileInputStream(libFiles[i], libFiles[i].getPath()));
+        }
+
+        return parseYangSources(yangSources, libSources, supportedFeatures);
+    }
+
+    public static SchemaContext parseYangSources(final StatementStreamSource[] yangSources,
+            final StatementStreamSource[] libSources, final Set<QName> supportedFeatures) throws ReactorException {
+
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
+                .newBuild(supportedFeatures);
+        reactor.addSources(yangSources);
+        reactor.addLibSources(libSources);
+
+        return reactor.buildEffective();
+    }
 }

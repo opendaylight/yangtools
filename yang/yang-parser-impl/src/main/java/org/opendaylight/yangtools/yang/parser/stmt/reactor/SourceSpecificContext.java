@@ -188,7 +188,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             root = new RootStatementContext<>(this, def, ref, argument);
         } else if (!RootStatementContext.DEFAULT_VERSION.equals(root.getRootVersion())
                 && inProgressPhase == ModelProcessingPhase.SOURCE_LINKAGE) {
-            root = new RootStatementContext<>(this, def, ref, argument, root.getRootVersion());
+            root = new RootStatementContext<>(this, def, ref, argument, root.getRootVersion(), root.getRootIdentifier());
         } else {
             final QName rootStatement = root.definition().getStatementName();
             final String rootArgument = root.rawStatementArgument();
@@ -464,5 +464,13 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     void addMutableStmtToSeal(final MutableStatement mutableStatement) {
         currentContext.addMutableStmtToSeal(mutableStatement);
+    }
+
+    Collection<ModuleIdentifier> getRequiredModules() {
+        return root.getRequiredModules();
+    }
+
+    ModuleIdentifier getRootIdentifier() {
+        return root.getRootIdentifier();
     }
 }

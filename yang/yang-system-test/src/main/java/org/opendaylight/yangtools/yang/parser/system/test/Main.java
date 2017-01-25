@@ -92,16 +92,16 @@ public class Main {
             LOG.setLevel(Level.SEVERE);
         }
 
-        final List<String> yangDirs = initYangDirsPath(arguments);
+        final List<String> yangLibDirs = initYangDirsPath(arguments);
         final List<String> yangFiles = Arrays.asList(arguments.getArgs());
         final HashSet<QName> supportedFeatures = initSupportedFeatures(arguments);
 
-        runSystemTest(yangDirs, yangFiles, supportedFeatures);
+        runSystemTest(yangLibDirs, yangFiles, supportedFeatures);
     }
 
-    private static void runSystemTest(final List<String> yangDirs, final List<String> yangFiles,
+    private static void runSystemTest(final List<String> yangLibDirs, final List<String> yangFiles,
             final HashSet<QName> supportedFeatures) {
-        LOG.log(Level.INFO, "Yang model dirs: {0} ", yangDirs);
+        LOG.log(Level.INFO, "Yang model dirs: {0} ", yangLibDirs);
         LOG.log(Level.INFO, "Yang model files: {0} ", yangFiles);
         LOG.log(Level.INFO, "Supported features: {0} ", supportedFeatures);
 
@@ -111,7 +111,7 @@ public class Main {
         final Stopwatch stopWatch = Stopwatch.createStarted();
 
         try {
-            context = SystemTestUtils.parseYangSources(yangDirs, yangFiles, supportedFeatures);
+            context = SystemTestUtils.parseYangSources(yangLibDirs, yangFiles, supportedFeatures);
         } catch (final Exception e) {
             LOG.log(Level.SEVERE, "Failed to create SchemaContext.", e);
             System.exit(1);

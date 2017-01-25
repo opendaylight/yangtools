@@ -14,6 +14,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -189,6 +190,23 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          *            mutable statement which should be sealed
          */
         void addMutableStmtToSeal(MutableStatement mutableStatement);
-    }
 
+        /**
+         * Add required module. Based on these dependencies are collected
+         * required sources from library sources.
+         *
+         * @param dependency
+         *            ModuleIdentifier of module required by current root
+         *            context
+         */
+        void addRequiredModule(ModuleIdentifier dependency);
+
+        /**
+         * Set identifier of current root context.
+         *
+         * @param identifier
+         *            of current root context
+         */
+        void setRootIdentifier(ModuleIdentifier identifier);
+    }
 }
