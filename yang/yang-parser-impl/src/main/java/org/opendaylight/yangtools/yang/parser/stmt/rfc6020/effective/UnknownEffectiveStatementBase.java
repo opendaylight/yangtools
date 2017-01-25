@@ -29,6 +29,7 @@ public abstract class UnknownEffectiveStatementBase<A> extends AbstractEffective
 
     private final boolean addedByUses;
     private final boolean addedByAugmentation;
+    private final boolean addedByDeviation;
 
     private final ExtensionDefinition extension;
     private final List<UnknownSchemaNode> unknownNodes;
@@ -54,11 +55,16 @@ public abstract class UnknownEffectiveStatementBase<A> extends AbstractEffective
 
         // initCopyType
         final CopyHistory copyTypesFromOriginal = ctx.getCopyHistory();
-        if (copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES_AUGMENTATION)) {
+        if (copyTypesFromOriginal.contains(CopyType.ADDED_BY_DEVIATION)) {
+            this.addedByDeviation = true;
+            this.addedByAugmentation = this.addedByUses = false;
+        } else if (copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES_AUGMENTATION)) {
             this.addedByUses = this.addedByAugmentation = true;
+            this.addedByDeviation = false;
         } else {
             this.addedByAugmentation = copyTypesFromOriginal.contains(CopyType.ADDED_BY_AUGMENTATION);
             this.addedByUses = copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES);
+            this.addedByDeviation = false;
         }
 
         nodeParameter = (ctx.rawStatementArgument() == null) ? "" : ctx.rawStatementArgument();
@@ -91,6 +97,11 @@ public abstract class UnknownEffectiveStatementBase<A> extends AbstractEffective
     @Override
     public boolean isAddedByUses() {
         return addedByUses;
+    }
+
+    @Override
+    public boolean isAddedByDeviation() {
+        return addedByDeviation;
     }
 
     @Override

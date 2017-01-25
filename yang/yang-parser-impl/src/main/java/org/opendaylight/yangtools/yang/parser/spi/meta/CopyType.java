@@ -15,7 +15,8 @@ public enum CopyType {
     ORIGINAL,
     ADDED_BY_USES,
     ADDED_BY_AUGMENTATION,
-    ADDED_BY_USES_AUGMENTATION;
+    ADDED_BY_USES_AUGMENTATION,
+    ADDED_BY_DEVIATION;
 
     private final int bit;
 

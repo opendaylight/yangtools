@@ -297,8 +297,13 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
             return configuration;
         }
 
-        final StmtContext<Boolean, ?, ?> configStatement = StmtContextUtils.findFirstSubstatement(this,
-            ConfigStatement.class);
+        // if the config substatement is deviated by a deviation, it is an effective statement
+        StmtContext<Boolean, ?, ?> configStatement = StmtContextUtils.findFirstEffectiveSubstatement(this,
+                ConfigStatement.class);
+        if (configStatement == null) {
+            configStatement = StmtContextUtils.findFirstDeclaredSubstatement(this, ConfigStatement.class);
+        }
+
         final boolean parentIsConfig = parent.isConfiguration();
 
         final boolean isConfig;
