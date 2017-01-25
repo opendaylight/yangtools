@@ -1,0 +1,10 @@
+module foo-imp-2 {
+    namespace foo-imp-2;
+    prefix foo-imp-2;
+    yang-version 1;
+
+    revision 2017-01-23;
+
+    container root {
+    }
+}

@@ -11,18 +11,22 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
@@ -45,6 +49,8 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     private final A argument;
 
     private YangVersion version;
+    private Collection<ModuleIdentifier> requiredModules = ImmutableSet.of();
+    private ModuleIdentifier identifier;
 
     /**
      * References to RootStatementContext of submodules which are included in this source.
@@ -59,9 +65,11 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     }
 
     RootStatementContext(final SourceSpecificContext sourceContext, final StatementDefinitionContext<A, D, E> def,
-        final StatementSourceReference ref, final String rawArgument, final YangVersion version) {
+            final StatementSourceReference ref, final String rawArgument, final YangVersion version,
+            final ModuleIdentifier identifier) {
         this(sourceContext, def, ref, rawArgument);
         this.setRootVersion(version);
+        this.setRootIdentifier(identifier);
     }
 
     RootStatementContext(final RootStatementContext<A, D, E> original, final QNameModule newQNameModule,
@@ -247,5 +255,29 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     @Override
     public void addMutableStmtToSeal(final MutableStatement mutableStatement) {
         sourceContext.addMutableStmtToSeal(mutableStatement);
+    }
+
+    @Override
+    public void addRequiredModule(final ModuleIdentifier dependency) {
+        Preconditions.checkState(sourceContext.getInProgressPhase() == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
+                "Add required module is allowed only in ModelProcessingPhase.SOURCE_PRE_LINKAGE phase");
+        if (requiredModules.isEmpty()) {
+            requiredModules = new HashSet<>();
+        }
+        requiredModules.add(dependency);
+    }
+
+    Collection<ModuleIdentifier> getRequiredModules() {
+        return ImmutableSet.copyOf(requiredModules);
+    }
+
+    @Override
+    public void setRootIdentifier(final ModuleIdentifier identifier) {
+        Preconditions.checkNotNull(identifier);
+        this.identifier = identifier;
+    }
+
+    ModuleIdentifier getRootIdentifier() {
+        return identifier;
     }
 }

@@ -18,6 +18,7 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -338,5 +339,15 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     @Override
     public void addMutableStmtToSeal(final MutableStatement mutableStatement) {
         getRoot().addMutableStmtToSeal(mutableStatement);
+    }
+
+    @Override
+    public void addRequiredModule(final ModuleIdentifier dependency) {
+        getRoot().addRequiredModule(dependency);
+    }
+
+    @Override
+    public void setRootIdentifier(final ModuleIdentifier identifier) {
+        getRoot().setRootIdentifier(identifier);
     }
 }
