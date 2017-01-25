@@ -18,7 +18,6 @@ module deviation-test {
 
     deviation /t:interfaces/t:ifEntry {
         deviate add {
-            default "admin"; // new users are 'admin' by default
             config "true";
         }
         reference "system/user ref";

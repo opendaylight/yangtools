@@ -66,12 +66,12 @@ public class DeviationStmtTest {
                 assertEquals(DeviateKind.ADD, deviates.iterator().next().getDeviateType());
                 assertEquals("added-def-val", deviates.iterator().next().getDeviatedDefault());
                 assertFalse(deviates.iterator().next().getDeviatedConfig());
+                assertTrue(deviates.iterator().next().getDeviatedMandatory());
             } else if ("test-leaf-list".equals(targetLocalName)) {
                 assertEquals(3, deviates.size());
                 for (DeviateDefinition deviate : deviates) {
                     if (DeviateKind.ADD.equals(deviate.getDeviateType())) {
                         assertEquals(12, deviate.getDeviatedMaxElements().intValue());
-                        assertTrue(deviate.getDeviatedMandatory());
                     } else if (DeviateKind.REPLACE.equals(deviate.getDeviateType())) {
                         assertEquals(5, deviate.getDeviatedMinElements().intValue());
                         assertTrue(deviate.getDeviatedType() instanceof UnsignedIntegerTypeDefinition);
@@ -112,7 +112,7 @@ public class DeviationStmtTest {
 
             if ("bar-container-2".equals(targetLocalName)) {
                 DeviateKind deviateKind = deviates.iterator().next().getDeviateType();
-                if (deviateKind.equals(DeviateKind.NOT_SUPPORTED)) {
+                if (deviateKind.equals(DeviateKind.DELETE)) {
                     deviation2 = deviation;
                 } else if (deviateKind.equals(DeviateKind.ADD)) {
                     deviation3 = deviation;

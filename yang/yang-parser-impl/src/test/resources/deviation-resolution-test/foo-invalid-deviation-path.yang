@@ -1,0 +1,14 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    revision 2017-01-20;
+
+    deviation "/invalid/path" {
+        deviate not-supported;
+    }
+
+    container my-cont {
+
+    }
+}

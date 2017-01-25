@@ -253,7 +253,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         }
     }
 
-    public void removeStatementFromEffectiveSubstatements(final StatementDefinition refineSubstatementDef) {
+    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef) {
         if (effective.isEmpty()) {
             return;
         }
@@ -261,7 +261,39 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         final Iterator<StatementContextBase<?, ?, ?>> iterator = effective.iterator();
         while (iterator.hasNext()) {
             final StatementContextBase<?, ?, ?> next = iterator.next();
-            if (next.getPublicDefinition().equals(refineSubstatementDef)) {
+            if (statementDef.equals(next.getPublicDefinition())) {
+                iterator.remove();
+            }
+        }
+
+        shrinkEffective();
+    }
+
+    /**
+     * Removes a statement context from the effective substatements
+     * based on its statement definition (i.e statement keyword) and raw (in String form) statement argument.
+     * The statement context is removed only if both statement definition and statement argument match with
+     * one of the effective substatements' statement definition and argument.
+     *
+     * If the statementArg parameter is null, the statement context is removed based only on its statement definition.
+     *
+     * @param statementDef statement definition of the statement context to remove
+     * @param statementArg statement argument of the statement context to remove
+     */
+    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef,
+            final String statementArg) {
+        if (statementArg == null) {
+            removeStatementFromEffectiveSubstatements(statementDef);
+        }
+
+        if (effective.isEmpty()) {
+            return;
+        }
+
+        final Iterator<StatementContextBase<?, ?, ?>> iterator = effective.iterator();
+        while (iterator.hasNext()) {
+            final StatementContextBase<?, ?, ?> next = iterator.next();
+            if (statementDef.equals(next.getPublicDefinition()) && statementArg.equals(next.rawStatementArgument())) {
                 iterator.remove();
             }
         }

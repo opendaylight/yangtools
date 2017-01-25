@@ -1,0 +1,16 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    revision 2017-01-20;
+
+    deviation "/my-leaf" {
+        deviate add {
+            type string;
+        }
+    }
+
+    leaf my-leaf {
+        type int32;
+    }
+}
