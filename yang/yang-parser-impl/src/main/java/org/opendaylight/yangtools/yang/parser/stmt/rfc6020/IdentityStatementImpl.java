@@ -102,6 +102,12 @@ public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
 
     @Nonnull
     @Override
+    public Collection<? extends BaseStatement> getBases() {
+        return allDeclared(BaseStatement.class);
+    }
+
+    @Nonnull
+    @Override
     public QName getName() {
         return argument();
     }
