@@ -1,0 +1,128 @@
+module foo {
+    namespace foo;
+    prefix foo;
+    yang-version 1.1;
+
+    revision 2017-01-20;
+
+    deviation "/my-leaf" {
+        deviate delete {
+            units seconds;
+            default 100;
+            foo:custom-property-without-arg;
+        }
+    }
+
+    deviation "/my-leaf-list" {
+        deviate delete {
+            default "def-val-1";
+            default "def-val-2";
+            must "a = 1 or b = 2";
+            must "x != y";
+        }
+    }
+
+    deviation "/my-list" {
+        deviate delete {
+            unique "my-leaf-a my-leaf-b";
+            unique "my-leaf-c my-leaf-d";
+            foo:custom-property "arg";
+            foo:custom-property "another arg";
+        }
+    }
+
+    extension custom-property {
+        argument name;
+    }
+
+    extension custom-property-without-arg;
+
+    leaf my-leaf {
+        type int32;
+        units seconds;
+        default 100;
+        foo:custom-property-without-arg;
+    }
+
+    leaf-list my-leaf-list {
+        type string;
+        default "def-val-1";
+        default "def-val-2";
+        must "a = 1 or b = 2";
+        must "x != y";
+    }
+
+    list my-list {
+        key key-leaf;
+
+        unique "my-leaf-a my-leaf-b";
+        unique "my-leaf-c my-leaf-d";
+        foo:custom-property "arg";
+        foo:custom-property "another arg";
+
+        leaf key-leaf {
+            type string;
+        }
+
+        leaf my-leaf-a {
+            type string;
+        }
+
+        leaf my-leaf-b {
+            type string;
+        }
+
+        leaf my-leaf-c {
+            type string;
+        }
+
+        leaf my-leaf-d {
+            type string;
+        }
+    }
+
+    container my-cont {
+        uses my-grouping {
+            refine my-used-leaf {
+                default "def-val-added-by-refine";
+                foo:custom-property-without-arg;
+            }
+        }
+    }
+
+    augment "/my-cont" {
+        leaf my-aug-leaf {
+            type int32;
+            default "def-val";
+            units "minutes";
+            must "x = 1";
+            foo:custom-property-without-arg;
+        }
+    }
+
+    deviation "/my-cont/my-aug-leaf" {
+        deviate delete {
+            default "def-val";
+            units "minutes";
+            must "x = 1";
+            foo:custom-property-without-arg;
+        }
+    }
+
+    grouping my-grouping {
+        leaf my-used-leaf {
+            type int32;
+            units "days";
+            must "y = 5";
+        }
+    }
+
+    deviation "/my-cont/my-used-leaf" {
+        deviate delete {
+            default "def-val-added-by-refine";
+            foo:custom-property-without-arg;
+            units "days";
+            must "y = 5";
+        }
+    }
+}

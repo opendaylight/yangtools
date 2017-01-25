@@ -1,0 +1,20 @@
+module imported {
+    namespace imp;
+    prefix imp;
+
+    revision 2017-01-20;
+
+    container my-cont-c {
+        leaf my-leaf-c1 {
+            type int8;
+        }
+
+        leaf my-leaf-c2 {
+            type int16;
+        }
+
+        leaf my-leaf-c3 {
+            type int32;
+        }
+    }
+}

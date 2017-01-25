@@ -1,0 +1,26 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    revision 2017-02-01;
+
+    deviation "/my-cont/my-used-leaf" {
+        deviate add {
+            default 50;
+        }
+    }
+
+    container my-cont {
+        uses my-grouping {
+            refine my-used-leaf {
+                default "def-val-added-by-refine";
+            }
+        }
+    }
+
+    grouping my-grouping {
+        leaf my-used-leaf {
+            type int32;
+        }
+    }
+}
