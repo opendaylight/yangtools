@@ -253,7 +253,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         }
     }
 
-    public void removeStatementFromEffectiveSubstatements(final StatementDefinition refineSubstatementDef) {
+    public void removeStatementFromEffectiveSubstatements(final StatementDefinition statementDef) {
         if (effective.isEmpty()) {
             return;
         }
@@ -261,7 +261,24 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         final Iterator<StatementContextBase<?, ?, ?>> iterator = effective.iterator();
         while (iterator.hasNext()) {
             final StatementContextBase<?, ?, ?> next = iterator.next();
-            if (next.getPublicDefinition().equals(refineSubstatementDef)) {
+            if (statementDef.equals(next.getPublicDefinition())) {
+                iterator.remove();
+            }
+        }
+
+        shrinkEffective();
+    }
+
+    public void removeStatementWithArgumentFromEffectiveSubstatements(final StatementDefinition statementDef,
+            final String statementArg) {
+        if (effective.isEmpty()) {
+            return;
+        }
+
+        final Iterator<StatementContextBase<?, ?, ?>> iterator = effective.iterator();
+        while (iterator.hasNext()) {
+            final StatementContextBase<?, ?, ?> next = iterator.next();
+            if (statementDef.equals(next.getPublicDefinition()) && statementArg.equals(next.rawStatementArgument())) {
                 iterator.remove();
             }
         }

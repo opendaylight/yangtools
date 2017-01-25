@@ -1,0 +1,131 @@
+module foo {
+    namespace foo;
+    prefix foo;
+    yang-version 1.1;
+
+    revision 2017-01-20;
+
+    deviation "/my-leaf-list" {
+        deviate add {
+            config false;
+            min-elements 5;
+            max-elements 10;
+            default 100;
+            default 200;
+            units "hours";
+        }
+    }
+
+    deviation "/my-list" {
+        deviate add {
+            unique "my-leaf-a my-leaf-b";
+            unique "my-leaf-c my-leaf-d";
+        }
+    }
+
+    deviation "/my-choice" {
+        deviate add {
+            default c2;
+        }
+    }
+
+    deviation "/my-rpc/input" {
+        deviate add {
+            must "day or night";
+            must "black and white";
+        }
+    }
+
+    deviation "/my-rpc/output" {
+        deviate add {
+            must "day or night";
+            must "black and white";
+        }
+    }
+
+    deviation "/my-notification" {
+        deviate add {
+            must "day or night";
+            must "black and white";
+        }
+    }
+
+    deviation "/my-anyxml" {
+        deviate add {
+            mandatory true;
+            foo:custom-property "arg";
+            foo:custom-property "another arg";
+        }
+    }
+
+    extension custom-property {
+        argument name;
+    }
+
+    leaf-list my-leaf-list {
+        type int32;
+        default 50;
+    }
+
+    list my-list {
+        key key-leaf;
+
+        leaf key-leaf {
+            type string;
+        }
+
+        leaf my-leaf-a {
+            type string;
+        }
+
+        leaf my-leaf-b {
+            type string;
+        }
+
+        leaf my-leaf-c {
+            type string;
+        }
+
+        leaf my-leaf-d {
+            type string;
+        }
+    }
+
+    choice my-choice {
+        case c1 {
+            leaf c1-leaf {
+                type string;
+                default "heaven";
+            }
+        }
+
+        case c2 {
+            leaf c2-leaf {
+                type string;
+                default "hell";
+            }
+        }
+    }
+
+    rpc my-rpc {
+        input {
+            leaf my-rpc-input-leaf {
+                type string;
+            }
+        }
+
+        output {
+            leaf my-rpc-output-leaf {
+                type string;
+            }
+        }
+    }
+
+    notification my-notification {
+
+    }
+
+    anyxml my-anyxml {
+
+    }
+}

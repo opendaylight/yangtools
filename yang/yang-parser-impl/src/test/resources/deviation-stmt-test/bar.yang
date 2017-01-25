@@ -5,12 +5,16 @@ module bar {
     revision "2016-09-22";
 
     deviation "/bar-container-1" {
-        deviate not-supported;
+        deviate add {
+            must "a != b";
+        }
         bar-prefix:bar-extension;
     }
 
     deviation "/bar-container-2" {
-        deviate not-supported;
+        deviate delete {
+            must "a = b";
+        }
     }
 
     deviation "/bar-container-2" {
@@ -28,21 +32,21 @@ module bar {
 
     deviation "/bar-container-1/bar-leaf-1" {
         deviate add {
-            default "def-val";
+            config false;
         }
         description "another desc";
     }
 
-    deviation "/bar-container-1/bar-leaf-2" {
+    deviation "/bar-container-2/bar-leaf-2" {
         deviate add {
             default "def-val";
         }
         reference "ref";
     }
 
-    deviation "/bar-container-1/bar-leaf-2" {
+    deviation "/bar-container-2/bar-leaf-2" {
         deviate add {
-            default "def-val";
+            config false;
         }
         reference "another ref";
     }
@@ -54,6 +58,8 @@ module bar {
     }
 
     container bar-container-2 {
+        must "a = b";
+
         leaf bar-leaf-2 {
             type string;
         }
