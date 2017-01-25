@@ -70,18 +70,24 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
         }
 
         @Override
+        public void onPreLinkageDeclared(
+                final StmtContext.Mutable<String, IncludeStatement, EffectiveStatement<String, IncludeStatement>> stmt) {
+            stmt.addRequiredModule(getIncludeSubmoduleIdentifier(stmt));
+        }
+
+        @Override
         public void onLinkageDeclared(
                 final Mutable<String, IncludeStatement, EffectiveStatement<String, IncludeStatement>> stmt) {
             final ModuleIdentifier includeSubmoduleIdentifier = getIncludeSubmoduleIdentifier(stmt);
 
-            ModelActionBuilder includeAction = stmt.newInferenceAction(SOURCE_LINKAGE);
+            final ModelActionBuilder includeAction = stmt.newInferenceAction(SOURCE_LINKAGE);
             final Prerequisite<StmtContext<?, ?, ?>> requiresCtxPrerequisite = includeAction.requiresCtx(stmt,
                     SubmoduleNamespace.class, includeSubmoduleIdentifier, SOURCE_LINKAGE);
 
             includeAction.apply(new InferenceAction() {
                 @Override
                 public void apply() {
-                    StmtContext<?, ?, ?> includedSubModuleContext = requiresCtxPrerequisite.get();
+                    final StmtContext<?, ?, ?> includedSubModuleContext = requiresCtxPrerequisite.get();
 
                     stmt.addToNs(IncludedModuleContext.class, includeSubmoduleIdentifier,
                             includedSubModuleContext);
@@ -100,7 +106,7 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
 
         private static ModuleIdentifier getIncludeSubmoduleIdentifier(final Mutable<String, IncludeStatement, ?> stmt) {
 
-            String subModuleName = stmt.getStatementArgument();
+            final String subModuleName = stmt.getStatementArgument();
 
             Date revisionDate = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
             if (revisionDate == null) {
