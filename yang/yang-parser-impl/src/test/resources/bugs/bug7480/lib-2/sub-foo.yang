@@ -1,0 +1,10 @@
+submodule sub-foo {
+    belongs-to foo {
+        prefix foo;
+    }
+
+    revision 2017-01-20;
+
+    container sub-root {
+    }
+}

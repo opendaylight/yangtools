@@ -1,0 +1,10 @@
+module lib-2 {
+    namespace lib-2;
+    prefix lib-2;
+    yang-version 1.1;
+
+    revision 2000-01-01;
+
+    container root {
+    }
+}

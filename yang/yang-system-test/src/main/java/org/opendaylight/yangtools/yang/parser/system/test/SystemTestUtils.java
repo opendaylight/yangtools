@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
@@ -35,55 +35,62 @@ class SystemTestUtils {
         }
     };
 
-    static SchemaContext parseYangSources(final Collection<File> files, final Set<QName> supportedFeatures)
-            throws ReactorException, FileNotFoundException {
-        return parseYangSources(files, StatementParserMode.DEFAULT_MODE, supportedFeatures);
-    }
-
-    static SchemaContext parseYangSources(final Collection<File> files,
-            final StatementParserMode statementParserMode, final Set<QName> supportedFeatures)
-            throws ReactorException, FileNotFoundException {
-        return parseYangSources(supportedFeatures, statementParserMode, files.toArray(new File[files.size()]));
-    }
-
-    static SchemaContext parseYangSources(final Set<QName> supportedFeatures,
-            final StatementParserMode statementParserMode, final File... files) throws ReactorException,
-            FileNotFoundException {
-        final YangStatementSourceImpl [] sources = new YangStatementSourceImpl[files.length];
-
-        for (int i = 0; i < files.length; i++) {
-            sources[i] = new YangStatementSourceImpl(new NamedFileInputStream(files[i], files[i].getPath()));
+    static SchemaContext parseYangSources(final List<String> yangLibDirs, final List<String> yangTestFiles,
+            final Set<QName> supportedFeatures) throws FileNotFoundException, ReactorException {
+        /*
+         * Current dir "." should be always present implicitly in the list of
+         * directories where dependencies are searched for
+         */
+        if (!yangLibDirs.contains(".")) {
+            yangLibDirs.add(".");
         }
 
-        return parseYangSources(supportedFeatures, statementParserMode, sources);
+        final List<File> libFiles = new ArrayList<>();
+        for (final String yangLibDir : yangLibDirs) {
+            libFiles.addAll(getYangFiles(yangLibDir));
+        }
+
+        final List<File> testFiles = new ArrayList<>();
+        for (final String yangTestFile : yangTestFiles) {
+            testFiles.add(new File(yangTestFile));
+        }
+
+        return parseYangSources(supportedFeatures, testFiles, libFiles);
     }
 
-    static SchemaContext parseYangSources(final Set<QName> supportedFeatures,
-            final StatementParserMode statementParserMode, final YangStatementSourceImpl... sources)
-            throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(
-                statementParserMode, supportedFeatures);
-        reactor.addSources(sources);
+    static SchemaContext parseYangSources(final Set<QName> supportedFeatures, final List<File> testFiles,
+            final List<File> libFiles) throws FileNotFoundException, ReactorException {
+        final StatementStreamSource[] testSources = getYangStatementSources(testFiles);
+        final StatementStreamSource[] libSources = getYangStatementSources(libFiles);
+        return parseYangSources(testSources, libSources, supportedFeatures);
+    }
+
+    static SchemaContext parseYangSources(final StatementStreamSource[] testSources,
+            final StatementStreamSource[] libSources, final Set<QName> supportedFeatures) throws ReactorException {
+
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
+                .newBuild(supportedFeatures);
+        reactor.addSources(testSources);
+        reactor.addLibSources(libSources);
 
         return reactor.buildEffective();
     }
 
-    static SchemaContext parseYangSources(final List<String> yangDirs, final List<String> yangFiles,
-            final Set<QName> supportedFeatures) throws FileNotFoundException, ReactorException {
-        final List<File> allYangFiles = new ArrayList<>();
-        for (final String yangDir : yangDirs) {
-            allYangFiles.addAll(getYangFiles(yangDir));
+    private static StatementStreamSource[] getYangStatementSources(final List<File> yangFiles)
+            throws FileNotFoundException {
+        final StatementStreamSource[] yangSources = new StatementStreamSource[yangFiles.size()];
+        for (int i = 0; i < yangFiles.size(); i++) {
+            yangSources[i] = new YangStatementSourceImpl(new NamedFileInputStream(yangFiles.get(i), yangFiles.get(i)
+                    .getPath()));
         }
-
-        for (final String yangFile : yangFiles) {
-            allYangFiles.add(new File(yangFile));
-        }
-
-        return parseYangSources(allYangFiles, supportedFeatures);
+        return yangSources;
     }
 
-    private static Collection<File> getYangFiles(final String yangSourcesDirectoryPath) {
+    private static Collection<File> getYangFiles(final String yangSourcesDirectoryPath) throws FileNotFoundException {
         final File testSourcesDir = new File(yangSourcesDirectoryPath);
+        if (testSourcesDir == null || !testSourcesDir.isDirectory()) {
+            throw new FileNotFoundException(String.format("%s no such directory", yangSourcesDirectoryPath));
+        }
         return Arrays.asList(testSourcesDir.listFiles(YANG_FILE_FILTER));
     }
 }
