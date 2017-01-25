@@ -117,8 +117,8 @@ public final class StmtContextUtils {
 
     public static <AT, DT extends DeclaredStatement<AT>> StmtContext<AT, ?, ?> findFirstSubstatement(
             final StmtContext<?, ?, ?> stmtContext, final Class<DT> declaredType) {
-        final StmtContext<AT, ?, ?> declaredSubstatement = findFirstDeclaredSubstatement(stmtContext, declaredType);
-        return declaredSubstatement != null ? declaredSubstatement : findFirstEffectiveSubstatement(stmtContext,
+        final StmtContext<AT, ?, ?> effectiveSubstatement = findFirstEffectiveSubstatement(stmtContext, declaredType);
+        return effectiveSubstatement != null ? effectiveSubstatement : findFirstDeclaredSubstatement(stmtContext,
                 declaredType);
     }
 

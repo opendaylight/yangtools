@@ -7,11 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import static org.opendaylight.yangtools.yang.common.YangVersion.VERSION_1;
+import static org.opendaylight.yangtools.yang.common.YangVersion.VERSION_1_1;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableTable;
+import com.google.common.collect.Table;
 import java.util.Map;
 import java.util.Set;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -42,6 +48,31 @@ public final class YangValidationBundles {
         SUPPORTED_REFINE_TARGETS = b.build();
     }
 
+    public static final Table<YangVersion, StatementDefinition, Set<StatementDefinition>> SUPPORTED_DEVIATION_TARGETS;
+    static {
+        final ImmutableTable.Builder<YangVersion, StatementDefinition, Set<StatementDefinition>> b =
+                ImmutableTable.builder();
+        b.put(VERSION_1, YangStmtMapping.CONFIG, ImmutableSet.of(YangStmtMapping.CONTAINER, YangStmtMapping.LEAF,
+                YangStmtMapping.LEAF_LIST, YangStmtMapping.LIST, YangStmtMapping.CHOICE, YangStmtMapping.ANYDATA,
+                YangStmtMapping.ANYXML));
+        b.put(VERSION_1, YangStmtMapping.DEFAULT, ImmutableSet.of(YangStmtMapping.LEAF, YangStmtMapping.CHOICE));
+        b.put(VERSION_1_1, YangStmtMapping.DEFAULT, ImmutableSet.of(YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST,
+                YangStmtMapping.CHOICE));
+        b.put(VERSION_1, YangStmtMapping.MANDATORY, ImmutableSet.of(YangStmtMapping.LEAF, YangStmtMapping.CHOICE,
+                YangStmtMapping.ANYDATA, YangStmtMapping.ANYXML));
+        b.put(VERSION_1, YangStmtMapping.MAX_ELEMENTS, ImmutableSet.of(YangStmtMapping.LIST, YangStmtMapping.LEAF_LIST));
+        b.put(VERSION_1, YangStmtMapping.MIN_ELEMENTS, ImmutableSet.of(YangStmtMapping.LIST, YangStmtMapping.LEAF_LIST));
+        b.put(VERSION_1, YangStmtMapping.MUST, ImmutableSet.of(YangStmtMapping.CONTAINER, YangStmtMapping.LEAF,
+                YangStmtMapping.LEAF_LIST, YangStmtMapping.LIST, YangStmtMapping.ANYXML));
+        b.put(VERSION_1_1, YangStmtMapping.MUST, ImmutableSet.of(YangStmtMapping.CONTAINER, YangStmtMapping.LEAF,
+                YangStmtMapping.LEAF_LIST, YangStmtMapping.LIST, YangStmtMapping.ANYDATA, YangStmtMapping.ANYXML,
+                YangStmtMapping.INPUT, YangStmtMapping.OUTPUT, YangStmtMapping.NOTIFICATION));
+        b.put(VERSION_1, YangStmtMapping.TYPE, ImmutableSet.of(YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST));
+        b.put(VERSION_1, YangStmtMapping.UNIQUE, ImmutableSet.of(YangStmtMapping.LIST));
+        b.put(VERSION_1, YangStmtMapping.UNITS, ImmutableSet.of(YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST));
+
+        SUPPORTED_DEVIATION_TARGETS = b.build();
+    }
 
     public static final Set<StatementDefinition> SUPPORTED_AUGMENT_TARGETS = ImmutableSet.of(
         YangStmtMapping.CONTAINER, YangStmtMapping.LIST, YangStmtMapping.CASE, YangStmtMapping.INPUT, YangStmtMapping.OUTPUT,
