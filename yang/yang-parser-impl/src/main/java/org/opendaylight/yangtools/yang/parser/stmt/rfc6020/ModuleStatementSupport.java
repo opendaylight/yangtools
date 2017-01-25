@@ -124,6 +124,8 @@ public class ModuleStatementSupport extends
         final QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate.orElse(null)).intern();
 
         stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule);
+        stmt.setRootIdentifier(ModuleIdentifierImpl.create(stmt.getStatementArgument(),
+                Optional.empty(), revisionDate));
     }
 
     @Override
