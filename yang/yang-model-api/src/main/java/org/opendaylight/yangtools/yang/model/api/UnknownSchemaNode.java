@@ -51,6 +51,15 @@ public interface UnknownSchemaNode extends SchemaNode {
     boolean isAddedByAugmentation();
 
     /**
+     * Describes whether the node was added through <code>deviation</code> YANG
+     * statement.
+     *
+     * @return boolean value which is <code>true</code> if the node is added by
+     *         <code>deviation</code> YANG statement
+     */
+    boolean isAddedByDeviation();
+
+    /**
      * Get extension definition which identifies this node
      *
      * @return extension definition if exists, null otherwise

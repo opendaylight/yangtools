@@ -86,7 +86,6 @@ module foo {
 
     deviation /br:interfaces/br:ifEntry {
         deviate add {
-            default "admin";
             config "true";
         }
         reference "system/user ref";

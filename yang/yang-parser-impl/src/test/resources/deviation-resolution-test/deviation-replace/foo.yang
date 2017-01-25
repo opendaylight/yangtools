@@ -1,0 +1,62 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    revision 2017-01-20;
+
+    deviation "/my-leaf" {
+        deviate replace {
+            type uint32;
+            default 10;
+            units bytes;
+        }
+    }
+
+    deviation "/my-leaf-list-test" {
+        deviate replace {
+            min-elements 3;
+            max-elements 6;
+            config true;
+        }
+    }
+
+    deviation "/my-choice" {
+        deviate replace {
+            mandatory false;
+            foo:custom-property "new arg";
+        }
+    }
+
+    extension custom-property {
+        argument name;
+    }
+
+    leaf my-leaf {
+        type int32;
+        default 100;
+        units kilobytes;
+    }
+
+    leaf-list my-leaf-list-test {
+        type string;
+        min-elements 5;
+        max-elements 10;
+        config false;
+    }
+
+    choice my-choice {
+        mandatory true;
+        foo:custom-property "original arg";
+        case c1 {
+            leaf c1-leaf {
+                type string;
+            }
+        }
+
+        case c2 {
+            leaf c2-leaf {
+                type string;
+            }
+        }
+    }
+}
