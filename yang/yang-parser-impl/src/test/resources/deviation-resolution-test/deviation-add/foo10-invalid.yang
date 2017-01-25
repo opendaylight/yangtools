@@ -1,0 +1,17 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    revision 2017-01-20;
+
+    deviation "/my-leaf-list" {
+        deviate add {
+            default 10;
+            default 100;
+        }
+    }
+
+    leaf-list my-leaf-list {
+        type int32;
+    }
+}

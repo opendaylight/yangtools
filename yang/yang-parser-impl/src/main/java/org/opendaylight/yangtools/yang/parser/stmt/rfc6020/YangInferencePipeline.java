@@ -67,6 +67,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.BitStatementRfc7950Su
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.CaseStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ChoiceStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ContainerStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.DeviateStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.EnumStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.GroupingStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.IdentityStatementRfc7950Support;
@@ -198,7 +199,8 @@ public final class YangInferencePipeline {
             .addSupport(new LeafStatementImpl.Definition())
             .addSupport(new ConfigStatementImpl.Definition())
             .addSupport(new DeviationStatementImpl.Definition())
-            .addSupport(new DeviateStatementImpl.Definition())
+            .addVersionSpecificSupport(VERSION_1, new DeviateStatementImpl.Definition())
+            .addVersionSpecificSupport(VERSION_1_1, new DeviateStatementRfc7950Support())
             .addVersionSpecificSupport(VERSION_1, new ChoiceStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1_1, new ChoiceStatementRfc7950Support())
             .addVersionSpecificSupport(VERSION_1, new CaseStatementImpl.Definition())
