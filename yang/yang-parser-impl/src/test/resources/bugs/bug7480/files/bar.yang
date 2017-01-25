@@ -1,0 +1,10 @@
+module bar {
+    namespace bar;
+    prefix bar;
+    yang-version 1;
+
+    revision 2017-01-25;
+
+    container root {
+    }
+}
