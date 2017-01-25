@@ -15,8 +15,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
+import com.google.common.collect.TreeBasedTable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,9 +28,12 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.SortedMap;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -70,6 +75,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     private final Map<ModelProcessingPhase, StatementSupportBundle> supports;
     private final Set<SourceSpecificContext> sources = new HashSet<>();
+    private Set<SourceSpecificContext> libSources = new HashSet<>();
 
     private ModelProcessingPhase currentPhase = ModelProcessingPhase.INIT;
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
@@ -113,6 +119,12 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     void addSource(@Nonnull final StatementStreamSource source) {
         sources.add(new SourceSpecificContext(this, source));
+    }
+
+    void addLibSource(@Nonnull final StatementStreamSource libSource) {
+        Preconditions.checkState(!isEnabledSemanticVersioning(),
+                "Library sources are not supported in semantic version mode currently.");
+        libSources.add(new SourceSpecificContext(this, libSource));
     }
 
     @Override
@@ -248,15 +260,30 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     private void startPhase(final ModelProcessingPhase phase) {
         Preconditions.checkState(Objects.equals(finishedPhase, phase.getPreviousPhase()));
-        for (final SourceSpecificContext source : sources) {
-            source.startPhase(phase);
+        startPhaseFor(phase, sources);
+        if (phase == ModelProcessingPhase.SOURCE_PRE_LINKAGE) {
+            startPhaseFor(phase, libSources);
         }
+
         currentPhase = phase;
         LOG.debug("Global phase {} started", phase);
     }
 
+    private void startPhaseFor(final ModelProcessingPhase phase, final Set<SourceSpecificContext> sources) {
+        for (final SourceSpecificContext source : sources) {
+            source.startPhase(phase);
+        }
+    }
+
     private void loadPhaseStatements() throws ReactorException {
         Preconditions.checkState(currentPhase != null);
+        loadPhaseStatementsFor(sources);
+        if (currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE) {
+            loadPhaseStatementsFor(libSources);
+        }
+    }
+
+    private void loadPhaseStatementsFor(final Set<SourceSpecificContext> sources) throws ReactorException {
         for (final SourceSpecificContext source : sources) {
             try {
                 source.loadStatements();
@@ -316,6 +343,15 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     private void completePhaseActions() throws ReactorException {
         Preconditions.checkState(currentPhase != null);
         final List<SourceSpecificContext> sourcesToProgress = Lists.newArrayList(sources);
+        if (!libSources.isEmpty()) {
+            Preconditions
+                    .checkState(
+                            currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
+                            "Yang library sources should be empty after ModelProcessingPhase.SOURCE_PRE_LINKAGE, but current phase was %s",
+                            currentPhase);
+            sourcesToProgress.addAll(libSources);
+        }
+
         boolean progressing = true;
         while (progressing) {
             // We reset progressing to false.
@@ -344,12 +380,66 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
                 }
             }
         }
+
+        if (!libSources.isEmpty()) {
+            final Set<SourceSpecificContext> requiredLibs = getRequiredSourcesFromLib();
+            sources.addAll(requiredLibs);
+            libSources = ImmutableSet.of();
+            /*
+             * We want to report only relevant sources errors, so any others can
+             * be removed.
+             */
+            sourcesToProgress.retainAll(sources);
+        }
+
         if (!sourcesToProgress.isEmpty()) {
             final SomeModifiersUnresolvedException buildFailure = addSourceExceptions(sourcesToProgress);
             if (buildFailure != null) {
                 throw buildFailure;
             }
         }
+    }
+
+    private Set<SourceSpecificContext> getRequiredSourcesFromLib() {
+        Preconditions
+                .checkState(
+                        currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
+                        "Library yang sources can be adden only in ModelProcessingPhase.SOURCE_PRE_LINKAGE phase, but current phase was %s",
+                        currentPhase);
+        final TreeBasedTable<String, Date, SourceSpecificContext> libSourcesTable = TreeBasedTable.create();
+        for (final SourceSpecificContext libSource : libSources) {
+            final ModuleIdentifier libSourceIdentifier = Preconditions.checkNotNull(libSource.getRootIdentifier());
+            libSourcesTable.put(libSourceIdentifier.getName(), libSourceIdentifier.getRevision(), libSource);
+        }
+
+        final Set<SourceSpecificContext> requiredLibs = new HashSet<>();
+        for (final SourceSpecificContext source : sources) {
+            collectRequiredSourcesFromLib(libSourcesTable, requiredLibs, source);
+        }
+        return requiredLibs;
+    }
+
+    private void collectRequiredSourcesFromLib(
+            final TreeBasedTable<String, Date, SourceSpecificContext> libSourcesTable,
+            final Set<SourceSpecificContext> requiredLibs, final SourceSpecificContext source) {
+        final Collection<ModuleIdentifier> requiredModules = source.getRequiredModules();
+        for (final ModuleIdentifier requiredModule : requiredModules) {
+            final SourceSpecificContext libSource = getRequiredLibSource(requiredModule, libSourcesTable);
+            if (libSource != null && requiredLibs.add(libSource)) {
+                collectRequiredSourcesFromLib(libSourcesTable, requiredLibs, libSource);
+            }
+        }
+    }
+
+    private SourceSpecificContext getRequiredLibSource(final ModuleIdentifier requiredModule,
+            final TreeBasedTable<String, Date, SourceSpecificContext> libSourcesTable) {
+        return requiredModule.getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP ? getLatestRevision(libSourcesTable
+                .row(requiredModule.getName())) : libSourcesTable.get(requiredModule.getName(),
+                requiredModule.getRevision());
+    }
+
+    private SourceSpecificContext getLatestRevision(final SortedMap<Date, SourceSpecificContext> sourceMap) {
+        return sourceMap.get(sourceMap.lastKey());
     }
 
     private void endPhase(final ModelProcessingPhase phase) {

@@ -1,0 +1,7 @@
+module baz-imp {
+    namespace baz-imp;
+    prefix baz-imp;
+
+    revision 2002-01-01 {
+    }
+}

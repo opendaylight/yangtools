@@ -1,0 +1,13 @@
+module lib-3 {
+    namespace lib-3;
+    prefix lib-3;
+    yang-version 1.1;
+
+    import lib-2 { prefix lib-2; revision-date 2000-01-01; }
+    import missing-lib { prefix missing; revision-date 2000-01-01; }
+
+    revision 2000-01-01;
+
+    container root {
+    }
+}

@@ -105,6 +105,7 @@ public final class YangInferencePipeline {
             .addSupport(new PrefixStatementImpl.Definition())
             .addSupport(new YangVersionStatementImpl.Definition())
             .addSupport(new RevisionStatementImpl.Definition())
+            .addSupport(new RevisionDateStatementImpl.Definition())
             .addSupport(global(ModuleNameToNamespace.class))
             .addSupport(global(PreLinkageModuleNamespace.class))
             .addSupport(sourceLocal(ImpPrefixToNamespace.class))
@@ -114,7 +115,6 @@ public final class YangInferencePipeline {
     public static final StatementSupportBundle LINKAGE_BUNDLE = StatementSupportBundle
             .derivedFrom(PRE_LINKAGE_BUNDLE)
             .addSupport(new DescriptionStatementImpl.Definition())
-            .addSupport(new RevisionDateStatementImpl.Definition())
             .addSupport(new ReferenceStatementImpl.Definition())
             .addSupport(new ContactStatementImpl.Definition())
             .addSupport(new OrganizationStatementImpl.Definition())
