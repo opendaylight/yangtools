@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
+import org.opendaylight.yangtools.yang.parser.spi.meta.RequiredRevisionImports;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -83,6 +84,7 @@ public class ImportStatementDefinition extends
 
     @Override
     public void onPreLinkageDeclared(final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt) {
+        stmt.addToValueNs(RequiredRevisionImports.class, RevisionImport.getImportedModuleIdentifier(stmt));
         final String moduleName = stmt.getStatementArgument();
         final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_PRE_LINKAGE);
         final Prerequisite<StmtContext<?, ?, ?>> imported = importAction.requiresCtx(stmt,
@@ -93,7 +95,7 @@ public class ImportStatementDefinition extends
         importAction.apply(new InferenceAction() {
             @Override
             public void apply() {
-                StmtContext<?, ?, ?> importedModuleContext = imported.get();
+                final StmtContext<?, ?, ?> importedModuleContext = imported.get();
                 Verify.verify(moduleName.equals(importedModuleContext.getStatementArgument()));
                 final URI importedModuleNamespace = importedModuleContext.getFromNamespace(ModuleNameToNamespace.class,
                         moduleName);
@@ -149,7 +151,7 @@ public class ImportStatementDefinition extends
                     StmtContext<?, ?, ?> importedModule = null;
                     ModuleIdentifier importedModuleIdentifier = null;
                     if (impIdentifier.getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP) {
-                        Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> recentModuleEntry = findRecentModule(
+                        final Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> recentModuleEntry = findRecentModule(
                                 impIdentifier, stmt.getAllFromNamespace(ModuleNamespace.class));
                         if (recentModuleEntry != null) {
                             importedModuleIdentifier = recentModuleEntry.getKey();
@@ -163,7 +165,7 @@ public class ImportStatementDefinition extends
                     }
 
                     linkageTarget.get().addToNs(ImportedModuleContext.class, importedModuleIdentifier, importedModule);
-                    String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
+                    final String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
                     stmt.addToNs(ImpPrefixToModuleIdentifier.class, impPrefix, importedModuleIdentifier);
 
                     final URI modNs = firstAttributeOf(importedModule.declaredSubstatements(), NamespaceStatement.class);
@@ -188,7 +190,7 @@ public class ImportStatementDefinition extends
             ModuleIdentifier recentModuleIdentifier = impIdentifier;
             Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> recentModuleEntry = null;
 
-            for (Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> moduleEntry : allModules
+            for (final Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> moduleEntry : allModules
                     .entrySet()) {
                 final ModuleIdentifier id = moduleEntry.getKey();
 
@@ -229,7 +231,7 @@ public class ImportStatementDefinition extends
             importAction.apply(new InferenceAction() {
                 @Override
                 public void apply() {
-                    Entry<SemVer, StmtContext<?, ?, ?>> importedModuleEntry= findRecentCompatibleModuleEntry(
+                    final Entry<SemVer, StmtContext<?, ?, ?>> importedModuleEntry= findRecentCompatibleModuleEntry(
                             impIdentifier.getName(), stmt);
 
                     StmtContext<?, ?, ?> importedModule = null;
@@ -246,7 +248,7 @@ public class ImportStatementDefinition extends
                     }
 
                     linkageTarget.get().addToNs(ImportedModuleContext.class, importedModuleIdentifier, importedModule);
-                    String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
+                    final String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
                     stmt.addToNs(ImpPrefixToModuleIdentifier.class, impPrefix, importedModuleIdentifier);
                     stmt.addToNs(ImpPrefixToSemVerModuleIdentifier.class, impPrefix, semVerModuleIdentifier);
 

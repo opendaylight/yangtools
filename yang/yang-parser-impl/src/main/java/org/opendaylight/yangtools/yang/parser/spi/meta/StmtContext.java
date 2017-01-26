@@ -66,6 +66,10 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     <K, V, KT extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(
             Class<N> type, KT key) throws NamespaceNotAvailableException;
 
+    @Nonnull
+    <V, N extends ValueNamespace<V>> Collection<V> getFromValueNamespace(
+            Class<N> type) throws NamespaceNotAvailableException;
+
     <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromNamespace(
             Class<N> type);
 
@@ -154,6 +158,10 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
                 Class<N> type, KT key, VT value)
                 throws NamespaceNotAvailableException;
 
+        <V, VT extends V, N extends ValueNamespace<V>> void addToValueNs(
+                Class<N> type, VT value)
+                throws NamespaceNotAvailableException;
+
         @Nonnull
         @Override
         StmtContext.Mutable<?, ?, ?> getRoot();
@@ -181,5 +189,4 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          */
         void setRootVersion(YangVersion version);
     }
-
 }

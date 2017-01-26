@@ -8,8 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.collect.ImmutableMap;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -22,10 +24,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Namesp
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ValueNamespace;
 
 abstract class NamespaceStorageSupport implements NamespaceStorageNode {
 
     private Map<Class<?>, Map<?,?>> namespaces = ImmutableMap.of();
+    private Map<Class<?>, Collection<?>> valueNamespaces = ImmutableMap.of();
 
     @Override
     public abstract NamespaceStorageNode getParentNamespaceStorage();
@@ -88,6 +92,12 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         return potential;
     }
 
+    @SuppressWarnings("unchecked")
+    @Override
+    public <V, N extends ValueNamespace<V>> Collection<V> getFromLocalValueStorage(final Class<N> type) {
+        return (Collection<V>) valueNamespaces.get(type);
+    }
+
     private static boolean isModuleIdentifierWithoutSpecifiedRevision(final Object obj) {
         if (!(obj instanceof ModuleIdentifier)) {
             return false;
@@ -140,4 +150,18 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         onNamespaceElementAdded(type,key,value);
     }
 
+    @Override
+    public <V, N extends ValueNamespace<V>> void addToLocalValueStorage(final Class<N> type, final V value) {
+        @SuppressWarnings("unchecked")
+        Collection<V> localValues = (Collection<V>) valueNamespaces.get(type);
+        if (localValues == null) {
+            localValues = new HashSet<>(1);
+
+            if (valueNamespaces.isEmpty()) {
+                valueNamespaces = new HashMap<>(1);
+            }
+            valueNamespaces.put(type, localValues);
+        }
+        localValues.add(value);
+    }
 }

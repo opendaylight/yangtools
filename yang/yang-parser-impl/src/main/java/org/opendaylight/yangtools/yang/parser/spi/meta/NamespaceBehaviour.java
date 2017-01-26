@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.base.Preconditions;
+import java.util.Collection;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -53,10 +54,14 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
         <K, V, N extends IdentifierNamespace<K, V>> V getFromLocalStorage(Class<N> type, K key);
 
         @Nullable
+        <V, N extends ValueNamespace<V>> Collection<V> getFromLocalValueStorage(Class<N> type);
+
+        @Nullable
         <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromLocalStorage(Class<N> type);
 
         <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(Class<N> type, K key, V value);
 
+        <V, N extends ValueNamespace<V>> void addToLocalValueStorage(Class<N> type, V value);
     }
 
     private final Class<N> identifier;
@@ -185,7 +190,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
 
         @Override
         public V getFrom(final NamespaceStorageNode storage, final K key) {
-            NamespaceStorageNode current = findClosestTowardsRoot(storage, storageType);
+            final NamespaceStorageNode current = findClosestTowardsRoot(storage, storageType);
             return getFromLocalStorage(current, key);
         }
 
@@ -201,7 +206,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
 
         @Override
         public void addTo(final NamespaceBehaviour.NamespaceStorageNode storage, final K key, final V value) {
-            NamespaceStorageNode current = findClosestTowardsRoot(storage, storageType);
+            final NamespaceStorageNode current = findClosestTowardsRoot(storage, storageType);
             addToStorage(current, key, value);
         }
 
