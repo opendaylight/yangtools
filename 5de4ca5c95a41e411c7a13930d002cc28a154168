@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_b13c1e95",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/UnknownSchemaNode.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-01-27T19:07:36Z",
+      "side": 1,
+      "message": "What is the use case for this method? Consumers of the effective model should not really care (they do not know about deleted nodes).",
+      "range": {
+        "startLine": 60,
+        "startChar": 4,
+        "endLine": 60,
+        "endChar": 33
+      },
+      "revId": "5de4ca5c95a41e411c7a13930d002cc28a154168",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_11424a10",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/CopyType.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-01-27T19:07:36Z",
+      "side": 1,
+      "message": "Is this really needed?",
+      "range": {
+        "startLine": 19,
+        "startChar": 4,
+        "endLine": 19,
+        "endChar": 23
+      },
+      "revId": "5de4ca5c95a41e411c7a13930d002cc28a154168",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_f146a622",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/stmt/DeviationResolutionTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-01-27T19:07:36Z",
+      "side": 1,
+      "message": "these need to cover \u0027must\u0027 statements, too",
+      "range": {
+        "startLine": 132,
+        "startChar": 16,
+        "endLine": 132,
+        "endChar": 34
+      },
+      "revId": "5de4ca5c95a41e411c7a13930d002cc28a154168",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
