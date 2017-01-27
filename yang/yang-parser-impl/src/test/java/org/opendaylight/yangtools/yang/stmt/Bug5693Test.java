@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 
 public class Bug5693Test {
 
-    private final String pathToModuleFoo = getClass().getResource("/bugs/bug5693/foo.xml").getPath();
+    private final String pathToModuleFoo = getClass().getResource("/bugs/bug5693/foo.yin").getPath();
     private Module foo;
 
     /**

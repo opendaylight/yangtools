@@ -65,7 +65,7 @@ public class SchemaContextEmitterTest {
         assertNotNull(output);
         assertNotEquals(0, output.length());
 
-        final Document doc = loadDocument("/schema-context-emitter-test/foo.xml");
+        final Document doc = loadDocument("/schema-context-emitter-test/foo.yin");
         final String expected = toString(doc.getDocumentElement());
 
         XMLUnit.setIgnoreWhitespace(true);
