@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.concepts;
 
+import com.google.common.base.Preconditions;
+import javax.annotation.Nonnull;
+
 /**
  * Utility registration handle. It is a convenience for register-style method
  * which can return an AutoCloseable realized by a subclass of this class.
@@ -16,8 +19,8 @@ package org.opendaylight.yangtools.concepts;
 public abstract class AbstractObjectRegistration<T> extends AbstractRegistration implements ObjectRegistration<T> {
     private final T instance;
 
-    protected AbstractObjectRegistration(final T instance) {
-        this.instance = instance;
+    protected AbstractObjectRegistration(final @Nonnull T instance) {
+        this.instance = Preconditions.checkNotNull(instance);
     }
 
     @Override
