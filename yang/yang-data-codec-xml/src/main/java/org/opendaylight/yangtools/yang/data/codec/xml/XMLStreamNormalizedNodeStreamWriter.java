@@ -31,6 +31,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamAttributeWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.slf4j.Logger;
@@ -77,7 +79,21 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
      * @return A new {@link NormalizedNodeStreamWriter}
      */
     public static NormalizedNodeStreamWriter create(final XMLStreamWriter writer, final SchemaContext context) {
-        return create( writer, context, SchemaPath.ROOT);
+        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context, SchemaTracker.create(context));
+    }
+
+    /**
+     * Create a new writer with the specified context and rooted in the specified schema path
+     *
+     * @param writer Output {@link XMLStreamWriter}
+     * @param context Associated {@link SchemaContext}.
+     * @param root Root container
+     *
+     * @return A new {@link NormalizedNodeStreamWriter}
+     */
+    public static NormalizedNodeStreamWriter create(final XMLStreamWriter writer, final SchemaContext context,
+            final DataNodeContainer root) {
+        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context, SchemaTracker.create(root));
     }
 
     /**
@@ -88,10 +104,14 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
      * @param path path
      *
      * @return A new {@link NormalizedNodeStreamWriter}
+     *
+     * @deprecated This method does not work with conflicting container/rpc/notification nodes. Use
+     *             {@link #create(XMLStreamWriter, SchemaContext, DataNodeContainer)} instead.
      */
+    @Deprecated
     public static NormalizedNodeStreamWriter create(final XMLStreamWriter writer, final SchemaContext context,
             final SchemaPath path) {
-        return SchemaAwareXMLStreamNormalizedNodeStreamWriter.newInstance(writer, context, path);
+        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context, SchemaTracker.create(context, path));
     }
 
     /**

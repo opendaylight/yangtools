@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -59,10 +60,22 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
     private final JsonWriter writer;
     private JSONStreamWriterContext context;
 
-    private JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final SchemaPath path, final JsonWriter JsonWriter, final JSONStreamWriterRootContext rootContext) {
-        this.writer = Preconditions.checkNotNull(JsonWriter);
+    @Deprecated
+    private JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final SchemaPath path,
+            final JsonWriter jsonWriter, final JSONStreamWriterRootContext rootContext) {
+        this(codecFactory, jsonWriter, rootContext, SchemaTracker.create(codecFactory.getSchemaContext(), path));
+    }
+
+    private JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final DataNodeContainer root,
+            final JsonWriter jsonWriter, final JSONStreamWriterRootContext rootContext) {
+        this(codecFactory, jsonWriter, rootContext, SchemaTracker.create(root));
+    }
+
+    private JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory,
+            final JsonWriter jsonWriter, final JSONStreamWriterRootContext rootContext, final SchemaTracker tracker) {
+        this.writer = Preconditions.checkNotNull(jsonWriter);
         this.codecs = Preconditions.checkNotNull(codecFactory);
-        this.tracker = SchemaTracker.create(codecFactory.getSchemaContext(), path);
+        this.tracker = Preconditions.checkNotNull(tracker);
         this.context = Preconditions.checkNotNull(rootContext);
     }
 
@@ -82,9 +95,38 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
      * @param initialNs Initial namespace
      * @param jsonWriter JsonWriter
      * @return A stream writer instance
+     *
+     * @deprecated This method does not work with conflicting container/rpc/notification nodes. Use
+     *             {@link #createExclusiveWriter(JSONCodecFactory, DataNodeContainer, URI, JsonWriter)} instead.
      */
-    public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory, final SchemaPath path, final URI initialNs, final JsonWriter jsonWriter) {
-        return new JSONNormalizedNodeStreamWriter(codecFactory, path, jsonWriter, new JSONStreamWriterExclusiveRootContext(initialNs));
+    @Deprecated
+    public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory,
+            final SchemaPath path, final URI initialNs, final JsonWriter jsonWriter) {
+        return new JSONNormalizedNodeStreamWriter(codecFactory, path, jsonWriter,
+            new JSONStreamWriterExclusiveRootContext(initialNs));
+    }
+
+    /**
+     * Create a new stream writer, which writes to the specified output stream.
+     *
+     * The codec factory can be reused between multiple writers.
+     *
+     * Returned writer is exclusive user of JsonWriter, which means it will start
+     * top-level JSON element and ends it.
+     *
+     * This instance of writer can be used only to emit one top level element,
+     * otherwise it will produce incorrect JSON.
+     *
+     * @param codecFactory JSON codec factory
+     * @param root Root container
+     * @param initialNs Initial namespace
+     * @param jsonWriter JsonWriter
+     * @return A stream writer instance
+     */
+    public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory,
+            final DataNodeContainer root, final URI initialNs, final JsonWriter jsonWriter) {
+        return new JSONNormalizedNodeStreamWriter(codecFactory, root, jsonWriter,
+            new JSONStreamWriterExclusiveRootContext(initialNs));
     }
 
     /**
@@ -102,9 +144,37 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
      * @param initialNs Initial namespace
      * @param jsonWriter JsonWriter
      * @return A stream writer instance
+     *
+     * @deprecated This method does not work with conflicting container/rpc/notification nodes. Use
+     *             {@link #createNestedWriter(JSONCodecFactory, DataNodeContainer, URI, JsonWriter)} instead.
      */
-    public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory, final SchemaPath path, final URI initialNs, final JsonWriter jsonWriter) {
-        return new JSONNormalizedNodeStreamWriter(codecFactory, path, jsonWriter, new JSONStreamWriterSharedRootContext(initialNs));
+    @Deprecated
+    public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory,
+            final SchemaPath path, final URI initialNs, final JsonWriter jsonWriter) {
+        return new JSONNormalizedNodeStreamWriter(codecFactory, path, jsonWriter,
+            new JSONStreamWriterSharedRootContext(initialNs));
+    }
+
+    /**
+     * Create a new stream writer, which writes to the specified output stream.
+     *
+     * The codec factory can be reused between multiple writers.
+     *
+     * Returned writer can be used emit multiple top level element,
+     * but does not start / close parent JSON object, which must be done
+     * by user providing {@code jsonWriter} instance in order for
+     * JSON to be valid.
+     *
+     * @param codecFactory JSON codec factory
+     * @param root Root container
+     * @param initialNs Initial namespace
+     * @param jsonWriter JsonWriter
+     * @return A stream writer instance
+     */
+    public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory,
+            final DataNodeContainer root, final URI initialNs, final JsonWriter jsonWriter) {
+        return new JSONNormalizedNodeStreamWriter(codecFactory, root, jsonWriter,
+            new JSONStreamWriterSharedRootContext(initialNs));
     }
 
     @Override
@@ -221,6 +291,7 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void writeValue(final Object value, final JSONCodec<?> codec)
             throws IOException {
         ((JSONCodec<Object>) codec).serializeToWriter(writer, value);
@@ -303,12 +374,11 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
 
     // json numbers are 64 bit wide floating point numbers - in java terms it is either long or double
     private static Number parseNumber(final String numberText) {
-        Matcher matcher = NOT_DECIMAL_NUMBER_PATTERN.matcher(numberText);
-        if (matcher.matches()) {
-            return Long.parseLong(numberText);
-        } else {
-            return Double.parseDouble(numberText);
+        if (NOT_DECIMAL_NUMBER_PATTERN.matcher(numberText).matches()) {
+            return Long.valueOf(numberText);
         }
+
+        return Double.valueOf(numberText);
     }
 
     private static boolean isJsonObject(final Node firstChild) {

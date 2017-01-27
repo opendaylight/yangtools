@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
+@Deprecated
 public class SchemaOrderedNormalizedNodeWriterTest {
 
     private static final String EXPECTED_1 =
@@ -153,7 +154,8 @@ public class SchemaOrderedNormalizedNodeWriterTest {
         XMLAssert.assertXMLIdentical(new Diff(EXPECTED_2, stringWriter.toString()), true);
     }
 
-    private SchemaContext getSchemaContext(final String filePath) throws URISyntaxException, ReactorException, FileNotFoundException {
+    private static SchemaContext getSchemaContext(final String filePath) throws URISyntaxException, ReactorException,
+            FileNotFoundException {
         return YangParserTestUtils.parseYangSource(filePath);
     }
 

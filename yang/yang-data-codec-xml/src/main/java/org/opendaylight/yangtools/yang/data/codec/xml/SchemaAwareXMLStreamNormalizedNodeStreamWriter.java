@@ -8,6 +8,7 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import java.io.IOException;
 import java.util.Collections;
@@ -20,7 +21,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -29,22 +29,16 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNormalizedNodeStreamWriter<SchemaNode> {
     private final SchemaTracker tracker;
     private final XmlStreamUtils streamUtils;
 
-    private SchemaAwareXMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final SchemaContext context,
-                                                           final SchemaPath path) {
+    SchemaAwareXMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final SchemaContext context,
+        final SchemaTracker tracker) {
         super(writer);
-        this.tracker = SchemaTracker.create(context, path);
         this.streamUtils = XmlStreamUtils.create(context);
-    }
-
-    static NormalizedNodeStreamWriter newInstance(final XMLStreamWriter writer, final SchemaContext context,
-            final SchemaPath path) {
-        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context, path);
+        this.tracker = Preconditions.checkNotNull(tracker);
     }
 
     @Override
@@ -103,7 +97,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     }
 
     @Override
-    public void leafNode(NodeIdentifier name, Object value, Map<QName, String> attributes) throws IOException {
+    public void leafNode(final NodeIdentifier name, final Object value, final Map<QName, String> attributes) throws IOException {
         final LeafSchemaNode schema = tracker.leafNode(name);
         writeElement(schema.getQName(), value, attributes, schema);
     }
