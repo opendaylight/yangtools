@@ -15,8 +15,7 @@ import com.google.common.collect.Interners;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.objcache.ObjectCache;
-import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
+import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 
 /**
@@ -120,6 +119,34 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
         return revision;
     }
 
+    /**
+     * <p>
+     * Since we've got two ways of model versioning (revision &amp; semantic version),
+     * this method shouldn't be called directly anymore. Eventually, callers of this method
+     * should be notified before method gets deleted.
+     * @deprecated use either
+     * <ul>
+     * <li>{@link SemVerSourceIdentifier#create(String, SemVer)}</li>
+     * <li>{@link SemVerSourceIdentifier#create(String, Optional, SemVer)}</li>
+     * <li>{@link SemVerSourceIdentifier#create(String, String, SemVer)}</li>
+     * </ul>
+     * or
+     * <ul>
+     * <li>{@link RevisionSourceIdentifier#create(String)}</li>
+     * <li>{@link RevisionSourceIdentifier#create(String, String)}</li>
+     * <li>{@link RevisionSourceIdentifier#create(String, Optional)}</li>
+     * </ul>
+     *
+     * @param moduleName
+     *            Name of schema
+
+     * @param revision
+     *            Revision of source in format YYYY-mm-dd. If not present,
+     *            default value will be used.
+     *
+     * @return particular SourceIdentifier instance
+     *
+     */
     @Deprecated
     public static SourceIdentifier create(final String moduleName, final Optional<String> revision) {
         return new RevisionSourceIdentifier(moduleName, revision);
