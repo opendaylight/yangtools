@@ -15,6 +15,7 @@ import com.google.common.collect.Interners;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.objcache.ObjectCache;
 import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
@@ -120,6 +121,13 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
         return revision;
     }
 
+    /**
+     *
+     * Note: Since we've got two ways of model versioning (revision & semantic version),
+     * this method shouldn't be called anymore. Please see implementations of this class.
+     * Eventually, callers of this method should be notified before method gets deleted.
+     *
+     */
     @Deprecated
     public static SourceIdentifier create(final String moduleName, final Optional<String> revision) {
         return new RevisionSourceIdentifier(moduleName, revision);
