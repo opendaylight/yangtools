@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.concepts;
 
+import javax.annotation.Nonnull;
+
 /**
  * Class representing a registration of an object. Such a registration is
  * a proper resource and should be cleaned up when no longer required, so
@@ -20,7 +22,7 @@ public interface ObjectRegistration<T> extends Registration {
      *
      * @return Registered object.
      */
-    T getInstance();
+    @Nonnull T getInstance();
 
     /**
      * Unregisters the object. This operation is required not to invoke
