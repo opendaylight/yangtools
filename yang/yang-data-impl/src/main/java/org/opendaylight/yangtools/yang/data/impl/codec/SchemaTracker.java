@@ -48,13 +48,12 @@ import org.slf4j.LoggerFactory;
 @Beta
 public final class SchemaTracker {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaTracker.class);
+
     private final Deque<Object> schemaStack = new ArrayDeque<>();
     private final DataNodeContainer root;
 
-    private SchemaTracker(final SchemaContext context, final SchemaPath path) {
-        SchemaNode current = SchemaUtils.findParentSchemaOnPath(context, path);
-        Preconditions.checkArgument(current instanceof DataNodeContainer,"Schema path must point to container or list or an rpc input/output. Supplied path %s pointed to: %s",path,current);
-        root = (DataNodeContainer) current;
+    private SchemaTracker(final DataNodeContainer root) {
+        this.root = Preconditions.checkNotNull(root);
     }
 
     /**
@@ -63,8 +62,21 @@ public final class SchemaTracker {
      * @param context Associated {@link SchemaContext}.
      * @return A new {@link NormalizedNodeStreamWriter}
      */
+    // FIXME: we should get rid of this one ... somehow. That will break ABI.
     public static SchemaTracker create(final SchemaContext context) {
-        return create(context, SchemaPath.ROOT);
+        return new SchemaTracker(context);
+    }
+
+    /**
+     * Create a new writer rooted at specified {@link DataNodeContainer}.
+     *
+     * @param root root container
+     *
+     * @return A new {@link NormalizedNodeStreamWriter}
+     * @throws NullPointerException if root is null
+     */
+    public static SchemaTracker create(final DataNodeContainer root) {
+        return new SchemaTracker(root);
     }
 
     /**
@@ -74,9 +86,17 @@ public final class SchemaTracker {
      * @param path schema path
      *
      * @return A new {@link NormalizedNodeStreamWriter}
+     *
+     * @deprecated This method does not work with conflicting container/rpc/notification nodes. Use
+     *             {@link #create(DataNodeContainer)} instead.
      */
+    @Deprecated
     public static SchemaTracker create(final SchemaContext context, final SchemaPath path) {
-        return new SchemaTracker(context, path);
+        SchemaNode current = SchemaUtils.findParentSchemaOnPath(context, path);
+        Preconditions.checkArgument(current instanceof DataNodeContainer,
+            "Schema path must point to container or list or an rpc input/output. Supplied path %s pointed to: %s",
+            path, current);
+        return create((DataNodeContainer) current);
     }
 
     public Object getParent() {
@@ -155,7 +175,8 @@ public final class SchemaTracker {
     public LeafListSchemaNode startLeafSet(final NodeIdentifier name) {
         final SchemaNode schema = getSchema(name);
 
-        Preconditions.checkArgument(schema instanceof LeafListSchemaNode, "Node %s is not a leaf-list", schema.getPath());
+        Preconditions.checkArgument(schema instanceof LeafListSchemaNode, "Node %s is not a leaf-list",
+            schema.getPath());
         schemaStack.push(schema);
         return (LeafListSchemaNode)schema;
     }
@@ -223,8 +244,10 @@ public final class SchemaTracker {
             final QName name = Iterables.get(identifier.getPossibleChildNames(), 0);
             parent = findCaseByChild((ChoiceSchemaNode) parent, name);
         }
-        Preconditions.checkArgument(parent instanceof DataNodeContainer, "Augmentation allowed only in DataNodeContainer",parent);
-        final AugmentationSchema schema = SchemaUtils.findSchemaForAugment((AugmentationTarget) parent, identifier.getPossibleChildNames());
+        Preconditions.checkArgument(parent instanceof DataNodeContainer,
+            "Augmentation allowed only in DataNodeContainer",parent);
+        final AugmentationSchema schema = SchemaUtils.findSchemaForAugment((AugmentationTarget) parent,
+            identifier.getPossibleChildNames());
         final HashSet<DataSchemaNode> realChildSchemas = new HashSet<>();
         for (final DataSchemaNode child : schema.getChildNodes()) {
             realChildSchemas.add(((DataNodeContainer) parent).getDataChildByName(child.getQName()));
