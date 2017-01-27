@@ -22,6 +22,29 @@
       "revId": "6a703377852b4177dd24b1685f6f25d91e42af9b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_d158c5fc",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/IdentityEffectiveStatementImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 76,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-01-27T11:21:51Z",
+      "side": 1,
+      "message": "I think this should be guarded by a checkState(sealed) -- to catch the case where we fail to seal the thing.",
+      "range": {
+        "startLine": 76,
+        "startChar": 8,
+        "endLine": 76,
+        "endChar": 30
+      },
+      "revId": "6a703377852b4177dd24b1685f6f25d91e42af9b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
