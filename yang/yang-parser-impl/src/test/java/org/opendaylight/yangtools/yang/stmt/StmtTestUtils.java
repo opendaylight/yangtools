@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -37,15 +38,11 @@ import org.slf4j.LoggerFactory;
 
 public class StmtTestUtils {
 
-    final public static FileFilter YANG_FILE_FILTER = file -> {
-        final String name = file.getName().toLowerCase();
-        return name.endsWith(".yang") && file.isFile();
-    };
+    public static final FileFilter YANG_FILE_FILTER =
+            file -> file.getName().endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION) && file.isFile();
 
-    final public static FileFilter YIN_FILE_FILTER = file -> {
-        final String name = file.getName().toLowerCase();
-        return name.endsWith(".xml") && file.isFile();
-    };
+    public static final FileFilter YIN_FILE_FILTER =
+            file -> file.getName().endsWith(YangConstants.RFC6020_YIN_FILE_EXTENSION) && file.isFile();
 
     private static final Logger LOG = LoggerFactory.getLogger(StmtTestUtils.class);
 
