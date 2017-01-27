@@ -29,18 +29,17 @@ import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 public class YinFileStmtTest {
 
-    private static final YinStatementSourceImpl YIN_FILE = new YinStatementSourceImpl
-            ("/semantic-statement-parser/yin/test.xml", false);
-    private static final YinStatementSourceImpl EXT_FILE = new YinStatementSourceImpl
-            ("/semantic-statement-parser/yin/extension.xml", false);
-    private static final YinStatementSourceImpl EXT_USE_FILE = new YinStatementSourceImpl
-            ("/semantic-statement-parser/yin/extension-use.xml", false);
-    private static final YinStatementSourceImpl INVALID_YIN_FILE = new YinStatementSourceImpl
-            ("/semantic-statement-parser/yin/incorrect-foo.xml", false);
-    private static final YinStatementSourceImpl INVALID_YIN_FILE_2 = new YinStatementSourceImpl
-            ("/semantic-statement-parser/yin/incorrect-bar.xml", false);
+    private static final YinStatementSourceImpl YIN_FILE = createSource("test.yin");
+    private static final YinStatementSourceImpl EXT_FILE = createSource("extension.yin");
+    private static final YinStatementSourceImpl EXT_USE_FILE = createSource("extension-use.yin");
+    private static final YinStatementSourceImpl INVALID_YIN_FILE = createSource("incorrect-foo.yin");
+    private static final YinStatementSourceImpl INVALID_YIN_FILE_2 = createSource("incorrect-bar.yin");
 
     private Set<Module> modules;
+
+    private static YinStatementSourceImpl createSource(final String name) {
+        return new YinStatementSourceImpl("/semantic-statement-parser/yin/" + name, false);
+    }
 
     @Before
     public void init() throws URISyntaxException, ReactorException {
