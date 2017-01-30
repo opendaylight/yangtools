@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * YIN text schema source representation. Exposes an RFC6020 XML representation as an {@link InputStream}.
+ * YIN text schema source representation. Exposes an RFC6020 or RFC7950 XML representation as an {@link InputStream}.
  */
 @Beta
 public abstract class YinTextSchemaSource extends ByteSource implements YinSchemaSourceRepresentation {

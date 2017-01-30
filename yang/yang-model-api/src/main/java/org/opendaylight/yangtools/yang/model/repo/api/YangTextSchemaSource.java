@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangNames;
 
 /**
- * YANG text schema source representation. Exposes an RFC6020 text representation
+ * YANG text schema source representation. Exposes an RFC6020 or RFC7950 text representation
  * as an {@link InputStream}.
  */
 @Beta

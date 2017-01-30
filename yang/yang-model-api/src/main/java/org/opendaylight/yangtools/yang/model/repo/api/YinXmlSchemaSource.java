@@ -12,7 +12,7 @@ import javax.annotation.Nonnull;
 import javax.xml.transform.Source;
 
 /**
- * YIN text schema source representation. Exposes an RFC6020 XML representation as an XML {@link Source}.
+ * YIN text schema source representation. Exposes an RFC6020 or RFC7950 XML representation as an XML {@link Source}.
  */
 @Beta
 public interface YinXmlSchemaSource extends YinSchemaSourceRepresentation {
