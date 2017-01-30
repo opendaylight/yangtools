@@ -68,6 +68,30 @@
       "revId": "5de4ca5c95a41e411c7a13930d002cc28a154168",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_885f270e",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/stmt/DeviationResolutionTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 4561
+      },
+      "writtenOn": "2017-01-30T13:05:19Z",
+      "side": 1,
+      "message": "Actually, according to YANG grammar, must statements are not allowed within deviate replace.",
+      "parentUuid": "fafc7978_f146a622",
+      "range": {
+        "startLine": 132,
+        "startChar": 16,
+        "endLine": 132,
+        "endChar": 34
+      },
+      "revId": "5de4ca5c95a41e411c7a13930d002cc28a154168",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
