@@ -60,28 +60,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamesp
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ActionStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.AnydataStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.AugmentStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.BitStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.CaseStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ChoiceStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ContainerStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.EnumStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.GroupingStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.IdentityStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ImportStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.IncludeStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.InputStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.LeafListStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ListStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ModifierStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ModuleStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.NotificationStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.OutputStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.PatternStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.RefineStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.SubmoduleStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.*;
 
 public final class YangInferencePipeline {
     public static final Set<YangVersion> SUPPORTED_VERSIONS = Sets.immutableEnumSet(VERSION_1, VERSION_1_1);
@@ -196,6 +175,7 @@ public final class YangInferencePipeline {
     public static final StatementSupportBundle FULL_DECL_BUNDLE = StatementSupportBundle
             .derivedFrom(STMT_DEF_BUNDLE)
             .addSupport(new LeafStatementImpl.Definition())
+            .addVersionSpecificSupport(VERSION_1_1, new LeafStatementRfc7950Support())
             .addSupport(new ConfigStatementImpl.Definition())
             .addSupport(new DeviationStatementImpl.Definition())
             .addSupport(new DeviateStatementImpl.Definition())
@@ -209,6 +189,7 @@ public final class YangInferencePipeline {
             .addVersionSpecificSupport(VERSION_1_1, new AnydataStatementImpl.Definition())
             .addSupport(new IfFeatureStatementImpl.Definition())
             .addSupport(new UsesStatementImpl.Definition())
+            .addVersionSpecificSupport(VERSION_1_1, new UsesStatementRfc7950Support())
             .addSupport(treeScoped(GroupingNamespace.class)) //treeScoped
             .addSupport(new ErrorMessageStatementImpl.Definition())
             .addSupport(new ErrorAppTagStatementImpl.Definition())
