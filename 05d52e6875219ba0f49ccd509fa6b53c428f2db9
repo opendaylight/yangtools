@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_6e2f68a2",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SubstatementContext.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 305,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-01-31T12:31:23Z",
+      "side": 1,
+      "message": "I suggest to fix that rather in the method StmtContextUtils.findFirstSubstatement()..",
+      "range": {
+        "startLine": 301,
+        "startChar": 8,
+        "endLine": 305,
+        "endChar": 9
+      },
+      "revId": "05d52e6875219ba0f49ccd509fa6b53c428f2db9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_6e580857",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/DeviateStatementImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-01-31T12:31:23Z",
+      "side": 1,
+      "message": "I think, we need to check also effective substatements here, because augment, refine, uses, etc. are producing effective substatements and so if we do not check them, we can create duplicite substatements (also with different arguments) here in some cases. This comment is relevant also for other deviate operations.\n\nPlease add also some tests for these situations described above.",
+      "range": {
+        "startLine": 174,
+        "startChar": 81,
+        "endLine": 174,
+        "endChar": 113
+      },
+      "revId": "05d52e6875219ba0f49ccd509fa6b53c428f2db9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_6eaac81a",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/DeviateStatementImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-01-31T12:31:23Z",
+      "side": 1,
+      "message": "whitespaces",
+      "range": {
+        "startLine": 233,
+        "startChar": 0,
+        "endLine": 233,
+        "endChar": 8
+      },
+      "revId": "05d52e6875219ba0f49ccd509fa6b53c428f2db9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_ee3b58e9",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/DeviateStatementImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-01-31T12:31:23Z",
+      "side": 1,
+      "message": "I suggest to throw an IllegalStateException here due to possible NPE (e.g. see call of the method above).",
+      "range": {
+        "startLine": 288,
+        "startChar": 20,
+        "endLine": 288,
+        "endChar": 32
+      },
+      "revId": "05d52e6875219ba0f49ccd509fa6b53c428f2db9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
