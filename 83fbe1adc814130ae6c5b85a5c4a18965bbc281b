@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_1af6d6d7",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/BuildGlobalContext.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-01-31T17:58:44Z",
+      "side": 1,
+      "message": "Ok, I removed these conditions, because libSources collection is empty after ModelProcessingPhase.SOURCE_PRE_LINKAGE. I have placed these conditions there only for sure...",
+      "parentUuid": "fafc7978_2e02803e",
+      "range": {
+        "startLine": 265,
+        "startChar": 0,
+        "endLine": 270,
+        "endChar": 29
+      },
+      "revId": "83fbe1adc814130ae6c5b85a5c4a18965bbc281b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_0effbc35",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/BuildGlobalContext.java",
         "patchSetId": 9
@@ -36,6 +60,30 @@
       "writtenOn": "2017-01-31T12:01:33Z",
       "side": 1,
       "message": "single line",
+      "range": {
+        "startLine": 349,
+        "startChar": 25,
+        "endLine": 351,
+        "endChar": 84
+      },
+      "revId": "83fbe1adc814130ae6c5b85a5c4a18965bbc281b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_7a03a2b8",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/BuildGlobalContext.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 351,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-01-31T17:58:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fafc7978_0effbc35",
       "range": {
         "startLine": 349,
         "startChar": 25,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_5a005eaa",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/BuildGlobalContext.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 352,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-01-31T17:58:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fafc7978_4ef9c44c",
+      "range": {
+        "startLine": 352,
+        "startChar": 17,
+        "endLine": 352,
+        "endChar": 28
+      },
+      "revId": "83fbe1adc814130ae6c5b85a5c4a18965bbc281b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_cea49459",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/ImportStatementDefinition.java",
         "patchSetId": 9
@@ -82,6 +154,30 @@
       "writtenOn": "2017-01-31T12:01:33Z",
       "side": 1,
       "message": "this needs a comment",
+      "range": {
+        "startLine": 86,
+        "startChar": 8,
+        "endLine": 86,
+        "endChar": 81
+      },
+      "revId": "83fbe1adc814130ae6c5b85a5c4a18965bbc281b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_9a3126a5",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/ImportStatementDefinition.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-01-31T17:58:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fafc7978_cea49459",
       "range": {
         "startLine": 86,
         "startChar": 8,
