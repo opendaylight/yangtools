@@ -38,6 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  *  -h,--help             print help message and exit.
  *  -p,--path &lt;arg&gt;       path is a colon (:) separated list of directories
  *                        to search for yang modules.
+ *  -r, --recursive       recursive search of directories specified by -p option
  *  -v,--verbose          shows details about the results of test running.
  *
  */
@@ -56,6 +57,11 @@ public class Main {
                 "path is a colon (:) separated list of directories to search for yang modules.");
         path.setRequired(false);
         options.addOption(path);
+
+        final Option recursiveSearch = new Option("r", "recursive", false,
+                "recursive search of directories specified by -p option.");
+        recursiveSearch.setRequired(false);
+        options.addOption(recursiveSearch);
 
         final Option verbose = new Option("v", "verbose", false, "shows details about the results of test running.");
         verbose.setRequired(false);
@@ -96,11 +102,11 @@ public class Main {
         final List<String> yangFiles = Arrays.asList(arguments.getArgs());
         final HashSet<QName> supportedFeatures = initSupportedFeatures(arguments);
 
-        runSystemTest(yangLibDirs, yangFiles, supportedFeatures);
+        runSystemTest(yangLibDirs, yangFiles, supportedFeatures, arguments.hasOption("recursive"));
     }
 
     private static void runSystemTest(final List<String> yangLibDirs, final List<String> yangFiles,
-            final HashSet<QName> supportedFeatures) {
+            final HashSet<QName> supportedFeatures, final boolean recursiveSearch) {
         LOG.log(Level.INFO, "Yang model dirs: {0} ", yangLibDirs);
         LOG.log(Level.INFO, "Yang model files: {0} ", yangFiles);
         LOG.log(Level.INFO, "Supported features: {0} ", supportedFeatures);
@@ -111,7 +117,7 @@ public class Main {
         final Stopwatch stopWatch = Stopwatch.createStarted();
 
         try {
-            context = SystemTestUtils.parseYangSources(yangLibDirs, yangFiles, supportedFeatures);
+            context = SystemTestUtils.parseYangSources(yangLibDirs, yangFiles, supportedFeatures, recursiveSearch);
         } catch (final Exception e) {
             LOG.log(Level.SEVERE, "Failed to create SchemaContext.", e);
             System.exit(1);

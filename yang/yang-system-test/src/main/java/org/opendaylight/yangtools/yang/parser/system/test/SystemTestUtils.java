@@ -8,6 +8,7 @@
 
 package org.opendaylight.yangtools.yang.parser.system.test;
 
+import com.google.common.base.Preconditions;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
@@ -36,7 +37,7 @@ class SystemTestUtils {
     };
 
     static SchemaContext parseYangSources(final List<String> yangLibDirs, final List<String> yangTestFiles,
-            final Set<QName> supportedFeatures) throws FileNotFoundException, ReactorException {
+            final Set<QName> supportedFeatures, final boolean recursiveSearch) throws FileNotFoundException, ReactorException {
         /*
          * Current dir "." should be always present implicitly in the list of
          * directories where dependencies are searched for
@@ -47,7 +48,7 @@ class SystemTestUtils {
 
         final List<File> libFiles = new ArrayList<>();
         for (final String yangLibDir : yangLibDirs) {
-            libFiles.addAll(getYangFiles(yangLibDir));
+            libFiles.addAll(getYangFiles(yangLibDir, recursiveSearch));
         }
 
         final List<File> testFiles = new ArrayList<>();
@@ -86,11 +87,29 @@ class SystemTestUtils {
         return yangSources;
     }
 
-    private static Collection<File> getYangFiles(final String yangSourcesDirectoryPath) throws FileNotFoundException {
+    private static Collection<File> getYangFiles(final String yangSourcesDirectoryPath, final boolean recursiveSearch)
+            throws FileNotFoundException {
         final File testSourcesDir = new File(yangSourcesDirectoryPath);
         if (testSourcesDir == null || !testSourcesDir.isDirectory()) {
             throw new FileNotFoundException(String.format("%s no such directory", yangSourcesDirectoryPath));
         }
-        return Arrays.asList(testSourcesDir.listFiles(YANG_FILE_FILTER));
+
+        return recursiveSearch ? searchYangFiles(testSourcesDir) : Arrays.asList(testSourcesDir.listFiles(YANG_FILE_FILTER));
+    }
+
+    private static List<File> searchYangFiles(final File dir) {
+        Preconditions.checkNotNull(dir);
+        Preconditions.checkArgument(dir.isDirectory(), "File %s is not a directory", dir.getPath());
+
+        final List<File> yangFiles = new ArrayList<>();
+        for (final File file : dir.listFiles()) {
+            if (file.isDirectory()) {
+                yangFiles.addAll(searchYangFiles(file));
+            } else if (file.isFile() && file.getName().toLowerCase().endsWith(".yang")) {
+                yangFiles.add(file);
+            }
+        }
+
+        return yangFiles;
     }
 }
