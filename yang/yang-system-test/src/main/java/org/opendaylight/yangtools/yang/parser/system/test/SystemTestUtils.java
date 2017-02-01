@@ -68,6 +68,7 @@ class SystemTestUtils {
 
     static SchemaContext parseYangSources(final StatementStreamSource[] testSources,
             final StatementStreamSource[] libSources, final Set<QName> supportedFeatures) throws ReactorException {
+        Preconditions.checkArgument(testSources != null && testSources.length > 0, "No yang sources");
 
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild(supportedFeatures);
