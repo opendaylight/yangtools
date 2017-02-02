@@ -711,33 +711,33 @@ class BuilderTemplate extends BaseTemplate {
             @Override
             public «String.importedName» toString() {
                 «StringBuilder.importedName» builder = new «StringBuilder.importedName» ("«type.name» [");
-                boolean first = true;
-
-                «FOR property : properties»
+                «FOR property : properties SEPARATOR "\n    builder.append(\", \");\n}" AFTER "    }\n"»
                     if («property.fieldName» != null) {
-                        if (first) {
-                            first = false;
-                        } else {
-                            builder.append(", ");
-                        }
                         builder.append("«property.fieldName»=");
                         «IF property.returnType.name.contains("[")»
                             builder.append(«Arrays.importedName».toString(«property.fieldName»));
                         «ELSE»
                             builder.append(«property.fieldName»);
                         «ENDIF»
-                     }
                 «ENDFOR»
                 «IF augmentField != null»
-                    if (first) {
-                        first = false;
-                    } else {
+                    «IF !properties.empty»
+                «««Append comma separator only if it's not there already from previous operation»»»
+int builderLength = builder.length();
+                    if (builderLength > 2 && !builder.substring(builderLength - 2, builderLength).equals(", ")) {
                         builder.append(", ");
                     }
+                    «ENDIF»
                     builder.append("«augmentField.name»=");
-                    builder.append(«augmentField.name».values());
+                    builder.append(«augmentField.name».values());«"\n"»
+                    return builder.append(']').toString();
+                «ELSE»
+                    «IF properties.empty»
+                    return builder.append(']').toString();
+                    «ELSE»
+            return builder.append(']').toString();
+                    «ENDIF»
                 «ENDIF»
-                return builder.append(']').toString();
             }
         «ENDIF»
     '''
