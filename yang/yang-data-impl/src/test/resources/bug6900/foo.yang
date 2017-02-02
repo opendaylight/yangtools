@@ -1,0 +1,11 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    container root {
+        leaf-list my-leaf-list {
+            config false;
+            type string;
+        }
+    }
+}
