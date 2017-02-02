@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_062795b7",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/DeviateStatementImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 280,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-02-02T09:12:45Z",
+      "side": 1,
+      "message": "please try to refactor this code, there is lot of duplicate code",
+      "range": {
+        "startLine": 250,
+        "startChar": 0,
+        "endLine": 280,
+        "endChar": 13
+      },
+      "revId": "fe38b5cc20db22f3a811fb97777a4c078f5c9676",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
