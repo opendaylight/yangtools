@@ -1,0 +1,14 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    uses grp;
+
+    rpc name {
+    }
+
+    grouping grp {
+        container name {
+        }
+    }
+}
