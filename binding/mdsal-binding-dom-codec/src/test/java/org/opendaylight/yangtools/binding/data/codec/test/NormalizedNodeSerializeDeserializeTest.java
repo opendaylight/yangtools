@@ -407,7 +407,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingRunti
         assertNotNull(entryContainer.getKey());
 
         final YangInstanceIdentifier.NodeIdentifierWithPredicates nodeIdentifierWithPredicates4798 = new YangInstanceIdentifier
-                .NodeIdentifierWithPredicates( nestedListQname4798, nestedListKeyQname4798, "foo" );
+                .NodeIdentifierWithPredicates(nestedListQname4798, nestedListKeyQname4798, "foo");
         final YangInstanceIdentifier yangInstanceIdentifier4798 = YangInstanceIdentifier.of(containerIdentifierQname4798)
                 .node(choiceIdentifierQname4798)
                 .node(nestedListQname4798)

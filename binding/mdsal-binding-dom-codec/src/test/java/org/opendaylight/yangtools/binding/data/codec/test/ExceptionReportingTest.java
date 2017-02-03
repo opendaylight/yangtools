@@ -81,7 +81,7 @@ public class ExceptionReportingTest {
     }
 
 
-    private static BindingNormalizedNodeCodecRegistry codec(final Class<?>... classes ) {
+    private static BindingNormalizedNodeCodecRegistry codec(final Class<?>... classes) {
         final ModuleInfoBackedContext ctx = ModuleInfoBackedContext.create();
         for(final Class<?> clazz : classes) {
             YangModuleInfo modInfo;

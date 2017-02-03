@@ -159,7 +159,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         if (data instanceof LeafSetNode) {
             return false;
         }
-        if( data instanceof LeafSetEntryNode<?>) {
+        if (data instanceof LeafSetEntryNode<?>) {
             return false;
         }
         if (data instanceof MapNode) {
