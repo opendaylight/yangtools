@@ -22,6 +22,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Namesp
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ChildSchemaNodes;
 
 abstract class NamespaceStorageSupport implements NamespaceStorageNode {
 
@@ -136,6 +138,14 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
             }
             namespaces.put(type, localNamespace);
         }
+
+        if (ChildSchemaNodes.class.isAssignableFrom(type)) {
+            SourceException.throwIf(localNamespace.containsKey(key),
+                    ((StmtContext<?, ?, ?>) value).getStatementSourceReference(),
+                    "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared.",
+                    ((StmtContext<?, ?, ?>) value).getRoot().getStatementArgument(), key, key);
+        }
+
         localNamespace.put(key,value);
         onNamespaceElementAdded(type,key,value);
     }
