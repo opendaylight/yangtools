@@ -1,0 +1,7 @@
+module foo-2 {
+    namespace foo;
+    prefix foo-2;
+
+    container root-2 {
+    }
+}
