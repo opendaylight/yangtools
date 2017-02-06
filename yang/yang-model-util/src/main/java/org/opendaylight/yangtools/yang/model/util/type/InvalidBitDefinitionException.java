@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
 @Beta
@@ -26,6 +27,12 @@ public class InvalidBitDefinitionException extends IllegalArgumentException {
         this(offendingBit, String.format(format, args));
     }
 
+    public InvalidBitDefinitionException(final String format, Object... args) {
+        super(String.format(format, args));
+        this.offendingBit = null;
+    }
+
+    @Nullable
     public Bit getOffendingBit() {
         return offendingBit;
     }

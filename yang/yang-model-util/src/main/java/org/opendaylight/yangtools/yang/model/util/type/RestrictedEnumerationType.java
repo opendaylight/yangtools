@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
 import javax.annotation.Nonnull;
@@ -15,15 +17,18 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 
 final class RestrictedEnumerationType extends AbstractRestrictedType<EnumTypeDefinition> implements EnumTypeDefinition {
+    private final List<EnumPair> values;
+
     RestrictedEnumerationType(final EnumTypeDefinition baseType, final SchemaPath path,
-            final Collection<UnknownSchemaNode> unknownSchemaNodes) {
+            final Collection<UnknownSchemaNode> unknownSchemaNodes, final Collection<EnumPair> values) {
         super(baseType, path, unknownSchemaNodes);
+        this.values = ImmutableList.copyOf(Preconditions.checkNotNull(values));
     }
 
     @Nonnull
     @Override
     public List<EnumPair> getValues() {
-        return getBaseType().getValues();
+        return values;
     }
 
     @Override
