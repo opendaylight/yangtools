@@ -1,0 +1,30 @@
+module bar {
+    namespace bar;
+    prefix bar;
+
+    revision 2017-02-02;
+
+    typedef my-base-bits-type {
+        type bits {
+            bit bit-a {
+                position 1;
+            }
+            bit bit-b;
+            bit bit-c {
+                position 3;
+            }
+            bit bit-d {
+                position 4;
+            }
+        }
+    }
+
+    leaf my-bits-leaf {
+        type my-base-bits-type {
+            bit bit-b;
+            bit bit-c {
+                position 3;
+            }
+        }
+    }
+}
