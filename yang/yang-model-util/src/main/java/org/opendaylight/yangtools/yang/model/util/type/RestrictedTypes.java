@@ -85,13 +85,8 @@ public final class RestrictedTypes {
         };
     }
 
-    public static TypeBuilder<BitsTypeDefinition> newBitsBuilder(final BitsTypeDefinition baseType, final SchemaPath path) {
-        return new AbstractRestrictedTypeBuilder<BitsTypeDefinition>(baseType, path) {
-            @Override
-            BitsTypeDefinition buildType() {
-                return new RestrictedBitsType(getBaseType(), getPath(), getUnknownSchemaNodes());
-            }
-        };
+    public static BitsTypeBuilder newBitsBuilder(final BitsTypeDefinition baseType, final SchemaPath path) {
+        return new BitsTypeBuilder(baseType, path);
     }
 
     public static TypeBuilder<BooleanTypeDefinition> newBooleanBuilder(@Nonnull final BooleanTypeDefinition baseType, @Nonnull final SchemaPath path) {
@@ -122,13 +117,8 @@ public final class RestrictedTypes {
         };
     }
 
-    public static TypeBuilder<EnumTypeDefinition> newEnumerationBuilder(final EnumTypeDefinition baseType, final SchemaPath path) {
-        return new AbstractRestrictedTypeBuilder<EnumTypeDefinition>(baseType, path) {
-            @Override
-            EnumTypeDefinition buildType() {
-                return new RestrictedEnumerationType(getBaseType(), getPath(), getUnknownSchemaNodes());
-            }
-        };
+    public static EnumerationTypeBuilder newEnumerationBuilder(final EnumTypeDefinition baseType, final SchemaPath path) {
+        return new EnumerationTypeBuilder(baseType, path);
     }
 
     public static TypeBuilder<IdentityrefTypeDefinition> newIdentityrefBuilder(final IdentityrefTypeDefinition baseType, final SchemaPath path) {
