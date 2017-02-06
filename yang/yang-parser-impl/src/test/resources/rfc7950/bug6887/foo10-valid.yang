@@ -1,0 +1,31 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    revision 2017-02-21;
+
+    extension ext;
+
+    typedef my-base-enumeration-type {
+        type enumeration {
+            enum white {
+                value 1;
+            }
+            enum yellow {
+                value 2;
+            }
+            enum red {
+                value 3;
+            }
+            enum black {
+                value 4;
+            }
+        }
+    }
+
+    leaf my-enumeration-leaf {
+        type my-base-enumeration-type {
+            foo:ext;
+        }
+    }
+}
