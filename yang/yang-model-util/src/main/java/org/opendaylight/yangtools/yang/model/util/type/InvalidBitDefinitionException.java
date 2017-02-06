@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 @Beta
 public class InvalidBitDefinitionException extends IllegalArgumentException {
     private static final long serialVersionUID = 1L;
-    private final Bit offendingBit;
+    private Bit offendingBit;
 
     protected InvalidBitDefinitionException(final Bit offendingBit, final String message) {
         super(message);
@@ -24,6 +24,10 @@ public class InvalidBitDefinitionException extends IllegalArgumentException {
     public InvalidBitDefinitionException(final Bit offendingBit, final String format,
             final Object... args) {
         this(offendingBit, String.format(format, args));
+    }
+
+    public InvalidBitDefinitionException(final String format, Object... args) {
+        super(String.format(format, args));
     }
 
     public Bit getOffendingBit() {

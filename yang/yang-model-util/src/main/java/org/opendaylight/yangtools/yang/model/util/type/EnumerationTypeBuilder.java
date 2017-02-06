@@ -10,26 +10,59 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
-public final class EnumerationTypeBuilder extends TypeBuilder<EnumTypeDefinition> {
+public final class EnumerationTypeBuilder extends AbstractRestrictedTypeBuilder<EnumTypeDefinition> {
     private final Builder<String, EnumPair> builder = ImmutableMap.builder();
 
     EnumerationTypeBuilder(final SchemaPath path) {
         super(null, path);
     }
 
+    EnumerationTypeBuilder(final EnumTypeDefinition baseType, final SchemaPath path) {
+        super(baseType, path);
+    }
+
     public EnumerationTypeBuilder addEnum(@Nonnull final EnumPair item) {
+        // in case we are dealing with a restricted enumeration type, validate if the enum is a subset of its base type
+        if (getBaseType() != null) {
+            validateRestrictedEnum(item);
+        }
+
         builder.put(item.getName(), item);
+        touch();
         return this;
     }
 
+    private void validateRestrictedEnum(@Nonnull final EnumPair item) {
+        final List<EnumPair> baseTypeEnumPairs = getBaseType().getValues();
+
+        boolean isASubsetOfBaseEnums = false;
+        for (EnumPair baseTypeEnumPair : baseTypeEnumPairs) {
+            if (item.getName().equals(baseTypeEnumPair.getName())) {
+                if (item.getValue() != baseTypeEnumPair.getValue()) {
+                    throw new InvalidEnumDefinitionException(item, "Value of enum '%s' must be the same as the value" +
+                            " of corresponding enum in the base enumeration type %s.", item.getName(),
+                            getBaseType().getQName());
+                }
+                isASubsetOfBaseEnums = true;
+                break;
+            }
+        }
+
+        if (!isASubsetOfBaseEnums) {
+            throw new InvalidEnumDefinitionException(item, "Enum '%s' is not a subset of its base enumeration type %s.",
+                    item.getName(), getBaseType().getQName());
+        }
+    }
+
     @Override
-    public EnumTypeDefinition build() {
+    public EnumTypeDefinition buildType() {
         final Map<String, EnumPair> map = builder.build();
         final Map<Integer, EnumPair> positionMap = new HashMap<>();
 
@@ -40,6 +73,10 @@ public final class EnumerationTypeBuilder extends TypeBuilder<EnumTypeDefinition
             }
         }
 
-        return new BaseEnumerationType(getPath(), getUnknownSchemaNodes(), map.values());
+        if (getBaseType() == null) {
+            return new BaseEnumerationType(getPath(), getUnknownSchemaNodes(), map.values());
+        } else {
+            return new RestrictedEnumerationType(getBaseType(), getPath(), getUnknownSchemaNodes(), map.values());
+        }
     }
 }

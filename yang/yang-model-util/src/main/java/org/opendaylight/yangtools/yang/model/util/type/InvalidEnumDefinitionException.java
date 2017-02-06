@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPai
 @Beta
 public class InvalidEnumDefinitionException extends IllegalArgumentException {
     private static final long serialVersionUID = 1L;
-    private final EnumPair offendingEnum;
+    private EnumPair offendingEnum;
 
     protected InvalidEnumDefinitionException(final EnumPair offendingEnum, final String message) {
         super(message);
@@ -24,6 +24,10 @@ public class InvalidEnumDefinitionException extends IllegalArgumentException {
     public InvalidEnumDefinitionException(final EnumPair offendingEnum, final String format,
             final Object... args) {
         this(offendingEnum, String.format(format, args));
+    }
+
+    public InvalidEnumDefinitionException(final String format, final Object... args) {
+        super(String.format(format, args));
     }
 
     public EnumPair getOffendingEnum() {
