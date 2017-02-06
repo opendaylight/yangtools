@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
 @Beta
@@ -26,6 +27,12 @@ public class InvalidEnumDefinitionException extends IllegalArgumentException {
         this(offendingEnum, String.format(format, args));
     }
 
+    public InvalidEnumDefinitionException(final String format, final Object... args) {
+        super(String.format(format, args));
+        this.offendingEnum = null;
+    }
+
+    @Nullable
     public EnumPair getOffendingEnum() {
         return offendingEnum;
     }

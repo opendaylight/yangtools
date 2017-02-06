@@ -1,0 +1,49 @@
+module foo {
+    namespace foo;
+    prefix foo;
+    yang-version 1.1;
+
+    revision 2017-01-26;
+
+    typedef my-base-enumeration-type {
+        type enumeration {
+            enum white {
+                value 1;
+            }
+            enum yellow;
+            enum red {
+                value 3;
+            }
+            enum black {
+                value 4;
+            }
+        }
+    }
+
+    typedef my-derived-enumeration-type {
+        type my-base-enumeration-type {
+            enum yellow;
+            enum red {
+                value 3;
+            }
+            enum black {
+                value 4;
+            }
+        }
+    }
+
+    leaf my-enumeration-leaf {
+        type my-derived-enumeration-type {
+            enum yellow;
+            enum red {
+                value 3;
+            }
+        }
+    }
+
+    leaf my-enumeration-leaf-2 {
+        type my-derived-enumeration-type {
+            // inherits enums from the base type
+        }
+    }
+}
