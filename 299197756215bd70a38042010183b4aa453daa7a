@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_9bd46c21",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/NamespaceStorageSupport.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-02-07T12:33:51Z",
+      "side": 1,
+      "message": "why is this cast needed? It looks like it needs to be part of something which knows that value is a StmtContext...",
+      "range": {
+        "startLine": 144,
+        "startChar": 20,
+        "endLine": 144,
+        "endChar": 43
+      },
+      "revId": "299197756215bd70a38042010183b4aa453daa7a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
