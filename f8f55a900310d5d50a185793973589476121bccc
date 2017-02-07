@@ -1,0 +1,234 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_5b916498",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 122,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-02-07T12:17:21Z",
+      "side": 1,
+      "message": "changes the look rules, indicating the lack of documentation. add javadoc.",
+      "range": {
+        "startLine": 118,
+        "startChar": 0,
+        "endLine": 122,
+        "endChar": 30
+      },
+      "revId": "f8f55a900310d5d50a185793973589476121bccc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_3b8c607f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/StatementContextBase.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-02-07T12:17:21Z",
+      "side": 1,
+      "message": "javadoc, especially regarding statementArg",
+      "range": {
+        "startLine": 272,
+        "startChar": 3,
+        "endLine": 272,
+        "endChar": 58
+      },
+      "revId": "f8f55a900310d5d50a185793973589476121bccc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_dbf434f4",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/DeviateStatementImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-02-07T12:17:21Z",
+      "side": 1,
+      "message": "please file an enhancement issue here: these casts are dirty.",
+      "range": {
+        "startLine": 132,
+        "startChar": 36,
+        "endLine": 132,
+        "endChar": 67
+      },
+      "revId": "f8f55a900310d5d50a185793973589476121bccc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_bbf7b0f4",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/DeviateStatementImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-02-07T12:17:21Z",
+      "side": 1,
+      "message": "switch (deviateKind)",
+      "range": {
+        "startLine": 134,
+        "startChar": 32,
+        "endLine": 134,
+        "endChar": 72
+      },
+      "revId": "f8f55a900310d5d50a185793973589476121bccc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_3be3c034",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/DeviateStatementImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-02-07T12:17:21Z",
+      "side": 1,
+      "message": "should be in the if",
+      "range": {
+        "startLine": 173,
+        "startChar": 12,
+        "endLine": 173,
+        "endChar": 80
+      },
+      "revId": "f8f55a900310d5d50a185793973589476121bccc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_fbd81881",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/DeviateStatementImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 176,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-02-07T12:17:21Z",
+      "side": 1,
+      "message": "DEFAULT.equals()",
+      "range": {
+        "startLine": 176,
+        "startChar": 64,
+        "endLine": 176,
+        "endChar": 110
+      },
+      "revId": "f8f55a900310d5d50a185793973589476121bccc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_5be84410",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/DeviateStatementImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-02-07T12:17:21Z",
+      "side": 1,
+      "message": "same here",
+      "range": {
+        "startLine": 177,
+        "startChar": 23,
+        "endLine": 177,
+        "endChar": 54
+      },
+      "revId": "f8f55a900310d5d50a185793973589476121bccc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_9bd10c5a",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/DeviateStatementImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 205,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-02-07T12:17:21Z",
+      "side": 1,
+      "message": "constant.equals()",
+      "range": {
+        "startLine": 205,
+        "startChar": 16,
+        "endLine": 205,
+        "endChar": 64
+      },
+      "revId": "f8f55a900310d5d50a185793973589476121bccc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_fbbf78fa",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/DeviateStatementImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 274,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-02-07T12:17:21Z",
+      "side": 1,
+      "message": "when can this be null?",
+      "range": {
+        "startLine": 274,
+        "startChar": 34,
+        "endLine": 274,
+        "endChar": 46
+      },
+      "revId": "f8f55a900310d5d50a185793973589476121bccc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_5bbfa4fb",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/YangValidationBundles.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-02-07T12:17:21Z",
+      "side": 1,
+      "message": "javadoc",
+      "range": {
+        "startLine": 51,
+        "startChar": 4,
+        "endLine": 51,
+        "endChar": 118
+      },
+      "revId": "f8f55a900310d5d50a185793973589476121bccc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
