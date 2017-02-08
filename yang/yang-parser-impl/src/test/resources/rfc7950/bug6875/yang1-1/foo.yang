@@ -1,0 +1,22 @@
+module foo {
+    namespace foo;
+    prefix foo;
+    yang-version 1.1;
+
+    import bar { prefix bar-1; revision-date 1999-01-01; }
+    import bar { prefix bar-2; revision-date 2017-02-06; }
+    import bar { prefix bar-3; revision-date 1970-01-01; }
+
+    grouping grp {
+        uses bar-1:grp;
+        uses bar-2:grp;
+    }
+
+    container root {
+        uses grp;
+    }
+
+    augment "/bar-3:root" {
+        uses foo:grp;
+    }
+}
