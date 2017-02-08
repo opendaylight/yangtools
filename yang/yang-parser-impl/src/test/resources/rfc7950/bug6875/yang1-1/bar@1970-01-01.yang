@@ -1,0 +1,9 @@
+module bar {
+    namespace bar;
+    prefix bar;
+
+    revision 1970-01-01;
+
+    container root {
+    }
+}

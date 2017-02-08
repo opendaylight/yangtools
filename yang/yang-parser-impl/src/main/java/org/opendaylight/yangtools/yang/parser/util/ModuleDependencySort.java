@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Node;
@@ -60,17 +61,17 @@ public final class ModuleDependencySort {
      *         returned order.
      */
     public static List<Module> sort(final Module... modules) {
-        List<TopologicalSort.Node> sorted = sortInternal(Arrays.asList(modules));
+        final List<TopologicalSort.Node> sorted = sortInternal(Arrays.asList(modules));
         // Cast to Module from Node and return
         return Lists.transform(sorted, TOPOLOGY_FUNCTION);
     }
 
     private static List<TopologicalSort.Node> sortInternal(final Iterable<Module> modules) {
-        Map<String, Map<Date, ModuleNodeImpl>> moduleGraph = createModuleGraph(modules);
+        final Map<String, Map<Date, ModuleNodeImpl>> moduleGraph = createModuleGraph(modules);
 
-        Set<TopologicalSort.Node> nodes = Sets.newHashSet();
-        for (Map<Date, ModuleNodeImpl> map : moduleGraph.values()) {
-            for (ModuleNodeImpl node : map.values()) {
+        final Set<TopologicalSort.Node> nodes = Sets.newHashSet();
+        for (final Map<Date, ModuleNodeImpl> map : moduleGraph.values()) {
+            for (final ModuleNodeImpl node : map.values()) {
                 nodes.add(node);
             }
         }
@@ -80,7 +81,7 @@ public final class ModuleDependencySort {
 
     @VisibleForTesting
     static Map<String, Map<Date, ModuleNodeImpl>> createModuleGraph(final Iterable<Module> builders) {
-        Map<String, Map<Date, ModuleNodeImpl>> moduleGraph = Maps.newHashMap();
+        final Map<String, Map<Date, ModuleNodeImpl>> moduleGraph = Maps.newHashMap();
 
         processModules(moduleGraph, builders);
         processDependencies(moduleGraph, builders);
@@ -93,11 +94,11 @@ public final class ModuleDependencySort {
      */
     private static void processDependencies(final Map<String, Map<Date, ModuleNodeImpl>> moduleGraph,
             final Iterable<Module> mmbs) {
-        Map<URI, Module> allNS = new HashMap<>();
+        final Map<URI, Module> allNS = new HashMap<>();
 
         // Create edges in graph
-        for (Module module : mmbs) {
-            Map<String, Date> imported = Maps.newHashMap();
+        for (final Module module : mmbs) {
+            final Map<String, Date> imported = Maps.newHashMap();
 
             String fromName;
             Date fromRevision;
@@ -111,9 +112,9 @@ public final class ModuleDependencySort {
 
             // check for existence of module with same namespace
             if (allNS.containsKey(ns)) {
-                Module mod = allNS.get(ns);
-                String name = mod.getName();
-                Date revision = mod.getRevision();
+                final Module mod = allNS.get(ns);
+                final String name = mod.getName();
+                final Date revision = mod.getRevision();
                 if (!(fromName.equals(name))) {
                     LOGGER.warn(
                             "Error while sorting module [{}, {}]: module with same namespace ({}) already loaded: [{}, {}]",
@@ -130,20 +131,21 @@ public final class ModuleDependencySort {
                 fromRevision = DEFAULT_REVISION;
             }
 
-            for (ModuleImport imprt : imports) {
-                String toName = imprt.getModuleName();
-                Date toRevision = imprt.getRevision() == null ? DEFAULT_REVISION : imprt.getRevision();
+            for (final ModuleImport imprt : imports) {
+                final String toName = imprt.getModuleName();
+                final Date toRevision = imprt.getRevision() == null ? DEFAULT_REVISION : imprt.getRevision();
 
-                ModuleNodeImpl from = moduleGraph.get(fromName).get(fromRevision);
+                final ModuleNodeImpl from = moduleGraph.get(fromName).get(fromRevision);
 
-                ModuleNodeImpl to = getModuleByNameAndRevision(moduleGraph, fromName, fromRevision, toName, toRevision);
+                final ModuleNodeImpl to = getModuleByNameAndRevision(moduleGraph, fromName, fromRevision, toName, toRevision);
 
                 /*
-                 * Check imports: If module is imported twice with different
+                 * If it is a yang 1 module, check imports: If module is imported twice with different
                  * revisions then throw exception
                  */
-                if (imported.get(toName) != null && !imported.get(toName).equals(toRevision)
-                        && !imported.get(toName).equals(DEFAULT_REVISION) && !toRevision.equals(DEFAULT_REVISION)) {
+                if (YangVersion.VERSION_1.toString().equals(module.getYangVersion()) && imported.get(toName) != null
+                        && !imported.get(toName).equals(toRevision) && !imported.get(toName).equals(DEFAULT_REVISION)
+                        && !toRevision.equals(DEFAULT_REVISION)) {
                     ex(String.format("Module:%s imported twice with different revisions:%s, %s", toName,
                             formatRevDate(imported.get(toName)), formatRevDate(toRevision)));
                 }
@@ -197,9 +199,9 @@ public final class ModuleDependencySort {
             final Iterable<Module> modules) {
 
         // Process nodes
-        for (Module momb : modules) {
+        for (final Module momb : modules) {
 
-            String name = momb.getName();
+            final String name = momb.getName();
             Date rev = momb.getRevision();
             if (rev == null) {
                 rev = DEFAULT_REVISION;
@@ -261,7 +263,7 @@ public final class ModuleDependencySort {
             if (getClass() != obj.getClass()) {
                 return false;
             }
-            ModuleNodeImpl other = (ModuleNodeImpl) obj;
+            final ModuleNodeImpl other = (ModuleNodeImpl) obj;
             if (name == null) {
                 if (other.name != null) {
                     return false;
