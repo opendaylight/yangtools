@@ -1,0 +1,12 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    import bar { prefix bar-1; revision-date 1999-01-01; }
+    import bar { prefix bar-2; revision-date 2017-02-06; }
+
+    container root {
+        uses bar-1:grp;
+        uses bar-2:grp;
+    }
+}
