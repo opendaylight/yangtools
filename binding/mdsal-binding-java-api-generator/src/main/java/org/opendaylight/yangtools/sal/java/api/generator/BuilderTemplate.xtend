@@ -710,7 +710,8 @@ class BuilderTemplate extends BaseTemplate {
         «IF !(properties === null)»
             @Override
             public «String.importedName» toString() {
-                «StringBuilder.importedName» builder = new «StringBuilder.importedName» ("«type.name» [");
+                «String.importedName» name = "«type.name» [";
+                «StringBuilder.importedName» builder = new «StringBuilder.importedName» (name);
                 «FOR property : properties SEPARATOR "\n    builder.append(\", \");\n}" AFTER "    }\n"»
                     if («property.fieldName» != null) {
                         builder.append("«property.fieldName»=");
@@ -723,8 +724,9 @@ class BuilderTemplate extends BaseTemplate {
                 «IF augmentField != null»
                     «IF !properties.empty»
                 «««Append comma separator only if it's not there already from previous operation»»»
-int builderLength = builder.length();
-                    if (builderLength > 2 && !builder.substring(builderLength - 2, builderLength).equals(", ")) {
+final int builderLength = builder.length();
+                    final int builderAdditionalLength = builder.substring(name.length(), builderLength).length();
+                    if (builderAdditionalLength > 2 && !builder.substring(builderLength - 2, builderLength).equals(", ")) {
                         builder.append(", ");
                     }
                     «ENDIF»
