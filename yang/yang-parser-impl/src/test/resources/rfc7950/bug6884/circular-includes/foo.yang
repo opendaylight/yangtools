@@ -1,0 +1,14 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+
+    include sub-foo {
+        revision-date 2017-02-09;
+    }
+    include sub-foo-2 {
+        revision-date 1970-01-01;
+    }
+
+    container root {
+    }
+}
