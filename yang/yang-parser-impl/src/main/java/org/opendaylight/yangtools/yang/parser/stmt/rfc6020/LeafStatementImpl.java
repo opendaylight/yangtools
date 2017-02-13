@@ -8,11 +8,15 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -21,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
@@ -30,6 +35,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.LeafEffectiveStatementImpl;
 
 public class LeafStatementImpl extends AbstractDeclaredStatement<QName> implements LeafStatement {
@@ -82,6 +88,51 @@ public class LeafStatementImpl extends AbstractDeclaredStatement<QName> implemen
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }
+
+        @Override
+        public void onFullDefinitionDeclared(
+                final StmtContext.Mutable<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
+            super.onFullDefinitionDeclared(ctx);
+
+            final StmtContext<?, ?, ?> parentCtx = ctx.getParentContext();
+
+            if (YangVersion.VERSION_1_1.equals(ctx.getRootVersion()) &&
+                    parentCtx.getPublicDefinition().equals(YangStmtMapping.LIST)) {
+
+                parentCtx.declaredSubstatements().forEach(substatement -> {
+                    if (substatement.getPublicDefinition().equals(YangStmtMapping.KEY)) {
+                        List<String> keyNames = ((Collection<SchemaNodeIdentifier>) substatement
+                                .getStatementArgument())
+                                .stream()
+                                .map(schemaNodeID -> new String(schemaNodeID.getLastComponent().getLocalName()))
+                                .collect(Collectors.toList());
+
+                        if (keyNames.isEmpty() ||
+                                !keyNames.contains(ctx.getStatementArgument().getLocalName())) {
+                            return;
+                        }
+
+                        disallowWhenAndIfFeatureOnKeys(ctx);
+                    }
+                });
+            }
+        }
+    }
+
+    private static void disallowWhenAndIfFeatureOnKeys(
+            final StmtContext.Mutable<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
+
+        ctx.declaredSubstatements().forEach(leafSubstatement -> {
+            final StatementDefinition statementDef = leafSubstatement.getPublicDefinition();
+            if (statementDef.equals(YangStmtMapping.IF_FEATURE)
+                    || statementDef.equals(YangStmtMapping.WHEN)) {
+                final String message = (statementDef.equals(YangStmtMapping.IF_FEATURE))
+                        ? "RFC7950: IF-FEATURE not allowed on LIST KEY"
+                        : "RFC7950: WHEN not allowed on LIST KEY";
+
+                throw new SourceException(message, ctx.getStatementSourceReference());
+            }
+        });
     }
 
     @Nullable @Override
