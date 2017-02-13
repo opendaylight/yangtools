@@ -11,7 +11,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -22,6 +24,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
@@ -111,6 +115,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                     try {
                         copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
                         resolveUsesNode(usesNode, targetNodeStmtCtx);
+                        disallowWhenAndIfFeatureOnKeys(usesNode);
                     } catch (final SourceException e) {
                         LOG.warn(e.getMessage(), e);
                         throw e;
@@ -124,6 +129,45 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                     throw new InferenceException("Unknown error occurred.", usesNode.getStatementSourceReference());
                 }
             });
+        }
+
+        private void disallowWhenAndIfFeatureOnKeys(
+                Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode) {
+
+            final StatementContextBase<?, ?, ?> parentCtx = (StatementContextBase) usesNode.getParentContext();
+//            LOG.info("Effective: {}, Declared: {}", parentCtx.effectiveSubstatements(),
+//                    parentCtx.buildDeclared());
+
+            // TODO: Handle REFINE substatement in USES that could define IF-FEATURE for key leaf
+            if(YangVersion.VERSION_1_1.equals(usesNode.getRootVersion()) &&
+                    parentCtx.getPublicDefinition().equals(YangStmtMapping.LIST)) {
+
+                ListStatement listDeclaredStmt = (ListStatementImpl) parentCtx.buildDeclared();
+                listDeclaredStmt.declaredSubstatements().forEach(stmt -> {
+                    if (stmt.statementDefinition().equals(YangStmtMapping.KEY)) {
+                        final List<String> keys = ((KeyStatement) stmt).argument().stream()
+                                .map(qName -> new String(qName.getLastComponent().getLocalName()))
+                                .collect(Collectors.toList());
+
+                        LOG.info("Bug6855: keyNames {}", keys);
+                        parentCtx.effectiveSubstatements().forEach(substatement -> {
+                            if (substatement.getPublicDefinition().equals(YangStmtMapping.LEAF) &&
+                                    keys.contains(substatement.rawStatementArgument())) {
+                                substatement.effectiveSubstatements().forEach(leafSubstatement -> {
+                                    final StatementDefinition statementDef = leafSubstatement.getPublicDefinition();
+                                    if (statementDef.equals(YangStmtMapping.IF_FEATURE)
+                                            || statementDef.equals(YangStmtMapping.WHEN)) {
+                                        final String message = (statementDef.equals(YangStmtMapping.IF_FEATURE))
+                                                ? "RFC7950: IF-FEATURE not allowed on LIST KEY"
+                                                : "RFC7950: WHEN not allowed on LIST KEY";
+                                        throw new SourceException(message, usesNode.getStatementSourceReference());
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
         }
 
         @Override
