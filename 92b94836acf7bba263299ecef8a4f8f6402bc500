@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_9573827f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc7950/DeviateStatementRfc7950Support.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-02-13T07:40:16Z",
+      "side": 1,
+      "message": "No nulls, please. This should be an IllegalStateException, as we would obviously be not handling an enum value.",
+      "range": {
+        "startLine": 55,
+        "startChar": 15,
+        "endLine": 55,
+        "endChar": 28
+      },
+      "revId": "92b94836acf7bba263299ecef8a4f8f6402bc500",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
