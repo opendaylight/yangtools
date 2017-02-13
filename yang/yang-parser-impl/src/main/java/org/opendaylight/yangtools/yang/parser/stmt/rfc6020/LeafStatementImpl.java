@@ -11,8 +11,10 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -28,9 +30,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.LeafEffectiveStatementImpl;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 public class LeafStatementImpl extends AbstractDeclaredStatement<QName> implements LeafStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
@@ -81,6 +88,40 @@ public class LeafStatementImpl extends AbstractDeclaredStatement<QName> implemen
         @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(
+                final StmtContext.Mutable<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
+
+            final Mutable<?, ?, ?> parentCtx = ctx.getParentContext();
+            final String leafName = ctx.getStatementArgument().getLocalName();
+
+            if(YangVersion.VERSION_1_1.equals(ctx.getRootVersion()) &&
+                    parentCtx.getPublicDefinition().equals(YangStmtMapping.LIST)) {
+                super.onFullDefinitionDeclared(ctx);
+
+                final List<String> keyNames = Arrays.asList(parentCtx.declaredSubstatements()
+                        .stream()
+                        .filter(substatement -> substatement.getPublicDefinition().equals(YangStmtMapping.KEY))
+                        .map(StatementContextBase::rawStatementArgument)
+                        .reduce("", String::concat).split("\\s+"));
+
+                if (keyNames == null || keyNames.isEmpty() || !keyNames.contains(leafName)) {
+                    return;
+                }
+
+                ctx.declaredSubstatements().forEach(leafSubstatement -> {
+                    final StatementDefinition statementDef = leafSubstatement.getPublicDefinition();
+                    if (statementDef.equals(YangStmtMapping.IF_FEATURE)
+                            || statementDef.equals(YangStmtMapping.WHEN)) {
+                        final String message = (statementDef.equals(YangStmtMapping.IF_FEATURE))
+                                ? "RFC7950: IF-FEATURE not allowed on LIST KEY"
+                                : "RFC7950: WHEN not allowed on LIST KEY";
+                        throw new InvalidSubstatementException(message, ctx.getStatementSourceReference());
+                    }
+                });
+            }
         }
     }
 

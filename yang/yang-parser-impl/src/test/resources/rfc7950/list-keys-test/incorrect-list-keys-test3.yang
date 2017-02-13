@@ -1,0 +1,30 @@
+module incorrect-list-keys-test3 {
+
+    namespace "incorrect-list-keys-test3";
+    prefix "test";
+
+    list invalid-list-a {
+        key "aug_leaf_a";
+    }
+
+    augment /invalid-list-a {
+        leaf aug_leaf_a {
+            if-feature feature-a;
+            type string;
+        }
+    }
+
+    list invalid-list-b {
+        key "aug_leaf_b";
+        leaf b {
+            type string;
+        }
+    }
+
+    augment /invalid-list-b {
+        leaf aug_leaf_b {
+            when "/test/invalid-list-b/b = 'test'";
+            type string;
+        }
+    }
+}
