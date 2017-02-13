@@ -1,0 +1,26 @@
+module incorrect-list-keys-test3 {
+    yang-version 1.1;
+    namespace "incorrect-list-keys-test3";
+    prefix "test";
+
+    revision 2017-02-06 {
+        description "Bug 6855: Test for grouping stmt";
+    }
+
+    grouping a {
+        leaf a1 {
+            type int32;
+            if-feature feature-a;
+        }
+        leaf a2 {
+            when "../a1 = '2'";
+            type string;
+        }
+    }
+
+    list invalid-list-a2 {
+        key a2;
+        uses test:a;
+        //key a2; #TO-DO: Fix the case where key is the last substatement
+    }
+}
