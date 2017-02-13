@@ -13,6 +13,7 @@ import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -199,14 +200,30 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
         super.addToLocalStorage(type, key, value);
     }
 
+    @Nullable
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> V getFromLocalStorage(final Class<N> type, final K key) {
+        return getFromLocalStorage(type, key, new HashSet<>());
+    }
+
+    /*
+     * We need to track already checked RootStatementContexts due to possible
+     * circular includes between of submodules
+     */
+    @Nullable
+    private <K, V, N extends IdentifierNamespace<K, V>> V getFromLocalStorage(final Class<N> type, final K key,
+            final HashSet<RootStatementContext<?, ?, ?>> alreadyChecked) {
         final V potentialLocal = super.getFromLocalStorage(type, key);
         if (potentialLocal != null) {
             return potentialLocal;
         }
-        for (final NamespaceStorageNode includedSource : includedContexts) {
-            final V potential = includedSource.getFromLocalStorage(type, key);
+
+        alreadyChecked.add(this);
+        for (final RootStatementContext<?, ?, ?> includedSource : includedContexts) {
+            if (alreadyChecked.contains(includedSource)) {
+                continue;
+            }
+            final V potential = includedSource.getFromLocalStorage(type, key, alreadyChecked);
             if (potential != null) {
                 return potential;
             }
@@ -217,12 +234,27 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     @Nullable
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromLocalStorage(final Class<N> type) {
+        return getAllFromLocalStorage(type, new HashSet<>());
+    }
+
+    /*
+     * We need to track already checked RootStatementContexts due to possible
+     * circular includes between of submodules
+     */
+    @Nullable
+    private <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromLocalStorage(final Class<N> type,
+            final HashSet<RootStatementContext<?, ?, ?>> alreadyChecked) {
         final Map<K, V> potentialLocal = super.getAllFromLocalStorage(type);
         if (potentialLocal != null) {
             return potentialLocal;
         }
-        for (final NamespaceStorageNode includedSource : includedContexts) {
-            final Map<K, V> potential = includedSource.getAllFromLocalStorage(type);
+
+        alreadyChecked.add(this);
+        for (final RootStatementContext<?, ?, ?> includedSource : includedContexts) {
+            if (alreadyChecked.contains(includedSource)) {
+                continue;
+            }
+            final Map<K, V> potential = includedSource.getAllFromLocalStorage(type, alreadyChecked);
             if (potential != null) {
                 return potential;
             }

@@ -1,0 +1,18 @@
+submodule sub-foo-2 {
+    belongs-to foo {
+        prefix foo;
+    }
+
+    include sub-foo {
+        revision-date 2017-02-09;
+    }
+
+    grouping sub-foo-2-grp {
+        container sub-foo-2-con {
+        }
+    }
+
+    container sub-root-2 {
+        uses sub-foo-grp;
+    }
+}

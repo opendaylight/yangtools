@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -42,10 +43,12 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
@@ -53,8 +56,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameTo
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> extends
-        AbstractEffectiveDocumentedNode<String, D> implements Module, Immutable {
-
+        AbstractEffectiveDocumentedNode<String, D> implements Module, MutableStatement {
     private final String name;
     private final String sourcePath;
     private final String prefix;
@@ -62,7 +64,6 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
     private final String organization;
     private final String contact;
     private final Set<ModuleImport> imports;
-    private final Set<Module> submodules;
     private final Set<FeatureDefinition> features;
     private final Set<NotificationDefinition> notifications;
     private final Set<AugmentationSchema> augmentations;
@@ -77,25 +78,28 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
     private final Set<TypeDefinition<?>> typeDefinitions;
     private final Set<DataSchemaNode> publicChildNodes;
     private final SemVer semanticVersion;
+    private Set<StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>> submoduleContextsToBuild;
+    private Set<Module> submodules;
+    private boolean sealed;
 
     AbstractEffectiveModule(final StmtContext<String, D, ? extends EffectiveStatement<String, ?>> ctx) {
         super(ctx);
 
         this.name = argument();
 
-        PrefixEffectiveStatementImpl prefixStmt = firstEffective(PrefixEffectiveStatementImpl.class);
+        final PrefixEffectiveStatementImpl prefixStmt = firstEffective(PrefixEffectiveStatementImpl.class);
         this.prefix = (prefixStmt == null) ? null : prefixStmt.argument();
 
-        YangVersionEffectiveStatementImpl yangVersionStmt = firstEffective(YangVersionEffectiveStatementImpl.class);
+        final YangVersionEffectiveStatementImpl yangVersionStmt = firstEffective(YangVersionEffectiveStatementImpl.class);
         this.yangVersion = (yangVersionStmt == null) ? YangVersion.VERSION_1 : yangVersionStmt.argument();
 
-        SemanticVersionEffectiveStatementImpl semanticVersionStmt = firstEffective(SemanticVersionEffectiveStatementImpl.class);
+        final SemanticVersionEffectiveStatementImpl semanticVersionStmt = firstEffective(SemanticVersionEffectiveStatementImpl.class);
         this.semanticVersion = (semanticVersionStmt == null) ? DEFAULT_SEMANTIC_VERSION : semanticVersionStmt.argument();
 
-        OrganizationEffectiveStatementImpl organizationStmt = firstEffective(OrganizationEffectiveStatementImpl.class);
+        final OrganizationEffectiveStatementImpl organizationStmt = firstEffective(OrganizationEffectiveStatementImpl.class);
         this.organization = (organizationStmt == null) ? null : organizationStmt.argument();
 
-        ContactEffectiveStatementImpl contactStmt = firstEffective(ContactEffectiveStatementImpl.class);
+        final ContactEffectiveStatementImpl contactStmt = firstEffective(ContactEffectiveStatementImpl.class);
         this.contact = (contactStmt == null) ? null : contactStmt.argument();
 
         if (ctx.getStatementSourceReference() instanceof DeclarationInTextSource) {
@@ -111,48 +115,77 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
 
         if (includedSubmodulesMap == null || includedSubmodulesMap.isEmpty()) {
             this.submodules = ImmutableSet.of();
+            this.submoduleContextsToBuild = ImmutableSet.of();
             substatementsOfSubmodules = ImmutableList.of();
-        } else {
-            Collection<ModuleIdentifier> includedSubmodules = includedSubmodulesMap.values();
-            Set<Module> submodulesInit = new HashSet<>();
-            List<EffectiveStatement<?, ?>> substatementsOfSubmodulesInit = new ArrayList<>();
-            for (ModuleIdentifier submoduleIdentifier : includedSubmodules) {
+        } else if (YangStmtMapping.MODULE.equals(ctx.getPublicDefinition())) {
+            /*
+             * Aggregation of substatements from submodules should be done only
+             * for modules. In case of submodules it does not make sense because
+             * of possible circular includes.
+             */
+            final Collection<ModuleIdentifier> includedSubmodules = includedSubmodulesMap.values();
+            final Set<Module> submodulesInit = new HashSet<>();
+            final List<EffectiveStatement<?, ?>> substatementsOfSubmodulesInit = new ArrayList<>();
+            for (final ModuleIdentifier submoduleIdentifier : includedSubmodules) {
                 @SuppressWarnings("unchecked")
-                Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> submoduleCtx =
-                    (Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>)
-                        ctx.getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);
-                SubmoduleEffectiveStatementImpl submodule = (SubmoduleEffectiveStatementImpl) submoduleCtx
+                final Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> submoduleCtx = (Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>) ctx
+                        .getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);
+                final SubmoduleEffectiveStatementImpl submodule = (SubmoduleEffectiveStatementImpl) submoduleCtx
                         .buildEffective();
                 submodulesInit.add(submodule);
                 substatementsOfSubmodulesInit.addAll(submodule.effectiveSubstatements());
             }
 
             this.submodules = ImmutableSet.copyOf(submodulesInit);
+            this.submoduleContextsToBuild = ImmutableSet.of();
             substatementsOfSubmodules = ImmutableList.copyOf(substatementsOfSubmodulesInit);
+        } else {
+            /*
+             * Because of possible circular includes between submodules we can
+             * collect only submodule contexts here and then build them during
+             * sealing of this statement.
+             */
+            final Collection<ModuleIdentifier> includedSubmodules = includedSubmodulesMap.values();
+            final Set<StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>> submoduleContextsInit = new HashSet<>();
+            for (final ModuleIdentifier submoduleIdentifier : includedSubmodules) {
+                final StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> submoduleCtx = ctx
+                        .getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);
+                submoduleContextsInit.add(submoduleCtx);
+            }
+
+            this.submoduleContextsToBuild = ImmutableSet.copyOf(submoduleContextsInit);
+            substatementsOfSubmodules = ImmutableList.of();
+        }
+
+        if (!submoduleContextsToBuild.isEmpty()) {
+            ((Mutable<?, ?, ?>) ctx).addMutableStmtToSeal(this);
+            sealed = false;
+        } else {
+            sealed = true;
         }
 
         // init substatements collections
-        List<EffectiveStatement<?, ?>> effectiveSubstatements = new ArrayList<>();
+        final List<EffectiveStatement<?, ?>> effectiveSubstatements = new ArrayList<>();
         effectiveSubstatements.addAll(effectiveSubstatements());
         effectiveSubstatements.addAll(substatementsOfSubmodules);
 
-        List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
-        Set<AugmentationSchema> augmentationsInit = new LinkedHashSet<>();
-        Set<ModuleImport> importsInit = new HashSet<>();
-        Set<NotificationDefinition> notificationsInit = new HashSet<>();
-        Set<RpcDefinition> rpcsInit = new HashSet<>();
-        Set<Deviation> deviationsInit = new HashSet<>();
-        Set<IdentitySchemaNode> identitiesInit = new HashSet<>();
-        Set<FeatureDefinition> featuresInit = new HashSet<>();
-        List<ExtensionDefinition> extensionNodesInit = new ArrayList<>();
+        final List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
+        final Set<AugmentationSchema> augmentationsInit = new LinkedHashSet<>();
+        final Set<ModuleImport> importsInit = new HashSet<>();
+        final Set<NotificationDefinition> notificationsInit = new HashSet<>();
+        final Set<RpcDefinition> rpcsInit = new HashSet<>();
+        final Set<Deviation> deviationsInit = new HashSet<>();
+        final Set<IdentitySchemaNode> identitiesInit = new HashSet<>();
+        final Set<FeatureDefinition> featuresInit = new HashSet<>();
+        final List<ExtensionDefinition> extensionNodesInit = new ArrayList<>();
 
-        Map<QName, DataSchemaNode> mutableChildNodes = new LinkedHashMap<>();
-        Set<GroupingDefinition> mutableGroupings = new HashSet<>();
-        Set<UsesNode> mutableUses = new HashSet<>();
-        Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
-        Set<DataSchemaNode> mutablePublicChildNodes = new LinkedHashSet<>();
+        final Map<QName, DataSchemaNode> mutableChildNodes = new LinkedHashMap<>();
+        final Set<GroupingDefinition> mutableGroupings = new HashSet<>();
+        final Set<UsesNode> mutableUses = new HashSet<>();
+        final Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
+        final Set<DataSchemaNode> mutablePublicChildNodes = new LinkedHashSet<>();
 
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 unknownNodesInit.add((UnknownSchemaNode) effectiveStatement);
             }
@@ -181,7 +214,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
                 extensionNodesInit.add((ExtensionEffectiveStatementImpl) effectiveStatement);
             }
             if (effectiveStatement instanceof DataSchemaNode) {
-                DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;
+                final DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;
                 if (!mutableChildNodes.containsKey(dataSchemaNode.getQName())) {
                     mutableChildNodes.put(dataSchemaNode.getQName(), dataSchemaNode);
                     mutablePublicChildNodes.add(dataSchemaNode);
@@ -190,7 +223,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
                 }
             }
             if (effectiveStatement instanceof UsesNode) {
-                UsesNode usesNode = (UsesNode) effectiveStatement;
+                final UsesNode usesNode = (UsesNode) effectiveStatement;
                 if (!mutableUses.contains(usesNode)) {
                     mutableUses.add(usesNode);
                 } else {
@@ -198,8 +231,8 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
                 }
             }
             if (effectiveStatement instanceof TypeDefEffectiveStatementImpl) {
-                TypeDefEffectiveStatementImpl typeDef = (TypeDefEffectiveStatementImpl) effectiveStatement;
-                TypeDefinition<?> type = typeDef.getTypeDefinition();
+                final TypeDefEffectiveStatementImpl typeDef = (TypeDefEffectiveStatementImpl) effectiveStatement;
+                final TypeDefinition<?> type = typeDef.getTypeDefinition();
                 if (!mutableTypeDefinitions.contains(type)) {
                     mutableTypeDefinitions.add(type);
                 } else {
@@ -207,7 +240,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
                 }
             }
             if (effectiveStatement instanceof GroupingDefinition) {
-                GroupingDefinition grp = (GroupingDefinition) effectiveStatement;
+                final GroupingDefinition grp = (GroupingDefinition) effectiveStatement;
                 if (!mutableGroupings.contains(grp)) {
                     mutableGroupings.add(grp);
                 } else {
@@ -241,7 +274,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
     private static Set<ModuleImport> resolveModuleImports(final Set<ModuleImport> importsInit,
             final StmtContext<String, ? extends DeclaredStatement<String>, ? extends EffectiveStatement<String, ?>> ctx) {
         final Set<ModuleImport> resolvedModuleImports = new LinkedHashSet<>();
-        for (ModuleImport moduleImport : importsInit) {
+        for (final ModuleImport moduleImport : importsInit) {
             if (moduleImport.getRevision().equals(SimpleDateFormatUtil.DEFAULT_DATE_IMP)) {
                 final QNameModule impModuleQName = Utils.getModuleQNameByPrefix(ctx, moduleImport.getPrefix());
                 final ModuleImport resolvedModuleImport = new ModuleImportImpl(moduleImport.getModuleName(),
@@ -306,6 +339,8 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
 
     @Override
     public Set<Module> getSubmodules() {
+        Preconditions.checkState(sealed, "Attempt to get base submodules from unsealed submodule effective statement %s",
+                getQNameModule());
         return submodules;
     }
 
@@ -393,4 +428,13 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
                 "]";
     }
 
+    @Override
+    public void seal() {
+        if (!sealed) {
+            submodules = ImmutableSet.copyOf(Iterables.transform(submoduleContextsToBuild,
+                    ctx -> (Module) ctx.buildEffective()));
+            submoduleContextsToBuild = ImmutableSet.of();
+            sealed = true;
+        }
+    }
 }
