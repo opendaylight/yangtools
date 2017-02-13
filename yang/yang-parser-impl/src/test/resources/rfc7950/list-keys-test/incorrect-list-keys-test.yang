@@ -1,0 +1,20 @@
+module incorrect-list-keys-test {
+    yang-version 1.1;
+    namespace "incorrect-list-keys-test";
+    prefix "test";
+
+    revision 2017-02-06 {
+        description "Bug 6855: Test for disallowing WHEN on list key";
+    }
+
+    list invalid-list-a {
+        leaf a1 {
+            type string;
+        }
+        leaf a2 {
+            when "../a1 = 'key-a1'";
+            type int32;
+        }
+        key "a1 a2";
+    }
+}
