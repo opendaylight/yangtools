@@ -20,11 +20,11 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
-import org.opendaylight.yangtools.websocket.server.WebSocketServerHandler;
 
+@Deprecated
 public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel> {
     @Override
-    public void initChannel(SocketChannel ch) throws Exception {
+    public void initChannel(final SocketChannel ch) throws Exception {
         ChannelPipeline pipeline = ch.pipeline();
         pipeline.addLast("codec-http", new HttpServerCodec());
         pipeline.addLast("aggregator", new HttpObjectAggregator(65536));

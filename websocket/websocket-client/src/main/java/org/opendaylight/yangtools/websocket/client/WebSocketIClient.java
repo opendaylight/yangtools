@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.websocket.client;
 
+import com.google.common.base.Preconditions;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -24,16 +25,15 @@ import io.netty.handler.codec.http.websocketx.PingWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import io.netty.handler.codec.http.websocketx.WebSocketClientHandshakerFactory;
 import io.netty.handler.codec.http.websocketx.WebSocketVersion;
-
 import java.net.URI;
-
 import org.opendaylight.yangtools.websocket.client.callback.ClientMessageCallback;
-
-import com.google.common.base.Preconditions;
 
 /**
  * Implementation of web socket client that supports WS and HTTP protocols.
+ *
+ * @deprecated This code is deprecated without replacement.
  */
+@Deprecated
 public class WebSocketIClient {
     private final EventLoopGroup group = new NioEventLoopGroup();
     private final Bootstrap bootstrap = new Bootstrap();
@@ -52,10 +52,8 @@ public class WebSocketIClient {
     public WebSocketIClient(final URI uri, final ClientMessageCallback clientMessageCallback) {
         this.uri = Preconditions.checkNotNull(uri);
         clientHandler = new WebSocketClientHandler(
-                WebSocketClientHandshakerFactory.newHandshaker(uri,
-                        WebSocketVersion.V13, null, false, null),
-                clientMessageCallback); // last null could be replaced with
-                                        // DefaultHttpHeaders
+                WebSocketClientHandshakerFactory.newHandshaker(uri, WebSocketVersion.V13, null, false, null),
+                clientMessageCallback); // last null could be replaced with DefaultHttpHeaders
         initialize();
     }
 

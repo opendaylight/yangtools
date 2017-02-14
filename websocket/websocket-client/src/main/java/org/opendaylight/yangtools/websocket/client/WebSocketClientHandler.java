@@ -27,14 +27,17 @@ import org.slf4j.LoggerFactory;
  * {@link WebSocketClientHandler} is implementation of
  * {@link SimpleChannelInboundHandler} which handle {@link TextWebSocketFrame},
  * {@link PongWebSocketFrame} and {@link CloseWebSocketFrame} messages.
+ *
+ * @deprecated This code is deprecated without replacement.
  */
+@Deprecated
 public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> {
 
-    private static final Logger LOGGER = LoggerFactory
-            .getLogger(WebSocketClientHandler.class.toString());
+    private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketClientHandler.class.toString());
     private final WebSocketClientHandshaker handshaker;
+    private final ClientMessageCallback messageListener;
+
     private ChannelPromise handshakeFuture;
-    private ClientMessageCallback messageListener;
 
     /**
      * Create new Web Socket Client Handler.
@@ -45,8 +48,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
      *
      *
      */
-    public WebSocketClientHandler(WebSocketClientHandshaker handshaker,
-            ClientMessageCallback listener) {
+    public WebSocketClientHandler(final WebSocketClientHandshaker handshaker, final ClientMessageCallback listener) {
         this.handshaker = handshaker;
         this.messageListener = listener;
     }
@@ -61,22 +63,22 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
     }
 
     @Override
-    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+    public void handlerAdded(final ChannelHandlerContext ctx) throws Exception {
         handshakeFuture = ctx.newPromise();
     }
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) throws Exception {
+    public void channelActive(final ChannelHandlerContext ctx) throws Exception {
         handshaker.handshake(ctx.channel());
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+    public void channelInactive(final ChannelHandlerContext ctx) throws Exception {
         LOGGER.info("WebSocket Client disconnected!");
     }
 
     @Override
-    public void channelRead0(ChannelHandlerContext ctx, Object msg)
+    public void channelRead0(final ChannelHandlerContext ctx, final Object msg)
             throws Exception {
         Channel ch = ctx.channel();
         if (!handshaker.isHandshakeComplete()) {
@@ -111,7 +113,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause)
+    public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause)
             throws Exception {
         if (!handshakeFuture.isDone()) {
             handshakeFuture.setFailure(cause);

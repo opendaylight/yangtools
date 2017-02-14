@@ -16,18 +16,15 @@
 package org.opendaylight.yangtools.websocket.server;
 
 import com.google.common.util.concurrent.SettableFuture;
-
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +47,7 @@ import org.slf4j.LoggerFactory;
  * <li>Firefox 11+ (RFC 6455 aka draft-ietf-hybi-thewebsocketprotocol-17)
  * </ul>
  */
+@Deprecated
 public class WebSocketServer implements Runnable {
 
     /**

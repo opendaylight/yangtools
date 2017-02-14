@@ -9,7 +9,10 @@ package org.opendaylight.yangtools.websocket.client.callback;
 
 /**
  * {@link ClientMessageCallback} notifies client that some event has occurred.
+ *
+ * @deprecated This code is deprecated without replacement.
  */
+@Deprecated
 public interface ClientMessageCallback {
 
     /**

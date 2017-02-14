@@ -7,27 +7,22 @@
  */
 package org.opendaylight.yangtools.websocket;
 
+import com.google.common.util.concurrent.SettableFuture;
+import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
 import java.net.URI;
 import java.net.URISyntaxException;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.Assert;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.opendaylight.yangtools.websocket.client.WebSocketIClient;
 import org.opendaylight.yangtools.websocket.server.WebSocketServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
-
-import com.google.common.util.concurrent.SettableFuture;
-
+@Deprecated
 public class WebSocketClientTest {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketClientTest.class.toString());
     private static final String MESSAGE = "Take me to your leader!";
@@ -36,7 +31,7 @@ public class WebSocketClientTest {
     /**
      * Tracks if the message from the server has been received
      */
-    private SettableFuture<Boolean> messageReceived = SettableFuture.create();
+    private final SettableFuture<Boolean> messageReceived = SettableFuture.create();
 
     /**
      * Tracks the port on which the server is listening
@@ -93,7 +88,7 @@ public class WebSocketClientTest {
 
     private class ClientMessageCallback implements org.opendaylight.yangtools.websocket.client.callback.ClientMessageCallback {
         @Override
-        public void onMessageReceived(Object message) {
+        public void onMessageReceived(final Object message) {
             logger.info("received message {}",message);
             messageReceived.set(true);
         }
