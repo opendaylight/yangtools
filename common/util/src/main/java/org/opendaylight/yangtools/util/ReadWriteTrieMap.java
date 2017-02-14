@@ -8,12 +8,12 @@
 package org.opendaylight.yangtools.util;
 
 import com.google.common.base.Preconditions;
-import com.romix.scala.collection.concurrent.TrieMap;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.triemap.TrieMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +34,7 @@ final class ReadWriteTrieMap<K, V> implements Map<K, V> {
     private int size;
 
     ReadWriteTrieMap() {
-        this.delegate = new TrieMap<>();
+        this.delegate = TrieMap.create();
         this.size = 0;
     }
 

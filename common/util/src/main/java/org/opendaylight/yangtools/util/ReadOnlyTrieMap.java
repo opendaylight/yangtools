@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.util;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ForwardingMap;
-import com.romix.scala.collection.concurrent.TrieMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import org.opendaylight.yangtools.triemap.TrieMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ final class ReadOnlyTrieMap<K, V> extends ForwardingMap<K, V> {
     }
 
     Map<K, V> toReadWrite() {
-        final Map<K, V> ret = new ReadWriteTrieMap<>(readWrite.snapshot(), size);
+        final Map<K, V> ret = new ReadWriteTrieMap<>(readWrite.mutableSnapshot(), size);
         LOG.trace("Converted read-only TrieMap {} to read-write {}", this, ret);
         return ret;
     }
@@ -47,7 +47,7 @@ final class ReadOnlyTrieMap<K, V> extends ForwardingMap<K, V> {
     protected Map<K, V> delegate() {
         TrieMap<K, V> ret = readOnly;
         if (ret == null) {
-            ret = readWrite.readOnlySnapshot();
+            ret = readWrite.immutableSnapshot();
             if (!UPDATER.compareAndSet(this, null, ret)) {
                 ret = readOnly;
             }

@@ -12,19 +12,19 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.romix.scala.collection.concurrent.TrieMap;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.junit.Test;
+import org.opendaylight.yangtools.triemap.TrieMap;
 
 public class ReadWriteTrieMapTest {
 
     @Test
     public void testMethodsOfReadWriteTrieMap() {
-        final TrieMap<String, String> trieMap = new TrieMap<>();
+        final TrieMap<String, String> trieMap = TrieMap.create();
         trieMap.put("0", "zero");
         trieMap.put("1", "one");
 
@@ -65,7 +65,7 @@ public class ReadWriteTrieMapTest {
         assertEquals("Size of readOnlyTrieMap should be '6'.", 6, readOnlyTrieMap.size());
     }
 
-    public Map<String, String> convertSetEntryToMap(Set<Entry<String, String>> input) {
+    public Map<String, String> convertSetEntryToMap(final Set<Entry<String, String>> input) {
         Map<String, String> resultMap = new HashMap<>();
         for (Entry<String, String> entry : input) {
             resultMap.put(entry.getKey(), entry.getValue());

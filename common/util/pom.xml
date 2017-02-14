@@ -39,12 +39,12 @@
             <artifactId>concepts</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>triemap</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.github.romix</groupId>
-            <artifactId>java-concurrent-hash-trie-map</artifactId>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
 
         <dependency>
