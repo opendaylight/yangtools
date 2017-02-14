@@ -8,12 +8,13 @@
 package org.opendaylight.yangtools.util;
 
 import com.google.common.base.Preconditions;
-import com.romix.scala.collection.concurrent.TrieMap;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.triemap.MutableTrieMap;
+import org.opendaylight.yangtools.triemap.TrieMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,15 +31,15 @@ import org.slf4j.LoggerFactory;
  */
 final class ReadWriteTrieMap<K, V> implements Map<K, V> {
     private static final Logger LOG = LoggerFactory.getLogger(ReadOnlyTrieMap.class);
-    private final TrieMap<K, V> delegate;
+    private final MutableTrieMap<K, V> delegate;
     private int size;
 
     ReadWriteTrieMap() {
-        this.delegate = new TrieMap<>();
+        this.delegate = TrieMap.create();
         this.size = 0;
     }
 
-    ReadWriteTrieMap(final TrieMap<K, V> delegate, final int size) {
+    ReadWriteTrieMap(final MutableTrieMap<K, V> delegate, final int size) {
         this.delegate = Preconditions.checkNotNull(delegate);
         this.size = size;
     }
@@ -128,5 +129,10 @@ final class ReadWriteTrieMap<K, V> implements Map<K, V> {
     @Override
     public int hashCode() {
         return delegate.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return delegate.toString();
     }
 }
