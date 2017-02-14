@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
  * @param <V> the type of mapped values
  */
 @Beta
-final class MutableTrieMap<K, V> extends TrieMap<K, V> {
+public final class MutableTrieMap<K, V> extends TrieMap<K, V> {
     private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("rawtypes")
