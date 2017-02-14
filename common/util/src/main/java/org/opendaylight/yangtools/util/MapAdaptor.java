@@ -10,11 +10,12 @@ package org.opendaylight.yangtools.util;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import com.romix.scala.collection.concurrent.TrieMap;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.opendaylight.yangtools.triemap.MutableTrieMap;
+import org.opendaylight.yangtools.triemap.TrieMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -228,7 +229,7 @@ public final class MapAdaptor {
          * which will maintain the size for us.
          */
         LOG.trace("Copying input {} to a TrieMap ({} entries)", input, size);
-        final TrieMap<K, V> map = new TrieMap<>();
+        final MutableTrieMap<K, V> map = TrieMap.create();
         map.putAll(input);
         final Map<K, V> ret = new ReadOnlyTrieMap<>(map, size);
         LOG.trace("Read-only TrieMap is {}", ret);

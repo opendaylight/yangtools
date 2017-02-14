@@ -50,7 +50,7 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
         this.equiv = equiv;
     }
 
-    public static <K, V> TrieMap<K, V> create() {
+    public static <K, V> MutableTrieMap<K, V> create() {
         return new MutableTrieMap<>(Equivalence.equals());
     }
 
