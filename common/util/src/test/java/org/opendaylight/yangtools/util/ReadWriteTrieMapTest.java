@@ -9,22 +9,24 @@ package org.opendaylight.yangtools.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.romix.scala.collection.concurrent.TrieMap;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.junit.Test;
+import org.opendaylight.yangtools.triemap.MutableTrieMap;
+import org.opendaylight.yangtools.triemap.TrieMap;
 
 public class ReadWriteTrieMapTest {
 
     @Test
     public void testMethodsOfReadWriteTrieMap() {
-        final TrieMap<String, String> trieMap = new TrieMap<>();
+        final MutableTrieMap<String, String> trieMap = TrieMap.create();
         trieMap.put("0", "zero");
         trieMap.put("1", "one");
 
@@ -51,21 +53,21 @@ public class ReadWriteTrieMapTest {
         final Collection<String> trieMapValues = readWriteTrieMap.values();
         assertEquals("Size of values should be '3'.", 3, trieMapValues.size());
 
-        assertTrue("Entry set of readWriteTrieMap and trieMap should by equals.", convertSetEntryToMap(readWriteTrieMap.entrySet()).equals(trieMap));
+        assertEquals(convertSetEntryToMap(readWriteTrieMap.entrySet()), trieMap);
 
         trieMap.put("2", "two");
         final ReadWriteTrieMap<String, String> readWriteTrieMap2 = new ReadWriteTrieMap<>(trieMap, 4);
 
-        assertFalse("Objects readWriteTrieMap and readOnlyTrieMap2 should be different.", readWriteTrieMap.equals(readWriteTrieMap2));
-        assertFalse("Hash codes of object readWriteTrieMap and readOnelyTrieMap2 should be different.", readWriteTrieMap.hashCode() == readWriteTrieMap2.hashCode());
+        assertNotEquals(readWriteTrieMap, readWriteTrieMap2);
+        assertEquals(readWriteTrieMap.hashCode(), readWriteTrieMap2.hashCode());
 
         final Map<String, String> readOnlyTrieMap = readWriteTrieMap.toReadOnly();
         readWriteTrieMap.clear();
-        assertEquals("Size of readWriteTrieMap should be '0'.", 0, readWriteTrieMap.size());
-        assertEquals("Size of readOnlyTrieMap should be '6'.", 6, readOnlyTrieMap.size());
+        assertEquals(0, readWriteTrieMap.size());
+        assertEquals(6, readOnlyTrieMap.size());
     }
 
-    public Map<String, String> convertSetEntryToMap(Set<Entry<String, String>> input) {
+    private static Map<String, String> convertSetEntryToMap(final Set<Entry<String, String>> input) {
         Map<String, String> resultMap = new HashMap<>();
         for (Entry<String, String> entry : input) {
             resultMap.put(entry.getKey(), entry.getValue());

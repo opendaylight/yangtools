@@ -9,9 +9,10 @@ package org.opendaylight.yangtools.util;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ForwardingMap;
-import com.romix.scala.collection.concurrent.TrieMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import org.opendaylight.yangtools.triemap.ImmutableTrieMap;
+import org.opendaylight.yangtools.triemap.MutableTrieMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,30 +25,30 @@ import org.slf4j.LoggerFactory;
  */
 final class ReadOnlyTrieMap<K, V> extends ForwardingMap<K, V> {
     @SuppressWarnings("rawtypes")
-    private static final AtomicReferenceFieldUpdater<ReadOnlyTrieMap, TrieMap> UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(ReadOnlyTrieMap.class, TrieMap.class, "readOnly");
+    private static final AtomicReferenceFieldUpdater<ReadOnlyTrieMap, ImmutableTrieMap> UPDATER =
+            AtomicReferenceFieldUpdater.newUpdater(ReadOnlyTrieMap.class, ImmutableTrieMap.class, "readOnly");
     private static final Logger LOG = LoggerFactory.getLogger(ReadOnlyTrieMap.class);
-    private final TrieMap<K, V> readWrite;
+    private final MutableTrieMap<K, V> readWrite;
     private final int size;
-    private volatile TrieMap<K, V> readOnly;
+    private volatile ImmutableTrieMap<K, V> readOnly;
 
-    ReadOnlyTrieMap(final TrieMap<K, V> map, final int size) {
+    ReadOnlyTrieMap(final MutableTrieMap<K, V> map, final int size) {
         super();
         this.readWrite = Preconditions.checkNotNull(map);
         this.size = size;
     }
 
     Map<K, V> toReadWrite() {
-        final Map<K, V> ret = new ReadWriteTrieMap<>(readWrite.snapshot(), size);
+        final Map<K, V> ret = new ReadWriteTrieMap<>(readWrite.mutableSnapshot(), size);
         LOG.trace("Converted read-only TrieMap {} to read-write {}", this, ret);
         return ret;
     }
 
     @Override
     protected Map<K, V> delegate() {
-        TrieMap<K, V> ret = readOnly;
+        ImmutableTrieMap<K, V> ret = readOnly;
         if (ret == null) {
-            ret = readWrite.readOnlySnapshot();
+            ret = readWrite.immutableSnapshot();
             if (!UPDATER.compareAndSet(this, null, ret)) {
                 ret = readOnly;
             }
