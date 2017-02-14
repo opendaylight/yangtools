@@ -15,6 +15,14 @@
  */
 package org.opendaylight.yangtools.websocket.server;
 
+import static io.netty.handler.codec.http.HttpHeaders.isKeepAlive;
+import static io.netty.handler.codec.http.HttpHeaders.setContentLength;
+import static io.netty.handler.codec.http.HttpHeaders.Names.HOST;
+import static io.netty.handler.codec.http.HttpMethod.GET;
+import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
+import static io.netty.handler.codec.http.HttpResponseStatus.FORBIDDEN;
+import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
@@ -34,17 +42,11 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static io.netty.handler.codec.http.HttpHeaders.Names.HOST;
-import static io.netty.handler.codec.http.HttpHeaders.isKeepAlive;
-import static io.netty.handler.codec.http.HttpHeaders.setContentLength;
-import static io.netty.handler.codec.http.HttpMethod.GET;
-import static io.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
-import static io.netty.handler.codec.http.HttpResponseStatus.FORBIDDEN;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
  * Handles handshakes and messages
  */
+@Deprecated
 public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> {
     private static final Logger logger = LoggerFactory.getLogger(WebSocketServerHandler.class.getName());
 
@@ -53,7 +55,7 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
     private WebSocketServerHandshaker handshaker;
 
     @Override
-    public void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
+    public void channelRead0(final ChannelHandlerContext ctx, final Object msg) throws Exception {
         if (msg instanceof FullHttpRequest) {
             handleHttpRequest(ctx, (FullHttpRequest) msg);
         } else if (msg instanceof WebSocketFrame) {
@@ -62,11 +64,11 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
     }
 
     @Override
-    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
+    public void channelReadComplete(final ChannelHandlerContext ctx) throws Exception {
         ctx.flush();
     }
 
-    private void handleHttpRequest(ChannelHandlerContext ctx, FullHttpRequest req) throws Exception {
+    private void handleHttpRequest(final ChannelHandlerContext ctx, final FullHttpRequest req) throws Exception {
         // Handle a bad request.
         if (!req.getDecoderResult().isSuccess()) {
             sendHttpResponse(ctx, req, new DefaultFullHttpResponse(HTTP_1_1, BAD_REQUEST));
@@ -91,7 +93,7 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
         }
     }
 
-    private void handleWebSocketFrame(ChannelHandlerContext ctx, WebSocketFrame frame) {
+    private void handleWebSocketFrame(final ChannelHandlerContext ctx, final WebSocketFrame frame) {
 
         // Check for closing frame
         if (frame instanceof CloseWebSocketFrame) {
@@ -114,7 +116,7 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
     }
 
     private static void sendHttpResponse(
-            ChannelHandlerContext ctx, FullHttpRequest req, FullHttpResponse res) {
+            final ChannelHandlerContext ctx, final FullHttpRequest req, final FullHttpResponse res) {
         // Generate an error page if response getStatus code is not OK (200).
         if (res.getStatus().code() != 200) {
             ByteBuf buf = Unpooled.copiedBuffer(res.getStatus().toString(), CharsetUtil.UTF_8);
@@ -131,12 +133,12 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+    public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) throws Exception {
         logger.info("Exception caught {}",cause);
         ctx.close();
     }
 
-    private static String getWebSocketLocation(FullHttpRequest req) {
+    private static String getWebSocketLocation(final FullHttpRequest req) {
         return "ws://" + req.headers().get(HOST) + WEBSOCKET_PATH;
     }
 
