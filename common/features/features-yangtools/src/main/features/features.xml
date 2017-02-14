@@ -32,6 +32,7 @@
         <bundle>mvn:org.opendaylight.yangtools/object-cache-api/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/object-cache-guava/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/object-cache-noop/{{VERSION}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/triemap/{{VERSION}}</bundle>
     </feature>
 
     <feature name='odl-yangtools-yang-parser' version='${project.version}' description='OpenDaylight :: Yangtools :: YANG Parser'>
