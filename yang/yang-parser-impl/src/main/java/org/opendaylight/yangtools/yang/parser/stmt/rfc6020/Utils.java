@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -408,6 +409,11 @@ public final class Utils {
     }
 
     public static String stringFromStringContext(final YangStatementParser.ArgumentContext context) {
+        return stringFromStringContext(context, YangVersion.VERSION_1);
+    }
+
+    public static String stringFromStringContext(final YangStatementParser.ArgumentContext context,
+            final YangVersion yangVersion) {
         final StringBuilder sb = new StringBuilder();
         List<TerminalNode> strings = context.STRING();
         if (strings.isEmpty()) {
@@ -432,10 +438,17 @@ public final class Utils {
                  */
                 sb.append(str.substring(1, str.length() - 1));
             } else {
+                checkUnquotedString(str, yangVersion);
                 sb.append(str);
             }
         }
         return sb.toString();
+    }
+
+    private static void checkUnquotedString(final String str, final YangVersion yangVersion) {
+        if (yangVersion == YangVersion.VERSION_1_1 && (str.indexOf('\'') != -1 || str.indexOf('"') != -1)) {
+            throw new IllegalArgumentException(String.format("Unquoted string %s contains illegal characters", str));
+        }
     }
 
     public static QName qNameFromArgument(StmtContext<?, ?, ?> ctx, final String value) {

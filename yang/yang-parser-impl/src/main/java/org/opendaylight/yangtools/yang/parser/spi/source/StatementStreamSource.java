@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import org.opendaylight.yangtools.yang.common.YangVersion;
+
 
 /**
  *
@@ -90,6 +92,11 @@ public interface StatementStreamSource {
      */
     void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef, PrefixToModule preLinkagePrefixes) throws SourceException;
 
+    default void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+            final PrefixToModule preLinkagePrefixes, final YangVersion yangVersion) {
+        writeLinkage(writer, stmtDef, preLinkagePrefixes);
+    }
+
     /**
      *
      * Emits only linkage and language extension statements to supplied
@@ -111,6 +118,10 @@ public interface StatementStreamSource {
      */
     void writeLinkageAndStatementDefinitions(StatementWriter writer, QNameToStatementDefinition stmtDef, PrefixToModule prefixes) throws SourceException;
 
+    default void writeLinkageAndStatementDefinitions(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes, final YangVersion yangVersion) {
+        writeLinkageAndStatementDefinitions(writer, stmtDef, prefixes);
+    }
+
     /**
      *
      * Emits every statements present in this statement source to supplied
@@ -128,4 +139,8 @@ public interface StatementStreamSource {
      *             failed to write statements.
      */
     void writeFull(StatementWriter writer,QNameToStatementDefinition stmtDef, PrefixToModule prefixes) throws SourceException;
+
+    default void writeFull(final StatementWriter writer,final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes, final YangVersion yangVersion) {
+        writeFull(writer, stmtDef, prefixes);
+    };
 }
