@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -408,6 +409,11 @@ public final class Utils {
     }
 
     public static String stringFromStringContext(final YangStatementParser.ArgumentContext context) {
+        return stringFromStringContext(context, YangVersion.VERSION_1);
+    }
+
+    public static String stringFromStringContext(final YangStatementParser.ArgumentContext context,
+            final YangVersion yangVersion) {
         final StringBuilder sb = new StringBuilder();
         List<TerminalNode> strings = context.STRING();
         if (strings.isEmpty()) {
@@ -423,6 +429,7 @@ public final class Utils {
                  * Unescape escaped double quotes, tabs, new line and backslash
                  * in the inner string and trim the result.
                  */
+                checkDoubleQuotedString(innerStr, yangVersion);
                 sb.append(innerStr.replace("\\\"", "\"").replace("\\\\", "\\").replace("\\n", "\n")
                         .replace("\\t", "\t"));
             } else if (firstChar == '\'' && lastChar == '\'') {
@@ -432,10 +439,46 @@ public final class Utils {
                  */
                 sb.append(str.substring(1, str.length() - 1));
             } else {
+                checkUnquotedString(str, yangVersion);
                 sb.append(str);
             }
         }
         return sb.toString();
+    }
+
+    private static void checkUnquotedString(final String str, final YangVersion yangVersion) {
+        if (yangVersion == YangVersion.VERSION_1_1) {
+            for (int i = 0; i < str.length(); i++) {
+                switch (str.charAt(i)) {
+                case '"':
+                case '\'':
+                    throw new IllegalArgumentException(String.format(
+                            "Yang 1.1: unquoted string (%s) contains illegal characters", str));
+                }
+            }
+        }
+    }
+
+    private static void checkDoubleQuotedString(final String str, final YangVersion yangVersion) {
+        if (yangVersion == YangVersion.VERSION_1_1) {
+            for (int i = 0; i < str.length() - 1; i++) {
+                if (str.charAt(i) == '\\') {
+                    switch (str.charAt(i + 1)) {
+                    case 'n':
+                    case 't':
+                    case '\\':
+                    case '\"':
+                        i++;
+                        break;
+                    default:
+                        throw new IllegalArgumentException(String.format(
+                                "Yang 1.1: illegal double quoted string (%s). In double quoted string the backslash must be followed "
+                                        + "by one of the following character [n,t,\",\\], but was '%s'.", str,
+                                str.charAt(i + 1)));
+                    }
+                }
+            }
+        }
     }
 
     public static QName qNameFromArgument(StmtContext<?, ?, ?> ctx, final String value) {
