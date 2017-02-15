@@ -25,9 +25,12 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMapping;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
+import org.opendaylight.yangtools.yang.parser.util.NamedInputStream;
 
 /**
  * Helper transfer object which holds basic and dependency information for YANG
@@ -183,19 +186,19 @@ public abstract class YangModelDependencyInfo {
 
         if (tree instanceof StatementContext) {
             final StatementContext rootStatement = (StatementContext) tree;
-            return parseAST(rootStatement);
+            return parseAST(rootStatement, name);
         }
 
         throw new YangSyntaxErrorException(name, 0, 0, "Unknown YANG text type");
     }
 
-    private static YangModelDependencyInfo parseAST(final StatementContext rootStatement) {
+    private static YangModelDependencyInfo parseAST(final StatementContext rootStatement, final String sourceName) {
         final String keyWordText = rootStatement.keyword().getText();
         if (YangStmtMapping.MODULE.getStatementName().getLocalName().equals(keyWordText)) {
-            return parseModuleContext(rootStatement);
+            return parseModuleContext(rootStatement, sourceName);
         }
         if (YangStmtMapping.SUBMODULE.getStatementName().getLocalName().equals(keyWordText)) {
-            return parseSubmoduleContext(rootStatement);
+            return parseSubmoduleContext(rootStatement, sourceName);
         }
         throw new IllegalArgumentException("Root of parsed AST must be either module or submodule");
     }
@@ -215,20 +218,20 @@ public abstract class YangModelDependencyInfo {
      */
     public static YangModelDependencyInfo fromInputStream(final InputStream yangStream) {
         final StatementContext yangAST = new YangStatementSourceImpl(yangStream).getYangAST();
-        return parseAST(yangAST);
+        return parseAST(yangAST, yangStream instanceof NamedInputStream ? yangStream.toString() : null);
     }
 
-    private static YangModelDependencyInfo parseModuleContext(final StatementContext module) {
-        final String name = Utils.stringFromStringContext(module.argument());
-        final String latestRevision = getLatestRevision(module);
-        final Optional<SemVer> semVer = Optional.fromNullable(getSemanticVersion(module));
-        final ImmutableSet<ModuleImport> imports = parseImports(module);
-        final ImmutableSet<ModuleImport> includes = parseIncludes(module);
+    private static YangModelDependencyInfo parseModuleContext(final StatementContext module, final String sourceName) {
+        final String name = Utils.stringFromStringContext(module.argument(), getReference(sourceName, module));
+        final String latestRevision = getLatestRevision(module, sourceName);
+        final Optional<SemVer> semVer = Optional.fromNullable(getSemanticVersion(module, sourceName));
+        final ImmutableSet<ModuleImport> imports = parseImports(module, sourceName);
+        final ImmutableSet<ModuleImport> includes = parseIncludes(module, sourceName);
 
         return new ModuleDependencyInfo(name, latestRevision, imports, includes, semVer);
     }
 
-    private static ImmutableSet<ModuleImport> parseImports(final StatementContext module) {
+    private static ImmutableSet<ModuleImport> parseImports(final StatementContext module, final String sourceName) {
         final Set<ModuleImport> result = new HashSet<>();
         final List<StatementContext> subStatements = module.statement();
         for (final StatementContext subStatementContext : subStatements) {
@@ -237,12 +240,12 @@ public abstract class YangModelDependencyInfo {
                     .getText()
                     .equals(YangStmtMapping.IMPORT.getStatementName()
                             .getLocalName())) {
-                final String revisionDateStr = getRevisionDateString(subStatementContext);
-                final String importedModuleName = Utils
-                        .stringFromStringContext(subStatementContext.argument());
+                final String revisionDateStr = getRevisionDateString(subStatementContext, sourceName);
+                final String importedModuleName = Utils.stringFromStringContext(subStatementContext.argument(),
+                        getReference(sourceName, subStatementContext));
                 final Date revisionDate = (revisionDateStr == null) ? null : QName
                         .parseRevision(revisionDateStr);
-                final Optional<SemVer> importSemVer = Optional.fromNullable(getSemanticVersion(subStatementContext));
+                final Optional<SemVer> importSemVer = Optional.fromNullable(getSemanticVersion(subStatementContext, sourceName));
                 result.add(new ModuleImportImpl(importedModuleName,
                         revisionDate, importSemVer));
             }
@@ -250,14 +253,15 @@ public abstract class YangModelDependencyInfo {
         return ImmutableSet.copyOf(result);
     }
 
-    private static SemVer getSemanticVersion(final StatementContext statement) {
+    private static SemVer getSemanticVersion(final StatementContext statement, final String sourceName) {
         final List<StatementContext> subStatements = statement.statement();
         String semVerString = null;
         final String semVerStmtName = SupportedExtensionsMapping.SEMANTIC_VERSION.getStatementName().getLocalName();
         for (final StatementContext subStatement : subStatements) {
             final String subStatementName = Utils.trimPrefix(subStatement.keyword().getText());
             if (semVerStmtName.equals(subStatementName)) {
-                semVerString = Utils.stringFromStringContext(subStatement.argument());
+                semVerString = Utils.stringFromStringContext(subStatement.argument(),
+                        getReference(sourceName, subStatement));
                 break;
             }
         }
@@ -269,7 +273,7 @@ public abstract class YangModelDependencyInfo {
         return SemVer.valueOf(semVerString);
     }
 
-    private static ImmutableSet<ModuleImport> parseIncludes(final StatementContext module) {
+    private static ImmutableSet<ModuleImport> parseIncludes(final StatementContext module, final String sourceName) {
         final Set<ModuleImport> result = new HashSet<>();
         final List<StatementContext> subStatements = module.statement();
         for (final StatementContext subStatementContext : subStatements) {
@@ -278,9 +282,9 @@ public abstract class YangModelDependencyInfo {
                     .getText()
                     .equals(YangStmtMapping.INCLUDE.getStatementName()
                             .getLocalName())) {
-                final String revisionDateStr = getRevisionDateString(subStatementContext);
-                final String IncludeModuleName = Utils
-                        .stringFromStringContext(subStatementContext.argument());
+                final String revisionDateStr = getRevisionDateString(subStatementContext, sourceName);
+                final String IncludeModuleName = Utils.stringFromStringContext(subStatementContext.argument(),
+                        getReference(sourceName, subStatementContext));
                 final Date revisionDate = (revisionDateStr == null) ? null : QName
                         .parseRevision(revisionDateStr);
                 result.add(new ModuleImportImpl(IncludeModuleName, revisionDate));
@@ -289,7 +293,7 @@ public abstract class YangModelDependencyInfo {
         return ImmutableSet.copyOf(result);
     }
 
-    private static String getRevisionDateString(final StatementContext importStatement) {
+    private static String getRevisionDateString(final StatementContext importStatement, final String sourceName) {
         final List<StatementContext> importSubStatements = importStatement.statement();
         String revisionDateStr = null;
         for (final StatementContext importSubStatement : importSubStatements) {
@@ -298,14 +302,14 @@ public abstract class YangModelDependencyInfo {
                     .getText()
                     .equals(YangStmtMapping.REVISION_DATE.getStatementName()
                             .getLocalName())) {
-                revisionDateStr = Utils
-                        .stringFromStringContext(importSubStatement.argument());
+                revisionDateStr = Utils.stringFromStringContext(importSubStatement.argument(),
+                        getReference(sourceName, importSubStatement));
             }
         }
         return revisionDateStr;
     }
 
-    public static String getLatestRevision(final StatementContext module) {
+    public static String getLatestRevision(final StatementContext module, final String sourceName) {
         final List<StatementContext> subStatements = module.statement();
         String latestRevision = null;
         for (final StatementContext subStatementContext : subStatements) {
@@ -314,8 +318,8 @@ public abstract class YangModelDependencyInfo {
                     .getText()
                     .equals(YangStmtMapping.REVISION.getStatementName()
                             .getLocalName())) {
-                final String currentRevision = Utils
-                        .stringFromStringContext(subStatementContext.argument());
+                final String currentRevision = Utils.stringFromStringContext(subStatementContext.argument(),
+                        getReference(sourceName, subStatementContext));
                 if (latestRevision == null
                         || latestRevision.compareTo(currentRevision) == -1) {
                     latestRevision = currentRevision;
@@ -325,19 +329,18 @@ public abstract class YangModelDependencyInfo {
         return latestRevision;
     }
 
-    private static YangModelDependencyInfo parseSubmoduleContext(final StatementContext submodule) {
-        final String name = Utils.stringFromStringContext(submodule.argument());
-        final String belongsTo = parseBelongsTo(submodule);
+    private static YangModelDependencyInfo parseSubmoduleContext(final StatementContext submodule, final String sourceName) {
+        final String name = Utils.stringFromStringContext(submodule.argument(), getReference(sourceName, submodule));
+        final String belongsTo = parseBelongsTo(submodule, sourceName);
 
-        final String latestRevision = getLatestRevision(submodule);
-        final ImmutableSet<ModuleImport> imports = parseImports(submodule);
-        final ImmutableSet<ModuleImport> includes = parseIncludes(submodule);
+        final String latestRevision = getLatestRevision(submodule, sourceName);
+        final ImmutableSet<ModuleImport> imports = parseImports(submodule, sourceName);
+        final ImmutableSet<ModuleImport> includes = parseIncludes(submodule, sourceName);
 
-        return new SubmoduleDependencyInfo(name, latestRevision, belongsTo,
-                imports, includes);
+        return new SubmoduleDependencyInfo(name, latestRevision, belongsTo, imports, includes);
     }
 
-    private static String parseBelongsTo(final StatementContext submodule) {
+    private static String parseBelongsTo(final StatementContext submodule, final String sourceName) {
         final List<StatementContext> subStatements = submodule.statement();
         for (final StatementContext subStatementContext : subStatements) {
             if (subStatementContext
@@ -346,10 +349,16 @@ public abstract class YangModelDependencyInfo {
                     .equals(YangStmtMapping.BELONGS_TO.getStatementName()
                             .getLocalName())) {
                 return Utils.stringFromStringContext(subStatementContext
-                        .argument());
+                        .argument(), getReference(sourceName, subStatementContext));
             }
         }
         return null;
+    }
+
+    private static StatementSourceReference getReference(final String sourceName,
+            final StatementContext context) {
+        return DeclarationInTextSource.atPosition(sourceName, context.getStart().getLine(), context.getStart()
+                .getCharPositionInLine());
     }
 
     /**

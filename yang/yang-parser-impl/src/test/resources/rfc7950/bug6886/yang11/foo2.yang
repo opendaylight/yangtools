@@ -1,0 +1,7 @@
+module foo2 {
+    namespace foo2;
+    prefix foo2;
+    yang-version 1.1;
+
+    description illegalchars'test2;
+}

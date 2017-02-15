@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -61,6 +62,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.RootStatementContext;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.slf4j.Logger;
@@ -407,7 +409,13 @@ public final class Utils {
         return SchemaNodeIdentifier.create(qNames, PATH_ABS.matcher(path).matches());
     }
 
-    public static String stringFromStringContext(final YangStatementParser.ArgumentContext context) {
+    public static String stringFromStringContext(final YangStatementParser.ArgumentContext context,
+            final StatementSourceReference ref) {
+        return stringFromStringContext(context, YangVersion.VERSION_1, ref);
+    }
+
+    public static String stringFromStringContext(final YangStatementParser.ArgumentContext context,
+            final YangVersion yangVersion, final StatementSourceReference ref) {
         final StringBuilder sb = new StringBuilder();
         List<TerminalNode> strings = context.STRING();
         if (strings.isEmpty()) {
@@ -423,6 +431,7 @@ public final class Utils {
                  * Unescape escaped double quotes, tabs, new line and backslash
                  * in the inner string and trim the result.
                  */
+                checkDoubleQuotedString(innerStr, yangVersion, ref);
                 sb.append(innerStr.replace("\\\"", "\"").replace("\\\\", "\\").replace("\\n", "\n")
                         .replace("\\t", "\t"));
             } else if (firstChar == '\'' && lastChar == '\'') {
@@ -432,10 +441,47 @@ public final class Utils {
                  */
                 sb.append(str.substring(1, str.length() - 1));
             } else {
+                checkUnquotedString(str, yangVersion, ref);
                 sb.append(str);
             }
         }
         return sb.toString();
+    }
+
+    private static void checkUnquotedString(final String str, final YangVersion yangVersion,
+            final StatementSourceReference ref) {
+        if (yangVersion == YangVersion.VERSION_1_1) {
+            for (int i = 0; i < str.length(); i++) {
+                switch (str.charAt(i)) {
+                case '"':
+                case '\'':
+                    throw new SourceException(ref, "Yang 1.1: unquoted string (%s) contains illegal characters", str);
+                }
+            }
+        }
+    }
+
+    private static void checkDoubleQuotedString(final String str, final YangVersion yangVersion,
+            final StatementSourceReference ref) {
+        if (yangVersion == YangVersion.VERSION_1_1) {
+            for (int i = 0; i < str.length() - 1; i++) {
+                if (str.charAt(i) == '\\') {
+                    switch (str.charAt(i + 1)) {
+                    case 'n':
+                    case 't':
+                    case '\\':
+                    case '\"':
+                        i++;
+                        break;
+                    default:
+                        throw new SourceException(ref,
+                                "Yang 1.1: illegal double quoted string (%s). In double quoted string the backslash must be followed "
+                                        + "by one of the following character [n,t,\",\\], but was '%s'.", str,
+                                str.charAt(i + 1));
+                    }
+                }
+            }
+        }
     }
 
     public static QName qNameFromArgument(StmtContext<?, ?, ?> ctx, final String value) {

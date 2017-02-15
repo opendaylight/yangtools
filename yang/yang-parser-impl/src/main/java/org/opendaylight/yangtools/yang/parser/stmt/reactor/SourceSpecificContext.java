@@ -379,13 +379,13 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 source.writePreLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef());
                 break;
             case SOURCE_LINKAGE:
-                source.writeLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef(), preLinkagePrefixes());
+                source.writeLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef(), preLinkagePrefixes(), getRootVersion());
                 break;
             case STATEMENT_DEFINITION:
-                source.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes());
+                source.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes(), getRootVersion());
                 break;
             case FULL_DECLARATION:
-                source.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes());
+                source.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes(), getRootVersion());
                 break;
             default:
                 break;

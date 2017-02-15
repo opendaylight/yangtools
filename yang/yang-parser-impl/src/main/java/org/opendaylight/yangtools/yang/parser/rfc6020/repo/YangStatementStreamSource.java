@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementLexer;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.concepts.Identifiable;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -94,21 +95,39 @@ public final class YangStatementStreamSource implements Identifiable<SourceIdent
     @Override
     public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
             final PrefixToModule preLinkagePrefixes) {
-        yangStatementModelParser.setAttributes(writer, stmtDef, preLinkagePrefixes);
+        writeLinkage(writer, stmtDef, preLinkagePrefixes, YangVersion.VERSION_1);
+    }
+
+    @Override
+    public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+            final PrefixToModule preLinkagePrefixes, final YangVersion yangVersion) {
+        yangStatementModelParser.setAttributes(writer, stmtDef, preLinkagePrefixes, yangVersion);
         ParseTreeWalker.DEFAULT.walk(yangStatementModelParser, context);
     }
 
     @Override
     public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
             final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) {
-        yangStatementModelParser.setAttributes(writer, stmtDef, prefixes);
+        writeLinkageAndStatementDefinitions(writer, stmtDef, prefixes, YangVersion.VERSION_1);
+    }
+
+    @Override
+    public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
+            final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes, final YangVersion yangVersion) {
+        yangStatementModelParser.setAttributes(writer, stmtDef, prefixes, yangVersion);
         ParseTreeWalker.DEFAULT.walk(yangStatementModelParser, context);
     }
 
     @Override
     public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
             final PrefixToModule prefixes) {
-        yangStatementModelParser.setAttributes(writer, stmtDef, prefixes);
+        writeFull(writer, stmtDef, prefixes, YangVersion.VERSION_1);
+    }
+
+    @Override
+    public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+            final PrefixToModule prefixes, final YangVersion yangVersion) {
+        yangStatementModelParser.setAttributes(writer, stmtDef, prefixes, yangVersion);
         ParseTreeWalker.DEFAULT.walk(yangStatementModelParser, context);
     }
 
