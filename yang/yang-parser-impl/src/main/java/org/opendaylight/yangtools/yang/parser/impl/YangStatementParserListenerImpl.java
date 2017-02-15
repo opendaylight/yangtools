@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParserBaseListen
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
@@ -46,6 +47,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
     private QNameToStatementDefinition stmtDef;
     private PrefixToModule prefixes;
     private StatementWriter writer;
+    private YangVersion yangVersion;
 
     public YangStatementParserListenerImpl(final String sourceName) {
         this.sourceName = sourceName;
@@ -63,6 +65,12 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
         this.stmtDef = stmtDef;
         this.prefixes = prefixes;
         initCounters();
+    }
+
+    public void setAttributes(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+            final PrefixToModule prefixes, final YangVersion yangVersion) {
+        this.yangVersion = yangVersion;
+        setAttributes(writer, stmtDef, prefixes);
     }
 
     private void initCounters() {
@@ -87,7 +95,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
         }
 
         final ArgumentContext argumentCtx = ctx.getChild(ArgumentContext.class, 0);
-        final String argument = argumentCtx != null ? Utils.stringFromStringContext(argumentCtx) : null;
+        final String argument = argumentCtx != null ? Utils.stringFromStringContext(argumentCtx, yangVersion) : null;
         writer.startStatement(childId, validStatementDefinition, argument, ref);
     }
 
@@ -96,8 +104,8 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
         final StatementSourceReference ref = DeclarationInTextSource.atPosition(
             sourceName, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
 
-        KeywordContext keyword = ctx.getChild(KeywordContext.class, 0);
-        String statementName = keyword.getText();
+        final KeywordContext keyword = ctx.getChild(KeywordContext.class, 0);
+        final String statementName = keyword.getText();
         if (stmtDef != null && getValidStatementDefinition(prefixes, stmtDef, statementName) != null
                 && toBeSkipped.isEmpty()) {
             writer.endStatement(ref);

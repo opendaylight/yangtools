@@ -1,0 +1,6 @@
+module foo2 {
+    namespace foo2;
+    prefix foo2;
+
+    description illegalchars'test2;
+}

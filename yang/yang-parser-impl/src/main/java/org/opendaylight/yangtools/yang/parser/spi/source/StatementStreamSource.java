@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import org.opendaylight.yangtools.yang.common.YangVersion;
+
 
 /**
  *
@@ -92,6 +94,33 @@ public interface StatementStreamSource {
 
     /**
      *
+     * Emits only linkage-related statements to supplied {@code writer} based on
+     * specified yang version. Default implementation does not make any
+     * differences between versions.
+     *
+     * @param writer
+     *            {@link StatementWriter} which should be used to emit
+     *            statements.
+     * @param stmtDef
+     *            Map of available statement definitions. Only these statements
+     *            may be written to statement writer, source MUST ignore and
+     *            MUST NOT emit any other statements.
+     * @param preLinkagePrefixes
+     *            Pre-linkage map of source-specific prefixes to namespaces
+     * @param yangVersion
+     *            yang version.
+     *
+     * @throws SourceException
+     *             If source was is not valid, or provided statement writer
+     *             failed to write statements.
+     */
+    default void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+            final PrefixToModule preLinkagePrefixes, final YangVersion yangVersion) {
+        writeLinkage(writer, stmtDef, preLinkagePrefixes);
+    }
+
+    /**
+     *
      * Emits only linkage and language extension statements to supplied
      * {@code writer}.
      *
@@ -113,6 +142,33 @@ public interface StatementStreamSource {
 
     /**
      *
+     * Emits only linkage and language extension statements to supplied
+     * {@code writer} based on specified yang version. Default implementation
+     * does not make any differences between versions.
+     *
+     * @param writer
+     *            {@link StatementWriter} which should be used to emit
+     *            statements.
+     * @param stmtDef
+     *            Map of available statement definitions. Only these statements
+     *            may be written to statement writer, source MUST ignore and
+     *            MUST NOT emit any other statements.
+     * @param prefixes
+     *            Map of source-specific prefixes to namespaces
+     * @param yangVersion
+     *            yang version.
+     *
+     * @throws SourceException
+     *             If source was is not valid, or provided statement writer
+     *             failed to write statements.
+     */
+    default void writeLinkageAndStatementDefinitions(final StatementWriter writer,
+            final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes, final YangVersion yangVersion) {
+        writeLinkageAndStatementDefinitions(writer, stmtDef, prefixes);
+    }
+
+    /**
+     *
      * Emits every statements present in this statement source to supplied
      * {@code writer}.
      *
@@ -128,4 +184,28 @@ public interface StatementStreamSource {
      *             failed to write statements.
      */
     void writeFull(StatementWriter writer,QNameToStatementDefinition stmtDef, PrefixToModule prefixes) throws SourceException;
+
+    /**
+     *
+     * Emits every statements present in this statement source to supplied
+     * {@code writer} based on specified yang version. Default implementation
+     * does not make any differences between versions.
+     *
+     * @param writer
+     *            {@link StatementWriter} which should be used to emit
+     *            statements.
+     * @param stmtDef
+     *            Map of available statement definitions.
+     * @param prefixes
+     *            Map of source-specific prefixes to namespaces
+     * @param yangVersion
+     *            yang version.
+     * @throws SourceException
+     *             If source was is not valid, or provided statement writer
+     *             failed to write statements.
+     */
+    default void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+            final PrefixToModule prefixes, final YangVersion yangVersion) {
+        writeFull(writer, stmtDef, prefixes);
+    }
 }
