@@ -1,0 +1,35 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    revision 2017-02-10;
+
+    list interface {
+        key "name type";
+        leaf name {
+            type string;
+        }
+        leaf type {
+            type string;
+        }
+        leaf enabled {
+            type boolean;
+        }
+    }
+
+    container mgmt-interface {
+        leaf name {
+            type leafref {
+                path "/interface/name";
+            }
+        }
+        leaf type {
+            type leafref {
+                path "/interface[name=current()/../name]/type";
+            }
+            must "deref(.)/../enabled = 'true'" {
+                error-message "The management interface cannot be disabled.";
+            }
+        }
+    }
+}

@@ -1,0 +1,85 @@
+module foo {
+    namespace foo;
+    prefix foo;
+    yang-version 1.1;
+
+    revision 2016-02-24;
+
+    identity interface-type;
+
+    identity ethernet {
+        base interface-type;
+    }
+
+    identity fast-ethernet {
+        base ethernet;
+    }
+
+    identity gigabit-ethernet {
+        base ethernet;
+    }
+
+    list interface {
+        key "name";
+        leaf name {
+            type string;
+        }
+
+        leaf type {
+            type identityref {
+                base interface-type;
+            }
+        }
+
+        leaf enabled {
+            type boolean;
+        }
+    }
+
+    leaf outgoing-interface {
+        type leafref {
+            path "/interface/name";
+        }
+
+        must "count(/interface[re-match(name, 'eth0\.\d+')]) = 3";
+    }
+
+    container mgmt-interface {
+        leaf name {
+            type leafref {
+                path "/interface/name";
+            }
+        }
+        leaf type {
+            type leafref {
+                path "/interface[name=current()/../name]/type";
+            }
+            must "derived-from(deref(.), 'foo:ethernet')";
+        }
+    }
+
+    container my-cont {
+        leaf enum-value {
+            type enumeration {
+                enum a {
+                    value 1;
+                }
+                enum b {
+                    value 2;
+                }
+            }
+        }
+
+        must "enum-value(current()/enum-value) = 1";
+
+        leaf bit-is-set {
+            type bits {
+                bit x;
+                bit y;
+                bit z;
+            }
+        }
+
+        must "bit-is-set(current()/bit-is-set, 'z')";
+    }
+}

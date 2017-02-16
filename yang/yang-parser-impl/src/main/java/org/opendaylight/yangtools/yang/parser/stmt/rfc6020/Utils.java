@@ -13,6 +13,7 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
@@ -37,6 +38,8 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -68,6 +71,7 @@ import org.slf4j.LoggerFactory;
 
 public final class Utils {
     private static final int UNICODE_SCRIPT_FIX_COUNTER = 30;
+    private static final String YANG_XPATH_FUNCTIONS_PREFIX = "yang";
     private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
     private static final CharMatcher LEFT_PARENTHESIS_MATCHER = CharMatcher.is('(');
     private static final CharMatcher RIGHT_PARENTHESIS_MATCHER = CharMatcher.is(')');
@@ -305,6 +309,9 @@ public final class Utils {
         }
     };
 
+    private static final Set<String> YANG_XPATH_FUNCTIONS = ImmutableSet.of("re-match", "deref",
+            "derived-from", "derived-from-or-self", "enum-value", "bit-is-set");
+
     private Utils() {
         throw new UnsupportedOperationException();
     }
@@ -358,17 +365,37 @@ public final class Utils {
 
     static RevisionAwareXPath parseXPath(final StmtContext<?, ?, ?> ctx, final String path) {
         final XPath xPath = XPATH_FACTORY.get().newXPath();
-        xPath.setNamespaceContext(StmtNamespaceContext.create(ctx));
+        xPath.setNamespaceContext(StmtNamespaceContext.create(ctx,
+                ImmutableBiMap.of(YangConstants.RFC6020_YANG_NAMESPACE.toString(), YANG_XPATH_FUNCTIONS_PREFIX)));
 
         final String trimmed = trimSingleLastSlashFromXPath(path);
         try {
+            // XPath extension functions have to be prefixed
+            // yang-specific XPath functions are in fact extended functions, therefore we have to add
+            // "yang" prefix to them so that they can be properly validated with the XPath.compile() method
+            // the "yang" prefix is bound to RFC6020 YANG namespace
+            final String prefixedXPath = addPrefixToYangXPathFunctions(trimmed, ctx);
             // TODO: we could capture the result and expose its 'evaluate' method
-            xPath.compile(trimmed);
+            xPath.compile(prefixedXPath);
         } catch (final XPathExpressionException e) {
             LOG.warn("Argument \"{}\" is not valid XPath string at \"{}\"", path, ctx.getStatementSourceReference(), e);
         }
 
         return new RevisionAwareXPathImpl(path, PATH_ABS.matcher(path).matches());
+    }
+
+    private static String addPrefixToYangXPathFunctions(final String path, final StmtContext<?, ?, ?> ctx) {
+        if (ctx.getRootVersion() == YangVersion.VERSION_1_1) {
+            String result = path;
+            final String prefix = YANG_XPATH_FUNCTIONS_PREFIX + ":";
+            for (final String xpathFunction : YANG_XPATH_FUNCTIONS) {
+                result = result.replaceAll(xpathFunction + "\\(", prefix + xpathFunction + "(");
+            }
+
+            return result;
+        }
+
+        return path;
     }
 
     public static QName trimPrefix(final QName identifier) {
