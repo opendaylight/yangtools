@@ -1,0 +1,25 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    revision 2017-02-10;
+
+    list interface {
+        key "name";
+        leaf name {
+            type string;
+        }
+
+        leaf enabled {
+            type boolean;
+        }
+    }
+
+    leaf outgoing-interface {
+        type leafref {
+            path "/interface/name";
+        }
+
+        must "count(/interface[re-match(name, 'eth0\.\d+')]) = 3";
+    }
+}
