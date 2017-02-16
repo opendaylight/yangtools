@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_6f21d4fa",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/type/InvalidBitDefinitionException.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-02-16T18:22:59Z",
+      "side": 0,
+      "message": "please do not remove final keyword, but rather initialize this field in constructor",
+      "range": {
+        "startLine": 17,
+        "startChar": 12,
+        "endLine": 17,
+        "endChar": 17
+      },
+      "revId": "4d5bda95b177476ce3a2060c75cb1566ba760fd6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_af7a9cee",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/type/InvalidEnumDefinitionException.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-02-16T18:22:59Z",
+      "side": 0,
+      "message": "please do not remove final keyword, but rather initialize this field in constructor",
+      "range": {
+        "startLine": 17,
+        "startChar": 12,
+        "endLine": 17,
+        "endChar": 17
+      },
+      "revId": "4d5bda95b177476ce3a2060c75cb1566ba760fd6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}

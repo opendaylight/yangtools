@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_8f7d18ea",
+        "filename": "yang/yang-parser-impl/src/test/resources/rfc7950/bug6887/bar-invalid-2.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-02-16T18:22:59Z",
+      "side": 1,
+      "message": "please add test, which will not contain any bit nor enum in the type body.",
+      "range": {
+        "startLine": 25,
+        "startChar": 0,
+        "endLine": 34,
+        "endChar": 13
+      },
+      "revId": "2df953a570bc7a83d57d1d958357a98d3f237362",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
