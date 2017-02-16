@@ -1,0 +1,42 @@
+module foo {
+    namespace foo;
+    prefix foo;
+    yang-version 1.1;
+
+    revision 2017-02-10;
+
+    list interface {
+        key "name";
+        leaf name {
+            type string;
+        }
+
+        leaf enabled {
+            type boolean;
+        }
+    }
+
+    leaf outgoing-interface {
+        type leafref {
+            path "/interface/name";
+        }
+
+        must "count(/interface[re-match(name, 'eth0\.\d+')]) = 3";
+    }
+
+    container mgmt-interface {
+        leaf name {
+            type leafref {
+                path "/interface/name";
+            }
+        }
+        leaf type {
+            type leafref {
+                path "/interface[name=current()/../name]/type";
+            }
+            must "deref(.)/../enabled = 'true'" {
+                error-message "The management interface cannot be disabled.";
+            }
+        }
+    }
+}

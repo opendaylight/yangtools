@@ -32,11 +32,15 @@ import javax.annotation.Nullable;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import javax.xml.xpath.XPathFunction;
+import javax.xml.xpath.XPathFunctionException;
+import javax.xml.xpath.XPathFunctionResolver;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -359,6 +363,7 @@ public final class Utils {
     static RevisionAwareXPath parseXPath(final StmtContext<?, ?, ?> ctx, final String path) {
         final XPath xPath = XPATH_FACTORY.get().newXPath();
         xPath.setNamespaceContext(StmtNamespaceContext.create(ctx));
+        xPath.setXPathFunctionResolver(YANG_1_1_XPATH_FUNCTIONS_RESOLVER);
 
         final String trimmed = trimSingleLastSlashFromXPath(path);
         try {
@@ -369,6 +374,36 @@ public final class Utils {
         }
 
         return new RevisionAwareXPathImpl(path, PATH_ABS.matcher(path).matches());
+    }
+
+    private static final XPathFunctionResolver YANG_1_1_XPATH_FUNCTIONS_RESOLVER = new XPathFunctionResolver() {
+        @Override
+        public XPathFunction resolveFunction(javax.xml.namespace.QName functionName, int arity) {
+            if (functionName.getLocalPart().equals("deref")) {
+                return new XPathFunction() {
+                    @Override
+                    public Object evaluate(List args) throws XPathFunctionException {
+                        return null; // skuska, dat sem breakpoint
+                    }
+                };
+            }
+
+            return null; // skuska, dat sem breakpoint
+        }
+    };
+
+    private static final Set<String> YANG_1_1_XPATH_FUNCTIONS = ImmutableSet.of("re-match(", "deref(",
+            "derived-from(", "derived-from-or-self(", "enum-value(", "bit-is-set(");
+
+    private static void validateXPathFunctions(final StmtContext ctx, final String xpath) {
+        if (!YangVersion.VERSION_1_1.equals(ctx.getRootVersion())) {
+            for (final String xpathFunction : YANG_1_1_XPATH_FUNCTIONS) {
+                if (xpath.contains(xpathFunction)) {
+                    throw new SourceException(ctx.getStatementSourceReference(),
+                            "XPath function %s) is not valid for yang-version %s.", xpathFunction, ctx.getRootVersion());
+                }
+            }
+        }
     }
 
     public static QName trimPrefix(final QName identifier) {
