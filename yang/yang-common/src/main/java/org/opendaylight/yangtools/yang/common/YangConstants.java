@@ -70,6 +70,11 @@ public final class YangConstants {
     public static final URI RFC7950_YANG_LIBRARY_CAPABILITY =
         URI.create("urn:ietf:params:netconf:capability:yang-library:1.0");
 
+    /**
+     * Prefix for YANG-specific XPath functions
+     */
+    public static final String YANG_XPATH_FUNCTIONS_PREFIX = "yang";
+
     private YangConstants() {
         throw new UnsupportedOperationException("Utility class");
     }

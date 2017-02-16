@@ -7,12 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_NAMESPACE;
+import static org.opendaylight.yangtools.yang.common.YangConstants.YANG_XPATH_FUNCTIONS_PREFIX;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
@@ -29,6 +32,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import javax.annotation.Nullable;
+import javax.annotation.RegEx;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -79,6 +83,10 @@ public final class Utils {
     private static final Splitter SPACE_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
     private static final Splitter COLON_SPLITTER = Splitter.on(":").omitEmptyStrings().trimResults();
     private static final Pattern PATH_ABS = Pattern.compile("/[^/].*");
+    @RegEx
+    private static final String YANG_XPATH_FUNCTIONS_STRING =
+            "(re-match|deref|derived-from(-or-self)?|enum-value|bit-is-set)(\\()";
+    private static final Pattern YANG_XPATH_FUNCTIONS_PATTERN = Pattern.compile(YANG_XPATH_FUNCTIONS_STRING);
     private static final Pattern BETWEEN_CURLY_BRACES_PATTERN = Pattern.compile("\\{(.+?)\\}");
     private static final Set<String> JAVA_UNICODE_BLOCKS = ImmutableSet.<String>builder()
             .add("AegeanNumbers")
@@ -360,17 +368,41 @@ public final class Utils {
 
     static RevisionAwareXPath parseXPath(final StmtContext<?, ?, ?> ctx, final String path) {
         final XPath xPath = XPATH_FACTORY.get().newXPath();
-        xPath.setNamespaceContext(StmtNamespaceContext.create(ctx));
+        xPath.setNamespaceContext(StmtNamespaceContext.create(ctx,
+                ImmutableBiMap.of(RFC6020_YANG_NAMESPACE.toString(), YANG_XPATH_FUNCTIONS_PREFIX)));
 
         final String trimmed = trimSingleLastSlashFromXPath(path);
         try {
+            // XPath extension functions have to be prefixed
+            // yang-specific XPath functions are in fact extended functions, therefore we have to add
+            // "yang" prefix to them so that they can be properly validated with the XPath.compile() method
+            // the "yang" prefix is bound to RFC6020 YANG namespace
+            final String prefixedXPath = addPrefixToYangXPathFunctions(trimmed, ctx);
             // TODO: we could capture the result and expose its 'evaluate' method
-            xPath.compile(trimmed);
+            xPath.compile(prefixedXPath);
         } catch (final XPathExpressionException e) {
             LOG.warn("Argument \"{}\" is not valid XPath string at \"{}\"", path, ctx.getStatementSourceReference(), e);
         }
 
         return new RevisionAwareXPathImpl(path, PATH_ABS.matcher(path).matches());
+    }
+
+    private static String addPrefixToYangXPathFunctions(final String path, final StmtContext<?, ?, ?> ctx) {
+        if (ctx.getRootVersion() == YangVersion.VERSION_1_1) {
+            // FIXME once Java 9 is available, change this to StringBuilder as Matcher.appendReplacement() and
+            // Matcher.appendTail() will accept StringBuilder parameter in Java 9
+            final StringBuffer result = new StringBuffer();
+            final String prefix = YANG_XPATH_FUNCTIONS_PREFIX + ":";
+            final Matcher matcher = YANG_XPATH_FUNCTIONS_PATTERN.matcher(path);
+            while (matcher.find()) {
+                matcher.appendReplacement(result, prefix + matcher.group());
+            }
+
+            matcher.appendTail(result);
+            return result.toString();
+        }
+
+        return path;
     }
 
     public static QName trimPrefix(final QName identifier) {
