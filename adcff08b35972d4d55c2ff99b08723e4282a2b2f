@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_02561a06",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/TypeUtils.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-02-17T13:00:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fafc7978_edbb22e3",
+      "range": {
+        "startLine": 40,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 103
+      },
+      "revId": "adcff08b35972d4d55c2ff99b08723e4282a2b2f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_6d73b280",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/TypeUtils.java",
         "patchSetId": 11
@@ -36,6 +60,30 @@
       "writtenOn": "2017-02-13T16:19:18Z",
       "side": 1,
       "message": "missing javadocs. Especially document the fact that defaultValues are being mutated!",
+      "range": {
+        "startLine": 230,
+        "startChar": 0,
+        "endLine": 244,
+        "endChar": 5
+      },
+      "revId": "adcff08b35972d4d55c2ff99b08723e4282a2b2f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_42430242",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/TypeUtils.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 244,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-02-17T13:00:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fafc7978_6d73b280",
       "range": {
         "startLine": 230,
         "startChar": 0,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_e25af628",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/TypeUtils.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 257,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-02-17T13:00:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fafc7978_4d6eae97",
+      "range": {
+        "startLine": 257,
+        "startChar": 45,
+        "endLine": 257,
+        "endChar": 74
+      },
+      "revId": "adcff08b35972d4d55c2ff99b08723e4282a2b2f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_6dcf3280",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/TypeUtils.java",
         "patchSetId": 11
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_027bba7b",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/TypeUtils.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 271,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-02-17T13:00:45Z",
+      "side": 1,
+      "message": "Hmm, StatementSourceReference is not available here. However, in current solution we catch thrown IllegalStateException in the callers (i.e. LeafListEffectiveStatementImpl, LeafEffectiveStatementImpl, etc.) where we can add missing StatementSourceReference and then throw SourceException.",
+      "parentUuid": "fafc7978_6dcf3280",
+      "range": {
+        "startLine": 270,
+        "startChar": 0,
+        "endLine": 271,
+        "endChar": 31
+      },
+      "revId": "adcff08b35972d4d55c2ff99b08723e4282a2b2f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_8dfff6a9",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/TypeUtils.java",
         "patchSetId": 11
@@ -105,6 +201,30 @@
       "writtenOn": "2017-02-13T16:19:18Z",
       "side": 1,
       "message": "Unneeded local",
+      "range": {
+        "startLine": 276,
+        "startChar": 61,
+        "endLine": 276,
+        "endChar": 84
+      },
+      "revId": "adcff08b35972d4d55c2ff99b08723e4282a2b2f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_22407e33",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/TypeUtils.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 276,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-02-17T13:00:45Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fafc7978_8dfff6a9",
       "range": {
         "startLine": 276,
         "startChar": 61,
