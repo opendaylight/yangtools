@@ -22,6 +22,30 @@
       "revId": "5efc04abdf726f8d631aa924fd131edda2bb1a52",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_c26092a7",
+        "filename": "common/artifacts/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-02-17T13:24:05Z",
+      "side": 1,
+      "message": "Each of the artifacts has its own life w.r.t. versions, i.e. we can bump version of yang-data-jaxen to 2.0.0 while keeping others in 1.2.0.\n\nThe follow-up patch shows this: triemap is 0.9.0, i.e. not yet API-stable.",
+      "parentUuid": "fafc7978_62b9e614",
+      "range": {
+        "startLine": 35,
+        "startChar": 25,
+        "endLine": 35,
+        "endChar": 39
+      },
+      "revId": "5efc04abdf726f8d631aa924fd131edda2bb1a52",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
