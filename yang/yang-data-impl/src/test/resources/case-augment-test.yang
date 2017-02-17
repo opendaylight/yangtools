@@ -1,0 +1,33 @@
+module case-augment-test {
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test";
+    prefix "store-test";
+
+    revision "2014-03-13" {
+        description "Initial revision.";
+    }
+
+    container test {
+        choice choice1 {
+            case case1 {
+                leaf case1-leaf1 {
+                    type string;
+                }
+            }
+            case case2 {
+                leaf case2-leaf1 {
+                    type string;
+                }
+            }
+        }
+    }
+
+    augment "/test/choice1/case1" {
+        leaf case1-leaf2 {
+            type string;
+        }
+        leaf case1-leaf3 {
+            type string;
+        }
+    }
+}
