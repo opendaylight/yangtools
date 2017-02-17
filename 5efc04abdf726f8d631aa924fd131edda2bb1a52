@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_62b9e614",
+        "filename": "common/artifacts/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-02-17T13:17:34Z",
+      "side": 1,
+      "message": "Just for interest, why is it better to \"hard-code\" these versions ?",
+      "range": {
+        "startLine": 35,
+        "startChar": 25,
+        "endLine": 35,
+        "endChar": 39
+      },
+      "revId": "5efc04abdf726f8d631aa924fd131edda2bb1a52",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
