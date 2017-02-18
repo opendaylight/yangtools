@@ -14,7 +14,10 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * with BuildContext. These will have the build context injected before any
  * attempt is made to generate files and should interact with the reactor solely
  * through it.
+ *
+ * @deprecated Use {@link FileGenerator} instead.
  */
+@Deprecated
 public interface BuildContextAware {
     /**
      * Set the build context to be used during the lifetime of this reactor.
