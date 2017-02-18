@@ -8,10 +8,14 @@
 package org.opendaylight.yangtools.yang2sources.spi;
 
 import org.apache.maven.project.MavenProject;
+import org.opendaylight.yangtools.plugin.generator.api.FileGeneratorFactory;
 
 /**
  * Bridge for plugins which need access to the underlying maven project.
+ *
+ * @deprecated Use {@link FileGeneratorFactory} instead.
  */
+@Deprecated
 public interface MavenProjectAware {
     /**
      * Provided maven project object. Any additional information about current
