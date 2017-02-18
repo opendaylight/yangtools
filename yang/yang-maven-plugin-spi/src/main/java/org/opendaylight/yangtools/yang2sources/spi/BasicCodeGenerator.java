@@ -12,12 +12,16 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
 /**
  * Maven 3.1.x and newer uses SLF4J internally, which means we do not need to pass a logger instance around.
+ *
+ * @deprecated Use {@link FileGenerator} instead.
  */
+@Deprecated
 public interface BasicCodeGenerator {
     enum ImportResolutionMode {
         /**
