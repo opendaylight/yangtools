@@ -7,7 +7,13 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-public interface Identifiable<T> {
+import javax.annotation.Nonnull;
 
-    T getIdentifier();
+public interface Identifiable<T> {
+    /**
+     * Return this objects Identifier
+     *
+     * @return Object's identifier, must not be null.
+     */
+    @Nonnull T getIdentifier();
 }
