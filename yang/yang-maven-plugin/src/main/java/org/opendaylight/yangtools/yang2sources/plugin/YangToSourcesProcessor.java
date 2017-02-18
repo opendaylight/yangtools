@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
@@ -264,6 +265,12 @@ class YangToSourcesProcessor {
                 return Optional.empty();
             }
 
+            final BuildInfo buildInfo = getBuildInfo();
+            if (buildInfo != null) {
+
+
+            }
+
             final YangParser parser = parserFactory.createParser(parserMode);
             final List<YangTextSchemaSource> sourcesInProject = new ArrayList<>(yangFilesInProject.size());
             for (final File f : yangFilesInProject) {
@@ -294,6 +301,16 @@ class YangToSourcesProcessor {
             throw new MojoExecutionException(LOG_PREFIX + " Unable to parse YANG files from " + yangFilesRootDir,
                 rootCause);
         }
+    }
+
+    private @Nullable BuildInfo getBuildInfo() {
+        final Object stored = buildContext.getValue(BuildInfo.class.getName());
+        if (stored == null) {
+            return null;
+        }
+
+        verify(stored instanceof BuildInfo, "Unexpected build info structure %s", stored);
+        return (BuildInfo) stored;
     }
 
     private static List<File> listFiles(final File root, final Collection<File> excludedFiles)
