@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
+import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +22,6 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.plugin.GenerateSourcesTest.GeneratorMock;
-import org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.YangProvider;
 
 @RunWith(MockitoJUnitRunner.class)
 public class YangToSourcesMojoTest {
@@ -66,7 +66,6 @@ public class YangToSourcesMojoTest {
         final File file = new File(getClass().getResource("/yang").getFile());
         final File excludedYang = new File(getClass().getResource("/yang/excluded-file.yang").getFile());
         final String path = file.getPath();
-        final File[] yangFilesRootDir = { excludedYang };
         final List<CodeGeneratorArg> codeGenerators = new ArrayList<>();
         final CodeGeneratorArg codeGeneratorArg = new CodeGeneratorArg(GeneratorMock.class.getName(), path);
         codeGenerators.add(codeGeneratorArg);
@@ -74,7 +73,7 @@ public class YangToSourcesMojoTest {
         final Build build = new Build();
         Mockito.when(mvnProject.getBuild()).thenReturn(build);
         final boolean dependencies = true;
-        this.proc = new YangToSourcesProcessor(file, yangFilesRootDir, codeGenerators,
+        this.proc = new YangToSourcesProcessor(file, ImmutableList.of(excludedYang), codeGenerators,
                 mvnProject, dependencies, new YangProvider());
     }
 }
