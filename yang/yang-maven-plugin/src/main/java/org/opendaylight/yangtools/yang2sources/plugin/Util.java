@@ -63,7 +63,7 @@ final class Util {
      * List files recursively and return as array of String paths. Use cache of
      * size 1.
      */
-    static Collection<File> listFiles(File root) throws FileNotFoundException {
+    static Collection<File> listFiles(final File root) throws FileNotFoundException {
         if (cache.get(root) != null) {
             return cache.get(root);
         }
@@ -78,7 +78,7 @@ final class Util {
         return yangFiles;
     }
 
-    static Collection<File> listFiles(File root, File[] excludedFiles) throws FileNotFoundException {
+    static Collection<File> listFiles(final File root, final File[] excludedFiles) throws FileNotFoundException {
         if (!root.exists()) {
             LOG.warn("{} YANG source directory {} not found. No code will be generated.", YangToSourcesProcessor
                     .LOG_PREFIX, root.toString());
@@ -96,7 +96,7 @@ final class Util {
                 }
             }
             if (excluded) {
-                LOG.info("{} {} file excluded {}", YangToSourcesProcessor.LOG_PREFIX, Util.YANG_SUFFIX.toUpperCase(),
+                LOG.info("{} {} file excluded {}", YangToSourcesProcessor.LOG_PREFIX, YANG_SUFFIX.toUpperCase(),
                         f);
             } else {
                 result.add(f);
@@ -110,24 +110,7 @@ final class Util {
         cache.put(rootDir, yangFiles);
     }
 
-    /**
-     * Instantiate object from fully qualified class name
-     */
-    static <T> T getInstance(String codeGeneratorClass, Class<T> baseType) throws ClassNotFoundException,
-            InstantiationException, IllegalAccessException {
-        return baseType.cast(resolveClass(codeGeneratorClass, baseType).newInstance());
-    }
-
-    private static Class<?> resolveClass(String codeGeneratorClass, Class<?> baseType) throws ClassNotFoundException {
-        Class<?> clazz = Class.forName(codeGeneratorClass);
-
-        if (!baseType.isAssignableFrom(clazz)) {
-            throw new IllegalArgumentException("Code generator " + clazz + " has to implement " + baseType);
-        }
-        return clazz;
-    }
-
-    static List<File> getClassPath(MavenProject project) {
+    static List<File> getClassPath(final MavenProject project) {
         List<File> dependencies = Lists.newArrayList();
         for (Artifact element : project.getArtifacts()) {
             File asFile = element.getFile();
@@ -151,8 +134,8 @@ final class Util {
      * @param remoteRepos
      *            remote repositories
      */
-    static void checkClasspath(MavenProject project, RepositorySystem repoSystem, ArtifactRepository localRepo,
-            List<ArtifactRepository> remoteRepos) {
+    static void checkClasspath(final MavenProject project, final RepositorySystem repoSystem,
+            final ArtifactRepository localRepo, final List<ArtifactRepository> remoteRepos) {
         Plugin plugin = project.getPlugin(YangToSourcesMojo.PLUGIN_NAME);
         if (plugin == null) {
             LOG.warn("{} {} not found, dependencies version check skipped", YangToSourcesProcessor.LOG_PREFIX,
@@ -185,8 +168,9 @@ final class Util {
      * @param remoteRepos
      *            list of remote repositories
      */
-    private static void getPluginTransitiveDependencies(Plugin plugin, Map<Artifact, Collection<Artifact>> map,
-            RepositorySystem repoSystem, ArtifactRepository localRepository, List<ArtifactRepository> remoteRepos) {
+    private static void getPluginTransitiveDependencies(final Plugin plugin,
+            final Map<Artifact, Collection<Artifact>> map, final RepositorySystem repoSystem,
+            final ArtifactRepository localRepository, final List<ArtifactRepository> remoteRepos) {
 
         List<Dependency> pluginDependencies = plugin.getDependencies();
         for (Dependency dep : pluginDependencies) {
@@ -214,7 +198,7 @@ final class Util {
      * @param dependencies
      *            collection of dependencies
      */
-    private static void checkArtifact(Artifact artifact, Collection<Artifact> dependencies) {
+    private static void checkArtifact(final Artifact artifact, final Collection<Artifact> dependencies) {
         for (org.apache.maven.artifact.Artifact d : dependencies) {
             if (artifact.getGroupId().equals(d.getGroupId()) && artifact.getArtifactId().equals(d.getArtifactId())) {
                 if (!(artifact.getVersion().equals(d.getVersion()))) {
@@ -229,11 +213,11 @@ final class Util {
 
     private static final String JAR_SUFFIX = ".jar";
 
-    private static boolean isJar(File element) {
+    private static boolean isJar(final File element) {
         return (element.isFile() && element.getName().endsWith(JAR_SUFFIX));
     }
 
-    static <T> T checkNotNull(T obj, String paramName) {
+    static <T> T checkNotNull(final T obj, final String paramName) {
         return Preconditions.checkNotNull(obj, "Parameter " + paramName + " is null");
     }
 
@@ -241,7 +225,8 @@ final class Util {
         private final List<YangSourceFromDependency> yangStreams;
         private final List<Closeable> zipInputStreams;
 
-        private YangsInZipsResult(List<YangSourceFromDependency> yangStreams, List<Closeable> zipInputStreams) {
+        private YangsInZipsResult(final List<YangSourceFromDependency> yangStreams,
+                final List<Closeable> zipInputStreams) {
             this.yangStreams = yangStreams;
             this.zipInputStreams = zipInputStreams;
         }
@@ -258,7 +243,7 @@ final class Util {
         }
     }
 
-    static YangsInZipsResult findYangFilesInDependenciesAsStream(MavenProject project)
+    static YangsInZipsResult findYangFilesInDependenciesAsStream(final MavenProject project)
             throws MojoFailureException {
         List<YangSourceFromDependency> yangsFromDependencies = new ArrayList<>();
         List<Closeable> zips = new ArrayList<>();
@@ -320,7 +305,7 @@ final class Util {
      * @return
      * @throws MojoFailureException
      */
-    static Collection<File> findYangFilesInDependencies(MavenProject project) throws MojoFailureException {
+    static Collection<File> findYangFilesInDependencies(final MavenProject project) throws MojoFailureException {
         final List<File> yangsFilesFromDependencies = new ArrayList<>();
 
         List<File> filesOnCp;
@@ -373,7 +358,7 @@ final class Util {
         private final SchemaContext context;
         private final Set<Module> yangModules;
 
-        ContextHolder(SchemaContext context, Set<Module> yangModules) {
+        ContextHolder(final SchemaContext context, final Set<Module> yangModules) {
             this.context = context;
             this.yangModules = yangModules;
         }
