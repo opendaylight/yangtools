@@ -10,10 +10,13 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
+import com.google.common.io.CharStreams;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -22,7 +25,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -221,12 +224,13 @@ class YangToSourcesProcessor {
         }
     }
 
-    private static List<InputStream> toStreamsWithoutDuplicates(final List<YangSourceFromDependency> list) throws IOException {
+    private static List<InputStream> toStreamsWithoutDuplicates(final List<YangSourceFromDependency> list)
+            throws IOException {
         final Map<String, YangSourceFromDependency> byContent = new HashMap<>();
 
         for (YangSourceFromDependency yangFromDependency : list) {
-            try (InputStream dataStream = yangFromDependency.openStream()) {
-                String contents = IOUtils.toString(dataStream);
+            try (Reader reader = yangFromDependency.asCharSource(StandardCharsets.UTF_8).openStream()) {
+                final String contents = CharStreams.toString(reader);
                 byContent.putIfAbsent(contents, yangFromDependency);
             } catch (IOException e) {
                 throw new IOException("Exception when reading from: " + yangFromDependency.getDescription(), e);
@@ -270,7 +274,7 @@ class YangToSourcesProcessor {
             try {
                 Collection<File> files = Util.listFiles(yangFilesRootDir, excludedFiles);
                 for (File file : files) {
-                    org.apache.commons.io.FileUtils.copyFile(file, new File(withMetaInf, file.getName()));
+                    FileUtils.copyFile(file, new File(withMetaInf, file.getName()));
                 }
             } catch (IOException e) {
                 LOG.warn("Failed to generate files into root {}", yangFilesRootDir, e);
