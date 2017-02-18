@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
-import java.io.File;
-import java.util.Map;
-
-import org.apache.maven.project.MavenProject;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import java.io.File;
+import java.util.Map;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Base complex configuration arguments
@@ -22,22 +20,22 @@ public abstract class ConfigArg {
 
     private final File outputBaseDir;
 
-    public ConfigArg(String outputBaseDir) {
+    public ConfigArg(final String outputBaseDir) {
         this.outputBaseDir = outputBaseDir == null ? null : new File(outputBaseDir);
     }
 
-    public File getOutputBaseDir(MavenProject project) {
-        if (outputBaseDir == null) {
-            return null;
-        }
+    public File getOutputBaseDir(final MavenProject project) {
         if (outputBaseDir.isAbsolute()) {
             return outputBaseDir;
-        } else {
-            return new File(project.getBasedir(), outputBaseDir.getPath());
         }
+
+        return new File(project.getBasedir(), outputBaseDir.getPath());
     }
 
-    public abstract void check();
+    public void check() {
+        Preconditions.checkNotNull(outputBaseDir,
+            "outputBaseDir is null. Please provide a valid outputBaseDir value in the pom.xml");
+    }
 
     /**
      * Configuration argument for code generator class and output directory.
@@ -52,22 +50,22 @@ public abstract class ConfigArg {
         private String codeGeneratorClass;
         private File resourceBaseDir = new File(CODE_GEN_DEFAULT_RESOURCE_DIR);
 
-        private Map<String, String> additionalConfiguration = Maps.newHashMap();
+        private final Map<String, String> additionalConfiguration = Maps.newHashMap();
 
         public CodeGeneratorArg() {
             super(null);
         }
 
-        public CodeGeneratorArg(String codeGeneratorClass) {
+        public CodeGeneratorArg(final String codeGeneratorClass) {
             this(codeGeneratorClass, null);
         }
 
-        public CodeGeneratorArg(String codeGeneratorClass, String outputBaseDir) {
+        public CodeGeneratorArg(final String codeGeneratorClass, final String outputBaseDir) {
             super(outputBaseDir);
             this.codeGeneratorClass = codeGeneratorClass;
         }
 
-        public CodeGeneratorArg(String codeGeneratorClass, String outputBaseDir, String resourceBaseDir) {
+        public CodeGeneratorArg(final String codeGeneratorClass, final String outputBaseDir, final String resourceBaseDir) {
             super(outputBaseDir);
             this.codeGeneratorClass = codeGeneratorClass;
             this.resourceBaseDir = new File(resourceBaseDir);
@@ -75,6 +73,7 @@ public abstract class ConfigArg {
 
         @Override
         public void check() {
+            super.check();
             Preconditions.checkNotNull(codeGeneratorClass, "codeGeneratorClass for CodeGenerator cannot be null");
         }
 
@@ -82,12 +81,12 @@ public abstract class ConfigArg {
             return codeGeneratorClass;
         }
 
-        public File getResourceBaseDir(MavenProject project) {
+        public File getResourceBaseDir(final MavenProject project) {
             if (resourceBaseDir.isAbsolute()) {
                 return resourceBaseDir;
-            } else {
-                return new File(project.getBasedir(), resourceBaseDir.getPath());
             }
+
+            return new File(project.getBasedir(), resourceBaseDir.getPath());
         }
 
         public Map<String, String> getAdditionalConfiguration() {
