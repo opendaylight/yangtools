@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,22 +21,22 @@ public abstract class ConfigArg {
 
     private final File outputBaseDir;
 
-    public ConfigArg(String outputBaseDir) {
+    public ConfigArg(final String outputBaseDir) {
         this.outputBaseDir = outputBaseDir == null ? null : new File(outputBaseDir);
     }
 
-    public File getOutputBaseDir(MavenProject project) {
-        if (outputBaseDir == null) {
-            return null;
-        }
+    public File getOutputBaseDir(final MavenProject project) {
         if (outputBaseDir.isAbsolute()) {
             return outputBaseDir;
-        } else {
-            return new File(project.getBasedir(), outputBaseDir.getPath());
         }
+
+        return new File(project.getBasedir(), outputBaseDir.getPath());
     }
 
-    public abstract void check();
+    public void check() {
+        requireNonNull(outputBaseDir,
+            "outputBaseDir is null. Please provide a valid outputBaseDir value in the pom.xml");
+    }
 
     /**
      * Configuration argument for code generator class and output directory.
@@ -51,16 +52,16 @@ public abstract class ConfigArg {
             super(null);
         }
 
-        public CodeGeneratorArg(String codeGeneratorClass) {
+        public CodeGeneratorArg(final String codeGeneratorClass) {
             this(codeGeneratorClass, null);
         }
 
-        public CodeGeneratorArg(String codeGeneratorClass, String outputBaseDir) {
+        public CodeGeneratorArg(final String codeGeneratorClass, final String outputBaseDir) {
             super(outputBaseDir);
             this.codeGeneratorClass = codeGeneratorClass;
         }
 
-        public CodeGeneratorArg(String codeGeneratorClass, String outputBaseDir, String resourceBaseDir) {
+        public CodeGeneratorArg(final String codeGeneratorClass, final String outputBaseDir, final String resourceBaseDir) {
             super(outputBaseDir);
             this.codeGeneratorClass = codeGeneratorClass;
             this.resourceBaseDir = new File(resourceBaseDir);
@@ -68,14 +69,15 @@ public abstract class ConfigArg {
 
         @Override
         public void check() {
-            Preconditions.checkNotNull(codeGeneratorClass, "codeGeneratorClass for CodeGenerator cannot be null");
+            super.check();
+            requireNonNull(codeGeneratorClass, "codeGeneratorClass for CodeGenerator cannot be null");
         }
 
         public String getCodeGeneratorClass() {
             return codeGeneratorClass;
         }
 
-        public File getResourceBaseDir(MavenProject project) {
+        public File getResourceBaseDir(final MavenProject project) {
             if (resourceBaseDir == null) {
                 // if it has not been set, use a default (correctly dealing with target/ VS target-ide)
                 return new GeneratedDirectories(project).getYangServicesDir();
