@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableSet;
 import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.maven.spi.generator.GeneratedFilePath;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -22,7 +24,7 @@ final class ContextHolder implements Immutable {
     private final Set<SourceIdentifier> sources;
 
     ContextHolder(final SchemaContext context, final Set<Module> modules, final Set<SourceIdentifier> sources) {
-        this.context = Preconditions.checkNotNull(context);
+        this.context = requireNonNull(context);
         this.modules = ImmutableSet.copyOf(modules);
         this.sources = ImmutableSet.copyOf(sources);
     }
@@ -36,9 +38,17 @@ final class ContextHolder implements Immutable {
     }
 
     Optional<String> moduleToResourcePath(final Module mod) {
+        return moduleYangFileName(mod)
+                .map(filename -> "/" + YangToSourcesProcessor.META_INF_YANG_STRING_JAR + "/" + filename);
+    }
+
+    Optional<GeneratedFilePath> moduleToGeneratedFilePath(final Module mod) {
+        return moduleYangFileName(mod)
+                .map(filename -> GeneratedFilePath.create(YangToSourcesProcessor.META_INF_YANG_STRING_JAR, filename));
+    }
+
+    private Optional<String> moduleYangFileName(final Module mod) {
         final SourceIdentifier id = Util.moduleToIdentifier(mod);
-        return sources.contains(id)
-                ? Optional.of("/" + YangToSourcesProcessor.META_INF_YANG_STRING_JAR + "/" + id.toYangFilename())
-                        : Optional.empty();
+        return sources.contains(id) ? Optional.of(id.toYangFilename()) : Optional.empty();
     }
 }

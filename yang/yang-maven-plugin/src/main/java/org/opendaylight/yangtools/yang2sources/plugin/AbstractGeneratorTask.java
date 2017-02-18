@@ -1,0 +1,25 @@
+/*
+ * Copyright (c) 2017 Pantheon Technologies, s.r.o. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang2sources.plugin;
+
+import java.util.Optional;
+import java.util.concurrent.Callable;
+import org.apache.maven.project.MavenProject;
+import org.opendaylight.yangtools.yang.maven.spi.generator.ImportResolutionMode;
+import org.sonatype.plexus.build.incremental.BuildContext;
+
+abstract class AbstractGeneratorTask implements Callable<GeneratorResult> {
+
+    abstract void setBuildContext(BuildContext buildContext);
+
+    abstract void initialize(MavenProject project, ContextHolder context);
+
+    abstract Optional<ImportResolutionMode> suggestedImportResolutionMode();
+
+    abstract boolean isAcceptableImportResolutionMode(ImportResolutionMode mode);
+}
