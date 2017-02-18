@@ -13,8 +13,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * An SPI-level interface to find the schema source for a particular YANG module, as packaged in the final artifact.
  * The module must be part of the current resolution context.
+ *
+ * @deprecated Use {@link org.opendaylight.yangtools.plugin.generator.api.ModuleResourceResolver} instead.
  */
 @Beta
+@Deprecated
 @FunctionalInterface
 @SuppressFBWarnings(value = "NM_SAME_SIMPLE_NAME_AS_INTERFACE", justification = "Migration to new place")
 public interface ModuleResourceResolver extends org.opendaylight.yangtools.plugin.generator.api.ModuleResourceResolver {
