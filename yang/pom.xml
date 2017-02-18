@@ -34,13 +34,16 @@
         <module>yang-data-codec-binfmt</module>
         <module>yang-data-codec-gson</module>
         <module>yang-data-codec-xml</module>
-        <module>yang-maven-plugin</module>
-        <module>yang-maven-plugin-it</module>
-        <module>yang-maven-plugin-spi</module>
         <module>yang-model-api</module>
         <module>yang-model-export</module>
         <module>yang-model-util</module>
         <module>yang-model-util-ut</module>
+
+        <!-- Code Generation and build plugins -->
+        <module>plugin-generator-api</module>
+        <module>yang-maven-plugin</module>
+        <module>yang-maven-plugin-spi</module>
+        <module>yang-maven-plugin-it</module>
 
         <!-- YANG XPath API and implementation -->
         <module>yang-xpath-api</module>
