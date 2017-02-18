@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Maps;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -18,11 +17,11 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -223,7 +222,7 @@ class YangToSourcesProcessor {
     }
 
     private static List<InputStream> toStreamsWithoutDuplicates(final List<YangSourceFromDependency> list) throws IOException {
-        ConcurrentMap<String, YangSourceFromDependency> byContent = Maps.newConcurrentMap();
+        final Map<String, YangSourceFromDependency> byContent = new HashMap<>();
 
         for (YangSourceFromDependency yangFromDependency : list) {
             try (InputStream dataStream = yangFromDependency.openStream()) {
@@ -300,7 +299,7 @@ class YangToSourcesProcessor {
             return;
         }
 
-        Map<String, String> thrown = Maps.newHashMap();
+        final Map<String, String> thrown = new HashMap<>();
         for (CodeGeneratorArg codeGenerator : codeGenerators) {
             try {
                 generateSourcesWithOneGenerator(context, codeGenerator);
