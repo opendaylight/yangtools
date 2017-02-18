@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang2sources.plugin;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.io.CharStreams;
 import java.io.Closeable;
@@ -24,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.model.Resource;
@@ -38,9 +38,7 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.ContextHolder;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.YangsInZipsResult;
-import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
-import org.opendaylight.yangtools.yang2sources.spi.BuildContextAware;
-import org.opendaylight.yangtools.yang2sources.spi.MavenProjectAware;
+import org.opendaylight.yangtools.yang2sources.spi.FileGeneratorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.plexus.build.incremental.BuildContext;
@@ -298,20 +296,37 @@ class YangToSourcesProcessor {
      * Call generate on every generator from plugin configuration
      */
     private void generateSources(final ContextHolder context) throws MojoFailureException {
-        if (codeGenerators.size() == 0) {
+        final Collection<AbstractGeneratorTask> tasks = new ArrayList<>();
+
+        for (CodeGeneratorArg arg : codeGenerators) {
+            tasks.add(CodeGeneratorTask.create(arg));
+        }
+        for (FileGeneratorFactory f : ServiceLoader.load(FileGeneratorFactory.class)) {
+            tasks.add(new FileGeneratorTask(f.newFileGenerator()));
+        }
+        if (tasks.size() == 0) {
             LOG.warn("{} No code generators provided", LOG_PREFIX);
             return;
         }
 
-        final Map<String, String> thrown = new HashMap<>();
-        for (CodeGeneratorArg codeGenerator : codeGenerators) {
+        LOG.info("{} Initializing {} generators", LOG_PREFIX, tasks.size());
+        for (AbstractGeneratorTask t : tasks) {
+            LOG.debug("{}: Initializing {}", LOG_PREFIX, t);
+            t.setBuildContext(buildContext);
+            t.initialize(project, context);
+        }
+
+        LOG.info("{} starting code generation", LOG_PREFIX);
+        final Map<AbstractGeneratorTask, String> thrown = new HashMap<>();
+        for (AbstractGeneratorTask t : tasks) {
+            final GeneratorResult r;
             try {
-                generateSourcesWithOneGenerator(context, codeGenerator);
+                r = t.call();
             } catch (Exception e) {
                 // try other generators, exception will be thrown after
-                LOG.error("{} Unable to generate sources with {} generator", LOG_PREFIX, codeGenerator
-                        .getCodeGeneratorClass(), e);
-                thrown.put(codeGenerator.getCodeGeneratorClass(), e.getClass().getCanonicalName());
+                LOG.error("{} Unable to generate sources with {}", LOG_PREFIX, t, e);
+                thrown.put(t, e.getClass().getCanonicalName());
+
             }
         }
 
@@ -320,61 +335,5 @@ class YangToSourcesProcessor {
             LOG.error("{}" + message + "{}", LOG_PREFIX, thrown.toString());
             throw new MojoFailureException(LOG_PREFIX + message + thrown.toString());
         }
-    }
-
-    /**
-     * Instantiate generator from class and call required method
-     */
-    private void generateSourcesWithOneGenerator(final ContextHolder context, final CodeGeneratorArg codeGeneratorCfg)
-            throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
-
-        codeGeneratorCfg.check();
-
-        BasicCodeGenerator g = getInstance(codeGeneratorCfg.getCodeGeneratorClass(), BasicCodeGenerator.class);
-        LOG.info("{} Code generator instantiated from {}", LOG_PREFIX, codeGeneratorCfg.getCodeGeneratorClass());
-
-        final File outputDir = codeGeneratorCfg.getOutputBaseDir(project);
-
-        if (outputDir == null) {
-            throw new NullPointerException("outputBaseDir is null. Please provide a valid outputBaseDir value in the " +
-                    "pom.xml");
-        }
-
-        project.addCompileSourceRoot(outputDir.getAbsolutePath());
-
-        LOG.info("{} Sources will be generated to {}", LOG_PREFIX, outputDir);
-        LOG.debug("{} Project root dir is {}", LOG_PREFIX, project.getBasedir());
-        LOG.debug("{} Additional configuration picked up for : {}: {}", LOG_PREFIX, codeGeneratorCfg
-                        .getCodeGeneratorClass(), codeGeneratorCfg.getAdditionalConfiguration());
-
-        if (g instanceof BuildContextAware) {
-            ((BuildContextAware)g).setBuildContext(buildContext);
-        }
-        if (g instanceof MavenProjectAware) {
-            ((MavenProjectAware)g).setMavenProject(project);
-        }
-        g.setAdditionalConfig(codeGeneratorCfg.getAdditionalConfiguration());
-        File resourceBaseDir = codeGeneratorCfg.getResourceBaseDir(project);
-
-        YangProvider.setResource(resourceBaseDir, project);
-        g.setResourceBaseDir(resourceBaseDir);
-        LOG.debug("{} Folder: {} marked as resources for generator: {}", LOG_PREFIX, resourceBaseDir,
-                codeGeneratorCfg.getCodeGeneratorClass());
-
-        Collection<File> generated = g.generateSources(context.getContext(), outputDir, context.getYangModules());
-
-        LOG.info("{} Sources generated by {}: {}", LOG_PREFIX, codeGeneratorCfg.getCodeGeneratorClass(), generated);
-    }
-
-    /**
-     * Instantiate object from fully qualified class name
-     */
-    private static <T> T getInstance(final String codeGeneratorClass, final Class<T> baseType) throws
-            ClassNotFoundException, InstantiationException, IllegalAccessException {
-        final Class<?> clazz = Class.forName(codeGeneratorClass);
-
-        Preconditions.checkArgument(baseType.isAssignableFrom(clazz), "Code generator %s has to implement ", clazz,
-            baseType);
-        return baseType.cast(clazz.newInstance());
     }
 }
