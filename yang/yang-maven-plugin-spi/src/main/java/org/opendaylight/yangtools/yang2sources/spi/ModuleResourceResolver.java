@@ -12,8 +12,11 @@ import com.google.common.annotations.Beta;
 /**
  * An SPI-level interface to find the schema source for a particular YANG module, as packaged in the final artifact.
  * The module must be part of the current resolution context.
+ *
+ * @deprecated Use {@link org.opendaylight.yangtools.plugin.generator.api.ModuleResourceResolver} instead.
  */
 @Beta
+@Deprecated
 @FunctionalInterface
 public interface ModuleResourceResolver extends org.opendaylight.yangtools.plugin.generator.api.ModuleResourceResolver {
 
