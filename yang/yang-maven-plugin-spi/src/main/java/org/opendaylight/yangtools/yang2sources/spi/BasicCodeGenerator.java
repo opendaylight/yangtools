@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.plugin.generator.api.FileGenerator;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
@@ -24,13 +26,28 @@ public interface BasicCodeGenerator {
          * Standard, RFC6020 and RFC7950 compliant mode. Imports are satisfied by exact revision match (if specified),
          * or by latest available revision.
          */
-        REVISION_EXACT_OR_LATEST,
+        REVISION_EXACT_OR_LATEST(FileGenerator.ImportResolutionMode.REVISION_EXACT_OR_LATEST),
         /**
          * Semantic version based mode. Imports which specify a semantic version (via the OpenConfig extension) will
          * be satisfied by module which exports the latest compatible revision. Imports which do not specify semantic
          * version will be resolved just as they would be via {@link #REVISION_EXACT_OR_LATEST}.
          */
-        SEMVER_LATEST,
+        SEMVER_LATEST(FileGenerator.ImportResolutionMode.SEMVER_LATEST);
+
+        private final FileGenerator.@NonNull ImportResolutionMode fileGeneratorMode;
+
+        ImportResolutionMode(final FileGenerator.@NonNull ImportResolutionMode fileGeneratorMode) {
+            this.fileGeneratorMode = fileGeneratorMode;
+        }
+
+        /**
+         * Return {@link FileGenerator.ImportResolutionMode} equivalent of this mode.
+         *
+         * @return {@link FileGenerator.ImportResolutionMode} equivalent of this mode
+         */
+        public final FileGenerator.@NonNull ImportResolutionMode toFileGeneratorMode() {
+            return fileGeneratorMode;
+        }
     }
 
     /**

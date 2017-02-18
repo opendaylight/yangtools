@@ -32,6 +32,10 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>plugin-generator-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-common</artifactId>
         </dependency>
         <dependency>
@@ -376,7 +380,7 @@
                         </group>
                         <group>
                             <title>yang-maven-plugin codegen interface</title>
-                            <packages>org.opendaylight.yangtools.yang2sources.spi*</packages>
+                            <packages>org.opendaylight.yangtools.plugin.generator.api*:org.opendaylight.yangtools.yang2sources.spi*</packages>
                         </group>
                         <group>
                             <title>Common YANG parser</title>
