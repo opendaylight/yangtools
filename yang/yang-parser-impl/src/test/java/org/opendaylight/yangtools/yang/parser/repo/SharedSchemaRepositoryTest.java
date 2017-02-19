@@ -333,14 +333,14 @@ public class SharedSchemaRepositoryTest {
 
     static SettableSchemaProvider<ASTSchemaSource> getRemoteYangSourceProviderFromResource(final String resourceName)
             throws Exception {
-        final ResourceYangSource yangSource = new ResourceYangSource(resourceName);
+        final ResourceYangTextSchemaSource yangSource = ResourceYangTextSchemaSource.create(resourceName);
         return SettableSchemaProvider.createRemote(TextToASTTransformer.transformText(yangSource),
             ASTSchemaSource.class);
     }
 
     static SettableSchemaProvider<ASTSchemaSource> getImmediateYangSourceProviderFromResource(final String resourceName)
             throws Exception {
-        final ResourceYangSource yangSource = new ResourceYangSource(resourceName);
+        final ResourceYangTextSchemaSource yangSource = ResourceYangTextSchemaSource.create(resourceName);
         return SettableSchemaProvider.createImmediate(TextToASTTransformer.transformText(yangSource),
             ASTSchemaSource.class);
     }

@@ -15,11 +15,9 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map.Entry;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangNames;
 
@@ -36,12 +34,38 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
     }
 
     public static SourceIdentifier identifierFromFilename(final String name) {
-        checkArgument(name.endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION), "Filename %s does not have a .yang extension",
-            name);
+        checkArgument(name.endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION),
+            "Filename %s does not have a .yang extension", name);
 
         final String baseName = name.substring(0, name.length() - YangConstants.RFC6020_YANG_FILE_EXTENSION.length());
         final Entry<String, String> parsed = YangNames.parseFilename(baseName);
         return RevisionSourceIdentifier.create(parsed.getKey(), Optional.fromNullable(parsed.getValue()));
+    }
+
+    /**
+     * Create a new YangTextSchemaSource with a specific source identifier and backed
+     * by ByteSource, which provides the actual InputStreams.
+     *
+     * @param identifier SourceIdentifier of the resulting schema source
+     * @param delegate Backing ByteSource instance
+     * @return A new YangTextSchemaSource
+     */
+    public static YangTextSchemaSource delegateForByteSource(final SourceIdentifier identifier,
+            final ByteSource delegate) {
+        return new DelegatedYangTextSchemaSource(identifier, delegate);
+    }
+
+    /**
+     * Create a new YangTextSchemaSource with {@link SourceIdentifier} derived from a supplied filename and backed
+     * by ByteSource, which provides the actual InputStreams.
+     *
+     * @param fileName File name
+     * @param delegate Backing ByteSource instance
+     * @return A new YangTextSchemaSource
+     * @throws IllegalArgumentException if the file name has invalid format
+     */
+    public static YangTextSchemaSource delegateForByteSource(final String fileName, final ByteSource delegate) {
+        return new DelegatedYangTextSchemaSource(identifierFromFilename(fileName), delegate);
     }
 
     /**
@@ -76,40 +100,4 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @return ToStringHelper supplied as input argument.
      */
     protected abstract ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper);
-
-    /**
-     * Create a new YangTextSchemaSource with a specific source identifier and backed
-     * by ByteSource, which provides the actual InputStreams.
-     *
-     * @param identifier SourceIdentifier of the resulting schema source
-     * @param delegate Backing ByteSource instance
-     * @return A new YangTextSchemaSource
-     */
-    public static YangTextSchemaSource delegateForByteSource(final SourceIdentifier identifier, final ByteSource delegate) {
-        return new DelegatedYangTextSchemaSource(identifier, delegate);
-    }
-
-    private static final class DelegatedYangTextSchemaSource extends YangTextSchemaSource implements Delegator<ByteSource> {
-        private final ByteSource delegate;
-
-        private DelegatedYangTextSchemaSource(final SourceIdentifier identifier, final ByteSource delegate) {
-            super(identifier);
-            this.delegate = Preconditions.checkNotNull(delegate);
-        }
-
-        @Override
-        public ByteSource getDelegate() {
-            return delegate;
-        }
-
-        @Override
-        public InputStream openStream() throws IOException {
-            return delegate.openStream();
-        }
-
-        @Override
-        protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-            return toStringHelper.add("delegate", delegate);
-        }
-    }
 }

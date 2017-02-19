@@ -96,7 +96,7 @@ public class SemVerSharedSchemaRepositoryTest {
 
     static SettableSchemaProvider<ASTSchemaSource> getImmediateYangSourceProviderFromResource(final String resourceName)
             throws Exception {
-        final ResourceYangSource yangSource = new ResourceYangSource(resourceName);
+        final ResourceYangTextSchemaSource yangSource = ResourceYangTextSchemaSource.create(resourceName);
         return SettableSchemaProvider.createImmediate(TextToASTTransformer.transformText(yangSource),
             ASTSchemaSource.class);
     }

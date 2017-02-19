@@ -111,7 +111,7 @@ public class MultipleRevImportBug6875Test {
 
     private static SettableSchemaProvider<ASTSchemaSource> getSourceProvider(final String resourceName)
             throws Exception {
-        final ResourceYangSource yangSource = new ResourceYangSource(resourceName);
+        final ResourceYangTextSchemaSource yangSource = ResourceYangTextSchemaSource.create(resourceName);
         return SettableSchemaProvider.createImmediate(TextToASTTransformer.transformText(yangSource),
             ASTSchemaSource.class);
     }
