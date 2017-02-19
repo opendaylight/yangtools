@@ -40,9 +40,9 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.ContextHolder;
-import org.opendaylight.yangtools.yang2sources.plugin.Util.YangsInZipsResult;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UtilTest {
@@ -111,10 +111,9 @@ public class UtilTest {
         final MavenProject project = Mockito.mock(MavenProject.class);
         prepareProject(project);
 
-        final YangsInZipsResult yangzip = Util.findYangFilesInDependenciesAsStream(project);
+        final List<YangTextSchemaSource> yangzip = Util.findYangFilesInDependenciesAsStream(project);
         Assert.assertNotNull(yangzip);
-        Assert.assertEquals(2, yangzip.getYangStreams().size());
-        yangzip.close();
+        Assert.assertEquals(2, yangzip.size());
     }
 
     @Test
