@@ -22,6 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
@@ -111,6 +113,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                     try {
                         copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
                         resolveUsesNode(usesNode, targetNodeStmtCtx);
+                        processIfFeatureAndWhenOnListKeys(usesNode);
                     } catch (final SourceException e) {
                         LOG.warn(e.getMessage(), e);
                         throw e;
@@ -123,6 +126,35 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                             usesNode.getStatementSourceReference(), "Grouping '%s' was not resolved.", groupingName);
                     throw new InferenceException("Unknown error occurred.", usesNode.getStatementSourceReference());
                 }
+            });
+        }
+
+        private static void processIfFeatureAndWhenOnListKeys(
+                Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode) {
+            if (YangVersion.VERSION_1_1.equals(usesNode.getRootVersion())
+                    && StmtContextUtils.hasParentOfType(usesNode, YangStmtMapping.LIST)) {
+                final StmtContext<?, ?, ?> parentCtx = usesNode.getParentContext();
+                final StmtContext<Collection<SchemaNodeIdentifier>, ?, ?> keyStmtCtx =
+                        StmtContextUtils.findFirstDeclaredSubstatement(parentCtx, KeyStatement.class);
+
+                if (keyStmtCtx != null) {
+                    StmtContextUtils.findAllEffectiveSubstatements(parentCtx, LeafStatement.class).forEach(
+                            leafStatement -> keyStmtCtx.getStatementArgument().forEach(keyIdentifier -> {
+                        if (leafStatement.getStatementArgument().equals(keyIdentifier.getLastComponent())) {
+                            disallowIfFeatureAndWhenOnListKeys(leafStatement);
+                        }
+                    }));
+                }
+            }
+        }
+
+        private static void disallowIfFeatureAndWhenOnListKeys(final StmtContext<?, ?, ?> ctx) {
+            ctx.effectiveSubstatements().forEach(leafSubstatement -> {
+                final StatementDefinition statementDef = leafSubstatement.getPublicDefinition();
+                SourceException.throwIf(YangStmtMapping.IF_FEATURE.equals(statementDef)
+                                || YangStmtMapping.WHEN.equals(statementDef), ctx.getStatementSourceReference(),
+                        "%s statement is not allowed in %s leaf statement which is specified as a list key.",
+                        statementDef.getStatementName(), ctx.getStatementArgument());
             });
         }
 

@@ -1,0 +1,70 @@
+module correct-list-keys-test {
+    yang-version 1;
+    namespace "correct-list-keys-test";
+    prefix "test";
+
+    list valid-list-a {
+        leaf a1 {
+            type string;
+        }
+        leaf a2 {
+            when "../a1 = 'key-a1'";
+            type int32;
+        }
+        key "a1 a2";
+    }
+
+    list valid-list-b {
+        key "b";
+        leaf b {
+            if-feature feature-b;
+            type string;
+        }
+    }
+
+    list valid-list-c {
+        key "aug_leaf_c";
+    }
+
+    augment /valid-list-c {
+        leaf aug_leaf_c {
+            if-feature feature-c;
+            type string;
+        }
+    }
+
+    list valid-list-c1 {
+        key "aug_leaf_c1";
+        leaf c1 {
+            type string;
+        }
+    }
+
+    augment /valid-list-c1 {
+        leaf aug_leaf_c1 {
+            when "/test/valid-list-c1/c1 = 'test'";
+            type string;
+        }
+    }
+
+    grouping d {
+        leaf d1 {
+            type int32;
+            if-feature feature-d;
+        }
+        leaf d2 {
+            when "../d1 = '2'";
+            type string;
+        }
+    }
+
+    list valid-list-d1 {
+        key d1;
+        uses test:d;
+    }
+
+    list valid-list-d2 {
+        key d2;
+        uses test:d;
+    }
+}

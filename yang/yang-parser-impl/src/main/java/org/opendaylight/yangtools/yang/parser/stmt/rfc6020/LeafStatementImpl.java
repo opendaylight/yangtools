@@ -11,16 +11,20 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
@@ -30,6 +34,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.LeafEffectiveStatementImpl;
 
 public class LeafStatementImpl extends AbstractDeclaredStatement<QName> implements LeafStatement {
@@ -81,6 +87,38 @@ public class LeafStatementImpl extends AbstractDeclaredStatement<QName> implemen
         @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(
+                final StmtContext.Mutable<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
+            super.onFullDefinitionDeclared(ctx);
+
+            // check whether this leaf is a list key - if it is, it should not contain an if-feature or a when statement
+            // if the module version is YANG 1.1
+            if (YangVersion.VERSION_1_1.equals(ctx.getRootVersion())
+                    && StmtContextUtils.hasParentOfType(ctx, YangStmtMapping.LIST)) {
+                final StmtContext<?, ?, ?> parentCtx = ctx.getParentContext();
+                final StmtContext<Collection<SchemaNodeIdentifier>, ?, ?> keyStmtCtx =
+                        StmtContextUtils.findFirstDeclaredSubstatement(parentCtx, KeyStatement.class);
+                if (keyStmtCtx != null) {
+                    keyStmtCtx.getStatementArgument().forEach(keyIdentifier -> {
+                        if (ctx.getStatementArgument().equals(keyIdentifier.getLastComponent())) {
+                            disallowIfFeatureAndWhenOnListKeys(ctx);
+                        }
+                    });
+                }
+            }
+        }
+
+        private static void disallowIfFeatureAndWhenOnListKeys(final StmtContext<?, ?, ?> ctx) {
+            ctx.declaredSubstatements().forEach(leafSubstatement -> {
+                final StatementDefinition statementDef = leafSubstatement.getPublicDefinition();
+                SourceException.throwIf(YangStmtMapping.IF_FEATURE.equals(statementDef)
+                                || YangStmtMapping.WHEN.equals(statementDef), ctx.getStatementSourceReference(),
+                        "%s statement is not allowed in %s leaf statement which is specified as a list key.",
+                        statementDef.getStatementName(), ctx.getStatementArgument());
+            });
         }
     }
 
