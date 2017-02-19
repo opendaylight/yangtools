@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 
 /**
  * Base class of YANG Schema source identifiers.
@@ -186,7 +187,7 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
             filename.append('@');
             filename.append(revision.get());
         }
-        filename.append(".yang");
+        filename.append(YangConstants.RFC6020_YANG_FILE_EXTENSION);
         return filename.toString();
     }
 }
