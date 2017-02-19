@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.repo.api;
 
 import com.google.common.annotations.Beta;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -52,4 +53,14 @@ public interface SchemaSourceRepresentation extends Identifiable<SourceIdentifie
      * @return The type of representation.
      */
     @Nonnull Class<? extends SchemaSourceRepresentation> getType();
+
+    /**
+     * Return the symbolic name, if available. This name has no semantic meaning beyond being useful for debugging
+     * by humans.
+     *
+     * @return Symbolic name, if available
+     */
+    default Optional<String> getSymbolicName() {
+        return Optional.empty();
+    }
 }

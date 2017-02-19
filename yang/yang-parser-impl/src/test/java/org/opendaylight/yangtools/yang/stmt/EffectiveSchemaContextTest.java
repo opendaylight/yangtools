@@ -14,14 +14,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.collect.Lists;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
@@ -45,26 +43,17 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSc
 public class EffectiveSchemaContextTest {
 
     @Test
-    public void testEffectiveSchemaContext() throws ReactorException, ParseException, FileNotFoundException,
-            URISyntaxException {
+    public void testEffectiveSchemaContext() throws ReactorException, ParseException, URISyntaxException, IOException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
 
-        final File yangFile1 = new File(getClass().getResource("/effective-schema-context-test/foo.yang").toURI());
-        assertNotNull(yangFile1);
-        final File yangFile2 = new File(getClass().getResource("/effective-schema-context-test/bar.yang").toURI());
-        assertNotNull(yangFile2);
-        final File yangFile3 = new File(getClass().getResource("/effective-schema-context-test/baz.yang").toURI());
-        assertNotNull(yangFile3);
+        final YangTextSchemaSource source1 = YangTextSchemaSource.forResource(
+            "/effective-schema-context-test/foo.yang");
+        final YangTextSchemaSource source2 = YangTextSchemaSource.forResource(
+            "/effective-schema-context-test/bar.yang");
+        final YangTextSchemaSource source3 = YangTextSchemaSource.forResource(
+            "/effective-schema-context-test/baz.yang");
 
-        final InputStream yangInputStream1 = new FileInputStream(yangFile1);
-        assertNotNull(yangInputStream1);
-        final InputStream yangInputStream2 = new FileInputStream(yangFile2);
-        assertNotNull(yangInputStream2);
-        final InputStream yangInputStream3 = new FileInputStream(yangFile3);
-        assertNotNull(yangInputStream3);
-
-        final SchemaContext schemaContext = reactor.buildEffective(Lists.newArrayList(
-                yangInputStream1, yangInputStream2, yangInputStream3));
+        final SchemaContext schemaContext = reactor.buildEffective(Arrays.asList(source1, source2, source3));
         assertNotNull(schemaContext);
 
         final Set<DataSchemaNode> dataDefinitions = schemaContext.getDataDefinitions();

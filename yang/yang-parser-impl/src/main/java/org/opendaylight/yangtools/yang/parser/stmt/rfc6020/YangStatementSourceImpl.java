@@ -8,6 +8,7 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import java.io.File;
@@ -26,6 +27,7 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.impl.YangStatementParserListenerImpl;
 import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangErrorListener;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
@@ -33,17 +35,13 @@ import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinit
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.opendaylight.yangtools.yang.parser.util.NamedInputStream;
 
 /**
  * This class represents implementation of StatementStreamSource
  * in order to emit YANG statements using supplied StatementWriter.
  */
 public final class YangStatementSourceImpl implements StatementStreamSource {
-
-    private static final Logger LOG = LoggerFactory.getLogger(YangStatementSourceImpl.class);
-
     private static final ParseTreeListener MAKE_IMMUTABLE_LISTENER = new ParseTreeListener() {
         @Override
         public void enterEveryRule(final ParserRuleContext ctx) {
@@ -66,13 +64,22 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
         }
     };
 
-    private YangStatementParserListenerImpl yangStatementModelParser;
-    private YangStatementParser.StatementContext statementContext;
-    private String sourceName;
+    private final YangStatementParserListenerImpl yangStatementModelParser;
+    private final StatementContext statementContext;
+    private final String sourceName;
+
+    private YangStatementSourceImpl(final YangStatementParserListenerImpl parser, final StatementContext context,
+            final String sourceName) {
+        this.yangStatementModelParser = Preconditions.checkNotNull(parser);
+        this.statementContext = Preconditions.checkNotNull(context);
+        this.sourceName = sourceName;
+    }
 
     public YangStatementSourceImpl(final String fileName, final boolean isAbsolute) {
         try {
-            statementContext = parseYangSource(loadFile(fileName, isAbsolute));
+            final NamedFileInputStream is = loadFile(fileName, isAbsolute);
+            sourceName = is.toString();
+            statementContext = parseYangSource(is);
             yangStatementModelParser = new YangStatementParserListenerImpl(sourceName);
         } catch (IOException | URISyntaxException | YangSyntaxErrorException e) {
             throw Throwables.propagate(e);
@@ -81,6 +88,7 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
 
     public YangStatementSourceImpl(final InputStream inputStream) {
         try {
+            sourceName = inputStream instanceof NamedInputStream ? inputStream.toString() : null;
             statementContext = parseYangSource(inputStream);
             yangStatementModelParser = new YangStatementParserListenerImpl(sourceName);
         } catch (IOException | YangSyntaxErrorException e) {
@@ -88,11 +96,23 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
         }
     }
 
-    public YangStatementSourceImpl(final SourceIdentifier identifier,
-            final YangStatementParser.StatementContext statementContext) {
+    public YangStatementSourceImpl(final SourceIdentifier identifier, final StatementContext statementContext) {
         this.statementContext = statementContext;
         this.sourceName = identifier.getName();
         yangStatementModelParser = new YangStatementParserListenerImpl(sourceName);
+    }
+
+    public static YangStatementSourceImpl create(final YangTextSchemaSource source) throws IOException,
+            YangSyntaxErrorException {
+        final StatementContext context;
+        try (final InputStream stream = source.openStream()) {
+            context = parseYangSource(source.openStream());
+        }
+
+        final String sourceName = source.getSymbolicName().orElse(null);
+        final YangStatementParserListenerImpl parser = new YangStatementParserListenerImpl(sourceName);
+
+        return new YangStatementSourceImpl(parser, context, sourceName);
     }
 
     @Override
@@ -129,7 +149,7 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
                 : new NamedFileInputStream(new File(getClass().getResource(fileName).toURI()), fileName);
     }
 
-    private YangStatementParser.StatementContext parseYangSource(final InputStream stream) throws IOException,
+    private static StatementContext parseYangSource(final InputStream stream) throws IOException,
             YangSyntaxErrorException {
         final YangStatementLexer lexer = new YangStatementLexer(new ANTLRInputStream(stream));
         final CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -139,12 +159,6 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
 
         final YangErrorListener errorListener = new YangErrorListener();
         parser.addErrorListener(errorListener);
-
-        if (stream instanceof NamedFileInputStream) {
-            sourceName = stream.toString();
-        } else {
-            sourceName = null;
-        }
 
         final StatementContext result = parser.statement();
         errorListener.validate();
@@ -157,7 +171,7 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
         return result;
     }
 
-    public YangStatementParser.StatementContext getYangAST() {
+    public StatementContext getYangAST() {
         return statementContext;
     }
 
