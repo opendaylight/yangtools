@@ -7,12 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
+import static org.opendaylight.yangtools.yang.model.api.Module.DEFAULT_SEMANTIC_VERSION;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
+import java.util.Optional;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
@@ -33,24 +36,31 @@ import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
 @Beta
 public final class ASTSchemaSource implements SchemaSourceRepresentation {
     @Deprecated
-    public static final Function<ASTSchemaSource, SourceIdentifier> GET_IDENTIFIER = ASTSchemaSource::getIdentifier;
+    public static final Function<ASTSchemaSource, SourceIdentifier> GET_IDENTIFIER =
+        ASTSchemaSource::getIdentifier;
     @Deprecated
-    public static final Function<ASTSchemaSource, SourceIdentifier> GET_SEMVER_IDENTIFIER = ASTSchemaSource::getSemVerIdentifier;
+    public static final Function<ASTSchemaSource, SourceIdentifier> GET_SEMVER_IDENTIFIER =
+        ASTSchemaSource::getSemVerIdentifier;
     @Deprecated
-    public static final Function<ASTSchemaSource, YangModelDependencyInfo> GET_DEPINFO = ASTSchemaSource::getDependencyInformation;
+    public static final Function<ASTSchemaSource, YangModelDependencyInfo> GET_DEPINFO =
+        ASTSchemaSource::getDependencyInformation;
     @Deprecated
     public static final Function<ASTSchemaSource, ParserRuleContext> GET_AST = ASTSchemaSource::getAST;
 
     private final YangModelDependencyInfo depInfo;
+    private final SemVerSourceIdentifier semVerId;
     private final ParserRuleContext tree;
     private final SourceIdentifier id;
-    private final SemVerSourceIdentifier semVerId;
+    private final String symbolicName;
 
-    private ASTSchemaSource(@Nonnull final SourceIdentifier id, @Nonnull final SemVerSourceIdentifier semVerId, @Nonnull final ParserRuleContext tree, @Nonnull final YangModelDependencyInfo depInfo) {
+    private ASTSchemaSource(@Nonnull final SourceIdentifier id, @Nonnull final SemVerSourceIdentifier semVerId,
+            @Nonnull final ParserRuleContext tree, @Nonnull final YangModelDependencyInfo depInfo,
+            @Nullable final String symbolicName) {
         this.depInfo = Preconditions.checkNotNull(depInfo);
         this.tree = Preconditions.checkNotNull(tree);
         this.id = Preconditions.checkNotNull(id);
         this.semVerId = Preconditions.checkNotNull(semVerId);
+        this.symbolicName = symbolicName;
     }
 
     /**
@@ -62,25 +72,26 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
      * @return A new representation instance.
      * @throws YangSyntaxErrorException if we fail to extract dependency information.
      */
-    public static ASTSchemaSource create(@Nonnull final String name, @Nonnull final ParserRuleContext tree) throws YangSyntaxErrorException {
+    public static ASTSchemaSource create(@Nonnull final String name, @Nonnull final ParserRuleContext tree)
+            throws YangSyntaxErrorException {
         final YangModelDependencyInfo depInfo = YangModelDependencyInfo.fromAST(name, tree);
         final SourceIdentifier id = getSourceId(depInfo);
         final SemVerSourceIdentifier semVerId = getSemVerSourceId(depInfo);
-        return new ASTSchemaSource(id, semVerId, tree, depInfo);
+        return new ASTSchemaSource(id, semVerId, tree, depInfo, null);
     }
 
     private static SourceIdentifier getSourceId(final YangModelDependencyInfo depInfo) {
         final String name = depInfo.getName();
-        return depInfo.getFormattedRevision() == null
-                ? RevisionSourceIdentifier.create(name)
+        return depInfo.getFormattedRevision() == null ? RevisionSourceIdentifier.create(name)
                 : RevisionSourceIdentifier.create(name, depInfo.getFormattedRevision());
     }
 
     private static SemVerSourceIdentifier getSemVerSourceId(final YangModelDependencyInfo depInfo) {
-        return depInfo.getFormattedRevision() == null ? SemVerSourceIdentifier.create(depInfo.getName(), depInfo
-                .getSemanticVersion().or(Module.DEFAULT_SEMANTIC_VERSION)) : SemVerSourceIdentifier.create(
-                depInfo.getName(), depInfo.getFormattedRevision(),
-                depInfo.getSemanticVersion().or(Module.DEFAULT_SEMANTIC_VERSION));
+        return depInfo.getFormattedRevision() == null
+                ? SemVerSourceIdentifier.create(depInfo.getName(),
+                    depInfo.getSemanticVersion().or(DEFAULT_SEMANTIC_VERSION))
+                        : SemVerSourceIdentifier.create(depInfo.getName(), depInfo.getFormattedRevision(),
+                            depInfo.getSemanticVersion().or(DEFAULT_SEMANTIC_VERSION));
     }
 
     /**
@@ -106,8 +117,8 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
     }
 
     /**
-     * Create a new instance of AST representation for a abstract syntax tree,
-     * performing minimal semantic analysis to acquire dependency information.
+     * Create a new instance of AST representation for a abstract syntax tree, performing minimal semantic analysis
+     * to acquire dependency information.
      *
      * @param identifier
      *            SourceIdentifier of yang schema source.
@@ -119,6 +130,31 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
      */
     public static ASTSchemaSource create(@Nonnull final SourceIdentifier identifier,
             @Nonnull final ParserRuleContext tree) throws YangSyntaxErrorException {
+        return create(identifier, null, tree);
+    }
+
+    /**
+     * Create a new instance of AST representation for a abstract syntax tree, performing minimal semantic analysis
+     * to acquire dependency information.
+     *
+     * @param symbolicName
+     *            Symbolic name
+     * @param identifier
+     *            SourceIdentifier of yang schema source.
+     * @param tree
+     *            ANTLR abstract syntax tree
+     * @return A new representation instance.
+     * @throws YangSyntaxErrorException
+     *             if we fail to extract dependency information.
+     */
+    public static ASTSchemaSource create(@Nonnull final String symbolicName, @Nonnull final SourceIdentifier identifier,
+            @Nonnull final ParserRuleContext tree) throws YangSyntaxErrorException {
+        return create(identifier, symbolicName, tree);
+    }
+
+    private static ASTSchemaSource create(@Nonnull final SourceIdentifier identifier,
+            @Nullable final String symbolicName, @Nonnull final ParserRuleContext tree)
+                    throws YangSyntaxErrorException {
         final YangModelDependencyInfo depInfo = YangModelDependencyInfo.fromAST(identifier.getName(), tree);
         final SourceIdentifier id = getSourceId(depInfo);
 
@@ -129,12 +165,18 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
             semVerId = getSemVerSourceId(depInfo);
         }
 
-        return new ASTSchemaSource(id, semVerId, tree, depInfo);
+        return new ASTSchemaSource(id, semVerId, tree, depInfo, symbolicName);
     }
+
 
     @Override
     public SourceIdentifier getIdentifier() {
         return id;
+    }
+
+    @Override
+    public Optional<String> getSymbolicName() {
+        return Optional.ofNullable(symbolicName);
     }
 
     public SemVerSourceIdentifier getSemVerIdentifier() {
