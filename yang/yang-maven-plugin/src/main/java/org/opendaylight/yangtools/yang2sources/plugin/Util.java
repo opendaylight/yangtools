@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -50,32 +48,6 @@ final class Util {
     static final String YANG_SUFFIX = "yang";
 
     private static final Logger LOG = LoggerFactory.getLogger(Util.class);
-    private static final int CACHE_SIZE = 10;
-    // Cache for listed directories and found yang files. Typically yang files
-    // are utilized twice. First: code is generated during generate-sources
-    // phase Second: yang files are copied as resources during
-    // generate-resources phase. This cache ensures that yang files are listed
-    // only once.
-    private static Map<File, Collection<File>> cache = Maps.newHashMapWithExpectedSize(CACHE_SIZE);
-
-    /**
-     * List files recursively and return as array of String paths. Use cache of
-     * size 1.
-     */
-    static Collection<File> listFiles(final File root) throws FileNotFoundException {
-        if (cache.get(root) != null) {
-            return cache.get(root);
-        }
-
-        if (!root.exists()) {
-            throw new FileNotFoundException(root.toString());
-        }
-
-        Collection<File> yangFiles = FileUtils.listFiles(root, new String[] { YANG_SUFFIX }, true);
-
-        toCache(root, yangFiles);
-        return yangFiles;
-    }
 
     static Collection<File> listFiles(final File root, final Collection<File> excludedFiles) throws FileNotFoundException {
         if (!root.exists()) {
@@ -98,12 +70,8 @@ final class Util {
         return result;
     }
 
-    private static void toCache(final File rootDir, final Collection<File> yangFiles) {
-        cache.put(rootDir, yangFiles);
-    }
-
     static List<File> getClassPath(final MavenProject project) {
-        List<File> dependencies = Lists.newArrayList();
+        List<File> dependencies = new ArrayList<>();
         for (Artifact element : project.getArtifacts()) {
             File asFile = element.getFile();
             if (isJar(asFile) || asFile.isDirectory()) {

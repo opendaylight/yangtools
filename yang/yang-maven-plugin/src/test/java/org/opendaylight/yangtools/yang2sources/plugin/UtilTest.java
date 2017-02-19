@@ -48,14 +48,6 @@ import org.opendaylight.yangtools.yang2sources.plugin.Util.YangsInZipsResult;
 public class UtilTest {
 
     @Test
-    public void testCache() throws Exception {
-        final String yang = new File(getClass().getResource("/yang/mock.yang").toURI()).getParent();
-        final Collection<File> files = Util.listFiles(new File(yang));
-        final Collection<File> files2 = Util.listFiles(new File(yang));
-        Assert.assertTrue(files == files2);
-    }
-
-    @Test
     public void getClassPathTest() {
         final MavenProject project = Mockito.mock(MavenProject.class);
         final File file = Mockito.mock(File.class);
