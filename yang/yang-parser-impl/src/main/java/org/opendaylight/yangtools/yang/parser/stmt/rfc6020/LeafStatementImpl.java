@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.LeafEffectiveStatementImpl;
 
 public class LeafStatementImpl extends AbstractDeclaredStatement<QName> implements LeafStatement {
@@ -81,6 +82,13 @@ public class LeafStatementImpl extends AbstractDeclaredStatement<QName> implemen
         @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(
+                final StmtContext.Mutable<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
+            super.onFullDefinitionDeclared(ctx);
+            StmtContextUtils.validateIfFeatureAndWhenOnListKeys(ctx);
         }
     }
 

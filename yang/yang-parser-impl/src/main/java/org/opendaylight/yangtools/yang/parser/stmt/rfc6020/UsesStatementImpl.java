@@ -111,6 +111,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                     try {
                         copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
                         resolveUsesNode(usesNode, targetNodeStmtCtx);
+                        StmtContextUtils.validateIfFeatureAndWhenOnListKeys(usesNode);
                     } catch (final SourceException e) {
                         LOG.warn(e.getMessage(), e);
                         throw e;
