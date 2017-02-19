@@ -9,8 +9,6 @@ package org.opendaylight.yangtools.yang.parser.repo;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -31,6 +29,7 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
@@ -105,12 +104,12 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
         final YangTextSchemaSource text;
         if (!parsedId.equals(providedId)) {
             if (!parsedId.getName().equals(providedId.getName())) {
-                LOG.info("Provided module name {} does not match actual text {}, corrected", providedId.toYangFilename(),
-                    parsedId.toYangFilename());
+                LOG.info("Provided module name {} does not match actual text {}, corrected",
+                    providedId.toYangFilename(), parsedId.toYangFilename());
             } else {
                 final String sourceRev = providedId.getRevision();
                 final String astRev = parsedId.getRevision();
-                if (sourceRev != null) {
+                if (sourceRev != null && !SourceIdentifier.NOT_PRESENT_FORMATTED_REVISION.equals(sourceRev)) {
                     if (!sourceRev.equals(astRev)) {
                         LOG.info("Provided module revision {} does not match actual text {}, corrected",
                             providedId.toYangFilename(), parsedId.toYangFilename());
@@ -160,7 +159,8 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
      * @throws SchemaSourceException When parsing encounters general error
      * @return a YangTextSchemaSourceRegistration for this URL
      */
-    public YangTextSchemaSourceRegistration registerSource(@Nonnull final URL url) throws SchemaSourceException, IOException, YangSyntaxErrorException {
+    public YangTextSchemaSourceRegistration registerSource(@Nonnull final URL url) throws SchemaSourceException,
+            IOException, YangSyntaxErrorException {
         checkArgument(url != null, "Supplied URL must not be null");
 
         final SourceIdentifier guessedId = RevisionSourceIdentifier.create(url.getFile(), Optional.absent());
@@ -194,7 +194,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
      * @return new schema context iif there is at least 1 yang file registered and
      *         new schema context was successfully built.
      */
-    public Optional<SchemaContext> getSchemaContext(StatementParserMode statementParserMode) {
+    public Optional<SchemaContext> getSchemaContext(final StatementParserMode statementParserMode) {
         final SchemaContextFactory factory = repository.createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
         Optional<SchemaContext> sc;
         Object v;
@@ -217,7 +217,8 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             } while (v != version);
 
             while (true) {
-                final CheckedFuture<SchemaContext, SchemaResolutionException> f = factory.createSchemaContext(sources, statementParserMode);
+                final CheckedFuture<SchemaContext, SchemaResolutionException> f = factory.createSchemaContext(sources,
+                    statementParserMode);
                 try {
                     sc = Optional.of(f.checkedGet());
                     break;
@@ -241,13 +242,14 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     }
 
     @Override
-    public synchronized CheckedFuture<YangTextSchemaSource, SchemaSourceException> getSource(final SourceIdentifier sourceIdentifier) {
+    public synchronized CheckedFuture<YangTextSchemaSource, SchemaSourceException> getSource(
+            final SourceIdentifier sourceIdentifier) {
         final Collection<YangTextSchemaSource> ret = texts.get(sourceIdentifier);
 
         LOG.debug("Lookup {} result {}", sourceIdentifier, ret);
         if (ret.isEmpty()) {
-            return Futures.immediateFailedCheckedFuture(
-                    new MissingSchemaSourceException("URL for " + sourceIdentifier + " not registered", sourceIdentifier));
+            return Futures.immediateFailedCheckedFuture(new MissingSchemaSourceException(
+                "URL for " + sourceIdentifier + " not registered", sourceIdentifier));
         }
 
         return Futures.immediateCheckedFuture(ret.iterator().next());
