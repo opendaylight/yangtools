@@ -18,7 +18,9 @@ import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
+import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
@@ -159,8 +161,16 @@ public class CrossSourceStatementReactor {
 
         public SchemaContext buildEffective(final Collection<ByteSource> yangByteSources) throws ReactorException,
                 IOException {
-            for (final ByteSource yangByteSource : yangByteSources) {
-                addSource(new YangStatementSourceImpl(yangByteSource.openStream()));
+            for (final ByteSource source : yangByteSources) {
+                if (source instanceof YangTextSchemaSource) {
+                    try {
+                        addSource(YangStatementSourceImpl.create((YangTextSchemaSource) source));
+                    } catch (YangSyntaxErrorException e) {
+                        throw new IOException("Source " + source + " failed to parse", e);
+                    }
+                } else {
+                    addSource(new YangStatementSourceImpl(source.openStream()));
+                }
             }
 
             return buildEffective();

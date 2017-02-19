@@ -14,13 +14,10 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.collect.Lists;
-import com.google.common.io.ByteSource;
-import com.google.common.io.Files;
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.ParseException;
+import java.util.Arrays;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
@@ -30,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
@@ -40,17 +38,13 @@ public class ConstraintDefinitionsTest {
     public void testConstraintDefinitions() throws ParseException, ReactorException, URISyntaxException, IOException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
 
-        final File yangFile = new File(getClass().getResource("/constraint-definitions-test/foo.yang").toURI());
-        assertNotNull(yangFile);
+        final YangTextSchemaSource source = YangTextSchemaSource.forResource("/constraint-definitions-test/foo.yang");
 
-        final ByteSource yangByteSource = Files.asByteSource(yangFile);
-        assertNotNull(yangByteSource);
-
-        final SchemaContext schemaContext = reactor.buildEffective(Lists.newArrayList(yangByteSource));
+        final SchemaContext schemaContext = reactor.buildEffective(Arrays.asList(source));
         assertNotNull(schemaContext);
 
-        final Module testModule = schemaContext.findModuleByName(
-                "foo", SimpleDateFormatUtil.getRevisionFormat().parse("2016-09-20"));
+        final Module testModule = schemaContext.findModuleByName( "foo",
+            SimpleDateFormatUtil.getRevisionFormat().parse("2016-09-20"));
         assertNotNull(testModule);
 
         final LeafSchemaNode mandatoryLeaf1 = (LeafSchemaNode) testModule.getDataChildByName(
