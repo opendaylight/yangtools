@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.model.repo.util.SchemaSourceTransformer;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangStatementStreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +40,7 @@ public final class TextToASTTransformer extends SchemaSourceTransformer<YangText
         @Override
         public CheckedFuture<ASTSchemaSource, SchemaSourceException> apply(@Nonnull final YangTextSchemaSource input)
                 throws IOException, YangSyntaxErrorException {
-            final YangStatementSourceImpl src = YangStatementSourceImpl.create(input);
+            final YangStatementStreamSource src = YangStatementStreamSource.create(input);
 
             final ParserRuleContext ctx = src.getYangAST();
             LOG.debug("Model {} parsed successfully", input);

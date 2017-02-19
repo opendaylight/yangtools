@@ -190,21 +190,14 @@ public abstract class YangModelDependencyInfo {
     }
 
     private static YangModelDependencyInfo parseAST(final StatementContext rootStatement) {
-        if (rootStatement
-                .keyword()
-                .getText()
-                .equals(YangStmtMapping.MODULE.getStatementName().getLocalName())) {
+        final String keyWordText = rootStatement.keyword().getText();
+        if (YangStmtMapping.MODULE.getStatementName().getLocalName().equals(keyWordText)) {
             return parseModuleContext(rootStatement);
-        } else if (rootStatement
-                .keyword()
-                .getText()
-                .equals(YangStmtMapping.SUBMODULE.getStatementName()
-                        .getLocalName())) {
+        }
+        if (YangStmtMapping.SUBMODULE.getStatementName().getLocalName().equals(keyWordText)) {
             return parseSubmoduleContext(rootStatement);
         }
-
-        throw new IllegalArgumentException(
-                "Root of parsed AST must be either module or submodule");
+        throw new IllegalArgumentException("Root of parsed AST must be either module or submodule");
     }
 
     /**
@@ -220,10 +213,8 @@ public abstract class YangModelDependencyInfo {
      * @throws IllegalArgumentException
      *             If input stream is not valid YANG stream
      */
-    public static YangModelDependencyInfo fromInputStream(
-            final InputStream yangStream) {
-        final StatementContext yangAST = new YangStatementSourceImpl(yangStream)
-                .getYangAST();
+    public static YangModelDependencyInfo fromInputStream(final InputStream yangStream) {
+        final StatementContext yangAST = new YangStatementSourceImpl(yangStream).getYangAST();
         return parseAST(yangAST);
     }
 
