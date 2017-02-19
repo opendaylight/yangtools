@@ -61,10 +61,10 @@ public class YangToSourcesPluginTestIT {
         try {
             setUp("test-parent/MissingYangInDep/", false);
         } catch (VerificationException e) {
-            assertVerificationException(
-                    e,
-                    "org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException: Imported module " +
-                    "[unknownDep] was not found.");
+            assertVerificationException(e,
+                    "SchemaResolutionException{unsatisfiedImports={RevisionSourceIdentifier"
+                    + " [name=private@2013-02-27]=[ModuleImportImpl"
+                    + " [name=unknownDep, revision=2013-02-27, semanticVersion=0.0.0]]}");
             return;
         }
 
