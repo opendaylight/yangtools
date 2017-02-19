@@ -17,7 +17,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,7 +41,6 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.ContextHolder;
-import org.opendaylight.yangtools.yang2sources.plugin.Util.YangsInZipsResult;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UtilTest {
@@ -104,27 +102,6 @@ public class UtilTest {
         Assert.assertEquals(1, artifacts.size());
         Assert.assertEquals(1, remoteRepos.size());
         Assert.assertEquals(1, listDepcy.size());
-    }
-
-    @Test
-    public void findYangFilesInDependenciesAsStream() throws Exception {
-        final MavenProject project = Mockito.mock(MavenProject.class);
-        prepareProject(project);
-
-        final YangsInZipsResult yangzip = Util.findYangFilesInDependenciesAsStream(project);
-        Assert.assertNotNull(yangzip);
-        Assert.assertEquals(2, yangzip.getYangStreams().size());
-        yangzip.close();
-    }
-
-    @Test
-    public void findYangFilesInDependencies() throws Exception {
-        final MavenProject project = Mockito.mock(MavenProject.class);
-        prepareProject(project);
-
-        final Collection<File> files = Util.findYangFilesInDependencies(project);
-        Assert.assertNotNull(files);
-        Assert.assertEquals(2, files.size());
     }
 
     @Test
