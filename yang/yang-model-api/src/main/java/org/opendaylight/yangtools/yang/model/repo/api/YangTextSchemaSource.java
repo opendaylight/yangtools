@@ -15,11 +15,12 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
-import java.io.IOException;
+import com.google.common.io.Resources;
+import java.io.File;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Map.Entry;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangNames;
 
@@ -36,8 +37,8 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
     }
 
     public static SourceIdentifier identifierFromFilename(final String name) {
-        checkArgument(name.endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION), "Filename %s does not have a .yang extension",
-            name);
+        checkArgument(name.endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION),
+            "Filename %s does not have a .yang extension", name);
 
         final String baseName = name.substring(0, name.length() - YangConstants.RFC6020_YANG_FILE_EXTENSION.length());
         final Entry<String, String> parsed = YangNames.parseFilename(baseName);
@@ -45,16 +46,77 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
     }
 
     /**
-     * {@inheritDoc}
+     * Create a new YangTextSchemaSource with a specific source identifier and backed
+     * by ByteSource, which provides the actual InputStreams.
+     *
+     * @param identifier SourceIdentifier of the resulting schema source
+     * @param delegate Backing ByteSource instance
+     * @return A new YangTextSchemaSource
      */
+    public static YangTextSchemaSource delegateForByteSource(final SourceIdentifier identifier,
+            final ByteSource delegate) {
+        return new DelegatedYangTextSchemaSource(identifier, delegate);
+    }
+
+    /**
+     * Create a new YangTextSchemaSource with {@link SourceIdentifier} derived from a supplied filename and backed
+     * by ByteSource, which provides the actual InputStreams.
+     *
+     * @param fileName File name
+     * @param delegate Backing ByteSource instance
+     * @return A new YangTextSchemaSource
+     * @throws IllegalArgumentException if the file name has invalid format
+     */
+    public static YangTextSchemaSource delegateForByteSource(final String fileName, final ByteSource delegate) {
+        return new DelegatedYangTextSchemaSource(identifierFromFilename(fileName), delegate);
+    }
+
+    /**
+     * Create a new YangTextSchemaSource backed by a {@link File} with {@link SourceIdentifier} derived from the file
+     * name.
+     *
+     * @param file Backing File
+     * @return A new YangTextSchemaSource
+     * @throws IllegalArgumentException if the file name has invalid format or if the supplied File is not a file
+     * @throws NullPointerException if file is null
+     */
+    public static YangTextSchemaSource forFile(final File file) {
+        Preconditions.checkArgument(file.isFile(), "Supplied file %s is not a file");
+        return new YangTextFileSchemaSource(identifierFromFilename(file.getName()), file);
+    }
+
+    /**
+     * Create a new {@link YangTextSchemaSource} backed by a resource available in the ClassLoader where this
+     * class resides.
+     *
+     * @param resourceName Resource name
+     * @return A new instance.
+     * @throws IllegalArgumentException if the resource does not exist or if the name has invalid format
+     */
+    public static ResourceYangTextSchemaSource forResource(final String resourceName) {
+        return forResource(YangTextSchemaSource.class, resourceName);
+    }
+
+    /**
+     * Create a new {@link YangTextSchemaSource} backed by a resource by a resource available on the ClassLoader
+     * which loaded the specified class.
+     *
+     * @param clazz Class reference
+     * @param resourceName Resource name
+     * @return A new instance.
+     * @throws IllegalArgumentException if the resource does not exist or if the name has invalid format
+     */
+    public static ResourceYangTextSchemaSource forResource(final Class<?> clazz, final String resourceName) {
+        final SourceIdentifier identifier = identifierFromFilename(resourceName);
+        final URL url = Resources.getResource(clazz, resourceName);
+        return new ResourceYangTextSchemaSource(identifier, url);
+    }
+
     @Override
     public final SourceIdentifier getIdentifier() {
         return identifier;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Nonnull
     @Override
     public Class<? extends YangTextSchemaSource> getType() {
@@ -76,40 +138,4 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @return ToStringHelper supplied as input argument.
      */
     protected abstract ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper);
-
-    /**
-     * Create a new YangTextSchemaSource with a specific source identifier and backed
-     * by ByteSource, which provides the actual InputStreams.
-     *
-     * @param identifier SourceIdentifier of the resulting schema source
-     * @param delegate Backing ByteSource instance
-     * @return A new YangTextSchemaSource
-     */
-    public static YangTextSchemaSource delegateForByteSource(final SourceIdentifier identifier, final ByteSource delegate) {
-        return new DelegatedYangTextSchemaSource(identifier, delegate);
-    }
-
-    private static final class DelegatedYangTextSchemaSource extends YangTextSchemaSource implements Delegator<ByteSource> {
-        private final ByteSource delegate;
-
-        private DelegatedYangTextSchemaSource(final SourceIdentifier identifier, final ByteSource delegate) {
-            super(identifier);
-            this.delegate = Preconditions.checkNotNull(delegate);
-        }
-
-        @Override
-        public ByteSource getDelegate() {
-            return delegate;
-        }
-
-        @Override
-        public InputStream openStream() throws IOException {
-            return delegate.openStream();
-        }
-
-        @Override
-        protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-            return toStringHelper.add("delegate", delegate);
-        }
-    }
 }

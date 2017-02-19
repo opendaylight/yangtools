@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
+import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.util.ASTSchemaSource;
 import org.opendaylight.yangtools.yang.parser.util.TextToASTTransformer;
 
@@ -96,7 +97,7 @@ public class SemVerSharedSchemaRepositoryTest {
 
     static SettableSchemaProvider<ASTSchemaSource> getImmediateYangSourceProviderFromResource(final String resourceName)
             throws Exception {
-        final ResourceYangSource yangSource = new ResourceYangSource(resourceName);
+        final YangTextSchemaSource yangSource = YangTextSchemaSource.forResource(resourceName);
         return SettableSchemaProvider.createImmediate(TextToASTTransformer.transformText(yangSource),
             ASTSchemaSource.class);
     }
