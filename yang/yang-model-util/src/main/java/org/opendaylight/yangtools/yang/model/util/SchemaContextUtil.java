@@ -13,7 +13,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -69,14 +68,14 @@ public final class SchemaContextUtil {
      * (i.e. contains <code>null</code> values) the method will return
      * IllegalArgumentException.
      *
-     * @throws IllegalArgumentException
-     *
      * @param context
      *            Schema Context
      * @param schemaPath
      *            Schema Path to search for
      * @return SchemaNode from the end of the Schema Path or <code>null</code>
      *         if the Node is not present.
+     *
+     * @throws IllegalArgumentException
      */
     public static SchemaNode findDataSchemaNode(final SchemaContext context, final SchemaPath schemaPath) {
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
@@ -110,8 +109,6 @@ public final class SchemaContextUtil {
      * method will return specified Data Schema Node, otherwise the operation
      * will fail and method will return <code>null</code>.
      *
-     * @throws IllegalArgumentException
-     *
      * @param context
      *            Schema Context
      * @param module
@@ -121,15 +118,18 @@ public final class SchemaContextUtil {
      * @return Returns Data Schema Node for specified Schema Context for given
      *         Non-conditional Revision Aware XPath, or <code>null</code> if the
      *         DataSchemaNode is not present in Schema Context.
+     * @throws IllegalArgumentException
      */
-    public static SchemaNode findDataSchemaNode(final SchemaContext context, final Module module, final RevisionAwareXPath nonCondXPath) {
+    public static SchemaNode findDataSchemaNode(final SchemaContext context, final Module module,
+            final RevisionAwareXPath nonCondXPath) {
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
         Preconditions.checkArgument(module != null, "Module reference cannot be NULL");
         Preconditions.checkArgument(nonCondXPath != null, "Non Conditional Revision Aware XPath cannot be NULL");
 
         final String strXPath = nonCondXPath.toString();
         if (strXPath != null) {
-            Preconditions.checkArgument(strXPath.indexOf('[') == -1, "Revision Aware XPath may not contain a condition");
+            Preconditions.checkArgument(strXPath.indexOf('[') == -1,
+                    "Revision Aware XPath may not contain a condition");
             if (nonCondXPath.isAbsolute()) {
                 final List<QName> qnamedPath = xpathToQNamePath(context, module, strXPath);
                 if (qnamedPath != null) {
@@ -165,8 +165,6 @@ public final class SchemaContextUtil {
      * the method will return specified Data Schema Node, otherwise the
      * operation will fail and method will return <code>null</code>.
      *
-     * @throws IllegalArgumentException
-     *
      * @param context
      *            Schema Context
      * @param module
@@ -178,6 +176,8 @@ public final class SchemaContextUtil {
      * @return DataSchemaNode if is present in specified Schema Context for
      *         given relative Revision Aware XPath, otherwise will return
      *         <code>null</code>.
+     *
+     * @throws IllegalArgumentException
      */
     public static SchemaNode findDataSchemaNodeForRelativeXPath(final SchemaContext context, final Module module,
             final SchemaNode actualSchemaNode, final RevisionAwareXPath relativeXPath) {
@@ -207,15 +207,14 @@ public final class SchemaContextUtil {
      * If Schema Context or Schema Node contains <code>null</code> references
      * the method will throw IllegalArgumentException
      *
-     * @throws IllegalArgumentException
-     *
      * @param context
      *            Schema Context
      * @param schemaNode
      *            Schema Node
-     * @return Yang Module for specified Schema Context and Schema Node, if
-     *         Schema Node is NOT present, the method will returns
-     *         <code>null</code>
+     * @return Yang Module for specified Schema Context and Schema Node, if Schema Node is NOT present, the method will
+     *         return <code>null</code>
+     *
+     * @throws IllegalArgumentException
      */
     public static Module findParentModule(final SchemaContext context, final SchemaNode schemaNode) {
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL!");
@@ -224,9 +223,8 @@ public final class SchemaContextUtil {
                 + "set properly (Schema Path is NULL)");
 
         final QName qname = schemaNode.getPath().getLastComponent();
-        Preconditions.checkState(qname != null,
-                "Schema Path contains invalid state of path parts. " +
-                        "The Schema Path MUST contain at least ONE QName which defines namespace and Local name of path.");
+        Preconditions.checkState(qname != null, "Schema Path contains invalid state of path parts. "
+                + "The Schema Path MUST contain at least ONE QName  which defines namespace and Local name of path.");
         return context.findModuleByNamespaceAndRevision(qname.getNamespace(), qname.getRevision());
     }
 
@@ -251,7 +249,8 @@ public final class SchemaContextUtil {
      * @return Notification schema or null, if notification is not present in schema context.
      */
     @Beta
-    @Nullable public static NotificationDefinition getNotificationSchema(@Nonnull final SchemaContext schema, @Nonnull final SchemaPath path) {
+    @Nullable public static NotificationDefinition getNotificationSchema(@Nonnull final SchemaContext schema,
+            @Nonnull final SchemaPath path) {
         Preconditions.checkNotNull(schema, "Schema context must not be null.");
         Preconditions.checkNotNull(path, "Schema path must not be null.");
         for (final NotificationDefinition potential : schema.getNotifications()) {
@@ -270,7 +269,8 @@ public final class SchemaContextUtil {
      * @return Notification schema or null, if notification is not present in schema context.
      */
     @Beta
-    @Nullable public static ContainerSchemaNode getRpcDataSchema(@Nonnull final SchemaContext schema, @Nonnull final SchemaPath path) {
+    @Nullable public static ContainerSchemaNode getRpcDataSchema(@Nonnull final SchemaContext schema,
+            @Nonnull final SchemaPath path) {
         Preconditions.checkNotNull(schema, "Schema context must not be null.");
         Preconditions.checkNotNull(path, "Schema path must not be null.");
         final Iterator<QName> it = path.getPathFromRoot().iterator();
@@ -455,8 +455,6 @@ public final class SchemaContextUtil {
      * If Schema Context, Parent Module or XPath string contains
      * <code>null</code> values, the method will throws IllegalArgumentException
      *
-     * @throws IllegalArgumentException
-     *
      * @param context
      *            Schema Context
      * @param parentModule
@@ -464,8 +462,11 @@ public final class SchemaContextUtil {
      * @param xpath
      *            XPath String
      * @return return a list of QName
+     *
+     * @throws IllegalArgumentException
      */
-    private static List<QName> xpathToQNamePath(final SchemaContext context, final Module parentModule, final String xpath) {
+    private static List<QName> xpathToQNamePath(final SchemaContext context, final Module parentModule,
+            final String xpath) {
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
         Preconditions.checkArgument(parentModule != null, "Parent Module reference cannot be NULL");
         Preconditions.checkArgument(xpath != null, "XPath string reference cannot be NULL");
@@ -490,8 +491,6 @@ public final class SchemaContextUtil {
      * If Schema Context, Parent Module or Prefixed Path Part refers to
      * <code>null</code> the method will throw IllegalArgumentException
      *
-     * @throws IllegalArgumentException
-     *
      * @param context
      *            Schema Context
      * @param parentModule
@@ -499,8 +498,11 @@ public final class SchemaContextUtil {
      * @param prefixedPathPart
      *            Prefixed Path Part string
      * @return QName from prefixed Path Part String.
+     *
+     * @throws IllegalArgumentException
      */
-    private static QName stringPathPartToQName(final SchemaContext context, final Module parentModule, final String prefixedPathPart) {
+    private static QName stringPathPartToQName(final SchemaContext context, final Module parentModule,
+            final String prefixedPathPart) {
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
         Preconditions.checkArgument(parentModule != null, "Parent Module reference cannot be NULL");
         Preconditions.checkArgument(prefixedPathPart != null, "Prefixed Path Part cannot be NULL!");
@@ -510,13 +512,14 @@ public final class SchemaContextUtil {
             final String modulePrefix = prefixedName.next();
 
             final Module module = resolveModuleForPrefix(context, parentModule, modulePrefix);
-            Preconditions.checkArgument(module != null, "Failed to resolve xpath: no module found for prefix %s in module %s",
-                    modulePrefix, parentModule.getName());
+            Preconditions.checkArgument(module != null,
+                    "Failed to resolve xpath: no module found for prefix %s in module %s", modulePrefix,
+                    parentModule.getName());
 
             return QName.create(module.getQNameModule(), prefixedName.next());
-        } else {
-            return QName.create(parentModule.getNamespace(), parentModule.getRevision(), prefixedPathPart);
         }
+
+        return QName.create(parentModule.getNamespace(), parentModule.getRevision(), prefixedPathPart);
     }
 
     /**
@@ -532,8 +535,6 @@ public final class SchemaContextUtil {
      * If Schema Context, Module or Prefix are referring to <code>null</code>
      * the method will return IllegalArgumentException
      *
-     * @throws IllegalArgumentException
-     *
      * @param context
      *            Schema Context
      * @param module
@@ -542,8 +543,11 @@ public final class SchemaContextUtil {
      *            Module Prefix
      * @return Module for given prefix in specified Schema Context if is
      *         present, otherwise returns <code>null</code>
+     *
+     * @throws IllegalArgumentException
      */
-    private static Module resolveModuleForPrefix(final SchemaContext context, final Module module, final String prefix) {
+    private static Module resolveModuleForPrefix(final SchemaContext context, final Module module,
+            final String prefix) {
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
         Preconditions.checkArgument(module != null, "Module reference cannot be NULL");
         Preconditions.checkArgument(prefix != null, "Prefix string cannot be NULL");
@@ -562,8 +566,6 @@ public final class SchemaContextUtil {
     }
 
     /**
-     * @throws IllegalArgumentException
-     *
      * @param context
      *            Schema Context
      * @param module
@@ -573,6 +575,8 @@ public final class SchemaContextUtil {
      * @param actualSchemaNode
      *            actual schema node
      * @return list of QName
+     *
+     * @throws IllegalArgumentException
      */
     private static Iterable<QName> resolveRelativeXPath(final SchemaContext context, final Module module,
             final RevisionAwareXPath relativeXPath, final SchemaNode actualSchemaNode) {
@@ -608,8 +612,8 @@ public final class SchemaContextUtil {
     }
 
     /**
-     * Extracts the base type of node on which schema node points to. If target node is again of type LeafrefTypeDefinition, methods will be call recursively until it reach concrete
-     * type definition.
+     * Extracts the base type of node on which schema node points to. If target node is again of type
+     * LeafrefTypeDefinition, methods will be call recursively until it reach concrete type definition.
      *
      * @param typeDefinition
      *            type of node which will be extracted
@@ -617,11 +621,14 @@ public final class SchemaContextUtil {
      *            Schema Context
      * @param schema
      *            Schema Node
-     * @return recursively found type definition this leafref is pointing to or null if the xpath is incorrect (null is there to preserve backwards compatibility)
+     * @return recursively found type definition this leafref is pointing to or null if the xpath is incorrect (null
+     *         is there to preserve backwards compatibility)
      */
-    public static TypeDefinition<?> getBaseTypeForLeafRef(final LeafrefTypeDefinition typeDefinition, final SchemaContext schemaContext, final SchemaNode schema) {
+    public static TypeDefinition<?> getBaseTypeForLeafRef(final LeafrefTypeDefinition typeDefinition,
+            final SchemaContext schemaContext, final SchemaNode schema) {
         RevisionAwareXPath pathStatement = typeDefinition.getPathStatement();
-        pathStatement = new RevisionAwareXPathImpl(stripConditionsFromXPathString(pathStatement), pathStatement.isAbsolute());
+        pathStatement = new RevisionAwareXPathImpl(stripConditionsFromXPathString(pathStatement),
+            pathStatement.isAbsolute());
 
         final DataSchemaNode dataSchemaNode;
         if (pathStatement.isAbsolute()) {
@@ -655,9 +662,9 @@ public final class SchemaContextUtil {
 
         if (targetTypeDefinition instanceof LeafrefTypeDefinition) {
             return getBaseTypeForLeafRef(((LeafrefTypeDefinition) targetTypeDefinition), schemaContext, dataSchemaNode);
-        } else {
-            return targetTypeDefinition;
         }
+
+        return targetTypeDefinition;
     }
 
     private static Module findParentModuleOfReferencingType(final SchemaContext schemaContext,
@@ -680,33 +687,35 @@ public final class SchemaContextUtil {
     }
 
     /**
-     * Returns base type for {@code typeDefinition} which belongs to module specified via {@code qName}. This handle case
-     * when leafref type isn't specified as type substatement of leaf or leaf-list but is defined in other module as typedef
-     * which is then imported to referenced module.
+     * Returns base type for {@code typeDefinition} which belongs to module specified via {@code qName}. This handle
+     * the case when leafref type isn't specified as type substatement of leaf or leaf-list but is defined in other
+     * module as typedef which is then imported to referenced module.
      *
      * Because {@code typeDefinition} is definied via typedef statement, only absolute path is meaningful.
      *
      * @param typeDefinition
      * @param schemaContext
      * @param qName
-     * @return
      */
     public static TypeDefinition<?> getBaseTypeForLeafRef(final LeafrefTypeDefinition typeDefinition,
             final SchemaContext schemaContext, final QName qName) {
         final RevisionAwareXPath pathStatement = typeDefinition.getPathStatement();
-        final RevisionAwareXPath strippedPathStatement = new RevisionAwareXPathImpl(stripConditionsFromXPathString(pathStatement), pathStatement.isAbsolute());
+        final RevisionAwareXPath strippedPathStatement = new RevisionAwareXPathImpl(
+            stripConditionsFromXPathString(pathStatement), pathStatement.isAbsolute());
         if (!strippedPathStatement.isAbsolute()) {
             return null;
         }
 
-        final Module parentModule = schemaContext.findModuleByNamespaceAndRevision(qName.getNamespace(),qName.getRevision());
-        final DataSchemaNode dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNode(schemaContext, parentModule, strippedPathStatement);
+        final Module parentModule = schemaContext.findModuleByNamespaceAndRevision(qName.getNamespace()
+            ,qName.getRevision());
+        final DataSchemaNode dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNode(schemaContext,
+            parentModule, strippedPathStatement);
         final TypeDefinition<?> targetTypeDefinition = typeDefinition(dataSchemaNode);
         if (targetTypeDefinition instanceof LeafrefTypeDefinition) {
             return getBaseTypeForLeafRef(((LeafrefTypeDefinition) targetTypeDefinition), schemaContext, dataSchemaNode);
-        } else {
-            return targetTypeDefinition;
         }
+
+        return targetTypeDefinition;
     }
 
     private static final Pattern STRIP_PATTERN = Pattern.compile("\\[[^\\[\\]]*\\]");
@@ -767,7 +776,7 @@ public final class SchemaContextUtil {
         } else if (node instanceof LeafSchemaNode) {
             return typeDefinition((LeafSchemaNode) node);
         } else {
-            throw new IllegalArgumentException("Unhandled parameter types: " + Collections.<Object>singletonList(node).toString());
+            throw new IllegalArgumentException("Unhandled parameter type: " + node);
         }
     }
 }
