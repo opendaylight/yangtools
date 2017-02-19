@@ -8,13 +8,15 @@
 package org.opendaylight.yangtools.yang2sources.plugin;
 
 import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_FILE_EXTENSION;
+import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.LOG_PREFIX;
+import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.META_INF_YANG_STRING;
+import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.META_INF_YANG_STRING_JAR;
 
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
-import java.io.Closeable;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.io.ByteSource;
+import com.google.common.io.ByteStreams;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,6 +41,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,10 +57,10 @@ final class Util {
 
     private static final Logger LOG = LoggerFactory.getLogger(Util.class);
 
-    static Collection<File> listFiles(final File root, final Collection<File> excludedFiles) throws FileNotFoundException {
+    static Collection<File> listFiles(final File root, final Collection<File> excludedFiles)
+            throws FileNotFoundException {
         if (!root.exists()) {
-            LOG.warn("{} YANG source directory {} not found. No code will be generated.", YangToSourcesProcessor
-                    .LOG_PREFIX, root.toString());
+            LOG.warn("{} YANG source directory {} not found. No code will be generated.", LOG_PREFIX, root);
 
             return Collections.emptyList();
         }
@@ -65,8 +68,7 @@ final class Util {
         Collection<File> yangFiles = FileUtils.listFiles(root, new String[] { YANG_SUFFIX }, true);
         for (File f : yangFiles) {
             if (excludedFiles.contains(f)) {
-                LOG.info("{} {} file excluded {}", YangToSourcesProcessor.LOG_PREFIX, Util.YANG_SUFFIX.toUpperCase(),
-                        f);
+                LOG.info("{} {} file excluded {}", LOG_PREFIX, Util.YANG_SUFFIX.toUpperCase(), f);
             } else {
                 result.add(f);
             }
@@ -103,8 +105,7 @@ final class Util {
             final ArtifactRepository localRepo, final List<ArtifactRepository> remoteRepos) {
         Plugin plugin = project.getPlugin(YangToSourcesMojo.PLUGIN_NAME);
         if (plugin == null) {
-            LOG.warn("{} {} not found, dependencies version check skipped", YangToSourcesProcessor.LOG_PREFIX,
-                    YangToSourcesMojo.PLUGIN_NAME);
+            LOG.warn("{} {} not found, dependencies version check skipped", LOG_PREFIX, YangToSourcesMojo.PLUGIN_NAME);
         } else {
             Map<Artifact, Collection<Artifact>> pluginDependencies = new HashMap<>();
             getPluginTransitiveDependencies(plugin, pluginDependencies, repoSystem, localRepo, remoteRepos);
@@ -167,92 +168,68 @@ final class Util {
         for (org.apache.maven.artifact.Artifact d : dependencies) {
             if (artifact.getGroupId().equals(d.getGroupId()) && artifact.getArtifactId().equals(d.getArtifactId())) {
                 if (!(artifact.getVersion().equals(d.getVersion()))) {
-                    LOG.warn("{} Dependency resolution conflict:", YangToSourcesProcessor.LOG_PREFIX);
+                    LOG.warn("{} Dependency resolution conflict:", LOG_PREFIX);
                     LOG.warn("{} '{}' dependency [{}] has different version than one declared in current project [{}]" +
                                     ". It is recommended to fix this problem because it may cause compilation errors.",
-                            YangToSourcesProcessor.LOG_PREFIX, YangToSourcesMojo.PLUGIN_NAME, artifact, d);
+                            LOG_PREFIX, YangToSourcesMojo.PLUGIN_NAME, artifact, d);
                 }
             }
         }
     }
 
-    private static final String JAR_SUFFIX = ".jar";
-
     private static boolean isJar(final File element) {
-        return (element.isFile() && element.getName().endsWith(JAR_SUFFIX));
+        return element.isFile() && element.getName().endsWith(".jar");
     }
 
-    static final class YangsInZipsResult implements Closeable {
-        private final List<YangSourceFromDependency> yangStreams;
-        private final List<Closeable> zipInputStreams;
-
-        private YangsInZipsResult(final List<YangSourceFromDependency> yangStreams,
-                final List<Closeable> zipInputStreams) {
-            this.yangStreams = yangStreams;
-            this.zipInputStreams = zipInputStreams;
-        }
-
-        @Override
-        public void close() throws IOException {
-            for (Closeable is : zipInputStreams) {
-                is.close();
-            }
-        }
-
-        public List<YangSourceFromDependency> getYangStreams() {
-            return this.yangStreams;
-        }
-    }
-
-    static YangsInZipsResult findYangFilesInDependenciesAsStream(final MavenProject project)
+    static List<YangTextSchemaSource> findYangFilesInDependenciesAsStream(final MavenProject project)
             throws MojoFailureException {
-        List<YangSourceFromDependency> yangsFromDependencies = new ArrayList<>();
-        List<Closeable> zips = new ArrayList<>();
         try {
-            List<File> filesOnCp = Util.getClassPath(project);
-            LOG.info("{} Searching for yang files in following dependencies: {}", YangToSourcesProcessor.LOG_PREFIX,
-                    filesOnCp);
+            final List<File> filesOnCp = Util.getClassPath(project);
+            LOG.info("{} Searching for yang files in following dependencies: {}", LOG_PREFIX, filesOnCp);
 
+            final List<YangTextSchemaSource> yangsFromDependencies = new ArrayList<>();
             for (File file : filesOnCp) {
-                List<String> foundFilesForReporting = new ArrayList<>();
+                final List<String> foundFilesForReporting = new ArrayList<>();
                 // is it jar file or directory?
                 if (file.isDirectory()) {
                     //FIXME: code duplicate
-                    File yangDir = new File(file, YangToSourcesProcessor.META_INF_YANG_STRING);
+                    File yangDir = new File(file, META_INF_YANG_STRING);
                     if (yangDir.exists() && yangDir.isDirectory()) {
                         File[] yangFiles = yangDir.listFiles(
                             (dir, name) -> name.endsWith(RFC6020_YANG_FILE_EXTENSION) && new File(dir, name).isFile());
                         for (final File yangFile : yangFiles) {
-                            yangsFromDependencies.add(new YangSourceFromFile(yangFile));
+                            foundFilesForReporting.add(yangFile.getName());
+                            yangsFromDependencies.add(YangTextSchemaSource.forFile(yangFile));
                         }
                     }
-
                 } else {
-                    ZipFile zip = new ZipFile(file);
-                    zips.add(zip);
+                    try (ZipFile zip = new ZipFile(file)) {
+                        final Enumeration<? extends ZipEntry> entries = zip.entries();
+                        while (entries.hasMoreElements()) {
+                            final ZipEntry entry = entries.nextElement();
+                            final String entryName = entry.getName();
 
-                    Enumeration<? extends ZipEntry> entries = zip.entries();
-                    while (entries.hasMoreElements()) {
-                        ZipEntry entry = entries.nextElement();
-                        String entryName = entry.getName();
+                            if (entryName.startsWith(META_INF_YANG_STRING_JAR) && !entry.isDirectory()
+                                    && entryName.endsWith(RFC6020_YANG_FILE_EXTENSION)) {
+                                foundFilesForReporting.add(entryName);
 
-                        if (entryName.startsWith(YangToSourcesProcessor.META_INF_YANG_STRING_JAR)
-                                && !entry.isDirectory() && entryName.endsWith(RFC6020_YANG_FILE_EXTENSION)) {
-                            foundFilesForReporting.add(entryName);
-                            yangsFromDependencies.add(new YangSourceInZipFile(zip, entry));
+                                yangsFromDependencies.add(YangTextSchemaSource.delegateForByteSource(entryName,
+                                    ByteSource.wrap(ByteStreams.toByteArray(zip.getInputStream(entry)))));
+                            }
                         }
                     }
                 }
                 if (foundFilesForReporting.size() > 0) {
-                    LOG.info("{} Found {} yang files in {}: {}", YangToSourcesProcessor.LOG_PREFIX,
-                            foundFilesForReporting.size(), file, foundFilesForReporting);
+                    LOG.info("{} Found {} yang files in {}: {}", LOG_PREFIX, foundFilesForReporting.size(), file,
+                        foundFilesForReporting);
                 }
 
             }
+
+            return yangsFromDependencies;
         } catch (Exception e) {
             throw new MojoFailureException(e.getMessage(), e);
         }
-        return new YangsInZipsResult(yangsFromDependencies, zips);
     }
 
     /**
@@ -269,21 +246,20 @@ final class Util {
     static Collection<File> findYangFilesInDependencies(final MavenProject project) throws MojoFailureException {
         final List<File> yangsFilesFromDependencies = new ArrayList<>();
 
-        List<File> filesOnCp;
+        final List<File> filesOnCp;
         try {
             filesOnCp = Util.getClassPath(project);
         } catch (Exception e) {
             throw new MojoFailureException("Failed to scan for YANG files in dependencies", e);
         }
-        LOG.info("{} Searching for yang files in following dependencies: {}", YangToSourcesProcessor.LOG_PREFIX,
-            filesOnCp);
+        LOG.info("{} Searching for yang files in following dependencies: {}", LOG_PREFIX, filesOnCp);
 
         for (File file : filesOnCp) {
             try {
                 // is it jar file or directory?
                 if (file.isDirectory()) {
                     //FIXME: code duplicate
-                    File yangDir = new File(file, YangToSourcesProcessor.META_INF_YANG_STRING);
+                    File yangDir = new File(file, META_INF_YANG_STRING);
                     if (yangDir.exists() && yangDir.isDirectory()) {
                         File[] yangFiles = yangDir.listFiles(
                             (dir, name) -> name.endsWith(RFC6020_YANG_FILE_EXTENSION) && new File(dir, name).isFile());
@@ -298,10 +274,9 @@ final class Util {
                             ZipEntry entry = entries.nextElement();
                             String entryName = entry.getName();
 
-                            if (entryName.startsWith(YangToSourcesProcessor.META_INF_YANG_STRING_JAR)
+                            if (entryName.startsWith(META_INF_YANG_STRING_JAR)
                                     && !entry.isDirectory() && entryName.endsWith(RFC6020_YANG_FILE_EXTENSION)) {
-                                LOG.debug("{} Found a YANG file in {}: {}", YangToSourcesProcessor.LOG_PREFIX, file,
-                                        entryName);
+                                LOG.debug("{} Found a YANG file in {}: {}", LOG_PREFIX, file, entryName);
                                 yangsFilesFromDependencies.add(file);
                                 break;
                             }
@@ -316,14 +291,12 @@ final class Util {
     }
 
     static final class ContextHolder {
-        private static final Splitter SEP_SPLITTER = Splitter.on(File.separator);
-
         private final SchemaContext context;
-        private final Set<Module> yangModules;
+        private final Map<Module, String> yangModules;
 
-        ContextHolder(final SchemaContext context, final Set<Module> yangModules) {
+        ContextHolder(final SchemaContext context, final Map<Module, String> yangModules) {
             this.context = context;
-            this.yangModules = yangModules;
+            this.yangModules = ImmutableMap.copyOf(yangModules);
         }
 
         SchemaContext getContext() {
@@ -331,16 +304,16 @@ final class Util {
         }
 
         Set<Module> getYangModules() {
-            return yangModules;
+            return yangModules.keySet();
         }
 
         Optional<String> moduleToResourcePath(final Module mod) {
-            if (!yangModules.contains(mod)) {
+            final String fileName = yangModules.get(mod);
+            if (fileName == null) {
                 return Optional.empty();
             }
 
-            return Optional.of("/" + YangToSourcesProcessor.META_INF_YANG_STRING_JAR + "/"
-                    + Iterables.getLast(SEP_SPLITTER.split(mod.getSource())));
+            return Optional.of("/" + YangToSourcesProcessor.META_INF_YANG_STRING_JAR + "/" + fileName);
         }
     }
 }
