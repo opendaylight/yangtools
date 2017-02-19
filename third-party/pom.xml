@@ -24,6 +24,7 @@
 
     <modules>
         <module>triemap</module>
+        <module>zipfs</module>
     </modules>
 
     <!--
