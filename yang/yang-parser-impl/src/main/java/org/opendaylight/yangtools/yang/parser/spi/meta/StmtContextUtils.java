@@ -12,19 +12,23 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Set;
 import java.util.function.Predicate;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.RootStatementContext;
@@ -410,5 +414,66 @@ public final class StmtContextUtils {
         Preconditions.checkNotNull(parentType);
         final StmtContext<?, ?, ?> parentContext = ctx.getParentContext();
         return parentContext != null ? parentType.equals(parentContext.getPublicDefinition()) : false;
+    }
+
+    /**
+     * Validates the specified statement context with regards to if-feature and when statement on list keys.
+     * The context can either be a leaf which is defined directly in the substatements of a keyed list or a uses
+     * statement defined in a keyed list (a uses statement may add leaves into the list).
+     *
+     * If one of the list keys contains an if-feature or a when statement in YANG 1.1 model, an exception is thrown.
+     *
+     * @param ctx statement context to be validated
+     */
+    public static void validateIfFeatureAndWhenOnListKeys(final StmtContext<?, ?, ?> ctx) {
+        Preconditions.checkNotNull(ctx);
+
+        if (!isRelevantForIfFeatureAndWhenOnListKeysCheck(ctx)) {
+            return;
+        }
+
+        final StmtContext<?, ?, ?> listStmtCtx = ctx.getParentContext();
+        final StmtContext<Collection<SchemaNodeIdentifier>, ?, ?> keyStmtCtx =
+                StmtContextUtils.findFirstDeclaredSubstatement(listStmtCtx, KeyStatement.class);
+
+        if (YangStmtMapping.LEAF.equals(ctx.getPublicDefinition())) {
+            if (isListKey(ctx, keyStmtCtx)) {
+                disallowIfFeatureAndWhenOnListKeys(ctx);
+            }
+        } else if (YangStmtMapping.USES.equals(ctx.getPublicDefinition())) {
+            StmtContextUtils.findAllEffectiveSubstatements(listStmtCtx, LeafStatement.class).forEach(leafStmtCtx -> {
+                if (isListKey(leafStmtCtx, keyStmtCtx)) {
+                    disallowIfFeatureAndWhenOnListKeys(leafStmtCtx);
+                }
+            });
+        }
+    }
+
+    private static boolean isRelevantForIfFeatureAndWhenOnListKeysCheck(final StmtContext<?, ?, ?> ctx) {
+        return YangVersion.VERSION_1_1.equals(ctx.getRootVersion())
+                && StmtContextUtils.hasParentOfType(ctx, YangStmtMapping.LIST)
+                && StmtContextUtils.findFirstDeclaredSubstatement(ctx.getParentContext(), KeyStatement.class) != null;
+    }
+
+    private static boolean isListKey(final StmtContext<?, ?, ?> leafStmtCtx,
+            final StmtContext<Collection<SchemaNodeIdentifier>, ?, ?> keyStmtCtx) {
+        for (final SchemaNodeIdentifier keyIdentifier : keyStmtCtx.getStatementArgument()) {
+            if (leafStmtCtx.getStatementArgument().equals(keyIdentifier.getLastComponent())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static void disallowIfFeatureAndWhenOnListKeys(final StmtContext<?, ?, ?> leafStmtCtx) {
+        Iterables.concat(leafStmtCtx.declaredSubstatements(), leafStmtCtx.effectiveSubstatements()).forEach(
+                leafSubstmtCtx -> {
+            final StatementDefinition statementDef = leafSubstmtCtx.getPublicDefinition();
+            SourceException.throwIf(YangStmtMapping.IF_FEATURE.equals(statementDef)
+                    || YangStmtMapping.WHEN.equals(statementDef), leafStmtCtx.getStatementSourceReference(),
+                    "%s statement is not allowed in %s leaf statement which is specified as a list key.",
+                    statementDef.getStatementName(), leafStmtCtx.getStatementArgument());
+        });
     }
 }
