@@ -32,9 +32,14 @@ import org.slf4j.LoggerFactory;
 @Beta
 public final class TextToASTTransformer extends SchemaSourceTransformer<YangTextSchemaSource, ASTSchemaSource> {
 
+    /**
+     * @deprecated Use {@link TextToASTTransformer#transformText(YangTextSchemaSource)} instead.
+     */
+    @Deprecated
     public static final class TextToASTTransformation implements Transformation<YangTextSchemaSource, ASTSchemaSource> {
         @Override
-        public CheckedFuture<ASTSchemaSource, SchemaSourceException> apply(@Nonnull final YangTextSchemaSource input) throws IOException, YangSyntaxErrorException {
+        public CheckedFuture<ASTSchemaSource, SchemaSourceException> apply(@Nonnull final YangTextSchemaSource input)
+                throws IOException, YangSyntaxErrorException {
             try (InputStream is = input.openStream()) {
                 final ParserRuleContext ctx = new YangStatementSourceImpl(is).getYangAST();
                 LOG.debug("Model {} parsed successfully", input);
@@ -46,7 +51,12 @@ public final class TextToASTTransformer extends SchemaSourceTransformer<YangText
         }
     }
 
+    /**
+     * @deprecated Use {@link TextToASTTransformer#transformText(YangTextSchemaSource)} instead.
+     */
+    @Deprecated
     public static final TextToASTTransformation TRANSFORMATION = new TextToASTTransformation();
+
     private static final Logger LOG = LoggerFactory.getLogger(TextToASTTransformer.class);
 
     private TextToASTTransformer(final SchemaRepository provider, final SchemaSourceRegistry consumer) {
@@ -55,5 +65,10 @@ public final class TextToASTTransformer extends SchemaSourceTransformer<YangText
 
     public static TextToASTTransformer create(final SchemaRepository provider, final SchemaSourceRegistry consumer) {
         return new TextToASTTransformer(provider, consumer);
+    }
+
+    public static ASTSchemaSource transformText(final YangTextSchemaSource text) throws SchemaSourceException,
+            IOException, YangSyntaxErrorException {
+        return TRANSFORMATION.apply(text).checkedGet();
     }
 }

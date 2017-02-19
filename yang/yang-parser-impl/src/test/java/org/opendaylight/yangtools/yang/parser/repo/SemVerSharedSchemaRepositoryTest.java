@@ -18,7 +18,6 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.util.ASTSchemaSource;
@@ -31,13 +30,16 @@ public class SemVerSharedSchemaRepositoryTest {
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
                 "sem-ver-shared-schema-repo-test");
 
-        final SettableSchemaProvider<ASTSchemaSource> bar = getImmediateYangSourceProviderFromResource("/semantic-version/semver-shared-schema-repository/bar@2016-01-01.yang");
+        final SettableSchemaProvider<ASTSchemaSource> bar = getImmediateYangSourceProviderFromResource(
+            "/semantic-version/semver-shared-schema-repository/bar@2016-01-01.yang");
         bar.register(sharedSchemaRepository);
         bar.setResult();
-        final SettableSchemaProvider<ASTSchemaSource> foo = getImmediateYangSourceProviderFromResource("/semantic-version/semver-shared-schema-repository/foo.yang");
+        final SettableSchemaProvider<ASTSchemaSource> foo = getImmediateYangSourceProviderFromResource(
+            "/semantic-version/semver-shared-schema-repository/foo.yang");
         foo.register(sharedSchemaRepository);
         foo.setResult();
-        final SettableSchemaProvider<ASTSchemaSource> semVer = getImmediateYangSourceProviderFromResource("/semantic-version/semver-shared-schema-repository/semantic-version.yang");
+        final SettableSchemaProvider<ASTSchemaSource> semVer = getImmediateYangSourceProviderFromResource(
+            "/semantic-version/semver-shared-schema-repository/semantic-version.yang");
         semVer.register(sharedSchemaRepository);
         semVer.setResult();
 
@@ -45,7 +47,8 @@ public class SemVerSharedSchemaRepositoryTest {
                 .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
 
         final CheckedFuture<SchemaContext, SchemaResolutionException> inetAndTopologySchemaContextFuture = fact
-                .createSchemaContext(Lists.newArrayList(bar.getId(), foo.getId(), semVer.getId()), StatementParserMode.SEMVER_MODE);
+                .createSchemaContext(Lists.newArrayList(bar.getId(), foo.getId(), semVer.getId()),
+                    StatementParserMode.SEMVER_MODE);
         assertTrue(inetAndTopologySchemaContextFuture.isDone());
         assertSchemaContext(inetAndTopologySchemaContextFuture.checkedGet(), 3);
 
@@ -59,13 +62,16 @@ public class SemVerSharedSchemaRepositoryTest {
     public void testSharedSchemaRepository() throws Exception {
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository("shared-schema-repo-test");
 
-        final SettableSchemaProvider<ASTSchemaSource> bar = getImmediateYangSourceProviderFromResource("/semantic-version/shared-schema-repository/bar@2016-01-01.yang");
+        final SettableSchemaProvider<ASTSchemaSource> bar = getImmediateYangSourceProviderFromResource(
+            "/semantic-version/shared-schema-repository/bar@2016-01-01.yang");
         bar.register(sharedSchemaRepository);
         bar.setResult();
-        final SettableSchemaProvider<ASTSchemaSource> foo = getImmediateYangSourceProviderFromResource("/semantic-version/shared-schema-repository/foo.yang");
+        final SettableSchemaProvider<ASTSchemaSource> foo = getImmediateYangSourceProviderFromResource(
+            "/semantic-version/shared-schema-repository/foo.yang");
         foo.register(sharedSchemaRepository);
         foo.setResult();
-        final SettableSchemaProvider<ASTSchemaSource> semVer = getImmediateYangSourceProviderFromResource("/semantic-version/shared-schema-repository/semantic-version.yang");
+        final SettableSchemaProvider<ASTSchemaSource> semVer = getImmediateYangSourceProviderFromResource(
+            "/semantic-version/shared-schema-repository/semantic-version.yang");
         semVer.register(sharedSchemaRepository);
         semVer.setResult();
 
@@ -91,8 +97,7 @@ public class SemVerSharedSchemaRepositoryTest {
     static SettableSchemaProvider<ASTSchemaSource> getImmediateYangSourceProviderFromResource(final String resourceName)
             throws Exception {
         final ResourceYangSource yangSource = new ResourceYangSource(resourceName);
-        final CheckedFuture<ASTSchemaSource, SchemaSourceException> aSTSchemaSource = TextToASTTransformer.TRANSFORMATION
-                .apply(yangSource);
-        return SettableSchemaProvider.createImmediate(aSTSchemaSource.get(), ASTSchemaSource.class);
+        return SettableSchemaProvider.createImmediate(TextToASTTransformer.transformText(yangSource),
+            ASTSchemaSource.class);
     }
 }
