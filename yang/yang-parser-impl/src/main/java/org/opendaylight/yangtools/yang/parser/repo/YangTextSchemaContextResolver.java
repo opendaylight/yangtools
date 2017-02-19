@@ -94,7 +94,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             throws SchemaSourceException, IOException, YangSyntaxErrorException {
         checkArgument(source != null);
 
-        final ASTSchemaSource ast = TextToASTTransformer.TRANSFORMATION.apply(source).checkedGet();
+        final ASTSchemaSource ast = TextToASTTransformer.transformText(source);
         LOG.trace("Resolved source {} to source {}", source, ast);
 
         // AST carries an accurate identifier, check if it matches the one supplied by the source. If it

@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.util.ASTSchemaSource;
@@ -113,9 +112,8 @@ public class MultipleRevImportBug6875Test {
     private static SettableSchemaProvider<ASTSchemaSource> getSourceProvider(final String resourceName)
             throws Exception {
         final ResourceYangSource yangSource = new ResourceYangSource(resourceName);
-        final CheckedFuture<ASTSchemaSource, SchemaSourceException> aSTSchemaSource = TextToASTTransformer.TRANSFORMATION
-                .apply(yangSource);
-        return SettableSchemaProvider.createImmediate(aSTSchemaSource.get(), ASTSchemaSource.class);
+        return SettableSchemaProvider.createImmediate(TextToASTTransformer.transformText(yangSource),
+            ASTSchemaSource.class);
     }
 
     private static SchemaNode findNode(final SchemaContext context, final Iterable<QName> qNames) {
