@@ -13,10 +13,8 @@ import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.CharStreams;
-import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -31,12 +29,12 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.repo.YangTextSchemaContextResolver;
-import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
-import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.ContextHolder;
-import org.opendaylight.yangtools.yang2sources.plugin.Util.YangsInZipsResult;
 import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
 import org.opendaylight.yangtools.yang2sources.spi.BuildContextAware;
 import org.opendaylight.yangtools.yang2sources.spi.MavenProjectAware;
@@ -60,7 +58,6 @@ class YangToSourcesProcessor {
     private final boolean inspectDependencies;
     private final BuildContext buildContext;
     private final YangProvider yangProvider;
-    private final YangTextSchemaContextResolver resolver;
 
     @VisibleForTesting
     YangToSourcesProcessor(final File yangFilesRootDir, final Collection<File> excludedFiles,
@@ -80,7 +77,6 @@ class YangToSourcesProcessor {
         this.project = Preconditions.checkNotNull(project);
         this.inspectDependencies = inspectDependencies;
         this.yangProvider = yangProvider;
-        this.resolver = YangTextSchemaContextResolver.create("maven-plugin");
     }
 
     YangToSourcesProcessor(final BuildContext buildContext, final File yangFilesRootDir,
@@ -118,8 +114,6 @@ class YangToSourcesProcessor {
     }
 
     private ContextHolder processYang() throws MojoExecutionException {
-        SchemaContext resolveSchemaContext;
-        List<Closeable> closeables = new ArrayList<>();
         LOG.info("{} Inspecting {}", LOG_PREFIX, yangFilesRootDir);
         try {
             /*
@@ -157,15 +151,12 @@ class YangToSourcesProcessor {
                 return null;
             }
 
-            final List<NamedFileInputStream> yangsInProject = new ArrayList<>();
+            final YangTextSchemaContextResolver resolver = YangTextSchemaContextResolver.create("maven-plugin");
             for (final File f : yangFilesInProject) {
-                // FIXME: This is hack - normal path should be reported.
-                yangsInProject.add(new NamedFileInputStream(f, META_INF_YANG_STRING + File.separator + f.getName()));
+                resolver.registerSource(YangTextSchemaSource.forFile(f));
             }
 
-            List<InputStream> all = new ArrayList<>();
-            all.addAll(yangsInProject);
-            closeables.addAll(yangsInProject);
+            final Set<SourceIdentifier> sourcesInProject = ImmutableSet.copyOf(resolver.getAvailableSources());
 
             /**
              * Set contains all modules generated from input sources. Number of
@@ -173,46 +164,31 @@ class YangToSourcesProcessor {
              * (parsed submodule's data are added to its parent module). Set
              * cannot contains null values.
              */
-            Set<Module> projectYangModules;
-            try {
-                if (inspectDependencies) {
-                    YangsInZipsResult dependentYangResult = Util.findYangFilesInDependenciesAsStream(project);
-                    Closeable dependentYangResult1 = dependentYangResult;
-                    closeables.add(dependentYangResult1);
-                    List<InputStream> yangStreams = toStreamsWithoutDuplicates(dependentYangResult.getYangStreams());
-                    all.addAll(yangStreams);
-                    closeables.addAll(yangStreams);
-                }
-
-                resolveSchemaContext = YangParserTestUtils.parseYangStreams(all);
-
-                Set<Module> parsedAllYangModules = resolveSchemaContext.getModules();
-                projectYangModules = new HashSet<>();
-                for (Module module : parsedAllYangModules) {
-                    final String path = module.getModuleSourcePath();
-                    if (path != null) {
-                        LOG.debug("Looking for source {}", path);
-                        for (NamedFileInputStream is : yangsInProject) {
-                            LOG.debug("In project destination {}", is.getFileDestination());
-                            if (path.equals(is.getFileDestination())) {
-                                LOG.debug("Module {} belongs to current project", module);
-                                projectYangModules.add(module);
-                                break;
-                            }
-                        }
-                    }
-                }
-            } finally {
-                for (AutoCloseable closeable : closeables) {
-                    closeable.close();
+            if (inspectDependencies) {
+                final List<YangTextSchemaSource> sourcesInDependencies = Util.findYangFilesInDependenciesAsStream(
+                    project);
+                for (YangTextSchemaSource s : toUniqueSources(sourcesInDependencies)) {
+                    resolver.registerSource(s);
                 }
             }
 
-            LOG.info("{} {} files parsed from {}", LOG_PREFIX, Util.YANG_SUFFIX.toUpperCase(), yangsInProject);
-            return new ContextHolder(resolveSchemaContext, projectYangModules);
+            final SchemaContext schemaContext = resolver.trySchemaContext();
+            final Set<Module> projectYangModules = new HashSet<>();
+            for (Module module : schemaContext.getModules()) {
+                final SourceIdentifier modId = RevisionSourceIdentifier.create(module.getName(),
+                    module.getQNameModule().getFormattedRevision());
+                LOG.debug("Looking for source {}", modId);
+                if (sourcesInProject.contains(modId)) {
+                    LOG.debug("Module {} belongs to current project", module);
+                    projectYangModules.add(module);
+                }
+            }
 
-            // MojoExecutionException is thrown since execution cannot continue
+            LOG.debug("Processed project files: {}", yangFilesInProject);
+            LOG.info("{} project model files parsed {}", LOG_PREFIX, yangFilesInProject.size());
+            return new ContextHolder(schemaContext, projectYangModules);
         } catch (Exception e) {
+            // MojoExecutionException is thrown since execution cannot continue
             LOG.error("{} Unable to parse {} files from {}", LOG_PREFIX, Util.YANG_SUFFIX, yangFilesRootDir, e);
             Throwable rootCause = Throwables.getRootCause(e);
             throw new MojoExecutionException(LOG_PREFIX + " Unable to parse " + Util.YANG_SUFFIX + " files from " +
@@ -220,24 +196,16 @@ class YangToSourcesProcessor {
         }
     }
 
-    private static List<InputStream> toStreamsWithoutDuplicates(final List<YangSourceFromDependency> list)
+    private static Collection<YangTextSchemaSource> toUniqueSources(final Collection<YangTextSchemaSource> sources)
             throws IOException {
-        final Map<String, YangSourceFromDependency> byContent = new HashMap<>();
-
-        for (YangSourceFromDependency yangFromDependency : list) {
-            try (Reader reader = yangFromDependency.asCharSource(StandardCharsets.UTF_8).openStream()) {
+        final Map<String, YangTextSchemaSource> byContent = new HashMap<>();
+        for (YangTextSchemaSource s : sources) {
+            try (Reader reader = s.asCharSource(StandardCharsets.UTF_8).openStream()) {
                 final String contents = CharStreams.toString(reader);
-                byContent.putIfAbsent(contents, yangFromDependency);
-            } catch (IOException e) {
-                throw new IOException("Exception when reading from: " + yangFromDependency.getDescription(), e);
+                byContent.putIfAbsent(contents, s);
             }
-
         }
-        List<InputStream> inputs = new ArrayList<>(byContent.size());
-        for (YangSourceFromDependency entry : byContent.values()) {
-            inputs.add(entry.openStream());
-        }
-        return inputs;
+        return byContent.values();
     }
 
     /**
