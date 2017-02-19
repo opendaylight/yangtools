@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
+import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_FILE_EXTENSION;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -216,7 +218,7 @@ final class Util {
                     File yangDir = new File(file, YangToSourcesProcessor.META_INF_YANG_STRING);
                     if (yangDir.exists() && yangDir.isDirectory()) {
                         File[] yangFiles = yangDir.listFiles(
-                                (dir, name) -> name.endsWith(".yang") && new File(dir, name).isFile());
+                            (dir, name) -> name.endsWith(RFC6020_YANG_FILE_EXTENSION) && new File(dir, name).isFile());
                         for (final File yangFile : yangFiles) {
                             yangsFromDependencies.add(new YangSourceFromFile(yangFile));
                         }
@@ -232,7 +234,7 @@ final class Util {
                         String entryName = entry.getName();
 
                         if (entryName.startsWith(YangToSourcesProcessor.META_INF_YANG_STRING_JAR)
-                                && !entry.isDirectory() && entryName.endsWith(".yang")) {
+                                && !entry.isDirectory() && entryName.endsWith(RFC6020_YANG_FILE_EXTENSION)) {
                             foundFilesForReporting.add(entryName);
                             yangsFromDependencies.add(new YangSourceInZipFile(zip, entry));
                         }
@@ -281,7 +283,7 @@ final class Util {
                     File yangDir = new File(file, YangToSourcesProcessor.META_INF_YANG_STRING);
                     if (yangDir.exists() && yangDir.isDirectory()) {
                         File[] yangFiles = yangDir.listFiles(
-                                (dir, name) -> name.endsWith(".yang") && new File(dir, name).isFile());
+                            (dir, name) -> name.endsWith(RFC6020_YANG_FILE_EXTENSION) && new File(dir, name).isFile());
 
                         yangsFilesFromDependencies.addAll(Arrays.asList(yangFiles));
                     }
@@ -294,7 +296,7 @@ final class Util {
                             String entryName = entry.getName();
 
                             if (entryName.startsWith(YangToSourcesProcessor.META_INF_YANG_STRING_JAR)
-                                    && !entry.isDirectory() && entryName.endsWith(".yang")) {
+                                    && !entry.isDirectory() && entryName.endsWith(RFC6020_YANG_FILE_EXTENSION)) {
                                 LOG.debug("{} Found a YANG file in {}: {}", YangToSourcesProcessor.LOG_PREFIX, file,
                                         entryName);
                                 yangsFilesFromDependencies.add(file);

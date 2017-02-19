@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YinStatementStreamSource;
@@ -40,7 +41,7 @@ public final class YangParserTestUtils {
 
     private static final FileFilter YANG_FILE_FILTER = file -> {
         final String name = file.getName().toLowerCase();
-        return name.endsWith(".yang") && file.isFile();
+        return name.endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION) && file.isFile();
     };
 
     private YangParserTestUtils() {
@@ -68,7 +69,8 @@ public final class YangParserTestUtils {
      * Creates a new effective schema context containing the specified YANG sources. Statement parser mode is set to
      * default mode.
      *
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG models are resolved
+     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
+     *                          models are resolved
      * @param sources YANG sources to be parsed
      *
      * @return effective schema context
@@ -102,7 +104,8 @@ public final class YangParserTestUtils {
     /**
      * Creates a new effective schema context containing the specified YANG sources.
      *
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG models are resolved
+     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
+     *                          models are resolved
      * @param statementParserMode mode of statement parser
      * @param sources YANG sources to be parsed
      *
@@ -139,7 +142,8 @@ public final class YangParserTestUtils {
      * Creates a new effective schema context containing the specified YANG sources. Statement parser mode is set to
      * default mode.
      *
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG models are resolved
+     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
+     *                          models are resolved
      * @param files YANG files to be parsed
      *
      * @return effective schema context
@@ -171,7 +175,8 @@ public final class YangParserTestUtils {
     /**
      * Creates a new effective schema context containing the specified YANG sources.
      *
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG models are resolved
+     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
+     *                          models are resolved
      * @param statementParserMode mode of statement parser
      * @param files YANG files to be parsed
      *
@@ -211,7 +216,8 @@ public final class YangParserTestUtils {
      * Creates a new effective schema context containing the specified YANG sources. Statement parser mode is set to
      * default mode.
      *
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG models are resolved
+     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
+     *                          models are resolved
      * @param files collection of YANG files to be parsed
      *
      * @return effective schema context
@@ -235,15 +241,16 @@ public final class YangParserTestUtils {
      * @throws ReactorException if there is an error in one of the parsed YANG sources
      * @throws FileNotFoundException if one of the specified files does not exist
      */
-    public static SchemaContext parseYangSources(final Collection<File> files, final StatementParserMode statementParserMode)
-            throws ReactorException, FileNotFoundException {
+    public static SchemaContext parseYangSources(final Collection<File> files,
+            final StatementParserMode statementParserMode) throws ReactorException, FileNotFoundException {
         return parseYangSources(files, null, statementParserMode);
     }
 
     /**
      * Creates a new effective schema context containing the specified YANG sources.
      *
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG models are resolved
+     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
+     *                          models are resolved
      * @param statementParserMode mode of statement parser
      * @param files collection of YANG files to be parsed
      *
@@ -279,7 +286,8 @@ public final class YangParserTestUtils {
      * default mode.
      *
      * @param yangSourcesDirectoryPath relative path to the directory with YANG files to be parsed
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG models are resolved
+     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
+     *                          models are resolved
      *
      * @return effective schema context
      *
@@ -315,7 +323,8 @@ public final class YangParserTestUtils {
      * Creates a new effective schema context containing the specified YANG sources.
      *
      * @param yangSourcesDirectoryPath relative path to the directory with YANG files to be parsed
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG models are resolved
+     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
+     *                          models are resolved
      * @param statementParserMode mode of statement parser
      *
      * @return effective schema context
@@ -355,7 +364,8 @@ public final class YangParserTestUtils {
      * default mode.
      *
      * @param yangSourcePath relative path to the YANG file to be parsed
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG model are resolved
+     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
+     *                          model are resolved
      *
      * @return effective schema context
      *
@@ -380,8 +390,9 @@ public final class YangParserTestUtils {
      * @throws FileNotFoundException if the specified file does not exist
      * @throws URISyntaxException if the specified file does not exist
      */
-    public static SchemaContext parseYangSource(final String yangSourcePath, final StatementParserMode statementParserMode)
-            throws ReactorException, FileNotFoundException, URISyntaxException {
+    public static SchemaContext parseYangSource(final String yangSourcePath,
+            final StatementParserMode statementParserMode) throws ReactorException, FileNotFoundException,
+            URISyntaxException {
         return parseYangSource(yangSourcePath, null, statementParserMode);
     }
 
@@ -389,7 +400,8 @@ public final class YangParserTestUtils {
      * Creates a new effective schema context containing the specified YANG source.
      *
      * @param yangSourcePath relative path to the YANG file to be parsed
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG model are resolved
+     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
+     *                          model are resolved
      * @param statementParserMode mode of statement parser
      *
      * @return effective schema context
@@ -430,7 +442,8 @@ public final class YangParserTestUtils {
      *
      * @param yangDirs relative paths to the directories containing YANG files to be parsed
      * @param yangFiles relative paths to the YANG files to be parsed
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG models are resolved
+     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
+     *                          models are resolved
      *
      * @return effective schema context
      *
@@ -468,7 +481,8 @@ public final class YangParserTestUtils {
      *
      * @param yangDirs relative paths to the directories containing YANG files to be parsed
      * @param yangFiles relative paths to the YANG files to be parsed
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG models are resolved
+     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
+     *                          models are resolved
      * @param statementParserMode mode of statement parser
      *
      * @return effective schema context
@@ -518,7 +532,8 @@ public final class YangParserTestUtils {
      * Creates a new effective schema context containing the specified YANG sources. Statement parser mode is set to
      * default mode.
      *
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG models are resolved
+     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
+     *                          models are resolved
      * @param filePaths relative paths to the YANG files to be parsed
      *
      * @return effective schema context
@@ -548,7 +563,8 @@ public final class YangParserTestUtils {
     /**
      * Creates a new effective schema context containing the specified YANG sources.
      *
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG models are resolved
+     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
+     *                          models are resolved
      * @param statementParserMode mode of statement parser
      * @param filePaths relative paths to the YANG files to be parsed
      *
@@ -587,7 +603,8 @@ public final class YangParserTestUtils {
      * default mode.
      *
      * @param streams input streams containing YANG sources to be parsed
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG models are resolved
+     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
+     *                          models are resolved
      *
      * @return effective schema context
      *
@@ -608,15 +625,16 @@ public final class YangParserTestUtils {
      *
      * @throws ReactorException if there is an error in one of the parsed YANG sources
      */
-    public static SchemaContext parseYangStreams(final List<InputStream> streams, final StatementParserMode statementParserMode)
-            throws ReactorException {
+    public static SchemaContext parseYangStreams(final List<InputStream> streams,
+            final StatementParserMode statementParserMode) throws ReactorException {
         return parseYangStreams(streams, null, statementParserMode);
     }
 
     /**
      * Creates a new effective schema context containing the specified YANG sources.
      *
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG models are resolved
+     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
+     *                          models are resolved
      * @param statementParserMode mode of statement parser
      * @param streams input streams containing YANG sources to be parsed
      *
@@ -672,7 +690,8 @@ public final class YangParserTestUtils {
      * Creates a new effective schema context containing the specified YANG sources. Statement parser mode is set to
      * default mode.
      *
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG models are resolved
+     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
+     *                          models are resolved
      * @param streams input streams containing YANG sources to be parsed
      *
      * @return effective schema context
@@ -702,7 +721,8 @@ public final class YangParserTestUtils {
     /**
      * Creates a new effective schema context containing the specified YANG sources.
      *
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG models are resolved
+     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
+     *                          models are resolved
      * @param statementParserMode mode of statement parser
      * @param streams input streams containing YANG sources to be parsed
      *
@@ -733,7 +753,8 @@ public final class YangParserTestUtils {
      * Creates a new effective schema context containing the specified YIN sources. Statement parser mode is set to
      * default mode.
      *
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YIN models are resolved
+     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YIN
+     *                          models are resolved
      * @param sources YIN sources to be parsed
      *
      * @return effective schema context
@@ -762,7 +783,8 @@ public final class YangParserTestUtils {
     /**
      * Creates a new effective schema context containing the specified YIN sources.
      *
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YIN models are resolved
+     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YIN
+     *                          models are resolved
      * @param statementParserMode mode of statement parser
      * @param sources YIN sources to be parsed
      *
