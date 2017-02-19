@@ -16,6 +16,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +33,6 @@ import org.mockito.MockitoAnnotations;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
-import org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.YangProvider;
 import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
 import org.opendaylight.yangtools.yang2sources.spi.MavenProjectAware;
 
@@ -54,10 +54,10 @@ public class GenerateSourcesTest {
         this.outDir = new File("/outputDir");
         final YangProvider mock = mock(YangProvider.class);
         doNothing().when(mock).addYangsToMetaInf(any(MavenProject.class), any(File.class),
-                any(File[].class));
+                any(Collection.class));
 
-        final YangToSourcesProcessor processor = new YangToSourcesProcessor(new File(this.yang), new File[] {},
-                Lists.newArrayList(new CodeGeneratorArg(GeneratorMock.class.getName(), "outputDir")), this.project, false,
+        final YangToSourcesProcessor processor = new YangToSourcesProcessor(new File(this.yang), ImmutableList.of(),
+                ImmutableList.of(new CodeGeneratorArg(GeneratorMock.class.getName(), "outputDir")), this.project, false,
                 mock);
         this.mojo = new YangToSourcesMojo(processor);
         doReturn(new File("")).when(this.project).getBasedir();

@@ -8,8 +8,11 @@
 package org.opendaylight.yangtools.yang2sources.plugin;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -49,8 +52,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
     /**
      * Classes implementing {@link BasicCodeGenerator} interface. An instance will be
      * created out of every class using default constructor. Method {@link
-     * CodeGenerator#generateSources(SchemaContext, File, Set<String>
-     * yangModulesNames)} will be called on every instance.
+     * BasicCodeGenerator#generateSources(SchemaContext, File, Set)} will be called on every instance.
      */
     @Parameter(required = false)
     private CodeGeneratorArg[] codeGenerators;
@@ -111,7 +113,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
 
             // defaults to ${basedir}/src/main/yang
             File yangFilesRootFile = processYangFilesRootDir(yangFilesRootDir, project.getBasedir());
-            File[] excludedFiles = processExcludeFiles(excludeFiles, yangFilesRootFile);
+            Collection<File> excludedFiles = processExcludeFiles(excludeFiles, yangFilesRootFile);
 
             yangToSourcesProcessor = new YangToSourcesProcessor(buildContext, yangFilesRootFile,
                     excludedFiles, codeGeneratorArgs, project, inspectDependencies);
@@ -144,16 +146,12 @@ public final class YangToSourcesMojo extends AbstractMojo {
         return yangFilesRootFile;
     }
 
-    private static File[] processExcludeFiles(final String[] excludeFiles, final File baseDir) {
+    private static Collection<File> processExcludeFiles(final String[] excludeFiles, final File baseDir) {
         if (excludeFiles == null) {
-            return new File[] {};
-        }
-        File[] result = new File[excludeFiles.length];
-        for (int i = 0; i < excludeFiles.length; i++) {
-            result[i] = new File(baseDir, excludeFiles[i]);
+            return ImmutableList.of();
         }
 
-        return result;
+        return Collections2.transform(Arrays.asList(excludeFiles), f -> new File(baseDir, f));
     }
 
 }

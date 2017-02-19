@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.io.Closeable;
@@ -78,7 +77,7 @@ final class Util {
         return yangFiles;
     }
 
-    static Collection<File> listFiles(final File root, final File[] excludedFiles) throws FileNotFoundException {
+    static Collection<File> listFiles(final File root, final Collection<File> excludedFiles) throws FileNotFoundException {
         if (!root.exists()) {
             LOG.warn("{} YANG source directory {} not found. No code will be generated.", YangToSourcesProcessor
                     .LOG_PREFIX, root.toString());
@@ -88,15 +87,8 @@ final class Util {
         Collection<File> result = new ArrayList<>();
         Collection<File> yangFiles = FileUtils.listFiles(root, new String[] { YANG_SUFFIX }, true);
         for (File f : yangFiles) {
-            boolean excluded = false;
-            for (File ex : excludedFiles) {
-                if (ex.equals(f)) {
-                    excluded = true;
-                    break;
-                }
-            }
-            if (excluded) {
-                LOG.info("{} {} file excluded {}", YangToSourcesProcessor.LOG_PREFIX, YANG_SUFFIX.toUpperCase(),
+            if (excludedFiles.contains(f)) {
+                LOG.info("{} {} file excluded {}", YangToSourcesProcessor.LOG_PREFIX, Util.YANG_SUFFIX.toUpperCase(),
                         f);
             } else {
                 result.add(f);
@@ -215,10 +207,6 @@ final class Util {
 
     private static boolean isJar(final File element) {
         return (element.isFile() && element.getName().endsWith(JAR_SUFFIX));
-    }
-
-    static <T> T checkNotNull(final T obj, final String paramName) {
-        return Preconditions.checkNotNull(obj, "Parameter " + paramName + " is null");
     }
 
     static final class YangsInZipsResult implements Closeable {
