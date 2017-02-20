@@ -48,6 +48,7 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.ContextHolder;
@@ -139,7 +140,7 @@ public class UtilTest {
         final File testYang1 = new File(getClass().getResource("/test.yang").toURI());
         final File testYang2 = new File(getClass().getResource("/test2.yang").toURI());
         final SchemaContext context = YangParserTestUtils.parseYangSources(testYang1, testYang2);
-        final Map<Module, String> yangModules = new HashMap<>();
+        final Map<Module, SourceIdentifier> yangModules = new HashMap<>();
         final Util.ContextHolder cxH = new ContextHolder(context, yangModules);
         assertEquals(context, cxH.getContext());
         assertEquals(yangModules.keySet(), cxH.getYangModules());
