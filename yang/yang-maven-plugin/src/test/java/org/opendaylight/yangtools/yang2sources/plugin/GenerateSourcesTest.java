@@ -16,10 +16,10 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -56,8 +56,8 @@ public class GenerateSourcesTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        this.yang = new File(getClass().getResource("/yang/mock.yang").toURI()).getParent();
-        this.outDir = new File("/outputDir");
+        yang = new File(getClass().getResource("/yang/mock.yang").toURI()).getParent();
+        outDir = new File("/outputDir");
         final YangProvider mock = mock(YangProvider.class);
         doNothing().when(mock).addYangsToMetaInf(any(MavenProject.class), any(File.class),
                 any(Collection.class));
@@ -76,16 +76,15 @@ public class GenerateSourcesTest {
 
     @Test
     public void test() throws Exception {
-        this.mojo.execute();
-        assertEquals(this.outDir, GeneratorMock.outputDir);
-        assertEquals(this.project, GeneratorMock.project);
+        mojo.execute();
+        assertEquals(outDir, GeneratorMock.outputDir);
+        assertEquals(project, GeneratorMock.project);
         assertTrue(GeneratorMock.additionalCfg.isEmpty());
         assertThat(GeneratorMock.resourceBaseDir.toString(), containsString("target" + File.separator
                 + "generated-sources" + File.separator + "spi"));
     }
 
     public static class GeneratorMock implements BasicCodeGenerator, MavenProjectAware {
-
         private static int called = 0;
         private static File outputDir;
         private static Map<String, String> additionalCfg;
