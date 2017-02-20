@@ -12,22 +12,24 @@ import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProces
 import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.META_INF_YANG_STRING;
 import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.META_INF_YANG_STRING_JAR;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
+import com.google.common.io.Files;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
@@ -37,6 +39,7 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -59,24 +62,21 @@ final class Util {
             throws FileNotFoundException {
         if (!root.exists()) {
             LOG.warn("{} YANG source directory {} not found. No code will be generated.", LOG_PREFIX, root);
-
-            return Collections.emptyList();
-        }
-        Collection<File> result = new ArrayList<>();
-        Collection<File> yangFiles = FileUtils.listFiles(root, new String[] { YANG_SUFFIX }, true);
-        for (File f : yangFiles) {
-            if (excludedFiles.contains(f)) {
-                LOG.info("{} {} file excluded {}", LOG_PREFIX, Util.YANG_SUFFIX.toUpperCase(), f);
-            } else {
-                result.add(f);
-            }
+            return ImmutableList.of();
         }
 
-        return result;
+        return StreamSupport.stream(Files.fileTreeTraverser().children(root).spliterator(), false).filter(File::isFile)
+                .filter(f -> f.getName().endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION)).filter(f -> {
+                    if (excludedFiles.contains(f)) {
+                        LOG.info("{} YANG file excluded {}", LOG_PREFIX, f);
+                        return false;
+                    }
+                    return true;
+                }).collect(Collectors.toList());
     }
 
     static List<File> getClassPath(final MavenProject project) {
-        List<File> dependencies = new ArrayList<>();
+        final List<File> dependencies = new ArrayList<>();
         for (Artifact element : project.getArtifacts()) {
             File asFile = element.getFile();
             if (isJar(asFile) || asFile.isDirectory()) {
