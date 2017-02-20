@@ -13,19 +13,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
+import org.opendaylight.yangtools.yang.model.api.ActionNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
-import org.opendaylight.yangtools.yang.model.api.ActionNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
@@ -36,8 +33,7 @@ public class ActionStatementTest {
     private static final String FOO_REV = "2016-12-13";
 
     @Test
-    public void testActionStatementInDataContainers() throws ReactorException, FileNotFoundException,
-            URISyntaxException, ParseException {
+    public void testActionStatementInDataContainers() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/action-stmt/foo.yang");
         assertNotNull(schemaContext);
 
@@ -79,7 +75,7 @@ public class ActionStatementTest {
     }
 
     @Test
-    public void testActionUnsupportedInYang10() throws ReactorException, FileNotFoundException, URISyntaxException {
+    public void testActionUnsupportedInYang10() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/action-stmt/foo10.yang");
             fail("Test should fail due to invalid Yang 1.0");
@@ -89,7 +85,7 @@ public class ActionStatementTest {
     }
 
     @Test
-    public void testActionWithinIllegalAncestor() throws FileNotFoundException, URISyntaxException {
+    public void testActionWithinIllegalAncestor() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/action-stmt/foo-invalid.yang");
             fail("Test should fail due to invalid Yang 1.1");
@@ -100,7 +96,7 @@ public class ActionStatementTest {
     }
 
     @Test
-    public void testActionWithinListWithoutKey() throws FileNotFoundException, URISyntaxException {
+    public void testActionWithinListWithoutKey() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/action-stmt/bar-invalid.yang");
             fail("Test should fail due to invalid Yang 1.1");
@@ -112,7 +108,7 @@ public class ActionStatementTest {
     }
 
     @Test
-    public void testActionInUsedGroupingWithinCase() throws FileNotFoundException, URISyntaxException {
+    public void testActionInUsedGroupingWithinCase() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/action-stmt/baz-invalid.yang");
             fail("Test should fail due to invalid Yang 1.1");
@@ -124,7 +120,7 @@ public class ActionStatementTest {
     }
 
     @Test
-    public void testActionInUsedGroupingAtTopLevelOfModule() throws FileNotFoundException, URISyntaxException {
+    public void testActionInUsedGroupingAtTopLevelOfModule() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/action-stmt/foobar-invalid.yang");
             fail("Test should fail due to invalid Yang 1.1");

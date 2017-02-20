@@ -14,7 +14,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.FileNotFoundException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -38,8 +37,6 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class UsesAugmentTest {
     private static final URI UG_NS = URI.create("urn:opendaylight:params:xml:ns:yang:uses-grouping");
@@ -643,7 +640,7 @@ public class UsesAugmentTest {
     }
 
     @Test
-    public void testTypedefs() throws URISyntaxException, SourceException, ReactorException {
+    public void testTypedefs() throws Exception {
         modules = TestUtils.loadModules(getClass().getResource("/grouping-test").toURI());
         final Module testModule = TestUtils.findModule(modules, "grouping-definitions");
         final Set<TypeDefinition<?>> types = testModule.getTypeDefinitions();

@@ -13,9 +13,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.Set;
 import org.junit.Test;
@@ -32,8 +29,7 @@ import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 public class Bug6871Test {
 
     @Test
-    public void testValidYang11Model() throws ReactorException, FileNotFoundException, URISyntaxException,
-            ParseException {
+    public void testValidYang11Model() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6871/foo.yang");
         assertNotNull(schemaContext);
 
@@ -64,14 +60,13 @@ public class Bug6871Test {
     }
 
     @Test
-    public void testInvalidYang10Model() throws FileNotFoundException, URISyntaxException {
+    public void testInvalidYang10Model() throws Exception {
         assertException("/rfc7950/bug6871/foo10.yang", "MUST is not valid for NOTIFICATION");
         assertException("/rfc7950/bug6871/bar10.yang", "MUST is not valid for INPUT");
         assertException("/rfc7950/bug6871/baz10.yang", "MUST is not valid for OUTPUT");
     }
 
-    private static void assertException(final String sourcePath, final String exceptionMessage)
-            throws FileNotFoundException, URISyntaxException {
+    private static void assertException(final String sourcePath, final String exceptionMessage) throws Exception {
         try {
             StmtTestUtils.parseYangSource(sourcePath);
             fail("Test should fail due to invalid Yang 1.0");

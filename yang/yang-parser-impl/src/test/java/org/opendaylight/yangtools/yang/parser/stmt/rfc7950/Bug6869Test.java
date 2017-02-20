@@ -17,8 +17,6 @@ import static org.junit.Assert.fail;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.Test;
@@ -30,9 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6869Test {
@@ -40,8 +36,7 @@ public class Bug6869Test {
     private static final String FOO_REV = "1970-01-01";
 
     @Test
-    public void identityNoFeaureTest() throws ReactorException, SourceException, FileNotFoundException,
-            URISyntaxException {
+    public void identityNoFeaureTest() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6869/foo.yang",
                 ImmutableSet.of());
         assertNotNull(schemaContext);
@@ -56,8 +51,7 @@ public class Bug6869Test {
     }
 
     @Test
-    public void identityAllFeauresTest() throws ReactorException, SourceException, FileNotFoundException,
-            URISyntaxException {
+    public void identityAllFeauresTest() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6869/foo.yang",
                 createFeaturesSet("identity-feature", "mandatory-leaf", "tls", "ssh", "two", "three"));
         assertNotNull(schemaContext);
@@ -94,7 +88,7 @@ public class Bug6869Test {
     }
 
     @Test
-    public void invalidYang10Test() throws ReactorException, SourceException, FileNotFoundException, URISyntaxException {
+    public void invalidYang10Test() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/bug6869/invalid10.yang");
             fail("Test should fail due to invalid Yang 1.0");

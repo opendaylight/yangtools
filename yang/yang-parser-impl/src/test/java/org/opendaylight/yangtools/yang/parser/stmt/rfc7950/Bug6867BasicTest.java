@@ -12,31 +12,27 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6867BasicTest {
 
     @Test
-    public void valid10Test() throws ReactorException, SourceException, FileNotFoundException, URISyntaxException {
+    public void valid10Test() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/basic-test/valid-10.yang");
         assertNotNull(schemaContext);
     }
 
     @Test
-    public void valid11Test() throws ReactorException, SourceException, FileNotFoundException, URISyntaxException {
+    public void valid11Test() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/basic-test/valid-11.yang");
         assertNotNull(schemaContext);
     }
 
     @Test
-    public void invalid10Test() throws ReactorException, SourceException, FileNotFoundException, URISyntaxException {
+    public void invalid10Test() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/basic-test/invalid-10.yang");
             fail("Test should fail due to invalid Yang 1.0");
@@ -46,7 +42,7 @@ public class Bug6867BasicTest {
     }
 
     @Test
-    public void invalid11Test() throws ReactorException, SourceException, FileNotFoundException, URISyntaxException {
+    public void invalid11Test() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/basic-test/invalid-11.yang");
             fail("Test should fail due to invalid Yang 1.1");
@@ -56,13 +52,13 @@ public class Bug6867BasicTest {
     }
 
     @Test
-    public void anyData11Test() throws ReactorException, SourceException, FileNotFoundException, URISyntaxException {
+    public void anyData11Test() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/basic-test/anydata-11.yang");
         assertNotNull(schemaContext);
     }
 
     @Test
-    public void anyData10Test() throws ReactorException, SourceException, FileNotFoundException, URISyntaxException {
+    public void anyData10Test() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/basic-test/anydata-10.yang");
             fail("Test should fail due to invalid Yang 1.0");
@@ -72,14 +68,13 @@ public class Bug6867BasicTest {
     }
 
     @Test
-    public void yangModelTest() throws ReactorException, SourceException, FileNotFoundException, URISyntaxException {
+    public void yangModelTest() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/rfc7950/model");
         assertNotNull(schemaContext);
     }
 
     @Test
-    public void unsupportedVersionTest() throws ReactorException, SourceException, FileNotFoundException,
-            URISyntaxException {
+    public void unsupportedVersionTest() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/basic-test/unsupported-version.yang");
             fail("Test should fail due to unsupported Yang version");

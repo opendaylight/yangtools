@@ -13,9 +13,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.Set;
 import org.junit.Test;
@@ -29,8 +26,7 @@ import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 public class IdentityStatementTest {
 
     @Test
-    public void testMultipleBaseIdentities() throws ReactorException, FileNotFoundException, URISyntaxException,
-            ParseException {
+    public void testMultipleBaseIdentities() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/identity-stmt/foo.yang");
         assertNotNull(schemaContext);
 
@@ -49,7 +45,7 @@ public class IdentityStatementTest {
     }
 
     @Test
-    public void testInvalidYang10() throws FileNotFoundException, URISyntaxException {
+    public void testInvalidYang10() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/identity-stmt/foo10.yang");
             fail("Test should fail due to invalid Yang 1.0");

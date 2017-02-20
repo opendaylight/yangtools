@@ -12,10 +12,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import org.junit.Before;
@@ -43,7 +40,7 @@ public class CaseStmtTest {
     public ExpectedException expectedEx = ExpectedException.none();
 
     @Before
-    public void setup() throws ReactorException, FileNotFoundException, URISyntaxException, ParseException {
+    public void setup() throws Exception {
         schema = StmtTestUtils.parseYangSources("/case-test");
         String date_s = "2015-09-09 00:00:00.0";
         SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -533,13 +530,13 @@ public class CaseStmtTest {
     }
 
     @Test
-    public void InferenceExceptionChoiceTest() throws ReactorException, FileNotFoundException, URISyntaxException {
+    public void InferenceExceptionChoiceTest() throws Exception {
         expectedEx.expect(ReactorException.class);
         schema = StmtTestUtils.parseYangSources("/case-test/case-test-exceptions/choice");
     }
 
     @Test
-    public void InferenceExceptionCaseTest() throws ReactorException, FileNotFoundException, URISyntaxException {
+    public void InferenceExceptionCaseTest() throws Exception {
         expectedEx.expect(ReactorException.class);
         schema = StmtTestUtils.parseYangSources("/case-test/case-test-exceptions/case");
     }

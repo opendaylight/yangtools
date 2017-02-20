@@ -11,9 +11,6 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -26,13 +23,11 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class Bug7440Test {
 
     @Test
-    public void testRestrictedTypeParentSchemaPathInDeviate() throws ReactorException, FileNotFoundException,
-            URISyntaxException, ParseException {
+    public void testRestrictedTypeParentSchemaPathInDeviate() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/bugs/bug7440/foo.yang");
         assertNotNull(schemaContext);
 
