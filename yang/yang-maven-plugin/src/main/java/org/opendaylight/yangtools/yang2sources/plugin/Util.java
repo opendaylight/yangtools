@@ -44,6 +44,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -295,11 +296,11 @@ final class Util {
 
     static final class ContextHolder {
         private final SchemaContext context;
-        private final Map<Module, String> yangModules;
+        private final Map<Module, SourceIdentifier> yangModules;
 
-        ContextHolder(final SchemaContext context, final Map<Module, String> yangModules) {
+        ContextHolder(final SchemaContext context, final Map<Module, SourceIdentifier> projectYangModules) {
             this.context = context;
-            this.yangModules = ImmutableMap.copyOf(yangModules);
+            this.yangModules = ImmutableMap.copyOf(projectYangModules);
         }
 
         SchemaContext getContext() {
@@ -311,12 +312,12 @@ final class Util {
         }
 
         Optional<Collection<String>> moduleToFinalPath(final Module mod) {
-            final String fileName = yangModules.get(mod);
-            if (fileName == null) {
+            final SourceIdentifier id = yangModules.get(mod);
+            if (id == null) {
                 return Optional.empty();
             }
 
-            return Optional.of(ImmutableList.of(META_INF_STR, YANG_STR, fileName));
+            return Optional.of(ImmutableList.of(META_INF_STR, YANG_STR, id.toYangFilename()));
         }
     }
 }
