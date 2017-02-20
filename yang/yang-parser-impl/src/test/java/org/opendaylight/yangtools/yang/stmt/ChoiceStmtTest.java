@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -18,25 +19,22 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class ChoiceStmtTest {
 
-    private static final YangStatementSourceImpl CHOICE_MODULE = new YangStatementSourceImpl("/model/foo.yang", false);
-    private static final YangStatementSourceImpl IMPORTED_MODULE1 = new YangStatementSourceImpl("/model/bar.yang",
-            false);
-    private static final YangStatementSourceImpl IMPORTED_MODULE2 = new YangStatementSourceImpl("/model/baz.yang",
-            false);
-    private static final YangStatementSourceImpl INCLUDED_MODULE = new YangStatementSourceImpl("/model/subfoo.yang",
-            false);
+    private static final StatementStreamSource CHOICE_MODULE = sourceForResource("/model/foo.yang");
+    private static final StatementStreamSource IMPORTED_MODULE1 = sourceForResource("/model/bar.yang");
+    private static final StatementStreamSource IMPORTED_MODULE2 = sourceForResource("/model/baz.yang");
+    private static final StatementStreamSource INCLUDED_MODULE = sourceForResource("/model/subfoo.yang");
 
     @Test
     public void choiceAndCaseTest() throws ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        StmtTestUtils.addSources(reactor, CHOICE_MODULE, IMPORTED_MODULE1, IMPORTED_MODULE2, INCLUDED_MODULE);
+        reactor.addSources(CHOICE_MODULE, IMPORTED_MODULE1, IMPORTED_MODULE2, INCLUDED_MODULE);
 
         final EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);

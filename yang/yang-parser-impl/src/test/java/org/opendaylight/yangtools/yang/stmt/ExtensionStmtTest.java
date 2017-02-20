@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.util.List;
 import org.junit.Test;
@@ -20,26 +21,23 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class ExtensionStmtTest {
 
-    private static final YangStatementSourceImpl EXT_DEF_MODULE = new YangStatementSourceImpl("/model/bar.yang",
-            false);
-    private static final YangStatementSourceImpl EXT_DEF_MODULE2 = new YangStatementSourceImpl
-            ("/semantic-statement-parser/ext-typedef.yang",
-            false);
-    private static final YangStatementSourceImpl EXT_USE_MODULE = new YangStatementSourceImpl
-            ("/semantic-statement-parser/ext-use.yang",
-            false);
+    private static final StatementStreamSource EXT_DEF_MODULE = sourceForResource("/model/bar.yang");
+    private static final StatementStreamSource EXT_DEF_MODULE2 = sourceForResource(
+        "/semantic-statement-parser/ext-typedef.yang");
+    private static final StatementStreamSource EXT_USE_MODULE = sourceForResource(
+        "/semantic-statement-parser/ext-use.yang");
 
     @Test
     public void testExtensionDefinition() throws ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        StmtTestUtils.addSources(reactor, EXT_DEF_MODULE);
+        reactor.addSources(EXT_DEF_MODULE);
 
         final EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);
@@ -59,7 +57,7 @@ public class ExtensionStmtTest {
     @Test
     public void testExtensionUsage() throws ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        StmtTestUtils.addSources(reactor, EXT_DEF_MODULE2, EXT_USE_MODULE);
+        reactor.addSources(EXT_DEF_MODULE2, EXT_USE_MODULE);
 
         final EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);

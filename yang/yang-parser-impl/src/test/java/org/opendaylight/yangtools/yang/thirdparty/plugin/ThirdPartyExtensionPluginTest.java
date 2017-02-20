@@ -10,9 +10,7 @@ package org.opendaylight.yangtools.yang.thirdparty.plugin;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
 import org.junit.Test;
@@ -20,9 +18,11 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class ThirdPartyExtensionPluginTest {
@@ -30,11 +30,9 @@ public class ThirdPartyExtensionPluginTest {
     private static final String REV = "2016-06-09";
 
     @Test
-    public void test() throws FileNotFoundException, URISyntaxException, ReactorException {
+    public void test() throws URISyntaxException, ReactorException, IOException, YangSyntaxErrorException {
         final CrossSourceStatementReactor.BuildAction reactor = CustomInferencePipeline.CUSTOM_REACTOR.newBuild();
-        final FileInputStream yangFile = new FileInputStream(new File(getClass().getResource("/plugin-test/foo.yang")
-                .toURI()));
-        reactor.addSource(new YangStatementSourceImpl(yangFile));
+        reactor.addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource("/plugin-test/foo.yang")));
 
         final EffectiveSchemaContext schema = reactor.buildEffective();
         final DataSchemaNode dataChildByName = schema.getDataChildByName(QName.create(NS, REV, "root"));

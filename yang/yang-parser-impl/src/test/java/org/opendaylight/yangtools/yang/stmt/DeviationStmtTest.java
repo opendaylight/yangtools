@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -29,14 +30,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 
 public class DeviationStmtTest {
 
-    private static final StatementStreamSource FOO_MODULE =
-            new YangStatementSourceImpl("/deviation-stmt-test/foo.yang", false);
-    private static final StatementStreamSource BAR_MODULE =
-            new YangStatementSourceImpl("/deviation-stmt-test/bar.yang", false);
+    private static final StatementStreamSource FOO_MODULE = sourceForResource("/deviation-stmt-test/foo.yang");
+    private static final StatementStreamSource BAR_MODULE = sourceForResource("/deviation-stmt-test/bar.yang");
 
     @Test
     public void testDeviationAndDeviate() throws ReactorException, ParseException {

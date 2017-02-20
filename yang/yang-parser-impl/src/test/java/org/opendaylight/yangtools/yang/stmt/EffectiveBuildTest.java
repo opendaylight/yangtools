@@ -11,6 +11,8 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
+
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -29,24 +31,24 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class EffectiveBuildTest {
 
-    private static final YangStatementSourceImpl SIMPLE_MODULE = new YangStatementSourceImpl(
-            "/stmt-test/effective-build/simple-module.yang", false);
+    private static final StatementStreamSource SIMPLE_MODULE = sourceForResource(
+            "/stmt-test/effective-build/simple-module.yang");
     private static final QNameModule SIMPLE_MODULE_QNAME = QNameModule.create(
             URI.create("simple.yang"), SimpleDateFormatUtil.DEFAULT_DATE_REV);
-    private static final YangStatementSourceImpl YANG_EXT = new YangStatementSourceImpl(
-            "/stmt-test/extensions/yang-ext.yang", false);
+    private static final StatementStreamSource YANG_EXT = sourceForResource(
+            "/stmt-test/extensions/yang-ext.yang");
 
     @Test
     public void effectiveBuildTest() throws SourceException, ReactorException {
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, SIMPLE_MODULE);
+        reactor.addSources(SIMPLE_MODULE);
         EffectiveSchemaContext result = reactor.buildEffective();
 
         assertNotNull(result);
@@ -108,7 +110,7 @@ public class EffectiveBuildTest {
     @Test
     public void extensionsTest() throws SourceException, ReactorException {
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, YANG_EXT);
+        reactor.addSources(YANG_EXT);
         EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
@@ -134,11 +136,5 @@ public class EffectiveBuildTest {
 
         SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
-    }
-
-    private static void addSources(final BuildAction reactor, final YangStatementSourceImpl... sources) {
-        for (YangStatementSourceImpl source : sources) {
-            reactor.addSource(source);
-        }
     }
 }

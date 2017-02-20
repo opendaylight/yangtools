@@ -29,15 +29,15 @@ import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 public class YinFileStmtTest {
 
-    private static final YinStatementSourceImpl YIN_FILE = createSource("test.yin");
-    private static final YinStatementSourceImpl EXT_FILE = createSource("extension.yin");
-    private static final YinStatementSourceImpl EXT_USE_FILE = createSource("extension-use.yin");
-    private static final YinStatementSourceImpl INVALID_YIN_FILE = createSource("incorrect-foo.yin");
-    private static final YinStatementSourceImpl INVALID_YIN_FILE_2 = createSource("incorrect-bar.yin");
+    private static final StatementStreamSource YIN_FILE = createSource("test.yin");
+    private static final StatementStreamSource EXT_FILE = createSource("extension.yin");
+    private static final StatementStreamSource EXT_USE_FILE = createSource("extension-use.yin");
+    private static final StatementStreamSource INVALID_YIN_FILE = createSource("incorrect-foo.yin");
+    private static final StatementStreamSource INVALID_YIN_FILE_2 = createSource("incorrect-bar.yin");
 
     private Set<Module> modules;
 
-    private static YinStatementSourceImpl createSource(final String name) {
+    private static StatementStreamSource createSource(final String name) {
         return new YinStatementSourceImpl("/semantic-statement-parser/yin/" + name, false);
     }
 

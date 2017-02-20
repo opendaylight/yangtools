@@ -12,8 +12,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
@@ -35,49 +35,42 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class MoreRevisionsTest {
 
-    private static final YangStatementSourceImpl REVFILE = new YangStatementSourceImpl(
-            "/semantic-statement-parser/revisions/more-revisions-test.yang",
-            false);
+    private static final StatementStreamSource REVFILE = sourceForResource(
+            "/semantic-statement-parser/revisions/more-revisions-test.yang");
 
-    private static final YangStatementSourceImpl TED_20130712 = new YangStatementSourceImpl(
-            "/semantic-statement-parser/two-revisions/ted@2013-07-12.yang",
-            false);
+    private static final StatementStreamSource TED_20130712 = sourceForResource(
+            "/semantic-statement-parser/two-revisions/ted@2013-07-12.yang");
 
-    private static final YangStatementSourceImpl TED_20131021 = new YangStatementSourceImpl(
-            "/semantic-statement-parser/two-revisions/ted@2013-10-21.yang",
-            false);
+    private static final StatementStreamSource TED_20131021 = sourceForResource(
+            "/semantic-statement-parser/two-revisions/ted@2013-10-21.yang");
 
-    private static final YangStatementSourceImpl IETF_TYPES = new YangStatementSourceImpl(
-            "/ietf/ietf-inet-types@2010-09-24.yang", false);
+    private static final StatementStreamSource IETF_TYPES = sourceForResource(
+            "/ietf/ietf-inet-types@2010-09-24.yang");
 
-    private static final YangStatementSourceImpl NETWORK_TOPOLOGY_20130712 = new YangStatementSourceImpl(
-            "/ietf/network-topology@2013-07-12.yang", false);
+    private static final StatementStreamSource NETWORK_TOPOLOGY_20130712 = sourceForResource(
+            "/ietf/network-topology@2013-07-12.yang");
 
-    private static final YangStatementSourceImpl NETWORK_TOPOLOGY_20131021 = new YangStatementSourceImpl(
-            "/ietf/network-topology@2013-10-21.yang", false);
+    private static final StatementStreamSource NETWORK_TOPOLOGY_20131021 = sourceForResource(
+            "/ietf/network-topology@2013-10-21.yang");
 
-    private static final YangStatementSourceImpl ISIS_20130712 = new YangStatementSourceImpl(
-            "/semantic-statement-parser/two-revisions/isis-topology@2013-07-12.yang",
-            false);
+    private static final StatementStreamSource ISIS_20130712 = sourceForResource(
+            "/semantic-statement-parser/two-revisions/isis-topology@2013-07-12.yang");
 
-    private static final YangStatementSourceImpl ISIS_20131021 = new YangStatementSourceImpl(
-            "/semantic-statement-parser/two-revisions/isis-topology@2013-10-21.yang",
-            false);
+    private static final StatementStreamSource ISIS_20131021 = sourceForResource(
+            "/semantic-statement-parser/two-revisions/isis-topology@2013-10-21.yang");
 
-    private static final YangStatementSourceImpl L3_20130712 = new YangStatementSourceImpl(
-            "/semantic-statement-parser/two-revisions/l3-unicast-igp-topology@2013-07-12.yang",
-            false);
+    private static final StatementStreamSource L3_20130712 = sourceForResource(
+            "/semantic-statement-parser/two-revisions/l3-unicast-igp-topology@2013-07-12.yang");
 
-    private static final YangStatementSourceImpl L3_20131021 = new YangStatementSourceImpl(
-            "/semantic-statement-parser/two-revisions/l3-unicast-igp-topology@2013-10-21.yang",
-            false);
+    private static final StatementStreamSource L3_20131021 = sourceForResource(
+            "/semantic-statement-parser/two-revisions/l3-unicast-igp-topology@2013-10-21.yang");
 
     @Test
     public void readAndParseYangFileTest() throws SourceException,
@@ -137,8 +130,7 @@ public class MoreRevisionsTest {
     }
 
     @Test
-    public void multipleRevisionsTest() throws SourceException,
-            ReactorException, FileNotFoundException, URISyntaxException {
+    public void multipleRevisionsTest() throws Exception {
         for (int i = 0; i < 100; i++) {
             SchemaContext context = StmtTestUtils
                     .parseYangSources("/semantic-statement-parser/multiple-revisions");
@@ -147,8 +139,7 @@ public class MoreRevisionsTest {
     }
 
     @Test
-    public void multipleRevisionsFullTest() throws SourceException,
-            ReactorException, FileNotFoundException, URISyntaxException,
+    public void multipleRevisionsFullTest() throws Exception,
             ParseException {
         for (int i = 0; i < 100; i++) {
             SchemaContext context = StmtTestUtils
@@ -159,8 +150,7 @@ public class MoreRevisionsTest {
         }
     }
 
-    private static void checkContentFullTest(final SchemaContext context) throws ParseException,
-            URISyntaxException {
+    private static void checkContentFullTest(final SchemaContext context) throws ParseException, URISyntaxException {
 
         String yangTypesNSStr = "urn:ietf:params:xml:ns:yang:ietf-yang-types";
         URI yangTypesNS = new URI(yangTypesNSStr);
@@ -248,12 +238,10 @@ public class MoreRevisionsTest {
     }
 
     @Test
-    public void multipleRevisionsSimpleTest() throws SourceException,
-            ReactorException, FileNotFoundException, URISyntaxException,
-            ParseException {
+    public void multipleRevisionsSimpleTest() throws Exception {
         for (int i = 0; i < 1000; i++) {
-            SchemaContext context = StmtTestUtils
-                    .parseYangSources("/semantic-statement-parser/multiple-revisions/simple");
+            SchemaContext context = StmtTestUtils.parseYangSources(
+                "/semantic-statement-parser/multiple-revisions/simple");
             assertNotNull(context);
             assertEquals(5, context.getModules().size());
             checkContentSimpleTest(context);

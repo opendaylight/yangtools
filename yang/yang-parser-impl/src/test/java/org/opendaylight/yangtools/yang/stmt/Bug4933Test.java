@@ -12,8 +12,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
@@ -24,7 +22,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public class Bug4933Test {
 
     @Test
-    public void test() throws ReactorException, FileNotFoundException, URISyntaxException {
+    public void test() throws Exception {
         SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug4933/correct");
         assertNotNull(context);
 
@@ -33,7 +31,7 @@ public class Bug4933Test {
     }
 
     @Test
-    public void incorrectKeywordTest() throws FileNotFoundException, URISyntaxException {
+    public void incorrectKeywordTest() throws Exception {
         try {
             StmtTestUtils.parseYangSources("/bugs/bug4933/incorrect");
             fail("ReactorException should be thrown.");

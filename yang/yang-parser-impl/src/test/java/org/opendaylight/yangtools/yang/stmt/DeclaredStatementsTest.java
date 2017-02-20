@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.text.ParseException;
 import java.util.Collection;
@@ -64,7 +65,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AnyXmlEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AugmentEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ChoiceEffectiveStatementImpl;
@@ -76,8 +77,8 @@ public class DeclaredStatementsTest {
 
     @Test
     public void testDeclaredAnyXml() throws ReactorException {
-        final YangStatementSourceImpl anyxmlStmtModule =
-                new YangStatementSourceImpl("/declared-statements-test/anyxml-declared-test.yang", false);
+        final StatementStreamSource anyxmlStmtModule =
+                sourceForResource("/declared-statements-test/anyxml-declared-test.yang");
 
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(anyxmlStmtModule);
         assertNotNull(schemaContext);
@@ -146,8 +147,8 @@ public class DeclaredStatementsTest {
 
     @Test
     public void testDeclaredChoice() throws ReactorException {
-        final YangStatementSourceImpl choiceStmtModule =
-                new YangStatementSourceImpl("/declared-statements-test/choice-declared-test.yang", false);
+        final StatementStreamSource choiceStmtModule =
+                sourceForResource("/declared-statements-test/choice-declared-test.yang");
 
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(choiceStmtModule);
         assertNotNull(schemaContext);
@@ -213,8 +214,8 @@ public class DeclaredStatementsTest {
 
     @Test
     public void testDeclaredAugment() throws ReactorException {
-        final YangStatementSourceImpl augmentStmtModule =
-                new YangStatementSourceImpl("/declared-statements-test/augment-declared-test.yang", false);
+        final StatementStreamSource augmentStmtModule =
+                sourceForResource("/declared-statements-test/augment-declared-test.yang");
 
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(augmentStmtModule);
         assertNotNull(schemaContext);
@@ -240,11 +241,11 @@ public class DeclaredStatementsTest {
 
     @Test
     public void testDeclaredModuleAndSubmodule() throws ReactorException {
-        final YangStatementSourceImpl parentModule =
-                new YangStatementSourceImpl("/declared-statements-test/parent-module-declared-test.yang", false);
+        final StatementStreamSource parentModule =
+                sourceForResource("/declared-statements-test/parent-module-declared-test.yang");
 
-        final YangStatementSourceImpl childModule =
-                new YangStatementSourceImpl("/declared-statements-test/child-module-declared-test.yang", false);
+        final StatementStreamSource childModule =
+                sourceForResource("/declared-statements-test/child-module-declared-test.yang");
 
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(parentModule, childModule);
         assertNotNull(schemaContext);
@@ -294,11 +295,11 @@ public class DeclaredStatementsTest {
 
     @Test
     public void testDeclaredModule() throws ReactorException, ParseException {
-        final YangStatementSourceImpl rootModule =
-                new YangStatementSourceImpl("/declared-statements-test/root-module-declared-test.yang", false);
+        final StatementStreamSource rootModule =
+                sourceForResource("/declared-statements-test/root-module-declared-test.yang");
 
-        final YangStatementSourceImpl importedModule =
-                new YangStatementSourceImpl("/declared-statements-test/imported-module-declared-test.yang", false);
+        final StatementStreamSource importedModule =
+                sourceForResource("/declared-statements-test/imported-module-declared-test.yang");
 
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(rootModule, importedModule);
         assertNotNull(schemaContext);
@@ -370,8 +371,8 @@ public class DeclaredStatementsTest {
 
     @Test
     public void testDeclaredContainer() throws ReactorException {
-        final YangStatementSourceImpl containerStmtModule =
-                new YangStatementSourceImpl("/declared-statements-test/container-declared-test.yang", false);
+        final StatementStreamSource containerStmtModule =
+                sourceForResource("/declared-statements-test/container-declared-test.yang");
 
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(containerStmtModule);
         assertNotNull(schemaContext);

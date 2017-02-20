@@ -12,9 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.FileNotFoundException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
@@ -23,14 +21,12 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class SemanticVersionMultipleImportTest {
 
     @Test
-    public void multipleInvalidDeprecatedTest() throws SourceException, FileNotFoundException, ReactorException,
-            URISyntaxException {
+    public void multipleInvalidDeprecatedTest() throws Exception {
         try {
             StmtTestUtils.parseYangSources("/semantic-version/multiple/multiple-invalid-deprecated",
                     StatementParserMode.SEMVER_MODE);
@@ -42,8 +38,7 @@ public class SemanticVersionMultipleImportTest {
     }
 
     @Test
-    public void multipleInvalidNosufficientTest() throws SourceException, FileNotFoundException, ReactorException,
-            URISyntaxException {
+    public void multipleInvalidNosufficientTest() throws Exception {
         try {
             StmtTestUtils.parseYangSources("/semantic-version/multiple/multiple-invalid-nosufficient",
                     StatementParserMode.SEMVER_MODE);
@@ -55,8 +50,7 @@ public class SemanticVersionMultipleImportTest {
     }
 
     @Test
-    public void multipleValidDefaultsTest() throws SourceException, FileNotFoundException, ReactorException,
-            URISyntaxException {
+    public void multipleValidDefaultsTest() throws Exception {
         SchemaContext context = StmtTestUtils.parseYangSources("/semantic-version/multiple/multiple-valid-defaults",
                 StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
@@ -72,8 +66,7 @@ public class SemanticVersionMultipleImportTest {
     }
 
     @Test
-    public void multipleValidSpecifiedTest() throws SourceException, FileNotFoundException, ReactorException,
-            URISyntaxException {
+    public void multipleValidSpecifiedTest() throws Exception {
         SchemaContext context = StmtTestUtils.parseYangSources("/semantic-version/multiple/multiple-valid-specified",
                 StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
@@ -88,7 +81,8 @@ public class SemanticVersionMultipleImportTest {
         assertEquals(SemVer.valueOf("5.5.6"), bar.getSemanticVersion());
     }
 
-    private static Module findImportedModule(SchemaContext context, Module rootModule, String importedModuleName) {
+    private static Module findImportedModule(final SchemaContext context, final Module rootModule,
+            final String importedModuleName) {
         ModuleImport requestedModuleImport = null;
         Set<ModuleImport> rootImports = rootModule.getImports();
         for (ModuleImport moduleImport : rootImports) {

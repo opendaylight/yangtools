@@ -13,8 +13,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -28,13 +26,11 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class Bug6180Test {
 
     @Test
-    public void stringTest() throws ReactorException, SourceException, FileNotFoundException, URISyntaxException {
+    public void stringTest() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(new File(getClass().getResource(
                 "/bugs/bug6180/string-test.yang").toURI()));
         assertNotNull(schemaContext);
@@ -47,7 +43,7 @@ public class Bug6180Test {
     }
 
     @Test
-    public void doubleQuotesTest() throws ReactorException, SourceException, FileNotFoundException, URISyntaxException {
+    public void doubleQuotesTest() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(new File(getClass().getResource(
                 "/bugs/bug6180/double-quotes.yang").toURI()));
         assertNotNull(schemaContext);
@@ -55,8 +51,7 @@ public class Bug6180Test {
     }
 
     @Test
-    public void doubleQuotesSinbleInsideTest() throws ReactorException, SourceException, FileNotFoundException,
-            URISyntaxException {
+    public void doubleQuotesSinbleInsideTest() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(new File(getClass().getResource(
                 "/bugs/bug6180/double-quotes-single-inside.yang").toURI()));
         assertNotNull(schemaContext);
@@ -64,7 +59,7 @@ public class Bug6180Test {
     }
 
     @Test
-    public void singleQuotesTest() throws ReactorException, SourceException, FileNotFoundException, URISyntaxException {
+    public void singleQuotesTest() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(new File(getClass().getResource(
                 "/bugs/bug6180/single-quotes.yang").toURI()));
         assertNotNull(schemaContext);

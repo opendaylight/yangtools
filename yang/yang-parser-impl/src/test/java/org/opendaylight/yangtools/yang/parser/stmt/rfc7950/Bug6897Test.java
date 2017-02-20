@@ -12,8 +12,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.Test;
@@ -25,9 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6897Test {
@@ -35,8 +31,7 @@ public class Bug6897Test {
     private static final String FOO_REV = "1970-01-01";
 
     @Test
-    public void notificationsInDataContainersTest() throws ReactorException, SourceException, FileNotFoundException,
-            URISyntaxException {
+    public void notificationsInDataContainersTest() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils
                 .parseYangSource("/rfc7950/notifications-in-data-nodes/foo.yang");
         assertNotNull(schemaContext);
@@ -79,7 +74,7 @@ public class Bug6897Test {
     }
 
     @Test
-    public void invalid10Test() throws ReactorException, SourceException, FileNotFoundException, URISyntaxException {
+    public void invalid10Test() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/notifications-in-data-nodes/foo10.yang");
             fail("Test should fail due to invalid Yang 1.0");
@@ -89,7 +84,7 @@ public class Bug6897Test {
     }
 
     @Test
-    public void invalid11Test() throws ReactorException, SourceException, FileNotFoundException, URISyntaxException {
+    public void invalid11Test() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/notifications-in-data-nodes/foo-invalid.yang");
             fail("Test should fail due to invalid Yang 1.1");
@@ -104,7 +99,7 @@ public class Bug6897Test {
     }
 
     @Test
-    public void testNotificationWithinListWithoutKey() throws ReactorException, FileNotFoundException, URISyntaxException {
+    public void testNotificationWithinListWithoutKey() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/notifications-in-data-nodes/bar-invalid.yang");
             fail("Test should fail due to invalid Yang 1.1");
@@ -116,7 +111,7 @@ public class Bug6897Test {
     }
 
     @Test
-    public void testNotificationInUsedGroupingWithinCase() throws ReactorException, FileNotFoundException, URISyntaxException {
+    public void testNotificationInUsedGroupingWithinCase() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/notifications-in-data-nodes/baz-invalid.yang");
             fail("Test should fail due to invalid Yang 1.1");

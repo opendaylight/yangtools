@@ -10,9 +10,6 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
@@ -26,15 +23,13 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class Bug5884Test {
     private static final String NS = "urn:yang.foo";
     private static final String REV = "2016-01-01";
 
     @Test
-    public void testBug5884() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException, ParseException {
+    public void testBug5884() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5884");
         assertNotNull(context);
 
@@ -44,7 +39,8 @@ public class Bug5884Test {
         final Date date = SimpleDateFormatUtil.getRevisionFormat().parse("2016-01-01");
         final Module foo = context.findModuleByName("foo", date);
         final ContainerSchemaNode rootContainer = (ContainerSchemaNode) context.getDataChildByName(root);
-        final ContainerSchemaNode testContainer = (ContainerSchemaNode) rootContainer.getDataChildByName(testContainerQname);
+        final ContainerSchemaNode testContainer = (ContainerSchemaNode) rootContainer.getDataChildByName(
+            testContainerQname);
         final ChoiceSchemaNode dataChildByName = (ChoiceSchemaNode) testContainer.getDataChildByName(choice);
         final Set<AugmentationSchema> augmentations = foo.getAugmentations();
         final Set<AugmentationSchema> availableAugmentations = dataChildByName.getAvailableAugmentations();

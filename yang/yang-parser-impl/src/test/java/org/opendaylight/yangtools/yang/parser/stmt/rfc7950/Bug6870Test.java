@@ -15,8 +15,6 @@ import static org.junit.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -29,9 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6870Test {
@@ -39,7 +35,7 @@ public class Bug6870Test {
     private static final String FOO_REV = "1970-01-01";
 
     @Test
-    public void valid11Test() throws ReactorException, SourceException, FileNotFoundException, URISyntaxException {
+    public void valid11Test() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6870/foo.yang");
         assertNotNull(schemaContext);
 
@@ -47,7 +43,7 @@ public class Bug6870Test {
         assertModifier(schemaContext, null, ImmutableList.of("root", "my-leaf-2"));
     }
 
-    private void assertModifier(final SchemaContext schemaContext, final ModifierKind expectedModifierKind,
+    private static void assertModifier(final SchemaContext schemaContext, final ModifierKind expectedModifierKind,
             final List<String> localNamePath) {
         final SchemaNode findNode = findNode(schemaContext, localNamePath);
         assertTrue(findNode instanceof LeafSchemaNode);
@@ -71,7 +67,7 @@ public class Bug6870Test {
     }
 
     @Test
-    public void invalid11Test() throws ReactorException, SourceException, FileNotFoundException, URISyntaxException {
+    public void invalid11Test() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/bug6870/invalid11.yang");
             fail("Test should fail due to invalid Yang 1.1");
@@ -82,7 +78,7 @@ public class Bug6870Test {
     }
 
     @Test
-    public void invalid10Test() throws ReactorException, SourceException, FileNotFoundException, URISyntaxException {
+    public void invalid10Test() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/bug6870/invalid10.yang");
             fail("Test should fail due to invalid Yang 1.0");

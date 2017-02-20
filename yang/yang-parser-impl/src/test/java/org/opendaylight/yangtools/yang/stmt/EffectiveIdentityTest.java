@@ -13,29 +13,29 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-
+import java.net.URISyntaxException;
 import java.util.Set;
+import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
-import java.net.URISyntaxException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
-import org.junit.Test;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class EffectiveIdentityTest {
 
-    private static final YangStatementSourceImpl IDENTITY_TEST = new YangStatementSourceImpl(
-            "/stmt-test/identity/identity-test.yang", false);
+    private static final StatementStreamSource IDENTITY_TEST = sourceForResource(
+            "/stmt-test/identity/identity-test.yang");
 
-    private static final YangStatementSourceImpl CYCLIC_IDENTITY_TEST = new YangStatementSourceImpl(
-            "/stmt-test/identity/cyclic-identity-test.yang", false);
+    private static final StatementStreamSource CYCLIC_IDENTITY_TEST = sourceForResource(
+            "/stmt-test/identity/cyclic-identity-test.yang");
 
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void cyclicefineTest() throws SourceException, ReactorException,
@@ -43,7 +43,7 @@ public class EffectiveIdentityTest {
 
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
-        StmtTestUtils.addSources(reactor, CYCLIC_IDENTITY_TEST);
+        reactor.addSources(CYCLIC_IDENTITY_TEST);
         try {
             EffectiveSchemaContext result = reactor.buildEffective();
         } catch (SomeModifiersUnresolvedException e) {
@@ -58,7 +58,7 @@ public class EffectiveIdentityTest {
 
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
-        StmtTestUtils.addSources(reactor, IDENTITY_TEST);
+        reactor.addSources(IDENTITY_TEST);
         EffectiveSchemaContext result = reactor.buildEffective();
 
         assertNotNull(result);

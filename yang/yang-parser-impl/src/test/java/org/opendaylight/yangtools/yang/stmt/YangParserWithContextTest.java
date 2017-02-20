@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.net.URI;
 import java.text.DateFormat;
@@ -47,7 +48,6 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 
 public class YangParserWithContextTest {
     private static final URI T1_NS = URI.create("urn:simple.demo.test1");
@@ -56,19 +56,19 @@ public class YangParserWithContextTest {
     private final DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private static Date rev;
 
-    private static final YangStatementSourceImpl BAR = new YangStatementSourceImpl("/model/bar.yang", false);
-    private static final YangStatementSourceImpl BAZ = new YangStatementSourceImpl("/model/baz.yang", false);
-    private static final YangStatementSourceImpl FOO = new YangStatementSourceImpl("/model/foo.yang", false);
-    private static final YangStatementSourceImpl SUBFOO = new YangStatementSourceImpl("/model/subfoo.yang", false);
+    private static final StatementStreamSource BAR = sourceForResource("/model/bar.yang");
+    private static final StatementStreamSource BAZ = sourceForResource("/model/baz.yang");
+    private static final StatementStreamSource FOO = sourceForResource("/model/foo.yang");
+    private static final StatementStreamSource SUBFOO = sourceForResource("/model/subfoo.yang");
 
-    private static final YangStatementSourceImpl[] IETF = new YangStatementSourceImpl[] {
-            new YangStatementSourceImpl("/ietf/iana-afn-safi@2012-06-04.yang", false),
-            new YangStatementSourceImpl("/ietf/iana-if-type@2012-06-05.yang", false),
-            new YangStatementSourceImpl("/ietf/iana-timezones@2012-07-09.yang", false),
-            new YangStatementSourceImpl("/ietf/ietf-inet-types@2010-09-24.yang", false),
-            new YangStatementSourceImpl("/ietf/ietf-yang-types@2010-09-24.yang", false),
-            new YangStatementSourceImpl("/ietf/network-topology@2013-07-12.yang", false),
-            new YangStatementSourceImpl("/ietf/network-topology@2013-10-21.yang", false) };
+    private static final StatementStreamSource[] IETF = new StatementStreamSource[] {
+            sourceForResource("/ietf/iana-afn-safi@2012-06-04.yang"),
+            sourceForResource("/ietf/iana-if-type@2012-06-05.yang"),
+            sourceForResource("/ietf/iana-timezones@2012-07-09.yang"),
+            sourceForResource("/ietf/ietf-inet-types@2010-09-24.yang"),
+            sourceForResource("/ietf/ietf-yang-types@2010-09-24.yang"),
+            sourceForResource("/ietf/network-topology@2013-07-12.yang"),
+            sourceForResource("/ietf/network-topology@2013-10-21.yang") };
 
     @BeforeClass
     public static void init() throws ParseException {
@@ -81,12 +81,11 @@ public class YangParserWithContextTest {
 
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
 
-        final YangStatementSourceImpl types = new YangStatementSourceImpl("/types/custom-types-test@2012-4-4.yang",
-                false);
-        final YangStatementSourceImpl test1 = new YangStatementSourceImpl("/context-test/test1.yang", false);
+        final StatementStreamSource types = sourceForResource("/types/custom-types-test@2012-4-4.yang");
+        final StatementStreamSource test1 = sourceForResource("/context-test/test1.yang");
 
-        StmtTestUtils.addSources(reactor, IETF);
-        StmtTestUtils.addSources(reactor, types, test1);
+        reactor.addSources(IETF);
+        reactor.addSources(types, test1);
 
         final SchemaContext context = reactor.buildEffective();
 
@@ -123,8 +122,8 @@ public class YangParserWithContextTest {
     public void testUsesFromContext() throws Exception {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
 
-        final YangStatementSourceImpl test2 = new YangStatementSourceImpl("/context-test/test2.yang", false);
-        StmtTestUtils.addSources(reactor, BAZ, FOO, BAR, SUBFOO, test2);
+        final StatementStreamSource test2 = sourceForResource("/context-test/test2.yang");
+        reactor.addSources(BAZ, FOO, BAR, SUBFOO, test2);
         final SchemaContext context = reactor.buildEffective();
 
         final Module testModule = context.findModuleByName("test2",
@@ -234,8 +233,8 @@ public class YangParserWithContextTest {
 
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
 
-        final YangStatementSourceImpl test2 = new YangStatementSourceImpl("/context-test/test2.yang", false);
-        StmtTestUtils.addSources(reactor, BAZ, FOO, BAR, SUBFOO, test2);
+        final StatementStreamSource test2 = sourceForResource("/context-test/test2.yang");
+        reactor.addSources(BAZ, FOO, BAR, SUBFOO, test2);
         final SchemaContext context = reactor.buildEffective();
 
         final Module module = context.findModuleByName("test2",
@@ -310,12 +309,11 @@ public class YangParserWithContextTest {
 
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
 
-        final YangStatementSourceImpl types = new YangStatementSourceImpl("/types/custom-types-test@2012-4-4.yang",
-                false);
-        final YangStatementSourceImpl test3 = new YangStatementSourceImpl("/context-test/test3.yang", false);
+        final StatementStreamSource types = sourceForResource("/types/custom-types-test@2012-4-4.yang");
+        final StatementStreamSource test3 = sourceForResource("/context-test/test3.yang");
 
-        StmtTestUtils.addSources(reactor, IETF);
-        StmtTestUtils.addSources(reactor, types, test3);
+        reactor.addSources(IETF);
+        reactor.addSources(types, test3);
         final SchemaContext context = reactor.buildEffective();
 
         final Module module = context.findModuleByName("test3",
@@ -343,12 +341,11 @@ public class YangParserWithContextTest {
 
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
 
-        final YangStatementSourceImpl types = new YangStatementSourceImpl("/types/custom-types-test@2012-4-4.yang",
-                false);
-        final YangStatementSourceImpl test3 = new YangStatementSourceImpl("/context-test/test3.yang", false);
+        final StatementStreamSource types = sourceForResource("/types/custom-types-test@2012-4-4.yang");
+        final StatementStreamSource test3 = sourceForResource("/context-test/test3.yang");
 
-        StmtTestUtils.addSources(reactor, IETF);
-        StmtTestUtils.addSources(reactor, types, test3);
+        reactor.addSources(IETF);
+        reactor.addSources(types, test3);
 
         final SchemaContext context = reactor.buildEffective();
 
@@ -372,10 +369,10 @@ public class YangParserWithContextTest {
 
     @Test
     public void testAugment() throws Exception {
-        final StatementStreamSource resource = new YangStatementSourceImpl("/context-augment-test/test4.yang", false);
-        final StatementStreamSource test1 = new YangStatementSourceImpl("/context-augment-test/test1.yang", false);
-        final StatementStreamSource test2 = new YangStatementSourceImpl("/context-augment-test/test2.yang", false);
-        final StatementStreamSource test3 = new YangStatementSourceImpl("/context-augment-test/test3.yang", false);
+        final StatementStreamSource resource = sourceForResource("/context-augment-test/test4.yang");
+        final StatementStreamSource test1 = sourceForResource("/context-augment-test/test1.yang");
+        final StatementStreamSource test2 = sourceForResource("/context-augment-test/test2.yang");
+        final StatementStreamSource test3 = sourceForResource("/context-augment-test/test3.yang");
 
         final SchemaContext context = TestUtils.parseYangSources(resource, test1, test2, test3);
         final Set<Module> modules = context.getModules();
@@ -414,11 +411,10 @@ public class YangParserWithContextTest {
 
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
 
-        final YangStatementSourceImpl bar = new YangStatementSourceImpl("/model/bar.yang", false);
-        final YangStatementSourceImpl deviationTest = new YangStatementSourceImpl("/context-test/deviation-test.yang",
-                false);
+        final StatementStreamSource bar = sourceForResource("/model/bar.yang");
+        final StatementStreamSource deviationTest = sourceForResource("/context-test/deviation-test.yang");
 
-        StmtTestUtils.addSources(reactor, bar, deviationTest);
+        reactor.addSources(bar, deviationTest);
         final SchemaContext context = reactor.buildEffective();
 
         final Module testModule = context.findModuleByName("deviation-test", SimpleDateFormatUtil.getRevisionFormat()

@@ -10,25 +10,26 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class TypedefSubStmtsTest {
 
-    private static final YangStatementSourceImpl FOOBAR = new YangStatementSourceImpl
-            ("/typedef-substmts-test/typedef-substmts-test.yang", false);
+    private static final StatementStreamSource FOOBAR = sourceForResource(
+        "/typedef-substmts-test/typedef-substmts-test.yang");
 
     @Test
     public void typedefSubStmtsTest() throws ReactorException {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        StmtTestUtils.addSources(reactor, FOOBAR);
+        reactor.addSources(FOOBAR);
 
         EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);

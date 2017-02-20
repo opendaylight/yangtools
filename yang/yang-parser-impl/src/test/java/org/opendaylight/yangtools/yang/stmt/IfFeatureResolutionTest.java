@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
@@ -25,14 +26,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 
 public class IfFeatureResolutionTest {
 
-    private static final StatementStreamSource FOO_MODULE =
-            new YangStatementSourceImpl("/if-feature-resolution-test/foo.yang", false);
-    private static final StatementStreamSource BAR_MODULE =
-            new YangStatementSourceImpl("/if-feature-resolution-test/bar.yang", false);
+    private static final StatementStreamSource FOO_MODULE = sourceForResource("/if-feature-resolution-test/foo.yang");
+    private static final StatementStreamSource BAR_MODULE = sourceForResource("/if-feature-resolution-test/bar.yang");
 
     @Test
     public void testSomeFeaturesSupported() throws ReactorException {

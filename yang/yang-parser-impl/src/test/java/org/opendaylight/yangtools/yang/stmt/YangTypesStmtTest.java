@@ -8,32 +8,29 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertNotNull;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class YangTypesStmtTest {
 
-    private static final YangStatementSourceImpl TYPEFILE1 = new YangStatementSourceImpl
-            ("/semantic-statement-parser/types.yang",false);
-    private static final YangStatementSourceImpl TYPEFILE2 = new YangStatementSourceImpl
-            ("/semantic-statement-parser/simple-types.yang",false);
-    private static final YangStatementSourceImpl TYPEFILE3 = new YangStatementSourceImpl
-            ("/semantic-statement-parser/identityreftest.yang",false);
+    private static final StatementStreamSource TYPEFILE1 = sourceForResource("/semantic-statement-parser/types.yang");
+    private static final StatementStreamSource TYPEFILE2 = sourceForResource(
+        "/semantic-statement-parser/simple-types.yang");
+    private static final StatementStreamSource TYPEFILE3 = sourceForResource(
+        "/semantic-statement-parser/identityreftest.yang");
 
-    private static final YangStatementSourceImpl FILE1 = new YangStatementSourceImpl
-            ("/semantic-statement-parser/model/bar.yang",false);
-    private static final YangStatementSourceImpl FILE2 = new YangStatementSourceImpl
-            ("/semantic-statement-parser/model/baz.yang",false);
-    private static final YangStatementSourceImpl FILE3 = new YangStatementSourceImpl
-            ("/semantic-statement-parser/model/subfoo.yang",false);
-    private static final YangStatementSourceImpl FILE4 = new YangStatementSourceImpl
-            ("/semantic-statement-parser/model/foo.yang",false);
+    private static final StatementStreamSource FILE1 = sourceForResource("/semantic-statement-parser/model/bar.yang");
+    private static final StatementStreamSource FILE2 = sourceForResource("/semantic-statement-parser/model/baz.yang");
+    private static final StatementStreamSource FILE3 = sourceForResource(
+        "/semantic-statement-parser/model/subfoo.yang");
+    private static final StatementStreamSource FILE4 = sourceForResource("/semantic-statement-parser/model/foo.yang");
 
     @Test
     public void readAndParseYangFileTest() throws SourceException, ReactorException {

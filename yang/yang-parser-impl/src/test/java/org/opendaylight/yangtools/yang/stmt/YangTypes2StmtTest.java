@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
+
 import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -23,19 +25,16 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class YangTypes2StmtTest {
 
-    private static final YangStatementSourceImpl TYPEFILE1 = new YangStatementSourceImpl(
-            "/semantic-statement-parser/types2.yang", false);
-    private static final YangStatementSourceImpl TYPEFILE2 = new YangStatementSourceImpl(
-            "/semantic-statement-parser/types.yang", false);
-    private static final YangStatementSourceImpl TYPEFILE3 = new YangStatementSourceImpl(
-            "/semantic-statement-parser/simple-types.yang", false);
-    private static final YangStatementSourceImpl TYPEFILE4 = new YangStatementSourceImpl(
-            "/semantic-statement-parser/identityreftest.yang", false);
+    private static final StatementStreamSource TYPEFILE1 = sourceForResource("/semantic-statement-parser/types2.yang");
+    private static final StatementStreamSource TYPEFILE2 = sourceForResource("/semantic-statement-parser/types.yang");
+    private static final StatementStreamSource TYPEFILE3 = sourceForResource(
+            "/semantic-statement-parser/simple-types.yang");
+    private static final StatementStreamSource TYPEFILE4 = sourceForResource(
+            "/semantic-statement-parser/identityreftest.yang");
 
     private static final QNameModule types2Module = QNameModule.create(URI.create("types2"),
             SimpleDateFormatUtil.DEFAULT_DATE_REV);

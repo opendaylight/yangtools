@@ -10,18 +10,18 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 
 public class Bug7146Test {
 
     @Test
     public void shouldFailOnSyntaxError() throws ReactorException {
         try {
-            StmtTestUtils.parseYangSources(new YangStatementSourceImpl("/bugs/bug7146/foo.yang", false));
+            StmtTestUtils.parseYangSources(sourceForResource("/bugs/bug7146/foo.yang"));
             fail("RuntimeException should have been thrown because of an unknown character in yang module.");
         } catch (RuntimeException ex) {
             final Throwable cause = ex.getCause();

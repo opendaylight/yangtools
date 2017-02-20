@@ -12,22 +12,19 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.FileNotFoundException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class SemanticVersionImportTest {
 
     @Test
-    public void importValidTest() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void importValidTest() throws Exception {
         SchemaContext context = StmtTestUtils.parseYangSources("/semantic-version/import/import-valid",
                 StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
@@ -39,8 +36,7 @@ public class SemanticVersionImportTest {
     }
 
     @Test
-    public void importInvalidDeprecatedTest1() throws SourceException, FileNotFoundException, ReactorException,
-            URISyntaxException {
+    public void importInvalidDeprecatedTest1() throws Exception {
         try {
             StmtTestUtils.parseYangSources("/semantic-version/import/import-invalid-deprecated-1",
                     StatementParserMode.SEMVER_MODE);
@@ -52,8 +48,7 @@ public class SemanticVersionImportTest {
     }
 
     @Test
-    public void importInvalidDeprecatedTest2() throws SourceException, FileNotFoundException, ReactorException,
-            URISyntaxException {
+    public void importInvalidDeprecatedTest2() throws Exception {
         try {
             StmtTestUtils.parseYangSources("/semantic-version/import/import-invalid-deprecated-2",
                     StatementParserMode.SEMVER_MODE);
@@ -65,8 +60,7 @@ public class SemanticVersionImportTest {
     }
 
     @Test
-    public void importInvalidNotsufficientTest1() throws SourceException, FileNotFoundException, ReactorException,
-            URISyntaxException {
+    public void importInvalidNotsufficientTest1() throws Exception {
         try {
             StmtTestUtils.parseYangSources("/semantic-version/import/import-invalid-notsufficient-1",
                     StatementParserMode.SEMVER_MODE);
@@ -78,8 +72,7 @@ public class SemanticVersionImportTest {
     }
 
     @Test
-    public void importInvalidNotsufficientTest2() throws SourceException, FileNotFoundException, ReactorException,
-            URISyntaxException {
+    public void importInvalidNotsufficientTest2() throws Exception {
         try {
             StmtTestUtils.parseYangSources("/semantic-version/import/import-invalid-notsufficient-2",
                     StatementParserMode.SEMVER_MODE);

@@ -11,9 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Set;
 import org.junit.Test;
@@ -21,12 +19,10 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class Bug4456Test {
     @Test
-    public void test() throws IOException, URISyntaxException, SourceException, ReactorException {
+    public void test() throws Exception {
         SchemaContext schema = StmtTestUtils.parseYangSources("/bugs/bug4456");
         assertNotNull(schema);
 

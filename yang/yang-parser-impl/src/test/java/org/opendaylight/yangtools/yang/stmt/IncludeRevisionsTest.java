@@ -12,6 +12,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -21,34 +23,21 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 
 public class IncludeRevisionsTest {
 
-    private static final YangStatementSourceImpl EQUAL_ROOT = new YangStatementSourceImpl("/revisions/equal-root.yang",
-            false);
-    private static final YangStatementSourceImpl EQUAL_REV = new YangStatementSourceImpl("/revisions/equal-rev.yang",
-            false);
-    private static final YangStatementSourceImpl UNEQUAL_ROOT = new YangStatementSourceImpl(
-            "/revisions/unequal-root.yang", false);
-    private static final YangStatementSourceImpl UNEQUAL_REV = new YangStatementSourceImpl(
-            "/revisions/unequal-rev.yang", false);
-    private static final YangStatementSourceImpl SUBMOD_ONLY_ROOT = new YangStatementSourceImpl(
-            "/revisions/submod-only-root.yang", false);
-    private static final YangStatementSourceImpl SUBMOD_ONLY_REV = new YangStatementSourceImpl(
-            "/revisions/submod-only-rev.yang", false);
-    private static final YangStatementSourceImpl MOD_ONLY_ROOT = new YangStatementSourceImpl(
-            "/revisions/mod-only-root.yang", false);
-    private static final YangStatementSourceImpl MOD_ONLY_REV = new YangStatementSourceImpl(
-            "/revisions/mod-only-rev.yang", false);
-    private static final YangStatementSourceImpl MOD_ONLY_1970_ROOT = new YangStatementSourceImpl(
-            "/revisions/mod-1970-root.yang", false);
-    private static final YangStatementSourceImpl MOD_ONLY_1970_REV = new YangStatementSourceImpl(
-            "/revisions/mod-1970-rev.yang", false);
-    private static final YangStatementSourceImpl NOWHERE_ROOT = new YangStatementSourceImpl(
-            "/revisions/nowhere-root.yang", false);
-    private static final YangStatementSourceImpl NOWHERE_REV = new YangStatementSourceImpl(
-            "/revisions/nowhere-rev.yang", false);
+    private static final StatementStreamSource EQUAL_ROOT = sourceForResource("/revisions/equal-root.yang");
+    private static final StatementStreamSource EQUAL_REV = sourceForResource("/revisions/equal-rev.yang");
+    private static final StatementStreamSource UNEQUAL_ROOT = sourceForResource("/revisions/unequal-root.yang");
+    private static final StatementStreamSource UNEQUAL_REV = sourceForResource("/revisions/unequal-rev.yang");
+    private static final StatementStreamSource SUBMOD_ONLY_ROOT = sourceForResource("/revisions/submod-only-root.yang");
+    private static final StatementStreamSource SUBMOD_ONLY_REV = sourceForResource("/revisions/submod-only-rev.yang");
+    private static final StatementStreamSource MOD_ONLY_ROOT = sourceForResource("/revisions/mod-only-root.yang");
+    private static final StatementStreamSource MOD_ONLY_REV = sourceForResource("/revisions/mod-only-rev.yang");
+    private static final StatementStreamSource MOD_ONLY_1970_ROOT = sourceForResource("/revisions/mod-1970-root.yang");
+    private static final StatementStreamSource MOD_ONLY_1970_REV = sourceForResource("/revisions/mod-1970-rev.yang");
+    private static final StatementStreamSource NOWHERE_ROOT = sourceForResource("/revisions/nowhere-root.yang");
+    private static final StatementStreamSource NOWHERE_REV = sourceForResource("/revisions/nowhere-rev.yang");
 
     @Test
     public void revsEqualTest() throws SourceException, ReactorException {

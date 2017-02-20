@@ -10,15 +10,16 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class ListKeysTest {
@@ -26,11 +27,10 @@ public class ListKeysTest {
     @Test
     public void correctListKeysTest() throws ReactorException {
 
-        final YangStatementSourceImpl yangFile = new YangStatementSourceImpl(
-                "/list-keys-test/correct-list-keys-test.yang", false);
+        final StatementStreamSource yangFile = sourceForResource("/list-keys-test/correct-list-keys-test.yang");
 
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, yangFile);
+        reactor.addSources(yangFile);
 
         final EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);
@@ -39,11 +39,10 @@ public class ListKeysTest {
     @Test
     public void incorrectListKeysTest1() throws IOException, YangSyntaxErrorException, URISyntaxException {
 
-        final YangStatementSourceImpl yangFile = new YangStatementSourceImpl(
-                "/list-keys-test/incorrect-list-keys-test.yang", false);
+        final StatementStreamSource yangFile = sourceForResource("/list-keys-test/incorrect-list-keys-test.yang");
 
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, yangFile);
+        reactor.addSources(yangFile);
 
         try {
             reactor.buildEffective();
@@ -57,11 +56,10 @@ public class ListKeysTest {
     @Test
     public void incorrectListKeysTest2() throws IOException, YangSyntaxErrorException, URISyntaxException {
 
-        final YangStatementSourceImpl yangFile = new YangStatementSourceImpl(
-                "/list-keys-test/incorrect-list-keys-test2.yang", false);
+        final StatementStreamSource yangFile = sourceForResource("/list-keys-test/incorrect-list-keys-test2.yang");
 
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, yangFile);
+        reactor.addSources(yangFile);
 
         try {
             reactor.buildEffective();
@@ -75,11 +73,10 @@ public class ListKeysTest {
     @Test
     public void incorrectListKeysTest3() throws IOException, YangSyntaxErrorException, URISyntaxException {
 
-        final YangStatementSourceImpl yangFile = new YangStatementSourceImpl(
-                "/list-keys-test/incorrect-list-keys-test3.yang", false);
+        final StatementStreamSource yangFile = sourceForResource("/list-keys-test/incorrect-list-keys-test3.yang");
 
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, yangFile);
+        reactor.addSources(yangFile);
 
         try {
             reactor.buildEffective();
@@ -93,11 +90,10 @@ public class ListKeysTest {
     @Test
     public void incorrectListKeysTest4() throws IOException, YangSyntaxErrorException, URISyntaxException {
 
-        final YangStatementSourceImpl yangFile = new YangStatementSourceImpl(
-                "/list-keys-test/incorrect-list-keys-test4.yang", false);
+        final StatementStreamSource yangFile = sourceForResource("/list-keys-test/incorrect-list-keys-test4.yang");
 
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, yangFile);
+        reactor.addSources(yangFile);
 
         try {
             reactor.buildEffective();
@@ -106,13 +102,6 @@ public class ListKeysTest {
         } catch (Exception e) {
             assertTrue(e instanceof ReactorException);
             assertTrue(e.getCause().getMessage().startsWith("Key 'grp_leaf' misses node 'grp_leaf'"));
-        }
-    }
-
-    private static void addSources(final CrossSourceStatementReactor.BuildAction reactor,
-                                   final YangStatementSourceImpl... sources) {
-        for (YangStatementSourceImpl source : sources) {
-            reactor.addSource(source);
         }
     }
 }
