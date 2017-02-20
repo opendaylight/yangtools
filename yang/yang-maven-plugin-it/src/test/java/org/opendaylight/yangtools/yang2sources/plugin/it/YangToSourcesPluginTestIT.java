@@ -146,19 +146,19 @@ public class YangToSourcesPluginTestIT {
         v1.executeGoal("package");
 
         String buildDir = getMavenBuildDirectory(v1);
-        v1.assertFilePresent(buildDir + "/classes/META-INF/yang/testfile1.yang");
-        v1.assertFilePresent(buildDir + "/classes/META-INF/yang/testfile2.yang");
-        v1.assertFilePresent(buildDir + "/classes/META-INF/yang/testfile3.yang");
+        v1.assertFilePresent(buildDir + "/classes/META-INF/yang/types1@2013-02-27.yang");
+        v1.assertFilePresent(buildDir + "/classes/META-INF/yang/types2@2013-02-27.yang");
+        v1.assertFilePresent(buildDir + "/classes/META-INF/yang/types3@2013-02-27.yang");
 
         Verifier v2 = setUp("test-parent/GenerateTest2/", false);
         v2.executeGoal("clean");
         v2.executeGoal("package");
 
         buildDir = getMavenBuildDirectory(v2);
-        v2.assertFilePresent(buildDir + "/classes/META-INF/yang/private.yang");
-        v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/testfile1.yang");
-        v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/testfile2.yang");
-        v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/testfile3.yang");
+        v2.assertFilePresent(buildDir + "/classes/META-INF/yang/private@2013-02-27.yang");
+        v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/types1@2013-02-27.yang");
+        v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/types2@2013-02-27.yang");
+        v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/types3@2013-02-27.yang");
     }
 
     private static String getMavenBuildDirectory(Verifier verifier) throws IOException {
