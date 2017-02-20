@@ -14,14 +14,14 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
 /**
- * {@link Immutable} implementation of {@link LengthConstraint}.
+ * {@link Immutable} implementation of {@link RangeConstraint}.
  *
- * Range constraint based on supplied parameters with additional behaviour:
+ * Range constraint based on supplied parameters with additional behavior:
  *
  * <ul>
  * <li>{@link RangeConstraint#getErrorAppTag()} returns
  * <code>range-out-of-specified-bounds</code>
- * <li>{@link RangeConstraint#getErrorMessage() returns <code>The argument is
+ * <li>{@link RangeConstraint#getErrorMessage()} returns <code>The argument is
  * out of bounds &lt;<i>min</i>, <i>max</i> &gt;</code>
  * </ul>
  */
@@ -110,18 +110,7 @@ final class RangeConstraintImpl implements RangeConstraint, Immutable {
 
     @Override
     public String toString() {
-        return "RangeConstraintImpl [min=" +
-                min +
-                ", max=" +
-                max +
-                ", description=" +
-                description +
-                ", reference=" +
-                reference +
-                ", errorAppTag=" +
-                errorAppTag +
-                ", errorMessage=" +
-                errorMessage +
-                "]";
+        return "RangeConstraintImpl [min=" + min + ", max=" + max + ", description=" + description
+                + ", reference=" + reference + ", errorAppTag=" + errorAppTag + ", errorMessage=" + errorMessage + "]";
     }
 }
