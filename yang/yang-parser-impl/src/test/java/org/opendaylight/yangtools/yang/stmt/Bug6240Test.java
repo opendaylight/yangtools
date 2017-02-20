@@ -11,8 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -20,16 +18,14 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class Bug6240Test {
     private static final String NS = "bar";
     private static final String REV = "2016-07-19";
 
     @Test
-    public void testModels() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void testModels() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6240/correct");
         assertNotNull(context);
 
@@ -59,12 +55,12 @@ public class Bug6240Test {
     }
 
     @Test
-    public void testInvalidModels() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void testInvalidModels() throws Exception {
         try {
             StmtTestUtils.parseYangSources("/bugs/bug6240/incorrect");
         } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e.getCause().getCause().getMessage()
-                    .startsWith("Grouping '(bar?revision=2016-07-19)foo-imp-grp' was not resolved."));
+            assertTrue(e.getCause().getCause().getMessage().startsWith(
+                "Grouping '(bar?revision=2016-07-19)foo-imp-grp' was not resolved."));
         }
     }
 }

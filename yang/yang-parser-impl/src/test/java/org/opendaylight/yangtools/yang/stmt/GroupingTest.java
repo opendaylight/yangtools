@@ -14,7 +14,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -49,7 +48,7 @@ public class GroupingTest {
     private Set<Module> modules;
 
     @Before
-    public void init() throws URISyntaxException, ReactorException {
+    public void init() throws Exception {
         modules = TestUtils.loadModules(getClass().getResource("/model").toURI());
         assertEquals(3, modules.size());
     }
@@ -607,7 +606,7 @@ public class GroupingTest {
     }
 
     @Test
-    public void testAddedByUsesLeafTypeQName() throws URISyntaxException, ReactorException {
+    public void testAddedByUsesLeafTypeQName() throws Exception {
 
         final Set<Module> loadModules = TestUtils.loadModules(getClass().getResource("/added-by-uses-leaf-test")
                 .toURI());

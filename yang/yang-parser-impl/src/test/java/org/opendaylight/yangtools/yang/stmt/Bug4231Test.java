@@ -9,10 +9,7 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -21,12 +18,11 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class Bug4231Test {
 
     @Test
-    public void test() throws IOException, URISyntaxException, ParseException, ReactorException {
+    public void test() throws Exception {
         SchemaContext context = TestUtils.parseYangSources("/bugs/bug4231");
 
         assertNotNull(context);

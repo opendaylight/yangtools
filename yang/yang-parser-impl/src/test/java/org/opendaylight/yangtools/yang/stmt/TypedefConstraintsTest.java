@@ -13,9 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
 import java.math.BigDecimal;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Set;
 import org.junit.Test;
@@ -26,17 +24,13 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 public class TypedefConstraintsTest {
 
     @Test
-    public void decimalRangeConstraintsTest() throws SourceException,
-            FileNotFoundException, ReactorException, URISyntaxException {
-        final SchemaContext context = StmtTestUtils
-                .parseYangSources("/stmt-test/constraints");
+    public void decimalRangeConstraintsTest() throws Exception {
+        final SchemaContext context = StmtTestUtils.parseYangSources("/stmt-test/constraints");
 
         assertNotNull(context);
 

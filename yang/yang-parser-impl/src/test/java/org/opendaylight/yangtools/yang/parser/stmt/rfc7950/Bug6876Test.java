@@ -12,8 +12,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableList;
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -21,8 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6876Test {
@@ -32,20 +28,23 @@ public class Bug6876Test {
     private static final String FOO_REV = "1970-01-01";
 
     @Test
-    public void yang11Test() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void yang11Test() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/rfc7950/bug6876/yang11");
         assertNotNull(context);
 
-        assertTrue(findNode(context, ImmutableList.of(bar("augment-target"), bar("my-leaf"))) instanceof LeafSchemaNode);
-        assertTrue(findNode(context, ImmutableList.of(bar("augment-target"), foo("mandatory-leaf"))) instanceof LeafSchemaNode);
+        assertTrue(findNode(context, ImmutableList.of(bar("augment-target"),
+            bar("my-leaf"))) instanceof LeafSchemaNode);
+        assertTrue(findNode(context, ImmutableList.of(bar("augment-target"),
+            foo("mandatory-leaf"))) instanceof LeafSchemaNode);
     }
 
     @Test
-    public void yang10Test() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void yang10Test() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/rfc7950/bug6876/yang10");
         assertNotNull(context);
 
-        assertTrue(findNode(context, ImmutableList.of(bar("augment-target"), bar("my-leaf"))) instanceof LeafSchemaNode);
+        assertTrue(findNode(context, ImmutableList.of(bar("augment-target"),
+            bar("my-leaf"))) instanceof LeafSchemaNode);
         assertNull(findNode(context, ImmutableList.of(bar("augment-target"), foo("mandatory-leaf"))));
     }
 

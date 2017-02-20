@@ -14,8 +14,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
@@ -24,8 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6883Test {
@@ -33,7 +29,7 @@ public class Bug6883Test {
     private static final String FOO_REV = "1970-01-01";
 
     @Test
-    public void test() throws ReactorException, SourceException, FileNotFoundException, URISyntaxException {
+    public void test() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/rfc7950/bug6883");
         assertNotNull(schemaContext);
 

@@ -16,11 +16,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.Date;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -35,7 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
@@ -44,8 +39,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 public class DeviationResolutionTest {
 
     @Test
-    public void testDeviateNotSupported() throws ReactorException, FileNotFoundException, URISyntaxException,
-            ParseException {
+    public void testDeviateNotSupported() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(
                 "/deviation-resolution-test/deviation-not-supported");
         assertNotNull(schemaContext);
@@ -79,7 +73,7 @@ public class DeviationResolutionTest {
     }
 
     @Test
-    public void testDeviateAdd() throws ReactorException, FileNotFoundException, URISyntaxException, ParseException {
+    public void testDeviateAdd() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource(
                 "/deviation-resolution-test/deviation-add/foo.yang");
         assertNotNull(schemaContext);
@@ -126,7 +120,7 @@ public class DeviationResolutionTest {
     }
 
     @Test
-    public void testDeviateReplace() throws ReactorException, FileNotFoundException, URISyntaxException, ParseException {
+    public void testDeviateReplace() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource(
                 "/deviation-resolution-test/deviation-replace/foo.yang");
         assertNotNull(schemaContext);
@@ -190,7 +184,7 @@ public class DeviationResolutionTest {
     }
 
     @Test
-    public void testDeviateDelete() throws ReactorException, FileNotFoundException, URISyntaxException, ParseException {
+    public void testDeviateDelete() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource(
                 "/deviation-resolution-test/deviation-delete/foo.yang");
         assertNotNull(schemaContext);
@@ -244,7 +238,7 @@ public class DeviationResolutionTest {
     }
 
     @Test
-    public void shouldFailOnInvalidYang10Model() throws FileNotFoundException, URISyntaxException {
+    public void shouldFailOnInvalidYang10Model() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/deviation-resolution-test/deviation-add/foo10-invalid.yang");
             fail("An exception should have been thrown.");
@@ -256,7 +250,7 @@ public class DeviationResolutionTest {
     }
 
     @Test
-    public void shouldFailOnInvalidYang10Model2() throws FileNotFoundException, URISyntaxException {
+    public void shouldFailOnInvalidYang10Model2() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/deviation-resolution-test/deviation-delete/foo10-invalid.yang");
             fail("An exception should have been thrown.");
@@ -268,7 +262,7 @@ public class DeviationResolutionTest {
     }
 
     @Test
-    public void shouldFailOnInvalidDeviationTarget() throws FileNotFoundException, URISyntaxException {
+    public void shouldFailOnInvalidDeviationTarget() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/deviation-resolution-test/foo-invalid-deviation-target.yang");
             fail("An exception should have been thrown.");
@@ -281,7 +275,7 @@ public class DeviationResolutionTest {
     }
 
     @Test
-    public void shouldFailOnInvalidDeviationPath() throws FileNotFoundException, URISyntaxException {
+    public void shouldFailOnInvalidDeviationPath() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/deviation-resolution-test/foo-invalid-deviation-path.yang");
             fail("An exception should have been thrown.");
@@ -294,7 +288,7 @@ public class DeviationResolutionTest {
     }
 
     @Test
-    public void shouldFailOnInvalidDeviateAdd() throws FileNotFoundException, URISyntaxException {
+    public void shouldFailOnInvalidDeviateAdd() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/deviation-resolution-test/deviation-add/foo-invalid.yang");
             fail("An exception should have been thrown.");
@@ -308,7 +302,7 @@ public class DeviationResolutionTest {
     }
 
     @Test
-    public void shouldFailOnInvalidDeviateAdd2() throws FileNotFoundException, URISyntaxException {
+    public void shouldFailOnInvalidDeviateAdd2() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/deviation-resolution-test/deviation-add/foo-invalid-2.yang");
             fail("An exception should have been thrown.");
@@ -322,7 +316,7 @@ public class DeviationResolutionTest {
     }
 
     @Test
-    public void shouldFailOnInvalidDeviateAdd3() throws FileNotFoundException, URISyntaxException {
+    public void shouldFailOnInvalidDeviateAdd3() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/deviation-resolution-test/deviation-add/foo-invalid-4.yang");
             fail("An exception should have been thrown.");
@@ -336,7 +330,7 @@ public class DeviationResolutionTest {
     }
 
     @Test
-    public void shouldFailOnInvalidDeviateReplace() throws FileNotFoundException, URISyntaxException {
+    public void shouldFailOnInvalidDeviateReplace() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/deviation-resolution-test/deviation-replace/foo-invalid.yang");
             fail("An exception should have been thrown.");
@@ -350,8 +344,7 @@ public class DeviationResolutionTest {
     }
 
     @Test
-    public void shouldLogInvalidDeviateReplaceAttempt() throws FileNotFoundException, URISyntaxException,
-            UnsupportedEncodingException, ReactorException {
+    public void shouldLogInvalidDeviateReplaceAttempt() throws Exception {
         final PrintStream stdout = System.out;
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         final String testLog;
@@ -368,8 +361,7 @@ public class DeviationResolutionTest {
     }
 
     @Test
-    public void shouldLogInvalidDeviateDeleteAttempt() throws FileNotFoundException, URISyntaxException,
-            UnsupportedEncodingException, ReactorException {
+    public void shouldLogInvalidDeviateDeleteAttempt() throws Exception {
         final PrintStream stdout = System.out;
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         final String testLog;
@@ -386,7 +378,7 @@ public class DeviationResolutionTest {
     }
 
     @Test
-    public void shouldFailOnInvalidDeviateAddSubstatement() throws FileNotFoundException, URISyntaxException {
+    public void shouldFailOnInvalidDeviateAddSubstatement() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/deviation-resolution-test/deviation-add/foo-invalid-3.yang");
             fail("An exception should have been thrown.");
@@ -398,7 +390,7 @@ public class DeviationResolutionTest {
     }
 
     @Test
-    public void shouldFailOnInvalidDeviateReplaceSubstatement() throws FileNotFoundException, URISyntaxException {
+    public void shouldFailOnInvalidDeviateReplaceSubstatement() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/deviation-resolution-test/deviation-replace/foo-invalid-3.yang");
             fail("An exception should have been thrown.");
@@ -410,7 +402,7 @@ public class DeviationResolutionTest {
     }
 
     @Test
-    public void shouldFailOnInvalidDeviateDeleteSubstatement() throws FileNotFoundException, URISyntaxException {
+    public void shouldFailOnInvalidDeviateDeleteSubstatement() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/deviation-resolution-test/deviation-delete/foo-invalid-2.yang");
             fail("An exception should have been thrown.");
