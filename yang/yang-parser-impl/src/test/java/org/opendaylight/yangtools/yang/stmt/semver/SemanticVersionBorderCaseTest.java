@@ -12,23 +12,19 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.FileNotFoundException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class SemanticVersionBorderCaseTest {
 
     @Test
-    public void borderCaseValidMajorTest() throws SourceException, FileNotFoundException, ReactorException,
-            URISyntaxException {
+    public void borderCaseValidMajorTest() throws Exception {
         SchemaContext context = StmtTestUtils.parseYangSources("/semantic-version/border-case/border-case-valid-major",
                 StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
@@ -44,8 +40,7 @@ public class SemanticVersionBorderCaseTest {
     }
 
     @Test
-    public void borderCaseValidMinorTest() throws SourceException, FileNotFoundException, ReactorException,
-            URISyntaxException {
+    public void borderCaseValidMinorTest() throws Exception {
         SchemaContext context = StmtTestUtils.parseYangSources("/semantic-version/border-case/border-case-valid-minor",
                 StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
@@ -61,8 +56,7 @@ public class SemanticVersionBorderCaseTest {
     }
 
     @Test
-    public void borderCaseValidPatchTest() throws SourceException, FileNotFoundException, ReactorException,
-            URISyntaxException {
+    public void borderCaseValidPatchTest() throws Exception {
         SchemaContext context = StmtTestUtils.parseYangSources("/semantic-version/border-case/border-case-valid-patch",
                 StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
@@ -78,8 +72,7 @@ public class SemanticVersionBorderCaseTest {
     }
 
     @Test
-    public void borderCaseInvalidMajorTest() throws SourceException, FileNotFoundException, ReactorException,
-            URISyntaxException {
+    public void borderCaseInvalidMajorTest() throws Exception {
         try {
             StmtTestUtils.parseYangSources("/semantic-version/border-case/border-case-invalid-major",
                     StatementParserMode.SEMVER_MODE);
@@ -91,8 +84,7 @@ public class SemanticVersionBorderCaseTest {
     }
 
     @Test
-    public void borderCaseInvalidMinorTest() throws SourceException, FileNotFoundException, ReactorException,
-            URISyntaxException {
+    public void borderCaseInvalidMinorTest() throws Exception {
         try {
             StmtTestUtils.parseYangSources("/semantic-version/border-case/border-case-invalid-minor",
                     StatementParserMode.SEMVER_MODE);
@@ -104,8 +96,7 @@ public class SemanticVersionBorderCaseTest {
     }
 
     @Test
-    public void borderCaseInvalidPatchTest() throws SourceException, FileNotFoundException, ReactorException,
-            URISyntaxException {
+    public void borderCaseInvalidPatchTest() throws Exception {
         try {
             StmtTestUtils.parseYangSources("/semantic-version/border-case/border-case-invalid-patch",
                     StatementParserMode.SEMVER_MODE);

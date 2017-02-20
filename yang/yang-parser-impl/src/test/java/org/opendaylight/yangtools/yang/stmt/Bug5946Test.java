@@ -13,8 +13,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -25,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class Bug5946Test {
     private static final String NS = "foo";
@@ -42,7 +39,7 @@ public class Bug5946Test {
     private static final SchemaNodeIdentifier C_L3_ID = SchemaNodeIdentifier.create(false, C, L3);
 
     @Test
-    public void test() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void test() throws Exception {
         SchemaContext context = StmtTestUtils.parseYangSources(new File(getClass()
                 .getResource("/bugs/bug5946/foo.yang").toURI()));
         assertNotNull(context);
@@ -78,7 +75,7 @@ public class Bug5946Test {
     }
 
     @Test
-    public void testInvalid() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void testInvalid() throws Exception {
         try {
             StmtTestUtils.parseYangSources(new File(getClass().getResource("/bugs/bug5946/foo-invalid.yang").toURI()));
             fail("Should fail due to invalid argument of unique constraint");
@@ -89,7 +86,7 @@ public class Bug5946Test {
         }
     }
 
-    private static Collection<UniqueConstraint> getListConstraints(SchemaContext context, QName listQName) {
+    private static Collection<UniqueConstraint> getListConstraints(final SchemaContext context, final QName listQName) {
         DataSchemaNode dataChildByName = context.getDataChildByName(listQName);
         assertTrue(dataChildByName instanceof ListSchemaNode);
         return ((ListSchemaNode) dataChildByName).getUniqueConstraints();

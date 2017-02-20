@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -20,8 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class Bug6771Test {
     private static final String NS = "http://www.example.com/typedef-bug";
@@ -32,7 +28,7 @@ public class Bug6771Test {
     private static final QName INNER_CONTAINER = QName.create(NS, REV, "inner-container");
 
     @Test
-    public void augmentTest() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void augmentTest() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6771/augment");
         assertNotNull(context);
 
@@ -43,7 +39,7 @@ public class Bug6771Test {
     }
 
     @Test
-    public void choiceCaseTest() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void choiceCaseTest() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6771/choice-case");
         assertNotNull(context);
 
@@ -64,7 +60,7 @@ public class Bug6771Test {
     }
 
     @Test
-    public void groupingTest() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void groupingTest() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6771/grouping");
         assertNotNull(context);
         verifyLeafType(SchemaContextUtil
@@ -75,5 +71,4 @@ public class Bug6771Test {
         assertTrue(schemaNode instanceof LeafSchemaNode);
         assertTrue(((LeafSchemaNode) schemaNode).getType() instanceof UnsignedIntegerTypeDefinition);
     }
-
 }

@@ -11,8 +11,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -21,8 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class Bug6669Test {
     private static final String REV = "2016-09-08";
@@ -36,8 +32,7 @@ public class Bug6669Test {
     private static final QName L = QName.create(BAR_NS, REV, "l");
 
     @Test
-    public void testInvalidAugment() throws SourceException, ReactorException, FileNotFoundException,
-            URISyntaxException {
+    public void testInvalidAugment() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/invalid/test1");
         assertNotNull(context);
 
@@ -47,8 +42,7 @@ public class Bug6669Test {
     }
 
     @Test
-    public void testInvalidAugment2() throws SourceException, ReactorException, FileNotFoundException,
-            URISyntaxException {
+    public void testInvalidAugment2() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/invalid/test2");
         assertNotNull(context);
 
@@ -58,8 +52,7 @@ public class Bug6669Test {
     }
 
     @Test
-    public void testInvalidAugment3() throws SourceException, ReactorException, FileNotFoundException,
-            URISyntaxException {
+    public void testInvalidAugment3() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/invalid/test3");
         assertNotNull(context);
 
@@ -69,7 +62,7 @@ public class Bug6669Test {
     }
 
     @Test
-    public void testValidAugment() throws SourceException, ReactorException, FileNotFoundException, URISyntaxException {
+    public void testValidAugment() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/valid/test1");
         assertNotNull(context);
 
@@ -79,7 +72,7 @@ public class Bug6669Test {
     }
 
     @Test
-    public void testValidAugment2() throws SourceException, ReactorException, FileNotFoundException, URISyntaxException {
+    public void testValidAugment2() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/valid/test2");
         assertNotNull(context);
 
@@ -89,7 +82,7 @@ public class Bug6669Test {
     }
 
     @Test
-    public void testValidAugment3() throws SourceException, ReactorException, FileNotFoundException, URISyntaxException {
+    public void testValidAugment3() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6669/valid/test3");
         assertNotNull(context);
 

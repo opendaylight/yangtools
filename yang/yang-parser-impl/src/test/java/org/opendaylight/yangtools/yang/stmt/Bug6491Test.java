@@ -12,8 +12,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.DEFAULT_DATE_REV;
 import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.getRevisionFormat;
 
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Set;
@@ -22,7 +20,6 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class Bug6491Test {
     private Date date;
@@ -33,15 +30,15 @@ public class Bug6491Test {
     }
 
     @Test
-    public void tetststs() throws ReactorException, FileNotFoundException, URISyntaxException {
+    public void tetststs() throws Exception {
         testRevision("withoutRevision", DEFAULT_DATE_REV, DEFAULT_DATE_REV);
         testRevision("withRevision", date, date);
         testRevision("importedModuleRevisionOnly", DEFAULT_DATE_REV, date);
         testRevision("moduleRevisionOnly", date, DEFAULT_DATE_REV);
     }
 
-    private void testRevision(final String path, final Date moduleRevision, final Date importedRevision) throws
-            ReactorException, FileNotFoundException, URISyntaxException {
+    private static void testRevision(final String path, final Date moduleRevision, final Date importedRevision)
+            throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6491/".concat(path));
         assertNotNull(context);
         final Module module = context.findModuleByName("bar", moduleRevision);

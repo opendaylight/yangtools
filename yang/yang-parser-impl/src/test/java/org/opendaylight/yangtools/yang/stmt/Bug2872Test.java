@@ -11,10 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,12 +24,11 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class Bug2872Test {
 
     @Test
-    public void test() throws ReactorException, FileNotFoundException, URISyntaxException, ParseException {
+    public void test() throws Exception {
         final SchemaContext schema = StmtTestUtils.parseYangSources("/bugs/bug2872");
         assertNotNull(schema);
 

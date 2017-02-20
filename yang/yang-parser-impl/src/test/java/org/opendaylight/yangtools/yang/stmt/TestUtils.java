@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -34,6 +35,9 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
@@ -42,7 +46,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YinStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
-import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,14 +56,14 @@ public final class TestUtils {
     }
 
     public static Set<Module> loadModules(final URI resourceDirectory)
-            throws SourceException, ReactorException {
+            throws SourceException, ReactorException, IOException, YangSyntaxErrorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
         File[] files = new File(resourceDirectory).listFiles();
 
         for (File file : files) {
-            if (file.getName().endsWith(".yang")) {
-                addSources(reactor, new YangStatementSourceImpl(file.getPath(), true));
+            if (file.getName().endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION)) {
+                reactor.addSource(YangStatementStreamSource.create(YangTextSchemaSource.forFile(file)));
             } else {
                 LOG.info("Ignoring non-yang file {}", file);
             }
@@ -75,7 +78,7 @@ public final class TestUtils {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
             .newBuild();
         for (InputStream inputStream : streams) {
-            addSources(reactor, new YangStatementSourceImpl(inputStream));
+            reactor.addSource(new YangStatementSourceImpl(inputStream));
         }
 
         EffectiveSchemaContext ctx = reactor.buildEffective();
@@ -86,7 +89,7 @@ public final class TestUtils {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
 
         for (File file : new File(resourceDirectory).listFiles()) {
-            addYinSources(reactor, new YinStatementSourceImpl(file.getPath(), true));
+            reactor.addSource(new YinStatementSourceImpl(file.getPath(), true));
         }
 
         EffectiveSchemaContext ctx = reactor.buildEffective();
@@ -96,7 +99,7 @@ public final class TestUtils {
     public static Set<Module> loadYinModules(final List<InputStream> streams) throws SourceException, ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         for (InputStream inputStream : streams) {
-            addYinSources(reactor, new YinStatementSourceImpl(inputStream));
+            reactor.addSource(new YinStatementSourceImpl(inputStream));
         }
 
         EffectiveSchemaContext ctx = reactor.buildEffective();
@@ -107,14 +110,14 @@ public final class TestUtils {
         throws SourceException, ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
             .newBuild();
-        addSources(reactor, new YangStatementSourceImpl(stream));
+        reactor.addSource(new YangStatementSourceImpl(stream));
         EffectiveSchemaContext ctx = reactor.buildEffective();
         return ctx.getModules().iterator().next();
     }
 
     public static Module loadYinModule(final InputStream stream) throws SourceException, ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addYinSources(reactor, new YinStatementSourceImpl(stream));
+        reactor.addSources(new YinStatementSourceImpl(stream));
         EffectiveSchemaContext ctx = reactor.buildEffective();
         return ctx.getModules().iterator().next();
     }
@@ -232,8 +235,7 @@ public final class TestUtils {
         }
     }
 
-    public static List<Module> findModules(final Set<Module> modules,
-            final String moduleName) {
+    public static List<Module> findModules(final Set<Module> modules, final String moduleName) {
         List<Module> result = new ArrayList<>();
         for (Module module : modules) {
             if (module.getName().equals(moduleName)) {
@@ -243,16 +245,7 @@ public final class TestUtils {
         return result;
     }
 
-    private static void addSources(
-            final CrossSourceStatementReactor.BuildAction reactor,
-            final YangStatementSourceImpl... sources) {
-        for (YangStatementSourceImpl source : sources) {
-            reactor.addSource(source);
-        }
-    }
-
-    public static SchemaContext parseYangSources(
-            final StatementStreamSource... sources) throws SourceException,
+    public static SchemaContext parseYangSources(final StatementStreamSource... sources) throws SourceException,
             ReactorException {
 
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
@@ -263,25 +256,24 @@ public final class TestUtils {
     }
 
     public static SchemaContext parseYangSources(final File... files)
-            throws SourceException, ReactorException, FileNotFoundException {
+            throws SourceException, ReactorException, IOException, YangSyntaxErrorException {
 
         StatementStreamSource[] sources = new StatementStreamSource[files.length];
 
         for (int i = 0; i < files.length; i++) {
-            sources[i] = new YangStatementSourceImpl(new NamedFileInputStream(files[i], files[i].getPath()));
+            sources[i] = YangStatementStreamSource.create(YangTextSchemaSource.forFile(files[i]));
         }
 
         return parseYangSources(sources);
     }
 
     public static SchemaContext parseYangSources(final Collection<File> files)
-            throws SourceException, ReactorException, FileNotFoundException {
+            throws SourceException, ReactorException, IOException, YangSyntaxErrorException {
         return parseYangSources(files.toArray(new File[files.size()]));
     }
 
     public static SchemaContext parseYangSources(final String yangSourcesDirectoryPath)
-            throws SourceException, ReactorException, FileNotFoundException,
-            URISyntaxException {
+            throws SourceException, ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
 
         URL resourceDir = StmtTestUtils.class
                 .getResource(yangSourcesDirectoryPath);
@@ -291,21 +283,11 @@ public final class TestUtils {
     }
 
     public static SchemaContext parseYangSource(final String yangSourceFilePath)
-            throws SourceException, ReactorException, FileNotFoundException,
-            URISyntaxException {
+            throws SourceException, ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
 
-        URL resourceFile = StmtTestUtils.class
-                .getResource(yangSourceFilePath);
+        URL resourceFile = StmtTestUtils.class.getResource(yangSourceFilePath);
         File testSourcesFile = new File(resourceFile.toURI());
 
         return parseYangSources(testSourcesFile);
     }
-
-    private static void addYinSources(final CrossSourceStatementReactor.BuildAction reactor,
-                                      final YinStatementSourceImpl... sources) {
-        for (YinStatementSourceImpl source : sources) {
-            reactor.addSource(source);
-        }
-    }
-
 }
