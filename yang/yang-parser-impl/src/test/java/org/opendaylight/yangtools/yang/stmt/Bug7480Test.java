@@ -12,23 +12,17 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.FileNotFoundException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class Bug7480Test {
     @Test
-    public void libSourcesTest() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException,
-            ParseException {
+    public void libSourcesTest() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug7480/files", "/bugs/bug7480/lib");
         assertNotNull(context);
 
@@ -50,8 +44,7 @@ public class Bug7480Test {
     }
 
     @Test
-    public void missingRelevantImportTest() throws SourceException, FileNotFoundException, ReactorException,
-            URISyntaxException, ParseException {
+    public void missingRelevantImportTest() throws Exception {
         try {
             StmtTestUtils.parseYangSources("/bugs/bug7480/files-2", "/bugs/bug7480/lib-2");
             fail("Test should fail due to missing import of required yang source from library");

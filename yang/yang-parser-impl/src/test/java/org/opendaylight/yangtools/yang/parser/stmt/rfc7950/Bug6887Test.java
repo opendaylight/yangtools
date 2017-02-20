@@ -15,9 +15,6 @@ import static org.junit.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import org.junit.Test;
@@ -43,8 +40,7 @@ import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 public class Bug6887Test {
 
     @Test
-    public void testRestrictedEnumeration() throws ReactorException, FileNotFoundException, URISyntaxException,
-            ParseException {
+    public void testRestrictedEnumeration() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6887/foo.yang");
         assertNotNull(schemaContext);
 
@@ -88,7 +84,7 @@ public class Bug6887Test {
     }
 
     @Test
-    public void testInvalidRestrictedEnumeration() throws FileNotFoundException, URISyntaxException {
+    public void testInvalidRestrictedEnumeration() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/bug6887/foo-invalid.yang");
             fail("An exception should have been thrown.");
@@ -101,7 +97,7 @@ public class Bug6887Test {
     }
 
     @Test
-    public void testInvalidRestrictedEnumeration2() throws FileNotFoundException, URISyntaxException {
+    public void testInvalidRestrictedEnumeration2() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/bug6887/foo-invalid-2.yang");
             fail("An exception should have been thrown.");
@@ -114,7 +110,7 @@ public class Bug6887Test {
     }
 
     @Test
-    public void testInvalidRestrictedEnumeration3() throws FileNotFoundException, URISyntaxException {
+    public void testInvalidRestrictedEnumeration3() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/bug6887/foo-invalid-3.yang");
             fail("An exception should have been thrown.");
@@ -128,7 +124,7 @@ public class Bug6887Test {
     }
 
     @Test
-    public void testInvalidRestrictedEnumeration4() throws FileNotFoundException, URISyntaxException {
+    public void testInvalidRestrictedEnumeration4() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/bug6887/foo-invalid-4.yang");
             fail("An exception should have been thrown.");
@@ -142,14 +138,13 @@ public class Bug6887Test {
     }
 
     @Test
-    public void testValidYang10EnumerationWithUnknownStatements() throws ReactorException, FileNotFoundException,
-            URISyntaxException {
+    public void testValidYang10EnumerationWithUnknownStatements() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6887/foo10-valid.yang");
         assertNotNull(schemaContext);
     }
 
     @Test
-    public void testInvalidYang10RestrictedEnumeration() throws FileNotFoundException, URISyntaxException {
+    public void testInvalidYang10RestrictedEnumeration() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/bug6887/foo10-invalid.yang");
             fail("An exception should have been thrown.");
@@ -161,7 +156,7 @@ public class Bug6887Test {
     }
 
     @Test
-    public void testInvalidYang10RestrictedEnumeration2() throws FileNotFoundException, URISyntaxException {
+    public void testInvalidYang10RestrictedEnumeration2() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/bug6887/foo10-invalid-2.yang");
             fail("An exception should have been thrown.");
@@ -173,8 +168,7 @@ public class Bug6887Test {
     }
 
     @Test
-    public void testRestrictedBits() throws ReactorException, FileNotFoundException, URISyntaxException,
-            ParseException {
+    public void testRestrictedBits() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6887/bar.yang");
         assertNotNull(schemaContext);
 
@@ -238,7 +232,7 @@ public class Bug6887Test {
     }
 
     @Test
-    public void testInvalidRestrictedBits() throws FileNotFoundException, URISyntaxException {
+    public void testInvalidRestrictedBits() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/bug6887/bar-invalid.yang");
             fail("An exception should have been thrown.");
@@ -251,7 +245,7 @@ public class Bug6887Test {
     }
 
     @Test
-    public void testInvalidRestrictedBits2() throws FileNotFoundException, URISyntaxException {
+    public void testInvalidRestrictedBits2() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/bug6887/bar-invalid-2.yang");
             fail("An exception should have been thrown.");
@@ -264,7 +258,7 @@ public class Bug6887Test {
     }
 
     @Test
-    public void testInvalidRestrictedBits3() throws FileNotFoundException, URISyntaxException {
+    public void testInvalidRestrictedBits3() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/bug6887/bar-invalid-3.yang");
             fail("An exception should have been thrown.");
@@ -277,7 +271,7 @@ public class Bug6887Test {
     }
 
     @Test
-    public void testInvalidRestrictedBits4() throws FileNotFoundException, URISyntaxException {
+    public void testInvalidRestrictedBits4() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/bug6887/bar-invalid-4.yang");
             fail("An exception should have been thrown.");
@@ -290,14 +284,13 @@ public class Bug6887Test {
     }
 
     @Test
-    public void testValidYang10BitsWithUnknownStatements() throws ReactorException, FileNotFoundException,
-            URISyntaxException {
+    public void testValidYang10BitsWithUnknownStatements() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6887/bar10-valid.yang");
         assertNotNull(schemaContext);
     }
 
     @Test
-    public void testInvalidYang10RestrictedBits() throws FileNotFoundException, URISyntaxException {
+    public void testInvalidYang10RestrictedBits() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/bug6887/bar10-invalid.yang");
             fail("An exception should have been thrown.");
@@ -309,7 +302,7 @@ public class Bug6887Test {
     }
 
     @Test
-    public void testInvalidYang10RestrictedBits2() throws FileNotFoundException, URISyntaxException {
+    public void testInvalidYang10RestrictedBits2() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/bug6887/bar10-invalid-2.yang");
             fail("An exception should have been thrown.");
@@ -320,7 +313,7 @@ public class Bug6887Test {
         }
     }
 
-    private static EnumPair createEnumPair(final String name, int value) {
+    private static EnumPair createEnumPair(final String name, final int value) {
         return EnumPairBuilder.create(name, value).build();
     }
 
@@ -330,7 +323,7 @@ public class Bug6887Test {
         }
     }
 
-    private static Bit createBit(final SchemaPath path, long position) {
+    private static Bit createBit(final SchemaPath path, final long position) {
         return BitBuilder.create(path, position).build();
     }
 

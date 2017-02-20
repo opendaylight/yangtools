@@ -13,8 +13,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -23,9 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6880Test {
@@ -33,7 +29,7 @@ public class Bug6880Test {
     private static final String FOO_REV = "1970-01-01";
 
     @Test
-    public void valid10Test() throws ReactorException, SourceException, FileNotFoundException, URISyntaxException {
+    public void valid10Test() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6880/foo.yang");
         assertNotNull(schemaContext);
 
@@ -48,7 +44,7 @@ public class Bug6880Test {
     }
 
     @Test
-    public void invalid10Test() throws ReactorException, SourceException, FileNotFoundException, URISyntaxException {
+    public void invalid10Test() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/bug6880/invalid10.yang");
             fail("Test should fail due to invalid Yang 1.0");

@@ -13,7 +13,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
@@ -137,8 +136,7 @@ public class MoreRevisionsTest {
     }
 
     @Test
-    public void multipleRevisionsTest() throws SourceException,
-            ReactorException, FileNotFoundException, URISyntaxException {
+    public void multipleRevisionsTest() throws Exception {
         for (int i = 0; i < 100; i++) {
             SchemaContext context = StmtTestUtils
                     .parseYangSources("/semantic-statement-parser/multiple-revisions");
@@ -147,8 +145,7 @@ public class MoreRevisionsTest {
     }
 
     @Test
-    public void multipleRevisionsFullTest() throws SourceException,
-            ReactorException, FileNotFoundException, URISyntaxException,
+    public void multipleRevisionsFullTest() throws Exception,
             ParseException {
         for (int i = 0; i < 100; i++) {
             SchemaContext context = StmtTestUtils
@@ -159,8 +156,7 @@ public class MoreRevisionsTest {
         }
     }
 
-    private static void checkContentFullTest(final SchemaContext context) throws ParseException,
-            URISyntaxException {
+    private static void checkContentFullTest(final SchemaContext context) throws ParseException, URISyntaxException {
 
         String yangTypesNSStr = "urn:ietf:params:xml:ns:yang:ietf-yang-types";
         URI yangTypesNS = new URI(yangTypesNSStr);
@@ -248,12 +244,10 @@ public class MoreRevisionsTest {
     }
 
     @Test
-    public void multipleRevisionsSimpleTest() throws SourceException,
-            ReactorException, FileNotFoundException, URISyntaxException,
-            ParseException {
+    public void multipleRevisionsSimpleTest() throws Exception {
         for (int i = 0; i < 1000; i++) {
-            SchemaContext context = StmtTestUtils
-                    .parseYangSources("/semantic-statement-parser/multiple-revisions/simple");
+            SchemaContext context = StmtTestUtils.parseYangSources(
+                "/semantic-statement-parser/multiple-revisions/simple");
             assertNotNull(context);
             assertEquals(5, context.getModules().size());
             checkContentSimpleTest(context);

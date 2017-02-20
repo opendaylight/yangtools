@@ -13,9 +13,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.FileNotFoundException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -27,13 +25,13 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class SemanticVersionTest {
     @Test
-    public void basicTest() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
-        SchemaContext context = StmtTestUtils.parseYangSources("/semantic-version/basic", StatementParserMode.SEMVER_MODE);
+    public void basicTest() throws Exception {
+        SchemaContext context = StmtTestUtils.parseYangSources("/semantic-version/basic",
+            StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
         Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
@@ -47,8 +45,9 @@ public class SemanticVersionTest {
     }
 
     @Test
-    public void basicTest2() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
-        SchemaContext context = StmtTestUtils.parseYangSources("/semantic-version/basic-2", StatementParserMode.SEMVER_MODE);
+    public void basicTest2() throws Exception {
+        SchemaContext context = StmtTestUtils.parseYangSources("/semantic-version/basic-2",
+            StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
         Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
@@ -62,8 +61,9 @@ public class SemanticVersionTest {
     }
 
     @Test
-    public void basicTest3() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
-        SchemaContext context = StmtTestUtils.parseYangSources("/semantic-version/basic-3", StatementParserMode.SEMVER_MODE);
+    public void basicTest3() throws Exception {
+        SchemaContext context = StmtTestUtils.parseYangSources("/semantic-version/basic-3",
+            StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
         Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
@@ -75,7 +75,7 @@ public class SemanticVersionTest {
     }
 
     @Test
-    public void basicImportTest1() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void basicImportTest1() throws Exception {
         SchemaContext context = StmtTestUtils.parseYangSources("/semantic-version/basic-import-1",
                 StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
@@ -91,8 +91,7 @@ public class SemanticVersionTest {
     }
 
     @Test
-    public void multipleModulesTest() throws SourceException, FileNotFoundException, ReactorException,
-            URISyntaxException {
+    public void multipleModulesTest() throws Exception {
         SchemaContext context = StmtTestUtils.parseYangSources("/semantic-version/multiple-modules",
                 StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
@@ -108,8 +107,7 @@ public class SemanticVersionTest {
     }
 
     @Test
-    public void basicImportErrTest1() throws SourceException, FileNotFoundException, ReactorException,
-            URISyntaxException {
+    public void basicImportErrTest1() throws Exception {
         try {
             StmtTestUtils.parseYangSources("/semantic-version/basic-import-invalid-1", StatementParserMode.SEMVER_MODE);
             fail("Test should fail due to invalid semantic version");
@@ -120,8 +118,7 @@ public class SemanticVersionTest {
     }
 
     @Test
-    public void basicImportErrTest2() throws SourceException, FileNotFoundException, ReactorException,
-            URISyntaxException {
+    public void basicImportErrTest2() throws Exception {
         try {
             StmtTestUtils.parseYangSources("/semantic-version/basic-import-invalid-2", StatementParserMode.SEMVER_MODE);
             fail("Test should fail due to invalid semantic version");
@@ -133,7 +130,8 @@ public class SemanticVersionTest {
 
     @Test
     public void nodeTest() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/semantic-version/node-test", StatementParserMode.SEMVER_MODE);
+        SchemaContext context = StmtTestUtils.parseYangSources("/semantic-version/node-test",
+            StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
         Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();

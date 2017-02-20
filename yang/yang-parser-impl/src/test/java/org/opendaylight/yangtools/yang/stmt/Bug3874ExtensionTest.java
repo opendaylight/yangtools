@@ -9,10 +9,8 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import java.io.FileNotFoundException;
+
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import org.junit.Test;
@@ -26,8 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMapping;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AnyxmlSchemaLocationEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.YangModeledAnyXmlEffectiveStatementImpl;
@@ -35,7 +31,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.YangModeled
 public class Bug3874ExtensionTest {
 
     @Test
-    public void test() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException, ParseException {
+    public void test() throws Exception {
             SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug3874");
 
             Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("1970-01-01");

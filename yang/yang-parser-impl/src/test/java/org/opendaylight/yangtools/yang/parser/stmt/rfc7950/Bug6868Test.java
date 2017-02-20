@@ -15,8 +15,6 @@ import static org.junit.Assert.fail;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import java.util.HashSet;
 import java.util.Set;
 import org.junit.Test;
@@ -27,9 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6868Test {
@@ -41,8 +37,7 @@ public class Bug6868Test {
             "my-container-3", "foo", "not-foo", "imp-bar", "imp-bar-2");
 
     @Test
-    public void ifFeatureYang11ResolutionTest() throws ReactorException, SourceException, FileNotFoundException,
-            URISyntaxException {
+    public void ifFeatureYang11ResolutionTest() throws Exception {
         assertSchemaContextFor(null, ALL_CONTAINERS);
         assertSchemaContextFor(ImmutableSet.of(), ImmutableSet.of("my-container-1", "my-container-2", "not-foo"));
         assertSchemaContextFor(ImmutableSet.of("foo"), ImmutableSet.of("foo"));
@@ -57,8 +52,8 @@ public class Bug6868Test {
         assertSchemaContextFor(ImmutableSet.of("foo", "baz", "imp:bar"), ImmutableSet.of("foo", "imp-bar", "imp-bar-2"));
     }
 
-    private static void assertSchemaContextFor(final Set<String> supportedFeatures, final Set<String> expectedContainers)
-            throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    private static void assertSchemaContextFor(final Set<String> supportedFeatures,
+            final Set<String> expectedContainers) throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/rfc7950/bug6868/yang11",
                 supportedFeatures != null ? createFeaturesSet(supportedFeatures) : null,
                 StatementParserMode.DEFAULT_MODE);
@@ -96,7 +91,7 @@ public class Bug6868Test {
     }
 
     @Test
-    public void invalidYang10Test() throws ReactorException, SourceException, FileNotFoundException, URISyntaxException {
+    public void invalidYang10Test() throws Exception {
         try {
             StmtTestUtils.parseYangSource("/rfc7950/bug6868/invalid10.yang");
             fail("Test should fail due to invalid Yang 1.0");

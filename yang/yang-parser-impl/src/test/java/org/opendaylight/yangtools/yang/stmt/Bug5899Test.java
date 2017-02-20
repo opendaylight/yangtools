@@ -10,18 +10,13 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class Bug5899Test {
 
     @Test
-    public void testBug5899() throws ReactorException, SourceException, FileNotFoundException,
-            URISyntaxException {
+    public void testBug5899() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/bugs/bug5899");
         assertNotNull(schemaContext);
     }

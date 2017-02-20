@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
@@ -32,16 +31,12 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class ControllerStmtParserTest {
 
     @Test
-    public void test() throws SourceException, FileNotFoundException,
-            ReactorException, URISyntaxException, ParseException {
-        final SchemaContext context = StmtTestUtils
-                .parseYangSources("/sal-broker-impl");
+    public void test() throws Exception {
+        final SchemaContext context = StmtTestUtils.parseYangSources("/sal-broker-impl");
         assertNotNull(context);
 
         salDomBrokerImplModuleTest(context);
