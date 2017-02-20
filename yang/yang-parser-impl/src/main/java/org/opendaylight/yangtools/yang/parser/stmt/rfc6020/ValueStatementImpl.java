@@ -34,17 +34,12 @@ public class ValueStatementImpl extends AbstractDeclaredStatement<Integer> imple
 
         @Override
         public Integer parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-            int valueNum;
-
             try {
-                valueNum = Integer.parseInt(value);
+                return Integer.valueOf(value);
             } catch (NumberFormatException e) {
-                throw new SourceException(String.format(
-                        "%s is not valid value statement integer argument in a range of -2147483648..2147483647", value),
-                        ctx.getStatementSourceReference(), e);
+                throw new SourceException(ctx.getStatementSourceReference(), e,
+                    "%s is not valid value statement integer argument in a range of -2147483648..2147483647", value);
             }
-
-            return valueNum;
         }
 
         @Override
