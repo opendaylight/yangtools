@@ -11,8 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -27,8 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug5200Test {
@@ -36,7 +32,7 @@ public class Bug5200Test {
     private static final String REV = "2016-05-05";
 
     @Test
-    public void test() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void test() throws Exception {
         SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5200");
         assertNotNull(context);
 

@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -23,15 +21,13 @@ import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class Bug5437Test {
     private static final String NS = "foo";
     private static final String REV = "2016-03-01";
 
     @Test
-    public void test() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void test() throws Exception {
         SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5437");
         assertNotNull(context);
 

@@ -11,7 +11,6 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Set;
 import org.junit.Test;
@@ -22,16 +21,12 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class OrderingTest {
 
     @Test
-    public void testOrderingTypedef() throws URISyntaxException,
-            SourceException, ReactorException {
-        final Set<Module> modules = TestUtils.loadModules(getClass().getResource(
-                "/model").toURI());
+    public void testOrderingTypedef() throws Exception {
+        final Set<Module> modules = TestUtils.loadModules(getClass().getResource("/model").toURI());
         final Module bar = TestUtils.findModule(modules, "bar");
         final Set<TypeDefinition<?>> typedefs = bar.getTypeDefinitions();
         final String[] expectedOrder = new String[] { "int32-ext1", "int32-ext2",
@@ -49,10 +44,8 @@ public class OrderingTest {
     }
 
     @Test
-    public void testOrderingChildNodes() throws URISyntaxException,
-            SourceException, ReactorException {
-        final Set<Module> modules = TestUtils.loadModules(getClass().getResource(
-                "/model").toURI());
+    public void testOrderingChildNodes() throws Exception {
+        final Set<Module> modules = TestUtils.loadModules(getClass().getResource("/model").toURI());
         final Module foo = TestUtils.findModule(modules, "foo");
         AugmentationSchema augment1 = null;
         for (final AugmentationSchema as : foo.getAugmentations()) {
@@ -77,10 +70,8 @@ public class OrderingTest {
     }
 
     @Test
-    public void testOrderingNestedChildNodes1() throws URISyntaxException,
-            SourceException, ReactorException {
-        final Set<Module> modules = TestUtils.loadModules(getClass().getResource(
-                "/model").toURI());
+    public void testOrderingNestedChildNodes1() throws Exception {
+        final Set<Module> modules = TestUtils.loadModules(getClass().getResource("/model").toURI());
         final Module foo = TestUtils.findModule(modules, "foo");
 
         final Collection<DataSchemaNode> childNodes = foo.getChildNodes();
@@ -104,10 +95,8 @@ public class OrderingTest {
     }
 
     @Test
-    public void testOrderingNestedChildNodes2() throws URISyntaxException,
-            SourceException, ReactorException {
-        final Set<Module> modules = TestUtils.loadModules(getClass().getResource(
-                "/model").toURI());
+    public void testOrderingNestedChildNodes2() throws Exception {
+        final Set<Module> modules = TestUtils.loadModules(getClass().getResource("/model").toURI());
         final Module baz = TestUtils.findModule(modules, "baz");
         final Set<GroupingDefinition> groupings = baz.getGroupings();
         assertEquals(1, groupings.size());
