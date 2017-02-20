@@ -13,10 +13,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,8 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class Bug5335Test {
     private static final String FOO = "foo";
@@ -55,7 +51,7 @@ public class Bug5335Test {
     }
 
     @Test
-    public void incorrectTest1() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void incorrectTest1() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/incorrect/case-1");
         assertNotNull(context);
 
@@ -69,7 +65,7 @@ public class Bug5335Test {
     }
 
     @Test
-    public void incorrectTest2() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void incorrectTest2() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/incorrect/case-2");
         assertNotNull(context);
 
@@ -83,7 +79,7 @@ public class Bug5335Test {
     }
 
     @Test
-    public void incorrectTest3() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void incorrectTest3() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/incorrect/case-2");
         assertNotNull(context);
 
@@ -98,7 +94,7 @@ public class Bug5335Test {
     }
 
     @Test
-    public void correctTest1() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void correctTest1() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-1");
         assertNotNull(context);
 
@@ -108,7 +104,7 @@ public class Bug5335Test {
     }
 
     @Test
-    public void correctTest2() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void correctTest2() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-2");
         assertNotNull(context);
 
@@ -119,7 +115,7 @@ public class Bug5335Test {
     }
 
     @Test
-    public void correctTest3() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void correctTest3() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-3");
         assertNotNull(context);
 
@@ -130,7 +126,7 @@ public class Bug5335Test {
     }
 
     @Test
-    public void correctTest4() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void correctTest4() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5335/correct/case-4");
         assertNotNull(context);
 

@@ -16,7 +16,6 @@ import static org.junit.Assert.fail;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
-import java.net.URISyntaxException;
 import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
@@ -31,7 +30,6 @@ public class SubstatementValidatorTest {
 
     private final PrintStream stdout = System.out;
     private final ByteArrayOutputStream output = new ByteArrayOutputStream();
-    private String testLog;
 
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
@@ -47,14 +45,14 @@ public class SubstatementValidatorTest {
     }
 
     @Test
-    public void noException() throws URISyntaxException, ReactorException {
+    public void noException() throws Exception {
         final Set<Module> modules = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment")
                 .toURI());
         assertNotNull(modules);
     }
 
     @Test
-    public void undesirableElementException() throws URISyntaxException {
+    public void undesirableElementException() throws Exception {
         try {
             TestUtils.loadModules(getClass().getResource("/substatement-validator/undesirable-element").toURI());
             fail("Unexpected success");
@@ -65,7 +63,7 @@ public class SubstatementValidatorTest {
     }
 
     @Test
-    public void maximalElementCountException() throws URISyntaxException, ReactorException {
+    public void maximalElementCountException() throws Exception {
         try {
             TestUtils.loadModules(getClass().getResource("/substatement-validator/maximal-element").toURI());
             fail("Unexpected success");
@@ -76,21 +74,21 @@ public class SubstatementValidatorTest {
     }
 
     @Test
-    public void missingElementException() throws URISyntaxException, ReactorException {
+    public void missingElementException() throws Exception {
         expectedEx.expect(SomeModifiersUnresolvedException.class);
 
         TestUtils.loadModules(getClass().getResource("/substatement-validator/missing-element").toURI());
     }
 
     @Test
-    public void bug6173Test() throws ReactorException, URISyntaxException {
+    public void bug6173Test() throws Exception {
         final Set<Module> loadModules = TestUtils.loadModules(getClass().getResource(
                 "/substatement-validator/empty-element").toURI());
         assertEquals(1, loadModules.size());
     }
 
     @Test
-    public void bug4310test() throws URISyntaxException, ReactorException {
+    public void bug4310test() throws Exception {
         expectedEx.expect(SomeModifiersUnresolvedException.class);
         TestUtils.loadModules(getClass().getResource("/substatement-validator/bug-4310").toURI());
     }

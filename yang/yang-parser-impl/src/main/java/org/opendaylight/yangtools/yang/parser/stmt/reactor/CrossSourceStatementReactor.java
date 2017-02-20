@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
@@ -127,6 +128,10 @@ public class CrossSourceStatementReactor {
          *            which should be added into main sources
          */
         public void addSources(final StatementStreamSource... sources) {
+            addSources(Arrays.asList(sources));
+        }
+
+        public void addSources(final Collection<? extends StatementStreamSource> sources) {
             for (final StatementStreamSource source : sources) {
                 context.addSource(source);
             }

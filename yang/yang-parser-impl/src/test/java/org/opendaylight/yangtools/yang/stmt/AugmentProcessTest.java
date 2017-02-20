@@ -15,9 +15,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableList;
-import java.io.FileNotFoundException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -225,9 +223,7 @@ public class AugmentProcessTest {
     }
 
     @Test
-    public void caseShortHandAugmentingTest() throws SourceException, FileNotFoundException, ReactorException,
-            URISyntaxException {
-
+    public void caseShortHandAugmentingTest() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/choice-case-type-test-models");
 
         assertNotNull(context);

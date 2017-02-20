@@ -11,9 +11,11 @@ package org.opendaylight.yangtools.yang.stmt;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -24,13 +26,15 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
+import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YinStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 import org.slf4j.Logger;
@@ -69,8 +73,9 @@ public class StmtTestUtils {
         return result;
     }
 
-    public static void addSources(final CrossSourceStatementReactor.BuildAction reactor, final YangStatementSourceImpl... sources) {
-        for (final YangStatementSourceImpl source : sources) {
+    public static void addSources(final CrossSourceStatementReactor.BuildAction reactor,
+            final StatementStreamSource... sources) {
+        for (final StatementStreamSource source : sources) {
             reactor.addSource(source);
         }
     }
@@ -99,60 +104,67 @@ public class StmtTestUtils {
         return parseYangSources(StatementParserMode.DEFAULT_MODE, null, sources);
     }
 
-    public static SchemaContext parseYangSources(final StatementParserMode statementParserMode, final Set<QName> supportedFeatures, final StatementStreamSource... sources)
+    public static SchemaContext parseYangSources(final StatementParserMode statementParserMode,
+            final Set<QName> supportedFeatures, final StatementStreamSource... sources)
             throws SourceException, ReactorException {
+        return parseYangSources(statementParserMode, supportedFeatures, Arrays.asList(sources));
+    }
 
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(statementParserMode, supportedFeatures);
+    public static SchemaContext parseYangSources(final StatementParserMode statementParserMode,
+            final Set<QName> supportedFeatures, final Collection<? extends StatementStreamSource> sources)
+            throws SourceException, ReactorException {
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(
+            statementParserMode, supportedFeatures);
         reactor.addSources(sources);
 
         return reactor.buildEffective();
     }
 
     public static SchemaContext parseYangSources(final File... files) throws SourceException, ReactorException,
-            FileNotFoundException {
+            IOException, YangSyntaxErrorException {
         return parseYangSources(StatementParserMode.DEFAULT_MODE, null, files);
     }
 
-    public static SchemaContext parseYangSources(final StatementParserMode statementParserMode, final Set<QName> supportedFeatures, final File... files) throws SourceException,
-            ReactorException, FileNotFoundException {
+    public static SchemaContext parseYangSources(final StatementParserMode statementParserMode,
+            final Set<QName> supportedFeatures, final File... files) throws SourceException,
+            ReactorException, IOException, YangSyntaxErrorException {
 
-        final StatementStreamSource[] sources = new StatementStreamSource[files.length];
-
-        for (int i = 0; i < files.length; i++) {
-            sources[i] = new YangStatementSourceImpl(new NamedFileInputStream(files[i], files[i].getPath()));
+        final Collection<YangStatementStreamSource> sources = new ArrayList<>(files.length);
+        for (File file : files) {
+            sources.add(YangStatementStreamSource.create(YangTextSchemaSource.forFile(file)));
         }
 
         return parseYangSources(statementParserMode, supportedFeatures, sources);
     }
 
     public static SchemaContext parseYangSources(final Collection<File> files) throws SourceException, ReactorException,
-            FileNotFoundException {
+            IOException, YangSyntaxErrorException {
         return parseYangSources(files, StatementParserMode.DEFAULT_MODE);
     }
 
     public static SchemaContext parseYangSources(final Collection<File> files, final StatementParserMode statementParserMode)
-            throws SourceException, ReactorException, FileNotFoundException {
+            throws SourceException, ReactorException, IOException, YangSyntaxErrorException {
         return parseYangSources(statementParserMode, null, files.toArray(new File[files.size()]));
     }
 
     public static SchemaContext parseYangSources(final String yangSourcesDirectoryPath) throws SourceException,
-            ReactorException, FileNotFoundException, URISyntaxException {
+            ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
         return parseYangSources(yangSourcesDirectoryPath, StatementParserMode.DEFAULT_MODE);
     }
 
     public static SchemaContext parseYangSource(final String yangSourcePath) throws SourceException, ReactorException,
-            FileNotFoundException, URISyntaxException {
+            URISyntaxException, IOException, YangSyntaxErrorException {
         return parseYangSource(yangSourcePath, StatementParserMode.DEFAULT_MODE, null);
     }
 
     public static SchemaContext parseYangSource(final String yangSourcePath, final Set<QName> supportedFeatures)
-            throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+            throws SourceException, ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
         return parseYangSource(yangSourcePath, StatementParserMode.DEFAULT_MODE, supportedFeatures);
     }
 
     public static SchemaContext parseYangSource(final String yangSourcePath,
             final StatementParserMode statementParserMode, final Set<QName> supportedFeatures)
-            throws SourceException, ReactorException, FileNotFoundException, URISyntaxException {
+            throws SourceException, ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
         final URL source = StmtTestUtils.class.getResource(yangSourcePath);
         final File sourceFile = new File(source.toURI());
         return parseYangSources(statementParserMode, supportedFeatures, sourceFile);
@@ -160,13 +172,13 @@ public class StmtTestUtils {
 
     public static SchemaContext parseYangSources(final String yangSourcesDirectoryPath,
             final StatementParserMode statementParserMode) throws SourceException, ReactorException,
-            FileNotFoundException, URISyntaxException {
+            URISyntaxException, IOException, YangSyntaxErrorException {
         return parseYangSources(yangSourcesDirectoryPath, null, statementParserMode);
     }
 
     public static SchemaContext parseYangSources(final String yangSourcesDirectoryPath,
             final Set<QName> supportedFeatures, final StatementParserMode statementParserMode) throws SourceException,
-            ReactorException, FileNotFoundException, URISyntaxException {
+            ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
 
         final URL resourceDir = StmtTestUtils.class.getResource(yangSourcesDirectoryPath);
         final File testSourcesDir = new File(resourceDir.toURI());
@@ -183,8 +195,8 @@ public class StmtTestUtils {
         return parseYinSources(statementParserMode, testSourcesDir.listFiles(YIN_FILE_FILTER));
     }
 
-    public static SchemaContext parseYinSources(final StatementParserMode statementParserMode, final File... files) throws SourceException,
-            ReactorException, FileNotFoundException {
+    public static SchemaContext parseYinSources(final StatementParserMode statementParserMode, final File... files)
+            throws SourceException, ReactorException, FileNotFoundException {
 
         final StatementStreamSource[] sources = new StatementStreamSource[files.length];
 

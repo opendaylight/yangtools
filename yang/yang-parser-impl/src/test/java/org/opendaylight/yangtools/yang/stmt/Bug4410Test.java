@@ -11,18 +11,14 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.google.common.base.Throwables;
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class Bug4410Test {
 
     @Test
-    public void test() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void test() throws Exception {
         try {
             StmtTestUtils.parseYangSources("/bugs/bug4410");
             fail("SomeModifiersUnresolvedException should be thrown.");

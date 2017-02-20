@@ -12,9 +12,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import org.junit.Ignore;
@@ -26,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.LeafEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnitsEffectiveStatementImpl;
 
@@ -34,8 +30,7 @@ public class Bug6972Test {
 
     @Ignore
     @Test
-    public void allUnitsShouldBeTheSameInstance() throws ReactorException, FileNotFoundException, URISyntaxException,
-            ParseException {
+    public void allUnitsShouldBeTheSameInstance() throws Exception {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/bugs/bug6972");
         assertNotNull(schemaContext);
         assertEquals(3, schemaContext.getModules().size());

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -26,8 +27,7 @@ public class YangParserIdentityTest {
 
     // base identity name equals identity name
     @Test(expected = SomeModifiersUnresolvedException.class)
-    public void testParsingIdentityTestModule() throws URISyntaxException,
-            ReactorException, FileNotFoundException {
+    public void testParsingIdentityTestModule() throws URISyntaxException, ReactorException, FileNotFoundException {
         File yang = new File(getClass().getResource("/identity/identitytest.yang").toURI());
         InputStream stream = new NamedFileInputStream(yang, yang.getPath());
         try {
@@ -55,8 +55,7 @@ public class YangParserIdentityTest {
     // imported module prefixed base identity name equals identity name, but
     // prefix differs
     @Test
-    public void testParsingImportPrefixIdentityTestModule() throws URISyntaxException,
-            ReactorException {
+    public void testParsingImportPrefixIdentityTestModule() throws Exception {
         Set<Module> modules = TestUtils.loadModules(getClass().getResource("/identity/import").toURI());
         Module module = TestUtils.findModule(modules, "prefiximportidentitytest");
         Set<ModuleImport> imports = module.getImports();
