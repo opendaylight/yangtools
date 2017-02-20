@@ -182,10 +182,10 @@ class YangToSourcesProcessor {
             return Optional.of(reactor);
         } catch (Exception e) {
             // MojoExecutionException is thrown since execution cannot continue
-            LOG.error("{} Unable to parse {} files from {}", LOG_PREFIX, Util.YANG_SUFFIX, yangFilesRootDir, e);
+            LOG.error("{} Unable to parse YANG files from {}", LOG_PREFIX, yangFilesRootDir, e);
             Throwable rootCause = Throwables.getRootCause(e);
-            throw new MojoExecutionException(LOG_PREFIX + " Unable to parse " + Util.YANG_SUFFIX + " files from " +
-                    yangFilesRootDir, rootCause);
+            throw new MojoExecutionException(LOG_PREFIX + " Unable to parse YANG files from " + yangFilesRootDir,
+                rootCause);
         }
     }
 
