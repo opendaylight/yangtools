@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.sal.java.api.generator
 
 import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.encodeAngleBrackets;
 
-import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
-import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
+import org.opendaylight.mdsal.binding.model.api.Enumeration
+import org.opendaylight.mdsal.binding.model.api.GeneratedType
 
 /**
  * Template for generating JAVA enumeration type.

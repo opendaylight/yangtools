@@ -28,9 +28,9 @@ import java.util.Set
 import java.util.TreeMap
 import java.util.function.Function
 import org.opendaylight.yangtools.binding.generator.util.Types
-import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType
-import org.opendaylight.yangtools.sal.binding.model.api.Type
-import org.opendaylight.yangtools.sal.binding.model.api.WildcardType
+import org.opendaylight.mdsal.binding.model.api.ParameterizedType
+import org.opendaylight.mdsal.binding.model.api.Type
+import org.opendaylight.mdsal.binding.model.api.WildcardType
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider
 import org.opendaylight.yangtools.yang.model.api.Module

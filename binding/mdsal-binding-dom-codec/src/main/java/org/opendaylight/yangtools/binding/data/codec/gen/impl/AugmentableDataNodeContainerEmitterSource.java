@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.gen.impl;
 
-import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
+import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerImplementation;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 

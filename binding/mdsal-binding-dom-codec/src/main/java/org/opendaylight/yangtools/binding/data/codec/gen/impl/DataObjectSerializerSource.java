@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.binding.data.codec.gen.impl;
 
 import com.google.common.base.Preconditions;
+import org.opendaylight.mdsal.binding.generator.api.ClassLoadingStrategy;
+import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.data.codec.gen.spi.AbstractSource;
-import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy;
 import org.opendaylight.yangtools.sal.binding.generator.impl.GeneratedClassLoadingStrategy;
-import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;

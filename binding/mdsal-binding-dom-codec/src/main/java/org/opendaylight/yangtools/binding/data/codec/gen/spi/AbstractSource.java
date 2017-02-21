@@ -13,8 +13,7 @@ import com.google.common.collect.UnmodifiableIterator;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.opendaylight.yangtools.sal.binding.model.api.Type;
+import org.opendaylight.mdsal.binding.model.api.Type;
 
 public abstract class AbstractSource {
 

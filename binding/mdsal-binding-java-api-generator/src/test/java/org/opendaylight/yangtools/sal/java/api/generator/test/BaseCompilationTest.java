@@ -11,7 +11,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
+import org.opendaylight.mdsal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.generator.impl.BindingGeneratorImpl;
 
 public abstract class BaseCompilationTest {

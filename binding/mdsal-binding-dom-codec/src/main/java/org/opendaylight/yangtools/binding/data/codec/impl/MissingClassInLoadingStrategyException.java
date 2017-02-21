@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy;
+import org.opendaylight.mdsal.binding.generator.api.ClassLoadingStrategy;
 
 /**
  *

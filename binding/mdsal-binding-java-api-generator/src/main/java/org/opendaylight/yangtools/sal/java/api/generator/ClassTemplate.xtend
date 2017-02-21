@@ -19,14 +19,14 @@ import java.util.List
 import java.util.Objects
 import java.util.regex.Pattern
 import org.opendaylight.yangtools.binding.generator.util.TypeConstants
-import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType
-import org.opendaylight.yangtools.sal.binding.model.api.Constant
-import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
-import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty
-import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
-import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
-import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
-import org.opendaylight.yangtools.sal.binding.model.api.Type
+import org.opendaylight.mdsal.binding.model.api.ConcreteType
+import org.opendaylight.mdsal.binding.model.api.Constant
+import org.opendaylight.mdsal.binding.model.api.Enumeration
+import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
+import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
+import org.opendaylight.mdsal.binding.model.api.GeneratedType
+import org.opendaylight.mdsal.binding.model.api.Restrictions
+import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
 
 /**
