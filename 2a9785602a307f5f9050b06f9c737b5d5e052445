@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_62df1b6a",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/type/BitsTypeEffectiveStatementImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-02-21T09:41:32Z",
+      "side": 1,
+      "message": "I think we should throw this exception only in the case when we find a \"bit\" substatement. So please move this statement inside the \"if\" below. Please add the following test: create yang 1 module and add an unknown statement inside enumeration type without any other restrictions. I have a suspicion that the current solution will not work correctly for this described case. The same comment applies also to enum ..",
+      "range": {
+        "startLine": 37,
+        "startChar": 0,
+        "endLine": 38,
+        "endChar": 77
+      },
+      "revId": "2a9785602a307f5f9050b06f9c737b5d5e052445",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
