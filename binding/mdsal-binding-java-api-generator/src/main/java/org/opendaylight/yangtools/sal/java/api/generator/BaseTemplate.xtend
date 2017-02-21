@@ -16,7 +16,7 @@ import java.util.List
 import java.util.Map
 import java.util.StringTokenizer
 import java.util.regex.Pattern
-import org.opendaylight.yangtools.binding.generator.util.Types
+import org.opendaylight.mdsal.binding.generator.util.Types
 import org.opendaylight.mdsal.binding.model.api.ConcreteType
 import org.opendaylight.mdsal.binding.model.api.Constant
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty

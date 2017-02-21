@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator
 
-import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.encodeAngleBrackets;
+import static org.opendaylight.mdsal.binding.generator.util.BindingGeneratorUtil.encodeAngleBrackets;
 
 import org.opendaylight.mdsal.binding.model.api.Enumeration
 import org.opendaylight.mdsal.binding.model.api.GeneratedType

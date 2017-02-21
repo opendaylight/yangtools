@@ -16,11 +16,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.junit.Test;
+import org.opendaylight.mdsal.binding.generator.util.BindingTypes;
+import org.opendaylight.mdsal.binding.generator.util.Types;
+import org.opendaylight.mdsal.binding.generator.util.generated.type.builder.GeneratedTypeBuilderImpl;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
-import org.opendaylight.yangtools.binding.generator.util.BindingTypes;
-import org.opendaylight.yangtools.binding.generator.util.Types;
-import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTypeBuilderImpl;
 import org.opendaylight.yangtools.sal.java.api.generator.GeneratorJavaFile;
 
 public class GeneratorJavaFileTest {

@@ -18,7 +18,7 @@ import java.util.Collections
 import java.util.List
 import java.util.Objects
 import java.util.regex.Pattern
-import org.opendaylight.yangtools.binding.generator.util.TypeConstants
+import org.opendaylight.mdsal.binding.generator.util.TypeConstants
 import org.opendaylight.mdsal.binding.model.api.ConcreteType
 import org.opendaylight.mdsal.binding.model.api.Constant
 import org.opendaylight.mdsal.binding.model.api.Enumeration

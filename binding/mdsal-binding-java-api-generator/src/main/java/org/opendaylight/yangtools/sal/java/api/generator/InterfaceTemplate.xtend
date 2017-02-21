@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.sal.java.api.generator
 
 import java.util.List
-import org.opendaylight.yangtools.binding.generator.util.TypeConstants
+import org.opendaylight.mdsal.binding.generator.util.TypeConstants
 import org.opendaylight.mdsal.binding.model.api.Constant
 import org.opendaylight.mdsal.binding.model.api.Enumeration
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject

@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.opendaylight.mdsal.binding.generator.util.TypeConstants;
+import org.opendaylight.mdsal.binding.generator.util.Types;
 import org.opendaylight.mdsal.binding.model.api.AnnotationType;
 import org.opendaylight.mdsal.binding.model.api.Constant;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
@@ -23,8 +25,6 @@ import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.WildcardType;
-import org.opendaylight.yangtools.binding.generator.util.TypeConstants;
-import org.opendaylight.yangtools.binding.generator.util.Types;
 
 public final class GeneratorUtil {
 

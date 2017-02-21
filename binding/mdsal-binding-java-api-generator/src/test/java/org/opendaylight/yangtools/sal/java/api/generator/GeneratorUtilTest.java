@@ -14,7 +14,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
-import static org.opendaylight.yangtools.binding.generator.util.TypeConstants.PATTERN_CONSTANT_NAME;
+import static org.opendaylight.mdsal.binding.generator.util.TypeConstants.PATTERN_CONSTANT_NAME;
 import static org.opendaylight.yangtools.sal.java.api.generator.GeneratorUtil.createImports;
 
 import com.google.common.collect.ImmutableList;

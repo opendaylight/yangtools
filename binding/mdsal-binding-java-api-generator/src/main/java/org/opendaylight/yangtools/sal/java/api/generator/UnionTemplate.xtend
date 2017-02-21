@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator
 
-import static org.opendaylight.yangtools.binding.generator.util.Types.*
+import static org.opendaylight.mdsal.binding.generator.util.Types.*
+
 import com.google.common.base.Preconditions;
 import java.beans.ConstructorProperties
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
