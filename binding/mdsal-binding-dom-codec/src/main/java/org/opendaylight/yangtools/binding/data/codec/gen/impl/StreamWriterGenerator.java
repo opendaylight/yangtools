@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.gen.impl;
 
+import org.opendaylight.mdsal.binding.generator.util.JavassistUtils;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.binding.data.codec.util.AugmentableDispatchSerializer;
 import org.opendaylight.yangtools.binding.data.codec.util.ChoiceDispatchSerializer;
-import org.opendaylight.yangtools.sal.binding.generator.util.JavassistUtils;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerImplementation;

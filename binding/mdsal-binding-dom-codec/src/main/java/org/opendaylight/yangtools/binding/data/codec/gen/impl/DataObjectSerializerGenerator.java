@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.gen.impl;
 
-import org.opendaylight.yangtools.sal.binding.generator.util.BindingRuntimeContext;
+import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerImplementation;
 
 /**

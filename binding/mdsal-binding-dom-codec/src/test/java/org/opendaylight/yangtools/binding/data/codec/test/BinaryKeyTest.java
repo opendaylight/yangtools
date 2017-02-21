@@ -13,11 +13,11 @@ import static org.junit.Assert.assertNotEquals;
 import com.google.common.base.Optional;
 import javassist.ClassPool;
 import org.junit.Test;
+import org.opendaylight.mdsal.binding.generator.util.JavassistUtils;
 import org.opendaylight.yang.gen.v1.odl.test.binary.key.rev160101.BinaryList;
 import org.opendaylight.yang.gen.v1.odl.test.binary.key.rev160101.BinaryListBuilder;
 import org.opendaylight.yangtools.binding.data.codec.gen.impl.StreamWriterGenerator;
 import org.opendaylight.yangtools.binding.data.codec.impl.BindingNormalizedNodeCodecRegistry;
-import org.opendaylight.yangtools.sal.binding.generator.util.JavassistUtils;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
