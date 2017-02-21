@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_5ddc7c73",
+        "filename": "yang/yang-maven-plugin-spi/src/main/java/org/opendaylight/yangtools/yang/maven/spi/generator/FileGenerator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2017-02-21T11:46:18Z",
+      "side": 1,
+      "message": "One \"directly\" too many.",
+      "range": {
+        "startLine": 36,
+        "startChar": 59,
+        "endLine": 36,
+        "endChar": 99
+      },
+      "revId": "bc726b48888a7ae0959d3a0c29baa029777dbd3a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_fdd2905a",
+        "filename": "yang/yang-maven-plugin-spi/src/main/java/org/opendaylight/yangtools/yang/maven/spi/generator/FileGenerator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2017-02-21T11:46:18Z",
+      "side": 1,
+      "message": "To what?",
+      "range": {
+        "startLine": 41,
+        "startChar": 41,
+        "endLine": 41,
+        "endChar": 47
+      },
+      "revId": "bc726b48888a7ae0959d3a0c29baa029777dbd3a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
