@@ -45,6 +45,23 @@
       "revId": "bc726b48888a7ae0959d3a0c29baa029777dbd3a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_5d3e3c29",
+        "filename": "yang/yang-maven-plugin-spi/src/main/java/org/opendaylight/yangtools/yang/maven/spi/generator/GeneratedFileLifecycle.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2017-02-21T12:52:42Z",
+      "side": 1,
+      "message": "expecting rest of Javadoc, I assume...",
+      "revId": "bc726b48888a7ae0959d3a0c29baa029777dbd3a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
