@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_333f24d8",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 449,
+      "author": {
+        "id": 4561
+      },
+      "writtenOn": "2017-02-22T10:14:36Z",
+      "side": 1,
+      "message": "Section 6.1.3 in RFC6020 states that:\n\nIf a string contains any space or tab characters, a semicolon (\";\"), braces (\"{\" or \"}\"), or comment sequences (\"//\", \"/*\", or \"*/\"), then it MUST be enclosed within double or single quotes.\n\nIn other words, an unquoted string cannot contain space, tab, semicolon, braces and comment sequences.\n\nSection 6.1.3 in RFC7950 states that:\n\nAn unquoted string is any sequence of characters that does not contain any space, tab, carriage return, or line feed characters, a single or double quote character, a semicolon (\";\"), braces (\"{\" or \"}\"), or comment sequences (\"//\", \"/*\", or \"*/\").\n\nNew forbidden characters in an unquoted string are not only single and double quotes, but also carriage return (\\r) and line feed (\\n). Therefore they should also be checked, right?.",
+      "range": {
+        "startLine": 449,
+        "startChar": 24,
+        "endLine": 449,
+        "endChar": 43
+      },
+      "revId": "a27b62d22e589b68860d39eff5366b2b97aa0e0b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
