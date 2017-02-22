@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_b07caab6",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/YangTextSchemaSource.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-02-22T08:55:15Z",
+      "side": 1,
+      "message": "Maybe it would be better to use YangConstants.RFC6020_YANG_FILE_EXTENSION here instead of text \".yang\", because error message does not have to match with perfromed check if value of YangConstants.RFC6020_YANG_FILE_EXTENSION will be changed.",
+      "range": {
+        "startLine": 41,
+        "startChar": 41,
+        "endLine": 41,
+        "endChar": 46
+      },
+      "revId": "fda0985f91d0a13ec2c54f9073dadeb02933c0d6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
