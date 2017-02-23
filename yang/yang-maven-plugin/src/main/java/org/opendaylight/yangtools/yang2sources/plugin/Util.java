@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 
 import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_FILE_EXTENSION;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -21,6 +23,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -313,6 +316,8 @@ final class Util {
     }
 
     static final class ContextHolder {
+        private static final Splitter SEP_SPLITTER = Splitter.on(File.separator);
+
         private final SchemaContext context;
         private final Set<Module> yangModules;
 
@@ -328,6 +333,14 @@ final class Util {
         Set<Module> getYangModules() {
             return yangModules;
         }
-    }
 
+        Optional<String> moduleToResourcePath(final Module mod) {
+            if (!yangModules.contains(mod)) {
+                return Optional.empty();
+            }
+
+            return Optional.of("/" + YangToSourcesProcessor.META_INF_YANG_STRING_JAR + "/"
+                    + Iterables.getLast(SEP_SPLITTER.split(mod.getSource())));
+        }
+    }
 }
