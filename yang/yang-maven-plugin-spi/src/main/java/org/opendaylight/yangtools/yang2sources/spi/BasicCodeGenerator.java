@@ -11,7 +11,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -32,9 +34,33 @@ public interface BasicCodeGenerator {
      *            YANG modules parsed from yangFilesRootDir
      * @return collection of files that were generated from schema context
      * @throws IOException
+     *
+     * @deprecated Implement {@link #generateSources(SchemaContext, File, Set, Function)} instead.
      */
+    @Deprecated
     Collection<File> generateSources(SchemaContext context, File outputBaseDir, Set<Module> currentModules)
             throws IOException;
+
+    /**
+     * Generate sources from provided {@link SchemaContext}
+     *
+     * @param context
+     *            parsed from YANG files
+     * @param outputBaseDir
+     *            expected output directory for generated sources configured by
+     *            user
+     * @param currentModules
+     *            YANG modules parsed from yangFilesRootDir
+     * @param moduleResourcePathResolver
+     *            Function converting a local module to the packaged resource path
+     * @return collection of files that were generated from schema context
+     * @throws IOException
+     */
+    default Collection<File> generateSources(final SchemaContext context, final File outputBaseDir,
+            final Set<Module> currentModules,
+            final Function<Module, Optional<String>> moduleResourcePathResolver) throws IOException {
+        return generateSources(context, outputBaseDir, currentModules);
+    }
 
     /**
      * Provided map contains all configuration that was set in pom for code
