@@ -13,6 +13,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
+
 import java.net.URISyntaxException;
 import java.util.Set;
 import org.junit.Test;
@@ -28,15 +30,14 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class EffectiveUsesRefineAndConstraintsTest {
 
-    private static final YangStatementSourceImpl REFINE_TEST = new YangStatementSourceImpl(
-            "/stmt-test/uses/refine-test.yang",false);
+    private static final StatementStreamSource REFINE_TEST = sourceForResource("/stmt-test/uses/refine-test.yang");
 
     @Test
     public void refineTest() throws SourceException, ReactorException,
@@ -44,7 +45,7 @@ public class EffectiveUsesRefineAndConstraintsTest {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
 
-        StmtTestUtils.addSources(reactor, REFINE_TEST);
+        reactor.addSources(REFINE_TEST);
 
         EffectiveSchemaContext result = reactor.buildEffective();
 

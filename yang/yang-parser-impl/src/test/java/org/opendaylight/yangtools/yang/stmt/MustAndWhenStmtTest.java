@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.util.Iterator;
 import java.util.Set;
@@ -23,22 +24,20 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class MustAndWhenStmtTest {
 
-    private static final YangStatementSourceImpl MUST_MODULE = new YangStatementSourceImpl
-            ("/must-when-stmt-test/must-test.yang", false);
-    private static final YangStatementSourceImpl WHEN_MODULE = new YangStatementSourceImpl("/must-when-stmt-test/" +
-            "when-test.yang", false);
+    private static final StatementStreamSource MUST_MODULE = sourceForResource("/must-when-stmt-test/must-test.yang");
+    private static final StatementStreamSource WHEN_MODULE = sourceForResource("/must-when-stmt-test/when-test.yang");
 
     @Test
     public void mustStmtTest() throws ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        StmtTestUtils.addSources(reactor, MUST_MODULE);
+        reactor.addSources(MUST_MODULE);
 
         final EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);
@@ -71,7 +70,7 @@ public class MustAndWhenStmtTest {
     @Test
     public void whenStmtTest() throws ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        StmtTestUtils.addSources(reactor, WHEN_MODULE);
+        reactor.addSources(WHEN_MODULE);
 
         final EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);

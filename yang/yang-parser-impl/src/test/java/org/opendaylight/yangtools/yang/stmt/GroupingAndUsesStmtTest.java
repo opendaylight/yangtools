@@ -13,6 +13,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.util.Iterator;
 import java.util.List;
@@ -32,23 +33,22 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class GroupingAndUsesStmtTest {
 
-    private static final YangStatementSourceImpl MODULE = new YangStatementSourceImpl("/model/bar.yang", false);
-    private static final YangStatementSourceImpl SUBMODULE = new YangStatementSourceImpl("/model/subfoo.yang", false);
-    private static final YangStatementSourceImpl GROUPING_MODULE = new YangStatementSourceImpl("/model/baz.yang",
-            false);
-    private static final YangStatementSourceImpl USES_MODULE = new YangStatementSourceImpl("/model/foo.yang", false);
+    private static final StatementStreamSource MODULE = sourceForResource("/model/bar.yang");
+    private static final StatementStreamSource SUBMODULE = sourceForResource("/model/subfoo.yang");
+    private static final StatementStreamSource GROUPING_MODULE = sourceForResource("/model/baz.yang");
+    private static final StatementStreamSource USES_MODULE = sourceForResource("/model/foo.yang");
 
     @Test
     public void groupingTest() throws ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        StmtTestUtils.addSources(reactor, MODULE, GROUPING_MODULE);
+        reactor.addSources(MODULE, GROUPING_MODULE);
 
         final EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);
@@ -90,7 +90,7 @@ public class GroupingAndUsesStmtTest {
     @Test
     public void usesAndRefinesTest() throws ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        StmtTestUtils.addSources(reactor, MODULE, SUBMODULE, GROUPING_MODULE, USES_MODULE);
+        reactor.addSources(MODULE, SUBMODULE, GROUPING_MODULE, USES_MODULE);
 
         final EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);

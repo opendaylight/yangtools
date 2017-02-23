@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -19,25 +20,25 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.DescriptionStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.IncludeStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ModuleStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ReferenceStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6874Test {
 
-    private static final YangStatementSourceImpl ROOT_MODULE = new YangStatementSourceImpl
-            ("/rfc7950/include-import-stmt-test/valid-11/root-module.yang", false);
-    private static final YangStatementSourceImpl CHILD_MODULE = new YangStatementSourceImpl
-            ("/rfc7950/include-import-stmt-test/valid-11/child-module.yang", false);
-    private static final YangStatementSourceImpl CHILD_MODULE_1 = new YangStatementSourceImpl
-            ("/rfc7950/include-import-stmt-test/valid-11/child-module-1.yang", false);
-    private static final YangStatementSourceImpl IMPORTED_MODULE = new YangStatementSourceImpl
-            ("/rfc7950/include-import-stmt-test/valid-11/imported-module.yang", false);
+    private static final StatementStreamSource ROOT_MODULE = sourceForResource
+            ("/rfc7950/include-import-stmt-test/valid-11/root-module.yang");
+    private static final StatementStreamSource CHILD_MODULE = sourceForResource
+            ("/rfc7950/include-import-stmt-test/valid-11/child-module.yang");
+    private static final StatementStreamSource CHILD_MODULE_1 = sourceForResource
+            ("/rfc7950/include-import-stmt-test/valid-11/child-module-1.yang");
+    private static final StatementStreamSource IMPORTED_MODULE = sourceForResource
+            ("/rfc7950/include-import-stmt-test/valid-11/imported-module.yang");
 
     @Test
     public void valid11Test() throws Exception {
@@ -81,7 +82,7 @@ public class Bug6874Test {
     @Test
     public void descriptionAndReferenceTest11() throws ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        StmtTestUtils.addSources(reactor, ROOT_MODULE, CHILD_MODULE, CHILD_MODULE_1, IMPORTED_MODULE);
+        reactor.addSources(ROOT_MODULE, CHILD_MODULE, CHILD_MODULE_1, IMPORTED_MODULE);
 
         reactor.build().getRootStatements().forEach(declaredStmt -> {
             if(declaredStmt instanceof ModuleStatementImpl) {

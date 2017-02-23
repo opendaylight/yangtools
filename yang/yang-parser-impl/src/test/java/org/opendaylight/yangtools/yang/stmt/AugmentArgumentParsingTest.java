@@ -12,40 +12,41 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 
 public class AugmentArgumentParsingTest {
 
-    private static final YangStatementSourceImpl IMPORTED = new YangStatementSourceImpl(
-            "/semantic-statement-parser/augment-arg-parsing/imported.yang", false);
-    private static final YangStatementSourceImpl VALID_ARGS = new YangStatementSourceImpl(
-            "/semantic-statement-parser/augment-arg-parsing/root-valid-aug-args.yang", false);
-    private static final YangStatementSourceImpl INVALID_REL1 = new YangStatementSourceImpl(
-            "/semantic-statement-parser/augment-arg-parsing/root-invalid-rel1.yang", false);
-    private static final YangStatementSourceImpl INVALID_REL2 = new YangStatementSourceImpl(
-            "/semantic-statement-parser/augment-arg-parsing/root-invalid-rel2.yang", false);
-    private static final YangStatementSourceImpl INVALID_ABS = new YangStatementSourceImpl(
-            "/semantic-statement-parser/augment-arg-parsing/root-invalid-abs.yang", false);
-    private static final YangStatementSourceImpl INVALID_ABS_PREFIXED_NO_IMP = new YangStatementSourceImpl(
-            "/semantic-statement-parser/augment-arg-parsing/root-invalid-abs-no-imp.yang", false);
-    private static final YangStatementSourceImpl INVALID_EMPTY = new YangStatementSourceImpl(
-            "/semantic-statement-parser/augment-arg-parsing/root-invalid-empty.yang", false);
-    private static final YangStatementSourceImpl INVALID_XPATH = new YangStatementSourceImpl(
-            "/semantic-statement-parser/augment-arg-parsing/root-invalid-xpath.yang", false);
+    private static final StatementStreamSource IMPORTED = sourceForResource(
+            "/semantic-statement-parser/augment-arg-parsing/imported.yang");
+    private static final StatementStreamSource VALID_ARGS = sourceForResource(
+            "/semantic-statement-parser/augment-arg-parsing/root-valid-aug-args.yang");
+    private static final StatementStreamSource INVALID_REL1 = sourceForResource(
+            "/semantic-statement-parser/augment-arg-parsing/root-invalid-rel1.yang");
+    private static final StatementStreamSource INVALID_REL2 = sourceForResource(
+            "/semantic-statement-parser/augment-arg-parsing/root-invalid-rel2.yang");
+    private static final StatementStreamSource INVALID_ABS = sourceForResource(
+            "/semantic-statement-parser/augment-arg-parsing/root-invalid-abs.yang");
+    private static final StatementStreamSource INVALID_ABS_PREFIXED_NO_IMP = sourceForResource(
+            "/semantic-statement-parser/augment-arg-parsing/root-invalid-abs-no-imp.yang");
+    private static final StatementStreamSource INVALID_EMPTY = sourceForResource(
+            "/semantic-statement-parser/augment-arg-parsing/root-invalid-empty.yang");
+    private static final StatementStreamSource INVALID_XPATH = sourceForResource(
+            "/semantic-statement-parser/augment-arg-parsing/root-invalid-xpath.yang");
 
     @Test
     public void validAugAbsTest() throws ReactorException {
 
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, IMPORTED, VALID_ARGS);
+        reactor.addSources(IMPORTED, VALID_ARGS);
 
         final EffectiveModelContext result = reactor.build();
         assertNotNull(result);
@@ -55,7 +56,7 @@ public class AugmentArgumentParsingTest {
     public void invalidAugRel1Test() {
 
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, INVALID_REL1);
+        reactor.addSources(INVALID_REL1);
 
         try {
             reactor.build();
@@ -69,7 +70,7 @@ public class AugmentArgumentParsingTest {
     public void invalidAugRel2Test() {
 
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, INVALID_REL2);
+        reactor.addSources(INVALID_REL2);
 
         try {
             reactor.build();
@@ -83,7 +84,7 @@ public class AugmentArgumentParsingTest {
     public void invalidAugAbs() {
 
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, INVALID_ABS);
+        reactor.addSources(INVALID_ABS);
 
         try {
             reactor.build();
@@ -97,7 +98,7 @@ public class AugmentArgumentParsingTest {
     public void invalidAugAbsPrefixedNoImp() {
 
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, INVALID_ABS_PREFIXED_NO_IMP);
+        reactor.addSources(INVALID_ABS_PREFIXED_NO_IMP);
 
         try {
             reactor.build();
@@ -112,7 +113,7 @@ public class AugmentArgumentParsingTest {
     public void invalidAugEmptyTest() throws SourceException {
 
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, INVALID_EMPTY);
+        reactor.addSources(INVALID_EMPTY);
 
         try {
             reactor.build();
@@ -127,7 +128,7 @@ public class AugmentArgumentParsingTest {
     public void invalidAugXPathTest() throws SourceException {
 
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, INVALID_XPATH);
+        reactor.addSources(INVALID_XPATH);
 
         try {
             reactor.build();
@@ -141,11 +142,5 @@ public class AugmentArgumentParsingTest {
         final Throwable cause = e.getCause();
         assertTrue(cause instanceof SourceException);
         assertTrue(cause.getMessage().startsWith(start));
-    }
-
-    private static void addSources(final BuildAction reactor, final YangStatementSourceImpl... sources) {
-        for (YangStatementSourceImpl source : sources) {
-            reactor.addSource(source);
-        }
     }
 }

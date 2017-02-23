@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,30 +25,30 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class EffectiveModulesAndSubmodulesTest {
 
-    private static final YangStatementSourceImpl ROOT_MODULE = new YangStatementSourceImpl(
-            "/stmt-test/submodules/root-module.yang",false);
-    private static final YangStatementSourceImpl IMPORTED_MODULE = new YangStatementSourceImpl(
-            "/stmt-test/submodules/imported-module.yang",false);
-    private static final YangStatementSourceImpl SUBMODULE_1 = new YangStatementSourceImpl(
-            "/stmt-test/submodules/submodule-1.yang",false);
-    private static final YangStatementSourceImpl SUBMODULE_2 = new YangStatementSourceImpl(
-            "/stmt-test/submodules/submodule-2.yang",false);
-    private static final YangStatementSourceImpl SUBMODULE_TO_SUBMODULE_1 = new YangStatementSourceImpl(
-            "/stmt-test/submodules/submodule-to-submodule-1.yang",false);
+    private static final StatementStreamSource ROOT_MODULE = sourceForResource(
+            "/stmt-test/submodules/root-module.yang");
+    private static final StatementStreamSource IMPORTED_MODULE = sourceForResource(
+            "/stmt-test/submodules/imported-module.yang");
+    private static final StatementStreamSource SUBMODULE_1 = sourceForResource(
+            "/stmt-test/submodules/submodule-1.yang");
+    private static final StatementStreamSource SUBMODULE_2 = sourceForResource(
+            "/stmt-test/submodules/submodule-2.yang");
+    private static final StatementStreamSource SUBMODULE_TO_SUBMODULE_1 = sourceForResource(
+            "/stmt-test/submodules/submodule-to-submodule-1.yang");
 
     @Test
     public void modulesAndSubmodulesSimpleReferencesTest()
             throws SourceException, ReactorException, URISyntaxException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
-        StmtTestUtils.addSources(reactor, ROOT_MODULE, IMPORTED_MODULE,
+        reactor.addSources(ROOT_MODULE, IMPORTED_MODULE,
                 SUBMODULE_1, SUBMODULE_2, SUBMODULE_TO_SUBMODULE_1);
         final EffectiveSchemaContext result = reactor.buildEffective();
 

@@ -13,6 +13,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.util.List;
 import org.junit.Before;
@@ -36,9 +37,9 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.LeafEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitsSpecificationEffectiveStatementImpl;
@@ -51,8 +52,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UnionS
 
 public class EffectiveStatementTypeTest {
 
-    private static final YangStatementSourceImpl IMPORTED_MODULE = new YangStatementSourceImpl(
-            "/type-tests/types.yang", false);
+    private static final StatementStreamSource IMPORTED_MODULE = sourceForResource("/type-tests/types.yang");
     private static EffectiveSchemaContext effectiveSchemaContext;
     private static LeafSchemaNode currentLeaf;
     private static Module types;

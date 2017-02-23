@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,7 +68,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
@@ -804,9 +804,8 @@ public class YangParserTest {
 
     @Test
     public void unknownStatementInSubmoduleHeaderTest() throws IOException, URISyntaxException, ReactorException {
-        final StatementStreamSource yang1 = new YangStatementSourceImpl("/yang-grammar-test/revisions-extension.yang", false);
-        final StatementStreamSource yang2 = new YangStatementSourceImpl("/yang-grammar-test/submodule-header-extension.yang",
-                false);
+        final StatementStreamSource yang1 = sourceForResource("/yang-grammar-test/revisions-extension.yang");
+        final StatementStreamSource yang2 = sourceForResource("/yang-grammar-test/submodule-header-extension.yang");
 
         try {
             TestUtils.parseYangSources(yang1, yang2);
@@ -820,13 +819,12 @@ public class YangParserTest {
     @Test
     public void unknownStatementBetweenRevisionsTest() throws ReactorException {
 
-        final YangStatementSourceImpl yangModule = new YangStatementSourceImpl(
-                "/yang-grammar-test/revisions-extension.yang", false);
-        final YangStatementSourceImpl yangSubmodule = new YangStatementSourceImpl(
-                "/yang-grammar-test/submodule-header-extension.yang", false);
+        final StatementStreamSource yangModule = sourceForResource("/yang-grammar-test/revisions-extension.yang");
+        final StatementStreamSource yangSubmodule = sourceForResource(
+                "/yang-grammar-test/submodule-header-extension.yang");
 
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, yangModule, yangSubmodule);
+        reactor.addSources(yangModule, yangSubmodule);
 
         final EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);
@@ -835,15 +833,15 @@ public class YangParserTest {
     @Test
     public void unknownStatementsInStatementsTest() throws ReactorException {
 
-        final YangStatementSourceImpl yangFile1 = new YangStatementSourceImpl(
-                "/yang-grammar-test/stmtsep-in-statements.yang", false);
-        final YangStatementSourceImpl yangFile2 = new YangStatementSourceImpl(
-                "/yang-grammar-test/stmtsep-in-statements2.yang", false);
-        final YangStatementSourceImpl yangFile3 = new YangStatementSourceImpl(
-                "/yang-grammar-test/stmtsep-in-statements-sub.yang", false);
+        final StatementStreamSource yangFile1 = sourceForResource(
+                "/yang-grammar-test/stmtsep-in-statements.yang");
+        final StatementStreamSource yangFile2 = sourceForResource(
+                "/yang-grammar-test/stmtsep-in-statements2.yang");
+        final StatementStreamSource yangFile3 = sourceForResource(
+                "/yang-grammar-test/stmtsep-in-statements-sub.yang");
 
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, yangFile1, yangFile2, yangFile3);
+        reactor.addSources(yangFile1, yangFile2, yangFile3);
         // TODO: change test or create new module in order to respect new statement parser validations
         try {
             final EffectiveSchemaContext result = reactor.buildEffective();
@@ -854,9 +852,4 @@ public class YangParserTest {
         }
     }
 
-    private static void addSources(final CrossSourceStatementReactor.BuildAction reactor, final YangStatementSourceImpl... sources) {
-        for (final YangStatementSourceImpl source : sources) {
-            reactor.addSource(source);
-        }
-    }
 }

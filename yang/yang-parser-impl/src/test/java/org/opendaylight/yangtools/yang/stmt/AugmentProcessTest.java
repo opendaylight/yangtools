@@ -13,8 +13,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -25,33 +25,26 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.meta.ModelStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class AugmentProcessTest {
 
-    private static final YangStatementSourceImpl AUGMENTED = new YangStatementSourceImpl(
-            "/stmt-test/augments/augmented.yang", false);
-    private static final YangStatementSourceImpl ROOT = new YangStatementSourceImpl(
-            "/stmt-test/augments/aug-root.yang", false);
+    private static final StatementStreamSource AUGMENTED = sourceForResource("/stmt-test/augments/augmented.yang");
+    private static final StatementStreamSource ROOT = sourceForResource("/stmt-test/augments/aug-root.yang");
 
     private static final QNameModule ROOT_QNAME_MODULE = QNameModule.create(
             URI.create("root"), SimpleDateFormatUtil.DEFAULT_DATE_REV);
     private static final QNameModule AUGMENTED_QNAME_MODULE = QNameModule
             .create(URI.create("aug"), SimpleDateFormatUtil.DEFAULT_DATE_REV);
-
-    private static GroupingDefinition grp2Def;
 
     private final QName augParent1 = QName.create(AUGMENTED_QNAME_MODULE,
             "aug-parent1");
@@ -81,21 +74,21 @@ public class AugmentProcessTest {
             "grp-cont22");
     private final QName grpAdd = QName.create(ROOT_QNAME_MODULE, "grp-add");
 
-    private static final YangStatementSourceImpl MULTIPLE_AUGMENT = new YangStatementSourceImpl(
-            "/stmt-test/augments/multiple-augment-test.yang",false);
+    private static final StatementStreamSource MULTIPLE_AUGMENT = sourceForResource(
+            "/stmt-test/augments/multiple-augment-test.yang");
 
-    private static final YangStatementSourceImpl MULTIPLE_AUGMENT_ROOT = new YangStatementSourceImpl(
-            "/stmt-test/augments/multiple-augment-root.yang",false);
-    private static final YangStatementSourceImpl MULTIPLE_AUGMENT_IMPORTED = new YangStatementSourceImpl(
-            "/stmt-test/augments/multiple-augment-imported.yang",false);
-    private static final YangStatementSourceImpl MULTIPLE_AUGMENT_SUBMODULE = new YangStatementSourceImpl(
-            "/stmt-test/augments/multiple-augment-submodule.yang",false);
+    private static final StatementStreamSource MULTIPLE_AUGMENT_ROOT = sourceForResource(
+            "/stmt-test/augments/multiple-augment-root.yang");
+    private static final StatementStreamSource MULTIPLE_AUGMENT_IMPORTED = sourceForResource(
+            "/stmt-test/augments/multiple-augment-imported.yang");
+    private static final StatementStreamSource MULTIPLE_AUGMENT_SUBMODULE = sourceForResource(
+            "/stmt-test/augments/multiple-augment-submodule.yang");
 
-    private static final YangStatementSourceImpl MULTIPLE_AUGMENT_INCORRECT = new YangStatementSourceImpl(
-            "/stmt-test/augments/multiple-augment-incorrect.yang",false);
+    private static final StatementStreamSource MULTIPLE_AUGMENT_INCORRECT = sourceForResource(
+            "/stmt-test/augments/multiple-augment-incorrect.yang");
 
-    private static final YangStatementSourceImpl MULTIPLE_AUGMENT_INCORRECT2 = new YangStatementSourceImpl(
-            "/stmt-test/augments/multiple-augment-incorrect2.yang",false);
+    private static final StatementStreamSource MULTIPLE_AUGMENT_INCORRECT2 = sourceForResource(
+            "/stmt-test/augments/multiple-augment-incorrect2.yang");
 
     @Test
     public void multipleAugmentsAndMultipleModulesTest() throws SourceException, ReactorException {
@@ -200,19 +193,6 @@ public class AugmentProcessTest {
         final ContainerSchemaNode grpAddNode = (ContainerSchemaNode) grpCont22Node
                 .getDataChildByName(grpAdd);
         assertNotNull(grpAddNode);
-    }
-
-    private static <T extends ModelStatement<?>> T findInStatements(final QName target,
-            final ImmutableList<T> statements) {
-
-        for (final T statement : statements) {
-            if (target
-                    .equals(statement.statementDefinition().getArgumentName())) {
-                return statement;
-            }
-        }
-
-        return null;
     }
 
     private static void addSources(final CrossSourceStatementReactor.BuildAction reactor,

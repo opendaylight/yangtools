@@ -12,7 +12,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.Module;

@@ -13,6 +13,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.text.ParseException;
 import java.util.Set;
@@ -24,23 +25,21 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class RpcStmtTest {
 
-    private static final YangStatementSourceImpl RPC_MODULE = new YangStatementSourceImpl("/model/baz.yang", false);
-    private static final YangStatementSourceImpl IMPORTED_MODULE = new YangStatementSourceImpl("/model/bar.yang",
-            false);
-    private static final YangStatementSourceImpl FOO_MODULE = new YangStatementSourceImpl("/rpc-stmt-test/foo.yang",
-            false);
+    private static final StatementStreamSource RPC_MODULE = sourceForResource("/model/baz.yang");
+    private static final StatementStreamSource IMPORTED_MODULE = sourceForResource("/model/bar.yang");
+    private static final StatementStreamSource FOO_MODULE = sourceForResource("/rpc-stmt-test/foo.yang");
 
     @Test
     public void rpcTest() throws ReactorException, ParseException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        StmtTestUtils.addSources(reactor, RPC_MODULE, IMPORTED_MODULE, FOO_MODULE);
+        reactor.addSources(RPC_MODULE, IMPORTED_MODULE, FOO_MODULE);
 
         final EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);

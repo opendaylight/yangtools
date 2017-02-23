@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.util.Set;
 import org.junit.Test;
@@ -20,14 +21,12 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 
 public class Bug6410Test {
 
     @Test
     public void testTypedefsInRpc() throws ReactorException {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(
-                new YangStatementSourceImpl("/bugs/bug6410/foo.yang", false));
+        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(sourceForResource("/bugs/bug6410/foo.yang"));
 
         final Set<Module> modules = schemaContext.getModules();
         assertEquals(1, modules.size());
@@ -44,7 +43,7 @@ public class Bug6410Test {
     @Test
     public void shouldFailOnDuplicateTypedefs() {
         try {
-            StmtTestUtils.parseYangSources(new YangStatementSourceImpl("/bugs/bug6410/bar.yang", false));
+            StmtTestUtils.parseYangSources(sourceForResource("/bugs/bug6410/bar.yang"));
             fail("A ReactorException should have been thrown.");
         } catch (ReactorException ex) {
             final Throwable cause = ex.getCause();

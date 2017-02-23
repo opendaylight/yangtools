@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -34,49 +35,42 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class MoreRevisionsTest {
 
-    private static final YangStatementSourceImpl REVFILE = new YangStatementSourceImpl(
-            "/semantic-statement-parser/revisions/more-revisions-test.yang",
-            false);
+    private static final StatementStreamSource REVFILE = sourceForResource(
+            "/semantic-statement-parser/revisions/more-revisions-test.yang");
 
-    private static final YangStatementSourceImpl TED_20130712 = new YangStatementSourceImpl(
-            "/semantic-statement-parser/two-revisions/ted@2013-07-12.yang",
-            false);
+    private static final StatementStreamSource TED_20130712 = sourceForResource(
+            "/semantic-statement-parser/two-revisions/ted@2013-07-12.yang");
 
-    private static final YangStatementSourceImpl TED_20131021 = new YangStatementSourceImpl(
-            "/semantic-statement-parser/two-revisions/ted@2013-10-21.yang",
-            false);
+    private static final StatementStreamSource TED_20131021 = sourceForResource(
+            "/semantic-statement-parser/two-revisions/ted@2013-10-21.yang");
 
-    private static final YangStatementSourceImpl IETF_TYPES = new YangStatementSourceImpl(
-            "/ietf/ietf-inet-types@2010-09-24.yang", false);
+    private static final StatementStreamSource IETF_TYPES = sourceForResource(
+            "/ietf/ietf-inet-types@2010-09-24.yang");
 
-    private static final YangStatementSourceImpl NETWORK_TOPOLOGY_20130712 = new YangStatementSourceImpl(
-            "/ietf/network-topology@2013-07-12.yang", false);
+    private static final StatementStreamSource NETWORK_TOPOLOGY_20130712 = sourceForResource(
+            "/ietf/network-topology@2013-07-12.yang");
 
-    private static final YangStatementSourceImpl NETWORK_TOPOLOGY_20131021 = new YangStatementSourceImpl(
-            "/ietf/network-topology@2013-10-21.yang", false);
+    private static final StatementStreamSource NETWORK_TOPOLOGY_20131021 = sourceForResource(
+            "/ietf/network-topology@2013-10-21.yang");
 
-    private static final YangStatementSourceImpl ISIS_20130712 = new YangStatementSourceImpl(
-            "/semantic-statement-parser/two-revisions/isis-topology@2013-07-12.yang",
-            false);
+    private static final StatementStreamSource ISIS_20130712 = sourceForResource(
+            "/semantic-statement-parser/two-revisions/isis-topology@2013-07-12.yang");
 
-    private static final YangStatementSourceImpl ISIS_20131021 = new YangStatementSourceImpl(
-            "/semantic-statement-parser/two-revisions/isis-topology@2013-10-21.yang",
-            false);
+    private static final StatementStreamSource ISIS_20131021 = sourceForResource(
+            "/semantic-statement-parser/two-revisions/isis-topology@2013-10-21.yang");
 
-    private static final YangStatementSourceImpl L3_20130712 = new YangStatementSourceImpl(
-            "/semantic-statement-parser/two-revisions/l3-unicast-igp-topology@2013-07-12.yang",
-            false);
+    private static final StatementStreamSource L3_20130712 = sourceForResource(
+            "/semantic-statement-parser/two-revisions/l3-unicast-igp-topology@2013-07-12.yang");
 
-    private static final YangStatementSourceImpl L3_20131021 = new YangStatementSourceImpl(
-            "/semantic-statement-parser/two-revisions/l3-unicast-igp-topology@2013-10-21.yang",
-            false);
+    private static final StatementStreamSource L3_20131021 = sourceForResource(
+            "/semantic-statement-parser/two-revisions/l3-unicast-igp-topology@2013-10-21.yang");
 
     @Test
     public void readAndParseYangFileTest() throws SourceException,

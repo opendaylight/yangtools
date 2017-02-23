@@ -73,10 +73,11 @@ public class StmtTestUtils {
         return result;
     }
 
-    public static void addSources(final CrossSourceStatementReactor.BuildAction reactor,
-            final StatementStreamSource... sources) {
-        for (final StatementStreamSource source : sources) {
-            reactor.addSource(source);
+    public static StatementStreamSource sourceForResource(final String resourceName) {
+        try {
+            return YangStatementStreamSource.create(YangTextSchemaSource.forResource(resourceName));
+        } catch (IOException | YangSyntaxErrorException e) {
+            throw new IllegalArgumentException("Failed to create source", e);
         }
     }
 
