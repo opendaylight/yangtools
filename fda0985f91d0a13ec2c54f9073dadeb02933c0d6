@@ -22,6 +22,30 @@
       "revId": "fda0985f91d0a13ec2c54f9073dadeb02933c0d6",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_6acd2985",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/YangTextSchemaSource.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-02-23T09:31:36Z",
+      "side": 1,
+      "message": "I do not believe that is going to change :)",
+      "parentUuid": "fafc7978_b07caab6",
+      "range": {
+        "startLine": 41,
+        "startChar": 41,
+        "endLine": 41,
+        "endChar": 46
+      },
+      "revId": "fda0985f91d0a13ec2c54f9073dadeb02933c0d6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
