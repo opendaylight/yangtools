@@ -39,7 +39,7 @@ abstract class BaseTemplate {
     private static final Splitter NL_SPLITTER = Splitter.on(NL_MATCHER)
 
     new(GeneratedType _type) {
-        if (_type == null) {
+        if (_type === null) {
             throw new IllegalArgumentException("Generated type reference cannot be NULL!")
         }
         this.type = _type;
@@ -176,7 +176,7 @@ abstract class BaseTemplate {
      * @return string with comment in JAVA format
      */
     def protected CharSequence asJavadoc(String comment) {
-        if(comment == null) return ''
+        if(comment === null) return ''
         var txt = comment
 
         txt = comment.trim
@@ -290,7 +290,7 @@ abstract class BaseTemplate {
     }
 
     protected def formatToParagraph(String text) {
-        if(text == null || text.isEmpty)
+        if(text === null || text.isEmpty)
             return text
 
         var formattedText = text
@@ -401,7 +401,7 @@ abstract class BaseTemplate {
             }
         }
         val GeneratedTransferObject parent = gto.superType
-        if (parent != null) {
+        if (parent !== null) {
             return findProperty(parent, name)
         }
         return null

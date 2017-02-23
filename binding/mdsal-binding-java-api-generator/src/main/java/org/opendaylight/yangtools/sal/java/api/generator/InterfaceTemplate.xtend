@@ -49,7 +49,7 @@ class InterfaceTemplate extends BaseTemplate {
      */
     new(GeneratedType genType) {
         super(genType)
-        if (genType == null) {
+        if (genType === null) {
             throw new IllegalArgumentException("Generated type reference cannot be NULL!")
         }
 
@@ -85,10 +85,10 @@ class InterfaceTemplate extends BaseTemplate {
 
 
     def private generateAnnotations(List<AnnotationType> annotations) '''
-        «IF annotations != null && !annotations.empty»
+        «IF annotations !== null && !annotations.empty»
             «FOR annotation : annotations»
                 @«annotation.importedName»
-                «IF annotation.parameters != null && !annotation.parameters.empty»
+                «IF annotation.parameters !== null && !annotation.parameters.empty»
                 (
                 «FOR param : annotation.parameters SEPARATOR ","»
                     «param.name»=«param.value»

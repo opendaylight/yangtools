@@ -36,7 +36,7 @@ class UnionTemplate extends ClassTemplate {
         for (property : finalProperties) {
             val propRet = property.returnType
             if (propRet instanceof GeneratedTransferObject && (propRet as GeneratedTransferObject).typedef &&
-                (propRet as GeneratedTransferObject).properties != null &&
+                (propRet as GeneratedTransferObject).properties !== null &&
                 !(propRet as GeneratedTransferObject).properties.empty &&
                 ((propRet as GeneratedTransferObject).properties.size == 1) &&
                 (propRet as GeneratedTransferObject).properties.get(0).name.equals("value") &&
@@ -144,7 +144,7 @@ class UnionTemplate extends ClassTemplate {
                                 «field.fieldName» = «property.fieldName».getValue();
                             «ELSEIF propRet instanceof GeneratedTransferObject // Is it a GeneratedTransferObject
                                     && (propRet as GeneratedTransferObject).typedef  // Is it a typedef
-                                    && (propRet as GeneratedTransferObject).properties != null
+                                    && (propRet as GeneratedTransferObject).properties !== null
                                     && !(propRet as GeneratedTransferObject).properties.empty
                                     && ((propRet as GeneratedTransferObject).properties.size == 1)
                                     && (propRet as GeneratedTransferObject).properties.get(0).name.equals("value")
@@ -153,7 +153,7 @@ class UnionTemplate extends ClassTemplate {
                                 «field.fieldName» = «property.fieldName».isValue().toString().toCharArray();
                             «ELSEIF propRet instanceof GeneratedTransferObject // Is it a GeneratedTransferObject
                                     && (propRet as GeneratedTransferObject).typedef  // Is it a typedef
-                                    && (propRet as GeneratedTransferObject).properties != null
+                                    && (propRet as GeneratedTransferObject).properties !== null
                                     && !(propRet as GeneratedTransferObject).properties.empty
                                     && ((propRet as GeneratedTransferObject).properties.size == 1)
                                     && (propRet as GeneratedTransferObject).properties.get(0).name.equals("value")

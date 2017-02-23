@@ -105,7 +105,7 @@ class BuilderTemplate extends BaseTemplate {
      * @param implementedIfcs list of implemented interfaces
      */
     def private void collectImplementedMethods(Set<MethodSignature> methods, List<Type> implementedIfcs) {
-        if (implementedIfcs == null || implementedIfcs.empty) {
+        if (implementedIfcs === null || implementedIfcs.empty) {
             return
         }
         for (implementedIfc : implementedIfcs) {
@@ -169,13 +169,13 @@ class BuilderTemplate extends BaseTemplate {
      * @return set of generated property instances which represents the getter <code>methods</code>
      */
     def private propertiesFromMethods(Collection<MethodSignature> methods) {
-        if (methods == null || methods.isEmpty()) {
+        if (methods === null || methods.isEmpty()) {
             return Collections.emptySet
         }
         val Set<GeneratedProperty> result = new LinkedHashSet
         for (m : methods) {
             val createdField = m.propertyFromGetter
-            if (createdField != null) {
+            if (createdField !== null) {
                 result.add(createdField)
             }
         }
@@ -195,11 +195,11 @@ class BuilderTemplate extends BaseTemplate {
      * </ul>
      */
     def private GeneratedProperty propertyFromGetter(MethodSignature method) {
-        if (method == null || method.name == null || method.name.empty || method.returnType == null) {
+        if (method === null || method.name === null || method.name.empty || method.returnType === null) {
             throw new IllegalArgumentException("Method, method name, method return type reference cannot be NULL or empty!")
         }
         var prefix = "get";
-        if(Types.BOOLEAN.equals(method.returnType)) {
+        if (Types.BOOLEAN.equals(method.returnType)) {
             prefix = "is";
         }
         if (method.name.startsWith(prefix)) {
@@ -419,7 +419,7 @@ class BuilderTemplate extends BaseTemplate {
     '''
 
     def private generateAugmentField(boolean isPrivate) '''
-        «IF augmentField != null»
+        «IF augmentField !== null»
             «IF isPrivate»private «ENDIF»«Map.importedName»<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> «augmentField.name» = «Collections.importedName».emptyMap();
         «ENDIF»
     '''
@@ -433,7 +433,7 @@ class BuilderTemplate extends BaseTemplate {
         «FOR field : properties SEPARATOR '\n'»
              «/* FIXME: generate checkers as simple blocks and embed them directly in setters  */»
              «val restrictions = field.returnType.restrictions»
-             «IF !(field.returnType instanceof GeneratedType) && restrictions != null»
+             «IF !(field.returnType instanceof GeneratedType) && restrictions !== null»
                     «IF !restrictions.rangeConstraints.nullOrEmpty»
                         «val rangeGenerator = AbstractRangeGenerator.forType(field.returnType)»
                         «rangeGenerator.generateRangeChecker(field.name.toFirstUpper, restrictions.rangeConstraints)»
@@ -445,8 +445,8 @@ class BuilderTemplate extends BaseTemplate {
                     «ENDIF»
             «ENDIF»
             public «type.name»«BUILDER» set«field.name.toFirstUpper»(final «field.returnType.importedName» value) {
-            «IF !(field.returnType instanceof GeneratedType) && restrictions != null»
-                «IF restrictions != null && (!restrictions.rangeConstraints.nullOrEmpty || !restrictions.lengthConstraints.nullOrEmpty)»
+            «IF !(field.returnType instanceof GeneratedType) && restrictions !== null»
+                «IF restrictions !== null && (!restrictions.rangeConstraints.nullOrEmpty || !restrictions.lengthConstraints.nullOrEmpty)»
                 if (value != null) {
                     «IF !restrictions.rangeConstraints.nullOrEmpty»
                         «val rangeGenerator = AbstractRangeGenerator.forType(field.returnType)»
@@ -470,7 +470,7 @@ class BuilderTemplate extends BaseTemplate {
                 return this;
             }
         «ENDFOR»
-        «IF augmentField != null»
+        «IF augmentField !== null»
 
             public «type.name»«BUILDER» add«augmentField.name.toFirstUpper»(«Class.importedName»<? extends «augmentField.returnType.importedName»> augmentationType, «augmentField.returnType.importedName» augmentation) {
                 if (augmentation == null) {
@@ -499,7 +499,7 @@ class BuilderTemplate extends BaseTemplate {
             «val allProps = new ArrayList(properties)»
             «val isList = implementsIfc(type, Types.parameterizedTypeFor(Types.typeForClass(Identifiable), type))»
             «val keyType = type.getKey»
-            «IF isList && keyType != null»
+            «IF isList && keyType !== null»
                 «val keyProps = new ArrayList((keyType as GeneratedTransferObject).properties)»
                 «Collections.sort(keyProps,
                     [ p1, p2 |
@@ -529,7 +529,7 @@ class BuilderTemplate extends BaseTemplate {
             «FOR field : allProps»
                 this.«field.fieldName» = base.«field.getterMethodName»();
             «ENDFOR»
-            «IF augmentField != null»
+            «IF augmentField !== null»
                 «IF impl»
                     switch (base.«augmentField.name».size()) {
                     case 0:
@@ -585,7 +585,7 @@ class BuilderTemplate extends BaseTemplate {
                 toRemove = p;
             }
         }
-        if (toRemove != null) {
+        if (toRemove !== null) {
             props.remove(toRemove);
         }
     }
@@ -602,7 +602,7 @@ class BuilderTemplate extends BaseTemplate {
                 «field.getterMethod»
             «ENDFOR»
         «ENDIF»
-        «IF augmentField != null»
+        «IF augmentField !== null»
 
             @SuppressWarnings("unchecked")
             «IF addOverride»@Override«ENDIF»
@@ -621,7 +621,7 @@ class BuilderTemplate extends BaseTemplate {
      * @return string with the <code>hashCode()</code> method definition in JAVA format
      */
     def protected generateHashCode() '''
-        «IF !properties.empty || augmentField != null»
+        «IF !properties.empty || augmentField !== null»
             private int hash = 0;
             private volatile boolean hashValid = false;
 
@@ -640,7 +640,7 @@ class BuilderTemplate extends BaseTemplate {
                     result = prime * result + «Objects.importedName».hashCode(«property.fieldName»);
                     «ENDIF»
                 «ENDFOR»
-                «IF augmentField != null»
+                «IF augmentField !== null»
                     result = prime * result + «Objects.importedName».hashCode(«augmentField.name»);
                 «ENDIF»
 
@@ -657,7 +657,7 @@ class BuilderTemplate extends BaseTemplate {
      * @return string with the <code>equals()</code> method definition in JAVA format
      */
     def protected generateEquals() '''
-        «IF !properties.empty || augmentField != null»
+        «IF !properties.empty || augmentField !== null»
             @Override
             public boolean equals(«Object.importedName» obj) {
                 if (this == obj) {
@@ -680,7 +680,7 @@ class BuilderTemplate extends BaseTemplate {
                         return false;
                     }
                 «ENDFOR»
-                «IF augmentField != null»
+                «IF augmentField !== null»
                     if (getClass() == obj.getClass()) {
                         // Simple case: we are comparing against self
                         «type.name»«IMPL» otherImpl = («type.name»«IMPL») obj;
@@ -721,7 +721,7 @@ class BuilderTemplate extends BaseTemplate {
                             builder.append(«property.fieldName»);
                         «ENDIF»
                 «ENDFOR»
-                «IF augmentField != null»
+                «IF augmentField !== null»
                     «IF !properties.empty»
                 «««Append comma separator only if it's not there already from previous operation»»»
 final int builderLength = builder.length();

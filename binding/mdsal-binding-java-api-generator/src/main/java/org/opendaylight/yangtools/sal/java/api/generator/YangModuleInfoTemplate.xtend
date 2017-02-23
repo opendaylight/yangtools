@@ -104,7 +104,7 @@ class YangModuleInfoTemplate {
                 «FOR imp : m.imports»
                     «val name = imp.moduleName»
                     «val rev = imp.revision»
-                    «IF rev == null»
+                    «IF rev === null»
                         «val Set<Module> modules = ctx.modules»
                         «val TreeMap<Date, Module> sorted = new TreeMap()»
                         «FOR module : modules»
@@ -217,7 +217,7 @@ class YangModuleInfoTemplate {
         }
         if (type instanceof ParameterizedType) {
             val Type[] params = type.getActualTypeArguments()
-            if (params != null) {
+            if (params !== null) {
                 for (Type param : params) {
                     putTypeIntoImports(param);
                 }
@@ -262,7 +262,7 @@ class YangModuleInfoTemplate {
     }
 
     final def String getParameters(Type[] pTypes) {
-        if (pTypes == null || pTypes.length == 0) {
+        if (pTypes === null || pTypes.length == 0) {
             return "?";
         }
         val StringBuilder builder = new StringBuilder();

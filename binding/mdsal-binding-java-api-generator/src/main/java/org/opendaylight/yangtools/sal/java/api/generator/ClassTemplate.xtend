@@ -84,7 +84,7 @@ class ClassTemplate extends BaseTemplate {
         this.consts = genType.constantDefinitions
         this.enclosedGeneratedTypes = genType.enclosedTypes
 
-        if (restrictions != null && !restrictions.rangeConstraints.nullOrEmpty) {
+        if (restrictions !== null && !restrictions.rangeConstraints.nullOrEmpty) {
             rangeGenerator = AbstractRangeGenerator.forType(findProperty(genType, "value").returnType)
             Preconditions.checkNotNull(rangeGenerator)
         } else {
@@ -121,7 +121,7 @@ class ClassTemplate extends BaseTemplate {
             «constantsDeclarations»
             «generateFields»
 
-            «IF restrictions != null»
+            «IF restrictions !== null»
                 «IF !restrictions.lengthConstraints.nullOrEmpty»
                     «LengthGenerator.generateLengthChecker("_value", findProperty(genTO, "value").returnType, restrictions.lengthConstraints)»
                 «ENDIF»
@@ -387,7 +387,7 @@ class ClassTemplate extends BaseTemplate {
         ELSE»«
             " "»«
         ENDIF»class «type.name»«
-        IF (genTO.superType != null)»«
+        IF (genTO.superType !== null)»«
             " extends "»«genTO.superType.importedName»«
         ENDIF»
         «IF (!type.implements.empty)»«
@@ -413,13 +413,13 @@ class ClassTemplate extends BaseTemplate {
     '''
 
     def protected suidDeclaration() '''
-        «IF genTO.SUID != null»
+        «IF genTO.SUID !== null»
             private static final long serialVersionUID = «genTO.SUID.value»L;
         «ENDIF»
     '''
 
     def protected annotationDeclaration() '''
-        «IF genTO.getAnnotations != null»
+        «IF genTO.getAnnotations !== null»
             «FOR e : genTO.getAnnotations»
                 @«e.getName»
             «ENDFOR»
