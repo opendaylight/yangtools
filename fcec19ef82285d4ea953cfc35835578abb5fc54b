@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_4a566507",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangStatementParserListenerImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-02-23T08:46:15Z",
+      "side": 1,
+      "message": "we have a reference here ...",
+      "range": {
+        "startLine": 83,
+        "startChar": 8,
+        "endLine": 83,
+        "endChar": 42
+      },
+      "revId": "fcec19ef82285d4ea953cfc35835578abb5fc54b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_6a408934",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangStatementParserListenerImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 98,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-02-23T08:46:15Z",
+      "side": 1,
+      "message": "... so we can pass it down ...",
+      "range": {
+        "startLine": 98,
+        "startChar": 60,
+        "endLine": 98,
+        "endChar": 83
+      },
+      "revId": "fcec19ef82285d4ea953cfc35835578abb5fc54b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_2a24c1ad",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 456,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-02-23T08:46:15Z",
+      "side": 1,
+      "message": "... and throw proper SourceException here.",
+      "range": {
+        "startLine": 455,
+        "startChar": 20,
+        "endLine": 456,
+        "endChar": 96
+      },
+      "revId": "fcec19ef82285d4ea953cfc35835578abb5fc54b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
