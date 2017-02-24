@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_cb2a548f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/RpcStatementImpl.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2017-02-24T12:03:59Z",
+      "side": 1,
+      "message": "I might be loosing information in MDSAL Binding that input, output is not explicit and won\u0027t be able to generate \u0027Void\u0027 compatible code. Any suggestions?",
+      "range": {
+        "startLine": 88,
+        "startChar": 8,
+        "endLine": 88,
+        "endChar": 44
+      },
+      "revId": "43887661dea189f9d1bcb9c950272a7cd42405de",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
