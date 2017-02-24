@@ -166,7 +166,8 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      * @return Filename for this source identifier.
      */
     public String toYangFilename() {
-        return toYangFileName(name, Optional.fromNullable(revision));
+        final String rev = NOT_PRESENT_FORMATTED_REVISION.equals(revision) ? null : revision;
+        return toYangFileName(name, Optional.fromNullable(rev));
     }
 
     /**
