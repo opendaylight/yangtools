@@ -40,14 +40,13 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
     /**
      *
      * Creates new YANG Schema revision source identifier for sources without
-     * revision. {@link SourceIdentifier#NOT_PRESENT_FORMATTED_REVISION} as
-     * default revision.
+     * a revision.
      *
      * @param name
      *            Name of schema
      */
     RevisionSourceIdentifier(final String name) {
-        this(name, NOT_PRESENT_FORMATTED_REVISION);
+        super(name);
     }
 
     /**
@@ -73,7 +72,7 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
      *            default value will be used.
      */
     RevisionSourceIdentifier(final String name, final Optional<String> formattedRevision) {
-        this(name, formattedRevision.or(NOT_PRESENT_FORMATTED_REVISION));
+        super(name, formattedRevision);
     }
 
     /**
@@ -104,10 +103,8 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
     }
 
     /**
-     *
      * Creates new YANG Schema revision source identifier for sources without
-     * revision. {@link SourceIdentifier#NOT_PRESENT_FORMATTED_REVISION} as
-     * default revision.
+     * a revision.
      *
      * @param moduleName
      *            Name of schema
@@ -139,6 +136,13 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
 
     @Override
     public String toString() {
-        return "RevisionSourceIdentifier [name=" + getName() + "@" + getRevision() + "]";
+        final StringBuilder sb = new StringBuilder("RevisionSourceIdentifier [name=");
+        sb.append(getName());
+
+        final String rev = getRevision();
+        if (rev != null) {
+            sb.append('@').append(rev);
+        }
+        return sb.append(']').toString();
     }
 }
