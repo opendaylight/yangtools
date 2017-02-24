@@ -107,7 +107,8 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @throws IllegalArgumentException if the resource does not exist or if the name has invalid format
      */
     public static ResourceYangTextSchemaSource forResource(final Class<?> clazz, final String resourceName) {
-        final SourceIdentifier identifier = identifierFromFilename(resourceName);
+        final String fileName = resourceName.substring(resourceName.lastIndexOf('/') + 1);
+        final SourceIdentifier identifier = identifierFromFilename(fileName);
         final URL url = Resources.getResource(clazz, resourceName);
         return new ResourceYangTextSchemaSource(identifier, url);
     }
