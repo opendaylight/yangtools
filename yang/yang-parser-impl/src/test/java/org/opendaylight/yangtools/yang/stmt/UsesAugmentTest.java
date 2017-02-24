@@ -16,7 +16,6 @@ import java.io.FileNotFoundException;
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Date;
@@ -25,6 +24,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -48,7 +48,7 @@ public class UsesAugmentTest {
 
     @Before
     public void init() throws FileNotFoundException, ParseException {
-        final DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        final DateFormat simpleDateFormat = SimpleDateFormatUtil.getRevisionFormat();
         UG_REV = simpleDateFormat.parse("2013-07-30");
         GD_REV = simpleDateFormat.parse("2013-09-04");
     }

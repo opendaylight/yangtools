@@ -16,7 +16,6 @@ import java.io.FileNotFoundException;
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,6 +26,7 @@ import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -56,7 +56,7 @@ public class AugmentTest {
 
     @BeforeClass
     public static void init() throws FileNotFoundException, ParseException {
-        final DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        final DateFormat simpleDateFormat = SimpleDateFormatUtil.getRevisionFormat();
         fooRev = simpleDateFormat.parse("2013-10-13");
         barRev = simpleDateFormat.parse("2013-10-14");
         bazRev = simpleDateFormat.parse("2013-10-15");
@@ -361,7 +361,7 @@ public class AugmentTest {
         modules = TestUtils.loadModules(getClass().getResource("/augment-test/rpc").toURI());
         final URI NS_BAR = URI.create("urn:opendaylight:bar");
         final URI NS_FOO = URI.create("urn:opendaylight:foo");
-        final Date revision = new SimpleDateFormat("yyyy-MM-dd").parse("2013-10-11");
+        final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2013-10-11");
 
         final Module bar = TestUtils.findModule(modules, "bar");
         final Set<RpcDefinition> rpcs = bar.getRpcs();

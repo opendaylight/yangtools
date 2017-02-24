@@ -14,9 +14,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +22,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -42,12 +41,11 @@ public class YangParserSimpleTest {
     private Date snRev;
     private final String snPref = "sn";
 
-    private final DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private Set<Module> modules;
 
     @Before
     public void init() throws Exception {
-        snRev = simpleDateFormat.parse("2013-07-30");
+        snRev = SimpleDateFormatUtil.getRevisionFormat().parse("2013-07-30");
         modules = TestUtils.loadModules(getClass().getResource("/simple-test").toURI());
     }
 
@@ -195,7 +193,7 @@ public class YangParserSimpleTest {
     private static final URI NS = URI.create("urn:opendaylight:simple-nodes");
 
     private static SchemaPath createPath(final String... names) throws ParseException {
-        final Date rev = new SimpleDateFormat("yyyy-MM-dd").parse("2013-07-30");
+        final Date rev = SimpleDateFormatUtil.getRevisionFormat().parse("2013-07-30");
 
         final List<QName> path = new ArrayList<>();
         for (final String name : names) {

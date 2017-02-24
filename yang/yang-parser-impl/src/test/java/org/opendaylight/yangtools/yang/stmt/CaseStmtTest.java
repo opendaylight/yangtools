@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -43,7 +44,7 @@ public class CaseStmtTest {
     public void setup() throws Exception {
         schema = StmtTestUtils.parseYangSources("/case-test");
         String date_s = "2015-09-09 00:00:00.0";
-        SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        SimpleDateFormat dt = SimpleDateFormatUtil.getRevisionFormat();
         Date date = dt.parse(date_s);
         rootFoo = schema.findModuleByName("foo", date);
         rootBar = schema.findModuleByName("bar", date);

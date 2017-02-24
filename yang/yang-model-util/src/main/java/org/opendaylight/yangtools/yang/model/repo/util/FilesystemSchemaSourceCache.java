@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.util;
 
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -29,7 +27,6 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -37,7 +34,9 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -186,7 +185,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
                  * String is comparable, pattern check tested format
                  * so comparing as ASCII string should be sufficient
                  */
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                DateFormat df = SimpleDateFormatUtil.getRevisionFormat();
                 try {
                     Date d = df.parse(revStr);
                     map.put(d, sorted);

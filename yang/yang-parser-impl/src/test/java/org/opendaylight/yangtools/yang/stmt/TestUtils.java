@@ -17,13 +17,13 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -170,7 +170,7 @@ public final class TestUtils {
 
     public static Date createDate(final String date) {
         Date result;
-        final DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        final DateFormat simpleDateFormat = SimpleDateFormatUtil.getRevisionFormat();
         try {
             result = simpleDateFormat.parse(date);
         } catch (ParseException e) {

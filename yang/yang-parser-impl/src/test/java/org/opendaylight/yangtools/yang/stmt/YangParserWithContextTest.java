@@ -16,7 +16,6 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -53,7 +52,6 @@ public class YangParserWithContextTest {
     private static final URI T1_NS = URI.create("urn:simple.demo.test1");
     private static final URI T2_NS = URI.create("urn:simple.demo.test2");
     private static final URI T3_NS = URI.create("urn:simple.demo.test3");
-    private final DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private static Date rev;
 
     private static final StatementStreamSource BAR = sourceForResource("/model/bar.yang");
@@ -72,7 +70,7 @@ public class YangParserWithContextTest {
 
     @BeforeClass
     public static void init() throws ParseException {
-        final DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        final DateFormat simpleDateFormat = SimpleDateFormatUtil.getRevisionFormat();
         rev = simpleDateFormat.parse("2013-06-18");
     }
 
@@ -100,13 +98,13 @@ public class YangParserWithContextTest {
         final UnsignedIntegerTypeDefinition leafType = (UnsignedIntegerTypeDefinition) leaf.getType();
         QName qname = leafType.getQName();
         assertEquals(URI.create("urn:simple.demo.test1"), qname.getNamespace());
-        assertEquals(simpleDateFormat.parse("2013-06-18"), qname.getRevision());
+        assertEquals(SimpleDateFormatUtil.getRevisionFormat().parse("2013-06-18"), qname.getRevision());
         assertEquals("port-number", qname.getLocalName());
 
         final UnsignedIntegerTypeDefinition leafBaseType = leafType.getBaseType();
         qname = leafBaseType.getQName();
         assertEquals(URI.create("urn:ietf:params:xml:ns:yang:ietf-inet-types"), qname.getNamespace());
-        assertEquals(simpleDateFormat.parse("2010-09-24"), qname.getRevision());
+        assertEquals(SimpleDateFormatUtil.getRevisionFormat().parse("2010-09-24"), qname.getRevision());
         assertEquals("port-number", qname.getLocalName());
 
         final UnsignedIntegerTypeDefinition dscpExt = (UnsignedIntegerTypeDefinition) TestUtils.findTypedef(
@@ -250,8 +248,8 @@ public class YangParserWithContextTest {
 
         // test grouping path
         final List<QName> path = new ArrayList<>();
-        final QName qname = QName.create(URI.create("urn:opendaylight.baz"), simpleDateFormat.parse("2013-02-27"),
-                "target");
+        final QName qname = QName.create(URI.create("urn:opendaylight.baz"),
+            SimpleDateFormatUtil.getRevisionFormat().parse("2013-02-27"), "target");
         path.add(qname);
         final SchemaPath expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, usesNode.getGroupingPath());
@@ -326,13 +324,13 @@ public class YangParserWithContextTest {
         final IdentitySchemaNode identity = identities.iterator().next();
         final QName idQName = identity.getQName();
         assertEquals(URI.create("urn:simple.demo.test3"), idQName.getNamespace());
-        assertEquals(simpleDateFormat.parse("2013-06-18"), idQName.getRevision());
+        assertEquals(SimpleDateFormatUtil.getRevisionFormat().parse("2013-06-18"), idQName.getRevision());
         assertEquals("pt", idQName.getLocalName());
 
         final IdentitySchemaNode baseIdentity = identity.getBaseIdentity();
         final QName idBaseQName = baseIdentity.getQName();
         assertEquals(URI.create("urn:custom.types.demo"), idBaseQName.getNamespace());
-        assertEquals(simpleDateFormat.parse("2012-04-16"), idBaseQName.getRevision());
+        assertEquals(SimpleDateFormatUtil.getRevisionFormat().parse("2012-04-16"), idBaseQName.getRevision());
         assertEquals("service-type", idBaseQName.getLocalName());
     }
 
@@ -361,7 +359,7 @@ public class YangParserWithContextTest {
         final UnknownSchemaNode un = unknownNodes.get(0);
         final QName unType = un.getNodeType();
         assertEquals(URI.create("urn:custom.types.demo"), unType.getNamespace());
-        assertEquals(simpleDateFormat.parse("2012-04-16"), unType.getRevision());
+        assertEquals(SimpleDateFormatUtil.getRevisionFormat().parse("2012-04-16"), unType.getRevision());
         assertEquals("mountpoint", unType.getLocalName());
         assertEquals("point", un.getNodeParameter());
         assertNotNull(un.getExtensionDefinition());
@@ -428,8 +426,7 @@ public class YangParserWithContextTest {
         assertEquals("system/user ref", dev.getReference());
 
         final URI expectedNS = URI.create("urn:opendaylight.bar");
-        final DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        final Date expectedRev = simpleDateFormat.parse("2013-07-03");
+        final Date expectedRev = SimpleDateFormatUtil.getRevisionFormat().parse("2013-07-03");
         final List<QName> path = new ArrayList<>();
         path.add(QName.create(expectedNS, expectedRev, "interfaces"));
         path.add(QName.create(expectedNS, expectedRev, "ifEntry"));

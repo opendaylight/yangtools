@@ -21,7 +21,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -31,6 +30,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -85,7 +85,7 @@ public class YangParserTest {
 
     @Before
     public void init() throws Exception {
-        final DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        final DateFormat simpleDateFormat = SimpleDateFormatUtil.getRevisionFormat();
         fooRev = simpleDateFormat.parse("2013-02-27");
         barRev = simpleDateFormat.parse("2013-07-03");
         bazRev = simpleDateFormat.parse("2013-02-27");
@@ -127,14 +127,16 @@ public class YangParserTest {
         final URI expectedNamespace = URI.create("urn:opendaylight.bar");
         final String expectedPrefix = "bar";
 
-        final ContainerSchemaNode interfaces = (ContainerSchemaNode) bar.getDataChildByName(QName.create(bar.getQNameModule(), "interfaces"));
+        final ContainerSchemaNode interfaces = (ContainerSchemaNode) bar.getDataChildByName(QName.create(
+            bar.getQNameModule(), "interfaces"));
 
-        final ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName(QName.create(bar.getQNameModule(), "ifEntry"));
+        final ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName(QName.create(bar.getQNameModule(),
+            "ifEntry"));
         // test SchemaNode args
         final QName expectedQName = QName.create(expectedNamespace, barRev, "ifEntry");
         assertEquals(expectedQName, ifEntry.getQName());
-        final SchemaPath expectedPath = TestUtils.createPath(true, expectedNamespace, barRev, expectedPrefix, "interfaces",
-                "ifEntry");
+        final SchemaPath expectedPath = TestUtils.createPath(true, expectedNamespace, barRev, expectedPrefix,
+            "interfaces", "ifEntry");
         assertEquals(expectedPath, ifEntry.getPath());
         assertNull(ifEntry.getDescription());
         assertNull(ifEntry.getReference());

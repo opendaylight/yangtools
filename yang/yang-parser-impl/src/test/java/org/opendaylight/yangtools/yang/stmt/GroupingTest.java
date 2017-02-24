@@ -15,7 +15,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -25,6 +24,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -436,7 +436,7 @@ public class GroupingTest {
         assertNotNull(gzz);
 
         final URI expectedNS = URI.create("urn:grouping:cascade-uses");
-        final Date expectedRev = new SimpleDateFormat("yyyy-MM-dd").parse("2013-07-18");
+        final Date expectedRev = SimpleDateFormatUtil.getRevisionFormat().parse("2013-07-18");
         final String expectedPref = "cu";
         SchemaPath expectedPath;
 
