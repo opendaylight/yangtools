@@ -13,6 +13,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.util.regex.Pattern;
+import javax.annotation.RegEx;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.SemVer;
@@ -31,21 +32,22 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 @Beta
 public abstract class SourceIdentifier implements Identifier, Immutable {
     /**
-     * Default revision for sources without specified revision. Marks the source
-     * as oldest.
+     * Default revision for sources without specified revision. This should be used for comparisons
+     * based on revision when a SourceIdentifier does not have a revision.
      */
     public static final String NOT_PRESENT_FORMATTED_REVISION = "0000-00-00";
 
+    @RegEx
+    private static final String REVISION_PATTERN_STR = "\\d\\d\\d\\d-\\d\\d-\\d\\d";
+
     /**
-     *
      * Simplified compiled revision pattern in format YYYY-mm-dd, which checks
      * only distribution of number elements.
      * <p>
      * For checking if supplied string is real date, use
      * {@link SimpleDateFormatUtil} instead.
-     *
      */
-    public static final Pattern REVISION_PATTERN = Pattern.compile("\\d\\d\\d\\d-\\d\\d-\\d\\d");
+    public static final Pattern REVISION_PATTERN = Pattern.compile(REVISION_PATTERN_STR);
 
     private static final Interner<SourceIdentifier> INTERNER = Interners.newWeakInterner();
 
@@ -56,14 +58,13 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
     /**
      *
      * Creates new YANG Schema source identifier for sources without revision.
-     * {@link SourceIdentifier#NOT_PRESENT_FORMATTED_REVISION} as default
-     * revision.
      *
      * @param name
      *            Name of schema
      */
     SourceIdentifier(final String name) {
-        this(name, NOT_PRESENT_FORMATTED_REVISION);
+        this.name = Preconditions.checkNotNull(name);
+        this.revision = null;
     }
 
     /**
@@ -80,7 +81,6 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
     }
 
     /**
-     *
      * Creates new YANG Schema source identifier.
      *
      * @param name
@@ -90,7 +90,8 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      *            default value will be used.
      */
     SourceIdentifier(final String name, final Optional<String> formattedRevision) {
-        this(name, formattedRevision.or(NOT_PRESENT_FORMATTED_REVISION));
+        this.name = Preconditions.checkNotNull(name);
+        this.revision = formattedRevision.orNull();
     }
 
     /**
@@ -116,6 +117,7 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      *
      * @return revision of source or null if revision was not supplied.
      */
+    // FIXME: version 2.0.0: this should return Optional<String>
     public String getRevision() {
         return revision;
     }

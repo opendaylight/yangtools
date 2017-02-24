@@ -51,7 +51,8 @@ public final class SemVerSourceIdentifier extends SourceIdentifier {
      *            semantic version of source
      */
     SemVerSourceIdentifier(final String name, final Optional<String> formattedRevision, final SemVer semVer) {
-        this(name, formattedRevision.or(NOT_PRESENT_FORMATTED_REVISION), semVer);
+        super(name, formattedRevision);
+        this.semVer = semVer == null ? Module.DEFAULT_SEMANTIC_VERSION : semVer;
     }
 
     /**
@@ -64,21 +65,6 @@ public final class SemVerSourceIdentifier extends SourceIdentifier {
      */
     SemVerSourceIdentifier(final String name, final SemVer semVer) {
         this(name, Optional.absent(), semVer);
-    }
-
-    /**
-     * Creates new YANG Schema semVer source identifier.
-     *
-     * @param name
-     *            Name of schema
-     * @param formattedRevision
-     *            Revision of source in format YYYY-mm-dd
-     * @param semVer
-     *            semantic version of source
-     */
-    SemVerSourceIdentifier(final String name, final String formattedRevision, final SemVer semVer) {
-        super(name, formattedRevision);
-        this.semVer = semVer == null ? Module.DEFAULT_SEMANTIC_VERSION : semVer;
     }
 
     /**
@@ -117,7 +103,7 @@ public final class SemVerSourceIdentifier extends SourceIdentifier {
      */
     public static SemVerSourceIdentifier create(final String moduleName, final String revision,
             final SemVer semVer) {
-        return new SemVerSourceIdentifier(moduleName, revision, semVer);
+        return new SemVerSourceIdentifier(moduleName, Optional.of(revision), semVer);
     }
 
     /**
