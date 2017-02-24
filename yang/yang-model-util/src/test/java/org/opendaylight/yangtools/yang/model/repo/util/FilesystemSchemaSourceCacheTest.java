@@ -19,8 +19,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.collect.Collections2;
@@ -40,6 +38,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -60,7 +59,8 @@ public class FilesystemSchemaSourceCacheTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         this.storageDir = Files.createTempDir();
-        doReturn(this.registration).when(this.registry).registerSchemaSource(any(SchemaSourceProvider.class), any(PotentialSchemaSource.class));
+        doReturn(this.registration).when(this.registry).registerSchemaSource(any(SchemaSourceProvider.class),
+            any(PotentialSchemaSource.class));
     }
 
     @Test
@@ -80,17 +80,21 @@ public class FilesystemSchemaSourceCacheTest {
         assertEquals(2, storedFiles.size());
         final Collection<String> fileNames = filesToFilenamesWithoutRevision(storedFiles);
 
-        assertThat(fileNames, both(hasItem("test2@0000-00-00")).and(hasItem("test@2012-12-12")));
+        assertThat(fileNames, both(hasItem("test2")).and(hasItem("test@2012-12-12")));
 
-        assertThat(Files.toString(storedFiles.get(0), StandardCharsets.UTF_8), either(containsString(content)).or(containsString(content2)));
-        assertThat(Files.toString(storedFiles.get(1), StandardCharsets.UTF_8), either(containsString(content)).or(containsString(content2)));
+        assertThat(Files.toString(storedFiles.get(0), StandardCharsets.UTF_8),
+            either(containsString(content)).or(containsString(content2)));
+        assertThat(Files.toString(storedFiles.get(1), StandardCharsets.UTF_8),
+            either(containsString(content)).or(containsString(content2)));
 
-        verify(this.registry, times(2)).registerSchemaSource(any(SchemaSourceProvider.class), any(PotentialSchemaSource.class));
+        verify(this.registry, times(2)).registerSchemaSource(any(SchemaSourceProvider.class),
+            any(PotentialSchemaSource.class));
 
         // Create new cache from stored sources
         new FilesystemSchemaSourceCache<>(this.registry, YangTextSchemaSource.class, this.storageDir);
 
-        verify(this.registry, times(4)).registerSchemaSource(any(SchemaSourceProvider.class), any(PotentialSchemaSource.class));
+        verify(this.registry, times(4)).registerSchemaSource(any(SchemaSourceProvider.class),
+            any(PotentialSchemaSource.class));
 
         final List<File> storedFilesAfterNewCache = getFilesFromCache();
         assertEquals(2, storedFilesAfterNewCache.size());
@@ -133,9 +137,11 @@ public class FilesystemSchemaSourceCacheTest {
         final List<File> storedFiles = getFilesFromCache();
         assertEquals(3, storedFiles.size());
 
-        assertThat(filesToFilenamesWithoutRevision(storedFiles), both(hasItem("test@0000-00-00")).and(hasItem("test@2012-12-12")).and(hasItem("test@2013-12-12")));
+        assertThat(filesToFilenamesWithoutRevision(storedFiles), both(hasItem("test"))
+            .and(hasItem("test@2012-12-12")).and(hasItem("test@2013-12-12")));
 
-        verify(this.registry, times(3)).registerSchemaSource(any(SchemaSourceProvider.class), any(PotentialSchemaSource.class));
+        verify(this.registry, times(3)).registerSchemaSource(any(SchemaSourceProvider.class),
+            any(PotentialSchemaSource.class));
     }
 
     @Test
