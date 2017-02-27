@@ -340,7 +340,7 @@ final class Util {
             }
 
             return Optional.of("/" + YangToSourcesProcessor.META_INF_YANG_STRING_JAR + "/"
-                    + Iterables.getLast(SEP_SPLITTER.split(mod.getSource())));
+                    + Iterables.getLast(SEP_SPLITTER.split(mod.getModuleSourcePath())));
         }
     }
 }
