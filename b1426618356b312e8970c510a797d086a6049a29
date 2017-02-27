@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_12b48833",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 393,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-02-27T10:14:06Z",
+      "side": 1,
+      "message": "please try to add all prefixes in one iteration. \nCreate pre-compiled pattern and use matcher in order to find corresponding function and add prefix to them.",
+      "range": {
+        "startLine": 391,
+        "startChar": 12,
+        "endLine": 393,
+        "endChar": 13
+      },
+      "revId": "b1426618356b312e8970c510a797d086a6049a29",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
