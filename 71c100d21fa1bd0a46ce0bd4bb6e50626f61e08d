@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_d3496232",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/StmtNamespaceContext.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-02-27T16:38:53Z",
+      "side": 1,
+      "message": "missing spaces all over the place",
+      "range": {
+        "startLine": 43,
+        "startChar": 92,
+        "endLine": 43,
+        "endChar": 93
+      },
+      "revId": "71c100d21fa1bd0a46ce0bd4bb6e50626f61e08d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_536572b3",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-02-27T16:38:53Z",
+      "side": 1,
+      "message": "This should be in YangConstants, I think",
+      "range": {
+        "startLine": 75,
+        "startChar": 4,
+        "endLine": 75,
+        "endChar": 69
+      },
+      "revId": "71c100d21fa1bd0a46ce0bd4bb6e50626f61e08d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_13676ab8",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-02-27T16:38:53Z",
+      "side": 1,
+      "message": "extract to a String constant annotated with @RegEx",
+      "range": {
+        "startLine": 86,
+        "startChar": 12,
+        "endLine": 86,
+        "endChar": 81
+      },
+      "revId": "71c100d21fa1bd0a46ce0bd4bb6e50626f61e08d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_7307d6ca",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-02-27T16:38:53Z",
+      "side": 1,
+      "message": "StringBuilder",
+      "range": {
+        "startLine": 389,
+        "startChar": 18,
+        "endLine": 389,
+        "endChar": 30
+      },
+      "revId": "71c100d21fa1bd0a46ce0bd4bb6e50626f61e08d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
