@@ -22,6 +22,30 @@
       "revId": "43887661dea189f9d1bcb9c950272a7cd42405de",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_c7f6c08e",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/RpcStatementImpl.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-02-27T09:08:40Z",
+      "side": 1,
+      "message": "Simple. Look at EffectiveStatement\u0027s getDeclared(), and there you have getStatementSource() -- it should indicate CONTEXT, not DECLARATION.",
+      "parentUuid": "fafc7978_cb2a548f",
+      "range": {
+        "startLine": 88,
+        "startChar": 8,
+        "endLine": 88,
+        "endChar": 44
+      },
+      "revId": "43887661dea189f9d1bcb9c950272a7cd42405de",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
