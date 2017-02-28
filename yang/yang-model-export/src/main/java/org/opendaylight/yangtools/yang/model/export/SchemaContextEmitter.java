@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -53,7 +54,9 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
@@ -1139,8 +1142,8 @@ class SchemaContextEmitter {
 
     }
 
-    private void emitInput(@Nullable final ContainerSchemaNode input) {
-        if (input != null) {
+    private void emitInput(@Nonnull final ContainerSchemaNode input) {
+        if (((EffectiveStatement<?, ?>) input).getDeclared().getStatementSource() == StatementSource.DECLARATION) {
             writer.startInputNode();
             emitDataNodeContainer(input);
             emitUnknownStatementNodes(input.getUnknownSchemaNodes());
@@ -1149,11 +1152,11 @@ class SchemaContextEmitter {
 
     }
 
-    private void emitOutput(@Nullable final ContainerSchemaNode input) {
-        if (input != null) {
+    private void emitOutput(@Nonnull final ContainerSchemaNode output) {
+        if (((EffectiveStatement<?, ?>) output).getDeclared().getStatementSource() == StatementSource.DECLARATION) {
             writer.startOutputNode();
-            emitDataNodeContainer(input);
-            emitUnknownStatementNodes(input.getUnknownSchemaNodes());
+            emitDataNodeContainer(output);
+            emitUnknownStatementNodes(output.getUnknownSchemaNodes());
             writer.endNode();
         }
 

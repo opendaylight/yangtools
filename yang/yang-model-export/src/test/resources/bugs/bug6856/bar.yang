@@ -1,0 +1,19 @@
+module bar {
+    namespace bar;
+    prefix bar;
+
+    revision 2017-02-28;
+
+    rpc bar-rpc {
+        input {
+            leaf input-leaf {
+                type string;
+            }
+        }
+        output {
+            leaf output-leaf {
+                type string;
+            }
+        }
+    }
+}
