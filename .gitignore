@@ -9,6 +9,7 @@
 .project
 .settings
 target
+target-ide
 *.iml
 .idea
 bin
@@ -19,3 +20,4 @@ META-INF
 .checkstyle
 .pmd
 .factorypath
+.fbExcludeFilterFile
