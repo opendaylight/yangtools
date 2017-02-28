@@ -46,7 +46,8 @@ public class YangToSourcesProcessorTest {
         final File file = new File(getClass().getResource("/yang").getFile());
         final File excludedYang = new File(getClass().getResource("/yang/excluded-file.yang").getFile());
         final String path = file.getPath();
-        final CodeGeneratorArg codeGeneratorArg = new CodeGeneratorArg(GeneratorMock.class.getName(), path);
+        final CodeGeneratorArg codeGeneratorArg = new CodeGeneratorArg(GeneratorMock.class.getName(),
+                "target/YangToSourcesProcessorTest-outputBaseDir");
         final List<CodeGeneratorArg> codeGenerators = ImmutableList.of(codeGeneratorArg);
         final MavenProject mvnProject = Mockito.mock(MavenProject.class);
         final Build build = new Build();
