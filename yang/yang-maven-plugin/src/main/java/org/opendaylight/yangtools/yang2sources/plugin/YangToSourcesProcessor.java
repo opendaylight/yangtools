@@ -29,6 +29,7 @@ import java.util.Set;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.FileUtils;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.repo.YangTextSchemaContextResolver;
@@ -325,6 +326,9 @@ class YangToSourcesProcessor {
         g.setResourceBaseDir(resourceBaseDir);
         LOG.debug("{} Folder: {} marked as resources for generator: {}", LOG_PREFIX, resourceBaseDir,
                 codeGeneratorCfg.getCodeGeneratorClass());
+
+        FileUtils.deleteDirectory(outputDir);
+        LOG.info("{} Succesfully deleted output directory {}", LOG_PREFIX, outputDir);
 
         Collection<File> generated = g.generateSources(context.getContext(), outputDir, context.getYangModules(),
             context::moduleToResourcePath);
