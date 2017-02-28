@@ -19,3 +19,4 @@ META-INF
 .checkstyle
 .pmd
 .factorypath
+.fbExcludeFilterFile

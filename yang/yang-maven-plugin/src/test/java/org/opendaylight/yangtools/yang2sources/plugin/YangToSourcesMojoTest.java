@@ -68,7 +68,8 @@ public class YangToSourcesMojoTest {
         final String path = file.getPath();
         final File[] yangFilesRootDir = { excludedYang };
         final List<CodeGeneratorArg> codeGenerators = new ArrayList<>();
-        final CodeGeneratorArg codeGeneratorArg = new CodeGeneratorArg(GeneratorMock.class.getName(), path);
+        final CodeGeneratorArg codeGeneratorArg = new CodeGeneratorArg(GeneratorMock.class.getName(),
+                "target/YangToSourcesMojoTest-outputBaseDir");
         codeGenerators.add(codeGeneratorArg);
         final MavenProject mvnProject = Mockito.mock(MavenProject.class);
         final Build build = new Build();
