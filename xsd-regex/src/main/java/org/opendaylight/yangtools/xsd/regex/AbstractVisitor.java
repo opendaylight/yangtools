@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.xsd.regex;
 
-import org.opendaylight.yangtools.xsd.regex.impl.XSDRegExpBaseVisitor;
 import org.opendaylight.yangtools.xsd.regex.impl.XSDRegExpParser.CharClassExprContext;
 import org.opendaylight.yangtools.xsd.regex.impl.XSDRegExpParser.NegCharGroupContext;
+import org.opendaylight.yangtools.xsd.regex.impl.XSDRegExpParserBaseVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class AbstractVisitor extends XSDRegExpBaseVisitor<StringBuilder> {
+abstract class AbstractVisitor extends XSDRegExpParserBaseVisitor<StringBuilder> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractVisitor.class);
 
     final StringBuilder sb = new StringBuilder();

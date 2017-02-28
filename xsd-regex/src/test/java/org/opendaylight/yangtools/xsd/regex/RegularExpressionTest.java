@@ -14,6 +14,14 @@ import org.junit.Test;
 public class RegularExpressionTest {
 
     @Test
+    public void testRegExpParser() {
+        RegularExpression.parse("");
+        RegularExpression.parse("^");
+        RegularExpression.parse("$");
+        RegularExpression.parse("$^$^[a][a][$]$$");
+    }
+
+    @Test
     public void testEmptyExpression() {
         final RegularExpression regex = RegularExpression.parse("");
 
