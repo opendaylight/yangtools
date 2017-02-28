@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_084734bd",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 396,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-02-28T08:56:43Z",
+      "side": 1,
+      "message": "this solution is incorrect, because you add prefix always to the first occurrence of a substring. Consider xpath with a function used multiple times in xpath e.g. ...deref()...deref()...deref()... then result.indexOf(matcher.group()) always returns index of the first occurence of the deref() function so you will add prefix always to the first occurrence of deref() and so it will be prefixed more times and the others will be without any prefix.\n\nMoreover considering these searches and indexes you are doing now almost the same things twice, because at first you are using the matcher to find an occurrence of a function the first time and then you are using indexOf to find occurence of the same function the second time.\n\nMy suggestion is to use previous solution with StringBuffer and appendReplacement. (Note: since Java 9 it should be available also for StringBuilder)",
+      "range": {
+        "startLine": 396,
+        "startChar": 16,
+        "endLine": 396,
+        "endChar": 58
+      },
+      "revId": "cb681f8b6c18bb9e29268c499b08472e59c07f28",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
