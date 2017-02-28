@@ -421,7 +421,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
         return this.getClass().getSimpleName() + "[" +
                 "name=" + name +
                 ", namespace=" + getNamespace() +
-                ", revision=" + getRevision() +
+                ", revision=" + getQNameModule().getFormattedRevision() +
                 ", prefix=" + prefix +
                 ", yangVersion=" + yangVersion +
                 "]";
