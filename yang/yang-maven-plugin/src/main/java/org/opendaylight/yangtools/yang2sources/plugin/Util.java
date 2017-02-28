@@ -320,10 +320,12 @@ final class Util {
 
         private final SchemaContext context;
         private final Set<Module> yangModules;
+        private final Set<Module> yangFiles;
 
-        ContextHolder(final SchemaContext context, final Set<Module> yangModules) {
+        ContextHolder(final SchemaContext context, final Set<Module> yangModules, final Set<Module> yangFiles) {
             this.context = context;
             this.yangModules = yangModules;
+            this.yangFiles = yangFiles;
         }
 
         SchemaContext getContext() {
@@ -334,8 +336,12 @@ final class Util {
             return yangModules;
         }
 
+        Set<Module> getYangFiles() {
+            return yangFiles;
+        }
+
         Optional<String> moduleToResourcePath(final Module mod) {
-            if (!yangModules.contains(mod)) {
+            if (!yangFiles.contains(mod)) {
                 return Optional.empty();
             }
 

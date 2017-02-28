@@ -173,7 +173,8 @@ class YangToSourcesProcessor {
              * (parsed submodule's data are added to its parent module). Set
              * cannot contains null values.
              */
-            Set<Module> projectYangModules;
+            final Set<Module> projectYangModules = new HashSet<>();
+            final Set<Module> projectYangFiles = new HashSet<>();
             try {
                 if (inspectDependencies) {
                     YangsInZipsResult dependentYangResult = Util.findYangFilesInDependenciesAsStream(project);
@@ -187,17 +188,18 @@ class YangToSourcesProcessor {
                 resolveSchemaContext = YangParserTestUtils.parseYangStreams(all);
 
                 Set<Module> parsedAllYangModules = resolveSchemaContext.getModules();
-                projectYangModules = new HashSet<>();
                 for (Module module : parsedAllYangModules) {
-                    final String path = module.getModuleSourcePath();
-                    if (path != null) {
-                        LOG.debug("Looking for source {}", path);
-                        for (NamedFileInputStream is : yangsInProject) {
-                            LOG.debug("In project destination {}", is.getFileDestination());
-                            if (path.equals(is.getFileDestination())) {
-                                LOG.debug("Module {} belongs to current project", module);
-                                projectYangModules.add(module);
-                                break;
+                    if (containedInFiles(yangsInProject, module)) {
+                        LOG.debug("Module {} belongs to current project", module);
+                        projectYangModules.add(module);
+                        projectYangFiles.add(module);
+
+                        for (Module sub : module.getSubmodules()) {
+                            if (containedInFiles(yangsInProject, sub)) {
+                                LOG.debug("Submodule {} belongs to current project", sub);
+                                projectYangFiles.add(sub);
+                            } else {
+                                LOG.warn("Submodule {} not found in input files", sub);
                             }
                         }
                     }
@@ -209,7 +211,9 @@ class YangToSourcesProcessor {
             }
 
             LOG.info("{} {} files parsed from {}", LOG_PREFIX, Util.YANG_SUFFIX.toUpperCase(), yangsInProject);
-            return new ContextHolder(resolveSchemaContext, projectYangModules);
+            LOG.debug("Project YANG files: {}", projectYangFiles);
+
+            return new ContextHolder(resolveSchemaContext, projectYangModules, projectYangFiles);
 
             // MojoExecutionException is thrown since execution cannot continue
         } catch (Exception e) {
@@ -218,6 +222,21 @@ class YangToSourcesProcessor {
             throw new MojoExecutionException(LOG_PREFIX + " Unable to parse " + Util.YANG_SUFFIX + " files from " +
                     yangFilesRootDir, rootCause);
         }
+    }
+
+    private static boolean containedInFiles(final List<NamedFileInputStream> files, final Module module) {
+        final String path = module.getModuleSourcePath();
+        if (path != null) {
+            LOG.debug("Looking for source {}", path);
+            for (NamedFileInputStream is : files) {
+                LOG.debug("In project destination {}", is.getFileDestination());
+                if (path.equals(is.getFileDestination())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private static List<InputStream> toStreamsWithoutDuplicates(final List<YangSourceFromDependency> list)

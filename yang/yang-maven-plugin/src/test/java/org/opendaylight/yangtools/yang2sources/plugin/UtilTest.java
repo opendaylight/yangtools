@@ -133,7 +133,7 @@ public class UtilTest {
         final File testYang2 = new File(getClass().getResource("/test2.yang").toURI());
         final SchemaContext context = YangParserTestUtils.parseYangSources(testYang1, testYang2);
         final Set<Module> yangModules = new HashSet<>();
-        final Util.ContextHolder cxH = new ContextHolder(context, yangModules);
+        final Util.ContextHolder cxH = new ContextHolder(context, yangModules, yangModules);
         Assert.assertEquals(context, cxH.getContext());
         Assert.assertEquals(yangModules, cxH.getYangModules());
     }
