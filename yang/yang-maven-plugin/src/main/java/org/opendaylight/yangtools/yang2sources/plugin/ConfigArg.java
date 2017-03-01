@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
-import java.io.File;
-import java.util.Map;
-
-import org.apache.maven.project.MavenProject;
-
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.maven.project.MavenProject;
 
 /**
  * Base complex configuration arguments
@@ -43,16 +41,11 @@ public abstract class ConfigArg {
      * Configuration argument for code generator class and output directory.
      */
     public static final class CodeGeneratorArg extends ConfigArg {
-        private static final String TARGET_GENERATED_SOURCES = "target" + File.separator + "generated-sources";
-        private static final String CODE_GEN_DEFAULT_RESOURCE_DIR = TARGET_GENERATED_SOURCES + File.separator + "spi";
-        public static final String YANG_GENERATED_DIR = TARGET_GENERATED_SOURCES + File.separator + "yang";
-        public static final String YANG_SERVICES_GENERATED_DIR = TARGET_GENERATED_SOURCES + File.separator + "spi";
 
+        private final Map<String, String> additionalConfiguration = new HashMap<>();
 
         private String codeGeneratorClass;
-        private File resourceBaseDir = new File(CODE_GEN_DEFAULT_RESOURCE_DIR);
-
-        private Map<String, String> additionalConfiguration = Maps.newHashMap();
+        private File resourceBaseDir;
 
         public CodeGeneratorArg() {
             super(null);
@@ -83,10 +76,12 @@ public abstract class ConfigArg {
         }
 
         public File getResourceBaseDir(MavenProject project) {
-            if (resourceBaseDir.isAbsolute()) {
-                return resourceBaseDir;
+            if (resourceBaseDir != null) {
+                return resourceBaseDir.isAbsolute() ? resourceBaseDir
+                        : new File(project.getBasedir(), resourceBaseDir.getPath());
             } else {
-                return new File(project.getBasedir(), resourceBaseDir.getPath());
+                // if it has not been set, use a default (correctly dealing with target/ VS target-ide)
+                return new GeneratedDirectories(project).getYangServicesDir();
             }
         }
 
