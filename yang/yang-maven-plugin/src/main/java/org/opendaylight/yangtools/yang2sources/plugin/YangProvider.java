@@ -13,7 +13,6 @@ import java.util.Collection;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,18 +23,8 @@ class YangProvider {
             final Collection<File> excludedFiles) throws MojoFailureException {
 
         // copy project's src/main/yang/*.yang to target/generated-sources/yang/META-INF/yang/*.yang
-
-        File generatedYangDir = new File(project.getBasedir(), CodeGeneratorArg.YANG_GENERATED_DIR);
+        File generatedYangDir = new GeneratedDirectories(project).getYangDir();
         addYangsToMetaInf(project, yangFilesRootDir, excludedFiles, generatedYangDir);
-
-        // Also copy to the actual build output dir if different than "target". When running in
-        // Eclipse this can differ (eg "target-ide").
-
-        File actualGeneratedYangDir = new File(project.getBuild().getDirectory(),
-                CodeGeneratorArg.YANG_GENERATED_DIR.replace("target" + File.separator, ""));
-        if (!actualGeneratedYangDir.equals(generatedYangDir)) {
-            addYangsToMetaInf(project, yangFilesRootDir, excludedFiles, actualGeneratedYangDir);
-        }
     }
 
     private static void addYangsToMetaInf(final MavenProject project, final File yangFilesRootDir,
