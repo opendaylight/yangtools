@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import org.apache.maven.model.Build;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
 import org.junit.Before;
@@ -41,8 +42,13 @@ public class GenerateSourcesTest {
     private String yang;
     private YangToSourcesMojo mojo;
     private File outDir;
+
     @Mock
     private MavenProject project;
+
+    @Mock
+    private Build build;
+
     @Mock
     private Plugin plugin;
 
@@ -61,6 +67,8 @@ public class GenerateSourcesTest {
                 mock);
         this.mojo = new YangToSourcesMojo(processor);
         doReturn(new File("")).when(this.project).getBasedir();
+        doReturn("target/").when(this.build).getDirectory();
+        doReturn(this.build).when(this.project).getBuild();
         doReturn(Collections.emptyList()).when(this.plugin).getDependencies();
         doReturn(this.plugin).when(this.project).getPlugin(YangToSourcesMojo.PLUGIN_NAME);
         this.mojo.setProject(this.project);
