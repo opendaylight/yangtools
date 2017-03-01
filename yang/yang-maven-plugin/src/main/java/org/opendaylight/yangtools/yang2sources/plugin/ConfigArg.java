@@ -11,7 +11,6 @@ import java.io.File;
 import java.util.Map;
 
 import org.apache.maven.project.MavenProject;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 
@@ -43,16 +42,14 @@ public abstract class ConfigArg {
      * Configuration argument for code generator class and output directory.
      */
     public static final class CodeGeneratorArg extends ConfigArg {
+
         private static final String TARGET_GENERATED_SOURCES = "target" + File.separator + "generated-sources";
         private static final String CODE_GEN_DEFAULT_RESOURCE_DIR = TARGET_GENERATED_SOURCES + File.separator + "spi";
-        public static final String YANG_GENERATED_DIR = TARGET_GENERATED_SOURCES + File.separator + "yang";
-        public static final String YANG_SERVICES_GENERATED_DIR = TARGET_GENERATED_SOURCES + File.separator + "spi";
-
 
         private String codeGeneratorClass;
         private File resourceBaseDir = new File(CODE_GEN_DEFAULT_RESOURCE_DIR);
 
-        private Map<String, String> additionalConfiguration = Maps.newHashMap();
+        private final Map<String, String> additionalConfiguration = Maps.newHashMap();
 
         public CodeGeneratorArg() {
             super(null);
