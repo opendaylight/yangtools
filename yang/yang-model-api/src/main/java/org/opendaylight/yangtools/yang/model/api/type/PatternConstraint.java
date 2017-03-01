@@ -17,12 +17,21 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 public interface PatternConstraint extends ConstraintMetaDefinition {
 
     /**
-     * Returns a regular expression (pattern).
+     * Returns a java regular expression (pattern).
      *
-     * @return string with regular expression which is equal to the argument of
+     * @return string with java regular expression which is equal to the argument of
      *         the YANG <code>pattern</code> substatement
      */
     String getRegularExpression();
+
+    /**
+     * Returns a raw regular expression as it was declared in a source.
+     *
+     * @return argument of pattern statement as it was declared in a source.
+     */
+    default String getRawRegularExpression() {
+        return getRegularExpression();
+    }
 
     /**
      * All implementations should override this method.
