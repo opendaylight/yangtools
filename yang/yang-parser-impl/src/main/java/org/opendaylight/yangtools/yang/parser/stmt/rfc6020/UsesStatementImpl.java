@@ -92,7 +92,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                 return;
             }
 
-            ModelActionBuilder usesAction = usesNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
+            final ModelActionBuilder usesAction = usesNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
             final QName groupingName = usesNode.getStatementArgument();
 
             final Prerequisite<StmtContext<?, ?, ?>> sourceGroupingPre = usesAction.requiresCtx(usesNode,
@@ -104,13 +104,13 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
 
                 @Override
                 public void apply() {
-                    StatementContextBase<?, ?, ?> targetNodeStmtCtx = (StatementContextBase<?, ?, ?>) targetNodePre.get();
-                    StatementContextBase<?, ?, ?> sourceGrpStmtCtx = (StatementContextBase<?, ?, ?>) sourceGroupingPre.get();
+                    final StatementContextBase<?, ?, ?> targetNodeStmtCtx = (StatementContextBase<?, ?, ?>) targetNodePre.get();
+                    final StatementContextBase<?, ?, ?> sourceGrpStmtCtx = (StatementContextBase<?, ?, ?>) sourceGroupingPre.get();
 
                     try {
                         copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
                         resolveUsesNode(usesNode, targetNodeStmtCtx);
-                    } catch (SourceException e) {
+                    } catch (final SourceException e) {
                         LOG.warn(e.getMessage(), e);
                         throw e;
                     }
@@ -350,7 +350,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
             return targetCtx.getFromNamespace(ModuleCtxToModuleQName.class, targetCtx);
         }
         if (targetCtx.getPublicDefinition() == Rfc6020Mapping.AUGMENT) {
-            return targetCtx.getFromNamespace(ModuleCtxToModuleQName.class, targetCtx.getRoot());
+            return Utils.getRootModuleQName(targetCtx);
         }
 
         final Object targetStmtArgument = targetCtx.getStatementArgument();

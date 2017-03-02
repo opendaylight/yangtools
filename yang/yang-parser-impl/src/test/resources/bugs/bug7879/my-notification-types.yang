@@ -1,0 +1,10 @@
+module my-notification-types {
+
+  namespace my-notif-types-ns;
+  prefix my-notif-types-pfx;
+
+  grouping my-notification {
+    container my-content;
+  }
+
+}

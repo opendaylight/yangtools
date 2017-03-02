@@ -1,0 +1,33 @@
+submodule my-model-alarms {
+
+  belongs-to my-model {
+    prefix my-model-pfx;
+  }
+
+  import my-notification-types {
+    prefix my-notif-types-pfx;
+  }
+
+  import my-event-types {
+    prefix my-event-types-pfx;
+  }
+
+  notification my-alarm {
+
+    uses my-notif-types-pfx:my-notification {
+      augment my-content {
+
+        uses my-event-types-pfx:my-event-with-value {
+          refine my-event-value {
+              description "new description";
+          }
+        }
+
+        uses my-event-types-pfx:my-event-with-container {
+          augment my-event-container;
+        }
+
+      }
+    }
+  }
+}
