@@ -1,0 +1,16 @@
+module my-event-types {
+
+  namespace my-event-types-ns;
+  prefix my-event-types-pfx;
+
+  grouping my-event-with-value {
+    leaf my-event-value {
+      type string;
+    }
+  }
+
+  grouping my-event-with-container {
+    container my-event-container;
+  }
+
+}
