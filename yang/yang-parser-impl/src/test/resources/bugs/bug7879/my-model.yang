@@ -1,0 +1,8 @@
+module my-model {
+
+  namespace my-model-ns;
+  prefix my-model-pfx;
+
+  include my-model-alarms;
+
+}

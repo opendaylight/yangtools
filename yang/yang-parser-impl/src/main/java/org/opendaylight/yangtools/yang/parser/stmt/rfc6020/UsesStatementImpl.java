@@ -370,7 +370,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
             return targetCtx.getFromNamespace(ModuleCtxToModuleQName.class, targetCtx);
         }
         if (targetCtx.getPublicDefinition() == YangStmtMapping.AUGMENT) {
-            return targetCtx.getFromNamespace(ModuleCtxToModuleQName.class, targetCtx.getRoot());
+            return Utils.getRootModuleQName(targetCtx);
         }
 
         final Object targetStmtArgument = targetCtx.getStatementArgument();
