@@ -195,7 +195,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(final Class<N> type, final K key,
+    public <K, V, N extends IdentifierNamespace<K, V>> V putToLocalStorage(final Class<N> type, final K key,
             final V value) {
         if (IncludedModuleContext.class.isAssignableFrom(type)) {
             if (includedContexts.isEmpty()) {
@@ -204,7 +204,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
             Verify.verify(value instanceof RootStatementContext);
             includedContexts.add((RootStatementContext<?, ?, ?>) value);
         }
-        super.addToLocalStorage(type, key, value);
+        return super.putToLocalStorage(type, key, value);
     }
 
     @Nullable

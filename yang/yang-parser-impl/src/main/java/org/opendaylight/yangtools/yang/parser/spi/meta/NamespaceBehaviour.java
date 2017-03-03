@@ -55,8 +55,29 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
         @Nullable
         <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromLocalStorage(Class<N> type);
 
-        <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(Class<N> type, K key, V value);
+        /**
+         * Populate specified namespace with a key/value pair, overwriting previous contents. Similar to
+         * {@link Map#put(Object, Object)}.
+         *
+         * @param type Namespace identifier
+         * @param key Key
+         * @param value Value
+         * @return Previously-stored value, or null if the key was not present
+         */
+        @Nullable
+        <K, V, N extends IdentifierNamespace<K, V>> V putToLocalStorage(Class<N> type, K key, V value);
 
+        /**
+         * Populate specified namespace with a key/value pair unless the key is already associated with a value. Similar
+         * to {@link Map#putIfAbsent(Object, Object)}.
+         *
+         * @param type Namespace identifier
+         * @param key Key
+         * @param value Value
+         * @return Preexisting value or null if there was no previous mapping
+         */
+        @Nullable
+        <K, V, N extends IdentifierNamespace<K, V>> V putToLocalStorageIfAbsent(Class<N> type, K key, V value);
     }
 
     private final Class<N> identifier;
@@ -171,7 +192,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
     }
 
     protected final void addToStorage(final NamespaceStorageNode storage, final K key, final V value) {
-        storage.addToLocalStorage(getIdentifier(), key, value);
+        storage.putToLocalStorage(getIdentifier(), key, value);
     }
 
     static class StorageSpecific<K, V, N extends IdentifierNamespace<K, V>> extends NamespaceBehaviour<K, V, N> {

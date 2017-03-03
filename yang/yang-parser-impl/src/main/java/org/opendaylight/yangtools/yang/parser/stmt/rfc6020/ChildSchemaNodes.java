@@ -22,9 +22,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  * @param <D>
  * @param <E>
  */
-public class ChildSchemaNodes<D extends DeclaredStatement<QName>,E extends EffectiveStatement<QName, D>>
+public class ChildSchemaNodes<D extends DeclaredStatement<QName>, E extends EffectiveStatement<QName, D>>
     extends NamespaceBehaviour<QName, StmtContext<?, D, E>, ChildSchemaNodes<D, E>>
-    implements StatementNamespace<QName, D, E>{
+    implements StatementNamespace<QName, D, E> {
 
     public ChildSchemaNodes() {
         super((Class) ChildSchemaNodes.class);
@@ -49,15 +49,20 @@ public class ChildSchemaNodes<D extends DeclaredStatement<QName>,E extends Effec
 
     @SuppressWarnings("unchecked")
     @Override
-    public void addTo(final NamespaceBehaviour.NamespaceStorageNode storage, final QName key, final StmtContext<?, D, E> value) {
-        globalOrStatementSpecific(storage).addToLocalStorage(ChildSchemaNodes.class, key, value);
+    public void addTo(final NamespaceStorageNode storage, final QName key, final StmtContext<?, D, E> value) {
+        // FIXME: BUG-7424: usee putToLocalStorageIfAbsent()
+        globalOrStatementSpecific(storage).putToLocalStorage(ChildSchemaNodes.class, key, value);
     }
 
-    private static NamespaceStorageNode globalOrStatementSpecific(final NamespaceBehaviour.NamespaceStorageNode storage) {
+    private static NamespaceStorageNode globalOrStatementSpecific(final NamespaceStorageNode storage) {
         NamespaceStorageNode current = storage;
-        while (current.getStorageNodeType() != StorageNodeType.STATEMENT_LOCAL && current.getStorageNodeType() != StorageNodeType.GLOBAL) {
+        while (!isLocalOrGlobal(current.getStorageNodeType())) {
             current = current.getParentNamespaceStorage();
         }
         return current;
+    }
+
+    private static boolean isLocalOrGlobal(final StorageNodeType type) {
+        return type == StorageNodeType.STATEMENT_LOCAL || type == StorageNodeType.GLOBAL;
     }
 }
