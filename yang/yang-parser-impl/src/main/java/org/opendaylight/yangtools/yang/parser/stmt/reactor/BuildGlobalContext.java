@@ -106,7 +106,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
             addToNs(SupportedFeaturesNamespace.class, SupportedFeatures.SUPPORTED_FEATURES,
                     ImmutableSet.copyOf(supportedFeatures));
         } else {
-            LOG.warn("Set of supported features has not been provided, so all features are supported by default.");
+            LOG.info("Set of supported features has not been provided, so all features are supported by default.");
         }
         this.supportedVersions = ImmutableSet.copyOf(supports.get(ModelProcessingPhase.INIT).getSupportedVersions());
         this.mutableStatementsToSeal = new ArrayList<>();
