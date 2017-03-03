@@ -19,6 +19,9 @@
   <artifactId>checkstyle-logging</artifactId>
   <version>1.1.0-SNAPSHOT</version>
   <packaging>bundle</packaging>
+  <!-- <name> formatting is used by autorelease to parse and notify projects on
+       build failure. Please do not modify this unless you have a good reason. -->
+  <name>ODL :: Yangtools :: ${project.artifactId}</name>
 
   <dependencies>
     <!-- This pulls in the appropriate version of checkstyle -->

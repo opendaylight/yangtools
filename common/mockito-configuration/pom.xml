@@ -22,7 +22,9 @@
     <version>1.1.0-SNAPSHOT</version>
     <description>Default mockito configuration</description>
     <packaging>jar</packaging><!-- not needed in OSGi -->
-    <name>${project.artifactId}</name>
+    <!-- <name> formatting is used by autorelease to parse and notify projects on
+         build failure. Please do not modify this unless you have a good reason. -->
+    <name>ODL :: Yangtools :: ${project.artifactId}</name>
 
     <dependencies>
         <!-- all those dependencies will be in test scope as mockito-configuration should be referenced as test scope dependency -->
