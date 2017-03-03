@@ -21,6 +21,9 @@
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>features4-yangtools</artifactId>
     <version>1.1.0-SNAPSHOT</version>
+    <!-- <name> formatting is used by autorelease to parse and notify projects on
+              build failure. Please do not modify this unless you have a good reason. -->
+    <name>ODL :: yangtools :: ${project.artifactId}</name>
     <packaging>feature</packaging>
 
     <dependencies>

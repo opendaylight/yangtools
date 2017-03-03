@@ -21,6 +21,9 @@
     <artifactId>yang-maven-plugin</artifactId>
     <version>1.1.0-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
+    <!-- <name> formatting is used by autorelease to parse and notify projects on
+         build failure. Please do not modify this unless you have a good reason. -->
+    <name>ODL :: yangtools :: ${project.artifactId}</name>
     <description>
         This plugin is a wrapper for "yang to source code" generation.
         It can be configured by a set of third-party code generators and resource providers.
