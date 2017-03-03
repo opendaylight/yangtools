@@ -236,10 +236,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         LOG.debug("Source {} started phase {}", source, phase);
     }
 
-    @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(final Class<N> type, final K key,
-           final V value) {
-
+    private void updateImportedNamespaces(final Class<?> type, final Object value) {
         if (BelongsToModuleContext.class.isAssignableFrom(type) || ImportedModuleContext.class.isAssignableFrom(type)) {
             if (importedNamespaces.isEmpty()) {
                 importedNamespaces = new ArrayList<>(1);
@@ -248,9 +245,27 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             Verify.verify(value instanceof RootStatementContext);
             importedNamespaces.add((RootStatementContext<?, ?, ?>) value);
         }
+    }
 
+    @Override
+    public <K, V, N extends IdentifierNamespace<K, V>> V putToLocalStorage(final Class<N> type, final K key,
+           final V value) {
         // RootStatementContext takes care of IncludedModuleContext and the rest...
-        getRoot().addToLocalStorage(type, key, value);
+        final V ret = getRoot().putToLocalStorage(type, key, value);
+        // FIXME: what about duplicates?
+        updateImportedNamespaces(type, value);
+        return ret;
+    }
+
+    @Override
+    public <K, V, N extends IdentifierNamespace<K, V>> V putToLocalStorageIfAbsent(final Class<N> type, final K key,
+           final V value) {
+        // RootStatementContext takes care of IncludedModuleContext and the rest...
+        final V ret = getRoot().putToLocalStorageIfAbsent(type, key, value);
+        if (ret == null) {
+            updateImportedNamespaces(type, value);
+        }
+        return ret;
     }
 
     @Override

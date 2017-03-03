@@ -52,7 +52,7 @@ public final class QNameCacheNamespace extends NamespaceBehaviour<QName, QName, 
             return stored;
         }
 
-        root.addToLocalStorage(QNameCacheNamespace.class, key, key);
+        root.putToLocalStorage(QNameCacheNamespace.class, key, key);
         return key;
     }
 

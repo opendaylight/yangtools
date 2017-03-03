@@ -122,22 +122,37 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         return localNamespace;
     }
 
-    @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(final Class<N> type, final K key,
-            final V value) {
+    private <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> ensureLocalNamespace(final Class<N> type) {
         @SuppressWarnings("unchecked")
-        Map<K, V> localNamespace = (Map<K,V>) namespaces.get(type);
-        if (localNamespace == null) {
+        Map<K, V> ret = (Map<K,V>) namespaces.get(type);
+        if (ret == null) {
             checkLocalNamespaceAllowed(type);
-            localNamespace = new HashMap<>(1);
+            ret = new HashMap<>(1);
 
             if (namespaces.isEmpty()) {
                 namespaces = new HashMap<>(1);
             }
-            namespaces.put(type, localNamespace);
+            namespaces.put(type, ret);
         }
-        localNamespace.put(key,value);
-        onNamespaceElementAdded(type,key,value);
+
+        return ret;
     }
 
+    @Override
+    public <K, V, N extends IdentifierNamespace<K, V>> V putToLocalStorage(final Class<N> type, final K key,
+            final V value) {
+        final V ret = ensureLocalNamespace(type).put(key, value);
+        onNamespaceElementAdded(type, key, value);
+        return ret;
+    }
+
+    @Override
+    public <K, V, N extends IdentifierNamespace<K, V>> V putToLocalStorageIfAbsent(final Class<N> type, final K key,
+            final V value) {
+        final V ret = ensureLocalNamespace(type).putIfAbsent(key, value);
+        if (ret == null) {
+            onNamespaceElementAdded(type, key, value);
+        }
+        return ret;
+    }
 }
