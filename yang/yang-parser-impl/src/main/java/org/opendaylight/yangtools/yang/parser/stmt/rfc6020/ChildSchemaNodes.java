@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * Statement local namespace, which holds direct schema node descendants.
@@ -50,8 +51,11 @@ public class ChildSchemaNodes<D extends DeclaredStatement<QName>, E extends Effe
     @SuppressWarnings("unchecked")
     @Override
     public void addTo(final NamespaceStorageNode storage, final QName key, final StmtContext<?, D, E> value) {
-        // FIXME: BUG-7424: usee putToLocalStorageIfAbsent()
-        globalOrStatementSpecific(storage).putToLocalStorage(ChildSchemaNodes.class, key, value);
+        final StmtContext<?, D, E> prev = globalOrStatementSpecific(storage).putToLocalStorageIfAbsent(
+            ChildSchemaNodes.class, key, value);
+        SourceException.throwIf(prev != null, value.getStatementSourceReference(),
+                "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared.",
+                value.getRoot().getStatementArgument(), key, key);
     }
 
     private static NamespaceStorageNode globalOrStatementSpecific(final NamespaceStorageNode storage) {
