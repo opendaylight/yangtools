@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_d5a4834c",
+        "filename": "yang/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/ConfigArg.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2017-03-03T13:24:25Z",
+      "side": 1,
+      "message": "Done, OK now?",
+      "parentUuid": "fafc7978_4732b7f2",
+      "range": {
+        "startLine": 80,
+        "startChar": 0,
+        "endLine": 85,
+        "endChar": 72
+      },
+      "revId": "0f7fa8271fbcf63e3c715a902cf3aaf5309f3fb5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_c75507fb",
         "filename": "yang/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/GeneratedDirectories.java",
         "patchSetId": 4
@@ -36,6 +60,30 @@
       "writtenOn": "2017-03-01T21:57:53Z",
       "side": 1,
       "message": "package-private",
+      "range": {
+        "startLine": 20,
+        "startChar": 0,
+        "endLine": 20,
+        "endChar": 6
+      },
+      "revId": "0f7fa8271fbcf63e3c715a902cf3aaf5309f3fb5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_f5a9c724",
+        "filename": "yang/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/GeneratedDirectories.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2017-03-03T13:24:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fafc7978_c75507fb",
       "range": {
         "startLine": 20,
         "startChar": 0,
