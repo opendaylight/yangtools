@@ -11,7 +11,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
@@ -73,30 +72,31 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     private final Table<YangVersion, QName, StatementDefinitionContext<?, ?, ?>> definitions = HashBasedTable.create();
     private final Map<Class<?>, NamespaceBehaviourWithListeners<?, ?, ?>> supportedNamespaces = new HashMap<>();
-
+    private final List<MutableStatement> mutableStatementsToSeal = new ArrayList<>();
     private final Map<ModelProcessingPhase, StatementSupportBundle> supports;
     private final Set<SourceSpecificContext> sources = new HashSet<>();
-    private Set<SourceSpecificContext> libSources = new HashSet<>();
+    private final Set<YangVersion> supportedVersions;
+    private final boolean enabledSemanticVersions;
 
+    private Set<SourceSpecificContext> libSources = new HashSet<>();
     private ModelProcessingPhase currentPhase = ModelProcessingPhase.INIT;
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
-
-    private final boolean enabledSemanticVersions;
-    private final Set<YangVersion> supportedVersions;
-    private final List<MutableStatement> mutableStatementsToSeal;
-
-    BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports,
-            final StatementParserMode statementParserMode, final Set<QName> supportedFeatures) {
-        this(supports, ImmutableMap.of(), statementParserMode, supportedFeatures);
-    }
 
     BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports,
             final Map<ValidationBundleType, Collection<?>> supportedValidation,
             final StatementParserMode statementParserMode, final Set<QName> supportedFeatures) {
-        super();
         this.supports = Preconditions.checkNotNull(supports, "BuildGlobalContext#supports cannot be null");
-        Preconditions.checkNotNull(statementParserMode, "Statement parser mode must not be null.");
-        this.enabledSemanticVersions = statementParserMode == StatementParserMode.SEMVER_MODE;
+
+        switch (statementParserMode) {
+            case DEFAULT_MODE:
+                enabledSemanticVersions = false;
+                break;
+            case SEMVER_MODE:
+                enabledSemanticVersions = true;
+                break;
+            default:
+                throw new IllegalArgumentException("Unhandled parser mode " + statementParserMode);
+        }
 
         for (final Entry<ValidationBundleType, Collection<?>> validationBundle : supportedValidation.entrySet()) {
             addToNs(ValidationBundlesNamespace.class, validationBundle.getKey(), validationBundle.getValue());
@@ -105,11 +105,8 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         if (supportedFeatures != null) {
             addToNs(SupportedFeaturesNamespace.class, SupportedFeatures.SUPPORTED_FEATURES,
                     ImmutableSet.copyOf(supportedFeatures));
-        } else {
-            LOG.warn("Set of supported features has not been provided, so all features are supported by default.");
         }
         this.supportedVersions = ImmutableSet.copyOf(supports.get(ModelProcessingPhase.INIT).getSupportedVersions());
-        this.mutableStatementsToSeal = new ArrayList<>();
     }
 
     boolean isEnabledSemanticVersioning() {
@@ -273,7 +270,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         LOG.debug("Global phase {} started", phase);
     }
 
-    private void startPhaseFor(final ModelProcessingPhase phase, final Set<SourceSpecificContext> sources) {
+    private static void startPhaseFor(final ModelProcessingPhase phase, final Set<SourceSpecificContext> sources) {
         for (final SourceSpecificContext source : sources) {
             source.startPhase(phase);
         }
@@ -429,14 +426,14 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         }
     }
 
-    private SourceSpecificContext getRequiredLibSource(final ModuleIdentifier requiredModule,
+    private static SourceSpecificContext getRequiredLibSource(final ModuleIdentifier requiredModule,
             final TreeBasedTable<String, Date, SourceSpecificContext> libSourcesTable) {
         return requiredModule.getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP ? getLatestRevision(libSourcesTable
                 .row(requiredModule.getName())) : libSourcesTable.get(requiredModule.getName(),
                 requiredModule.getRevision());
     }
 
-    private SourceSpecificContext getLatestRevision(final SortedMap<Date, SourceSpecificContext> sourceMap) {
+    private static SourceSpecificContext getLatestRevision(final SortedMap<Date, SourceSpecificContext> sourceMap) {
         return sourceMap != null && !sourceMap.isEmpty() ? sourceMap.get(sourceMap.lastKey()) : null;
     }
 
