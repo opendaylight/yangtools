@@ -30,16 +30,14 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class CrossSourceStatementReactor {
+public final class CrossSourceStatementReactor {
+    private static final Logger LOG = LoggerFactory.getLogger(CrossSourceStatementReactor.class);
 
     private final Map<ModelProcessingPhase, StatementSupportBundle> supportedTerminology;
     private final Map<ValidationBundleType, Collection<?>> supportedValidation;
-
-    CrossSourceStatementReactor(final Map<ModelProcessingPhase, StatementSupportBundle> supportedTerminology) {
-        this.supportedTerminology = ImmutableMap.copyOf(supportedTerminology);
-        this.supportedValidation = ImmutableMap.of();
-    }
 
     CrossSourceStatementReactor(final Map<ModelProcessingPhase, StatementSupportBundle> supportedTerminology,
             final Map<ValidationBundleType, Collection<?>> supportedValidation) {
@@ -47,31 +45,69 @@ public class CrossSourceStatementReactor {
         this.supportedValidation = ImmutableMap.copyOf(supportedValidation);
     }
 
+    /**
+     * Create a new {@link Builder}.
+     *
+     * @return A new builder.
+     */
     public static Builder builder() {
         return new Builder();
     }
 
-    public final BuildAction newBuild() {
+    /**
+     * Start a new reactor build using default statement parser mode and enabling all features.
+     *
+     * @return A new {@link BuildAction}.
+     */
+    public BuildAction newBuild() {
         return newBuild(StatementParserMode.DEFAULT_MODE);
     }
 
-    public final BuildAction newBuild(final Set<QName> supportedFeatures) {
-        return new BuildAction(StatementParserMode.DEFAULT_MODE, supportedFeatures);
+    /**
+     * Start a new reactor build using default statement parser mode and only specified features.
+     *
+     * @param supportedFeatures The set of supported features in the final SchemaContext
+     * @return A new {@link BuildAction}.
+     */
+    public BuildAction newBuild(final Set<QName> supportedFeatures) {
+        return new BuildAction(warnOnNull(supportedFeatures), StatementParserMode.DEFAULT_MODE);
     }
 
-    public final BuildAction newBuild(final StatementParserMode statementParserMode) {
-        return new BuildAction(statementParserMode, null);
+    /**
+     * Start a new reactor build using specified statement parser mode and enabling all features.
+     *
+     * @param statementParserMode Parser mode to use
+     * @return A new {@link BuildAction}.
+     * @throws NullPointerException if statementParserMode is null
+     */
+    public BuildAction newBuild(final StatementParserMode statementParserMode) {
+        return new BuildAction(null, statementParserMode);
     }
 
-    public final BuildAction newBuild(final StatementParserMode statementParserMode,
+    /**
+     * Start a new reactor build using default statement parser mode and only specified features.
+     *
+     * @param supportedFeatures The set of supported features in the final SchemaContext
+     * @return A new {@link BuildAction}.
+     * @throws NullPointerException if statementParserMode is null
+     */
+    public BuildAction newBuild(final StatementParserMode statementParserMode,
             final Set<QName> supportedFeatures) {
-        return new BuildAction(statementParserMode, supportedFeatures);
+        return new BuildAction(warnOnNull(supportedFeatures), statementParserMode);
+    }
+
+    private static <T> T warnOnNull(final T obj) {
+        if (obj == null) {
+            LOG.info("Set of supported features has not been provided, so all features are supported by default.");
+        }
+        return obj;
     }
 
     public static class Builder implements org.opendaylight.yangtools.concepts.Builder<CrossSourceStatementReactor> {
-
-        final Map<ModelProcessingPhase, StatementSupportBundle> bundles = new EnumMap<>(ModelProcessingPhase.class);
-        final Map<ValidationBundleType, Collection<?>> validationBundles = new EnumMap<>(ValidationBundleType.class);
+        private final Map<ValidationBundleType, Collection<?>> validationBundles =
+                new EnumMap<>(ValidationBundleType.class);
+        private final Map<ModelProcessingPhase, StatementSupportBundle> bundles =
+                new EnumMap<>(ModelProcessingPhase.class);
 
         public Builder setBundle(final ModelProcessingPhase phase, final StatementSupportBundle bundle) {
             bundles.put(phase, bundle);
@@ -92,21 +128,9 @@ public class CrossSourceStatementReactor {
     public class BuildAction {
         private final BuildGlobalContext context;
 
-        public BuildAction() {
-            this(StatementParserMode.DEFAULT_MODE);
-        }
-
-        public BuildAction(final StatementParserMode statementParserMode) {
-            this(statementParserMode, null);
-        }
-
-        public BuildAction(final Set<QName> supportedFeatures) {
-            this(StatementParserMode.DEFAULT_MODE, supportedFeatures);
-        }
-
-        public BuildAction(final StatementParserMode statementParserMode, final Set<QName> supportedFeatures) {
+        BuildAction(final Set<QName> supportedFeatures, final StatementParserMode statementParserMode) {
             this.context = new BuildGlobalContext(supportedTerminology, supportedValidation, statementParserMode,
-                    supportedFeatures);
+                supportedFeatures);
         }
 
         /**
@@ -165,6 +189,10 @@ public class CrossSourceStatementReactor {
             return context.buildEffective();
         }
 
+        /**
+         * @deprecated Use {@link #addSources(Collection)} and {@link #buildEffective()} instead.
+         */
+        @Deprecated
         public SchemaContext buildEffective(final Collection<ByteSource> yangByteSources) throws ReactorException,
                 IOException {
             for (final ByteSource source : yangByteSources) {
@@ -182,6 +210,10 @@ public class CrossSourceStatementReactor {
             return buildEffective();
         }
 
+        /**
+         * @deprecated Use {@link #addSources(Collection)} and {@link #buildEffective()} instead.
+         */
+        @Deprecated
         public SchemaContext buildEffective(final List<InputStream> yangInputStreams) throws ReactorException {
             for (final InputStream yangInputStream : yangInputStreams) {
                 addSource(new YangStatementSourceImpl(yangInputStream));
