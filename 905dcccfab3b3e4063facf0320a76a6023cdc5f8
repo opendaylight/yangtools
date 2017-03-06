@@ -22,6 +22,30 @@
       "revId": "905dcccfab3b3e4063facf0320a76a6023cdc5f8",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_fc81abfb",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/CrossSourceStatementReactor.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-03-06T09:03:03Z",
+      "side": 1,
+      "message": "Yeah, but this method does not really care about the type, hence I wrote it this way :)",
+      "parentUuid": "fafc7978_3cd17323",
+      "range": {
+        "startLine": 99,
+        "startChar": 19,
+        "endLine": 99,
+        "endChar": 48
+      },
+      "revId": "905dcccfab3b3e4063facf0320a76a6023cdc5f8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
