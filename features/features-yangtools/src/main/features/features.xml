@@ -14,7 +14,6 @@
     <feature name='odl-yangtools-yang-data' version='${project.version}' description='OpenDaylight :: Yangtools :: Data Binding'>
         <feature version='${project.version}' dependency="true">odl-yangtools-yang-parser</feature>
         <bundle>mvn:org.opendaylight.yangtools/yang-data-impl/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools/xsd-regex/{{VERSION}}</bundle>
 
         <!-- GSON-based JSON codec. Can be split out -->
         <bundle dependency="true">mvn:com.google.code.gson/gson/{{VERSION}}</bundle>
