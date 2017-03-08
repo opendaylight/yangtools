@@ -1,0 +1,16 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    container root {
+        foo:p "/bar:a/bar:b" {
+            foo:p "baz:a/baz:b" {
+                foo:p "p";
+            }
+        }
+    }
+
+    extension p {
+        argument "path";
+    }
+}

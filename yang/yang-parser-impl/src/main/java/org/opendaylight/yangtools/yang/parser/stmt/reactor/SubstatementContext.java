@@ -232,6 +232,9 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         Verify.verify(maybeParentPath.isPresent(), "Parent %s does not have a SchemaPath", parent);
         final SchemaPath parentPath = maybeParentPath.get();
 
+        if (Utils.isUnknownNode(this)) {
+            return parentPath.createChild(getPublicDefinition().getStatementName());
+        }
         if (argument instanceof QName) {
             final QName qname = (QName) argument;
             if (StmtContextUtils.producesDeclared(this, UsesStatement.class)) {
@@ -261,9 +264,6 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
                 .producesDeclared(this, DeviationStatement.class))) {
 
             return parentPath.createChild(((SchemaNodeIdentifier) argument).getPathFromRoot());
-        }
-        if (Utils.isUnknownNode(this)) {
-            return parentPath.createChild(getPublicDefinition().getStatementName());
         }
 
         // FIXME: this does not look right
