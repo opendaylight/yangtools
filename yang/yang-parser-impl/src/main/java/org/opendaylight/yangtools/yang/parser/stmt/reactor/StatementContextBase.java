@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EventListener;
 import java.util.Iterator;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -356,16 +357,23 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @param argument statement argument
      * @return A new substatement
      */
-    public final <CA, CD extends DeclaredStatement<CA>, CE extends EffectiveStatement<CA, CD>> StatementContextBase<CA, CD, CE>
-            createSubstatement(final int offset, final StatementDefinitionContext<CA, CD, CE> def,
-                    final StatementSourceReference ref, final String argument) {
+    public final <CA, CD extends DeclaredStatement<CA>, CE extends EffectiveStatement<CA, CD>> StatementContextBase<CA, CD, CE> createSubstatement(
+            final int offset, final StatementDefinitionContext<CA, CD, CE> def, final StatementSourceReference ref,
+            final String argument) {
         final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
         Preconditions.checkState(inProgressPhase != ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Declared statement cannot be added in effective phase at: %s", getStatementSourceReference());
 
+        final Optional<StatementContextBase<?, ?, ?>> implicitStatement = definition.beforeSubStatementCreated(this, offset, def, ref, argument);
+        if(implicitStatement.isPresent()) {
+            final StatementContextBase<?, ?, ?> presentImplicitStmt = implicitStatement.get();
+            return presentImplicitStmt.createSubstatement(offset, def, ref, argument);
+        }
+
         final StatementContextBase<CA, CD, CE> ret = new SubstatementContext<>(this, def, ref, argument);
         substatements = substatements.put(offset, ret);
         def.onStatementAdded(ret);
+        ret.setCompletedPhase(getCompletedPhase());
         return ret;
     }
 

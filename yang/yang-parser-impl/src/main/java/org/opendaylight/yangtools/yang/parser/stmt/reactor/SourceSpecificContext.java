@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -130,7 +131,10 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             QName name, final String argument, final StatementSourceReference ref) {
         if (current != null) {
             // Fast path: we are entering a statement which was emitted in previous phase
-            final StatementContextBase<?, ?, ?> existing = current.lookupSubstatement(childId);
+            StatementContextBase<?, ?, ?> existing = current.lookupSubstatement(childId);
+            while (existing != null && StatementSource.CONTEXT == existing.getStatementSource()) {
+                existing = existing.lookupSubstatement(childId);
+            }
             if (existing != null) {
                 return existing;
             }

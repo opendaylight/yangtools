@@ -8,10 +8,14 @@
 
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementDefinitionContext;
 
 /**
  *
@@ -68,6 +72,25 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      *            Context of added statement. No substatements are available.
      */
     void onStatementAdded(StmtContext.Mutable<A, D, E> stmt);
+
+    /**
+     * Invoked before a statement supported by this instance is created and
+     * added to build context. This allows implementations of this interface
+     * perform any modifications to the build context hierarchy before a
+     * substatement is created. One such use is creating implicit statements
+     * between these statements.
+     *
+     * @param stmt
+     *            Context of parent statement where a new substatement should be
+     *            created. No substatements are available.
+     * @param offset substatement offset
+     * @param def definition context
+     * @param ref source reference
+     * @param argument substatement argument
+     * @return optional of a new implicit substatement
+     */
+    Optional<StatementContextBase<?, ?, ?>> beforeSubStatementCreated(final Mutable<?, ?, ?> stmt, final int offset,
+            final StatementDefinitionContext<?, ?, ?> def, final StatementSourceReference ref, final String argument);
 
     /**
      * Invoked when statement is closed during
