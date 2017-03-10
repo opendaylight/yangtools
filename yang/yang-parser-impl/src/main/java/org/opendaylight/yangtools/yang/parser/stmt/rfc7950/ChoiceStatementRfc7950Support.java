@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ChoiceStatementImpl;
 
 /**
@@ -35,6 +36,13 @@ public final class ChoiceStatementRfc7950Support extends ChoiceStatementImpl.Def
             .addOptional(YangStmtMapping.STATUS)
             .addOptional(YangStmtMapping.WHEN)
             .build();
+
+    private static final StatementSupport<?, ?, ?> IMPLICIT_CASE = new CaseStatementRfc7950Support();
+
+    @Override
+    protected StatementSupport<?, ?, ?> implictCase() {
+        return IMPLICIT_CASE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

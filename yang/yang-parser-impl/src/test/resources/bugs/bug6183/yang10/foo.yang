@@ -1,0 +1,62 @@
+module foo {
+    namespace "foo";
+    prefix "foo";
+
+    container before {
+    }
+
+    choice my-choice {
+        container implicit-case-container {
+            container declared-container-in-case-container {
+                leaf declared-leaf {
+                    type empty;
+                }
+            }
+            leaf declared-leaf-in-case-container {
+                type empty;
+            }
+        }
+        case declared-case-one {
+            leaf leaf-in-declare-case-one {
+                type empty;
+            }
+        }
+        container second-implicit-case-container {
+            leaf declared-leaf-in-second-case-container {
+                type empty;
+            }
+        }
+        case declared-case-two {
+            leaf leaf-in-declare-case-two {
+                type empty;
+            }
+        }
+    }
+
+    container after {
+    }
+
+    augment "/my-choice/implicit-case-container" {
+        leaf leaf-after-container {
+            type empty;
+        }
+    }
+
+    augment "/my-choice/implicit-case-container/implicit-case-container" {
+        leaf leaf-inside-container {
+            type empty;
+        }
+    }
+
+    augment "/my-choice/second-implicit-case-container" {
+        leaf leaf-after-second-container {
+            type empty;
+        }
+    }
+
+    augment "/my-choice/second-implicit-case-container/second-implicit-case-container" {
+        leaf leaf-inside-second-container {
+            type empty;
+        }
+    }
+}
