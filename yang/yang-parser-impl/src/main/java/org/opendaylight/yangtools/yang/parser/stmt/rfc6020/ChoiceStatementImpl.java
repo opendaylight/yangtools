@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -26,8 +27,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementDefinitionContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ChoiceEffectiveStatementImpl;
 
 public class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
@@ -54,9 +60,9 @@ public class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
         super(context);
     }
 
-    public static class Definition
-            extends
+    public static class Definition extends
             AbstractStatementSupport<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> {
+        private static final StatementSupport<?, ?, ?> IMPLICIT_CASE = new CaseStatementImpl.Definition();
 
         public Definition() {
             super(YangStmtMapping.CHOICE);
@@ -68,13 +74,24 @@ public class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public void onStatementAdded(final Mutable<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> stmt) {
+        public Optional<StatementContextBase<?, ?, ?>> beforeSubStatementCreated(
+                final StmtContext.Mutable<?, ?, ?> stmt, final int offset,
+                final StatementDefinitionContext<?, ?, ?> def, final StatementSourceReference ref, final String argument) {
+
+            if (YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(def.getPublicView())) {
+                return Optional.of(createImplicitCase((StatementContextBase<?, ?, ?>) stmt, offset, ref, argument));
+            }
+            return Optional.empty();
+        }
+
+        @Override
+        public void onStatementAdded(
+                final Mutable<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> stmt) {
             stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
         }
 
         @Override
-        public ChoiceStatement createDeclared(
-                final StmtContext<QName, ChoiceStatement, ?> ctx) {
+        public ChoiceStatement createDeclared(final StmtContext<QName, ChoiceStatement, ?> ctx) {
             return new ChoiceStatementImpl(ctx);
         }
 
@@ -87,6 +104,17 @@ public class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
         @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
+        }
+
+        protected StatementSupport<?, ?, ?> implictCase() {
+            return IMPLICIT_CASE;
+        }
+
+        private StatementContextBase<?, ?, ?> createImplicitCase(final StmtContext.Mutable<?, ?, ?> stmt,
+                final int offset, final StatementSourceReference ref, final String argument) {
+            final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(implictCase());
+            return ((StatementContextBase<?, ?, ?>) stmt).createSubstatement(offset, def, ImplicitSubstatement.of(ref),
+                    argument);
         }
     }
 
