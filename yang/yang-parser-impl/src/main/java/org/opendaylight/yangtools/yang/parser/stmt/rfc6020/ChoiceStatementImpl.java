@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
@@ -26,8 +28,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementDefinitionContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ChoiceEffectiveStatementImpl;
 
 public class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
@@ -57,6 +63,7 @@ public class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
     public static class Definition
             extends
             AbstractStatementSupport<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> {
+        private static final StatementSupport<?, ?, ?> IMPLICIT_CASE = new CaseStatementImpl.Definition();
 
         public Definition() {
             super(YangStmtMapping.CHOICE);
@@ -70,6 +77,33 @@ public class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
         @Override
         public void onStatementAdded(final Mutable<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> stmt) {
             stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(
+                final Mutable<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> stmt) {
+            if (YangVersion.VERSION_1_1 == stmt.getRootVersion()) {
+                createImplicitCases(stmt);
+            }
+        }
+
+        private static void createImplicitCases(
+                final Mutable<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> stmt) {
+            for (final StatementContextBase<?, ?, ?> declaredSubstatement : stmt.declaredSubstatements()) {
+                if(YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(declaredSubstatement.getPublicDefinition())) {
+                    createImplicitCase((StatementContextBase<?, ?, ?>)stmt, declaredSubstatement);
+                }
+            }
+        }
+
+        private static void createImplicitCase(
+                final StatementContextBase<?, ?, ?> parent,
+                final StatementContextBase<?, ?, ?> dataNodeSubstatement) {
+            final StatementDefinitionContext<?, ?, ?> stmtDefCtx = new StatementDefinitionContext<>(IMPLICIT_CASE);
+
+            parent.createSubstatement(parent.declaredSubstatements().size(), ImmutableList.of(dataNodeSubstatement), stmtDefCtx,
+                ImplicitSubstatement.of(parent.getStatementSourceReference()), dataNodeSubstatement.rawStatementArgument());
+            dataNodeSubstatement.setIsSupportedToBuildEffective(false);
         }
 
         @Override

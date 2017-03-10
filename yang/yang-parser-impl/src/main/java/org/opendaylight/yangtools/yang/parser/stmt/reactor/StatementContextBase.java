@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
@@ -356,16 +355,33 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @param argument statement argument
      * @return A new substatement
      */
-    public final <CA, CD extends DeclaredStatement<CA>, CE extends EffectiveStatement<CA, CD>> StatementContextBase<CA, CD, CE>
-            createSubstatement(final int offset, final StatementDefinitionContext<CA, CD, CE> def,
-                    final StatementSourceReference ref, final String argument) {
+    public final <CA, CD extends DeclaredStatement<CA>, CE extends EffectiveStatement<CA, CD>> StatementContextBase<CA, CD, CE> createSubstatement(
+            final int offset, final StatementDefinitionContext<CA, CD, CE> def, final StatementSourceReference ref,
+            final String argument) {
+        return createSubstatement(offset, ImmutableList.of(), def, ref, argument);
+    }
+
+    /**
+     * Create a new effective substatement at the specified offset with specified substatements.
+     *
+     * @param offset Substatement offset
+     * @param subStatements subStatements of created subStatement
+     * @param def definition context
+     * @param ref source reference
+     * @param argument statement argument
+     * @return A new substatement
+     */
+    public final <CA, CD extends DeclaredStatement<CA>, CE extends EffectiveStatement<CA, CD>> StatementContextBase<CA, CD, CE> createSubstatement(
+            final int offset, final Collection<StatementContextBase<?, ?, ?>> subStatements,
+            final StatementDefinitionContext<CA, CD, CE> def, final StatementSourceReference ref, final String argument) {
         final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
         Preconditions.checkState(inProgressPhase != ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Declared statement cannot be added in effective phase at: %s", getStatementSourceReference());
 
-        final StatementContextBase<CA, CD, CE> ret = new SubstatementContext<>(this, def, ref, argument);
+        final StatementContextBase<CA, CD, CE> ret = new SubstatementContext<>(this, subStatements, def, ref, argument);
         substatements = substatements.put(offset, ret);
         def.onStatementAdded(ret);
+        ret.setCompletedPhase(getCompletedPhase());
         return ret;
     }
 
