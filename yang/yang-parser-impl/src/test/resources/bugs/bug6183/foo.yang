@@ -1,0 +1,22 @@
+module foo {
+    namespace "foo";
+    prefix "foo";
+    yang-version 1.1;
+
+    choice my-choice {
+        container implicit-case-container {
+        }
+    }
+
+    augment "/my-choice/implicit-case-container" {
+        leaf leaf-after-container {
+            type empty;
+        }
+    }
+
+    augment "/my-choice/implicit-case-container/implicit-case-container" {
+        leaf leaf-inside-container {
+            type empty;
+        }
+    }
+}

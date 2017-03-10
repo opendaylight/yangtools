@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.base.Preconditions;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -15,6 +16,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementDefinitionContext;
 
 /**
  *
@@ -66,6 +70,14 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     @Override
     public final StatementDefinition getPublicView() {
         return type;
+    }
+
+    @Override
+    public Optional<StatementContextBase<?, ?, ?>> beforeSubStatementCreated(final StmtContext.Mutable<?, ?, ?> stmt,
+            final int offset, final StatementDefinitionContext<?, ?, ?> def, final StatementSourceReference ref,
+            final String argument) {
+        // NOOP for most implementations and also no implicit statements
+        return Optional.empty();
     }
 
     @Override
