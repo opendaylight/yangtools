@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -20,6 +21,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
     private final StatementSupport<A, D, E> support;
@@ -42,6 +44,11 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
 
     public StatementDefinition getPublicView() {
         return support.getPublicView();
+    }
+
+    public Optional<StatementContextBase<?, ?, ?>> beforeSubStatementCreated(final Mutable<?, ?, ?> stmt, final int offset, final StatementDefinitionContext<?, ?, ?> def, final StatementSourceReference ref,
+            final String argument) {
+        return support.beforeSubStatementCreated(stmt, offset, def, ref, argument);
     }
 
     public boolean onStatementAdded(final Mutable<A, D, E> stmt) {
