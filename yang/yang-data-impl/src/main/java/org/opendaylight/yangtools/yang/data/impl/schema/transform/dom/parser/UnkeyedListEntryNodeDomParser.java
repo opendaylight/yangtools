@@ -17,17 +17,27 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.w3c.dom.Element;
 
 final class UnkeyedListEntryNodeDomParser extends ListEntryNodeDomParser<YangInstanceIdentifier.NodeIdentifier, UnkeyedListEntryNode> {
-    UnkeyedListEntryNodeDomParser(final NodeParserDispatcher<Element> dispatcher) {
+    private final boolean strictParsing;
+
+    UnkeyedListEntryNodeDomParser(final NodeParserDispatcher<Element> dispatcher, final boolean strictParsing) {
         super(dispatcher);
+        this.strictParsing = strictParsing;
     }
 
-    UnkeyedListEntryNodeDomParser(final BuildingStrategy<NodeIdentifier, UnkeyedListEntryNode> buildingStrategy, final NodeParserDispatcher<Element> dispatcher) {
+    UnkeyedListEntryNodeDomParser(final BuildingStrategy<NodeIdentifier, UnkeyedListEntryNode> buildingStrategy,
+            final NodeParserDispatcher<Element> dispatcher, final boolean strictParsing) {
         super(buildingStrategy, dispatcher);
+        this.strictParsing = strictParsing;
     }
 
     @Override
     protected DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, UnkeyedListEntryNode> getBuilder(
             final ListSchemaNode schema) {
         return Builders.unkeyedListEntryBuilder().withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
+    }
+
+    @Override
+    protected boolean strictParsing() {
+        return strictParsing;
     }
 }
