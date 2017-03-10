@@ -16,7 +16,6 @@ import java.util.List
 import java.util.Map
 import java.util.StringTokenizer
 import java.util.regex.Pattern
-import org.opendaylight.mdsal.binding.generator.util.Types
 import org.opendaylight.mdsal.binding.model.api.ConcreteType
 import org.opendaylight.mdsal.binding.model.api.Constant
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
@@ -26,6 +25,7 @@ import org.opendaylight.mdsal.binding.model.api.MethodSignature
 import org.opendaylight.mdsal.binding.model.api.Restrictions
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.api.TypeMember
+import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.yangtools.yang.common.QName
 
 abstract class BaseTemplate {

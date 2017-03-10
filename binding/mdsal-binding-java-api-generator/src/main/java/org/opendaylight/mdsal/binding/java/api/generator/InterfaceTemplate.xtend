@@ -8,13 +8,13 @@
 package org.opendaylight.mdsal.binding.java.api.generator
 
 import java.util.List
-import org.opendaylight.mdsal.binding.generator.util.TypeConstants
+import org.opendaylight.mdsal.binding.model.api.AnnotationType
 import org.opendaylight.mdsal.binding.model.api.Constant
 import org.opendaylight.mdsal.binding.model.api.Enumeration
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.MethodSignature
-import org.opendaylight.mdsal.binding.model.api.AnnotationType
+import org.opendaylight.mdsal.binding.model.util.TypeConstants
 
 /**
  * Template for generating JAVA interfaces.

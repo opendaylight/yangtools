@@ -7,7 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
-import static org.opendaylight.mdsal.binding.generator.util.Types.*
+import static org.opendaylight.mdsal.binding.model.util.Types.BOOLEAN;
+import static org.opendaylight.mdsal.binding.model.util.Types.getOuterClassName;
 
 import com.google.common.base.Preconditions;
 import java.beans.ConstructorProperties

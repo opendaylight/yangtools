@@ -7,32 +7,33 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
-import static org.opendaylight.yangtools.yang.binding.BindingMapping.getClassName
-import static org.opendaylight.yangtools.yang.binding.BindingMapping.getRootPackageName
 import static org.opendaylight.yangtools.yang.binding.BindingMapping.MODEL_BINDING_PROVIDER_CLASS_NAME
 import static org.opendaylight.yangtools.yang.binding.BindingMapping.MODULE_INFO_CLASS_NAME
+import static org.opendaylight.yangtools.yang.binding.BindingMapping.getClassName
+import static org.opendaylight.yangtools.yang.binding.BindingMapping.getRootPackageName
 
 import com.google.common.base.Preconditions
 import com.google.common.collect.ImmutableSet
-import java.io.InputStream
 import java.io.IOException
+import java.io.InputStream
 import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.util.Optional
 import java.util.Collections
 import java.util.Date
 import java.util.HashSet
 import java.util.LinkedHashMap
 import java.util.Map
+import java.util.Optional
 import java.util.Set
 import java.util.TreeMap
 import java.util.function.Function
-import org.opendaylight.mdsal.binding.generator.util.Types
+import org.eclipse.xtend.lib.Property
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.api.WildcardType
-import org.opendaylight.yangtools.yang.binding.YangModuleInfo
+import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider
+import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yangtools.yang.model.api.Module
 import org.opendaylight.yangtools.yang.model.api.SchemaContext
 
