@@ -1,0 +1,20 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    revision 2017-03-10;
+
+    container root-cont {
+        list my-outer-unkeyed-list {
+            leaf leaf-a {
+                type string;
+            }
+
+            list my-inner-unkeyed-list {
+                leaf leaf-b {
+                    type string;
+                }
+            }
+        }
+    }
+}
