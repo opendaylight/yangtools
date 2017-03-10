@@ -72,7 +72,7 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
         mapEntryNodeParser = new MapEntryNodeDomParser(dispatcher, strictParsing);
         mapNodeParser = new MapNodeDomParser(mapEntryNodeParser);
         orderedListNodeParser = new OrderedListNodeDomParser(mapEntryNodeParser);
-        unkeyedListEntryNodeParser = new UnkeyedListEntryNodeDomParser(dispatcher);
+        unkeyedListEntryNodeParser = new UnkeyedListEntryNodeDomParser(dispatcher, strictParsing);
         unkeyedListNodeParser = new UnkeyedListNodeDomParser(unkeyedListEntryNodeParser);
         choiceNodeParser = new ChoiceNodeDomParser(dispatcher);
         augmentationNodeParser = new AugmentationNodeDomParser(dispatcher, strictParsing);
@@ -97,7 +97,8 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
         mapEntryNodeParser = new MapEntryNodeDomParser(dispatcher, buildingStratProvider.forMapEntry(), strictParsing);
         mapNodeParser = new MapNodeDomParser(mapEntryNodeParser, buildingStratProvider.forMap());
         orderedListNodeParser = new OrderedListNodeDomParser(mapEntryNodeParser, buildingStratProvider.forOrderedList());
-        unkeyedListEntryNodeParser = new UnkeyedListEntryNodeDomParser(buildingStratProvider.forUnkeyedListEntry(), dispatcher);
+        unkeyedListEntryNodeParser = new UnkeyedListEntryNodeDomParser(buildingStratProvider.forUnkeyedListEntry(),
+                dispatcher, strictParsing);
         unkeyedListNodeParser = new UnkeyedListNodeDomParser(buildingStratProvider.forUnkeyedList(), unkeyedListEntryNodeParser);
         choiceNodeParser = new ChoiceNodeDomParser(dispatcher, buildingStratProvider.forChoice());
         // no buildingStrategy for Augment (no use case for now)
