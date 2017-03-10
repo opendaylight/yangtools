@@ -8,9 +8,17 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
 import com.google.common.annotations.Beta;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementDefinitionContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ChoiceStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangValidationBundles;
 
 /**
  * Class providing necessary support for processing YANG 1.1 Choice statement.
@@ -35,6 +43,26 @@ public final class ChoiceStatementRfc7950Support extends ChoiceStatementImpl.Def
             .addOptional(YangStmtMapping.STATUS)
             .addOptional(YangStmtMapping.WHEN)
             .build();
+
+    private static final StatementSupport<?, ?, ?> IMPLICIT_CASE = new CaseStatementRfc7950Support();
+
+    @Override
+    public Optional<StatementContextBase<?, ?, ?>> beforeSubStatementCreated(final StmtContext.Mutable<?, ?, ?> stmt,
+            final int offset, final StatementDefinitionContext<?, ?, ?> def, final StatementSourceReference ref,
+            final String argument) {
+
+        if (YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(def.getPublicView())) {
+            return Optional.of(createImplicitCase((StatementContextBase<?, ?, ?>) stmt, offset, ref, argument));
+        }
+        return Optional.empty();
+    }
+
+    private static StatementContextBase<?, ?, ?> createImplicitCase(final StmtContext.Mutable<?, ?, ?> stmt,
+            final int offset, final StatementSourceReference ref, final String argument) {
+        final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(IMPLICIT_CASE);
+        return ((StatementContextBase<?, ?, ?>) stmt).createSubstatement(offset, def, ImplicitSubstatement.of(ref),
+                argument);
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {
