@@ -141,7 +141,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     public StatementContextBase<A, D, E> createCopy(final QNameModule newQNameModule,
             final StatementContextBase<?, ?, ?> newParent, final CopyType typeOfCopy) {
         Preconditions.checkState(getCompletedPhase() == ModelProcessingPhase.EFFECTIVE_MODEL,
-                "Attempted to copy statement {} which has completed phase {}", this, getCompletedPhase());
+                "Attempted to copy statement %s which has completed phase %s", this, getCompletedPhase());
 
         final SubstatementContext<A, D, E> copy = new SubstatementContext<>(this, newQNameModule, newParent, typeOfCopy);
 
