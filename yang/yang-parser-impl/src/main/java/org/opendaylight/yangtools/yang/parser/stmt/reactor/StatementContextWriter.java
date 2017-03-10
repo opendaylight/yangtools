@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
@@ -36,7 +37,12 @@ final class StatementContextWriter implements StatementWriter {
     public void endStatement(@Nonnull final StatementSourceReference ref) {
         Preconditions.checkState(current != null);
         current.endDeclared(ref, phase);
-        current = current.getParentContext();
+        StatementContextBase<?, ?, ?> parentContext = current.getParentContext();
+        while (parentContext != null && StatementSource.CONTEXT == parentContext.getStatementSource()) {
+            parentContext.endDeclared(ref, phase);
+            parentContext = parentContext.getParentContext();
+        }
+        current = parentContext;
     }
 
     @Nonnull
