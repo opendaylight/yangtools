@@ -12,9 +12,7 @@ import com.google.common.base.Preconditions;
 import java.net.URI;
 import java.util.Map;
 import java.util.Map.Entry;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
@@ -35,15 +33,7 @@ public final class XmlDocumentUtils {
     }
 
     public static Document getDocument() {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        Document doc = null;
-        try {
-            DocumentBuilder bob = dbf.newDocumentBuilder();
-            doc = bob.newDocument();
-        } catch (ParserConfigurationException e) {
-            throw new RuntimeException(e);
-        }
-        return doc;
+        return UntrustedXML.newDocumentBuilder().newDocument();
     }
 
     private static Element createElementFor(final Document doc, final QName qname, final Object obj) {
@@ -79,7 +69,8 @@ public final class XmlDocumentUtils {
     }
 
     public static Optional<ModifyAction> getModifyOperationFromAttributes(final Element xmlElement) {
-        Attr attributeNodeNS = xmlElement.getAttributeNodeNS(OPERATION_ATTRIBUTE_QNAME.getNamespace().toString(), OPERATION_ATTRIBUTE_QNAME.getLocalName());
+        Attr attributeNodeNS = xmlElement.getAttributeNodeNS(OPERATION_ATTRIBUTE_QNAME.getNamespace().toString(),
+            OPERATION_ATTRIBUTE_QNAME.getLocalName());
         if (attributeNodeNS == null) {
             return Optional.absent();
         }
@@ -90,7 +81,8 @@ public final class XmlDocumentUtils {
         return Optional.of(action);
     }
 
-    public static Optional<DataSchemaNode> findFirstSchema(final QName qname, final Iterable<DataSchemaNode> dataSchemaNode) {
+    public static Optional<DataSchemaNode> findFirstSchema(final QName qname,
+            final Iterable<DataSchemaNode> dataSchemaNode) {
         if (dataSchemaNode != null && qname != null) {
             for (DataSchemaNode dsn : dataSchemaNode) {
                 if (qname.isEqualWithoutRevision(dsn.getQName())) {
