@@ -18,11 +18,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -40,21 +38,10 @@ public class Bug2964Test {
     public static final String XML_CONTENT = "<cont2 xmlns=\"urn:opendaylight:yangtools:leafref:test\">\n"
             + "<point-to-identityrefleaf>test-identity</point-to-identityrefleaf>\n" + "</cont2>";
 
-    private static final DocumentBuilderFactory BUILDERFACTORY;
-
     private static final String NAMESPACE = "urn:opendaylight:yangtools:leafref:test";
     private static final String TEST_IDENTITY = "test-identity";
     private static final String CONT_2 = "cont2";
     private static final String IDENTITY_LEAFREF = "point-to-identityrefleaf";
-
-    static {
-        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        factory.setCoalescing(true);
-        factory.setIgnoringElementContentWhitespace(true);
-        factory.setIgnoringComments(true);
-        BUILDERFACTORY = factory;
-    }
 
     private SchemaContext schema;
 
@@ -90,14 +77,7 @@ public class Bug2964Test {
     }
 
     public static Document readXmlToDocument(final InputStream xmlContent) throws SAXException, IOException {
-        final DocumentBuilder dBuilder;
-        try {
-            dBuilder = BUILDERFACTORY.newDocumentBuilder();
-        } catch (final ParserConfigurationException e) {
-            throw new IllegalStateException("Failed to parse XML document", e);
-        }
-        final Document doc = dBuilder.parse(xmlContent);
-
+        final Document doc = UntrustedXML.newDocumentBuilder().parse(xmlContent);
         doc.getDocumentElement().normalize();
         return doc;
     }

@@ -14,9 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
@@ -32,6 +29,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
+import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
@@ -57,21 +55,12 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
-    private static final DocumentBuilderFactory BUILDERFACTORY;
 
-    static {
-        BUILDERFACTORY = DocumentBuilderFactory.newInstance();
-        BUILDERFACTORY.setNamespaceAware(true);
-        BUILDERFACTORY.setCoalescing(true);
-        BUILDERFACTORY.setIgnoringElementContentWhitespace(true);
-        BUILDERFACTORY.setIgnoringComments(true);
-    }
-
-    private QNameModule bazModuleQName;
-    private QName myAnyXMLDataBaz;
-    private QName bazQName;
-    private QName myContainer2QName;
-    private SchemaContext schemaContext;
+    private final QNameModule bazModuleQName;
+    private final QName myAnyXMLDataBaz;
+    private final QName bazQName;
+    private final QName myContainer2QName;
+    private final SchemaContext schemaContext;
 
     public YangModeledAnyXMLSerializationTest() throws Exception {
         bazModuleQName = QNameModule.create(new URI("baz"), SimpleDateFormatUtil.getRevisionFormat()
@@ -115,7 +104,7 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
         assertTrue(myContainer2SchemaNode instanceof ContainerSchemaNode);
         assertEquals(myContainer2SchemaNode, schemaOfAnyXmlData);
 
-        final Document document = getDocument();
+        final Document document = UntrustedXML.newDocumentBuilder().newDocument();
         final DOMResult domResult = new DOMResult(document);
 
         final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
@@ -152,14 +141,7 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
     }
 
     private static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {
-        final DocumentBuilder dBuilder;
-        try {
-            dBuilder = BUILDERFACTORY.newDocumentBuilder();
-        } catch (final ParserConfigurationException e) {
-            throw new RuntimeException("Failed to parse XML document", e);
-        }
-        final Document doc = dBuilder.parse(xmlContent);
-
+        final Document doc = UntrustedXML.newDocumentBuilder().parse(xmlContent);
         doc.getDocumentElement().normalize();
         return doc;
     }
@@ -178,17 +160,5 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
         } catch (IllegalArgumentException | TransformerFactoryConfigurationError | TransformerException e) {
             throw new RuntimeException("Unable to serialize xml element " + xml, e);
         }
-    }
-
-    private static Document getDocument() {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        Document doc = null;
-        try {
-            DocumentBuilder bob = dbf.newDocumentBuilder();
-            doc = bob.newDocument();
-        } catch (ParserConfigurationException e) {
-            throw new RuntimeException(e);
-        }
-        return doc;
     }
 }

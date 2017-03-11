@@ -20,9 +20,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
 import java.net.URISyntaxException;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -36,6 +33,7 @@ import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
+import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.export.YinExportUtils;
@@ -84,19 +82,7 @@ public class SchemaContextEmitterTest {
     }
 
     private static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {
-        final DocumentBuilder dBuilder;
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            factory.setCoalescing(true);
-            factory.setIgnoringElementContentWhitespace(true);
-            factory.setIgnoringComments(true);
-            dBuilder = factory.newDocumentBuilder();
-        } catch (final ParserConfigurationException e) {
-            throw new RuntimeException("Failed to parse XML document", e);
-        }
-        final Document doc = dBuilder.parse(xmlContent);
-
+        final Document doc = UntrustedXML.newDocumentBuilder().parse(xmlContent);
         doc.getDocumentElement().normalize();
         return doc;
     }

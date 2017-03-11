@@ -18,9 +18,6 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -39,6 +36,7 @@ import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
@@ -126,8 +124,7 @@ public class NormalizedNodesToXmlTest {
 
         final Document doc = loadDocument("/baz.xml");
 
-        final Document document = getDocument();
-        final DOMResult domResult = new DOMResult(document);
+        final DOMResult domResult = new DOMResult(UntrustedXML.newDocumentBuilder().newDocument());
 
         final XMLOutputFactory factory = XMLOutputFactory.newInstance();
         factory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
@@ -246,19 +243,7 @@ public class NormalizedNodesToXmlTest {
     }
 
     private static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {
-        final DocumentBuilder dBuilder;
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            factory.setNamespaceAware(true);
-            factory.setCoalescing(true);
-            factory.setIgnoringElementContentWhitespace(true);
-            factory.setIgnoringComments(true);
-            dBuilder = factory.newDocumentBuilder();
-        } catch (final ParserConfigurationException e) {
-            throw new RuntimeException("Failed to parse XML document", e);
-        }
-        final Document doc = dBuilder.parse(xmlContent);
-
+        final Document doc = UntrustedXML.newDocumentBuilder().parse(xmlContent);
         doc.getDocumentElement().normalize();
         return doc;
     }
@@ -277,17 +262,5 @@ public class NormalizedNodesToXmlTest {
         } catch (IllegalArgumentException | TransformerFactoryConfigurationError | TransformerException e) {
             throw new RuntimeException("Unable to serialize xml element " + xml, e);
         }
-    }
-
-    private static Document getDocument() {
-        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-        Document doc = null;
-        try {
-            DocumentBuilder bob = dbf.newDocumentBuilder();
-            doc = bob.newDocument();
-        } catch (ParserConfigurationException e) {
-            throw new RuntimeException(e);
-        }
-        return doc;
     }
 }

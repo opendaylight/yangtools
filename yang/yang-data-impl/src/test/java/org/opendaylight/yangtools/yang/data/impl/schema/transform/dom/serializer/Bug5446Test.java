@@ -15,9 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -32,6 +29,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
+import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
@@ -55,23 +53,16 @@ import org.xml.sax.SAXException;
 
 public class Bug5446Test extends XMLTestCase {
     private static final XMLOutputFactory XML_FACTORY;
-    private static final DocumentBuilderFactory BUILDERFACTORY;
 
     static {
         XML_FACTORY = XMLOutputFactory.newFactory();
         XML_FACTORY.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, false);
-
-        BUILDERFACTORY = DocumentBuilderFactory.newInstance();
-        BUILDERFACTORY.setNamespaceAware(true);
-        BUILDERFACTORY.setCoalescing(true);
-        BUILDERFACTORY.setIgnoringElementContentWhitespace(true);
-        BUILDERFACTORY.setIgnoringComments(true);
     }
 
-    private QNameModule fooModuleQName;
-    private QName rootQName;
-    private QName ipAddressQName;
-    private SchemaContext schemaContext;
+    private final QNameModule fooModuleQName;
+    private final QName rootQName;
+    private final QName ipAddressQName;
+    private final SchemaContext schemaContext;
 
     public Bug5446Test() throws Exception {
         fooModuleQName = QNameModule.create(new URI("foo"), SimpleDateFormatUtil.getRevisionFormat()
@@ -162,13 +153,7 @@ public class Bug5446Test extends XMLTestCase {
     }
 
     private static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {
-        final DocumentBuilder dBuilder;
-        try {
-            dBuilder = BUILDERFACTORY.newDocumentBuilder();
-        } catch (final ParserConfigurationException e) {
-            throw new RuntimeException("Failed to parse XML document", e);
-        }
-        final Document doc = dBuilder.parse(xmlContent);
+        final Document doc = UntrustedXML.newDocumentBuilder().parse(xmlContent);
 
         doc.getDocumentElement().normalize();
         return doc;
