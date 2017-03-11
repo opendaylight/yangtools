@@ -20,12 +20,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nonnull;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLOutputFactory;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
@@ -51,17 +49,10 @@ import org.xml.sax.SAXException;
 
 public class YangModeledAnyXMLDeserializationTest {
     private static final XMLOutputFactory XML_FACTORY;
-    private static final DocumentBuilderFactory BUILDERFACTORY;
 
     static {
         XML_FACTORY = XMLOutputFactory.newFactory();
         XML_FACTORY.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, false);
-
-        BUILDERFACTORY = DocumentBuilderFactory.newInstance();
-        BUILDERFACTORY.setNamespaceAware(true);
-        BUILDERFACTORY.setCoalescing(true);
-        BUILDERFACTORY.setIgnoringElementContentWhitespace(true);
-        BUILDERFACTORY.setIgnoringComments(true);
     }
 
     private QNameModule fooModuleQName;
@@ -177,19 +168,11 @@ public class YangModeledAnyXMLDeserializationTest {
         final InputStream resourceAsStream = YangModeledAnyXMLDeserializationTest.class.getResourceAsStream(xmlPath);
 
         final Document currentConfigElement = readXmlToDocument(resourceAsStream);
-        Preconditions.checkNotNull(currentConfigElement);
-        return currentConfigElement;
+        return Preconditions.checkNotNull(currentConfigElement);
     }
 
     private static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {
-        final DocumentBuilder dBuilder;
-        try {
-            dBuilder = BUILDERFACTORY.newDocumentBuilder();
-        } catch (final ParserConfigurationException e) {
-            throw new RuntimeException("Failed to parse XML document", e);
-        }
-        final Document doc = dBuilder.parse(xmlContent);
-
+        final Document doc = UntrustedXML.newDocumentBuilder().parse(xmlContent);
         doc.getDocumentElement().normalize();
         return doc;
     }

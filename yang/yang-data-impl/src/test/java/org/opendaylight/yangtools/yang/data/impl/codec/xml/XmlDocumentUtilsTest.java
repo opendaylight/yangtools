@@ -19,15 +19,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -53,25 +51,13 @@ public class XmlDocumentUtilsTest {
     private static final String NS2 = "urn:opendaylight:controller:xml:doc:test2";
     private static final String NS3 = "urn:opendaylight:controller:xml:doc:test3";
     private static final String REVISION = "2014-07-28";
-    private static final DocumentBuilderFactory BUILDERFACTORY;
-
-    static {
-        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        factory.setCoalescing(true);
-        factory.setIgnoringElementContentWhitespace(true);
-        factory.setIgnoringComments(true);
-        BUILDERFACTORY = factory;
-    }
 
     private static final String XML_CONTENT = "<input xmlns=\"urn:opendaylight:controller:xml:doc:test\">\n"
-            +
-            "<a>value</a>\n" +
- "<ref xmlns:ltha=\"urn:opendaylight:controller:xml:doc:test\">"
-            +
-            "/ltha:cont/ltha:l[  ltha:id='id/foo/bar'  ]"+
-            "</ref>\n" +
-            "</input>";
+            + "<a>value</a>\n"
+            + "<ref xmlns:ltha=\"urn:opendaylight:controller:xml:doc:test\">"
+            + "/ltha:cont/ltha:l[  ltha:id='id/foo/bar'  ]"
+            + "</ref>\n"
+            + "</input>";
 
     private SchemaContext schema;
 
@@ -88,14 +74,7 @@ public class XmlDocumentUtilsTest {
     }
 
     public static Document readXmlToDocument(final InputStream xmlContent) throws SAXException, IOException {
-        final DocumentBuilder dBuilder;
-        try {
-            dBuilder = BUILDERFACTORY.newDocumentBuilder();
-        } catch (final ParserConfigurationException e) {
-            throw new IllegalStateException("Failed to parse XML document", e);
-        }
-        final Document doc = dBuilder.parse(xmlContent);
-
+        final Document doc = UntrustedXML.newDocumentBuilder().parse(xmlContent);
         doc.getDocumentElement().normalize();
         return doc;
     }
