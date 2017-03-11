@@ -21,13 +21,13 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.xml.namespace.NamespaceContext;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
+import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
@@ -47,7 +47,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -59,14 +58,6 @@ import org.xml.sax.SAXException;
 @Beta
 @NotThreadSafe
 public final class XmlParserStream implements Closeable, Flushable {
-    private static final DocumentBuilderFactory FACTORY;
-
-    static {
-        DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
-        f.setNamespaceAware(true);
-        FACTORY = f;
-    }
-
     private final NormalizedNodeStreamWriter writer;
     private final XmlCodecFactory codecs;
     private final DataSchemaNode parentNode;
@@ -240,13 +231,13 @@ public final class XmlParserStream implements Closeable, Flushable {
              *  reuse JSON parsing or XML parsing - anyxml is not well-defined in
              * JSON.
              */
-            final Document doc = FACTORY.newDocumentBuilder().parse(new InputSource(new StringReader(value)));
+            final Document doc = UntrustedXML.newDocumentBuilder().parse(new InputSource(new StringReader(value)));
             doc.normalize();
 
             return new DOMSource(doc.getDocumentElement());
-        } else {
-            return codecs.codecFor(node, namespaceCtx).deserialize(value);
         }
+
+        return codecs.codecFor(node, namespaceCtx).deserialize(value);
     }
 
     private static AbstractNodeDataWithSchema newEntryNode(final AbstractNodeDataWithSchema parent) {
