@@ -20,12 +20,9 @@ public class Bug7424Test {
             StmtTestUtils.parseYangSource("/bugs/bug7424/foo-rpc.yang");
             fail("Test should fail due to invalid yang model.");
         } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e
-                    .getCause()
-                    .getMessage()
-                    .startsWith(
-                            "Error in module 'foo': cannot add '(foo?revision=1970-01-01)name'. "
-                                    + "Node name collision: '(foo?revision=1970-01-01)name' already declared."));
+            assertTrue(e.getCause().getMessage().startsWith(
+                        "Error in module 'foo': cannot add '(foo?revision=1970-01-01)name'. "
+                        + "Node name collision: '(foo?revision=1970-01-01)name' already declared"));
         }
     }
 
@@ -35,12 +32,9 @@ public class Bug7424Test {
             StmtTestUtils.parseYangSource("/bugs/bug7424/foo-notification.yang");
             fail("Test should fail due to invalid yang model.");
         } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e
-                    .getCause()
-                    .getMessage()
-                    .startsWith(
-                            "Error in module 'foo': cannot add '(foo?revision=1970-01-01)name'. "
-                                    + "Node name collision: '(foo?revision=1970-01-01)name' already declared."));
+            assertTrue(e.getCause().getMessage().startsWith(
+                        "Error in module 'foo': cannot add '(foo?revision=1970-01-01)name'. "
+                        + "Node name collision: '(foo?revision=1970-01-01)name' already declared"));
         }
     }
 
@@ -50,12 +44,9 @@ public class Bug7424Test {
             StmtTestUtils.parseYangSource("/bugs/bug7424/foo-data.yang");
             fail("Test should fail due to invalid yang model.");
         } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e
-                    .getCause()
-                    .getMessage()
-                    .startsWith(
-                            "Error in module 'foo': cannot add '(foo?revision=1970-01-01)name'. "
-                                    + "Node name collision: '(foo?revision=1970-01-01)name' already declared."));
+            assertTrue(e.getCause().getMessage().startsWith(
+                        "Error in module 'foo': cannot add '(foo?revision=1970-01-01)name'. "
+                        + "Node name collision: '(foo?revision=1970-01-01)name' already declared"));
         }
     }
 
@@ -65,12 +56,9 @@ public class Bug7424Test {
             StmtTestUtils.parseYangSource("/bugs/bug7424/foo-rpc-uses.yang");
             fail("Test should fail due to invalid yang model.");
         } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e
-                    .getCause()
-                    .getMessage()
-                    .startsWith(
-                            "Error in module 'foo': cannot add '(foo?revision=1970-01-01)name'. "
-                                    + "Node name collision: '(foo?revision=1970-01-01)name' already declared."));
+            assertTrue(e.getCause().getMessage().startsWith(
+                        "Error in module 'foo': cannot add '(foo?revision=1970-01-01)name'. "
+                        + "Node name collision: '(foo?revision=1970-01-01)name' already declared"));
         }
     }
 }

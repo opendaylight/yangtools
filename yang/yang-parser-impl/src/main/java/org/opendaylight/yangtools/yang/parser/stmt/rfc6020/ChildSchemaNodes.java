@@ -54,9 +54,12 @@ public class ChildSchemaNodes<D extends DeclaredStatement<QName>, E extends Effe
         final StmtContext<?, D, E> prev = globalOrStatementSpecific(storage).putToLocalStorageIfAbsent(
             ChildSchemaNodes.class, key, value);
 
-        SourceException.throwIf(prev != null, value.getStatementSourceReference(),
-                "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared.", value.getRoot()
-                        .getStatementArgument(), key, prev != null ? prev.getStatementArgument() : null);
+        if (prev != null) {
+            throw new SourceException(value.getStatementSourceReference(),
+                "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared at %s",
+                value.getRoot().getStatementArgument(), key, prev.getStatementArgument(),
+                prev.getStatementSourceReference());
+        }
     }
 
     private static NamespaceStorageNode globalOrStatementSpecific(final NamespaceStorageNode storage) {

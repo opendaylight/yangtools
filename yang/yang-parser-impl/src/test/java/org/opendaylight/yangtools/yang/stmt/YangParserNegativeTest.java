@@ -151,7 +151,7 @@ public class YangParserNegativeTest {
         } catch (final ReactorException e) {
             final String expected = "Error in module 'container': cannot add '(urn:simple.container" +
                     ".demo?revision=1970-01-01)foo'. Node name collision: '(urn:simple.container" +
-                    ".demo?revision=1970-01-01)foo' already declared.";
+                    ".demo?revision=1970-01-01)foo' already declared";
             assertTrue(e.getCause().getMessage().contains(expected));
         }
     }
@@ -167,7 +167,7 @@ public class YangParserNegativeTest {
         } catch (final ReactorException e) {
             final String expected = "Error in module 'container-list': cannot add '(urn:simple.container" +
                     ".demo?revision=1970-01-01)foo'. Node name collision: '(urn:simple.container" +
-                    ".demo?revision=1970-01-01)foo' already declared.";
+                    ".demo?revision=1970-01-01)foo' already declared";
             assertTrue(e.getCause().getMessage().contains(expected));
         }
     }
@@ -183,7 +183,7 @@ public class YangParserNegativeTest {
         } catch (final ReactorException e) {
             final String expected = "Error in module 'container-leaf': cannot add '(urn:simple.container" +
                     ".demo?revision=1970-01-01)foo'. Node name collision: '(urn:simple.container" +
-                    ".demo?revision=1970-01-01)foo' already declared.";
+                    ".demo?revision=1970-01-01)foo' already declared";
             assertTrue(e.getCause().getMessage().contains(expected));
         }
     }
