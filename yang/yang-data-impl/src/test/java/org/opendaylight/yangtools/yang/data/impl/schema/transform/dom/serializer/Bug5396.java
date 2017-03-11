@@ -19,12 +19,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Collections;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLOutputFactory;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
@@ -42,17 +40,10 @@ import org.xml.sax.SAXException;
 
 public class Bug5396 {
     private static final XMLOutputFactory XML_FACTORY;
-    private static final DocumentBuilderFactory BUILDERFACTORY;
 
     static {
         XML_FACTORY = XMLOutputFactory.newFactory();
         XML_FACTORY.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, false);
-
-        BUILDERFACTORY = DocumentBuilderFactory.newInstance();
-        BUILDERFACTORY.setNamespaceAware(true);
-        BUILDERFACTORY.setCoalescing(true);
-        BUILDERFACTORY.setIgnoringElementContentWhitespace(true);
-        BUILDERFACTORY.setIgnoringComments(true);
     }
 
     private QNameModule fooModuleQName;
@@ -80,14 +71,12 @@ public class Bug5396 {
             testInputXML("/bug5396/xml/invalid-foo.xml", null);
             fail("Test should fail due to invalid input string");
         } catch (IllegalArgumentException e) {
-            assertTrue(e
-                    .getMessage()
-                    .startsWith(
-                            "Failed to parse element [my-leaf: null] as leaf AbsoluteSchemaPath{path=[(foo?revision=2016-03-22)root, (foo?revision=2016-03-22)my-leaf]"));
+            assertTrue(e.getMessage().startsWith(
+                    "Failed to parse element [my-leaf: null] as leaf AbsoluteSchemaPath{path=[(foo?revision=2016-03-22)root, (foo?revision=2016-03-22)my-leaf]"));
         }
     }
 
-    public void testInputXML(String xmlPath, String expectedValue) throws Exception {
+    public void testInputXML(final String xmlPath, final String expectedValue) throws Exception {
         final Document doc = loadDocument(xmlPath);
 
         final ContainerNode output = DomToNormalizedNodeParserFactory
@@ -116,14 +105,7 @@ public class Bug5396 {
     }
 
     private static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {
-        final DocumentBuilder dBuilder;
-        try {
-            dBuilder = BUILDERFACTORY.newDocumentBuilder();
-        } catch (final ParserConfigurationException e) {
-            throw new RuntimeException("Failed to parse XML document", e);
-        }
-        final Document doc = dBuilder.parse(xmlContent);
-
+        final Document doc = UntrustedXML.newDocumentBuilder().parse(xmlContent);
         doc.getDocumentElement().normalize();
         return doc;
     }
