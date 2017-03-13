@@ -137,7 +137,8 @@ final class PatternConstraintFactory extends ConstraintFactory<PatternConstraint
 
     private static PatternConstraint createCustomizedConstraint(final PatternConstraint patternConstraint,
             final AbstractConstraintEffectiveStatement<?, ?> stmt) {
-        return new PatternConstraintEffectiveImpl(patternConstraint.getRegularExpression(), stmt.getDescription(),
-                stmt.getReference(), stmt.getErrorAppTag(), stmt.getErrorMessage());
+        return new PatternConstraintEffectiveImpl(patternConstraint.getRegularExpression(),
+                patternConstraint.getRawRegularExpression(), stmt.getDescription(), stmt.getReference(),
+                stmt.getErrorAppTag(), stmt.getErrorMessage());
     }
 }

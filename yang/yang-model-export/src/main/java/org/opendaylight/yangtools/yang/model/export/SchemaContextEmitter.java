@@ -573,7 +573,7 @@ class SchemaContextEmitter {
     }
 
     private void emitPatternNode(final PatternConstraint pattern) {
-        writer.startPatternNode(pattern.getRegularExpression());
+        writer.startPatternNode(pattern.getRawRegularExpression());
         emitErrorMessageNode(pattern.getErrorMessage()); // FIXME: BUG-2444: Optional
         emitErrorAppTagNode(pattern.getErrorAppTag()); // FIXME: BUG-2444: Optional
         emitDescriptionNode(pattern.getDescription());
