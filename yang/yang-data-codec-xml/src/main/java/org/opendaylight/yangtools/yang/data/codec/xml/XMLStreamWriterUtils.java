@@ -125,13 +125,13 @@ abstract class XMLStreamWriterUtils {
                       @Nonnull final Object value, final QNameModule parent) throws XMLStreamException {
         if (value instanceof QName) {
             final QName qname = (QName) value;
-            final String prefix = "x";
 
             //in case parent is present and same as element namespace write value without namespace
             if (qname.getNamespace().equals(parent.getNamespace())){
                 writer.writeCharacters(qname.getLocalName());
             } else {
                 final String ns = qname.getNamespace().toString();
+                final String prefix = "x";
                 writer.writeNamespace(prefix, ns);
                 writer.writeCharacters(prefix + ':' + qname.getLocalName());
             }
