@@ -10,29 +10,30 @@ package org.opendaylight.yangtools.yang.data.util;
 
 import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.yang.data.api.codec.UnionCodec;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractStringUnionCodec implements Codec<String, Object> {
+public abstract class AbstractStringUnionCodec implements UnionCodec<String> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractStringUnionCodec.class);
 
-    protected final DataSchemaNode schema;
-    protected final UnionTypeDefinition typeDefinition;
+    private final DataSchemaNode schema;
+    private final UnionTypeDefinition typeDefinition;
 
     protected AbstractStringUnionCodec(final DataSchemaNode schema, final UnionTypeDefinition typeDefinition) {
         this.schema = Preconditions.checkNotNull(schema);
         this.typeDefinition = Preconditions.checkNotNull(typeDefinition);
     }
 
-    protected abstract Codec<String, Object> codecFor(final TypeDefinition<?> type);
+    protected abstract Codec<String, Object> codecFor(DataSchemaNode schema, TypeDefinition<?> type);
 
     @Override
     public final String serialize(final Object data) {
         for (final TypeDefinition<?> type : typeDefinition.getTypes()) {
-            Codec<String, Object> codec = codecFor(type);
+            Codec<String, Object> codec = codecFor(schema, type);
             if (codec == null) {
                 LOG.debug("no codec found for {}", type);
                 continue;
@@ -55,7 +56,7 @@ public abstract class AbstractStringUnionCodec implements Codec<String, Object> 
 
         Object returnValue = null;
         for (final TypeDefinition<?> type : typeDefinition.getTypes()) {
-            Codec<String, Object> codec = codecFor(type);
+            Codec<String, Object> codec = codecFor(schema, type);
             if (codec == null) {
                 /*
                  * This is a type for which we have no codec (eg identity ref) so we'll say it's

@@ -26,13 +26,13 @@ final class JSONStringUnionCodec extends AbstractStringUnionCodec implements JSO
     }
 
     @Override
-    public void serializeToWriter(JsonWriter writer, Object value) throws IOException {
+    public void serializeToWriter(final JsonWriter writer, final Object value) throws IOException {
         writer.value(serialize(value));
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Codec<String, Object> codecFor(final TypeDefinition<?> type) {
+    protected Codec<String, Object> codecFor(final DataSchemaNode schema, final TypeDefinition<?> type) {
         return (Codec<String, Object>) codecFactory.codecFor(schema, type);
     }
 }
