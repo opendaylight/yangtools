@@ -1,0 +1,13 @@
+submodule subbar {
+    belongs-to bar {
+        prefix bar-prefix;
+    }
+
+    revision 2017-03-14;
+
+    container sub-container {
+        leaf sub-leaf {
+            type string;
+        }
+    }
+}

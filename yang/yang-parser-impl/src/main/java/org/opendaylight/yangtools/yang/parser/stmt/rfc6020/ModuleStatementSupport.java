@@ -142,6 +142,14 @@ public class ModuleStatementSupport extends
         }
 
         final QNameModule qNameModule = QNameModule.create(moduleNs.get(), revisionDate.orElse(null)).intern();
+
+        final StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>> possibleDuplicateModule =
+                stmt.getFromNamespace(NamespaceToModule.class, qNameModule);
+        if (possibleDuplicateModule != null && possibleDuplicateModule != stmt) {
+            throw new SourceException(stmt.getStatementSourceReference(), "Module namespace collision: %s. At %s",
+                    qNameModule.getNamespace(), possibleDuplicateModule.getStatementSourceReference());
+        }
+
         final ModuleIdentifier moduleIdentifier = ModuleIdentifierImpl.create(stmt.getStatementArgument(),
                 Optional.empty(), revisionDate);
 

@@ -7,7 +7,7 @@
  */
 module types1 {
     yang-version 1;
-    namespace "urn:simple.container.demo";
+    namespace "urn:simple.container.demo.types1";
     prefix "t1";
 
     import types2 {
