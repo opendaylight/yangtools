@@ -1,6 +1,6 @@
 module test3 {
     yang-version 1;
-    namespace "urn:simple.container.demo";
+    namespace "urn:simple.container.demo.test3";
     prefix "t1";
 
     import test0 {

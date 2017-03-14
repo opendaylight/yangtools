@@ -7,7 +7,7 @@
  */
 module types3 {
     yang-version 1;
-    namespace "urn:simple.container.demo.test";
+    namespace "urn:simple.container.demo.types3";
     prefix "t3";
 
     import types2 {
