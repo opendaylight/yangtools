@@ -7,7 +7,7 @@
  */
 module types2 {
     yang-version 1;
-    namespace "urn:simple.types.data.demo";
+    namespace "urn:simple.types.data.demo.types2";
     prefix "t2";
     
     organization "opendaylight";
