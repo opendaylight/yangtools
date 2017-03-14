@@ -42,6 +42,11 @@ class RandomPrefix {
             return prefix;
         }
 
+        prefix = context.getPrefix(namespace.toString());
+        if (prefix != null && !prefix.isEmpty()) {
+            return prefix;
+        }
+
         do {
             prefix = encode(counter);
             counter++;
