@@ -48,7 +48,7 @@ public class UnionCodecStringTest {
         assertEquals("serialize", "123", codec.serialize("123"));
         assertEquals("serialize", "123", codec.serialize(123));
         assertEquals("serialize", "", codec.serialize(null));
-        assertEquals("serialize", "", codec.serialize("" ));
+        assertEquals("serialize", "", codec.serialize(""));
     }
 
     @SuppressWarnings("unchecked")
@@ -59,10 +59,10 @@ public class UnionCodecStringTest {
                 UnionCodec.class);
 
         assertEquals("deserialize", "enum1", codec.deserialize("enum1"));
-        assertEquals("deserialize", "123", codec.deserialize("123"));
-        assertEquals("deserialize", "-123", codec.deserialize("-123"));
-        assertEquals("deserialize", "41234567890", codec.deserialize("41234567890"));
-        assertEquals("deserialize", "", codec.deserialize(""));
+        assertEquals("deserialize", 123, codec.deserialize("123"));
+        assertEquals("deserialize", -123, codec.deserialize("-123"));
+        assertEquals("deserialize", 41234567890L, codec.deserialize("41234567890"));
+        assertEquals("deserialize", null, codec.deserialize(""));
         assertEquals("deserialize", null, codec.deserialize(null));
 
         deserializeWithExpectedIllegalArgEx(codec, "enum3");
