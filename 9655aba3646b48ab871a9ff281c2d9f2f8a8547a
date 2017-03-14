@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_ad7b367a",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/ModuleStatementSupport.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-03-14T22:53:07Z",
+      "side": 1,
+      "message": "it would be nice to identify both sources.",
+      "range": {
+        "startLine": 149,
+        "startChar": 52,
+        "endLine": 150,
+        "endChar": 45
+      },
+      "revId": "9655aba3646b48ab871a9ff281c2d9f2f8a8547a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
