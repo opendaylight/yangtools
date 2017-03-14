@@ -15,6 +15,7 @@ import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT16_QNAME;
 import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT32_QNAME;
 import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT64_QNAME;
 import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT8_QNAME;
+
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -148,9 +149,9 @@ abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N>, T ex
      * @param radix numeric base.
      * @return Deserialized value.
      */
-    protected abstract N deserialize(String stringRepresentation, int radix);
+    abstract N deserialize(String stringRepresentation, int radix);
 
-    protected abstract N convertValue(Number value);
+    abstract N convertValue(Number value);
 
 
     protected static List<RangeConstraint> extractRange(final IntegerTypeDefinition type) {

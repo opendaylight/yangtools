@@ -21,7 +21,7 @@ final class Uint32StringCodec extends AbstractIntegerStringCodec<Long, UnsignedI
     }
 
     @Override
-    public Long deserialize(final String stringRepresentation, final int base) {
+    Long deserialize(final String stringRepresentation, final int base) {
         return Long.valueOf(stringRepresentation, base);
     }
 
@@ -31,7 +31,7 @@ final class Uint32StringCodec extends AbstractIntegerStringCodec<Long, UnsignedI
     }
 
     @Override
-    protected Long convertValue(final Number value) {
+    Long convertValue(final Number value) {
         return value.longValue();
     }
 }
