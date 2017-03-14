@@ -69,7 +69,7 @@ public final class JSONCodecFactory {
             } else {
                 throw new IllegalArgumentException("Not supported node type " + key.getClass().getName());
             }
-            return createCodec(key,type);
+            return createCodec(key, type);
         }
     });
 

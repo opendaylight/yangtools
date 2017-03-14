@@ -12,7 +12,6 @@ import com.google.common.base.Preconditions;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.data.util.AbstractStringUnionCodec;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -35,12 +34,12 @@ final class XmlStringUnionCodec extends AbstractStringUnionCodec implements XmlC
     }
 
     @Override
-    public void serializeToWriter(XMLStreamWriter writer, Object value) throws XMLStreamException {
+    public void serializeToWriter(final XMLStreamWriter writer, final Object value) throws XMLStreamException {
         writer.writeCharacters(serialize(value));
     }
 
     @Override
-    protected Codec<String, Object> codecFor(final TypeDefinition<?> type) {
+    protected Codec<String, Object> codecFor(final DataSchemaNode schema, final TypeDefinition<?> type) {
         return (Codec<String, Object>) codecFactory.codecFor(schema, type, namespaceContext);
     }
 }
