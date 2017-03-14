@@ -33,13 +33,13 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNormalizedNodeStreamWriter<SchemaNode> {
     private final SchemaTracker tracker;
-    private final XmlStreamUtils streamUtils;
+    private final XMLStreamWriterUtils streamUtils;
 
     private SchemaAwareXMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final SchemaContext context,
                                                            final SchemaPath path) {
         super(writer);
         this.tracker = SchemaTracker.create(context, path);
-        this.streamUtils = XmlStreamUtils.create(context);
+        this.streamUtils = XMLStreamWriterUtils.create(context);
     }
 
     static NormalizedNodeStreamWriter newInstance(final XMLStreamWriter writer, final SchemaContext context,
