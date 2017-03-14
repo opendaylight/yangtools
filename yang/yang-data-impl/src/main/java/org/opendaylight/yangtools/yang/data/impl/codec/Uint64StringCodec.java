@@ -22,7 +22,7 @@ final class Uint64StringCodec extends AbstractIntegerStringCodec<BigInteger, Uns
     }
 
     @Override
-    public BigInteger deserialize(final String stringRepresentation, final int base) {
+    BigInteger deserialize(final String stringRepresentation, final int base) {
         return new BigInteger(stringRepresentation, base);
     }
 
@@ -32,7 +32,7 @@ final class Uint64StringCodec extends AbstractIntegerStringCodec<BigInteger, Uns
     }
 
     @Override
-    protected BigInteger convertValue(final Number value) {
+    BigInteger convertValue(final Number value) {
         if (value instanceof BigInteger) {
             return (BigInteger) value;
         }

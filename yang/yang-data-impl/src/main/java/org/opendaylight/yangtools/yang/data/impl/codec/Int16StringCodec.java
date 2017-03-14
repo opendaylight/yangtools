@@ -19,7 +19,7 @@ final class Int16StringCodec extends AbstractIntegerStringCodec<Short, IntegerTy
     }
 
     @Override
-    public Short deserialize(final String stringRepresentation, final int base) {
+    Short deserialize(final String stringRepresentation, final int base) {
         return Short.valueOf(stringRepresentation, base);
     }
 
@@ -29,7 +29,7 @@ final class Int16StringCodec extends AbstractIntegerStringCodec<Short, IntegerTy
     }
 
     @Override
-    protected Short convertValue(final Number value) {
+    Short convertValue(final Number value) {
         return value.shortValue();
     }
 }
