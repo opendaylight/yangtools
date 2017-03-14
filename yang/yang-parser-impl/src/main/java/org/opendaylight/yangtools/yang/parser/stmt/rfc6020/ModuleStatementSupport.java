@@ -142,6 +142,13 @@ public class ModuleStatementSupport extends
         }
 
         final QNameModule qNameModule = QNameModule.create(moduleNs.get(), revisionDate.orElse(null)).intern();
+
+        final StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>> possibleDuplicateModule =
+                stmt.getFromNamespace(NamespaceToModule.class, qNameModule);
+        SourceException.throwIf(possibleDuplicateModule != null && possibleDuplicateModule != stmt,
+                stmt.getStatementSourceReference(), "Module %s was added to the YANG parsing cycle twice.",
+                stmt.getStatementArgument());
+
         final ModuleIdentifier moduleIdentifier = ModuleIdentifierImpl.create(stmt.getStatementArgument(),
                 Optional.empty(), revisionDate);
 
