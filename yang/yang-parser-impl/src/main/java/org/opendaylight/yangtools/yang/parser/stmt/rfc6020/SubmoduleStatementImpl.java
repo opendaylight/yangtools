@@ -100,6 +100,13 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
         public void onLinkageDeclared(
                 final Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> stmt) {
             final ModuleIdentifier submoduleIdentifier = getSubmoduleIdentifier(stmt);
+
+            final StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> possibleDuplicateSubmodule =
+                    stmt.getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);
+            SourceException.throwIf(possibleDuplicateSubmodule != null && possibleDuplicateSubmodule != stmt,
+                    stmt.getStatementSourceReference(), "Submodule %s was added to the YANG parsing cycle twice.",
+                    stmt.getStatementArgument());
+
             stmt.addContext(SubmoduleNamespace.class, submoduleIdentifier, stmt);
 
             final String belongsToModuleName = firstAttributeOf(stmt.declaredSubstatements(), BelongsToStatement.class);
