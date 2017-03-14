@@ -77,8 +77,8 @@ public class XmlStreamUtilsTest {
         final Map.Entry<QName, String> attributeEntryNoPrefix = new AbstractMap.SimpleEntry<>(name, "value");
 
         final RandomPrefix randomPrefix = new RandomPrefix();
-        XmlStreamUtils.writeAttribute(writer, attributeEntry, randomPrefix);
-        XmlStreamUtils.writeAttribute(writer, attributeEntryNoPrefix, randomPrefix);
+        XMLStreamWriterUtils.writeAttribute(writer, attributeEntry, randomPrefix);
+        XMLStreamWriterUtils.writeAttribute(writer, attributeEntryNoPrefix, randomPrefix);
 
         writer.writeEndElement();
         writer.close();
@@ -109,11 +109,11 @@ public class XmlStreamUtilsTest {
 
         writer.writeStartElement("element");
         final QNameModule parent = QNameModule.create(URI.create("parent:uri"), new Date());
-        XmlStreamUtils.write(writer, null, QName.create(parent, "identity"), Optional.of(parent));
+        XMLStreamWriterUtils.write(writer, null, QName.create(parent, "identity"), parent);
         writer.writeEndElement();
 
         writer.writeStartElement("elementDifferent");
-        XmlStreamUtils.write(writer, null, QName.create("different:namespace", "identity"), Optional.of(parent));
+        XMLStreamWriterUtils.write(writer, null, QName.create("different:namespace", "identity"), parent);
         writer.writeEndElement();
 
         writer.close();
@@ -189,9 +189,8 @@ public class XmlStreamUtilsTest {
             final QName moduleQName = QName.create(namespace, revision, "module");
             final QNameModule module = QNameModule.create(moduleQName.getNamespace(), moduleQName.getRevision());
             return QName.create(module, localName);
-        } else {
-            return QName.create(namespace, revision, localName);
         }
+        return QName.create(namespace, revision, localName);
     }
 
     private LeafSchemaNode findSchemaNodeWithLeafrefType(final DataNodeContainer module, final String nodeName) {
