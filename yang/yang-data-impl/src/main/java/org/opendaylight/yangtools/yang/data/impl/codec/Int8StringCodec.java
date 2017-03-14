@@ -20,7 +20,7 @@ final class Int8StringCodec extends AbstractIntegerStringCodec<Byte, IntegerType
     }
 
     @Override
-    public Byte deserialize(final String stringRepresentation, final int base) {
+    Byte deserialize(final String stringRepresentation, final int base) {
         return Byte.valueOf(stringRepresentation, base);
     }
 
@@ -30,7 +30,7 @@ final class Int8StringCodec extends AbstractIntegerStringCodec<Byte, IntegerType
     }
 
     @Override
-    protected Byte convertValue(final Number value) {
+    Byte convertValue(final Number value) {
         return value.byteValue();
     }
 }
