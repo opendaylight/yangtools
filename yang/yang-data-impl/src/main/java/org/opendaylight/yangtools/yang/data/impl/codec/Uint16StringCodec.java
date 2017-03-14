@@ -20,7 +20,7 @@ final class Uint16StringCodec extends AbstractIntegerStringCodec<Integer, Unsign
     }
 
     @Override
-    public Integer deserialize(final String stringRepresentation, final int base) {
+    Integer deserialize(final String stringRepresentation, final int base) {
         return Integer.valueOf(stringRepresentation, base);
     }
 
@@ -30,7 +30,7 @@ final class Uint16StringCodec extends AbstractIntegerStringCodec<Integer, Unsign
     }
 
     @Override
-    protected Integer convertValue(final Number value) {
+    Integer convertValue(final Number value) {
         return value.intValue();
     }
 }

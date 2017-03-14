@@ -20,7 +20,7 @@ final class Int64StringCodec extends AbstractIntegerStringCodec<Long, IntegerTyp
     }
 
     @Override
-    public Long deserialize(final String stringRepresentation, final int base) {
+    Long deserialize(final String stringRepresentation, final int base) {
         return Long.valueOf(stringRepresentation, base);
     }
 
@@ -30,7 +30,7 @@ final class Int64StringCodec extends AbstractIntegerStringCodec<Long, IntegerTyp
     }
 
     @Override
-    protected Long convertValue(final Number value) {
+    Long convertValue(final Number value) {
         return value.longValue();
     }
 }

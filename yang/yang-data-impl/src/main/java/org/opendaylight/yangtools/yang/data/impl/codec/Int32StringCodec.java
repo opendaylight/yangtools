@@ -19,7 +19,7 @@ final class Int32StringCodec extends AbstractIntegerStringCodec<Integer, Integer
     }
 
     @Override
-    public Integer deserialize(final String stringRepresentation, final int base) {
+    Integer deserialize(final String stringRepresentation, final int base) {
         return Integer.valueOf(stringRepresentation, base);
     }
 
@@ -29,7 +29,7 @@ final class Int32StringCodec extends AbstractIntegerStringCodec<Integer, Integer
     }
 
     @Override
-    protected Integer convertValue(final Number value) {
+    Integer convertValue(final Number value) {
         return value.intValue();
     }
 }
