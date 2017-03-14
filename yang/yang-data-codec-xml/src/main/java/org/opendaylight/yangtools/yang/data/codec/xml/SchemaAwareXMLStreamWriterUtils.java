@@ -36,7 +36,8 @@ final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils {
     @Override
     void writeInstanceIdentifier(final XMLStreamWriter writer, final YangInstanceIdentifier value)
             throws XMLStreamException {
-        RandomPrefixInstanceIdentifierSerializer iiCodec = new RandomPrefixInstanceIdentifierSerializer(schemaContext);
+        RandomPrefixInstanceIdentifierSerializer iiCodec = new RandomPrefixInstanceIdentifierSerializer(schemaContext,
+            writer.getNamespaceContext());
         String serializedValue = iiCodec.serialize(value);
 
         for (Entry<URI, String> e : iiCodec.getPrefixes()) {

@@ -9,14 +9,19 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import javax.xml.namespace.NamespaceContext;
 import org.hamcrest.CoreMatchers;
+import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -24,10 +29,19 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 public class RandomPrefixTest {
     static final int MAX_COUNTER = 4000;
 
+    private NamespaceContext context;
+
+    @Before
+    public void setup() {
+        context = mock(NamespaceContext.class);
+        doReturn(null).when(context).getPrefix(any(String.class));
+        doReturn("").when(context).getNamespaceURI(any(String.class));
+    }
+
     @Test
     public void testEncodeDecode() throws Exception {
 
-        final List<String> allGenerated = Lists.newArrayList();
+        final List<String> allGenerated = new ArrayList<>();
         for (int i = 0; i < MAX_COUNTER; i++) {
             final String encoded = RandomPrefix.encode(i);
             assertEquals(RandomPrefix.decode(encoded), i);
@@ -37,14 +51,14 @@ public class RandomPrefixTest {
         assertEquals(allGenerated.size(), MAX_COUNTER);
         assertEquals("dPT", allGenerated.get(MAX_COUNTER - 1));
         assertEquals("a", allGenerated.get(0));
-        assertEquals(allGenerated.size(), Sets.newHashSet(allGenerated).size());
+        assertEquals(allGenerated.size(), new HashSet<>(allGenerated).size());
     }
 
     @Test
     public void testQNameWithPrefix() throws Exception {
-        final RandomPrefix a = new RandomPrefix();
+        final RandomPrefix a = new RandomPrefix(context);
 
-        final List<String> allGenerated = Lists.newArrayList();
+        final List<String> allGenerated = new ArrayList<>();
         for (int i = 0; i < MAX_COUNTER; i++) {
             final String prefix = RandomPrefix.encode(i);
             final URI uri = new URI("localhost:" + prefix);
@@ -65,7 +79,7 @@ public class RandomPrefixTest {
 
     @Test
     public void test2QNames1Namespace() throws Exception {
-        final RandomPrefix a = new RandomPrefix();
+        final RandomPrefix a = new RandomPrefix(context);
 
         final URI uri = URI.create("localhost");
         final QName qName = QName.create(QNameModule.create(uri, new Date()), "local-name");
@@ -76,7 +90,7 @@ public class RandomPrefixTest {
 
     @Test
     public void testQNameNoPrefix() throws Exception {
-        final RandomPrefix a = new RandomPrefix();
+        final RandomPrefix a = new RandomPrefix(context);
 
         final URI uri = URI.create("localhost");
         QName qName = QName.create(uri, new Date(), "local-name");

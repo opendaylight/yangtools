@@ -28,10 +28,6 @@ class RandomPrefix {
     private final BiMap<URI, String> prefixes = HashBiMap.create();
     private final NamespaceContext context;
 
-    RandomPrefix() {
-        this.context = null;
-    }
-
     RandomPrefix(final NamespaceContext context) {
         this.context = Preconditions.checkNotNull(context);
     }
@@ -56,10 +52,6 @@ class RandomPrefix {
     }
 
     private boolean alreadyUsedPrefix(final String prefix) {
-        if (context == null) {
-            return false;
-        }
-
         final String str = context.getNamespaceURI(prefix);
         return !XMLConstants.NULL_NS_URI.equals(str);
     }
