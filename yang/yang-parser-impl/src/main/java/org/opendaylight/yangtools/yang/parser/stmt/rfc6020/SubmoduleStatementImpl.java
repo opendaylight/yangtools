@@ -100,6 +100,14 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
         public void onLinkageDeclared(
                 final Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> stmt) {
             final ModuleIdentifier submoduleIdentifier = getSubmoduleIdentifier(stmt);
+
+            final StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> possibleDuplicateSubmodule =
+                    stmt.getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);
+            if (possibleDuplicateSubmodule != null && possibleDuplicateSubmodule != stmt) {
+                throw new SourceException(stmt.getStatementSourceReference(), "Submodule name collision: %s. At %s",
+                        stmt.getStatementArgument(), possibleDuplicateSubmodule.getStatementSourceReference());
+            }
+
             stmt.addContext(SubmoduleNamespace.class, submoduleIdentifier, stmt);
 
             final String belongsToModuleName = firstAttributeOf(stmt.declaredSubstatements(), BelongsToStatement.class);
