@@ -62,24 +62,46 @@ public final class XmlParserStream implements Closeable, Flushable {
     private final XmlCodecFactory codecs;
     private final DataSchemaNode parentNode;
 
-    private XmlParserStream(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
-                             final DataSchemaNode parentNode) {
+    private XmlParserStream(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
+            final DataSchemaNode parentNode) {
         this.writer = Preconditions.checkNotNull(writer);
-        this.codecs = XmlCodecFactory.create(schemaContext);
+        this.codecs = Preconditions.checkNotNull(codecs);
         this.parentNode = parentNode;
     }
 
-    public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
-            final SchemaNode parentNode ) {
+    /**
+     * Construct a new {@link XmlParserStream}.
+     *
+     * @param writer Output write
+     * @param codecs Shared codecs
+     * @param parentNode Parent root node
+     * @return A new stream instance
+     */
+    public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
+            final SchemaNode parentNode) {
         if (parentNode instanceof RpcDefinition) {
-            return new XmlParserStream(writer, schemaContext, new RpcAsContainer((RpcDefinition) parentNode));
+            return new XmlParserStream(writer, codecs, new RpcAsContainer((RpcDefinition) parentNode));
         }
         Preconditions.checkArgument(parentNode instanceof DataSchemaNode, "Instance of DataSchemaNode class awaited.");
-        return new XmlParserStream(writer, schemaContext, (DataSchemaNode) parentNode);
+        return new XmlParserStream(writer, codecs, (DataSchemaNode) parentNode);
     }
 
+    /**
+     * @deprecated Use {@link #create(NormalizedNodeStreamWriter, SchemaContext, SchemaNode)} instead.
+     */
+    @Deprecated
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext) {
-        return new XmlParserStream(writer, schemaContext, schemaContext);
+        return create(writer, schemaContext, schemaContext);
+    }
+
+    /**
+     * Utility method for use when caching {@link XmlCodecFactory} is not feasible. Users with high performance
+     * requirements should use {@link #create(NormalizedNodeStreamWriter, XmlCodecFactory, SchemaNode)} instead and
+     * maintain a {@link XmlCodecFactory} to match the current {@link SchemaContext}.
+     */
+    public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
+            final SchemaNode parentNode) {
+        return create(writer, XmlCodecFactory.create(schemaContext), parentNode);
     }
 
     /**
