@@ -9,10 +9,7 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Verify;
-import java.net.URI;
 import java.util.Map.Entry;
 import javax.annotation.Nonnull;
 import javax.xml.stream.XMLStreamException;
@@ -21,15 +18,13 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,16 +32,12 @@ import org.slf4j.LoggerFactory;
  * Utility class for bridging JAXP Stream and YANG Data APIs. Note that the definition of this class
  * by no means final and subject to change as more functionality is centralized here.
  */
-class XmlStreamUtils {
-    private static final Logger LOG = LoggerFactory.getLogger(XmlStreamUtils.class);
-    private final Optional<SchemaContext> schemaContext;
+abstract class XMLStreamWriterUtils {
+    private static final Logger LOG = LoggerFactory.getLogger(XMLStreamWriterUtils.class);
 
-    private XmlStreamUtils(final SchemaContext schemaContext) {
-        this.schemaContext = Optional.fromNullable(schemaContext);
-    }
-
-    static XmlStreamUtils create(final SchemaContext schemaContext) {
-        return new XmlStreamUtils(schemaContext);
+    static XMLStreamWriterUtils create(final SchemaContext schemaContext) {
+        return schemaContext == null ? SchemalessXMLStreamWriterUtils.INSTANCE
+                : new SchemaAwareXMLStreamWriterUtils(schemaContext);
     }
 
     @VisibleForTesting
@@ -65,42 +56,27 @@ class XmlStreamUtils {
      * @param writer XML Stream writer
      * @param schemaNode Schema node that describes the value
      * @param value data value
-     * @param parent optional parameter of a module QName owning the leaf definition
+     * @param parent module QName owning the leaf definition
      * @throws XMLStreamException if an encoding problem occurs
      */
     void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final SchemaNode schemaNode,
-                           final Object value, final Optional<QNameModule> parent) throws XMLStreamException {
+            final Object value, final QNameModule parent) throws XMLStreamException {
         if (value == null) {
             LOG.debug("Value of {}:{} is null, not encoding it", schemaNode.getQName().getNamespace(),
                     schemaNode.getQName().getLocalName());
             return;
         }
 
-        Preconditions.checkArgument(schemaNode instanceof LeafSchemaNode || schemaNode instanceof LeafListSchemaNode,
+        Preconditions.checkArgument(schemaNode instanceof TypedSchemaNode,
                 "Unable to write value for node %s, only nodes of type: leaf and leaf-list can be written at this point",
                 schemaNode.getQName());
 
-        TypeDefinition<?> type = schemaNode instanceof LeafSchemaNode ?
-                ((LeafSchemaNode) schemaNode).getType():
-                ((LeafListSchemaNode) schemaNode).getType();
-
-        if (schemaContext.isPresent() && type instanceof LeafrefTypeDefinition) {
-            LeafrefTypeDefinition leafrefTypeDefinition = (LeafrefTypeDefinition) type;
-            type = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypeDefinition, schemaContext.get(), schemaNode);
-            Verify.verifyNotNull(type, "Unable to find base type for leafref node '%s'.", schemaNode.getPath());
+        TypeDefinition<?> type = ((TypedSchemaNode) schemaNode).getType();
+        if (type instanceof LeafrefTypeDefinition) {
+            type = getBaseTypeForLeafRef(schemaNode, (LeafrefTypeDefinition) type);
         }
 
         writeValue(writer, type, value, parent);
-    }
-
-    void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final SchemaNode schemaNode,
-                           final Object value) throws XMLStreamException {
-        writeValue(writer, schemaNode, value, Optional.absent());
-    }
-
-    void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final SchemaNode schemaNode,
-                           final Object value, final QNameModule parent) throws XMLStreamException {
-        writeValue(writer, schemaNode, value, Optional.of(parent));
     }
 
     /**
@@ -113,8 +89,8 @@ class XmlStreamUtils {
      * @param parent optional parameter of a module QName owning the leaf definition
      * @throws XMLStreamException if an encoding problem occurs
      */
-    void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final TypeDefinition<?> type,
-                           final Object value, final Optional<QNameModule> parent) throws XMLStreamException {
+    private void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final TypeDefinition<?> type,
+            final Object value, final QNameModule parent) throws XMLStreamException {
         if (value == null) {
             LOG.debug("Value of {}:{} is null, not encoding it", type.getQName().getNamespace(),
                     type.getQName().getLocalName());
@@ -122,11 +98,7 @@ class XmlStreamUtils {
         }
 
         if (type instanceof IdentityrefTypeDefinition) {
-            if (parent.isPresent()) {
-                write(writer, (IdentityrefTypeDefinition) type, value, parent);
-            } else {
-                write(writer, (IdentityrefTypeDefinition) type, value, Optional.absent());
-            }
+            write(writer, (IdentityrefTypeDefinition) type, value, parent);
         } else if (type instanceof InstanceIdentifierTypeDefinition) {
             write(writer, (InstanceIdentifierTypeDefinition) type, value);
         } else {
@@ -148,25 +120,15 @@ class XmlStreamUtils {
         }
     }
 
-    void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final TypeDefinition<?> type,
-                           final Object value, final QNameModule parent) throws XMLStreamException {
-        writeValue(writer, type, value, Optional.of(parent));
-    }
-
-    void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final TypeDefinition<?> type,
-                           final Object value) throws XMLStreamException {
-        writeValue(writer, type, value, Optional.absent());
-    }
-
     @VisibleForTesting
     static void write(@Nonnull final XMLStreamWriter writer, @Nonnull final IdentityrefTypeDefinition type,
-                      @Nonnull final Object value, final Optional<QNameModule>  parent) throws XMLStreamException {
+                      @Nonnull final Object value, final QNameModule parent) throws XMLStreamException {
         if (value instanceof QName) {
             final QName qname = (QName) value;
             final String prefix = "x";
 
             //in case parent is present and same as element namespace write value without namespace
-            if (parent.isPresent() && qname.getNamespace().equals(parent.get().getNamespace())){
+            if (qname.getNamespace().equals(parent.getNamespace())){
                 writer.writeCharacters(qname.getLocalName());
             } else {
                 final String ns = qname.getNamespace().toString();
@@ -192,24 +154,8 @@ class XmlStreamUtils {
         }
     }
 
-    void writeInstanceIdentifier(final XMLStreamWriter writer, final YangInstanceIdentifier value)
-            throws XMLStreamException {
-        if (schemaContext.isPresent()) {
-            RandomPrefixInstanceIdentifierSerializer iiCodec =
-                    new RandomPrefixInstanceIdentifierSerializer(schemaContext.get());
-            String serializedValue = iiCodec.serialize(value);
-            writeNamespaceDeclarations(writer, iiCodec.getPrefixes());
-            writer.writeCharacters(serializedValue);
-        } else {
-            LOG.warn("Schema context not present in {}, serializing {} without schema.",this,value);
-            writeInstanceIdentifier(writer, value);
-        }
-    }
+    abstract TypeDefinition<?> getBaseTypeForLeafRef(SchemaNode schemaNode, LeafrefTypeDefinition type);
 
-    private static void writeNamespaceDeclarations(final XMLStreamWriter writer,
-                                               final Iterable<Entry<URI, String>> prefixes) throws XMLStreamException {
-        for (Entry<URI, String> e: prefixes) {
-            writer.writeNamespace(e.getValue(), e.getKey().toString());
-        }
-    }
+    abstract void writeInstanceIdentifier(XMLStreamWriter writer, YangInstanceIdentifier value)
+            throws XMLStreamException;
 }
