@@ -1,0 +1,8 @@
+Code-Review+1: Vratko Polák <vrpolak@cisco.com>
+Code-Review+2: Robert Varga <nite@hq.sk>
+Verified+1: jenkins-releng <jenkins-releng@opendaylight.org>
+Submitted-by: Robert Varga <nite@hq.sk>
+Submitted-at: Tue, 14 Mar 2017 22:26:14 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/53272
+Project: yangtools
+Branch: refs/heads/master
