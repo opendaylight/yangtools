@@ -25,10 +25,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
@@ -62,22 +61,13 @@ public final class XmlCodecFactory {
         }
     };
 
-    private final LoadingCache<Entry<DataSchemaNode, NamespaceContext>, XmlCodec<?>> codecs =
-            CacheBuilder.newBuilder().softValues().build(
-                    new CacheLoader<Entry<DataSchemaNode, NamespaceContext>, XmlCodec<?>>() {
+    private final LoadingCache<Entry<TypedSchemaNode, NamespaceContext>, XmlCodec<?>> codecs = CacheBuilder.newBuilder()
+            .softValues().build(new CacheLoader<Entry<TypedSchemaNode, NamespaceContext>, XmlCodec<?>>() {
                 @Override
-                public XmlCodec<?> load(@Nonnull final Entry<DataSchemaNode, NamespaceContext> schemaNodeAndNamespaceCtxPair)
-                        throws Exception {
-                    final DataSchemaNode schemaNode = schemaNodeAndNamespaceCtxPair.getKey();
-                    final TypeDefinition<?> type;
-                    if (schemaNode instanceof LeafSchemaNode) {
-                        type = ((LeafSchemaNode) schemaNode).getType();
-                    } else if (schemaNode instanceof LeafListSchemaNode) {
-                        type = ((LeafListSchemaNode) schemaNode).getType();
-                    } else {
-                        throw new IllegalArgumentException("Not supported node type " + schemaNode.getClass().getName());
-                    }
-                    return createCodec(schemaNode,type, schemaNodeAndNamespaceCtxPair.getValue());
+                public XmlCodec<?> load(@Nonnull final Entry<TypedSchemaNode, NamespaceContext> pair) {
+                    final TypedSchemaNode schemaNode = pair.getKey();
+                    final TypeDefinition<?> type = schemaNode.getType();
+                    return createCodec(schemaNode, type, pair.getValue());
                 }
             });
 
@@ -156,7 +146,8 @@ public final class XmlCodecFactory {
     }
 
     XmlCodec<?> codecFor(final DataSchemaNode schema, final NamespaceContext namespaceContext) {
-        return codecs.getUnchecked(new SimpleImmutableEntry<>(schema, namespaceContext));
+        Preconditions.checkArgument(schema instanceof TypedSchemaNode, "Unsupported node type %s", schema.getClass());
+        return codecs.getUnchecked(new SimpleImmutableEntry<>((TypedSchemaNode)schema, namespaceContext));
     }
 
     XmlCodec<?> codecFor(final DataSchemaNode schema, final TypeDefinition<?> unionSubType,
