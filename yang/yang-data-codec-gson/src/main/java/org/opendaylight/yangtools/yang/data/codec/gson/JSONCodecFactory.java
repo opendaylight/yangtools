@@ -19,10 +19,9 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
@@ -57,19 +56,12 @@ public final class JSONCodecFactory {
         }
     };
 
-    private final LoadingCache<DataSchemaNode, JSONCodec<?>> codecs =
-            CacheBuilder.newBuilder().softValues().build(new CacheLoader<DataSchemaNode, JSONCodec<?>>() {
+    private final LoadingCache<TypedSchemaNode, JSONCodec<?>> codecs = CacheBuilder.newBuilder().softValues()
+            .build(new CacheLoader<TypedSchemaNode, JSONCodec<?>>() {
         @Override
-        public JSONCodec<?> load(@Nonnull final DataSchemaNode key) throws Exception {
-            final TypeDefinition<?> type;
-            if (key instanceof LeafSchemaNode) {
-                type = ((LeafSchemaNode) key).getType();
-            } else if (key instanceof LeafListSchemaNode) {
-                type = ((LeafListSchemaNode) key).getType();
-            } else {
-                throw new IllegalArgumentException("Not supported node type " + key.getClass().getName());
-            }
-            return createCodec(key,type);
+        public JSONCodec<?> load(@Nonnull final TypedSchemaNode key) throws Exception {
+            final TypeDefinition<?> type = key.getType();
+            return createCodec(key, type);
         }
     });
 
@@ -144,7 +136,8 @@ public final class JSONCodecFactory {
     }
 
     JSONCodec<?> codecFor(final DataSchemaNode schema) {
-        return codecs.getUnchecked(schema);
+        Preconditions.checkArgument(schema instanceof TypedSchemaNode, "Unsupported node type %s", schema.getClass());
+        return codecs.getUnchecked((TypedSchemaNode) schema);
     }
 
     JSONCodec<?> codecFor(final DataSchemaNode schema, final TypeDefinition<?> unionSubType) {
