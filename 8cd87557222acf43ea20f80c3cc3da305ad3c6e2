@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_5e94f2e7",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/ModuleStatementSupport.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-03-15T12:27:27Z",
+      "side": 1,
+      "message": "Statement arguments i.e. module names are always the same here. However, StatementSourceReferences should be different, so I think both StatementSourceReferences are the crucial information we need to identify and report here...",
+      "range": {
+        "startLine": 150,
+        "startChar": 20,
+        "endLine": 150,
+        "endChar": 95
+      },
+      "revId": "8cd87557222acf43ea20f80c3cc3da305ad3c6e2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
