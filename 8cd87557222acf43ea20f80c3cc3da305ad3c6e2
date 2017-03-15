@@ -22,6 +22,30 @@
       "revId": "8cd87557222acf43ea20f80c3cc3da305ad3c6e2",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_237d92b2",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/ModuleStatementSupport.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-03-15T16:00:47Z",
+      "side": 1,
+      "message": "Yes, that\u0027s what I mean in my previous comment",
+      "parentUuid": "fafc7978_5e94f2e7",
+      "range": {
+        "startLine": 150,
+        "startChar": 20,
+        "endLine": 150,
+        "endChar": 95
+      },
+      "revId": "8cd87557222acf43ea20f80c3cc3da305ad3c6e2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
