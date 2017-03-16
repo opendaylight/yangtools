@@ -31,8 +31,9 @@ final class SharedJSONCodecFactory extends JSONCodecFactory {
                 }
             });
 
+    // Weak keys to force identity lookup
     // Soft values to keep unreferenced codecs around for a bit, but eventually we want them to go away
-    private final LoadingCache<TypedSchemaNode, JSONCodec<?>> codecs = CacheBuilder.newBuilder().softValues()
+    private final LoadingCache<TypedSchemaNode, JSONCodec<?>> codecs = CacheBuilder.newBuilder().weakKeys().softValues()
             .build(new CacheLoader<TypedSchemaNode, JSONCodec<?>>() {
                 @Override
                 public JSONCodec<?> load(@Nonnull final TypedSchemaNode key) {
