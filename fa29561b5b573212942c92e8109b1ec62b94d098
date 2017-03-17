@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_f13fc6d4",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2017-03-17T16:33:53Z",
+      "side": 1,
+      "message": "Maybe we should ask NETMOD mailing list, they may issue an errata. But ODL may have many downstream consumers already patching their models for ODL Boron behavior, so errata does not really matter that much.\n\nBu we should definitely document that ODL handles Yang 1.0 models in a way incompatible with Yang 1.1 wording.",
+      "range": {
+        "startLine": 13,
+        "startChar": 8,
+        "endLine": 13,
+        "endChar": 35
+      },
+      "revId": "fa29561b5b573212942c92e8109b1ec62b94d098",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_31730ee9",
+        "filename": "yang/yang-parser-impl/src/test/resources/bugs/bug6183/foo.yang",
+        "patchSetId": 7
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2017-03-17T16:33:53Z",
+      "side": 1,
+      "message": "Remove trailing whitespace.",
+      "range": {
+        "startLine": 51,
+        "startChar": 0,
+        "endLine": 51,
+        "endChar": 4
+      },
+      "revId": "fa29561b5b573212942c92e8109b1ec62b94d098",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
