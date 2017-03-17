@@ -159,7 +159,7 @@ public class NormalizedNodeXmlTranslationTest {
 
         final NormalizedNodeBuilder<NodeIdentifier, Object, LeafNode<Object>> booleanBuilder = Builders
                 .leafBuilder().withNodeIdentifier(getNodeIdentifier("boolean"));
-        booleanBuilder.withValue(false);
+        booleanBuilder.withValue(Boolean.FALSE);
         b.withChild(booleanBuilder.build());
 
         final ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafListBuilder = Builders.leafSetBuilder()
@@ -315,7 +315,7 @@ public class NormalizedNodeXmlTranslationTest {
     static final XMLOutputFactory XML_FACTORY;
     static {
         XML_FACTORY = XMLOutputFactory.newFactory();
-        XML_FACTORY.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, false);
+        XML_FACTORY.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.FALSE);
     }
 
     private static void writeNormalizedNode(final NormalizedNode<?, ?> normalized, final DOMResult result,

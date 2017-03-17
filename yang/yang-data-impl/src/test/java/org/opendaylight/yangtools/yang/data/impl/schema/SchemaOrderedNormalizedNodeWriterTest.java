@@ -153,7 +153,8 @@ public class SchemaOrderedNormalizedNodeWriterTest {
         XMLAssert.assertXMLIdentical(new Diff(EXPECTED_2, stringWriter.toString()), true);
     }
 
-    private SchemaContext getSchemaContext(final String filePath) throws URISyntaxException, ReactorException, FileNotFoundException {
+    private static SchemaContext getSchemaContext(final String filePath) throws URISyntaxException,
+            ReactorException, FileNotFoundException {
         return YangParserTestUtils.parseYangSource(filePath);
     }
 

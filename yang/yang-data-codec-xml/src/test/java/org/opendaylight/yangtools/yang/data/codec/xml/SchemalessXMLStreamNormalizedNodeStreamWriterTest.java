@@ -148,7 +148,7 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
         final DOMResult domResult = new DOMResult(UntrustedXML.newDocumentBuilder().newDocument());
 
         final XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        factory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
+        factory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);
 
         final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(domResult);
 
