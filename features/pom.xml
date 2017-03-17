@@ -32,6 +32,8 @@
         <module>odl-yangtools-yang-data</module>
         <module>odl-yangtools-yang-parser</module>
         <module>features4-yangtools</module>
+
+        <module>odl-guava</module>
     </modules>
 
     <!--
