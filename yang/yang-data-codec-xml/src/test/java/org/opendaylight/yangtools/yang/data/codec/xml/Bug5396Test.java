@@ -62,7 +62,7 @@ public class Bug5396Test {
         }
     }
 
-    private void testInputXML(String xmlPath, String expectedValue) throws Exception {
+    private void testInputXML(final String xmlPath, final String expectedValue) throws Exception {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream(xmlPath);
 
         final XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -72,7 +72,7 @@ public class Bug5396Test {
 
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
         xmlParser.parse(reader);
 
         assertNotNull(result.getResult());

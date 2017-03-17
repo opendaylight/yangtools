@@ -86,7 +86,7 @@ public class Bug5446Test {
         return writer.toString();
     }
 
-    private ContainerNode createRootNode() {
+    private static ContainerNode createRootNode() {
         LeafNode<byte[]> ipAddress = ImmutableNodes.leafNode(ipAddressQName, BaseEncoding.base64().decode("fwAAAQ=="));
         return ImmutableContainerNodeBuilder.create().withNodeIdentifier(new NodeIdentifier(rootQName))
                 .withChild(ipAddress).build();

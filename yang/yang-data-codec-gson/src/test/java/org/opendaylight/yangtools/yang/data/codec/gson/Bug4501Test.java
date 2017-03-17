@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
@@ -50,7 +50,7 @@ public class Bug4501Test {
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, schemaContext);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
-        assertNotNull(transformedInput instanceof UnkeyedListNode);
+        assertTrue(transformedInput instanceof UnkeyedListNode);
 
         final UnkeyedListNode hop = (UnkeyedListNode) transformedInput;
         final Optional<DataContainerChild<? extends PathArgument, ?>> lrsBits = hop.getChild(0).getChild(

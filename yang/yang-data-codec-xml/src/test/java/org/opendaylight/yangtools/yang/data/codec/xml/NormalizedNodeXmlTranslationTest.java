@@ -115,7 +115,7 @@ public class NormalizedNodeXmlTranslationTest {
     static final XMLOutputFactory XML_FACTORY;
     static {
         XML_FACTORY = XMLOutputFactory.newFactory();
-        XML_FACTORY.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, false);
+        XML_FACTORY.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.FALSE);
     }
 
     private static ContainerNode augmentChoiceHell2() {
@@ -169,7 +169,7 @@ public class NormalizedNodeXmlTranslationTest {
 
         final NormalizedNodeBuilder<NodeIdentifier, Object, LeafNode<Object>> booleanBuilder = Builders
                 .leafBuilder().withNodeIdentifier(getNodeIdentifier("boolean"));
-        booleanBuilder.withValue(false);
+        booleanBuilder.withValue(Boolean.FALSE);
         b.withChild(booleanBuilder.build());
 
         final ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafListBuilder = Builders.leafSetBuilder()
@@ -282,7 +282,7 @@ public class NormalizedNodeXmlTranslationTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schema);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schema, schema);
         xmlParser.parse(reader);
 
         final NormalizedNode<?, ?> built = result.getResult();
@@ -296,7 +296,7 @@ public class NormalizedNodeXmlTranslationTest {
         final DOMResult domResult = new DOMResult(document);
 
         final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-        outputFactory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
+        outputFactory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);
 
         final XMLStreamWriter xmlStreamWriter = outputFactory.createXMLStreamWriter(domResult);
 

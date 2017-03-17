@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
@@ -79,8 +80,8 @@ public class BuilderTest {
     private static final MapEntryNode LIST_MAIN_CHILD_1 = ImmutableNodes.mapEntry(LIST_MAIN, LIST_MAIN_CHILD_QNAME_1, 1);
     private static final MapEntryNode LIST_MAIN_CHILD_2 = ImmutableNodes.mapEntry(LIST_MAIN, LIST_MAIN_CHILD_QNAME_1, 2);
     private static final MapEntryNode LIST_MAIN_CHILD_3 = ImmutableNodes.mapEntry(LIST_MAIN, LIST_MAIN_CHILD_QNAME_1, 3);
-    private static final Integer SIZE = 3;
-    private static final NodeWithValue BAR_PATH = new NodeWithValue<>(LEAF_LIST_MAIN, "bar");
+    private static final int SIZE = 3;
+    private static final NodeWithValue<String> BAR_PATH = new NodeWithValue<>(LEAF_LIST_MAIN, "bar");
     private static final LeafSetEntryNode LEAF_SET_ENTRY_NODE = ImmutableLeafSetEntryNodeBuilder.create()
             .withNodeIdentifier(BAR_PATH)
             .withValue("bar")
@@ -127,13 +128,11 @@ public class BuilderTest {
                 .build();
 
         assertNotNull(Builders.orderedMapBuilder(list));
-        assertEquals(SIZE, (Integer) orderedMapNodeCreateNull.getSize());
+        assertEquals(SIZE, orderedMapNodeCreateNull.getSize());
         assertEquals(orderedMapNodeCreateNode.getSize(), orderedMapNodeCreateNull.getSize() - 1);
         assertEquals(NODE_IDENTIFIER_LIST, orderedMapNodeCreateSize.getIdentifier());
-        assertEquals(orderedMapNodeCreateNull.getChild(0), LIST_MAIN_CHILD_1);
-        assertEquals((Integer) orderedMapNodeCreateNull.getValue().size(), SIZE);
-        assertNotNull(orderedMapNodeCreateNull.hashCode());
-        assertEquals((Integer) orderedMapNodeCreateNull.getValue().size(), SIZE);
+        assertEquals(LIST_MAIN_CHILD_1, orderedMapNodeCreateNull.getChild(0));
+        assertEquals(SIZE, orderedMapNodeCreateNull.getValue().size());
         assertEquals(orderedMapNodeSchemaAware.getChild(0), orderedMapNodeSchemaAwareMapNodeConst.getChild(0));
     }
 
@@ -159,7 +158,6 @@ public class BuilderTest {
 
         assertNotNull(Builders.orderedLeafSetBuilder(leafList));
         assertNotNull(Builders.anyXmlBuilder());
-        assertNotNull(orderedLeafSetShemaAware.hashCode());
         assertNotNull(orderedLeafSetShemaAware);
         assertEquals(1, ((OrderedLeafSetNode<?>)orderedLeafSet).getSize());
         assertEquals("baz", ((OrderedLeafSetNode<?>)orderedLeafSet).getChild(0).getValue());
@@ -177,7 +175,6 @@ public class BuilderTest {
         collectionNodeBuilder.withNodeIdentifier(NODE_IDENTIFIER_LEAF_LIST);
         collectionNodeBuilder.withValue(mapEntryNodeColl);
         final MapNode mapNode = collectionNodeBuilder.build();
-        assertNotNull(mapNode.hashCode());
         final MapNode mapNodeSchemaAware = ImmutableMapNodeSchemaAwareBuilder.create(list, getImmutableMapNode()).build();
         assertNotNull(mapNodeSchemaAware);
         assertNotNull(Builders.mapBuilder(mapNode));
@@ -219,7 +216,6 @@ public class BuilderTest {
         } catch (IndexOutOfBoundsException e) {
         }
 
-        assertNotNull(unkeyedListNodeSize.getSize());
         assertNotNull(unkeyedListNodeSize.getValue());
         assertEquals(unkeyedListEntryNode, unkeyedListNodeCreated.getChild(0));
         assertEquals(unkeyedListNode.getNodeType().getLocalName(), unkeyedListNodeSize.getNodeType()

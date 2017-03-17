@@ -39,7 +39,7 @@ public class Bug6112Test {
         schemaContext = YangParserTestUtils.parseYangSources("/bug-6112/yang");
     }
 
-    private NormalizedNode<?, ?> readJson(final String jsonPath) throws IOException, URISyntaxException {
+    private static NormalizedNode<?, ?> readJson(final String jsonPath) throws IOException, URISyntaxException {
         final String inputJson = loadTextFile(jsonPath);
 
         final NormalizedNodeResult result = new NormalizedNodeResult();

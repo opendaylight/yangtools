@@ -119,7 +119,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
         xmlParser.parse(reader);
 
         xmlParser.flush();
@@ -147,7 +147,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
         xmlParser.parse(reader);
 
         final NormalizedNode<?, ?> transformedInput = result.getResult();
@@ -167,7 +167,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
         try {
             xmlParser.parse(reader);
             fail("IllegalStateException should have been thrown because of duplicate leaf.");
@@ -190,7 +190,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
         try {
             xmlParser.parse(reader);
             fail("IllegalStateException should have been thrown because of duplicate anyxml");
@@ -212,7 +212,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
         try {
             xmlParser.parse(reader);
             fail("IllegalStateException should have been thrown because of duplicate container");
@@ -234,7 +234,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
         try {
             xmlParser.parse(reader);
             fail("XMLStreamException should have been thrown because of unterminated leaf element.");
@@ -257,7 +257,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
         try {
             xmlParser.parse(reader);
             fail("XMLStreamException should have been thrown because of unterminated leaf element.");
@@ -280,7 +280,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
         try {
             xmlParser.parse(reader);
             fail("XMLStreamException should have been thrown because of unterminated container element.");
@@ -303,7 +303,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
         try {
             xmlParser.parse(reader);
             fail("IllegalStateException should have been thrown because of an unexisting container element.");

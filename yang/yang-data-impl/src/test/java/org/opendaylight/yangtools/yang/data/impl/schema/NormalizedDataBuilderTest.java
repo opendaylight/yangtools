@@ -8,12 +8,12 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.junit.Before;
@@ -205,7 +205,7 @@ public class NormalizedDataBuilderTest {
     }
 
     private static DataSchemaNode findChildNode(final Iterable<DataSchemaNode> children, final String name) {
-        List<DataNodeContainer> containers = Lists.newArrayList();
+        List<DataNodeContainer> containers = new ArrayList<>();
 
         for (DataSchemaNode dataSchemaNode : children) {
             if (dataSchemaNode.getQName().getLocalName().equals(name)) {

@@ -15,7 +15,6 @@ import com.google.common.base.Preconditions;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.RegEx;
 import javax.xml.transform.dom.DOMSource;
@@ -275,8 +274,7 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
             // text value, i.e. a number, string, boolean or null
             if (TEXT_NODE == childNode.getNodeType()) {
                 final String childNodeText = childNode.getNodeValue();
-                final Matcher matcher = NUMBER_PATTERN.matcher(childNodeText);
-                if (matcher.matches()) {
+                if (NUMBER_PATTERN.matcher(childNodeText).matches()) {
                     writer.value(parseNumber(childNodeText));
                 } else if ("true".equals(childNodeText) || "false".equals(childNodeText)) {
                     writer.value(Boolean.parseBoolean(childNodeText));
@@ -303,12 +301,11 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
 
     // json numbers are 64 bit wide floating point numbers - in java terms it is either long or double
     private static Number parseNumber(final String numberText) {
-        Matcher matcher = NOT_DECIMAL_NUMBER_PATTERN.matcher(numberText);
-        if (matcher.matches()) {
-            return Long.parseLong(numberText);
-        } else {
-            return Double.parseDouble(numberText);
+        if (NOT_DECIMAL_NUMBER_PATTERN.matcher(numberText).matches()) {
+            return Long.valueOf(numberText);
         }
+
+        return Double.valueOf(numberText);
     }
 
     private static boolean isJsonObject(final Node firstChild) {
