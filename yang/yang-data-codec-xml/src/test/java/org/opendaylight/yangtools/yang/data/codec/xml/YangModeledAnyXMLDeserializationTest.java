@@ -80,7 +80,7 @@ public class YangModeledAnyXMLDeserializationTest {
 
     @Test
     public void testRawAnyXMLFromBar() throws Exception {
-        DataSchemaNode barContainer = schemaContext.getDataChildByName(QName.create(barModuleQName, "bar"));;
+        DataSchemaNode barContainer = schemaContext.getDataChildByName(QName.create(barModuleQName, "bar"));
         assertTrue(barContainer instanceof ContainerSchemaNode);
         final YangModeledAnyXmlSchemaNode yangModeledAnyXML = new YangModeledAnyXMLSchemaNodeImplTest(myAnyXMLDataBar,
                 (ContainerSchemaNode) barContainer);
@@ -131,7 +131,7 @@ public class YangModeledAnyXMLDeserializationTest {
 
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
         xmlParser.parse(reader);
 
         final NormalizedNode<?, ?> output = result.build();
@@ -174,7 +174,7 @@ public class YangModeledAnyXMLDeserializationTest {
         private final QName qName;
         private final ContainerSchemaNode contentSchema;
 
-        private YangModeledAnyXMLSchemaNodeImplTest(QName qName, ContainerSchemaNode contentSchema) {
+        private YangModeledAnyXMLSchemaNodeImplTest(final QName qName, final ContainerSchemaNode contentSchema) {
             this.qName = qName;
             this.contentSchema = contentSchema;
         }

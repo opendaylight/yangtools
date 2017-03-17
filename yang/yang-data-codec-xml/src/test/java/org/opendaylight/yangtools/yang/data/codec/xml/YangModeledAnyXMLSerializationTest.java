@@ -83,7 +83,7 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
 
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
         xmlParser.parse(reader);
 
         final NormalizedNode<?, ?> transformedInput = result.getResult();
@@ -108,7 +108,7 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
         final DOMResult domResult = new DOMResult(document);
 
         final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-        outputFactory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
+        outputFactory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);
 
         final XMLStreamWriter xmlStreamWriter = outputFactory.createXMLStreamWriter(domResult);
 

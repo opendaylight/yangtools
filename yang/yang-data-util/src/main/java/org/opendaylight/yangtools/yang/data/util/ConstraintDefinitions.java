@@ -26,7 +26,7 @@ public final class ConstraintDefinitions {
         result = prime * result + Objects.hashCode(def.getMustConstraints());
         result = prime * result + Objects.hashCode(def.getMinElements());
         result = prime * result + Objects.hashCode(def.getMaxElements());
-        result = prime * result + Objects.hashCode(def.isMandatory());
+        result = prime * result + Boolean.hashCode(def.isMandatory());
         return result;
     }
 
