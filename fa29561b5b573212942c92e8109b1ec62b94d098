@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fafc7978_74190479",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 7
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2017-03-17T16:36:22Z",
+      "side": 1,
+      "message": "\u003e document\n\nIt should contain a clear recommendation \"If you are writing Yang 1.0 files, do not use shorthand cases.\".",
+      "parentUuid": "fafc7978_f13fc6d4",
+      "range": {
+        "startLine": 13,
+        "startChar": 8,
+        "endLine": 13,
+        "endChar": 35
+      },
+      "revId": "fa29561b5b573212942c92e8109b1ec62b94d098",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fafc7978_31730ee9",
         "filename": "yang/yang-parser-impl/src/test/resources/bugs/bug6183/foo.yang",
         "patchSetId": 7
