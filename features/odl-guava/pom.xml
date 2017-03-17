@@ -13,53 +13,25 @@
 
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
-        <artifactId>feature-repo-parent</artifactId>
+        <artifactId>single-feature-parent</artifactId>
         <version>1.8.0-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
     <groupId>org.opendaylight.yangtools</groupId>
-    <artifactId>features4-yangtools</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
+    <artifactId>odl4-guava</artifactId>
+    <version>1.8.0-SNAPSHOT</version>
     <packaging>feature</packaging>
+
+    <name>OpenDaylight :: Guava (for Karaf 4)</name>
 
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>odl4-guava</artifactId>
-            <version>1.8.0-SNAPSHOT</version>
-            <classifier>features</classifier>
-            <type>xml</type>
-        </dependency>
-
-        <dependency>
             <groupId>org.opendaylight.odlparent</groupId>
-            <artifactId>features4-odlparent</artifactId>
-            <version>1.8.0-SNAPSHOT</version>
-            <classifier>features</classifier>
+            <artifactId>odl4-guava-18</artifactId>
+            <version>[1.7.0,2.0.0)</version>
             <type>xml</type>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>odl-yangtools-common</artifactId>
-            <version>${project.version}</version>
             <classifier>features</classifier>
-            <type>xml</type>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>odl-yangtools-yang-data</artifactId>
-            <version>${project.version}</version>
-            <classifier>features</classifier>
-            <type>xml</type>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>odl-yangtools-yang-parser</artifactId>
-            <version>${project.version}</version>
-            <classifier>features</classifier>
-            <type>xml</type>
         </dependency>
     </dependencies>
 
