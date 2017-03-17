@@ -56,7 +56,7 @@ public class Bug5446Test extends XMLTestCase {
 
     static {
         XML_FACTORY = XMLOutputFactory.newFactory();
-        XML_FACTORY.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, false);
+        XML_FACTORY.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.FALSE);
     }
 
     private final QNameModule fooModuleQName;

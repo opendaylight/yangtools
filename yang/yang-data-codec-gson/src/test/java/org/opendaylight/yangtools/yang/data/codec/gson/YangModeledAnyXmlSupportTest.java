@@ -64,7 +64,7 @@ public class YangModeledAnyXmlSupportTest {
 
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
         xmlParser.parse(reader);
 
         assertNotNull(result.getResult());
