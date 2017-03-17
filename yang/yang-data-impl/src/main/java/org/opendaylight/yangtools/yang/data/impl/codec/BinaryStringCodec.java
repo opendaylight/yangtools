@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableRangeSet;
@@ -19,6 +20,11 @@ import org.opendaylight.yangtools.yang.data.api.codec.BinaryCodec;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
+
+/**
+ * Do not use this class outside of yangtools, its presence does not fall into the API stability contract.
+ */
+@Beta
 abstract class BinaryStringCodec extends TypeDefinitionAwareCodec<byte[], BinaryTypeDefinition>
         implements BinaryCodec<String> {
     private static final class Restricted extends BinaryStringCodec {
@@ -57,8 +63,9 @@ abstract class BinaryStringCodec extends TypeDefinitionAwareCodec<byte[], Binary
         super(Optional.of(typeDef), byte[].class);
     }
 
-    static TypeDefinitionAwareCodec<?, BinaryTypeDefinition> from(final BinaryTypeDefinition type) {
+    public static BinaryStringCodec from(final BinaryTypeDefinition type) {
         return type.getLengthConstraints().isEmpty() ? new Unrestricted(type) : new Restricted(type);
+        return new BinaryStringCodec(Optional.of(type));
     }
 
     @Override
