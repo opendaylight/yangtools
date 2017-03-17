@@ -29,13 +29,9 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 // TODO: expand these tests to catch some more obscure cases
 public class ConfigStatementValidationTest {
-    private static final Logger LOG = LoggerFactory.getLogger(ConfigStatementValidationTest.class);
-
     private static final Short ONE_ID = 1;
     private static final Short TWO_ID = 2;
 
