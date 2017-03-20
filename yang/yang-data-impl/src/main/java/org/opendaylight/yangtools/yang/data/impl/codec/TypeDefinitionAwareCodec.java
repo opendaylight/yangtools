@@ -25,15 +25,15 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     private final Optional<T> typeDefinition;
     private final Class<J> inputClass;
 
-    @Override
-    public Class<J> getInputClass() {
-        return inputClass;
-    }
-
     protected TypeDefinitionAwareCodec(final Optional<T> typeDefinition, final Class<J> outputClass) {
         Preconditions.checkArgument(outputClass != null, "Output class must be specified.");
         this.typeDefinition = typeDefinition;
         this.inputClass = outputClass;
+    }
+
+    @Override
+    public Class<J> getInputClass() {
+        return inputClass;
     }
 
     public Optional<T> getTypeDefinition() {
