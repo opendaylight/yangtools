@@ -7,12 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
+import com.google.common.base.Throwables;
+import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import javax.annotation.Nonnull;
+import java.util.concurrent.ExecutionException;
 import javax.annotation.concurrent.ThreadSafe;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
 
 /**
@@ -33,13 +36,10 @@ final class SharedJSONCodecFactory extends JSONCodecFactory {
 
     // Weak keys to force identity lookup
     // Soft values to keep unreferenced codecs around for a bit, but eventually we want them to go away
-    private final LoadingCache<TypedSchemaNode, JSONCodec<?>> codecs = CacheBuilder.newBuilder().weakKeys().softValues()
-            .build(new CacheLoader<TypedSchemaNode, JSONCodec<?>>() {
-                @Override
-                public JSONCodec<?> load(@Nonnull final TypedSchemaNode key) {
-                    return createCodec(key, key.getType());
-                }
-            });
+    private final Cache<TypeDefinition<?>, JSONCodec<?>> simpleCodecs = CacheBuilder.newBuilder().weakKeys()
+            .softValues().build();
+    private final Cache<TypedSchemaNode, JSONCodec<?>> complexCodecs = CacheBuilder.newBuilder().weakKeys().softValues()
+            .build();
 
     SharedJSONCodecFactory(final SchemaContext context) {
         super(context);
@@ -54,7 +54,30 @@ final class SharedJSONCodecFactory extends JSONCodecFactory {
     }
 
     @Override
-    JSONCodec<?> codecFor(final TypedSchemaNode schema) {
-        return codecs.getUnchecked(schema);
+    JSONCodec<?> lookupComplex(final TypedSchemaNode schema) {
+        return complexCodecs.getIfPresent(schema);
+    }
+
+    @Override
+    JSONCodec<?> lookupSimple(final TypeDefinition<?> type) {
+        return simpleCodecs.getIfPresent(type);
+    }
+
+    @Override
+    JSONCodec<?> getComplex(final TypedSchemaNode schema, final JSONCodec<?> codec) {
+        try {
+            return complexCodecs.get(schema, () -> codec);
+        } catch (ExecutionException e) {
+            throw Throwables.propagate(e.getCause());
+        }
+    }
+
+    @Override
+    JSONCodec<?> getSimple(final TypeDefinition<?> type, final JSONCodec<?> codec) {
+        try {
+            return simpleCodecs.get(type, () -> codec);
+        } catch (ExecutionException e) {
+            throw Throwables.propagate(e.getCause());
+        }
     }
 }

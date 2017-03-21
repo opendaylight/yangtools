@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.math.BigDecimal;
@@ -14,15 +15,19 @@ import java.util.Objects;
 import org.opendaylight.yangtools.yang.data.api.codec.DecimalCodec;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 
-final class DecimalStringCodec extends TypeDefinitionAwareCodec<BigDecimal, DecimalTypeDefinition>
+/**
+ * Do not use this class outside of yangtools, its presence does not fall into the API stability contract.
+ */
+@Beta
+public final class DecimalStringCodec extends TypeDefinitionAwareCodec<BigDecimal, DecimalTypeDefinition>
         implements DecimalCodec<String> {
 
     private DecimalStringCodec(final Optional<DecimalTypeDefinition> typeDef) {
         super(typeDef, BigDecimal.class);
     }
 
-    static TypeDefinitionAwareCodec<?,DecimalTypeDefinition> from(final DecimalTypeDefinition normalizedType) {
-        return new DecimalStringCodec(Optional.fromNullable(normalizedType));
+    public static DecimalStringCodec from(final DecimalTypeDefinition type) {
+        return new DecimalStringCodec(Optional.of(type));
     }
 
     @Override
@@ -33,6 +38,7 @@ final class DecimalStringCodec extends TypeDefinitionAwareCodec<BigDecimal, Deci
     @Override
     public BigDecimal deserialize(final String stringRepresentation) {
         Preconditions.checkArgument( stringRepresentation != null , "Input cannot be null" );
+        // FIXME: run value validation
         return new BigDecimal(stringRepresentation);
     }
 }
