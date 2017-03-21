@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.base.Preconditions;
-import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.data.api.codec.BooleanCodec;
 import org.opendaylight.yangtools.yang.data.api.codec.DecimalCodec;
 import org.opendaylight.yangtools.yang.data.api.codec.Int16Codec;
@@ -19,6 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.codec.Uint16Codec;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint32Codec;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint64Codec;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint8Codec;
+import org.opendaylight.yangtools.yang.data.impl.codec.DataStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 
 /**
@@ -27,9 +27,9 @@ import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
  * @param <T> Deserialized object type
  */
 abstract class AbstractJSONCodec<T> implements JSONCodec<T> {
-    private final Codec<String, T> codec;
+    private final DataStringCodec<T> codec;
 
-    protected AbstractJSONCodec(final Codec<String, T> codec) {
+    AbstractJSONCodec(final DataStringCodec<T> codec) {
         this.codec = Preconditions.checkNotNull(codec);
     }
 
@@ -38,9 +38,9 @@ abstract class AbstractJSONCodec<T> implements JSONCodec<T> {
      * @param codec underlying codec
      * @return A JSONCodec instance
      */
-    public static JSONCodec<?> create(final Codec<String, ?> codec) {
+    public static JSONCodec<?> create(final DataStringCodec<?> codec) {
         if (codec instanceof BooleanCodec) {
-            return new BooleanJSONCodec((BooleanCodec<String>) codec);
+            return new BooleanJSONCodec((DataStringCodec<Boolean>) codec);
         }
         if (codec instanceof DecimalCodec || codec instanceof Int8Codec
                 || codec instanceof Int16Codec || codec instanceof Int32Codec
@@ -54,12 +54,16 @@ abstract class AbstractJSONCodec<T> implements JSONCodec<T> {
     }
 
     @Override
-    public final T deserialize(final String input) {
-        return codec.deserialize(input);
+    public final Class<T> getDataClass() {
+        return codec.getInputClass();
     }
 
     @Override
-    public final String serialize(final T input) {
+    public final T deserializeString(final String input) {
+        return codec.deserialize(input);
+    }
+
+    final String serialize(final T input) {
         return codec.serialize(input);
     }
 }

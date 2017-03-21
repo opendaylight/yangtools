@@ -9,9 +9,10 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
-import org.opendaylight.yangtools.concepts.Codec;
 
-interface JSONCodec<T> extends Codec<String, T> {
+interface JSONCodec<T> {
+    T deserializeString(String value);
+
     /**
      * Serialize specified value with specified JsonWriter.
      *
@@ -19,4 +20,11 @@ interface JSONCodec<T> extends Codec<String, T> {
      * @param value
      */
     void serializeToWriter(JsonWriter writer, T value) throws IOException;
+
+    /**
+     * Return the internal representation class.
+     *
+     * @return Data representation class.
+     */
+    Class<T> getDataClass();
 }
