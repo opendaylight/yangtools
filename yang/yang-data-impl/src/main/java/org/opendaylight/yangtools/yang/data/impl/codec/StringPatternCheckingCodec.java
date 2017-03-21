@@ -33,7 +33,7 @@ final class StringPatternCheckingCodec extends StringStringCodec {
     }
 
     @Override
-    protected void validate(final String s) {
+    void validate(final String s) {
         super.validate(s);
         for (final CompiledPatternContext pattern : patterns) {
             pattern.validate(s);

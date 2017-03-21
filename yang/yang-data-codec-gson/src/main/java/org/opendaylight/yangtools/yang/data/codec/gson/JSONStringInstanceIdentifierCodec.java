@@ -54,7 +54,17 @@ final class JSONStringInstanceIdentifierCodec extends AbstractModuleStringInstan
         Preconditions.checkNotNull(schemaNode, "schemaNode cannot be null");
         Preconditions.checkArgument(schemaNode instanceof LeafSchemaNode, "schemaNode must be of type LeafSchemaNode");
         final JSONCodec<?> objectJSONCodec = codecFactory.codecFor(schemaNode);
-        return objectJSONCodec.deserialize(value);
+        return objectJSONCodec.deserializeString(value);
+    }
+
+    @Override
+    public Class<YangInstanceIdentifier> getDataClass() {
+        return YangInstanceIdentifier.class;
+    }
+
+    @Override
+    public YangInstanceIdentifier deserializeString(final String value) {
+        return deserialize(value);
     }
 
     /**

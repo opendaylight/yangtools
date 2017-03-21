@@ -11,6 +11,7 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
 
 /**
@@ -21,19 +22,38 @@ import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
  */
 @NotThreadSafe
 final class LazyJSONCodecFactory extends JSONCodecFactory {
-    private final Map<TypedSchemaNode, JSONCodec<?>> codecs = new IdentityHashMap<>();
+    private final Map<TypedSchemaNode, JSONCodec<?>> complexCodecs = new IdentityHashMap<>();
+    private final Map<TypeDefinition<?>, JSONCodec<?>> simpleCodecs = new IdentityHashMap<>();
 
     LazyJSONCodecFactory(final SchemaContext context) {
         super(context);
     }
 
     @Override
-    JSONCodec<?> codecFor(final TypedSchemaNode schema) {
-        return codecs.computeIfAbsent(schema, node -> createCodec(schema, schema.getType()));
+    JSONCodec<?> getComplex(final TypedSchemaNode schema, final JSONCodec<?> codec) {
+        return getComplexCodecs().computeIfAbsent(schema, any -> codec);
     }
 
-    // Used by EagerJSONCodecFactory. The map is leaked as-is, as we do not expect it to be touched again.
-    Map<TypedSchemaNode, JSONCodec<?>> getCodecs() {
-        return codecs;
+    @Override
+    JSONCodec<?> lookupComplex(final TypedSchemaNode schema) {
+        return getComplexCodecs().get(schema);
+    }
+
+    @Override
+    JSONCodec<?> lookupSimple(final TypeDefinition<?> type) {
+        return getSimpleCodecs().get(type);
+    }
+
+    @Override
+    JSONCodec<?> getSimple(final TypeDefinition<?> type, final JSONCodec<?> codec) {
+        return getSimpleCodecs().computeIfAbsent(type, any -> codec);
+    }
+
+    Map<TypeDefinition<?>, JSONCodec<?>> getSimpleCodecs() {
+        return simpleCodecs;
+    }
+
+    Map<TypedSchemaNode, JSONCodec<?>> getComplexCodecs() {
+        return complexCodecs;
     }
 }
