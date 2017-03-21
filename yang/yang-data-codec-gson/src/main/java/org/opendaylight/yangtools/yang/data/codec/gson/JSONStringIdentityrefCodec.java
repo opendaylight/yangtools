@@ -26,9 +26,19 @@ final class JSONStringIdentityrefCodec extends ModuleStringIdentityrefCodec impl
         if (prefix.isEmpty()) {
             return context.findModuleByNamespaceAndRevision(parentModuleQname.getNamespace(),
                     parentModuleQname.getRevision());
-        } else {
-            return context.findModuleByName(prefix, null);
         }
+
+        return context.findModuleByName(prefix, null);
+    }
+
+    @Override
+    public Class<QName> getDataClass() {
+        return QName.class;
+    }
+
+    @Override
+    public QName deserializeString(final String value) {
+        return deserialize(value);
     }
 
     /**
@@ -38,7 +48,7 @@ final class JSONStringIdentityrefCodec extends ModuleStringIdentityrefCodec impl
      * @param value QName
      */
     @Override
-    public void serializeToWriter(JsonWriter writer, QName value) throws IOException {
+    public void serializeToWriter(final JsonWriter writer, final QName value) throws IOException {
         writer.value(serialize(value));
     }
 }

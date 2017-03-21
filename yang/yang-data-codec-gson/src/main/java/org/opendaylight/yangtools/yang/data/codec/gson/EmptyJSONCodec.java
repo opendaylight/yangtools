@@ -11,28 +11,28 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 
-final class JSONEmptyCodec implements JSONCodec<Object> {
+final class EmptyJSONCodec implements JSONCodec<Void> {
 
-    static final JSONEmptyCodec INSTANCE = new JSONEmptyCodec();
+    static final EmptyJSONCodec INSTANCE = new EmptyJSONCodec();
 
-    private JSONEmptyCodec() {
+    private EmptyJSONCodec() {
 
     }
 
     @Override
-    public Object deserialize(final String input) {
+    public Void deserializeString(final String input) {
         return null;
     }
 
     @Override
-    public String serialize(final Object input) {
-        return null;
-    }
-
-    @Override
-    public void serializeToWriter(final JsonWriter writer, final Object value) throws IOException {
+    public void serializeToWriter(final JsonWriter writer, final Void value) throws IOException {
         writer.beginArray();
         writer.value((String) null);
         writer.endArray();
+    }
+
+    @Override
+    public Class<Void> getDataClass() {
+        return Void.class;
     }
 }

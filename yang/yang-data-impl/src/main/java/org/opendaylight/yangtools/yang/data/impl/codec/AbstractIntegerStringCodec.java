@@ -16,6 +16,7 @@ import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT32_QNAME;
 import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT64_QNAME;
 import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT8_QNAME;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -29,7 +30,12 @@ import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
-abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N>, T extends TypeDefinition<T>> extends TypeDefinitionAwareCodec<N, T>{
+/**
+ * Do not use this class outside of yangtools, its presence does not fall into the API stability contract.
+ */
+@Beta
+public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N>, T extends TypeDefinition<T>>
+        extends TypeDefinitionAwareCodec<N, T> {
 
     private static final Pattern INT_PATTERN = Pattern.compile("[+-]?[1-9][0-9]*$");
     private static final Pattern HEX_PATTERN = Pattern.compile("[+-]?0[xX][0-9a-fA-F]+");
@@ -47,7 +53,8 @@ abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N>, T ex
 
     private final List<Range<N>> rangeConstraints;
 
-    protected AbstractIntegerStringCodec(final Optional<T> typeDefinition, final List<RangeConstraint> constraints , final Class<N> outputClass) {
+    AbstractIntegerStringCodec(final Optional<T> typeDefinition, final List<RangeConstraint> constraints,
+        final Class<N> outputClass) {
         super(typeDefinition, outputClass);
         if (constraints.isEmpty()) {
             rangeConstraints = Collections.emptyList();
@@ -60,7 +67,7 @@ abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N>, T ex
         }
     }
 
-    static TypeDefinitionAwareCodec<?, IntegerTypeDefinition> from(final IntegerTypeDefinition type) {
+    public static AbstractIntegerStringCodec<?, IntegerTypeDefinition> from(final IntegerTypeDefinition type) {
         // FIXME: this is not necessary with yang.model.util.type
         IntegerTypeDefinition baseType = type;
         while (baseType.getBaseType() != null) {
@@ -83,7 +90,8 @@ abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N>, T ex
         }
     }
 
-    static TypeDefinitionAwareCodec<?, UnsignedIntegerTypeDefinition> from(final UnsignedIntegerTypeDefinition type) {
+    public static AbstractIntegerStringCodec<?, UnsignedIntegerTypeDefinition> from(
+            final UnsignedIntegerTypeDefinition type) {
         // FIXME: this is not necessary with yang.model.util.type
         UnsignedIntegerTypeDefinition baseType = type;
         while (baseType.getBaseType() != null) {
