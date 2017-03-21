@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -20,7 +21,11 @@ import org.opendaylight.yangtools.yang.data.api.codec.BitsCodec;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
-final class BitsStringCodec extends TypeDefinitionAwareCodec<Set<String>, BitsTypeDefinition>
+/**
+ * Do not use this class outside of yangtools, its presence does not fall into the API stability contract.
+ */
+@Beta
+public final class BitsStringCodec extends TypeDefinitionAwareCodec<Set<String>, BitsTypeDefinition>
         implements BitsCodec<String> {
 
     private static final Joiner JOINER = Joiner.on(" ").skipNulls();
@@ -38,8 +43,8 @@ final class BitsStringCodec extends TypeDefinitionAwareCodec<Set<String>, BitsTy
         }
     }
 
-    static TypeDefinitionAwareCodec<?, BitsTypeDefinition> from(final BitsTypeDefinition normalizedType) {
-        return new BitsStringCodec(Optional.fromNullable(normalizedType));
+    public static BitsStringCodec from(final BitsTypeDefinition type) {
+        return new BitsStringCodec(Optional.of(type));
     }
 
     @Override

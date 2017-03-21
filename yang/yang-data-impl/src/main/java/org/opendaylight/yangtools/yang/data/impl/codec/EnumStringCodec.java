@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -17,7 +18,12 @@ import org.opendaylight.yangtools.yang.data.api.codec.EnumCodec;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
-final class EnumStringCodec extends TypeDefinitionAwareCodec<String, EnumTypeDefinition> implements EnumCodec<String> {
+/**
+ * Do not use this class outside of yangtools, its presence does not fall into the API stability contract.
+ */
+@Beta
+public final class EnumStringCodec extends TypeDefinitionAwareCodec<String, EnumTypeDefinition>
+        implements EnumCodec<String> {
     private final Map<String, String> values;
 
     private EnumStringCodec(final Optional<EnumTypeDefinition> typeDef) {
@@ -35,8 +41,8 @@ final class EnumStringCodec extends TypeDefinitionAwareCodec<String, EnumTypeDef
         }
     }
 
-    static TypeDefinitionAwareCodec<?,EnumTypeDefinition> from(final EnumTypeDefinition normalizedType) {
-        return new EnumStringCodec(Optional.fromNullable(normalizedType));
+    public static EnumStringCodec from(final EnumTypeDefinition normalizedType) {
+        return new EnumStringCodec(Optional.of(normalizedType));
     }
 
     @Override

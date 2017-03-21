@@ -13,6 +13,7 @@ import com.google.common.cache.LoadingCache;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.ThreadSafe;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
 
 /**
@@ -54,7 +55,27 @@ final class SharedJSONCodecFactory extends JSONCodecFactory {
     }
 
     @Override
-    JSONCodec<?> codecFor(final TypedSchemaNode schema) {
-        return codecs.getUnchecked(schema);
+    JSONCodec<?> lookupComplex(final TypedSchemaNode schema) {
+        // TODO Auto-generated method stub
+        return null;
     }
+
+    @Override
+    JSONCodec<?> lookupSimple(final TypeDefinition<?> type) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    JSONCodec<?> getComplex(final TypedSchemaNode schema, final JSONCodec<?> codec) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    JSONCodec<?> getSimple(final TypeDefinition<?> type, final JSONCodec<?> codec) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

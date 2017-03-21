@@ -16,6 +16,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
 
 /**
@@ -51,13 +52,6 @@ final class EagerJSONCodecFactory extends JSONCodecFactory {
         return CACHE.getUnchecked(context);
     }
 
-    @Override
-    JSONCodec<?> codecFor(final TypedSchemaNode schema) {
-        final JSONCodec<?> ret = codecs.get(schema);
-        Preconditions.checkArgument(ret != null, "No codec available for schema %s", schema);
-        return ret;
-    }
-
     private static Map<TypedSchemaNode, JSONCodec<?>> constructCodecs(final SchemaContext context) {
         final LazyJSONCodecFactory lazy = new LazyJSONCodecFactory(context);
         requestCodecsForChildren(lazy, context);
@@ -72,5 +66,30 @@ final class EagerJSONCodecFactory extends JSONCodecFactory {
                 requestCodecsForChildren(factory, (DataNodeContainer)child);
             }
         }
+    }
+
+    @Override
+    JSONCodec<?> lookupComplex(final TypedSchemaNode schema) {
+        final JSONCodec<?> ret = codecs.get(schema);
+        Preconditions.checkArgument(ret != null, "No codec available for schema %s", schema);
+        return ret;
+    }
+
+    @Override
+    JSONCodec<?> lookupSimple(final TypeDefinition<?> type) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    JSONCodec<?> getComplex(final TypedSchemaNode schema, final JSONCodec<?> codec) {
+        // This should never be called
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    JSONCodec<?> getSimple(final TypeDefinition<?> type, final JSONCodec<?> codec) {
+        // This should never be called
+        throw new UnsupportedOperationException();
     }
 }

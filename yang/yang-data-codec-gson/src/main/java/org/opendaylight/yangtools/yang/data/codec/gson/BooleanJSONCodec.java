@@ -13,8 +13,6 @@ import org.opendaylight.yangtools.concepts.Codec;
 
 /**
  * A {@link JSONCodec} which does not need double quotes in output representation.
- *
- * @param <T> Deserialized value type
  */
 final class BooleanJSONCodec extends AbstractJSONCodec<Boolean> {
     BooleanJSONCodec(final Codec<String, Boolean> codec) {
@@ -28,7 +26,7 @@ final class BooleanJSONCodec extends AbstractJSONCodec<Boolean> {
      * @param value
      */
     @Override
-    public void serializeToWriter(JsonWriter writer, Boolean value) throws IOException {
+    public void serializeToWriter(final JsonWriter writer, final Boolean value) throws IOException {
         writer.value(value);
     }
 }

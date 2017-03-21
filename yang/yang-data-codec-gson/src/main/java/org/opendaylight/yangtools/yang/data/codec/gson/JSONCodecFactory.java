@@ -12,16 +12,32 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
+import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.BinaryStringCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.BitsStringCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.BooleanStringCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.DecimalStringCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.EnumStringCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.StringStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +85,90 @@ public abstract class JSONCodecFactory {
         return SharedJSONCodecFactory.get(context);
     }
 
+    final JSONCodec<?> codecFor(final DataSchemaNode schema) {
+        Preconditions.checkArgument(schema instanceof TypedSchemaNode, "Unsupported node type %s", schema.getClass());
+        return getCodecFor((TypedSchemaNode) schema);
+    }
+
+    private JSONCodec<?> getCodecFor(final TypedSchemaNode schema) {
+        /*
+         * There are many trade-offs to be made here. We need the common case being as fast as possible while reusing
+         * codecs as much as possible.
+         *
+         * This gives us essentially four classes of codecs:
+         * - simple codecs, which are based on the type definition only
+         * - complex codecs, which depend on both type definition and the leaf
+         * - null codec, which does not depend on anything
+         * - instance identifier codec, which is based on namespace mapping
+         *
+         * We assume prevalence is in above order and that caching is effective. We therefore
+         */
+        final TypeDefinition<?> type = schema.getType();
+        JSONCodec<?> ret = lookupSimple(type);
+        if (ret != null) {
+            return ret;
+        }
+
+        // FIXME: can we use the combination of QNameModule and type definition only?
+        ret = lookupComplex(schema);
+        if (ret != null) {
+            return ret;
+        }
+
+        if (type instanceof InstanceIdentifierTypeDefinition) {
+            return iidCodec;
+        } else if (type instanceof EmptyTypeDefinition) {
+            return JSONEmptyCodec.INSTANCE;
+        } else if (type instanceof UnknownTypeDefinition) {
+            return NULL_CODEC;
+        }
+
+        // Now deal with simple types. Note we consider union composed of purely simple types a simple type itself.
+        if (type instanceof BinaryTypeDefinition) {
+            ret = new QuotedJSONCodec<>(BinaryStringCodec.from((BinaryTypeDefinition) type));
+        } else if (type instanceof BitsTypeDefinition) {
+            ret = new QuotedJSONCodec<>(BitsStringCodec.from((BitsTypeDefinition) type));
+        } else if (type instanceof BooleanTypeDefinition) {
+            ret = new BooleanJSONCodec(BooleanStringCodec.from((BooleanTypeDefinition) type));
+        } else if (type instanceof DecimalTypeDefinition) {
+            ret = new NumberJSONCodec<>(DecimalStringCodec.from((DecimalTypeDefinition) type));
+        } else if (type instanceof EnumTypeDefinition) {
+            ret = new QuotedJSONCodec<>(EnumStringCodec.from((EnumTypeDefinition) type));
+        } else if (type instanceof IntegerTypeDefinition) {
+            ret = new NumberJSONCodec<>(AbstractIntegerStringCodec.from((IntegerTypeDefinition) type));
+        } else if (type instanceof StringTypeDefinition) {
+            ret = new QuotedJSONCodec<>(StringStringCodec.from((StringTypeDefinition) type));
+        } else if (type instanceof UnsignedIntegerTypeDefinition) {
+            ret = new NumberJSONCodec<>(AbstractIntegerStringCodec.from((UnsignedIntegerTypeDefinition) type));
+        } else if (type instanceof UnionTypeDefinition) {
+            // FIXME: run recursive analysis to see if the component types are simple
+        }
+
+        if (ret != null) {
+            return getSimple(type, ret);
+        }
+
+        // Now deal with the pesky complex types
+        if (type instanceof LeafrefTypeDefinition) {
+            ret = createReferencedTypeCodec(schema, (LeafrefTypeDefinition) type);
+        } else if (type instanceof IdentityrefTypeDefinition) {
+            ret = new JSONStringIdentityrefCodec(schemaContext, schema.getQName().getModule());
+        } else if (type instanceof UnionTypeDefinition) {
+            ret =  createUnionTypeCodec(schema, (UnionTypeDefinition) type);
+        }
+
+        Preconditions.checkArgument(ret != null, "Unsupported type %s", type);
+        return getComplex(schema, ret);
+    }
+
+    abstract JSONCodec<?> lookupComplex(TypedSchemaNode schema);
+
+    abstract JSONCodec<?> lookupSimple(TypeDefinition<?> type);
+
+    abstract JSONCodec<?> getComplex(TypedSchemaNode schema, JSONCodec<?> codec);
+
+    abstract JSONCodec<?> getSimple(TypeDefinition<?> type, JSONCodec<?> codec);
+
     final JSONCodec<?> createCodec(final DataSchemaNode key, final TypeDefinition<?> type) {
         if (type instanceof LeafrefTypeDefinition) {
             return createReferencedTypeCodec(key, (LeafrefTypeDefinition) type);
@@ -94,13 +194,6 @@ public abstract class JSONCodecFactory {
     final SchemaContext getSchemaContext() {
         return schemaContext;
     }
-
-    JSONCodec<?> codecFor(final DataSchemaNode schema) {
-        Preconditions.checkArgument(schema instanceof TypedSchemaNode, "Unsupported node type %s", schema.getClass());
-        return codecFor((TypedSchemaNode) schema);
-    }
-
-    abstract JSONCodec<?> codecFor(final TypedSchemaNode schema);
 
     final JSONCodec<?> codecFor(final DataSchemaNode schema, final TypeDefinition<?> unionSubType) {
         return createCodec(schema, unionSubType);
