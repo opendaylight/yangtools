@@ -9,15 +9,13 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
-import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.yang.data.impl.codec.DataStringCodec;
 
 /**
  * A {@link JSONCodec} which does not need double quotes in output representation.
- *
- * @param <T> Deserialized value type
  */
 final class BooleanJSONCodec extends AbstractJSONCodec<Boolean> {
-    BooleanJSONCodec(final Codec<String, Boolean> codec) {
+    BooleanJSONCodec(final DataStringCodec<Boolean> codec) {
         super(codec);
     }
 
@@ -28,7 +26,7 @@ final class BooleanJSONCodec extends AbstractJSONCodec<Boolean> {
      * @param value
      */
     @Override
-    public void serializeToWriter(JsonWriter writer, Boolean value) throws IOException {
+    public void serializeToWriter(final JsonWriter writer, final Boolean value) throws IOException {
         writer.value(value);
     }
 }

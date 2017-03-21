@@ -277,7 +277,7 @@ public final class JsonParserStream implements Closeable, Flushable {
     }
 
     private Object translateValueByType(final String value, final DataSchemaNode node) {
-        return codecs.codecFor(node).deserialize(value);
+        return codecs.codecFor(node).deserializeString(value);
     }
 
     private void removeNamespace() {

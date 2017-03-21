@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
-import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.yang.data.impl.codec.DataStringCodec;
 
 /**
  * A {@link JSONCodec} which does not need double quotes in output representation.
@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.concepts.Codec;
  * @param <T> Deserialized value type
  */
 final class NumberJSONCodec<T extends Number> extends AbstractJSONCodec<T > {
-    NumberJSONCodec(final Codec<String, T> codec) {
+    NumberJSONCodec(final DataStringCodec<T> codec) {
         super(codec);
     }
 
@@ -28,7 +28,7 @@ final class NumberJSONCodec<T extends Number> extends AbstractJSONCodec<T > {
      * @param value
      */
     @Override
-    public void serializeToWriter(JsonWriter writer, T value) throws IOException {
+    public void serializeToWriter(final JsonWriter writer, final T value) throws IOException {
         writer.value(value);
     }
 }
