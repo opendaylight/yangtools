@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import javax.annotation.concurrent.ThreadSafe;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
 
 /**
@@ -24,7 +25,22 @@ final class SimpleJSONCodecFactory extends JSONCodecFactory {
     }
 
     @Override
-    JSONCodec<?> codecFor(final TypedSchemaNode schema) {
-        return createCodec(schema, schema.getType());
+    JSONCodec<?> lookupComplex(final TypedSchemaNode schema) {
+        return null;
+    }
+
+    @Override
+    JSONCodec<?> lookupSimple(final TypeDefinition<?> type) {
+        return null;
+    }
+
+    @Override
+    JSONCodec<?> getSimple(final TypeDefinition<?> type, final JSONCodec<?> codec) {
+        return codec;
+    }
+
+    @Override
+    JSONCodec<?> getComplex(final TypedSchemaNode schema, final JSONCodec<?> codec) {
+        return codec;
     }
 }

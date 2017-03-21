@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -16,7 +17,10 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Pre-computed JSONCodecFactory. All possible codecs are created upfront at instantiation time, after which they
@@ -26,21 +30,36 @@ import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
  */
 @ThreadSafe
 final class EagerJSONCodecFactory extends JSONCodecFactory {
+    private static final Logger LOG = LoggerFactory.getLogger(EagerJSONCodecFactory.class);
+
     // Weak keys to retire the entry when SchemaContext goes away
     // Soft values to keep unreferenced factories around for a bit
     private static final LoadingCache<SchemaContext, EagerJSONCodecFactory> CACHE = CacheBuilder.newBuilder()
             .weakKeys().softValues().build(new CacheLoader<SchemaContext, EagerJSONCodecFactory>() {
                 @Override
                 public EagerJSONCodecFactory load(final SchemaContext key) {
-                    return new EagerJSONCodecFactory(key);
+                    final Stopwatch sw = Stopwatch.createStarted();
+                    final LazyJSONCodecFactory lazy = new LazyJSONCodecFactory(key);
+                    final int visitedLeaves = requestCodecsForChildren(lazy, key);
+                    sw.stop();
+
+                    final Map<TypeDefinition<?>, JSONCodec<?>> simple = lazy.getSimpleCodecs();
+                    final Map<TypedSchemaNode, JSONCodec<?>> complex = lazy.getComplexCodecs();
+
+                    LOG.debug("{} leaf nodes resulted in {} simple and {} complex codecs in {}", visitedLeaves,
+                        simple.size(), complex.size(), sw);
+                    return new EagerJSONCodecFactory(key, simple, complex);
                 }
             });
 
-    private final Map<TypedSchemaNode, JSONCodec<?>> codecs;
+    private final Map<TypeDefinition<?>, JSONCodec<?>> simpleCodecs;
+    private final Map<TypedSchemaNode, JSONCodec<?>> complexCodecs;
 
-    EagerJSONCodecFactory(final SchemaContext context) {
+    private EagerJSONCodecFactory(final SchemaContext context, final Map<TypeDefinition<?>, JSONCodec<?>> simpleCodecs,
+        final Map<TypedSchemaNode, JSONCodec<?>> complexCodecs) {
         super(context);
-        this.codecs = constructCodecs(context);
+        this.simpleCodecs = Preconditions.checkNotNull(simpleCodecs);
+        this.complexCodecs = Preconditions.checkNotNull(complexCodecs);
     }
 
     static EagerJSONCodecFactory getIfPresent(final SchemaContext context) {
@@ -52,25 +71,38 @@ final class EagerJSONCodecFactory extends JSONCodecFactory {
     }
 
     @Override
-    JSONCodec<?> codecFor(final TypedSchemaNode schema) {
-        final JSONCodec<?> ret = codecs.get(schema);
+    JSONCodec<?> lookupComplex(final TypedSchemaNode schema) {
+        final JSONCodec<?> ret = complexCodecs.get(schema);
         Preconditions.checkArgument(ret != null, "No codec available for schema %s", schema);
         return ret;
     }
 
-    private static Map<TypedSchemaNode, JSONCodec<?>> constructCodecs(final SchemaContext context) {
-        final LazyJSONCodecFactory lazy = new LazyJSONCodecFactory(context);
-        requestCodecsForChildren(lazy, context);
-        return lazy.getCodecs();
+    @Override
+    JSONCodec<?> lookupSimple(final TypeDefinition<?> type) {
+        return simpleCodecs.get(type);
     }
 
-    private static void requestCodecsForChildren(final LazyJSONCodecFactory factory, final DataNodeContainer parent) {
+    @Override
+    JSONCodec<?> getComplex(final TypedSchemaNode schema, final JSONCodec<?> codec) {
+        throw new IllegalStateException("Uncached codec for " + schema);
+    }
+
+    @Override
+    JSONCodec<?> getSimple(final TypeDefinition<?> type, final JSONCodec<?> codec) {
+        throw new IllegalStateException("Uncached codec for " + type);
+    }
+
+    static int requestCodecsForChildren(final LazyJSONCodecFactory lazy, final DataNodeContainer parent) {
+        int ret = 0;
         for (DataSchemaNode child : parent.getChildNodes()) {
             if (child instanceof TypedSchemaNode) {
-                factory.codecFor(child);
+                lazy.codecFor((TypedSchemaNode) child);
+                ++ret;
             } else if (child instanceof DataNodeContainer) {
-                requestCodecsForChildren(factory, (DataNodeContainer)child);
+                ret += requestCodecsForChildren(lazy, (DataNodeContainer) child);
             }
         }
+
+        return ret;
     }
 }
