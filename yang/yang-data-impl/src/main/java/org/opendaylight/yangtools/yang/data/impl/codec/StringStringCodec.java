@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableRangeSet;
@@ -19,8 +20,12 @@ import org.opendaylight.yangtools.yang.data.api.codec.StringCodec;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 
-class StringStringCodec extends TypeDefinitionAwareCodec<String, StringTypeDefinition> implements
-        StringCodec<String> {
+/**
+ * Do not use this class outside of yangtools, its presence does not fall into the API stability contract.
+ */
+@Beta
+public class StringStringCodec extends TypeDefinitionAwareCodec<String, StringTypeDefinition>
+        implements StringCodec<String> {
 
     private final RangeSet<Integer> lengths;
 
@@ -40,7 +45,7 @@ class StringStringCodec extends TypeDefinitionAwareCodec<String, StringTypeDefin
         }
     }
 
-    static TypeDefinitionAwareCodec<?, StringTypeDefinition> from(final StringTypeDefinition normalizedType) {
+    public static StringStringCodec from(final StringTypeDefinition normalizedType) {
         if (normalizedType.getPatternConstraints().isEmpty()) {
             return new StringStringCodec(normalizedType);
         }

@@ -7,16 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.data.api.codec.BooleanCodec;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 
-final class BooleanStringCodec extends TypeDefinitionAwareCodec<Boolean, BooleanTypeDefinition>
+/**
+ * Do not use this class outside of yangtools, its presence does not fall into the API stability contract.
+ */
+@Beta
+public final class BooleanStringCodec extends TypeDefinitionAwareCodec<Boolean, BooleanTypeDefinition>
         implements BooleanCodec<String> {
 
-    BooleanStringCodec(final Optional<BooleanTypeDefinition> typeDef) {
+    private BooleanStringCodec(final Optional<BooleanTypeDefinition> typeDef) {
         super(typeDef, Boolean.class);
     }
 
@@ -30,16 +35,13 @@ final class BooleanStringCodec extends TypeDefinitionAwareCodec<Boolean, Boolean
         if (stringRepresentation == null) {
             return null;
         }
-        validate(stringRepresentation);
+        Preconditions.checkArgument("true".equalsIgnoreCase(stringRepresentation)
+            || "false".equalsIgnoreCase(stringRepresentation),
+            "Invalid value '%s' for boolean type. Allowed values are true and false", stringRepresentation);
         return Boolean.valueOf(stringRepresentation);
     }
 
-    private static void validate(final String string) {
-        Preconditions.checkArgument("true".equalsIgnoreCase(string) || "false".equalsIgnoreCase(string),
-                "Invalid value '%s' for boolean type. Allowed values are true and false", string);
-    }
-
-    static TypeDefinitionAwareCodec<?,BooleanTypeDefinition> from(final BooleanTypeDefinition normalizedType) {
-        return new BooleanStringCodec(Optional.fromNullable(normalizedType));
+    public static BooleanStringCodec from(final BooleanTypeDefinition normalizedType) {
+        return new BooleanStringCodec(Optional.of(normalizedType));
     }
 }
