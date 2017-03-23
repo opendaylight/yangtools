@@ -9,6 +9,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import java.util.Optional;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -161,4 +162,20 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      * @throws SourceException when an inconsistency is detected.
      */
     void onFullDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt);
+
+    /**
+     * Returns true if this support has argument specific supports.
+     */
+    boolean hasArgumentSpecificSupports();
+
+    /**
+     * If this support has argument specific supports, the method returns
+     * support specific for given argument, otherwise returns null.
+     *
+     * @param argument
+     *            string argument of statement
+     * @return support specific for given argument or null
+     */
+    @Nullable
+    StatementSupport<?, ?, ?> getSupportBasedOnStmtArgument(String argument);
 }
