@@ -129,6 +129,20 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
         return getPublicView().isArgumentYinElement();
     }
 
+    @Override
+    public boolean hasArgumentSpecificSupports() {
+        // Most of statement supports have not any argument specific
+        // supports, so return 'false'.
+        return false;
+    }
+
+    @Override
+    public StatementSupport<?, ?, ?> getSupportBasedOnStmtArgument(final String argument) {
+        // Most of statement supports have not any argument specific
+        // supports, so return null.
+        return null;
+    }
+
     /**
      * Returns corresponding substatement validator of a statement support
      *

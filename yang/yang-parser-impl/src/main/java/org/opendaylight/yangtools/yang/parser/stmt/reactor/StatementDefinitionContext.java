@@ -10,6 +10,9 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
+import java.util.HashMap;
+import java.util.Map;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -23,9 +26,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
     private final StatementSupport<A, D, E> support;
+    private final Map<String, StatementDefinitionContext<?, ?, ?>> argumentSpecificStmtDefCtxs;
 
     public StatementDefinitionContext(final StatementSupport<A, D, E> support) {
         this.support = Preconditions.checkNotNull(support);
+        this.argumentSpecificStmtDefCtxs = support.hasArgumentSpecificSupports() ? new HashMap<>() : null;
     }
 
     public StatementFactory<A,D,E> getFactory() {
@@ -88,5 +93,26 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
         return toStringHelper.add("statement", getStatementName());
+    }
+
+    @Nonnull
+    public StatementDefinitionContext<?, ?, ?> getStmtDefBasedOnStmtArgument(final String argument) {
+        if (!hasArgumentSpecificStmtDefinitions()) {
+            return this;
+        }
+
+        StatementDefinitionContext<?, ?, ?> potential = argumentSpecificStmtDefCtxs.get(argument);
+        if (potential == null) {
+            final StatementSupport<?, ?, ?> argumentSpecificSupport = support.getSupportBasedOnStmtArgument(argument);
+            potential = argumentSpecificSupport != null ? new StatementDefinitionContext<>(argumentSpecificSupport)
+                    : this;
+            argumentSpecificStmtDefCtxs.put(argument, potential);
+        }
+
+        return potential;
+    }
+
+    public boolean hasArgumentSpecificStmtDefinitions() {
+        return support.hasArgumentSpecificSupports();
     }
 }
