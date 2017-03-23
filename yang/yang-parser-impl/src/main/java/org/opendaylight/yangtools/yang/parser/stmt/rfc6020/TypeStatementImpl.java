@@ -8,7 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import com.google.common.base.Verify;
+import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
+import java.util.Map;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -40,6 +42,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -82,6 +85,16 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
     public static class Definition
             extends
             AbstractStatementSupport<String, TypeStatement, EffectiveStatement<String, TypeStatement>> {
+
+        private static final Map<String, StatementSupport<?, ?, ?>> ARGUMENT_SPECIFIC_SUPPORTS = ImmutableMap
+                .<String, StatementSupport<?, ?, ?>> builder()
+                .put(TypeUtils.DECIMAL64, new Decimal64SpecificationImpl.Definition())
+                .put(TypeUtils.UNION, new UnionSpecificationImpl.Definition())
+                .put(TypeUtils.ENUMERATION, new EnumSpecificationImpl.Definition())
+                .put(TypeUtils.LEAF_REF, new LeafrefSpecificationImpl.Definition())
+                .put(TypeUtils.BITS, new BitsSpecificationImpl.Definition())
+                .put(TypeUtils.IDENTITY_REF, new IdentityRefSpecificationImpl.Definition())
+                .put(TypeUtils.INSTANCE_IDENTIFIER, new InstanceIdentifierSpecificationImpl.Definition()).build();
 
         public Definition() {
             super(YangStmtMapping.TYPE);
@@ -228,6 +241,16 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
         @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
+        }
+
+        @Override
+        public boolean hasArgumentSpecificSupports() {
+            return !ARGUMENT_SPECIFIC_SUPPORTS.isEmpty();
+        }
+
+        @Override
+        public StatementSupport<?, ?, ?> getSupportSpecificForArgument(final String argument) {
+            return ARGUMENT_SPECIFIC_SUPPORTS.get(argument);
         }
     }
 

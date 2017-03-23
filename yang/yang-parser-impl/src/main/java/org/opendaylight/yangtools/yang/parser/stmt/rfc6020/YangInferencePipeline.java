@@ -84,6 +84,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.PatternStatementRfc79
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.RefineStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.RpcStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.SubmoduleStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.TypeStatementRfc7950Support;
 
 public final class YangInferencePipeline {
     public static final Set<YangVersion> SUPPORTED_VERSIONS = Sets.immutableEnumSet(VERSION_1, VERSION_1_1);
@@ -161,7 +162,8 @@ public final class YangInferencePipeline {
             .addSupport(global(IdentityNamespace.class))
             .addSupport(new DefaultStatementImpl.Definition())
             .addSupport(new StatusStatementImpl.Definition())
-            .addSupport(new TypeStatementImpl.Definition())
+            .addVersionSpecificSupport(VERSION_1, new TypeStatementImpl.Definition())
+            .addVersionSpecificSupport(VERSION_1_1, new TypeStatementRfc7950Support())
             .addSupport(new UnitsStatementImpl.Definition())
             .addSupport(new RequireInstanceStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1, new BitStatementImpl.Definition())
