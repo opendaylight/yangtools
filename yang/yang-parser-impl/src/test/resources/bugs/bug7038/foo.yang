@@ -1,0 +1,8 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    extension decimal64 {
+        argument arg;
+    }
+}
