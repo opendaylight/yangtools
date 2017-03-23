@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fafc7978_b7051516",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/LazyJSONCodecFactory.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-03-23T08:21:00Z",
+      "side": 1,
+      "message": "please complete the sentence",
+      "range": {
+        "startLine": 17,
+        "startChar": 106,
+        "endLine": 18,
+        "endChar": 18
+      },
+      "revId": "8dbf1004dd1e8f8c62cede1758510aab3eb14187",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fafc7978_523dd7ba",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/LazyJSONCodecFactory.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-03-23T08:21:00Z",
+      "side": 1,
+      "message": "just for info, why we do not want to use immutable copy here (minimalize memory usage or ..) ?",
+      "range": {
+        "startLine": 37,
+        "startChar": 15,
+        "endLine": 37,
+        "endChar": 22
+      },
+      "revId": "8dbf1004dd1e8f8c62cede1758510aab3eb14187",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
