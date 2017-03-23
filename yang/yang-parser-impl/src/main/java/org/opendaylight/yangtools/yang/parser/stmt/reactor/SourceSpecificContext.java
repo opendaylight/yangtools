@@ -11,9 +11,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Table;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,10 +25,8 @@ import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -58,19 +54,9 @@ import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinit
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.BitsSpecificationImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Decimal64SpecificationImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.EnumSpecificationImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.IdentityRefSpecificationImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.InstanceIdentifierSpecificationImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.LeafrefSpecificationImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ModelDefinedStatementDefinition;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnionSpecificationImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.IdentityrefSpecificationRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.LeafrefSpecificationRfc7950Support;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,21 +69,6 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(SourceSpecificContext.class);
-    private static final Table<YangVersion, String, StatementSupport<?, ?, ?>> BUILTIN_TYPE_SUPPORTS =
-            ImmutableTable.<YangVersion, String, StatementSupport<?, ?, ?>>builder()
-            .put(YangVersion.VERSION_1, TypeUtils.DECIMAL64, new Decimal64SpecificationImpl.Definition())
-            .put(YangVersion.VERSION_1, TypeUtils.UNION, new UnionSpecificationImpl.Definition())
-            .put(YangVersion.VERSION_1, TypeUtils.ENUMERATION, new EnumSpecificationImpl.Definition())
-            .put(YangVersion.VERSION_1, TypeUtils.LEAF_REF, new LeafrefSpecificationImpl.Definition())
-            .put(YangVersion.VERSION_1_1, TypeUtils.LEAF_REF, new LeafrefSpecificationRfc7950Support())
-            .put(YangVersion.VERSION_1, TypeUtils.BITS, new BitsSpecificationImpl.Definition())
-            .put(YangVersion.VERSION_1, TypeUtils.IDENTITY_REF, new IdentityRefSpecificationImpl.Definition())
-            .put(YangVersion.VERSION_1_1, TypeUtils.IDENTITY_REF, new IdentityrefSpecificationRfc7950Support())
-            .put(YangVersion.VERSION_1, TypeUtils.INSTANCE_IDENTIFIER, new InstanceIdentifierSpecificationImpl.Definition())
-                    .build();
-
-    private static final QName TYPE = YangStmtMapping.TYPE.getStatementName();
-
     private final Multimap<ModelProcessingPhase, ModifierImpl> modifiers = HashMultimap.create();
     private final QNameToStatementDefinitionMap qNameToStmtDefMap = new QNameToStatementDefinitionMap();
     private final PrefixToModuleMap prefixToModuleMap = new PrefixToModuleMap();
@@ -128,7 +99,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     StatementContextBase<?, ?, ?> createDeclaredChild(final StatementContextBase<?, ?, ?> current, final int childId,
-            QName name, final String argument, final StatementSourceReference ref) {
+            final QName name, final String argument, final StatementSourceReference ref) {
         if (current != null) {
             // Fast path: we are entering a statement which was emitted in previous phase
             StatementContextBase<?, ?, ?> existing = current.lookupSubstatement(childId);
@@ -140,24 +111,11 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             }
         }
 
-        // FIXME: BUG-7038: Refactor/clean up this special case
-        if (TYPE.equals(name)) {
-            SourceException.throwIfNull(argument, ref, "Type statement requires an argument");
-            if (TypeUtils.isYangTypeBodyStmtString(argument)) {
-                name = QName.create(YangConstants.RFC6020_YIN_MODULE, argument);
-            } else {
-                name = QName.create(YangConstants.RFC6020_YIN_MODULE, TYPE.getLocalName());
-            }
-        }
-
         StatementDefinitionContext<?, ?, ?> def = currentContext.getStatementDefinition(getRootVersion(), name);
         if (def == null) {
             final StatementSupport<?, ?, ?> extension = qNameToStmtDefMap.get(name);
             if (extension != null) {
                 def = new StatementDefinitionContext<>(extension);
-            } else {
-                // type-body-stmts
-                def = resolveTypeBodyStmts(name.getLocalName(), getRootVersion());
             }
         } else if (current != null && current.definition().getRepresentingClass().equals(UnknownStatementImpl.class)) {
             /*
@@ -178,6 +136,16 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             SourceException.throwIfNull(argument, ref, "Statement %s requires an argument", name);
         } else {
             SourceException.throwIf(argument != null, ref, "Statement %s does not take argument", name);
+        }
+
+        /*
+         * If the current statement definition has argument specific
+         * sub-definitions, get argument specific sub-definition based on given
+         * argument (e.g. type statement need to be specialized based on its
+         * argument).
+         */
+        if (def.hasArgumentSpecificSubDefinitions()) {
+            def = def.getSubDefinitionSpecificForArgument(argument);
         }
 
         if (current != null) {
@@ -409,17 +377,6 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             default:
                 break;
         }
-    }
-
-    private static StatementDefinitionContext<?, ?, ?> resolveTypeBodyStmts(final String typeArgument,
-            final YangVersion version) {
-        StatementSupport<?, ?, ?> support = BUILTIN_TYPE_SUPPORTS.get(version, typeArgument);
-
-        if (support == null) {
-            support = BUILTIN_TYPE_SUPPORTS.get(YangVersion.VERSION_1, typeArgument);
-        }
-
-        return support == null ? null : new StatementDefinitionContext<>(support);
     }
 
     private PrefixToModule preLinkagePrefixes() {

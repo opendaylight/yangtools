@@ -10,7 +10,10 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -25,9 +28,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 
 public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
     private final StatementSupport<A, D, E> support;
+    private final Map<String, StatementDefinitionContext<?, ?, ?>> argumentSpecificSubDefinitions;
 
     public StatementDefinitionContext(final StatementSupport<A, D, E> support) {
         this.support = Preconditions.checkNotNull(support);
+        this.argumentSpecificSubDefinitions = support.hasArgumentSpecificSupports() ? new HashMap<>() : null;
     }
 
     public StatementFactory<A,D,E> getFactory() {
@@ -95,5 +100,26 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
         return toStringHelper.add("statement", getStatementName());
+    }
+
+    @Nonnull
+    public StatementDefinitionContext<?, ?, ?> getSubDefinitionSpecificForArgument(final String argument) {
+        if (!hasArgumentSpecificSubDefinitions()) {
+            return this;
+        }
+
+        StatementDefinitionContext<?, ?, ?> potential = argumentSpecificSubDefinitions.get(argument);
+        if (potential == null) {
+            final StatementSupport<?, ?, ?> argumentSpecificSupport = support.getSupportSpecificForArgument(argument);
+            potential = argumentSpecificSupport != null ? new StatementDefinitionContext<>(argumentSpecificSupport)
+                    : this;
+            argumentSpecificSubDefinitions.put(argument, potential);
+        }
+
+        return potential;
+    }
+
+    public boolean hasArgumentSpecificSubDefinitions() {
+        return support.hasArgumentSpecificSupports();
     }
 }
