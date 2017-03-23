@@ -1,0 +1,8 @@
+module bar {
+    namespace bar;
+    prefix bar;
+
+    import foo { prefix decimal64; revision-date 1970-01-01; }
+
+    decimal64:decimal64 decimal64;
+}
