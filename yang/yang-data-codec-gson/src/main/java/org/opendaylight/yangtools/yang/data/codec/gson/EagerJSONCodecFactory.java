@@ -33,9 +33,8 @@ final class EagerJSONCodecFactory extends JSONCodecFactory {
     private static final Logger LOG = LoggerFactory.getLogger(EagerJSONCodecFactory.class);
 
     // Weak keys to retire the entry when SchemaContext goes away
-    // Soft values to keep unreferenced factories around for a bit
     private static final LoadingCache<SchemaContext, EagerJSONCodecFactory> CACHE = CacheBuilder.newBuilder()
-            .weakKeys().softValues().build(new CacheLoader<SchemaContext, EagerJSONCodecFactory>() {
+            .weakKeys().build(new CacheLoader<SchemaContext, EagerJSONCodecFactory>() {
                 @Override
                 public EagerJSONCodecFactory load(final SchemaContext key) {
                     final Stopwatch sw = Stopwatch.createStarted();
@@ -62,12 +61,12 @@ final class EagerJSONCodecFactory extends JSONCodecFactory {
         this.complexCodecs = Preconditions.checkNotNull(complexCodecs);
     }
 
-    static EagerJSONCodecFactory getIfPresent(final SchemaContext context) {
-        return CACHE.getIfPresent(context);
-    }
-
     static EagerJSONCodecFactory get(final SchemaContext context) {
         return CACHE.getUnchecked(context);
+    }
+
+    static EagerJSONCodecFactory getIfPresent(final SchemaContext context) {
+        return CACHE.getIfPresent(context);
     }
 
     @Override

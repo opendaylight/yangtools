@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
 
 /**
  * Lazily-computed JSONCodecFactory. This is a non-thread-safe factory, which performs caching of codecs. It is most
- * appropriate for one-off encodings of repetetive data.
+ * appropriate for one-off encodings of repetitive data.
  *
  * @author Robert Varga
  */
