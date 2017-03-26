@@ -35,12 +35,12 @@ public final class SharedCodecCache<T> extends CodecCache<T> {
     }
 
     @Override
-    public T lookupSimple(final TypeDefinition<?> type) {
+    T lookupSimple(final TypeDefinition<?> type) {
         return simpleCodecs.getIfPresent(type);
     }
 
     @Override
-    public T getComplex(final TypedSchemaNode schema, final T codec) {
+    T getComplex(final TypedSchemaNode schema, final T codec) {
         try {
             return complexCodecs.get(schema, () -> codec);
         } catch (ExecutionException e) {
@@ -49,7 +49,7 @@ public final class SharedCodecCache<T> extends CodecCache<T> {
     }
 
     @Override
-    public T getSimple(final TypeDefinition<?> type, final T codec) {
+    T getSimple(final TypeDefinition<?> type, final T codec) {
         try {
             return simpleCodecs.get(type, () -> codec);
         } catch (ExecutionException e) {
