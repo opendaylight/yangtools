@@ -10,11 +10,13 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Stopwatch;
 import com.google.common.base.Verify;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BinaryStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BitsStringCodec;
@@ -22,6 +24,13 @@ import org.opendaylight.yangtools.yang.data.impl.codec.BooleanStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.DecimalStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.EnumStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.StringStringCodec;
+import org.opendaylight.yangtools.yang.data.util.codec.CodecCache;
+import org.opendaylight.yangtools.yang.data.util.codec.LazyCodecCache;
+import org.opendaylight.yangtools.yang.data.util.codec.NoopCodecCache;
+import org.opendaylight.yangtools.yang.data.util.codec.PrecomputedCodecCache;
+import org.opendaylight.yangtools.yang.data.util.codec.SharedCodecCache;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
@@ -52,14 +61,60 @@ import org.slf4j.LoggerFactory;
  * {@link #createLazy(SchemaContext)} and {@link #createSimple(SchemaContext)} for details.
  */
 @Beta
-public abstract class JSONCodecFactory {
+public final class JSONCodecFactory {
+    private static final class EagerCacheLoader extends CacheLoader<SchemaContext, JSONCodecFactory> {
+        @Override
+        public JSONCodecFactory load(final SchemaContext key) {
+            final Stopwatch sw = Stopwatch.createStarted();
+            final LazyCodecCache<JSONCodec<?>> lazyCache = new LazyCodecCache<>();
+            final JSONCodecFactory lazy = new JSONCodecFactory(key, lazyCache);
+            final int visitedLeaves = requestCodecsForChildren(lazy, key);
+            sw.stop();
+
+            final PrecomputedCodecCache<JSONCodec<?>> cache = lazyCache.toPrecomputed();
+            LOG.debug("{} leaf nodes resulted in {} simple and {} complex codecs in {}", visitedLeaves,
+                cache.simpleSize(), cache.complexSize(), sw);
+            return new JSONCodecFactory(key, cache);
+        }
+
+        private static int requestCodecsForChildren(final JSONCodecFactory lazy, final DataNodeContainer parent) {
+            int ret = 0;
+            for (DataSchemaNode child : parent.getChildNodes()) {
+                if (child instanceof TypedSchemaNode) {
+                    lazy.codecFor((TypedSchemaNode) child);
+                    ++ret;
+                } else if (child instanceof DataNodeContainer) {
+                    ret += requestCodecsForChildren(lazy, (DataNodeContainer) child);
+                }
+            }
+
+            return ret;
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(JSONCodecFactory.class);
 
+    // Weak keys to retire the entry when SchemaContext goes away
+    private static final LoadingCache<SchemaContext, JSONCodecFactory> PRECOMPUTED = CacheBuilder.newBuilder()
+            .weakKeys().build(new EagerCacheLoader());
+
+    // Weak keys to retire the entry when SchemaContext goes away and to force identity-based lookup
+    private static final LoadingCache<SchemaContext, JSONCodecFactory> SHARED = CacheBuilder.newBuilder()
+            .weakKeys().build(new CacheLoader<SchemaContext, JSONCodecFactory>() {
+                @Override
+                public JSONCodecFactory load(final SchemaContext key) {
+                    return new JSONCodecFactory(key, new SharedCodecCache<>());
+                }
+            });
+
+
+    private final CodecCache<JSONCodec<?>> cache;
     private final SchemaContext schemaContext;
     private final JSONCodec<?> iidCodec;
 
-    JSONCodecFactory(final SchemaContext context) {
+    JSONCodecFactory(final SchemaContext context, final CodecCache<JSONCodec<?>> cache) {
         this.schemaContext = Preconditions.checkNotNull(context);
+        this.cache = Preconditions.checkNotNull(cache);
         iidCodec = new JSONStringInstanceIdentifierCodec(context, this);
     }
 
@@ -96,7 +151,7 @@ public abstract class JSONCodecFactory {
      * @throws NullPointerException if context is null
      */
     public static JSONCodecFactory getPrecomputed(final SchemaContext context) {
-        return EagerJSONCodecFactory.get(context);
+        return PRECOMPUTED.getUnchecked(context);
     }
 
     /**
@@ -111,7 +166,7 @@ public abstract class JSONCodecFactory {
      * @throws NullPointerException if context is null
      */
     public static Optional<JSONCodecFactory> getPrecomputedIfAvailable(final SchemaContext context) {
-        return Optional.fromNullable(EagerJSONCodecFactory.getIfPresent(context));
+        return Optional.fromNullable(PRECOMPUTED.getIfPresent(context));
     }
 
     /**
@@ -127,7 +182,7 @@ public abstract class JSONCodecFactory {
      * @throws NullPointerException if context is null
      */
     public static JSONCodecFactory getShared(final SchemaContext context) {
-        return SharedJSONCodecFactory.get(context);
+        return SHARED.getUnchecked(context);
     }
 
     /**
@@ -143,7 +198,7 @@ public abstract class JSONCodecFactory {
      * @throws NullPointerException if context is null
      */
     public static JSONCodecFactory createLazy(final SchemaContext context) {
-        return new LazyJSONCodecFactory(context);
+        return new JSONCodecFactory(context, new LazyCodecCache<>());
     }
 
     /**
@@ -159,7 +214,7 @@ public abstract class JSONCodecFactory {
      * @throws NullPointerException if context is null.
      */
     public static JSONCodecFactory createSimple(final SchemaContext context) {
-        return new SimpleJSONCodecFactory(context);
+        return new JSONCodecFactory(context, NoopCodecCache.getInstance());
     }
 
     final JSONCodec<?> codecFor(final TypedSchemaNode schema) {
@@ -176,12 +231,12 @@ public abstract class JSONCodecFactory {
          * We assume prevalence is in above order and that caching is effective. We therefore
          */
         final TypeDefinition<?> type = schema.getType();
-        JSONCodec<?> ret = lookupSimple(type);
+        JSONCodec<?> ret = cache.lookupSimple(type);
         if (ret != null) {
             LOG.trace("Type {} hit simple {}", type, ret);
             return ret;
         }
-        ret = lookupComplex(schema);
+        ret = cache.lookupComplex(schema);
         if (ret != null) {
             LOG.trace("Type {} hit complex {}", type, ret);
             return ret;
@@ -197,46 +252,12 @@ public abstract class JSONCodecFactory {
         // ... and complex types afterwards
         ret = createComplexCodecFor(schema, type);
         LOG.trace("Type {} miss complex {}", type, ret);
-        return getComplex(schema, ret);
+        return cache.getComplex(schema, ret);
     }
 
     final SchemaContext getSchemaContext() {
         return schemaContext;
     }
-
-    /**
-     * Lookup a complex codec for schema node.
-     *
-     * @param schema Schema node
-     * @return Cached codec, or null if no codec is cached.
-     */
-    @Nullable abstract JSONCodec<?> lookupComplex(TypedSchemaNode schema);
-
-    /**
-     * Lookup a simple codec for a type definition.
-     *
-     * @param type Type definitions
-     * @return Cached codec, or null if no codec is cached.
-     */
-    @Nullable abstract JSONCodec<?> lookupSimple(TypeDefinition<?> type);
-
-    /**
-     * Lookup-or-store a complex codec for a particular schema node.
-     *
-     * @param schema Schema node
-     * @param codec Codec to cache
-     * @return Codec instance, either already-cached, or the codec presented as argument.
-     */
-    @Nonnull abstract JSONCodec<?> getComplex(TypedSchemaNode schema, JSONCodec<?> codec);
-
-    /**
-     * Lookup-or-store a simple codec for a particular schema node.
-     *
-     * @param schema Schema node
-     * @param codec Codec to cache
-     * @return Codec instance, either already-cached, or the codec presented as argument.
-     */
-    @Nonnull abstract JSONCodec<?> getSimple(TypeDefinition<?> type, JSONCodec<?> codec);
 
     private JSONCodec<?> getSimpleCodecFor(final TypeDefinition<?> type) {
         if (type instanceof InstanceIdentifierTypeDefinition) {
@@ -278,7 +299,7 @@ public abstract class JSONCodecFactory {
             return null;
         }
 
-        return getSimple(type, Verify.verifyNotNull(ret));
+        return cache.getSimple(type, Verify.verifyNotNull(ret));
     }
 
     private JSONCodec<?> createComplexCodecFor(final TypedSchemaNode schema, final TypeDefinition<?> type) {
@@ -317,7 +338,7 @@ public abstract class JSONCodecFactory {
         final List<JSONCodec<?>> codecs = new ArrayList<>(types.size());
 
         for (TypeDefinition<?> type : types) {
-            JSONCodec<?> codec = lookupSimple(type);
+            JSONCodec<?> codec = cache.lookupSimple(type);
             if (codec == null) {
                 codec = Verify.verifyNotNull(getSimpleCodecFor(type), "Type %s did not resolve to a simple codec",
                     type);
@@ -334,7 +355,7 @@ public abstract class JSONCodecFactory {
         final List<JSONCodec<?>> codecs = new ArrayList<>(types.size());
 
         for (TypeDefinition<?> type : types) {
-            JSONCodec<?> codec = lookupSimple(type);
+            JSONCodec<?> codec = cache.lookupSimple(type);
             if (codec == null) {
                 codec = getSimpleCodecFor(type);
                 if (codec == null) {
