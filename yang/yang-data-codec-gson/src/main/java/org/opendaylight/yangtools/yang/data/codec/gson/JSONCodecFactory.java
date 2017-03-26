@@ -9,14 +9,12 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Stopwatch;
-import com.google.common.base.Verify;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import java.util.ArrayList;
 import java.util.List;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BinaryStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BitsStringCodec;
@@ -24,6 +22,7 @@ import org.opendaylight.yangtools.yang.data.impl.codec.BooleanStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.DecimalStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.EnumStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.StringStringCodec;
+import org.opendaylight.yangtools.yang.data.util.codec.AbstractCodecFactory;
 import org.opendaylight.yangtools.yang.data.util.codec.CodecCache;
 import org.opendaylight.yangtools.yang.data.util.codec.LazyCodecCache;
 import org.opendaylight.yangtools.yang.data.util.codec.NoopCodecCache;
@@ -32,7 +31,6 @@ import org.opendaylight.yangtools.yang.data.util.codec.SharedCodecCache;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -43,12 +41,10 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +57,7 @@ import org.slf4j.LoggerFactory;
  * {@link #createLazy(SchemaContext)} and {@link #createSimple(SchemaContext)} for details.
  */
 @Beta
-public final class JSONCodecFactory {
+public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
     private static final class EagerCacheLoader extends CacheLoader<SchemaContext, JSONCodecFactory> {
         @Override
         public JSONCodecFactory load(final SchemaContext key) {
@@ -107,14 +103,10 @@ public final class JSONCodecFactory {
                 }
             });
 
-
-    private final CodecCache<JSONCodec<?>> cache;
-    private final SchemaContext schemaContext;
     private final JSONCodec<?> iidCodec;
 
     JSONCodecFactory(final SchemaContext context, final CodecCache<JSONCodec<?>> cache) {
-        this.schemaContext = Preconditions.checkNotNull(context);
-        this.cache = Preconditions.checkNotNull(cache);
+        super(context, cache);
         iidCodec = new JSONStringInstanceIdentifierCodec(context, this);
     }
 
@@ -217,155 +209,70 @@ public final class JSONCodecFactory {
         return new JSONCodecFactory(context, NoopCodecCache.getInstance());
     }
 
-    final JSONCodec<?> codecFor(final TypedSchemaNode schema) {
-        /*
-         * There are many trade-offs to be made here. We need the common case being as fast as possible while reusing
-         * codecs as much as possible.
-         *
-         * This gives us essentially four classes of codecs:
-         * - simple codecs, which are based on the type definition only
-         * - complex codecs, which depend on both type definition and the leaf
-         * - null codec, which does not depend on anything
-         * - instance identifier codec, which is based on namespace mapping
-         *
-         * We assume prevalence is in above order and that caching is effective. We therefore
-         */
-        final TypeDefinition<?> type = schema.getType();
-        JSONCodec<?> ret = cache.lookupSimple(type);
-        if (ret != null) {
-            LOG.trace("Type {} hit simple {}", type, ret);
-            return ret;
-        }
-        ret = cache.lookupComplex(schema);
-        if (ret != null) {
-            LOG.trace("Type {} hit complex {}", type, ret);
-            return ret;
-        }
-
-        // Dealing with simple types first...
-        ret = getSimpleCodecFor(type);
-        if (ret != null) {
-            LOG.trace("Type {} miss simple {}", type, ret);
-            return ret;
-        }
-
-        // ... and complex types afterwards
-        ret = createComplexCodecFor(schema, type);
-        LOG.trace("Type {} miss complex {}", type, ret);
-        return cache.getComplex(schema, ret);
+    @Override
+    protected JSONCodec<?> binaryCodec(final BinaryTypeDefinition type) {
+        return new QuotedJSONCodec<>(BinaryStringCodec.from(type));
     }
 
-    final SchemaContext getSchemaContext() {
-        return schemaContext;
+    @Override
+    protected JSONCodec<?> booleanCodec(final BooleanTypeDefinition type) {
+        return new BooleanJSONCodec(BooleanStringCodec.from(type));
     }
 
-    private JSONCodec<?> getSimpleCodecFor(final TypeDefinition<?> type) {
-        if (type instanceof InstanceIdentifierTypeDefinition) {
-            // FIXME: there really are two favors, as 'require-instance true' needs to be validated. In order to deal
-            //        with that, though, we need access to the current data store.
-            return iidCodec;
-        } else if (type instanceof EmptyTypeDefinition) {
-            return EmptyJSONCodec.INSTANCE;
-        } else if (type instanceof UnknownTypeDefinition) {
-            return NullJSONCodec.INSTANCE;
-        }
-
-        // Now deal with simple types. Note we consider union composed of purely simple types a simple type itself.
-        // The checks here are optimized for common types.
-        final JSONCodec<?> ret;
-        if (type instanceof StringTypeDefinition) {
-            ret = new QuotedJSONCodec<>(StringStringCodec.from((StringTypeDefinition) type));
-        } else if (type instanceof IntegerTypeDefinition) {
-            ret = new NumberJSONCodec<>(AbstractIntegerStringCodec.from((IntegerTypeDefinition) type));
-        } else if (type instanceof UnsignedIntegerTypeDefinition) {
-            ret = new NumberJSONCodec<>(AbstractIntegerStringCodec.from((UnsignedIntegerTypeDefinition) type));
-        } else if (type instanceof BooleanTypeDefinition) {
-            ret = new BooleanJSONCodec(BooleanStringCodec.from((BooleanTypeDefinition) type));
-        } else if (type instanceof DecimalTypeDefinition) {
-            ret = new NumberJSONCodec<>(DecimalStringCodec.from((DecimalTypeDefinition) type));
-        } else if (type instanceof EnumTypeDefinition) {
-            ret = new QuotedJSONCodec<>(EnumStringCodec.from((EnumTypeDefinition) type));
-        } else if (type instanceof BitsTypeDefinition) {
-            ret = new QuotedJSONCodec<>(BitsStringCodec.from((BitsTypeDefinition) type));
-        } else if (type instanceof UnionTypeDefinition) {
-            final UnionTypeDefinition union = (UnionTypeDefinition) type;
-            if (!isSimpleUnion(union)) {
-                return null;
-            }
-            ret = createSimpleUnion(union);
-        } else if (type instanceof BinaryTypeDefinition) {
-            ret = new QuotedJSONCodec<>(BinaryStringCodec.from((BinaryTypeDefinition) type));
-        } else {
-            return null;
-        }
-
-        return cache.getSimple(type, Verify.verifyNotNull(ret));
+    @Override
+    protected JSONCodec<?> bitsCodec(final BitsTypeDefinition type) {
+        return new QuotedJSONCodec<>(BitsStringCodec.from(type));
     }
 
-    private JSONCodec<?> createComplexCodecFor(final TypedSchemaNode schema, final TypeDefinition<?> type) {
-        if (type instanceof UnionTypeDefinition) {
-            return createComplexUnion(schema, (UnionTypeDefinition) type);
-        } else if (type instanceof LeafrefTypeDefinition) {
-            final TypeDefinition<?> target = SchemaContextUtil.getBaseTypeForLeafRef((LeafrefTypeDefinition) type,
-                schemaContext, schema);
-            Verify.verifyNotNull(target, "Unable to find base type for leafref node %s type %s.", schema.getPath(),
-                    target);
-
-            final JSONCodec<?> ret = getSimpleCodecFor(target);
-            return ret != null ? ret : createComplexCodecFor(schema, target);
-        } else if (type instanceof IdentityrefTypeDefinition) {
-            return new JSONStringIdentityrefCodec(schemaContext, schema.getQName().getModule());
-        } else {
-            throw new IllegalArgumentException("Unsupported type " + type);
-        }
+    @Override
+    protected JSONCodec<?> decimalCodec(final DecimalTypeDefinition type) {
+        return new NumberJSONCodec<>(DecimalStringCodec.from(type));
     }
 
-    private static boolean isSimpleUnion(final UnionTypeDefinition union) {
-        for (TypeDefinition<?> t : union.getTypes()) {
-            if (t instanceof IdentityrefTypeDefinition || t instanceof LeafrefTypeDefinition
-                    || (t instanceof UnionTypeDefinition && !isSimpleUnion((UnionTypeDefinition) t))) {
-                LOG.debug("Type {} has non-simple subtype", t);
-                return false;
-            }
-        }
-
-        LOG.debug("Type {} is simple", union);
-        return true;
+    @Override
+    protected JSONCodec<?> emptyCodec(final EmptyTypeDefinition type) {
+        return EmptyJSONCodec.INSTANCE;
     }
 
-    private JSONCodec<?> createSimpleUnion(final UnionTypeDefinition union) {
-        final List<TypeDefinition<?>> types = union.getTypes();
-        final List<JSONCodec<?>> codecs = new ArrayList<>(types.size());
-
-        for (TypeDefinition<?> type : types) {
-            JSONCodec<?> codec = cache.lookupSimple(type);
-            if (codec == null) {
-                codec = Verify.verifyNotNull(getSimpleCodecFor(type), "Type %s did not resolve to a simple codec",
-                    type);
-            }
-
-            codecs.add(codec);
-        }
-
-        return UnionJSONCodec.create(union, codecs);
+    @Override
+    protected JSONCodec<?> enumCodec(final EnumTypeDefinition type) {
+        return new QuotedJSONCodec<>(EnumStringCodec.from(type));
     }
 
-    private UnionJSONCodec<?> createComplexUnion(final TypedSchemaNode schema, final UnionTypeDefinition union) {
-        final List<TypeDefinition<?>> types = union.getTypes();
-        final List<JSONCodec<?>> codecs = new ArrayList<>(types.size());
+    @Override
+    protected JSONCodec<?> identityRefCodec(final IdentityrefTypeDefinition type, final QNameModule module) {
+        return new JSONStringIdentityrefCodec(getSchemaContext(), module);
+    }
 
-        for (TypeDefinition<?> type : types) {
-            JSONCodec<?> codec = cache.lookupSimple(type);
-            if (codec == null) {
-                codec = getSimpleCodecFor(type);
-                if (codec == null) {
-                    codec = createComplexCodecFor(schema, type);
-                }
-            }
+    @Override
+    protected JSONCodec<?> instanceIdentifierCodec(final InstanceIdentifierTypeDefinition type) {
+        // FIXME: there really are two favors, as 'require-instance true' needs to be validated. In order to deal
+        //        with that, though, we need access to the current data store.
+        return iidCodec;
+    }
 
-            codecs.add(Verify.verifyNotNull(codec, "Schema %s subtype %s has no codec", schema, type));
-        }
+    @Override
+    protected JSONCodec<?> intCodec(final IntegerTypeDefinition type) {
+        return new NumberJSONCodec<>(AbstractIntegerStringCodec.from(type));
+    }
 
-        return UnionJSONCodec.create(union, codecs);
+    @Override
+    protected JSONCodec<?> stringCodec(final StringTypeDefinition type) {
+        return new QuotedJSONCodec<>(StringStringCodec.from(type));
+    }
+
+    @Override
+    protected JSONCodec<?> uintCodec(final UnsignedIntegerTypeDefinition type) {
+        return new NumberJSONCodec<>(AbstractIntegerStringCodec.from(type));
+    }
+
+    @Override
+    protected JSONCodec<?> unionCodec(final UnionTypeDefinition type, final List<JSONCodec<?>> codecs) {
+        return UnionJSONCodec.create(type, codecs);
+    }
+
+    @Override
+    protected JSONCodec<?> unknownCodec(final UnknownTypeDefinition type) {
+        return NullJSONCodec.INSTANCE;
     }
 }

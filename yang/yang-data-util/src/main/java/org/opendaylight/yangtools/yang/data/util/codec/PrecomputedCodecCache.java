@@ -35,24 +35,24 @@ public final class PrecomputedCodecCache<T> extends CodecCache<T> {
     }
 
     @Override
-    public T lookupComplex(final TypedSchemaNode schema) {
+    T lookupComplex(final TypedSchemaNode schema) {
         final T ret = complexCodecs.get(schema);
         Preconditions.checkArgument(ret != null, "No codec available for schema %s", schema);
         return ret;
     }
 
     @Override
-    public T lookupSimple(final TypeDefinition<?> type) {
+    T lookupSimple(final TypeDefinition<?> type) {
         return simpleCodecs.get(type);
     }
 
     @Override
-    public T getComplex(final TypedSchemaNode schema, final T codec) {
+    T getComplex(final TypedSchemaNode schema, final T codec) {
         throw new IllegalStateException("Uncached codec for " + schema);
     }
 
     @Override
-    public T getSimple(final TypeDefinition<?> type, final T codec) {
+    T getSimple(final TypeDefinition<?> type, final T codec) {
         throw new IllegalStateException("Uncached codec for " + type);
     }
 
