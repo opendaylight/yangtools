@@ -21,17 +21,17 @@ final class EmptyXmlCodec implements XmlCodec<Void> {
     }
 
     @Override
-    public Class<Void> getDataClass() {
+    public Class<Void> getDataType() {
         return Void.class;
     }
 
     @Override
-    public Void deserializeFromString(final NamespaceContext namespaceContext, final String value) {
+    public Void parseValue(final NamespaceContext ctx, final String str) {
         return null;
     }
 
     @Override
-    public void serializeToWriter(final XMLStreamWriter writer, final Void value) throws XMLStreamException {
-        writer.writeCharacters("");
+    public void writeValue(final XMLStreamWriter ctx, final Void value) throws XMLStreamException {
+        ctx.writeCharacters("");
     }
 }

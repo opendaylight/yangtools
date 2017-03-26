@@ -62,28 +62,28 @@ final class XmlStringInstanceIdentifierCodec  extends AbstractModuleStringInstan
         Preconditions.checkNotNull(schemaNode, "schemaNode cannot be null");
         Preconditions.checkArgument(schemaNode instanceof LeafSchemaNode, "schemaNode must be of type LeafSchemaNode");
         final XmlCodec<?> objectXmlCodec = codecFactory.codecFor((LeafSchemaNode) schemaNode);
-        return objectXmlCodec.deserializeFromString(getNamespaceContext(), value);
+        return objectXmlCodec.parseValue(getNamespaceContext(), value);
     }
 
     @Override
-    public Class<YangInstanceIdentifier> getDataClass() {
+    public Class<YangInstanceIdentifier> getDataType() {
         return YangInstanceIdentifier.class;
     }
 
     @Override
-    public YangInstanceIdentifier deserializeFromString(final NamespaceContext namespaceContext, final String value) {
-        pushNamespaceContext(namespaceContext);
+    public YangInstanceIdentifier parseValue(final NamespaceContext ctx, final String str) {
+        pushNamespaceContext(ctx);
         try {
-            return deserialize(value);
+            return deserialize(str);
         } finally {
             popNamespaceContext();
         }
     }
 
     @Override
-    public void serializeToWriter(final XMLStreamWriter writer, final YangInstanceIdentifier value)
+    public void writeValue(final XMLStreamWriter ctx, final YangInstanceIdentifier value)
             throws XMLStreamException {
-        writer.writeCharacters(serialize(value));
+        ctx.writeCharacters(serialize(value));
     }
 
     private static NamespaceContext getNamespaceContext() {

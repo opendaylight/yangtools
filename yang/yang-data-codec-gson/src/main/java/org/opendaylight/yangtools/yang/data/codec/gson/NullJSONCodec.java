@@ -21,19 +21,19 @@ final class NullJSONCodec implements JSONCodec<Object> {
     }
 
     @Override
-    public Class<Object> getDataClass() {
+    public Class<Object> getDataType() {
         return Object.class;
     }
 
     @Override
-    public Object deserializeString(final String value) {
+    public Object parseValue(final Object ctx, final String str) {
         LOG.warn("Call of the deserializeString method on null codec. No operation performed.");
         return null;
     }
 
     @Override
-    public void serializeToWriter(final JsonWriter writer, final Object value) throws IOException {
-        // NOOP since codec is unkwown.
+    public void writeValue(final JsonWriter ctx, final Object value) throws IOException {
+        // NOOP since codec is unknown.
         LOG.warn("Call of the serializeToWriter method on null codec. No operation performed.");
     }
 }

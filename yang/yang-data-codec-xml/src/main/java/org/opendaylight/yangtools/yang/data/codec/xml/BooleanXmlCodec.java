@@ -18,7 +18,7 @@ final class BooleanXmlCodec extends AbstractXmlCodec<Boolean> {
     }
 
     @Override
-    public void serializeToWriter(final XMLStreamWriter writer, final Boolean value) throws XMLStreamException {
-        writer.writeCharacters(String.valueOf(value));
+    public void writeValue(final XMLStreamWriter ctx, final Boolean value) throws XMLStreamException {
+        ctx.writeCharacters(String.valueOf(value));
     }
 }

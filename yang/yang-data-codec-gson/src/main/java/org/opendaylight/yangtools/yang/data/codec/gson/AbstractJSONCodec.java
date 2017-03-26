@@ -24,13 +24,13 @@ abstract class AbstractJSONCodec<T> implements JSONCodec<T> {
     }
 
     @Override
-    public final Class<T> getDataClass() {
+    public final Class<T> getDataType() {
         return codec.getInputClass();
     }
 
     @Override
-    public final T deserializeString(final String input) {
-        return codec.deserialize(input);
+    public final T parseValue(final Object ctx, final String str) {
+        return codec.deserialize(str);
     }
 
     final String serialize(final T input) {

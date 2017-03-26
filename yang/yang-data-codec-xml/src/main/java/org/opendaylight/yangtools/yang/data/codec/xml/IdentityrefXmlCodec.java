@@ -40,30 +40,24 @@ final class IdentityrefXmlCodec extends ModuleStringIdentityrefCodec implements 
     }
 
     @Override
-    public Class<QName> getDataClass() {
+    public Class<QName> getDataType() {
         return QName.class;
     }
 
-    /**
-     * Serialize QName with specified XMLStreamWriter.
-     *
-     * @param writer XMLStreamWriter
-     * @param value QName
-     */
     @Override
-    public void serializeToWriter(final XMLStreamWriter writer, final QName value) throws XMLStreamException {
-        // FIXME: this does not work correctly, as we need to populate entries into the namespace context
-        writer.writeCharacters(serialize(value));
-    }
-
-    @Override
-    public QName deserializeFromString(final NamespaceContext namespaceContext, final String value) {
-        pushNamespaceContext(namespaceContext);
+    public QName parseValue(final NamespaceContext ctx, final String str) {
+        pushNamespaceContext(ctx);
         try {
-            return deserialize(value);
+            return deserialize(str);
         } finally {
             popNamespaceContext();
         }
+    }
+
+    @Override
+    public void writeValue(final XMLStreamWriter ctx, final QName value) throws XMLStreamException {
+        // FIXME: this does not work correctly, as we need to populate entries into the namespace context
+        ctx.writeCharacters(serialize(value));
     }
 
     private static NamespaceContext getNamespaceContext() {

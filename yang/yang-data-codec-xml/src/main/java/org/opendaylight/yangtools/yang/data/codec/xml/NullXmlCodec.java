@@ -22,20 +22,19 @@ final class NullXmlCodec implements XmlCodec<Object> {
     }
 
     @Override
-    public Class<Object> getDataClass() {
+    public Class<Object> getDataType() {
         return Object.class;
     }
 
     @Override
-    public void serializeToWriter(final XMLStreamWriter writer, final Object value) throws XMLStreamException {
-        // NOOP since codec is unkwown.
-        LOG.warn("Call of the serializeToWriter method on null codec. No operation performed.");
-    }
-
-    @Override
-    public Object deserializeFromString(final NamespaceContext namespaceContext, final String value) {
+    public Object parseValue(final NamespaceContext ctx, final String str) {
         LOG.warn("Call of the deserializeString method on null codec. No operation performed.");
         return null;
     }
 
+    @Override
+    public void writeValue(final XMLStreamWriter ctx, final Object value) throws XMLStreamException {
+        // NOOP since codec is unkwown.
+        LOG.warn("Call of the serializeToWriter method on null codec. No operation performed.");
+    }
 }

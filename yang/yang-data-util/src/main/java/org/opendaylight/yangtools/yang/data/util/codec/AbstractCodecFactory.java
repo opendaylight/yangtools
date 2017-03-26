@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * @param <T> Codec type
  */
 @ThreadSafe
-public abstract class AbstractCodecFactory<T> {
+public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCodecFactory.class);
 
     private final CodecCache<T> cache;

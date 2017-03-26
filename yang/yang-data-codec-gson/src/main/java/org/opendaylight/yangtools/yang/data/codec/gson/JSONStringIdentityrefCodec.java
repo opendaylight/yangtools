@@ -32,23 +32,17 @@ final class JSONStringIdentityrefCodec extends ModuleStringIdentityrefCodec impl
     }
 
     @Override
-    public Class<QName> getDataClass() {
+    public Class<QName> getDataType() {
         return QName.class;
     }
 
     @Override
-    public QName deserializeString(final String value) {
-        return deserialize(value);
+    public QName parseValue(final Object ctx, final String str) {
+        return deserialize(str);
     }
 
-    /**
-     * Serialize QName with specified JsonWriter.
-     *
-     * @param writer JsonWriter
-     * @param value QName
-     */
     @Override
-    public void serializeToWriter(final JsonWriter writer, final QName value) throws IOException {
-        writer.value(serialize(value));
+    public void writeValue(final JsonWriter ctx, final QName value) throws IOException {
+        ctx.value(serialize(value));
     }
 }
