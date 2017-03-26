@@ -18,7 +18,7 @@ final class NumberXmlCodec<T extends Number> extends AbstractXmlCodec<T> {
     }
 
     @Override
-    public void serializeToWriter(final XMLStreamWriter writer, final T value) throws XMLStreamException {
+    public void writeValue(final XMLStreamWriter writer, final T value) throws XMLStreamException {
         writer.writeCharacters(String.valueOf(value));
     }
 }

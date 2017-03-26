@@ -20,19 +20,19 @@ final class EmptyJSONCodec implements JSONCodec<Void> {
     }
 
     @Override
-    public Void deserializeString(final String input) {
+    public Class<Void> getDataType() {
+        return Void.class;
+    }
+
+    @Override
+    public Void parseValue(final Object ctx, final String input) {
         return null;
     }
 
     @Override
-    public void serializeToWriter(final JsonWriter writer, final Void value) throws IOException {
+    public void writeValue(final JsonWriter writer, final Void value) throws IOException {
         writer.beginArray();
         writer.value((String) null);
         writer.endArray();
-    }
-
-    @Override
-    public Class<Void> getDataClass() {
-        return Void.class;
     }
 }
