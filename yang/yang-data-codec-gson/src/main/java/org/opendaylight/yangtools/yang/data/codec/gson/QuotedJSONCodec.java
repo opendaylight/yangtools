@@ -28,7 +28,7 @@ final class QuotedJSONCodec<T> extends AbstractJSONCodec<T> {
      * @param value
      */
     @Override
-    public void serializeToWriter(final JsonWriter writer, final T value) throws IOException {
+    public void writeValue(final JsonWriter writer, final T value) throws IOException {
         writer.value(serialize(value));
     }
 }

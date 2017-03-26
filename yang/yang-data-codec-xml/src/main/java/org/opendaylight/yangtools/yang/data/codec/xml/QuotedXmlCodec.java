@@ -24,7 +24,7 @@ final class QuotedXmlCodec<T> extends AbstractXmlCodec<T> {
      * @param value value which will be serialized to the writer
      */
     @Override
-    public void serializeToWriter(final XMLStreamWriter writer, final T value) throws XMLStreamException {
+    public void writeValue(final XMLStreamWriter writer, final T value) throws XMLStreamException {
         writer.writeCharacters(serialize(value));
     }
 }

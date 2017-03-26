@@ -32,7 +32,7 @@ abstract class UnionJSONCodec<T> implements JSONCodec<T> {
         }
 
         @Override
-        public Class<Object> getDataClass() {
+        public Class<Object> getDataType() {
             return Object.class;
         }
     }
@@ -46,7 +46,7 @@ abstract class UnionJSONCodec<T> implements JSONCodec<T> {
         }
 
         @Override
-        public Class<T> getDataClass() {
+        public Class<T> getDataType() {
             return dataClass;
         }
     }
@@ -63,9 +63,9 @@ abstract class UnionJSONCodec<T> implements JSONCodec<T> {
         final Iterator<JSONCodec<?>> it = codecs.iterator();
         Verify.verify(it.hasNext(), "Union %s has no subtypes", type);
 
-        Class<?> dataClass = it.next().getDataClass();
+        Class<?> dataClass = it.next().getDataType();
         while (it.hasNext()) {
-            final Class<?> next = it.next().getDataClass();
+            final Class<?> next = it.next().getDataType();
             if (!dataClass.equals(next)) {
                 LOG.debug("Type {} has diverse data classes: {} and {}", type, dataClass, next);
                 return new Diverse(codecs);
@@ -77,26 +77,26 @@ abstract class UnionJSONCodec<T> implements JSONCodec<T> {
     }
 
     @Override
-    public final T deserializeString(final String input) {
+    public final T parseValue(final Object ctx, final String input) {
         for (JSONCodec<?> codec : codecs) {
             final Object ret;
             try {
-                ret = codec.deserializeString(input);
+                ret = codec.parseValue(ctx, input);
             } catch (RuntimeException e) {
                 LOG.debug("Codec {} did not accept input '{}'", codec, input, e);
                 continue;
             }
 
-            return getDataClass().cast(ret);
+            return getDataType().cast(ret);
         }
 
         throw new IllegalArgumentException("Input '" + input +"'  did not match any codecs");
     }
 
     @Override
-    public final void serializeToWriter(final JsonWriter writer, final T value) throws IOException {
+    public final void writeValue(final JsonWriter writer, final T value) throws IOException {
         for (JSONCodec<?> codec : codecs) {
-            if (!codec.getDataClass().isInstance(value)) {
+            if (!codec.getDataType().isInstance(value)) {
                 LOG.debug("Codec {} cannot accept input {}, skipping it", codec, value);
                 continue;
             }
@@ -104,7 +104,7 @@ abstract class UnionJSONCodec<T> implements JSONCodec<T> {
             @SuppressWarnings("unchecked")
             final JSONCodec<Object> objCodec = (JSONCodec<Object>) codec;
             try {
-                objCodec.serializeToWriter(writer, value);
+                objCodec.writeValue(writer, value);
                 return;
             } catch (RuntimeException e) {
                 LOG.debug("Codec {} failed to serialize {}", codec, value, e);

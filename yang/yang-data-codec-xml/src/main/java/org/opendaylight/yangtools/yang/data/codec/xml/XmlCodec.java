@@ -11,18 +11,14 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import org.opendaylight.yangtools.yang.data.util.codec.TypeAwareCodec;
 
-interface XmlCodec<T> {
-    Class<T> getDataClass();
-
-    T deserializeFromString(NamespaceContext namespaceContext, String value);
-
+interface XmlCodec<T> extends TypeAwareCodec<T, NamespaceContext, XMLStreamWriter> {
     /**
-     * Serialize specified value with specified XMLStreamWriter.
+     * {@inheritDoc}
      *
-     * @param writer XMLStreamWriter
-     * @param value value which will be serialized to the writer
      * @throws XMLStreamException from {@link XMLStreamWriter}
      */
-    void serializeToWriter(XMLStreamWriter writer, T value) throws XMLStreamException;
+    @Override
+    void writeValue(XMLStreamWriter writer, T value) throws XMLStreamException;
 }
