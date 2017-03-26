@@ -27,13 +27,13 @@ abstract class AbstractXmlCodec<T> implements XmlCodec<T> {
     }
 
     @Override
-    public final Class<T> getDataClass() {
+    public final Class<T> getDataType() {
         return codec.getInputClass();
     }
 
     @Override
-    public final T deserializeFromString(final NamespaceContext namespaceContext, final String value) {
-        return codec.deserialize(value);
+    public final T parseValue(final NamespaceContext namespaceContext, final String str) {
+        return codec.deserialize(str);
     }
 
     final String serialize(final T input) {

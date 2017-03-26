@@ -19,14 +19,8 @@ final class BooleanJSONCodec extends AbstractJSONCodec<Boolean> {
         super(codec);
     }
 
-    /**
-     * Serialize specified value with specified JsonWriter.
-     *
-     * @param writer JsonWriter
-     * @param value
-     */
     @Override
-    public void serializeToWriter(final JsonWriter writer, final Boolean value) throws IOException {
-        writer.value(value);
+    public void writeValue(final JsonWriter ctx, final Boolean value) throws IOException {
+        ctx.value(value);
     }
 }
