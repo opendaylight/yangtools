@@ -10,22 +10,15 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.yang.data.impl.codec.DataStringCodec;
 
 final class BooleanXmlCodec extends AbstractXmlCodec<Boolean> {
-
-    BooleanXmlCodec(final Codec<String, Boolean> codec) {
+    BooleanXmlCodec(final DataStringCodec<Boolean> codec) {
         super(codec);
     }
 
-    /**
-     * Serialize specified value with specified XMLStreamWriter.
-     *
-     * @param writer XMLStreamWriter
-     * @param value value which will be serialized to the writer
-     */
     @Override
-    public void serializeToWriter(XMLStreamWriter writer, Boolean value) throws XMLStreamException {
+    public void serializeToWriter(final XMLStreamWriter writer, final Boolean value) throws XMLStreamException {
         writer.writeCharacters(String.valueOf(value));
     }
 }

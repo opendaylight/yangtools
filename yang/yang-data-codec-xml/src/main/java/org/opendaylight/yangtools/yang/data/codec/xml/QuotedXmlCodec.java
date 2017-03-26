@@ -10,11 +10,10 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.yang.data.impl.codec.DataStringCodec;
 
 final class QuotedXmlCodec<T> extends AbstractXmlCodec<T> {
-
-    QuotedXmlCodec(final Codec<String, T> codec) {
+    QuotedXmlCodec(final DataStringCodec<T> codec) {
         super(codec);
     }
 
@@ -25,8 +24,7 @@ final class QuotedXmlCodec<T> extends AbstractXmlCodec<T> {
      * @param value value which will be serialized to the writer
      */
     @Override
-    public void serializeToWriter(XMLStreamWriter writer, T value) throws XMLStreamException {
+    public void serializeToWriter(final XMLStreamWriter writer, final T value) throws XMLStreamException {
         writer.writeCharacters(serialize(value));
     }
-
 }
