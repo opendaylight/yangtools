@@ -9,72 +9,39 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Verify;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import java.util.AbstractMap.SimpleImmutableEntry;
-import java.util.Map.Entry;
-import javax.annotation.Nonnull;
+import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.BinaryStringCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.BitsStringCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.BooleanStringCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.DecimalStringCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.EnumStringCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.StringStringCodec;
+import org.opendaylight.yangtools.yang.data.util.codec.AbstractCodecFactory;
+import org.opendaylight.yangtools.yang.data.util.codec.SharedCodecCache;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
 @Beta
 @ThreadSafe
-public final class XmlCodecFactory {
-
-    private static final Logger LOG = LoggerFactory.getLogger(XmlCodecFactory.class);
-    private static final XmlCodec<Object> NULL_CODEC = new XmlCodec<Object>() {
-        @Override
-        public Object deserialize(final String input) {
-            return null;
-        }
-
-        @Override
-        public String serialize(final Object input) {
-            return null;
-        }
-
-        @Override
-        public void serializeToWriter(final XMLStreamWriter writer, final Object value) throws XMLStreamException {
-            // NOOP since codec is unkwown.
-            LOG.warn("Call of the serializeToWriter method on XmlCodecFactory.NULL_CODEC object. No operation " +
-                    "performed.");
-        }
-    };
-
-    private final LoadingCache<Entry<TypedSchemaNode, NamespaceContext>, XmlCodec<?>> codecs = CacheBuilder.newBuilder()
-            .softValues().build(new CacheLoader<Entry<TypedSchemaNode, NamespaceContext>, XmlCodec<?>>() {
-                @Override
-                public XmlCodec<?> load(@Nonnull final Entry<TypedSchemaNode, NamespaceContext> pair) {
-                    final TypedSchemaNode schemaNode = pair.getKey();
-                    final TypeDefinition<?> type = schemaNode.getType();
-                    return createCodec(schemaNode, type, pair.getValue());
-                }
-            });
-
-    private final SchemaContext schemaContext;
+public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
 
     private XmlCodecFactory(final SchemaContext context) {
-        this.schemaContext = Preconditions.checkNotNull(context);
+        super(context, new SharedCodecCache<>());
     }
 
     /**
@@ -87,71 +54,68 @@ public final class XmlCodecFactory {
         return new XmlCodecFactory(context);
     }
 
-    private XmlCodec<?> createCodec(final DataSchemaNode key, final TypeDefinition<?> type,
-                                    final NamespaceContext namespaceContext) {
-        if (type instanceof LeafrefTypeDefinition) {
-            return createReferencedTypeCodec(key, (LeafrefTypeDefinition) type, namespaceContext);
-        } else if (type instanceof IdentityrefTypeDefinition) {
-            return createIdentityrefTypeCodec(key, namespaceContext);
-        } else if (type instanceof UnionTypeDefinition) {
-            return createUnionTypeCodec(key, (UnionTypeDefinition)type, namespaceContext);
-        }
-        return createFromSimpleType(key, type, namespaceContext);
+    @Override
+    protected XmlCodec<?> binaryCodec(final BinaryTypeDefinition type) {
+        return new QuotedXmlCodec<>(BinaryStringCodec.from(type));
     }
 
-    private XmlCodec<?> createReferencedTypeCodec(final DataSchemaNode schema, final LeafrefTypeDefinition type,
-                                                  final NamespaceContext namespaceContext) {
-        // FIXME: Verify if this does indeed support leafref of leafref
-        final TypeDefinition<?> referencedType =
-                SchemaContextUtil.getBaseTypeForLeafRef(type, getSchemaContext(), schema);
-        Verify.verifyNotNull(referencedType, "Unable to find base type for leafref node '%s'.", schema.getPath());
-        return createCodec(schema, referencedType, namespaceContext);
+    @Override
+    protected XmlCodec<?> booleanCodec(final BooleanTypeDefinition type) {
+        return new BooleanXmlCodec(BooleanStringCodec.from(type));
     }
 
-    public XmlCodec<QName> createIdentityrefTypeCodec(final DataSchemaNode schema,
-                                                      final NamespaceContext namespaceContext) {
-        final XmlCodec<QName> xmlStringIdentityrefCodec =
-                new XmlStringIdentityrefCodec(getSchemaContext(), schema.getQName().getModule(), namespaceContext);
-        return xmlStringIdentityrefCodec;
+    @Override
+    protected XmlCodec<?> bitsCodec(final BitsTypeDefinition type) {
+        return new QuotedXmlCodec<>(BitsStringCodec.from(type));
     }
 
-    private XmlCodec<Object> createUnionTypeCodec(final DataSchemaNode schema, final UnionTypeDefinition type,
-                                                  final NamespaceContext namespaceContext) {
-        final XmlCodec<Object> xmlStringUnionCodec = new XmlStringUnionCodec(schema, type, this, namespaceContext);
-        return xmlStringUnionCodec;
+    @Override
+    protected XmlCodec<?> emptyCodec(final EmptyTypeDefinition type) {
+        return EmptyXmlCodec.INSTANCE;
     }
 
-    private XmlCodec<?> createFromSimpleType(
-        final DataSchemaNode schema, final TypeDefinition<?> type,
-        final NamespaceContext namespaceContext) {
-        if (type instanceof InstanceIdentifierTypeDefinition) {
-            final XmlCodec<YangInstanceIdentifier> iidCodec = new XmlStringInstanceIdentifierCodec(schemaContext, this,
-                    namespaceContext);
-            return iidCodec;
-        }
-        if (type instanceof EmptyTypeDefinition) {
-            return XmlEmptyCodec.INSTANCE;
-        }
-
-        final TypeDefinitionAwareCodec<Object, ?> codec = TypeDefinitionAwareCodec.from(type);
-        if (codec == null) {
-            LOG.debug("Codec for type \"{}\" is not implemented yet.", type.getQName().getLocalName());
-            return NULL_CODEC;
-        }
-        return AbstractXmlCodec.create(codec);
+    @Override
+    protected XmlCodec<?> enumCodec(final EnumTypeDefinition type) {
+        return new QuotedXmlCodec<>(EnumStringCodec.from(type));
     }
 
-    SchemaContext getSchemaContext() {
-        return schemaContext;
+    @Override
+    protected XmlCodec<?> identityRefCodec(final IdentityrefTypeDefinition type, final QNameModule module) {
+        return new IdentityrefXmlCodec(getSchemaContext(), module);
     }
 
-    XmlCodec<?> codecFor(final DataSchemaNode schema, final NamespaceContext namespaceContext) {
-        Preconditions.checkArgument(schema instanceof TypedSchemaNode, "Unsupported node type %s", schema.getClass());
-        return codecs.getUnchecked(new SimpleImmutableEntry<>((TypedSchemaNode)schema, namespaceContext));
+    @Override
+    protected XmlCodec<?> instanceIdentifierCodec(final InstanceIdentifierTypeDefinition type) {
+        return new XmlStringInstanceIdentifierCodec(getSchemaContext(), this);
     }
 
-    XmlCodec<?> codecFor(final DataSchemaNode schema, final TypeDefinition<?> unionSubType,
-                         final NamespaceContext namespaceContext) {
-        return createCodec(schema, unionSubType, namespaceContext);
+    @Override
+    protected XmlCodec<?> intCodec(final IntegerTypeDefinition type) {
+        return new NumberXmlCodec<>(AbstractIntegerStringCodec.from(type));
+    }
+
+    @Override
+    protected XmlCodec<?> decimalCodec(final DecimalTypeDefinition type) {
+        return new NumberXmlCodec<>(DecimalStringCodec.from(type));
+    }
+
+    @Override
+    protected XmlCodec<?> stringCodec(final StringTypeDefinition type) {
+        return new QuotedXmlCodec<>(StringStringCodec.from(type));
+    }
+
+    @Override
+    protected XmlCodec<?> uintCodec(final UnsignedIntegerTypeDefinition type) {
+        return new NumberXmlCodec<>(AbstractIntegerStringCodec.from(type));
+    }
+
+    @Override
+    protected XmlCodec<?> unionCodec(final UnionTypeDefinition type, final List<XmlCodec<?>> codecs) {
+        return UnionXmlCodec.create(type, codecs);
+    }
+
+    @Override
+    protected XmlCodec<?> unknownCodec(final UnknownTypeDefinition type) {
+        return NullXmlCodec.INSTANCE;
     }
 }

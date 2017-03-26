@@ -9,17 +9,8 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import com.google.common.base.Preconditions;
-import org.opendaylight.yangtools.concepts.Codec;
-import org.opendaylight.yangtools.yang.data.api.codec.BooleanCodec;
-import org.opendaylight.yangtools.yang.data.api.codec.DecimalCodec;
-import org.opendaylight.yangtools.yang.data.api.codec.Int16Codec;
-import org.opendaylight.yangtools.yang.data.api.codec.Int32Codec;
-import org.opendaylight.yangtools.yang.data.api.codec.Int64Codec;
-import org.opendaylight.yangtools.yang.data.api.codec.Int8Codec;
-import org.opendaylight.yangtools.yang.data.api.codec.Uint16Codec;
-import org.opendaylight.yangtools.yang.data.api.codec.Uint32Codec;
-import org.opendaylight.yangtools.yang.data.api.codec.Uint64Codec;
-import org.opendaylight.yangtools.yang.data.api.codec.Uint8Codec;
+import javax.xml.namespace.NamespaceContext;
+import org.opendaylight.yangtools.yang.data.impl.codec.DataStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 
 /**
@@ -29,38 +20,23 @@ import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
  */
 abstract class AbstractXmlCodec<T> implements XmlCodec<T> {
 
-    private final Codec<String, T> codec;
+    private final DataStringCodec<T> codec;
 
-    protected AbstractXmlCodec(final Codec<String, T> codec) {
+    protected AbstractXmlCodec(final DataStringCodec<T> codec) {
         this.codec = Preconditions.checkNotNull(codec);
     }
 
-    /**
-     * Create a proper XmlCodec based on the underlying codec type
-     * @param codec underlying codec
-     * @return An XmlCodec instance
-     */
-    public static XmlCodec<?> create(final Codec<String, ?> codec) {
-        if (codec instanceof BooleanCodec) {
-            return new BooleanXmlCodec((BooleanCodec<String>) codec);
-        } else if (codec instanceof DecimalCodec || codec instanceof Int8Codec
-                || codec instanceof Int16Codec || codec instanceof Int32Codec
-                || codec instanceof Int64Codec || codec instanceof Uint8Codec
-                || codec instanceof Uint16Codec || codec instanceof Uint32Codec
-                || codec instanceof Uint64Codec) {
-            return new NumberXmlCodec(codec);
-        } else {
-            return new QuotedXmlCodec(codec);
-        }
+    @Override
+    public final Class<T> getDataClass() {
+        return codec.getInputClass();
     }
 
     @Override
-    public final T deserialize(final String input) {
-        return codec.deserialize(input);
+    public final T deserializeFromString(final NamespaceContext namespaceContext, final String value) {
+        return codec.deserialize(value);
     }
 
-    @Override
-    public final String serialize(final T input) {
+    final String serialize(final T input) {
         return codec.serialize(input);
     }
 }

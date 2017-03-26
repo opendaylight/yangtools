@@ -45,6 +45,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -259,7 +260,8 @@ public final class XmlParserStream implements Closeable, Flushable {
             return new DOMSource(doc.getDocumentElement());
         }
 
-        return codecs.codecFor(node, namespaceCtx).deserialize(value);
+        Preconditions.checkArgument(node instanceof TypedSchemaNode);
+        return codecs.codecFor((TypedSchemaNode) node).deserializeFromString(namespaceCtx, value);
     }
 
     private static AbstractNodeDataWithSchema newEntryNode(final AbstractNodeDataWithSchema parent) {
