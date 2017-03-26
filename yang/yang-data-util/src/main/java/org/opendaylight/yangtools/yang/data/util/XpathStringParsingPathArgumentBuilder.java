@@ -11,55 +11,43 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+
 /**
- *
  * Iterator which lazily parses {@link PathArgument} from string representation.
  *
  * Note that invocation of {@link #hasNext()} or {@link #next()} may result in
- * throwing of {@link IllegalArgumentException} if underlying string represenation
+ * throwing of {@link IllegalArgumentException} if underlying string representation
  * is not correctly serialized or does not represent instance identifier valid
  * for associated schema context.
- *
- * In order to obtain {@link Iterable} or {@link java.util.Collection} please use
- * {@link com.google.common.collect.ImmutableList#copyOf(java.util.Iterator)}
- * with this Iterator, which will trigger computation of all path arguments.
- *
  */
-class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgument>> {
+class XpathStringParsingPathArgumentBuilder implements Builder<Collection<PathArgument>> {
 
     /**
      * Matcher matching WSP YANG ABNF token
-     *
      */
     private static final CharMatcher WSP = CharMatcher.anyOf(" \t");
 
     /**
      * Matcher matching IDENTIFIER first char token.
-     *
      */
-    private static final CharMatcher IDENTIFIER_FIRST_CHAR =
-            CharMatcher.inRange('a', 'z')
-            .or(CharMatcher.inRange('A', 'Z'))
-            .or(CharMatcher.is('_')).precomputed();
+    private static final CharMatcher IDENTIFIER_FIRST_CHAR = CharMatcher.inRange('a', 'z')
+            .or(CharMatcher.inRange('A', 'Z')).or(CharMatcher.is('_')).precomputed();
+
     /**
-     *
      * Matcher matching IDENTIFIER token
-     *
      */
-    private static final CharMatcher IDENTIFIER =
-            IDENTIFIER_FIRST_CHAR
-            .or(CharMatcher.inRange('0', '9'))
+    private static final CharMatcher IDENTIFIER = IDENTIFIER_FIRST_CHAR.or(CharMatcher.inRange('0', '9'))
             .or(CharMatcher.anyOf(".-")).precomputed();
 
-    private static final CharMatcher SQUOTE = CharMatcher.is('\'');
-    private static final CharMatcher DQUOTE = CharMatcher.is('"');
+    private static final CharMatcher QUOTE = CharMatcher.anyOf("'\"");
 
     private static final char SLASH = '/';
     private static final char COLON = ':';
@@ -71,7 +59,7 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
     private final AbstractStringInstanceIdentifierCodec codec;
     private final String data;
 
-    private final List<PathArgument> product = new LinkedList<>();
+    private final List<PathArgument> product = new ArrayList<>();
 
     private DataSchemaContextNode<?> current;
     private int offset;
@@ -83,9 +71,8 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
         this.offset = 0;
     }
 
-
     @Override
-    public Iterable<PathArgument> build() {
+    public Collection<PathArgument> build() {
         while (!allCharactersConsumed()) {
             product.add(computeNextArgument());
         }
@@ -99,12 +86,11 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
         QName name = nextQName();
         if (allCharactersConsumed() || SLASH == currentChar()) {
             return computeIdentifier(name);
-        } else {
-            checkValid(PRECONDITION_START == currentChar(), "Last element must be identifier, predicate or '/'");
-            return computeIdentifierWithPredicate(name);
         }
-    }
 
+        checkValid(PRECONDITION_START == currentChar(), "Last element must be identifier, predicate or '/'");
+        return computeIdentifierWithPredicate(name);
+    }
 
     private DataSchemaContextNode<?> nextContextNode(final QName name) {
         current = current.getChild(name);
@@ -116,9 +102,7 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
         return current;
     }
 
-
     /**
-     *
      * Creates path argument with predicates and sets offset
      * to end of path argument.
      *
@@ -158,14 +142,14 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
             // Break-out from method for leaf-list case
             if (key == null && currentNode.isLeaf()) {
                 checkValid(offset == data.length(), "Leaf argument must be last argument of instance identifier.");
-                return new YangInstanceIdentifier.NodeWithValue<>(name, keyValue);
+                return new NodeWithValue<>(name, keyValue);
             }
             final DataSchemaContextNode<?> keyNode = currentNode.getChild(key);
             checkValid(keyNode != null, "%s is not correct schema node identifier.", key);
             final Object value = codec.deserializeKeyValue(keyNode.getDataSchemaNode(), keyValue);
             keyValues.put(key, value);
         }
-        return new YangInstanceIdentifier.NodeIdentifierWithPredicates(name, keyValues.build());
+        return new NodeIdentifierWithPredicates(name, keyValues.build());
     }
 
 
@@ -175,17 +159,16 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
         return currentNode.getIdentifier();
     }
 
-
     /**
-     *
      * Returns following QName and sets offset to end of QName.
      *
      * @return following QName.
      */
     private QName nextQName() {
-        // Consume prefix or identifie
+        // Consume prefix or identifier
         final String maybePrefix = nextIdentifier();
-        final String prefix,localName;
+        final String prefix;
+        final String localName;
         if (COLON == currentChar()) {
             // previous token is prefix;
             prefix = maybePrefix;
@@ -195,7 +178,7 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
             prefix = "";
             localName = maybePrefix;
         }
-        return createQName(prefix, localName);
+        return codec.createQName(prefix, localName);
     }
 
     /**
@@ -209,13 +192,7 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
         return offset == data.length();
     }
 
-
-    private QName createQName(final String prefix, final String localName) {
-        return codec.createQName(prefix, localName);
-    }
-
     /**
-     *
      * Skips current char if it equals expected otherwise fails parsing.
      *
      * @param expected Expected character
@@ -226,52 +203,36 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
         offset++;
     }
 
-
     /**
-     *
-     * Deserializes value for supplied key
-     *
-     * @param key Name of referenced key, If null, referenced leaf is previous encountered item.
-     * @param value Value to be checked and deserialized
-     * @return Object representing value in yang-data-api format.
-     */
-    private Object deserializeValue(@Nullable final QName key, final String value) {
-        // FIXME: Use codec to deserialize value to correct Java type
-        return value;
-    }
-
-    /**
-     *
-     * Fails parsing if condition is not met.
+     * Fails parsing if a condition is not met.
      *
      * In case of error provides pointer to failed instance identifier,
-     * offset on which failure occured with explanation.
+     * offset on which failure occurred with explanation.
      *
      * @param condition Fails parsing if {@code condition} is false
      * @param errorMsg Error message which will be provided to user.
      * @param attributes
      */
     private void checkValid(final boolean condition, final String errorMsg, final Object... attributes) {
-        Preconditions.checkArgument(condition, "Could not parse Instance Identifier '%s'. Offset: %s : Reason: %s",
-                data,
-                offset,
-                String.format(errorMsg, attributes));
+        if (!condition) {
+            throw new IllegalArgumentException(String.format(
+                "Could not parse Instance Identifier '%s'. Offset: %s : Reason: %s", data, offset,
+                String.format(errorMsg, attributes)));
+        }
     }
 
     /**
-     *
-     * Returns following value of quoted literal (without qoutes)
-     * and sets offset after literal.
+     * Returns following value of quoted literal (without quotes) and sets offset after literal.
      *
      * @return String literal
      */
     private String nextQuotedValue() {
-        char quoteChar = currentChar();
-        checkValidQuotation(quoteChar);
+        final char quoteChar = currentChar();
+        checkValid(QUOTE.matches(quoteChar), "Value must be qoute escaped with ''' or '\"'.");
         skipCurrentChar();
-        int valueStart = offset;
-        int endQoute = data.indexOf(quoteChar, offset);
-        String value = data.substring(valueStart, endQoute);
+        final int valueStart = offset;
+        final int endQoute = data.indexOf(quoteChar, offset);
+        final String value = data.substring(valueStart, endQoute);
         offset = endQoute;
         skipCurrentChar();
         return value;
@@ -308,8 +269,9 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
      * @return string which matches IDENTIFIER YANG ABNF token
      */
     private String nextIdentifier() {
-        int start = offset;
-        checkValid(IDENTIFIER_FIRST_CHAR.matches(currentChar()), "Identifier must start with character from set 'a-zA-Z_'");
+        checkValid(IDENTIFIER_FIRST_CHAR.matches(currentChar()),
+            "Identifier must start with character from set 'a-zA-Z_'");
+        final int start = offset;
         nextSequenceEnd(IDENTIFIER);
         return data.substring(start, offset);
     }
@@ -319,12 +281,4 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
             offset++;
         }
     }
-
-    private void checkValidQuotation(final char quoteChar) {
-        checkValid(
-                SQUOTE.matches(quoteChar) || DQUOTE.matches(quoteChar),
-                "Value must be qoute escaped with ''' or '\"'.");
-
-    }
-
 }
