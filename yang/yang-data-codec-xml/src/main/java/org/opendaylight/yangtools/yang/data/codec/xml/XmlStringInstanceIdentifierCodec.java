@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import com.google.common.base.Preconditions;
 import java.net.URI;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
@@ -25,22 +27,21 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 final class XmlStringInstanceIdentifierCodec  extends AbstractModuleStringInstanceIdentifierCodec
         implements XmlCodec<YangInstanceIdentifier> {
 
+    private static final ThreadLocal<Deque<NamespaceContext>> TL_CONTEXT = new ThreadLocal<>();
+
     private final DataSchemaContextTree dataContextTree;
     private final XmlCodecFactory codecFactory;
     private final SchemaContext context;
-    private final NamespaceContext namespaceContext;
 
-    XmlStringInstanceIdentifierCodec(final SchemaContext context, final XmlCodecFactory xmlCodecFactory,
-                                     final NamespaceContext namespaceContext) {
+    XmlStringInstanceIdentifierCodec(final SchemaContext context, final XmlCodecFactory xmlCodecFactory) {
         this.context = Preconditions.checkNotNull(context);
         this.dataContextTree = DataSchemaContextTree.from(context);
         this.codecFactory = Preconditions.checkNotNull(xmlCodecFactory);
-        this.namespaceContext = Preconditions.checkNotNull(namespaceContext);
     }
 
     @Override
     protected Module moduleForPrefix(@Nonnull final String prefix) {
-        final String prefixedNS = namespaceContext.getNamespaceURI(prefix);
+        final String prefixedNS = getNamespaceContext().getNamespaceURI(prefix);
         return context.findModuleByNamespaceAndRevision(URI.create(prefixedNS), null);
     }
 
@@ -60,20 +61,49 @@ final class XmlStringInstanceIdentifierCodec  extends AbstractModuleStringInstan
     protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final String value) {
         Preconditions.checkNotNull(schemaNode, "schemaNode cannot be null");
         Preconditions.checkArgument(schemaNode instanceof LeafSchemaNode, "schemaNode must be of type LeafSchemaNode");
-        final XmlCodec<?> objectXmlCodec = codecFactory.codecFor(schemaNode, namespaceContext);
-        return objectXmlCodec.deserialize(value);
+        final XmlCodec<?> objectXmlCodec = codecFactory.codecFor((LeafSchemaNode) schemaNode);
+        return objectXmlCodec.deserializeFromString(getNamespaceContext(), value);
     }
 
-    /**
-     * Serialize YangInstanceIdentifier with specified XMLStreamWriter.
-     *
-     * @param writer XMLStreamWriter
-     * @param value YangInstanceIdentifier
-     */
+    @Override
+    public Class<YangInstanceIdentifier> getDataClass() {
+        return YangInstanceIdentifier.class;
+    }
+
+    @Override
+    public YangInstanceIdentifier deserializeFromString(final NamespaceContext namespaceContext, final String value) {
+        pushNamespaceContext(namespaceContext);
+        try {
+            return deserialize(value);
+        } finally {
+            popNamespaceContext();
+        }
+    }
+
     @Override
     public void serializeToWriter(final XMLStreamWriter writer, final YangInstanceIdentifier value)
             throws XMLStreamException {
         writer.writeCharacters(serialize(value));
     }
 
+    private static NamespaceContext getNamespaceContext() {
+        return TL_CONTEXT.get().getFirst();
+    }
+
+    private static void popNamespaceContext() {
+        final Deque<NamespaceContext> stack = TL_CONTEXT.get();
+        stack.pop();
+        if (stack.isEmpty()) {
+            TL_CONTEXT.set(null);
+        }
+    }
+
+    private static void pushNamespaceContext(final NamespaceContext context) {
+        Deque<NamespaceContext> stack = TL_CONTEXT.get();
+        if (stack == null) {
+            stack = new ArrayDeque<>(1);
+            TL_CONTEXT.set(stack);
+        }
+        stack.push(context);
+    }
 }
