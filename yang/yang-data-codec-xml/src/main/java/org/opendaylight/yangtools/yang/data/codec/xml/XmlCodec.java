@@ -8,11 +8,14 @@
 
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import org.opendaylight.yangtools.concepts.Codec;
 
-interface XmlCodec<T> extends Codec<String, T> {
+interface XmlCodec<T> {
+    Class<T> getDataClass();
+
+    T deserializeFromString(NamespaceContext namespaceContext, String value);
 
     /**
      * Serialize specified value with specified XMLStreamWriter.

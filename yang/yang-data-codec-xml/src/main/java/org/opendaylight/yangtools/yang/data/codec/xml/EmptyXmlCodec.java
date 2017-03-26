@@ -8,29 +8,30 @@
 
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-final class XmlEmptyCodec implements XmlCodec<Object> {
+final class EmptyXmlCodec implements XmlCodec<Void> {
 
-    static final XmlEmptyCodec INSTANCE = new XmlEmptyCodec();
+    static final EmptyXmlCodec INSTANCE = new EmptyXmlCodec();
 
-    private XmlEmptyCodec() {
+    private EmptyXmlCodec() {
 
     }
 
     @Override
-    public Object deserialize(final String input) {
+    public Class<Void> getDataClass() {
+        return Void.class;
+    }
+
+    @Override
+    public Void deserializeFromString(final NamespaceContext namespaceContext, final String value) {
         return null;
     }
 
     @Override
-    public String serialize(final Object input) {
-        return null;
-    }
-
-    @Override
-    public void serializeToWriter(final XMLStreamWriter writer, final Object value) throws XMLStreamException {
+    public void serializeToWriter(final XMLStreamWriter writer, final Void value) throws XMLStreamException {
         writer.writeCharacters("");
     }
 }
