@@ -9,30 +9,14 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
+import org.opendaylight.yangtools.yang.data.util.codec.TypeAwareCodec;
 
-interface JSONCodec<T> {
+interface JSONCodec<T> extends TypeAwareCodec<T, Object, JsonWriter> {
     /**
-     * Deserialize (parse) a String representation into its native format.
+     * {@inheritDoc}
      *
-     * @param value String representation
-     * @return Value in native format
-     * @throws IllegalArgumentException if the value does not parse or pass type validation
-     */
-    T deserializeString(String value);
-
-    /**
-     * Serialize specified value with specified JsonWriter.
-     *
-     * @param writer JsonWriter
-     * @param value Value in native format
      * @throws IOException if the write fails
      */
-    void serializeToWriter(JsonWriter writer, T value) throws IOException;
-
-    /**
-     * Return the internal representation class.
-     *
-     * @return Data representation class.
-     */
-    Class<T> getDataClass();
+    @Override
+    void writeValue(JsonWriter ctx, T value) throws IOException;
 }

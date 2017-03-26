@@ -261,7 +261,7 @@ public final class XmlParserStream implements Closeable, Flushable {
         }
 
         Preconditions.checkArgument(node instanceof TypedSchemaNode);
-        return codecs.codecFor((TypedSchemaNode) node).deserializeFromString(namespaceCtx, value);
+        return codecs.codecFor((TypedSchemaNode) node).parseValue(namespaceCtx, value);
     }
 
     private static AbstractNodeDataWithSchema newEntryNode(final AbstractNodeDataWithSchema parent) {

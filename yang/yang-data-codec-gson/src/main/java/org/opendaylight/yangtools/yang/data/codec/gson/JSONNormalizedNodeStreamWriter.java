@@ -12,6 +12,7 @@ import static org.w3c.dom.Node.ELEMENT_NODE;
 import static org.w3c.dom.Node.TEXT_NODE;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
@@ -220,9 +221,17 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void writeValue(final Object value, final JSONCodec<?> codec)
             throws IOException {
-        ((JSONCodec<Object>) codec).serializeToWriter(writer, value);
+        try {
+            ((JSONCodec<Object>) codec).writeValue(writer, value);
+        } catch (IOException e) {
+            throw e;
+        } catch (Exception e) {
+            Throwables.propagateIfPossible(e);
+            throw new RuntimeException(e);
+        }
     }
 
     private void writeAnyXmlValue(final DOMSource anyXmlValue) throws IOException {
