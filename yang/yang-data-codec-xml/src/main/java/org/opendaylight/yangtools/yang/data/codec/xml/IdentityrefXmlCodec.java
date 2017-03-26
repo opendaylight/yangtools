@@ -8,35 +8,25 @@
 
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import com.google.common.base.Preconditions;
 import java.net.URI;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import javax.annotation.Nonnull;
+import java.util.Map.Entry;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.data.util.ModuleStringIdentityrefCodec;
+import org.opendaylight.yangtools.yang.data.util.codec.QNameCodecUtil;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-final class IdentityrefXmlCodec extends ModuleStringIdentityrefCodec implements XmlCodec<QName> {
-    private static final ThreadLocal<Deque<NamespaceContext>> TL_NSCONTEXT = new ThreadLocal<>();
+final class IdentityrefXmlCodec implements XmlCodec<QName> {
+    private final SchemaContext schemaContext;
+    private final QNameModule parentModule;
 
     IdentityrefXmlCodec(final SchemaContext context, final QNameModule parentModule) {
-        super(context, parentModule);
-    }
-
-    @Override
-    protected Module moduleForPrefix(@Nonnull final String prefix) {
-        if (prefix.isEmpty()) {
-            return context.findModuleByNamespaceAndRevision(parentModuleQname.getNamespace(),
-                    parentModuleQname.getRevision());
-        }
-
-        final String prefixedNS = getNamespaceContext().getNamespaceURI(prefix);
-        return context.findModuleByNamespaceAndRevision(URI.create(prefixedNS), null);
+        this.schemaContext = Preconditions.checkNotNull(context);
+        this.parentModule = Preconditions.checkNotNull(parentModule);
     }
 
     @Override
@@ -44,46 +34,28 @@ final class IdentityrefXmlCodec extends ModuleStringIdentityrefCodec implements 
         return QName.class;
     }
 
-    /**
-     * Serialize QName with specified XMLStreamWriter.
-     *
-     * @param writer XMLStreamWriter
-     * @param value QName
-     */
-    @Override
-    public void writeValue(final XMLStreamWriter writer, final QName value) throws XMLStreamException {
-        // FIXME: this does not work correctly, as we need to populate entries into the namespace context
-        writer.writeCharacters(serialize(value));
-    }
-
     @Override
     public QName parseValue(final NamespaceContext namespaceContext, final String value) {
-        pushNamespaceContext(namespaceContext);
-        try {
-            return deserialize(value);
-        } finally {
-            popNamespaceContext();
-        }
+        return QNameCodecUtil.decodeQName(value, prefix -> {
+            if (prefix.isEmpty()) {
+                return parentModule;
+            }
+
+            final String prefixedNS = namespaceContext.getNamespaceURI(prefix);
+            final Module module = schemaContext.findModuleByNamespaceAndRevision(URI.create(prefixedNS), null);
+            Preconditions.checkArgument(module != null, "Could not find module for namespace %s", prefixedNS);
+            return module.getQNameModule();
+        });
     }
 
-    private static NamespaceContext getNamespaceContext() {
-        return TL_NSCONTEXT.get().getFirst();
-    }
+    @Override
+    public void writeValue(final XMLStreamWriter writer, final QName value) throws XMLStreamException {
+        final RandomPrefix prefixes = new RandomPrefix(writer.getNamespaceContext());
+        final String str = QNameCodecUtil.encodeQName(value, uri -> prefixes.encodePrefix(uri.getNamespace()));
 
-    private static void popNamespaceContext() {
-        final Deque<NamespaceContext> stack = TL_NSCONTEXT.get();
-        stack.pop();
-        if (stack.isEmpty()) {
-            TL_NSCONTEXT.set(null);
+        for (Entry<URI, String> e : prefixes.getPrefixes()) {
+            writer.writeNamespace(e.getValue(), e.getKey().toString());
         }
-    }
-
-    private static void pushNamespaceContext(final NamespaceContext context) {
-        Deque<NamespaceContext> stack = TL_NSCONTEXT.get();
-        if (stack == null) {
-            stack = new ArrayDeque<>(1);
-            TL_NSCONTEXT.set(stack);
-        }
-        stack.push(context);
+        writer.writeCharacters(str);
     }
 }
