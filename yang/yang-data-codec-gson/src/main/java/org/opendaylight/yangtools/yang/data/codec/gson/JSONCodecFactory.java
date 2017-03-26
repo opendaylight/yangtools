@@ -241,7 +241,7 @@ public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
 
     @Override
     protected JSONCodec<?> identityRefCodec(final IdentityrefTypeDefinition type, final QNameModule module) {
-        return new JSONStringIdentityrefCodec(getSchemaContext(), module);
+        return new IdentityrefJSONCodec(getSchemaContext(), module);
     }
 
     @Override
