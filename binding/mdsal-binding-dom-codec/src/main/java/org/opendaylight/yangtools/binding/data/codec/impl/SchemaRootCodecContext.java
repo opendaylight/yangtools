@@ -33,6 +33,8 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
 
@@ -44,7 +46,6 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
                 public DataContainerCodecContext<?,?> load(final Class<?> key) {
                     return createDataTreeChildContext(key);
                 }
-
             });
 
     private final LoadingCache<Class<?>, ContainerNodeCodecContext<?>> rpcDataByClass = CacheBuilder.newBuilder().build(
@@ -74,23 +75,29 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
                         @SuppressWarnings("rawtypes")
                         final Class childCls = factory().getRuntimeContext().getClassForSchema(childSchema);
                         return streamChild(childCls);
-                    } else {
-                        throw new UnsupportedOperationException("Unsupported child type " + childSchema.getClass());
                     }
+
+                    throw new UnsupportedOperationException("Unsupported child type " + childSchema.getClass());
                 }
             });
 
-    private final LoadingCache<SchemaPath, ContainerNodeCodecContext<?>> rpcDataByPath = CacheBuilder.newBuilder().build(
-            new CacheLoader<SchemaPath, ContainerNodeCodecContext<?>>() {
-
-                @SuppressWarnings({ "rawtypes", "unchecked" })
-                @Override
-                public ContainerNodeCodecContext load(final SchemaPath key) {
-                    final ContainerSchemaNode schema = SchemaContextUtil.getRpcDataSchema(getSchema(), key);
-                    final Class cls = factory().getRuntimeContext().getClassForSchema(schema);
-                    return getRpc(cls);
+    private final LoadingCache<SchemaPath, RpcInputCodec<?>> rpcDataByPath = CacheBuilder.newBuilder().build(
+        new CacheLoader<SchemaPath, RpcInputCodec<?>>() {
+            @SuppressWarnings({ "rawtypes", "unchecked" })
+            @Override
+            public RpcInputCodec load(final SchemaPath key) {
+                final ContainerSchemaNode schema = SchemaContextUtil.getRpcDataSchema(getSchema(), key);
+                if (schema instanceof EffectiveStatement &&
+                        ((EffectiveStatement) schema).getDeclared().getStatementSource() != StatementSource.DECLARATION) {
+                    // This is an implicitly-defined input or output statement. We do not have a corresponding
+                    // data representation, so we hard-wire it to null.
+                    return UnmappedRpcInputCodec.getInstance();
                 }
-            });
+
+                final Class cls = factory().getRuntimeContext().getClassForSchema(schema);
+                return getRpc(cls);
+            }
+        });
 
     private final LoadingCache<SchemaPath, NotificationCodecContext<?>> notificationsByPath = CacheBuilder.newBuilder()
             .build(new CacheLoader<SchemaPath, NotificationCodecContext<?>>() {
@@ -165,7 +172,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         return getOrRethrow(notificationsByPath, notification);
     }
 
-    ContainerNodeCodecContext<?> getRpc(final SchemaPath notification) {
+    RpcInputCodec<?> getRpc(final SchemaPath notification) {
         return getOrRethrow(rpcDataByPath, notification);
     }
 
@@ -183,7 +190,6 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         for (final RpcDefinition potential : getSchema().getOperations()) {
             final QName potentialQName = potential.getQName();
             /*
-             *
              * Check if rpc and class represents data from same module and then
              * checks if rpc local name produces same class name as class name
              * appended with Input/Output based on QName associated with bidning
@@ -242,7 +248,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
             return cache.getUnchecked(key);
         } catch (final UncheckedExecutionException e) {
             final Throwable cause = e.getCause();
-            if(cause != null) {
+            if (cause != null) {
                 Throwables.propagateIfPossible(cause);
             }
             throw e;

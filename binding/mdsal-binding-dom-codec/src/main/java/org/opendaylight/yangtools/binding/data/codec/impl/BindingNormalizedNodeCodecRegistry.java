@@ -108,7 +108,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
             LOG.error("Unexpected failure while serializing path {} data {}", path, data, e);
             throw new IllegalStateException("Failed to create normalized node", e);
         }
-        return new SimpleEntry<YangInstanceIdentifier,NormalizedNode<?,?>>(writeCtx.getKey(),result.getResult());
+        return new SimpleEntry<>(writeCtx.getKey(),result.getResult());
     }
 
     @Override
@@ -189,7 +189,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
 
         final DataObject lazyObj = codec.deserialize(data);
         final InstanceIdentifier<?> bindingPath = InstanceIdentifier.create(builder);
-        return new SimpleEntry<InstanceIdentifier<?>, DataObject>(bindingPath, lazyObj);
+        return new SimpleEntry<>(bindingPath, lazyObj);
     }
 
     @Override
@@ -200,7 +200,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
 
     @Override
     public DataObject fromNormalizedNodeRpcData(final SchemaPath path, final ContainerNode data) {
-        final ContainerNodeCodecContext<?> codec = codecContext.getRpcDataContext(path);
+        final RpcInputCodec<?> codec = codecContext.getRpcInputCodec(path);
         return codec.deserialize(data);
     }
 
@@ -228,7 +228,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
 
     public <T extends DataObject> Function<Optional<NormalizedNode<?, ?>>, Optional<T>>  deserializeFunction(final InstanceIdentifier<T> path) {
         final DataObjectCodecContext<?,?> ctx = (DataObjectCodecContext<?,?>) codecContext.getCodecContextNode(path, null);
-        return new DeserializeFunction<T>(ctx);
+        return new DeserializeFunction<>(ctx);
     }
 
     @Override
