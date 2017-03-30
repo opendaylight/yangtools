@@ -1,0 +1,23 @@
+module baz {
+
+    namespace baz-ns;
+    prefix baz-prefix;
+
+    container top-cont {
+        list keyed-list {
+            key empty-key-leaf;
+
+            leaf empty-key-leaf {
+                type empty;
+            }
+
+            leaf regular-leaf {
+                type int32;
+            }
+        }
+
+        leaf iid-leaf {
+            type instance-identifier;
+        }
+    }
+}

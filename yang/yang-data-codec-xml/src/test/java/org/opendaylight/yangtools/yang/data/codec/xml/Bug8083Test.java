@@ -1,0 +1,70 @@
+package org.opendaylight.yangtools.yang.data.codec.xml;
+
+import static org.junit.Assert.assertNotNull;
+
+import java.io.InputStream;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
+
+public class Bug8083Test {
+
+    @Ignore("XMLEmptyCodec needs to be fixed first.")
+    @Test
+    public void testInstanceIdentifierPathWithEmptyListKey() throws Exception {
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/bug8083/yang/baz.yang");
+        final InputStream resourceAsStream = Bug8083Test.class.getResourceAsStream("/bug8083/xml/baz.xml");
+
+        final XMLInputFactory factory = XMLInputFactory.newInstance();
+        final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
+
+        // deserialization
+        final NormalizedNodeResult result = new NormalizedNodeResult();
+        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        xmlParser.parse(reader);
+        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        assertNotNull(transformedInput);
+    }
+
+    @Test
+    public void testInstanceIdentifierPathWithIdentityrefListKey() throws Exception {
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/bug8083/yang/zab.yang");
+        final InputStream resourceAsStream = Bug8083Test.class.getResourceAsStream("/bug8083/xml/zab.xml");
+
+        final XMLInputFactory factory = XMLInputFactory.newInstance();
+        final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
+
+        // deserialization
+        final NormalizedNodeResult result = new NormalizedNodeResult();
+        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        xmlParser.parse(reader);
+        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        assertNotNull(transformedInput);
+    }
+
+    @Test
+    public void testInstanceIdentifierPathWithInstanceIdentifierListKey() throws Exception {
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/bug8083/yang/foobar.yang");
+        final InputStream resourceAsStream = Bug8083Test.class.getResourceAsStream("/bug8083/xml/foobar.xml");
+
+        final XMLInputFactory factory = XMLInputFactory.newInstance();
+        final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
+
+        // deserialization
+        final NormalizedNodeResult result = new NormalizedNodeResult();
+        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+        xmlParser.parse(reader);
+        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        assertNotNull(transformedInput);
+    }
+}

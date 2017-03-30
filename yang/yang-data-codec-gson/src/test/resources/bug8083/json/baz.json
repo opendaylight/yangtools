@@ -1,0 +1,12 @@
+{
+  "top-cont": {
+    "keyed-list":[
+      {
+        "empty-key-leaf": [null],
+        "regular-leaf": 150
+      }
+    ],
+
+    "iid-leaf": "/baz:top-cont/baz:keyed-list[baz:empty-key-leaf='[null]']/baz:regular-leaf"
+  }
+}

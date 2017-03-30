@@ -1,0 +1,19 @@
+module example-foomod {
+
+    namespace "http://example.com/foomod";
+    prefix "foomod";
+
+    container top {
+        leaf foo {
+            type instance-identifier;
+        }
+
+        list foo-list {
+            key name;
+
+            leaf name {
+                type string;
+            }
+        }
+    }
+}
