@@ -1,0 +1,14 @@
+{
+  "top-cont": {
+    "keyed-list":[
+      {
+        "iid-key-leaf": "/foobar:top-cont/foobar:leaf-b",
+        "regular-leaf": 150
+      }
+    ],
+
+    "iid-leaf":
+      "/foobar:top-cont/foobar:keyed-list[foobar:iid-key-leaf='/foobar:top-cont/foobar:leaf-b']/foobar:regular-leaf",
+    "leaf-b": 200
+  }
+}
