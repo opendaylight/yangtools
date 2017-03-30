@@ -1,0 +1,5 @@
+{
+  "top": {
+    "foo": "/example-foomod:top/foo-list[name='key-value']/example-barmod:bar-container/bar-leaf"
+  }
+}
