@@ -148,7 +148,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                         augmentTargetCtx.addEffectiveSubstatement(augmentSourceCtx);
                         updateAugmentOrder(augmentSourceCtx);
                     } catch (final SourceException e) {
-                        LOG.debug("Failed to add augmentation {} defined at {}",
+                        LOG.error("Failed to add augmentation {} defined at {}",
                             augmentTargetCtx.getStatementSourceReference(),
                                 augmentSourceCtx.getStatementSourceReference(), e);
                     }
@@ -329,11 +329,16 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                 }
 
                 /*
-                 * If target or one of its parent is a presence container from
-                 * the same module, return false and skip mandatory nodes
-                 * validation
+                 * If target or one of the target's ancestors from the same namespace
+                 * is a presence container
+                 * or is non-mandatory choice
+                 * or is non-mandatory list
+                 * return false and skip mandatory nodes validation, because these nodes
+                 * are not mandatory node containers according to RFC 6020 section 3.1.
                  */
-                if (StmtContextUtils.isPresenceContainer(targetCtx)) {
+                if (StmtContextUtils.isPresenceContainer(targetCtx)
+                        || StmtContextUtils.isNotMandatoryNodeOfType(targetCtx, YangStmtMapping.CHOICE)
+                        || StmtContextUtils.isNotMandatoryNodeOfType(targetCtx, YangStmtMapping.LIST)) {
                     return false;
                 }
             } while ((targetCtx = targetCtx.getParentContext()) != root);

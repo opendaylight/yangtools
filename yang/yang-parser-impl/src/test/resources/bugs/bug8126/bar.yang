@@ -1,0 +1,39 @@
+module bar {
+    namespace bar;
+    prefix bar;
+
+    import foo { prefix foo; revision-date 1970-01-01; }
+
+    augment "/foo:root" {
+        container my-container {
+            choice my-choice {
+                case one {
+                }
+            }
+        }
+    }
+
+    augment "/foo:root/my-container/my-choice/one" {
+        container one {
+            leaf mandatory-leaf {
+                mandatory true;
+                type empty;
+            }
+        }
+    }
+
+    augment "/foo:root" {
+        list my-list {
+            min-elements 0;
+        }
+    }
+
+    augment "/foo:root/my-list" {
+        container two {
+            leaf mandatory-leaf-2 {
+                mandatory true;
+                type empty;
+            }
+        }
+    }
+}
