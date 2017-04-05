@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da01753e_df361de7",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/NullXmlCodec.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-04-05T08:40:51Z",
+      "side": 1,
+      "message": "typo: unknown",
+      "range": {
+        "startLine": 37,
+        "startChar": 31,
+        "endLine": 37,
+        "endChar": 38
+      },
+      "revId": "715442142530f0a6af457ec8a206b644567ab419",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
