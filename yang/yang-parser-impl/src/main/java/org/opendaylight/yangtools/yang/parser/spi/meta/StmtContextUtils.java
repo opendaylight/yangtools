@@ -304,18 +304,15 @@ public final class StmtContextUtils {
     }
 
     /**
-     * Checks whether statement context is a mandatory node according to RFC6020
-     * or not.
+     * Checks whether statement context is a mandatory leaf, choice, anyxml,
+     * list or leaf-list according to RFC6020 or not.
      *
      * @param stmtCtx
      *            statement context
-     * @return true if it is a mandatory node according to RFC6020
+     * @return true if it is a mandatory leaf, choice, anyxml, list or leaf-list
+     *         according to RFC6020.
      */
     public static boolean isMandatoryNode(final StatementContextBase<?, ?, ?> stmtCtx) {
-        return isMandatoryListOrLeafList(stmtCtx) || isMandatoryLeafChoiceOrAnyXML(stmtCtx);
-    }
-
-    private static boolean isMandatoryLeafChoiceOrAnyXML(final StatementContextBase<?, ?, ?> stmtCtx) {
         if (!(stmtCtx.getPublicDefinition() instanceof YangStmtMapping)) {
             return false;
         }
@@ -324,16 +321,6 @@ public final class StmtContextUtils {
         case CHOICE:
         case ANYXML:
             return Boolean.TRUE.equals(firstSubstatementAttributeOf(stmtCtx, MandatoryStatement.class));
-        default:
-            return false;
-        }
-    }
-
-    private static boolean isMandatoryListOrLeafList(final StatementContextBase<?, ?, ?> stmtCtx) {
-        if (!(stmtCtx.getPublicDefinition() instanceof YangStmtMapping)) {
-            return false;
-        }
-        switch ((YangStmtMapping) stmtCtx.getPublicDefinition()) {
         case LIST:
         case LEAF_LIST:
             final Integer minElements = firstSubstatementAttributeOf(stmtCtx, MinElementsStatement.class);
@@ -341,6 +328,24 @@ public final class StmtContextUtils {
         default:
             return false;
         }
+    }
+
+    /**
+     * Checks whether a statement context is a statement of supplied statement
+     * definition and whether it is not mandatory leaf, choice, anyxml, list or
+     * leaf-list according to RFC6020.
+     *
+     * @param stmtCtx
+     *            statement context
+     * @param stmtDef
+     *            statement definition
+     * @return true if supplied statement context is a statement of supplied
+     *         statement definition and if it is not mandatory leaf, choice,
+     *         anyxml, list or leaf-list according to RFC6020
+     */
+    public static boolean isNotMandatoryNodeOfType(final StatementContextBase<?, ?, ?> stmtCtx,
+            final StatementDefinition stmtDef) {
+        return stmtCtx.getPublicDefinition().equals(stmtDef) && !isMandatoryNode(stmtCtx);
     }
 
     /**
