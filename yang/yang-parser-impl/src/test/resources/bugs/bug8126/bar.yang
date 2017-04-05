@@ -1,0 +1,72 @@
+module bar {
+    namespace bar;
+    prefix bar;
+
+    import foo { prefix foo; revision-date 1970-01-01; }
+
+    //valid augments (non-mandatory choice)
+    augment "/foo:root" {
+        container my-container {
+            choice my-choice {
+                case one {
+                }
+            }
+        }
+    }
+
+    augment "/foo:root/my-container/my-choice/one" {
+        container one {
+            leaf mandatory-leaf {
+                mandatory true;
+                type empty;
+            }
+        }
+    }
+
+    //valid augments (non-mandatory list)
+    augment "/foo:root" {
+        list my-list {
+            min-elements 0;
+        }
+    }
+
+    augment "/foo:root/my-list" {
+        container two {
+            leaf mandatory-leaf-2 {
+                mandatory true;
+                type empty;
+            }
+        }
+    }
+
+    //invalid augment (mandatory choice)
+    augment "/foo:root" {
+        container mandatory-container {
+            choice mandatory-choice {
+                mandatory true;
+            }
+        }
+    }
+
+    //invalid augment (mandatory list)    
+    augment "/foo:root" {
+        list mandatory-list {
+            min-elements 1;
+        }
+    }
+
+    //invalid augments (mandatory container)
+    augment "/foo:root" {
+        container mandatory-container-2 {
+        }
+    }
+
+    augment "/foo:root/mandatory-container-2" {
+        container one {
+            leaf mandatory-leaf-3 {
+                mandatory true;
+                type empty;
+            }
+        }
+    }
+}
