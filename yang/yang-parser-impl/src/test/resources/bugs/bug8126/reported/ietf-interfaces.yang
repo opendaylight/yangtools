@@ -1,0 +1,92 @@
+module ietf-interfaces {
+    yang-version "1";
+
+    namespace "urn:ietf:params:xml:ns:yang:ietf-interfaces";
+
+    prefix "if";
+
+    revision "2014-05-08";
+
+    identity interface-type {
+        description
+          "Base identity from which specific interface types are
+           derived.";
+    }
+
+    typedef interface-ref {
+        type leafref {
+            path "/if:interfaces/if:interface/if:name";
+        }
+
+        description
+          "This type is used by data models that need to reference
+           configured interfaces.";
+    }
+
+    typedef interface-state-ref {
+        type leafref {
+            path "/if:interfaces-state/if:interface/if:name";
+        }
+
+        description
+          "This type is used by data models that need to reference
+           the operationally present interfaces.";
+    }
+
+        container interfaces {
+            description "Interface configuration parameters.";
+
+            list interface {
+                key "name";
+
+                description
+                  "The list of configured interfaces on the device.
+
+                   The operational state of an interface is available in the
+                   /interfaces-state/interface list.  If the configuration of a
+                   system-controlled interface cannot be used by the system
+                   (e.g., the interface hardware present does not match the
+                   interface type), then the configuration is not applied to
+                   the system-controlled interface shown in the
+                   /interfaces-state/interface list.  If the configuration
+                   of a user-controlled interface cannot be used by the system,
+                   the configured interface is not instantiated in the
+                   /interfaces-state/interface list.";
+
+                leaf name {
+                    type string;
+
+                    description
+                      "The name of the interface.
+
+                       A device MAY restrict the allowed values for this leaf,
+                       possibly depending on the type of the interface.
+                       For system-controlled interfaces, this leaf is the
+                       device-specific name of the interface.  The 'config false'
+                       list /interfaces-state/interface contains the currently
+                       existing interfaces on the device.
+
+                       If a client tries to create configuration for a
+                       system-controlled interface that is not present in the
+                       /interfaces-state/interface list, the server MAY reject
+                       the request if the implementation does not support
+                       pre-provisioning of interfaces or if the name refers to
+                       an interface that can never exist in the system.  A
+                       NETCONF server MUST reply with an rpc-error with the
+                       error-tag 'invalid-value' in this case.
+
+                       If the device supports pre-provisioning of interface
+                       configuration, the 'pre-provisioning' feature is
+                       advertised.
+
+                       If the device allows arbitrarily named user-controlled
+                       interfaces, the 'arbitrary-names' feature is advertised.
+
+                       When a configured user-controlled interface is created by
+                       the system, it is instantiated with the same name in the
+                       /interface-state/interface list.";
+                }
+
+        }
+    }
+}

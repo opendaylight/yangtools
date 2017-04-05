@@ -1,0 +1,159 @@
+module bbf-frame-classification {
+    yang-version "1";
+
+    namespace "urn:bbf:yang:bbf-frame-classification";
+
+    prefix "bbf-classif";
+
+    revision "2016-07-19";
+
+    typedef tag-index {
+        type uint8 {
+            range "0..1";
+        }
+
+        description
+          "The index of the VLAN tag in a frame.
+           Tag 0 refers to the outer tag, i.e. the tag just behind the
+           source MAC address.
+           Tag 1 refers to the tag next to tag 0.";
+    }
+
+    grouping dot1q-tag-ranges-or-any {
+        description
+          "Grouping to allow configuration to identify an 802.1Q VLAN tag
+           that matches any specific VLAN-ID within a set of non
+           overlapping vlan-id ranges, or the 'any' value to match any
+           VLAN-ID";
+
+        container dot1q-tag {
+
+            description
+              "Identifies an 802.1Q VLAN tag with an explicit tag-type, an
+               ordered list of vlan-id ranges, or 'any' VLAN-ID";
+
+            leaf tag-type {
+                mandatory true;
+
+                type string;
+
+                description "VLAN tag type.";
+            }
+
+            leaf vlan-id {
+                mandatory true;
+
+                type union {
+                    type uint8;
+
+                    type enumeration {
+                        enum "any" {
+                            description
+                              "Matches 'any' VLAN-ID in the range 1 to 4094, or
+                               matches priority tagged frames.";
+                        }
+
+                        enum "priority-tagged" {
+                            description
+                              "Priority-tagged frames are frames with a VLAN tag
+                               present and that match VLAN-ID 0.";
+                        }
+                    }
+                }
+
+                description "Allowed VLAN-IDs";
+            }
+
+            leaf pbit {
+                type union {
+                    type uint8;
+
+                    type enumeration {
+                        enum "any" {
+                            description "Matches 'any' pbit value in the range of 0 to 7.";
+                        }
+                    }
+                }
+
+                default "any";
+
+                description "Allowed PBIT values.";
+            }
+
+            leaf dei {
+                type union {
+                    type uint8;
+
+                    type enumeration {
+                        enum "any" {
+                            description "Matches 'any' DEI value, i.e. value 0 or 1.";
+                        }
+                    }
+                }
+
+                default "any";
+
+                description "Allowed DEI values.";
+            }
+        }
+    }
+
+    grouping multiple-vlan-tag-match {
+        description "Flexible match on the VLAN tags of Ethernet frames.";
+
+        choice vlan-tag-match-type {
+            default "match-all";
+
+            description "Provides a choice of how the frames may be matched.";
+
+            case match-all {
+                leaf match-all {
+                    type empty;
+
+                    description
+                      "Matches all traffic not matched to any other peer
+                       sub-interface by a more specific encapsulation.";
+                }
+            }
+
+            case untagged {
+                leaf untagged {
+                    type empty;
+
+                    description "Untagged match. Matches all untagged traffic.";
+                }
+            }
+
+            case vlan-tagged {
+                list tag {
+                    min-elements "1";
+
+                    max-elements "2";
+
+                    key "index";
+
+                    description
+                      "The tags to match, with the outermost tag to match
+                       assigned index 0";
+
+                    leaf index {
+                        must ". = 0 or count(../../tag[index = 0]/index) > 0" {
+                            error-message
+                              "An inner tag can only be matched on when also
+                               matching on an outer tag";
+
+                            description
+                              "Only allow matching on an inner tag, if also
+                               matching on
+                               the outer tags at the same time";
+                        }
+
+                        type tag-index;
+
+                        description "The index into the tag stack, outermost tag first";
+                    }
+                }
+            }
+        }
+    }
+}

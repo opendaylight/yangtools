@@ -1,0 +1,47 @@
+module bbf-sub-interface-tagging{
+    yang-version "1";
+
+    namespace "urn:bbf:yang:bbf-sub-interface-tagging";
+
+    prefix "bbf-subif-tag";
+
+    import "bbf-frame-classification" {
+        prefix "bbf-classif";
+
+        revision-date "2016-07-19";
+    }
+
+    import "bbf-sub-interfaces" {
+        prefix "bbf-subif";
+
+        revision-date "2016-07-08";
+    }
+
+    import "ietf-interfaces" {
+        prefix "if";
+
+        revision-date "2014-05-08";
+    }
+
+    revision "2016-05-30";
+
+    augment "/if:interfaces/if:interface/bbf-subif:frame-processing/bbf-subif:ingress-rule/bbf-subif:rule/bbf-subif:flexible-match/match-criteria/vlan-tag-match-type/vlan-tagged/tag" {
+        description
+          "Defines match criteria for all the fields of VLAN tags, being 
+           the TPID, the VLAN-ID, the PBIT, and the DEI fields.";
+
+        uses bbf-classif:dot1q-tag-ranges-or-any;
+    }
+
+    augment "/if:interfaces/if:interface/bbf-subif:frame-processing/bbf-subif:ingress-rule/bbf-subif:rule/bbf-subif:flexible-match" {
+        description
+          "Augments the general flexible-match container with specific 
+           vlan match criteria.";
+
+        container match-criteria {
+
+            uses bbf-classif:multiple-vlan-tag-match;
+
+        }
+    }
+}

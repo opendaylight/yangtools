@@ -1,0 +1,76 @@
+module bbf-sub-interfaces {
+    yang-version "1";
+
+    namespace "urn:bbf:yang:bbf-sub-interfaces";
+
+    prefix "bbf-subif";
+
+    import "ietf-interfaces" {
+        prefix "if";
+
+        revision-date "2014-05-08";
+    }
+
+ 
+    revision "2016-07-08";
+
+    augment "/if:interfaces/if:interface" {
+        description
+          "Add a reference pointing to a lower layer interface to those 
+           interfaces that are of the type sub-interface.";
+
+        container frame-processing {
+            description
+              "The frame processing refers to both directions:
+               - Ingress, which refers to packets received from the lower 
+                 layer interface.
+               - Egress, which refers to packets received from a higher 
+                 layer of the interface stack, or from a forwarder, and to 
+                 be transmitted to the lower layer of the interface 
+                 stack.
+               - In the ingress direction classification criteria identify 
+                 whether a received packet shall be offered to this 
+                 sub-interface
+               - For both the ingress and egress direction, rewrite = tag 
+                 manipulations can be supported.";
+
+            container ingress-rule {
+                presence "true";
+
+                description
+                  "The match used to classify ingress frames to this 
+                   sub-interface, and it allows to specify re-tagging actions 
+                   before sending it to higher layers in the interface stack 
+                   or to a forwarder.";
+
+                list rule {
+                    min-elements "1";
+
+                    key "name";
+
+                    description
+                      "A rule contains a classification,
+                       and for packets that match this classification it 
+                       specifies an ingress tag manipulation action.
+
+                       The definition is: first match, then stop searching for 
+                       matches with other rules, then execute the 
+                       ingress-rewrite actions specified in this rule.";
+
+                    leaf name {
+                        type string;
+
+                        description "The rule name";
+                    }
+
+                    container flexible-match {
+
+                        presence "true";
+
+                        description "Flexible match";
+                    }
+                }
+            }
+        }
+    }
+}
