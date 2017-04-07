@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 final class NormalizedNodeContextSupport extends ContextSupport {
     private static final long serialVersionUID = 1L;
@@ -44,6 +45,10 @@ final class NormalizedNodeContextSupport extends ContextSupport {
         }
 
         return result;
+    }
+
+    SchemaContext getSchemaContext() {
+        return getNavigator().getSchemaContext();
     }
 
     @Override

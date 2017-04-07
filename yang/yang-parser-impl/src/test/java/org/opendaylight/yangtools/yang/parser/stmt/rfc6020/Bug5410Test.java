@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.RegexUtils;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug5410Test {
@@ -199,7 +200,7 @@ public class Bug5410Test {
     }
 
     private static String javaRegexFromXSD(final String xsdRegex) {
-        return PatternStatementImpl.Definition.getJavaRegexFromXSD(xsdRegex);
+        return RegexUtils.getJavaRegexFromXSD(xsdRegex);
     }
 
     private static boolean testMatch(final String javaRegex, final String value) {
