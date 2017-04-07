@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da01753e_81042f16",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 348,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-04-07T01:38:47Z",
+      "side": 1,
+      "message": "\u0026\u0026 !isMandatoryNode(stmtCtx)",
+      "range": {
+        "startLine": 348,
+        "startChar": 60,
+        "endLine": 348,
+        "endChar": 97
+      },
+      "revId": "962eed03fb2b3c9f5ad7c901cc5b15272c4570e0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da01753e_411a476f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/AugmentStatementImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-04-07T01:38:47Z",
+      "side": 1,
+      "message": "this should actually be a warning, as we are attempting to continue without it.",
+      "range": {
+        "startLine": 151,
+        "startChar": 28,
+        "endLine": 151,
+        "endChar": 33
+      },
+      "revId": "962eed03fb2b3c9f5ad7c901cc5b15272c4570e0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
