@@ -11,17 +11,25 @@ import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathDocument;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 final class JaxenDocument implements XPathDocument {
     private final NormalizedNode<?, ?> root;
+    private final SchemaContext context;
 
     JaxenDocument(final JaxenSchemaContext context, final NormalizedNode<?, ?> root) {
         this.root = Preconditions.checkNotNull(root);
+        this.context = context.getSchemaContext();
     }
 
     @Nonnull
     @Override
     public NormalizedNode<?, ?> getRootNode() {
         return root;
+    }
+
+    @Nonnull
+    SchemaContext getSchemaContext() {
+        return context;
     }
 }

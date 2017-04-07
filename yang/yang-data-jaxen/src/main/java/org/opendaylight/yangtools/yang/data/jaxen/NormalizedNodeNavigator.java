@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import javax.annotation.Nonnull;
 import org.jaxen.DefaultNavigator;
 import org.jaxen.NamedAccessNavigator;
 import org.jaxen.Navigator;
@@ -36,6 +37,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
  * A {@link Navigator} implementation for YANG XPaths instantiated on a particular root {@link NormalizedNode}.
@@ -311,6 +313,11 @@ final class NormalizedNodeNavigator extends DefaultNavigator implements NamedAcc
 
     NormalizedNode<?, ?> getRootNode() {
         return document.getRootNode();
+    }
+
+    @Nonnull
+    SchemaContext getSchemaContext() {
+        return document.getSchemaContext();
     }
 
     private static final class NormalizedNodeContextIterator extends UnmodifiableIterator<NormalizedNodeContext> {
