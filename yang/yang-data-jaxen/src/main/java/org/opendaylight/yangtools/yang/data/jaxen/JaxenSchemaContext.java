@@ -45,4 +45,9 @@ final class JaxenSchemaContext implements XPathSchemaContext {
     public XPathDocument createDocument(@Nonnull final NormalizedNode<?, ?> documentRoot) {
         return new JaxenDocument(this, documentRoot);
     }
+
+    @Nonnull
+    SchemaContext getSchemaContext() {
+        return context;
+    }
 }

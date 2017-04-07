@@ -53,7 +53,7 @@ public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConst
 
         @Override
         public PatternConstraint parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-            final String pattern = getJavaRegexFromXSD(value);
+            final String pattern = Utils.getJavaRegexFromXSD(value);
 
             try {
                 Pattern.compile(pattern);
@@ -63,57 +63,6 @@ public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConst
             }
 
             return new PatternConstraintEffectiveImpl(pattern, value, Optional.absent(), Optional.absent());
-        }
-
-        static String getJavaRegexFromXSD(final String xsdRegex) {
-            return "^" + Utils.fixUnicodeScriptPattern(escapeChars(xsdRegex)) + '$';
-        }
-
-        /*
-         * As both '^' and '$' are special anchor characters in java regular
-         * expressions which are implicitly present in XSD regular expressions,
-         * we need to escape them in case they are not defined as part of
-         * character ranges i.e. inside regular square brackets.
-         */
-        private static String escapeChars(final String regex) {
-            final StringBuilder result = new StringBuilder(regex.length());
-            int bracket = 0;
-            boolean escape = false;
-            for (int i = 0; i < regex.length(); i++) {
-                final char ch = regex.charAt(i);
-                switch (ch) {
-                case '[':
-                    if (!escape) {
-                        bracket++;
-                    }
-                    escape = false;
-                    result.append(ch);
-                    break;
-                case ']':
-                    if (!escape) {
-                        bracket--;
-                    }
-                    escape = false;
-                    result.append(ch);
-                    break;
-                case '\\':
-                    escape = !escape;
-                    result.append(ch);
-                    break;
-                case '^':
-                case '$':
-                    if (bracket == 0) {
-                        result.append('\\');
-                    }
-                    escape = false;
-                    result.append(ch);
-                    break;
-                default:
-                    escape = false;
-                    result.append(ch);
-                }
-            }
-            return result.toString();
         }
 
         @Override

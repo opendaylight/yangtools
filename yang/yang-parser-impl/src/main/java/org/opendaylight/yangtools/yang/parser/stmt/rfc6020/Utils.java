@@ -664,6 +664,63 @@ public final class Utils {
         return string;
     }
 
+    /**
+     * Converts XSD regex to Java-compatible regex
+     *
+     * @param xsdRegex XSD regex pattern as it is defined in a YANG source
+     * @return Java-compatible regex
+     */
+    public static String getJavaRegexFromXSD(final String xsdRegex) {
+        return "^" + fixUnicodeScriptPattern(escapeChars(xsdRegex)) + '$';
+    }
+
+    /*
+     * As both '^' and '$' are special anchor characters in java regular
+     * expressions which are implicitly present in XSD regular expressions,
+     * we need to escape them in case they are not defined as part of
+     * character ranges i.e. inside regular square brackets.
+     */
+    private static String escapeChars(final String regex) {
+        final StringBuilder result = new StringBuilder(regex.length());
+        int bracket = 0;
+        boolean escape = false;
+        for (int i = 0; i < regex.length(); i++) {
+            final char ch = regex.charAt(i);
+            switch (ch) {
+                case '[':
+                    if (!escape) {
+                        bracket++;
+                    }
+                    escape = false;
+                    result.append(ch);
+                    break;
+                case ']':
+                    if (!escape) {
+                        bracket--;
+                    }
+                    escape = false;
+                    result.append(ch);
+                    break;
+                case '\\':
+                    escape = !escape;
+                    result.append(ch);
+                    break;
+                case '^':
+                case '$':
+                    if (bracket == 0) {
+                        result.append('\\');
+                    }
+                    escape = false;
+                    result.append(ch);
+                    break;
+                default:
+                    escape = false;
+                    result.append(ch);
+            }
+        }
+        return result.toString();
+    }
+
     public static String fixUnicodeScriptPattern(String rawPattern) {
         for (int i = 0; i < UNICODE_SCRIPT_FIX_COUNTER; i++) {
             try {

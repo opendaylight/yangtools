@@ -199,7 +199,7 @@ public class Bug5410Test {
     }
 
     private static String javaRegexFromXSD(final String xsdRegex) {
-        return PatternStatementImpl.Definition.getJavaRegexFromXSD(xsdRegex);
+        return Utils.getJavaRegexFromXSD(xsdRegex);
     }
 
     private static boolean testMatch(final String javaRegex, final String value) {
