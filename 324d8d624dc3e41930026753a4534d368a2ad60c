@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da01753e_e7dd4216",
+        "filename": "yang/yang-data-jaxen/src/main/java/org/opendaylight/yangtools/yang/data/jaxen/YangFunctionContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 350,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-04-10T07:14:17Z",
+      "side": 1,
+      "message": "return Double.NaN;",
+      "range": {
+        "startLine": 350,
+        "startChar": 12,
+        "endLine": 350,
+        "endChar": 97
+      },
+      "revId": "324d8d624dc3e41930026753a4534d368a2ad60c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
