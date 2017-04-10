@@ -22,6 +22,29 @@
       "revId": "324d8d624dc3e41930026753a4534d368a2ad60c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da01753e_47cece5b",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 675,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-04-10T07:17:16Z",
+      "side": 1,
+      "message": "this should live in yang-model-util",
+      "range": {
+        "startLine": 668,
+        "startChar": 0,
+        "endLine": 675,
+        "endChar": 5
+      },
+      "revId": "324d8d624dc3e41930026753a4534d368a2ad60c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }

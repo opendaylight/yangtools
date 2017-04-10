@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da01753e_67d152fb",
+        "filename": "yang/yang-data-jaxen/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-04-10T07:17:16Z",
+      "side": 0,
+      "message": "this should remain -test",
+      "range": {
+        "startLine": 56,
+        "startChar": 12,
+        "endLine": 56,
+        "endChar": 31
+      },
+      "revId": "3fef6ae3770c27bc84c39477cef53f79415c400b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
