@@ -22,6 +22,30 @@
       "revId": "f33d2a975debbaf0c4d71a6ac3d07c978ca64bb1",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da01753e_166a391a",
+        "filename": "yang/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/Util.java",
+        "patchSetId": 26
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-04-10T13:12:13Z",
+      "side": 1,
+      "message": "there isn\u0027t, it just got lost in refactoring",
+      "parentUuid": "fafc7978_c4d830f1",
+      "range": {
+        "startLine": 301,
+        "startChar": 21,
+        "endLine": 301,
+        "endChar": 44
+      },
+      "revId": "f33d2a975debbaf0c4d71a6ac3d07c978ca64bb1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
