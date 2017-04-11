@@ -8,36 +8,41 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import java.util.Date;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class RevisionEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Date, RevisionStatement> {
+public final class RevisionEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Date, RevisionStatement>
+        implements DocumentedNode {
+
     private final String reference;
     private final String description;
 
     public RevisionEffectiveStatementImpl(final StmtContext<Date, RevisionStatement, ?> ctx) {
         super(ctx);
 
-        DescriptionEffectiveStatementImpl descStmt = firstEffective(DescriptionEffectiveStatementImpl.class);
+        final DescriptionEffectiveStatementImpl descStmt = firstEffective(DescriptionEffectiveStatementImpl.class);
         if (descStmt != null) {
-            description = descStmt.argument();
+            this.description = descStmt.argument();
         } else {
-            description = null;
+            this.description = null;
         }
 
-        ReferenceEffectiveStatementImpl refStmt = firstEffective(ReferenceEffectiveStatementImpl.class);
+        final ReferenceEffectiveStatementImpl refStmt = firstEffective(ReferenceEffectiveStatementImpl.class);
         if (refStmt != null) {
-            reference = refStmt.argument();
+            this.reference = refStmt.argument();
         } else {
-            reference = null;
+            this.reference = null;
         }
     }
 
+    @Override
     public final String getDescription() {
-        return description;
+        return this.description;
     }
 
+    @Override
     public final String getReference() {
-        return reference;
+        return this.reference;
     }
 }
