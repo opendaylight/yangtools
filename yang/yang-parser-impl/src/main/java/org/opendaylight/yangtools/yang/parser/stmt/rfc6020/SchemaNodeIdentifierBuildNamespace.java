@@ -8,6 +8,8 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StmtContextUtils;
+
 import java.util.Collection;
 import java.util.Iterator;
 import javax.annotation.Nonnull;
@@ -20,7 +22,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 public class SchemaNodeIdentifierBuildNamespace extends
         DerivedNamespaceBehaviour<SchemaNodeIdentifier, StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>, QName, SchemaNodeIdentifierBuildNamespace, ChildSchemaNodes<?, ?>>
