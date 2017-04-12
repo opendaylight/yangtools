@@ -9,7 +9,9 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_NAMESPACE;
 import static org.opendaylight.yangtools.yang.common.YangConstants.YANG_XPATH_FUNCTIONS_PREFIX;
-import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
+import static org.opendaylight.yangtools.yang.parser.stmt.reactor.StmtContextUtils.firstAttributeOf;
+
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StmtContextUtils;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
@@ -58,7 +60,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
@@ -471,5 +472,21 @@ public final class Utils {
                 .orElse(SimpleDateFormatUtil.DEFAULT_DATE_REV);
         final String formattedRevision = SimpleDateFormatUtil.getRevisionFormat().format(revision);
         return RevisionSourceIdentifier.create((String) root.getStatementArgument(), formattedRevision);
+    }
+
+    public static boolean isInExtensionBody(final StmtContext<?, ?, ?> stmtCtx) {
+        StmtContext<?, ?, ?> current = stmtCtx;
+        while (!current.getParentContext().isRootContext()) {
+            current = current.getParentContext();
+            if (StmtContextUtils.producesDeclared(current, UnknownStatementImpl.class)) {
+                return true;
+            }
+        }
+    
+        return false;
+    }
+
+    public static boolean isUnknownStatement(final StmtContext<?, ?, ?> stmtCtx) {
+        return StmtContextUtils.producesDeclared(stmtCtx, UnknownStatementImpl.class);
     }
 }
