@@ -6,8 +6,11 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.yangtools.yang.parser.spi;
+package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+
+import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -16,11 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public final class SubstatementValidator {
     /**

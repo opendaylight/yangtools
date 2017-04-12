@@ -5,7 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.spi.meta;
+package org.opendaylight.yangtools.yang.parser.stmt.reactor;
+
+import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -31,9 +35,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.RootStatementContext;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 
 public final class StmtContextUtils {
     public static final Splitter LIST_KEY_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
@@ -191,22 +192,6 @@ public final class StmtContextUtils {
     public static boolean producesDeclared(final StmtContext<?, ?, ?> ctx,
             final Class<? extends DeclaredStatement<?>> type) {
         return type.isAssignableFrom(ctx.getPublicDefinition().getDeclaredRepresentationClass());
-    }
-
-    public static boolean isInExtensionBody(final StmtContext<?, ?, ?> stmtCtx) {
-        StmtContext<?, ?, ?> current = stmtCtx;
-        while (!current.getParentContext().isRootContext()) {
-            current = current.getParentContext();
-            if (producesDeclared(current, UnknownStatementImpl.class)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public static boolean isUnknownStatement(final StmtContext<?, ?, ?> stmtCtx) {
-        return producesDeclared(stmtCtx, UnknownStatementImpl.class);
     }
 
     public static Collection<SchemaNodeIdentifier> replaceModuleQNameForKey(
