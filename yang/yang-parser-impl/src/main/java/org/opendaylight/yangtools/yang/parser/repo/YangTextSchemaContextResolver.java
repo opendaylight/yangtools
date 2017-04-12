@@ -163,7 +163,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             IOException, YangSyntaxErrorException {
         checkArgument(url != null, "Supplied URL must not be null");
 
-        final SourceIdentifier guessedId = RevisionSourceIdentifier.create(url.getFile(), Optional.absent());
+        final SourceIdentifier guessedId = guessSourceIdentifier(url.getFile());
         return registerSource(new YangTextSchemaSource(guessedId) {
             @Override
             public InputStream openStream() throws IOException {
@@ -175,6 +175,15 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
                 return toStringHelper.add("url", url);
             }
         });
+    }
+
+    private static SourceIdentifier guessSourceIdentifier(final String fileName) {
+        try {
+            return YangTextSchemaSource.identifierFromFilename(fileName);
+        } catch (IllegalArgumentException e) {
+            LOG.warn("Invalid file name format in '{}'", fileName, e);
+            return RevisionSourceIdentifier.create(fileName);
+        }
     }
 
     /**
