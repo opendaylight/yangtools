@@ -7,10 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.api;
 
+import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_FILE_EXTENSION;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import java.text.ParseException;
+import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.Map.Entry;
 import java.util.Objects;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 
 /**
  * YANG Schema revision source identifier
@@ -111,6 +117,46 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
      */
     public static RevisionSourceIdentifier create(final String moduleName) {
         return new RevisionSourceIdentifier(moduleName);
+    }
+
+    /**
+     * Creates a new RevisionSourceIdentifier based on the provided file name.
+     *
+     * @param fileName file name
+     * @throws IllegalArgumentException when fileName does not have correct format
+     * @throws NullPointerException when fileName is null
+     * @throws ParseException if the revision part has invalid format
+     */
+    public static RevisionSourceIdentifier fromFileName(final String fileName) throws ParseException {
+        final Entry<String, String> split = splitFileName(fileName);
+        if (split.getValue() != null) {
+            SimpleDateFormatUtil.getRevisionFormat().parse(split.getValue());
+        }
+
+        return new RevisionSourceIdentifier(split.getKey(), Optional.fromNullable(split.getValue()));
+    }
+
+    /**
+     * Creates a new RevisionSourceIdentifier based on the provided file name. This variant ignores any revision
+     * part.
+     *
+     * @param fileName file name
+     * @throws IllegalArgumentException when fileName does not have correct format
+     * @throws NullPointerException when fileName is null
+     */
+    public static RevisionSourceIdentifier fromFileNameLenientRevision(final String fileName) {
+        final Entry<String, String> split = splitFileName(fileName);
+        return new RevisionSourceIdentifier(split.getKey(), Optional.fromNullable(split.getValue()));
+    }
+
+    private static Entry<String, String> splitFileName(final String fileName) {
+        Preconditions.checkArgument(fileName.endsWith(RFC6020_YANG_FILE_EXTENSION),
+            "File name '%s' does not end with %s", fileName, RFC6020_YANG_FILE_EXTENSION);
+
+        final String noExt = fileName.substring(0, fileName.length() - RFC6020_YANG_FILE_EXTENSION.length());
+        final int atIndex = noExt.indexOf('@');
+        return atIndex == -1 ? new SimpleImmutableEntry<>(noExt, null)
+                : new SimpleImmutableEntry<>(noExt.substring(0, atIndex), noExt.substring(atIndex + 1));
     }
 
     @Override
