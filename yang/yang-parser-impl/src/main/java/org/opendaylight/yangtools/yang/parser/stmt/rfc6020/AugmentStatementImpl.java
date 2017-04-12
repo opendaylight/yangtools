@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StmtContextUtils;
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.ImmutableSet;
@@ -28,7 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
-import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
@@ -38,7 +40,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StmtOrderingNamespace;
@@ -113,7 +114,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
 
             super.onFullDefinitionDeclared(augmentNode);
 
-            if (StmtContextUtils.isInExtensionBody(augmentNode)) {
+            if (Utils.isInExtensionBody(augmentNode)) {
                 return;
             }
 
@@ -129,7 +130,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                 public void apply() {
                     final StatementContextBase<?, ?, ?> augmentTargetCtx = (StatementContextBase<?, ?, ?>) target.get();
                     if (!isSupportedAugmentTarget(augmentTargetCtx)
-                            || StmtContextUtils.isInExtensionBody(augmentTargetCtx)) {
+                            || Utils.isInExtensionBody(augmentTargetCtx)) {
                         augmentNode.setIsSupportedToBuildEffective(false);
                         return;
                     }
