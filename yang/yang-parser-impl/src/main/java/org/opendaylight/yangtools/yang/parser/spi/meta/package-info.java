@@ -7,5 +7,10 @@
  */
 /**
  * Provides base abstract classes, interfaces and common implementation used by statement parser.
+ *
+ * <p>
+ * This package also contains substatement validator {@link SubstatementValidator} necessary
+ * for validation of allowed substatements of a statement.
+ * </p>
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
