@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+
 import com.google.common.base.Optional;
 import java.util.Collection;
 import java.util.Map;
@@ -27,7 +29,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
-import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;

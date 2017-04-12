@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StmtContextUtils;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
@@ -29,7 +32,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
@@ -40,7 +42,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
@@ -89,7 +90,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
             }
             super.onFullDefinitionDeclared(usesNode);
 
-            if (StmtContextUtils.isInExtensionBody(usesNode)) {
+            if (Utils.isInExtensionBody(usesNode)) {
                 return;
             }
 
@@ -296,7 +297,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                 refineTargetNodeIdentifier);
         Preconditions.checkArgument(refineTargetNodeCtx != null, "Refine target node %s not found. At %s",
                 refineTargetNodeIdentifier, refineCtx.getStatementSourceReference());
-        if (StmtContextUtils.isUnknownStatement(refineTargetNodeCtx)) {
+        if (Utils.isUnknownStatement(refineTargetNodeCtx)) {
             LOG.debug(
                     "Refine node '{}' in uses '{}' has target node unknown statement '{}'. Refine has been skipped. At line: {}",
                     refineCtx.getStatementArgument(), refineCtx.getParentContext().getStatementArgument(),
@@ -350,7 +351,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
 
         return supportedRefineSubstatements == null || supportedRefineSubstatements.isEmpty()
                 || supportedRefineSubstatements.contains(refineSubstatementCtx.getPublicDefinition())
-                || StmtContextUtils.isUnknownStatement(refineSubstatementCtx);
+                || Utils.isUnknownStatement(refineSubstatementCtx);
     }
 
     private static boolean isSupportedRefineTarget(final StatementContextBase<?, ?, ?> refineSubstatementCtx,

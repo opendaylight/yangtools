@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
-import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
+import static org.opendaylight.yangtools.yang.parser.stmt.reactor.StmtContextUtils.findFirstDeclaredSubstatement;
+import static org.opendaylight.yangtools.yang.parser.stmt.reactor.StmtContextUtils.firstAttributeOf;
+
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 import java.util.Date;
 import java.util.Optional;
@@ -23,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;

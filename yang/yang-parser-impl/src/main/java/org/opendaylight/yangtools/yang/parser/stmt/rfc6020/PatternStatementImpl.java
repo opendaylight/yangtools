@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+
 import com.google.common.base.Optional;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -21,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.util.RegexUtils;
-import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;

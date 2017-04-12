@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Namesp
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 

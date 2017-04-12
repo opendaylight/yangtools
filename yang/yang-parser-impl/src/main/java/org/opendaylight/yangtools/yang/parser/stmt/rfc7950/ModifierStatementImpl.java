@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc7950;
 
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+
 import com.google.common.annotations.Beta;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
-import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;

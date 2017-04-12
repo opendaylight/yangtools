@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StmtContextUtils;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,13 +25,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
-import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementDefinitionContext;
