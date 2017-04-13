@@ -92,7 +92,7 @@ class YangModuleInfoTemplate {
             package «packageName»;
 
             public final class «MODEL_BINDING_PROVIDER_CLASS_NAME» implements «YangModelBindingProvider.name» {
-
+                @Override
                 public «YangModuleInfo.name» getModuleInfo() {
                     return «MODULE_INFO_CLASS_NAME».getInstance();
                 }

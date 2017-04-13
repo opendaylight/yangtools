@@ -233,6 +233,7 @@ class BuilderTemplate extends BaseTemplate {
 
             «generateSetters»
 
+            @Override
             public «type.name» build() {
                 return new «type.name»«IMPL»(this);
             }
@@ -745,6 +746,7 @@ final int builderLength = builder.length();
     '''
 
     def implementedInterfaceGetter() '''
+    @Override
     public «Class.importedName»<«type.importedName»> getImplementedInterface() {
         return «type.importedName».class;
     }
