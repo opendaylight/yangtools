@@ -20,7 +20,6 @@ import com.google.common.util.concurrent.Futures;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.text.ParseException;
 import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -180,12 +179,9 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
 
     private static SourceIdentifier guessSourceIdentifier(final String fileName) {
         try {
-            return RevisionSourceIdentifier.fromFileName(fileName);
-        } catch (ParseException e) {
-            LOG.debug("Malformed revision in '{}'", fileName, e);
-            return RevisionSourceIdentifier.fromFileNameLenientRevision(fileName);
+            return YangTextSchemaSource.identifierFromFilename(fileName);
         } catch (IllegalArgumentException e) {
-            LOG.debug("Invalid file name format in '{}'", fileName, e);
+            LOG.warn("Invalid file name format in '{}'", fileName, e);
             return RevisionSourceIdentifier.create(fileName);
         }
     }
