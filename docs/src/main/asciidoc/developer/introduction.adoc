@@ -173,27 +173,24 @@ The YANG statement parser can work in three modes:
 
 The default mode is active when you initialize the parsing cycle as usual by calling the method newBuild() without passing any arguments to it. The second and third mode can be activated by invoking the newBuild() with a special argument. You can either activate just one of them or both by passing proper arguments. Let us explain how these modes work.
 
-Mode with active resolution of if-features makes yang statements containing an if-feature statement conditional based on the supported features. These features are provided in the form of a QName-based java.util.function.Predicate object. In the example below, only two features are supported: example-feature-1 and example-feature-2. The Predicate which contains this information is passed to the method newBuild() and the mode is activated.
+Mode with active resolution of if-features makes yang statements containing an if-feature statement conditional based on the supported features. These features are provided in the form of a QName-based java.util.Set object. In the example below, only two features are supported: example-feature-1 and example-feature-2. The Set is passed to the method newBuild() and the mode is activated.
 
 [source, java]
 ----
-Predicate<QName> isFeatureSupported = qName -> {
-    Set<QName> supportedFeatures = new HashSet<>();
-    supportedFeatures.add(QName.create("example-namespace", "2016-08-31", "example-feature-1"));
-    supportedFeatures.add(QName.create("example-namespace", "2016-08-31", "example-feature-2"));
-    return supportedFeatures.contains(qName);
-}
+Set<QName> supportedFeatures = ImmutableSet.of(
+    QName.create("example-namespace", "2016-08-31", "example-feature-1"),
+    QName.create("example-namespace", "2016-08-31", "example-feature-2"));
 
-CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(isFeatureSupported);
+CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(supportedFeatures);
 ----
 
-In case when no features should be supported, you should provide a Predicate<QName> object whose test() method just returns false.
+In case when no features should be supported, you should provide an empty Set<QName> object.
 
 [source, java]
 ----
-Predicate<QName> isFeatureSupported = qName -> false;
+Set<QName> supportedFeatures = ImmutableSet.of();
 
-CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(isFeatureSupported);
+CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(supportedFeatures);
 ----
 
 When this mode is not activated, all features in the processed YANG sources are supported.
