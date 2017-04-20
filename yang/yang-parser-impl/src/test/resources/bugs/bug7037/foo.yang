@@ -1,0 +1,33 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    import bar { prefix bar; revision-date 1970-01-01; }
+
+    extension foo-ext {
+        argument arg;
+    }
+
+    bar:bar-ext "first" {
+        container bar-ext-con {
+        }
+    }
+
+    container root {
+        bar:bar-ext "bar" {
+            container bar-ext-con-2 {
+            }
+            bar:bar-ext "sub-bar" {
+                container bar-ext-con-3 {
+                }
+            }
+            bar:bar-ext-2 {
+                container bar-ext-2-con {
+                }
+            }
+        }
+        foo:foo-ext "foo" {
+            container foo-ext-con;
+        }
+    }
+}
