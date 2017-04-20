@@ -1,0 +1,11 @@
+module bar {
+    namespace bar;
+    prefix bar;
+
+    extension bar-ext {
+        argument arg;
+    }
+
+    extension bar-ext-2 {
+    }
+}
