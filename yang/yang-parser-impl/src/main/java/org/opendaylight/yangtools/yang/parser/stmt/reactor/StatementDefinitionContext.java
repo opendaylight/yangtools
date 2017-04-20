@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
     private final StatementSupport<A, D, E> support;
     private final Map<String, StatementDefinitionContext<?, ?, ?>> argumentSpecificSubDefinitions;
+    private Map<StatementDefinitionContext<?,?,?>, StatementDefinitionContext<?,?,?>> unknownStmtDefsOfYangStmts;
 
     public StatementDefinitionContext(final StatementSupport<A, D, E> support) {
         this.support = Preconditions.checkNotNull(support);
@@ -89,8 +90,16 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
         return support.getArgumentName() != null;
     }
 
+    public boolean isArgumentYinElement() {
+        return support.isArgumentYinElement();
+    }
+
     public QName getStatementName() {
         return support.getStatementName();
+    }
+
+    public QName getArgumentName() {
+        return support.getArgumentName();
     }
 
     @Override
@@ -103,7 +112,7 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Nonnull
-    public StatementDefinitionContext<?, ?, ?> getSubDefinitionSpecificForArgument(final String argument) {
+    StatementDefinitionContext<?, ?, ?> getSubDefinitionSpecificForArgument(final String argument) {
         if (!hasArgumentSpecificSubDefinitions()) {
             return this;
         }
@@ -119,11 +128,30 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
         return potential;
     }
 
-    public boolean hasArgumentSpecificSubDefinitions() {
+    boolean hasArgumentSpecificSubDefinitions() {
         return support.hasArgumentSpecificSupports();
     }
 
     String internArgument(final String rawArgument) {
         return support.internArgument(rawArgument);
+    }
+
+    StatementDefinitionContext<?, ?, ?> getAsUnknownStatementDefinition(
+            final StatementDefinitionContext<?, ?, ?> yangStmtDef) {
+        if (unknownStmtDefsOfYangStmts == null) {
+            unknownStmtDefsOfYangStmts = new HashMap<>();
+        }
+
+        StatementDefinitionContext<?, ?, ?> ret = unknownStmtDefsOfYangStmts.get(yangStmtDef);
+        if (ret != null) {
+            return ret;
+        }
+
+        ret = support.getUnknownStatementDefinitionOf(yangStmtDef).orElse(null);
+
+        if (ret != null) {
+            unknownStmtDefsOfYangStmts.put(yangStmtDef, ret);
+        }
+        return ret;
     }
 }

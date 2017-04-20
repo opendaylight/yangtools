@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementDefinitionContext;
 
 /**
  * StatementSupport for statements defined via YANG extensions. This is implemented by piggy-backing
@@ -48,5 +50,11 @@ public final class ModelDefinedStatementSupport extends AbstractStatementSupport
     @Override
     protected SubstatementValidator getSubstatementValidator() {
         return null;
+    }
+
+    @Override
+    public Optional<StatementDefinitionContext<?, ?, ?>> getUnknownStatementDefinitionOf(
+            final StatementDefinitionContext<?, ?, ?> yangStmtDef) {
+        return definition.getUnknownStatementDefinitionOf(yangStmtDef);
     }
 }

@@ -20,9 +20,9 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementDefinitionContext;
 
 /**
- *
  * Support for processing concrete YANG statement.
  *
+ * <p>
  * This interface is intended to be implemented by developers, which want to
  * introduce support of statement to parser. Consider subclassing
  * {@link AbstractStatementSupport} for easier implementation of this interface.
@@ -189,4 +189,19 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     default String internArgument(final String rawArgument) {
         return rawArgument;
     }
+
+    /**
+     * Returns unknown statement form of a regular yang statement supplied as
+     * parameter to the method.
+     *
+     * @param yangStmtDef
+     *            statement definition of a regular yang statement
+     * @return Optional of unknown statement form of a regular yang statement or
+     *         Optional.empty() if it is not supported by this statement support
+     */
+    default Optional<StatementDefinitionContext<?, ?, ?>> getUnknownStatementDefinitionOf(
+            final StatementDefinitionContext<?, ?, ?> yangStmtDef) {
+        return Optional.empty();
+    }
 }
+
