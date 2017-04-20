@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -83,7 +84,7 @@ public class Bug1412Test {
         assertEquals(expectedNodeType, info.getNodeType());
         assertEquals("greeting", info.getNodeParameter());
 
-        expectedNodeType = QName.create(qm, "description");
+        expectedNodeType = QName.create(YangConstants.RFC6020_YIN_MODULE, "description");
         assertEquals(expectedNodeType, description.getNodeType());
         assertEquals("say greeting", description.getNodeParameter());
 
@@ -91,7 +92,7 @@ public class Bug1412Test {
         assertEquals(expectedNodeType, actionPoint.getNodeType());
         assertEquals("entry", actionPoint.getNodeParameter());
 
-        expectedNodeType = QName.create(qm, "output");
+        expectedNodeType = QName.create(YangConstants.RFC6020_YIN_MODULE, "output");
         assertEquals(expectedNodeType, output.getNodeType());
         assertEquals("", output.getNodeParameter());
     }

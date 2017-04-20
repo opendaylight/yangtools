@@ -39,6 +39,11 @@ public final class ModelDefinedStatementDefinition implements StatementDefinitio
         this(qname, hasArgument ? qname : null, false);
     }
 
+    public static ModelDefinedStatementDefinition createFrom(final StatementDefinition stmtDef) {
+        return new ModelDefinedStatementDefinition(stmtDef.getStatementName(), stmtDef.getArgumentName(),
+                stmtDef.isArgumentYinElement());
+    }
+
     @Nonnull
     @Override
     public QName getStatementName() {

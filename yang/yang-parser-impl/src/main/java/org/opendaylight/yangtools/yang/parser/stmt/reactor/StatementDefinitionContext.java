@@ -25,10 +25,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ModelDefinedStatementDefinition;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 
 public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
     private final StatementSupport<A, D, E> support;
     private final Map<String, StatementDefinitionContext<?, ?, ?>> argumentSpecificSubDefinitions;
+    private StatementDefinitionContext<?,?,?> unknownStatementDefinition;
 
     public StatementDefinitionContext(final StatementSupport<A, D, E> support) {
         this.support = Preconditions.checkNotNull(support);
@@ -103,7 +106,7 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
     }
 
     @Nonnull
-    public StatementDefinitionContext<?, ?, ?> getSubDefinitionSpecificForArgument(final String argument) {
+    StatementDefinitionContext<?, ?, ?> getSubDefinitionSpecificForArgument(final String argument) {
         if (!hasArgumentSpecificSubDefinitions()) {
             return this;
         }
@@ -119,7 +122,18 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
         return potential;
     }
 
-    public boolean hasArgumentSpecificSubDefinitions() {
+    boolean hasArgumentSpecificSubDefinitions() {
         return support.hasArgumentSpecificSupports();
+    }
+
+    StatementDefinitionContext<?, ?, ?> getAsUnknownStatementDefinition() {
+        if (unknownStatementDefinition != null) {
+            return unknownStatementDefinition;
+        }
+
+        unknownStatementDefinition = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition(
+                ModelDefinedStatementDefinition.createFrom(support.getPublicView())));
+
+        return unknownStatementDefinition;
     }
 }
