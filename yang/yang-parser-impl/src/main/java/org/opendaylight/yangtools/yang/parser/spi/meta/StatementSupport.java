@@ -179,4 +179,18 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      */
     @Nullable
     StatementSupport<?, ?, ?> getSupportSpecificForArgument(String argument);
+
+    /**
+     * Returns unknown statement form of a regular yang statement supplied as
+     * parameter to the method.
+     *
+     * @param yangStmtDef
+     *            statement definition of a regular yang statement
+     * @return Optional of unknown statement form of a regular yang statement or
+     *         Optional.empty() if it is not supported by this statement support
+     */
+    default Optional<StatementDefinitionContext<?, ?, ?>> getUnknownStatementDefinitionOf(
+            final StatementDefinitionContext<?, ?, ?> yangStmtDef) {
+        return Optional.empty();
+    }
 }
