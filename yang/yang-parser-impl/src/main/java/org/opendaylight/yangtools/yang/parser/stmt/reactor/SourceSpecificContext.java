@@ -41,6 +41,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Storag
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
@@ -54,9 +55,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinit
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ModelDefinedStatementDefinition;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,22 +111,22 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
         StatementDefinitionContext<?, ?, ?> def = currentContext.getStatementDefinition(getRootVersion(), name);
         if (def == null) {
-            final StatementSupport<?, ?, ?> extension = qNameToStmtDefMap.get(name);
-            if (extension != null) {
-                def = new StatementDefinitionContext<>(extension);
+            def = currentContext.getModelDefinedStatementDefinition(name);
+            if (def == null) {
+                final StatementSupport<?, ?, ?> extension = qNameToStmtDefMap.get(name);
+                if (extension != null) {
+                    def = new StatementDefinitionContext<>(extension);
+                    currentContext.putModelDefinedStatementDefinition(name, def);
+                }
             }
-        } else if (current != null && current.definition().getRepresentingClass().equals(UnknownStatementImpl.class)) {
+        } else if (current != null && StmtContextUtils.isUnknownStatement(current)) {
             /*
-             * This code wraps statements encountered inside an extension so they do not get confused with regular
-             * statements.
-             *
-             * FIXME: BUG-7037: re-evaluate whether this is really needed, as this is a very expensive way of making
-             *        this work. We really should be peeking into the extension definition to find these nodes,
-             *        as otherwise we are not reusing definitions nor support for these nodes.
+             * This code wraps statements encountered inside an extension so
+             * they do not get confused with regular statements.
              */
-            final QName qName = Utils.qNameFromArgument(current, name.getLocalName());
-            def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition(
-                new ModelDefinedStatementDefinition(qName, argument != null)));
+            def = Preconditions.checkNotNull(current.definition().getAsUnknownStatementDefinition(def),
+                    "Unable to create unknown statement definition of yang statement %s in unknown statement %s", def,
+                    current);
         }
 
         InferenceException.throwIfNull(def, ref, "Statement %s does not have type mapping defined.", name);
