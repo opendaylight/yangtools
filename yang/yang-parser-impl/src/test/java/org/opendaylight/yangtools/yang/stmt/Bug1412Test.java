@@ -83,7 +83,7 @@ public class Bug1412Test {
         assertEquals(expectedNodeType, info.getNodeType());
         assertEquals("greeting", info.getNodeParameter());
 
-        expectedNodeType = QName.create(qm, "description");
+        expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "description");
         assertEquals(expectedNodeType, description.getNodeType());
         assertEquals("say greeting", description.getNodeParameter());
 
@@ -91,7 +91,7 @@ public class Bug1412Test {
         assertEquals(expectedNodeType, actionPoint.getNodeType());
         assertEquals("entry", actionPoint.getNodeParameter());
 
-        expectedNodeType = QName.create(qm, "output");
+        expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "output");
         assertEquals(expectedNodeType, output.getNodeType());
         assertEquals("", output.getNodeParameter());
     }
