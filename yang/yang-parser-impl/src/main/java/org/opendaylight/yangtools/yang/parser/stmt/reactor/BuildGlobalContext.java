@@ -75,6 +75,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
             .add(ModelProcessingPhase.FULL_DECLARATION).add(ModelProcessingPhase.EFFECTIVE_MODEL).build();
 
     private final Table<YangVersion, QName, StatementDefinitionContext<?, ?, ?>> definitions = HashBasedTable.create();
+    private final Map<QName, StatementDefinitionContext<?, ?, ?>> modelDefinedStmtDefs = new HashMap<>();
     private final Map<Class<?>, NamespaceBehaviourWithListeners<?, ?, ?>> supportedNamespaces = new HashMap<>();
     private final List<MutableStatement> mutableStatementsToSeal = new ArrayList<>();
     private final Map<ModelProcessingPhase, StatementSupportBundle> supports;
@@ -201,6 +202,14 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
             }
         }
         return potential;
+    }
+
+    StatementDefinitionContext<?, ?, ?> getModelDefinedStatementDefinition(final QName name) {
+        return modelDefinedStmtDefs.get(name);
+    }
+
+    void putModelDefinedStatementDefinition(final QName name, final StatementDefinitionContext<?, ?, ?> def) {
+        modelDefinedStmtDefs.put(name, def);
     }
 
     private void executePhases() throws ReactorException {

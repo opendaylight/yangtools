@@ -34,11 +34,6 @@ public final class ModelDefinedStatementDefinition implements StatementDefinitio
         this.yinElement = yinElement;
     }
 
-    @Deprecated
-    public ModelDefinedStatementDefinition(final QName qname, final boolean hasArgument) {
-        this(qname, hasArgument ? qname : null, false);
-    }
-
     @Nonnull
     @Override
     public QName getStatementName() {
