@@ -1,0 +1,21 @@
+module foo-invalid {
+    namespace foo-ns;
+    prefix foo-prefix;
+    yang-version 1.1;
+
+    revision 2017-04-03;
+
+    container my-container {
+        list alarm {
+            key severity;
+
+            leaf ordinary-leaf {
+                type string;
+            }
+
+            leaf severity {
+                type int32;
+            }
+        }
+    }
+}

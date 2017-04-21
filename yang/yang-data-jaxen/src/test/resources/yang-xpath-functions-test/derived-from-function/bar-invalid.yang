@@ -1,0 +1,21 @@
+module bar-invalid {
+    namespace bar-ns;
+    prefix bar-prefix;
+    yang-version 1.1;
+
+    revision 2017-04-03;
+
+    container my-container {
+        list my-list {
+            key key-leaf;
+
+            leaf key-leaf {
+                type string;
+            }
+
+            leaf idref-leaf {
+                type int32;
+            }
+        }
+    }
+}

@@ -1,0 +1,21 @@
+module foo-invalid {
+    namespace foo-ns;
+    prefix foo-prefix;
+    yang-version 1.1;
+
+    revision 2017-04-03;
+
+    container my-container {
+        list my-list {
+            key flags;
+
+            leaf flags {
+                type int32;
+            }
+
+            leaf ordinary-leaf {
+                type string;
+            }
+        }
+    }
+}

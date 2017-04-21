@@ -20,6 +20,10 @@ module foo {
             leaf referenced-leaf {
                 type string;
             }
+
+            leaf referenced-leaf-list {
+                type string;
+            }
         }
 
         container my-inner-container {
@@ -32,8 +36,15 @@ module foo {
 
             leaf rel-leafref-leaf {
                 type leafref {
-                    path "../../my-list[key-leaf-a=current()/../ordinary-leaf-a]" +
-                        "[key-leaf-b=current()/../ordinary-leaf-b]/referenced-leaf";
+                    path "../../foo-prefix:my-list[foo-prefix:key-leaf-a=current()/../ordinary-leaf-a]" +
+                        "[key-leaf-b=current()/../ordinary-leaf-b]/foo-prefix:referenced-leaf";
+                }
+            }
+
+            leaf leaf-list-leafref-leaf {
+                type leafref {
+                    path "/my-container/my-list[key-leaf-a=current()/../ordinary-leaf-a]" +
+                        "[key-leaf-b=current()/../ordinary-leaf-b]/referenced-leaf-list";
                 }
             }
 
