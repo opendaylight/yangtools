@@ -29,6 +29,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -113,19 +115,7 @@ final class YangFunctionContext implements FunctionContext {
         if (correspondingSchemaNode.getType() instanceof LeafrefTypeDefinition) {
             final LeafrefTypeDefinition leafrefType = (LeafrefTypeDefinition) correspondingSchemaNode.getType();
             final RevisionAwareXPath xPath = leafrefType.getPathStatement();
-            if (xPath.isAbsolute()) {
-                final NormalizedNode<?, ?> referencedNode = getNodeReferencedByAbsoluteLeafref(
-                        xPath, currentNodeContext, schemaContext, correspondingSchemaNode);
-                if (referencedNode.getValue().equals(nodeValue)) {
-                    return referencedNode;
-                }
-            } else {
-                final NormalizedNode<?, ?> referencedNode = getNodeReferencedByRelativeLeafref(
-                        xPath, currentNodeContext, schemaContext, correspondingSchemaNode);
-                if (referencedNode.getValue().equals(nodeValue)) {
-                    return referencedNode;
-                }
-            }
+            return getNodeReferencedByLeafref(xPath, currentNodeContext, schemaContext, correspondingSchemaNode, nodeValue);
         }
 
         return null;
@@ -142,8 +132,24 @@ final class YangFunctionContext implements FunctionContext {
             if (possibleNode.isPresent()) {
                 return possibleNode.get();
             }
+        }
 
-            return null;
+        return null;
+    }
+
+    private static NormalizedNode<?, ?> getNodeReferencedByLeafref(final RevisionAwareXPath xPath,
+            final NormalizedNodeContext currentNodeContext, final SchemaContext schemaContext,
+            final TypedSchemaNode correspondingSchemaNode, final Object nodeValue) {
+        final NormalizedNode<?, ?> referencedNode = xPath.isAbsolute() ? getNodeReferencedByAbsoluteLeafref(xPath,
+                currentNodeContext, schemaContext, correspondingSchemaNode) : getNodeReferencedByRelativeLeafref(xPath,
+                currentNodeContext, schemaContext, correspondingSchemaNode);
+
+        if (referencedNode instanceof LeafSetNode) {
+            return getReferencedLeafSetEntryNode((LeafSetNode<?>) referencedNode, nodeValue);
+        }
+
+        if (referencedNode instanceof LeafNode && referencedNode.getValue().equals(nodeValue)) {
+            return referencedNode;
         }
 
         return null;
@@ -163,8 +169,6 @@ final class YangFunctionContext implements FunctionContext {
             if (possibleNode.isPresent()) {
                 return possibleNode.get();
             }
-
-            return null;
         }
 
         return null;
@@ -190,6 +194,17 @@ final class YangFunctionContext implements FunctionContext {
         final Optional<NormalizedNode<?, ?>> possibleNode = NormalizedNodes.findNode(relativeNode, pathArguments);
         if (possibleNode.isPresent()) {
             return possibleNode.get();
+        }
+
+        return null;
+    }
+
+    private static LeafSetEntryNode<?> getReferencedLeafSetEntryNode(final LeafSetNode<?> referencedNode,
+            final Object currentNodeValue) {
+        for (final LeafSetEntryNode<?> entryNode : referencedNode.getValue()) {
+            if (currentNodeValue.equals(entryNode.getValue())) {
+                return entryNode;
+            }
         }
 
         return null;
@@ -313,7 +328,8 @@ final class YangFunctionContext implements FunctionContext {
                 }
             }
 
-            throw new IllegalArgumentException("Cannot resolve prefix '%s' from identity '%s'.");
+            throw new IllegalArgumentException(String.format("Cannot resolve prefix '%s' from identity '%s'.",
+                    identityPrefixAndName.get(0), identity));
         }
 
         if (identityPrefixAndName.size() == 1) { // without prefix
@@ -335,8 +351,6 @@ final class YangFunctionContext implements FunctionContext {
                 " identity schema node in the module %s.", identityQName, module));
     }
 
-
-
     // enum-value(node-set nodes) function as per https://tools.ietf.org/html/rfc7950#section-10.5.1
     private static final Function ENUM_VALUE_FUNCTION = (context, args) -> {
         if (!args.isEmpty()) {
@@ -350,16 +364,18 @@ final class YangFunctionContext implements FunctionContext {
         final TypedSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext,
             currentNodeContext);
 
-        if (!(correspondingSchemaNode.getType() instanceof EnumTypeDefinition)) {
+        final TypeDefinition<?> nodeType = correspondingSchemaNode.getType();
+        if (!(nodeType instanceof EnumTypeDefinition)) {
             return DOUBLE_NAN;
         }
 
-        if (!(currentNodeContext.getNode().getValue() instanceof String)) {
+        final Object nodeValue = currentNodeContext.getNode().getValue();
+        if (!(nodeValue instanceof String)) {
             return DOUBLE_NAN;
         }
 
-        final EnumTypeDefinition enumerationType = (EnumTypeDefinition) correspondingSchemaNode.getType();
-        final String enumName = (String) currentNodeContext.getNode().getValue();
+        final EnumTypeDefinition enumerationType = (EnumTypeDefinition) nodeType;
+        final String enumName = (String) nodeValue;
 
         return getEnumValue(enumerationType, enumName);
     };
