@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -36,6 +37,9 @@ final class UnorderedMapModificationStrategy extends AbstractNodeContainerModifi
             return ImmutableMapNodeBuilder.create((MapNode) original);
         } else if (original instanceof MapEntryNode) {
             return ImmutableMapEntryNodeBuilder.create((MapEntryNode) original);
+        } else if (original instanceof ContainerNode && ((ContainerNode) original).getValue().isEmpty()) {
+            //handling SimpleContainerNode
+            return ImmutableMapNodeBuilder.create().withNodeIdentifier(((ContainerNode) original).getIdentifier());
         }
         throw new IllegalArgumentException("MapModification strategy can only handle MapNode or MapEntryNode's, offending node: " + original);
     }
@@ -46,6 +50,9 @@ final class UnorderedMapModificationStrategy extends AbstractNodeContainerModifi
             return ImmutableMapNodeBuilder.create().withNodeIdentifier(((MapNode) original).getIdentifier()).build();
         } else if (original instanceof MapEntryNode) {
             return ImmutableMapEntryNodeBuilder.create().withNodeIdentifier(((MapEntryNode) original).getIdentifier()).build();
+        } else if (original instanceof ContainerNode && ((ContainerNode) original).getValue().isEmpty()) {
+            //handling SimpleContainerNode
+            return ImmutableMapNodeBuilder.create().withNodeIdentifier(((ContainerNode) original).getIdentifier()).build();
         }
         throw new IllegalArgumentException("MapModification strategy can only handle MapNode or MapEntryNode's, offending node: " + original);
     }
