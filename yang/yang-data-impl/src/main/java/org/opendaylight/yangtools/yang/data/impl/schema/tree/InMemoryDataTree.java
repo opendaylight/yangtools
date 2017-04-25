@@ -35,6 +35,7 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTree.class);
 
     private final DataTreeConfiguration treeConfig;
+    private final boolean maskMandatory;
 
     /**
      * Current data store state generation.
@@ -44,10 +45,27 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
     InMemoryDataTree(final TreeNode rootNode, final DataTreeConfiguration treeConfig,
         final SchemaContext schemaContext) {
         this.treeConfig = Preconditions.checkNotNull(treeConfig, "treeConfig");
+        maskMandatory = true;
         state = DataTreeState.createInitial(rootNode);
         if (schemaContext != null) {
             setSchemaContext(schemaContext);
         }
+    }
+
+    InMemoryDataTree(final TreeNode rootNode, final DataTreeConfiguration treeConfig, final SchemaContext schemaContext,
+            final DataSchemaNode rootSchemaNode, final boolean maskMandatory) {
+        this.treeConfig = Preconditions.checkNotNull(treeConfig, "treeConfig");
+        this.maskMandatory = maskMandatory;
+
+        state = DataTreeState.createInitial(rootNode).withSchemaContext(schemaContext, getOperation(rootSchemaNode));
+    }
+
+    private ModificationApplyOperation getOperation(final DataSchemaNode rootSchemaNode) {
+        if (maskMandatory && rootSchemaNode instanceof ContainerSchemaNode) {
+            return new ContainerModificationStrategy((ContainerSchemaNode) rootSchemaNode, treeConfig);
+        }
+
+        return SchemaAwareApplyOperation.from(rootSchemaNode, treeConfig);
     }
 
     /*
@@ -73,14 +91,7 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
             return;
         }
 
-        final ModificationApplyOperation rootNode;
-        if (rootSchemaNode instanceof ContainerSchemaNode) {
-            // FIXME: real root needs to enfore presence, but that require pre-population
-            rootNode = new ContainerModificationStrategy((ContainerSchemaNode) rootSchemaNode, treeConfig);
-        } else {
-            rootNode = SchemaAwareApplyOperation.from(rootSchemaNode, treeConfig);
-        }
-
+        final ModificationApplyOperation rootNode = getOperation(rootSchemaNode);
         DataTreeState currentState, newState;
         do {
             currentState = state;
