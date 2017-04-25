@@ -163,7 +163,9 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             IOException, YangSyntaxErrorException {
         checkArgument(url != null, "Supplied URL must not be null");
 
-        final SourceIdentifier guessedId = guessSourceIdentifier(url.getFile());
+        final String path = url.getPath();
+        final String fileName = path.substring(path.lastIndexOf('/') + 1);
+        final SourceIdentifier guessedId = guessSourceIdentifier(fileName);
         return registerSource(new YangTextSchemaSource(guessedId) {
             @Override
             public InputStream openStream() throws IOException {
