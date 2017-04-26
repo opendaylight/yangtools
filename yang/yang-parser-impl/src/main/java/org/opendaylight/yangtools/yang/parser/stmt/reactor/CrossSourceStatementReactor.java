@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -68,9 +69,22 @@ public final class CrossSourceStatementReactor {
      *
      * @param supportedFeatures The set of supported features in the final SchemaContext
      * @return A new {@link BuildAction}.
+     *
+     * @deprecated Use {@link #newBuild(Optional)} instead.
      */
+    @Deprecated
     public BuildAction newBuild(final Set<QName> supportedFeatures) {
         return new BuildAction(warnOnNull(supportedFeatures), StatementParserMode.DEFAULT_MODE);
+    }
+
+    /**
+     * Start a new reactor build using default statement parser mode and only specified features.
+     *
+     * @param supportedFeatures The set of supported features in the final SchemaContext, if present.
+     * @return A new {@link BuildAction}.
+     */
+    public BuildAction newBuild(final Optional<Set<QName>> supportedFeatures) {
+        return new BuildAction(supportedFeatures.orElse(null), StatementParserMode.DEFAULT_MODE);
     }
 
     /**
@@ -87,13 +101,31 @@ public final class CrossSourceStatementReactor {
     /**
      * Start a new reactor build using default statement parser mode and only specified features.
      *
+     * @param statementParserMode Parser mode to use
      * @param supportedFeatures The set of supported features in the final SchemaContext
+     * @return A new {@link BuildAction}.
+     * @throws NullPointerException if statementParserMode is null
+     *
+     * @deprecated Use {@link #newBuild(StatementParserMode, Optional)} instead.
+     */
+    @Deprecated
+    public BuildAction newBuild(final StatementParserMode statementParserMode,
+            final Set<QName> supportedFeatures) {
+        return new BuildAction(warnOnNull(supportedFeatures), statementParserMode);
+    }
+
+    /**
+     * Start a new reactor build using default statement parser mode and only specified features.
+     *
+     * @param statementParserMode Parser mode to use
+     * @param supportedFeatures The set of supported features in the final SchemaContext, or absent if all features
+     *                          encountered should be supported.
      * @return A new {@link BuildAction}.
      * @throws NullPointerException if statementParserMode is null
      */
     public BuildAction newBuild(final StatementParserMode statementParserMode,
-            final Set<QName> supportedFeatures) {
-        return new BuildAction(warnOnNull(supportedFeatures), statementParserMode);
+            final Optional<Set<QName>> supportedFeatures) {
+        return new BuildAction(supportedFeatures.orElse(null), statementParserMode);
     }
 
     private static <T> T warnOnNull(final T obj) {
