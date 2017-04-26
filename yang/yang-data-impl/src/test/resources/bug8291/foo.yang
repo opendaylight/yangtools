@@ -1,0 +1,23 @@
+module odl-datastore-test {
+    yang-version 1;
+    namespace "foo";
+    prefix foo;
+
+    container root {
+        list outer-list {
+            key "id";
+            leaf id {
+                type uint16;
+            }
+           list inner-list {
+                key name;
+                leaf name {
+                    type string;
+                }
+                leaf value {
+                    type string;
+                }
+            }
+        }
+    }
+}
