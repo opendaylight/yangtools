@@ -92,9 +92,9 @@ public class EffectiveSchemaContextTest {
         assertEquals(SchemaContext.NAME, schemaContext.getQName());
         assertEquals(SchemaPath.ROOT, schemaContext.getPath());
         assertEquals(Status.CURRENT, schemaContext.getStatus());
-        assertTrue(schemaContext.getUses() instanceof Set);
+        assertNotNull(schemaContext.getUses());
         assertTrue(schemaContext.getUses().isEmpty());
-        assertTrue(schemaContext.getAvailableAugmentations() instanceof Set);
+        assertNotNull(schemaContext.getAvailableAugmentations());
         assertTrue(schemaContext.getAvailableAugmentations().isEmpty());
 
         Module fooModule = schemaContext.findModuleByName(
