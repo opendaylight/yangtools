@@ -19,8 +19,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.repo.api.StatementParserConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangStatementStreamSource;
@@ -56,12 +58,12 @@ public final class CrossSourceStatementReactor {
     }
 
     /**
-     * Start a new reactor build using default statement parser mode and enabling all features.
+     * Start a new reactor build using the default statement parser configuration.
      *
      * @return A new {@link BuildAction}.
      */
     public BuildAction newBuild() {
-        return newBuild(StatementParserMode.DEFAULT_MODE);
+        return newBuild(StatementParserConfiguration.getDefault());
     }
 
     /**
@@ -70,11 +72,11 @@ public final class CrossSourceStatementReactor {
      * @param supportedFeatures The set of supported features in the final SchemaContext
      * @return A new {@link BuildAction}.
      *
-     * @deprecated Use {@link #newBuild(Optional)} instead.
+     * @deprecated Use {@link #newBuild(StatementParserConfiguration)} instead.
      */
     @Deprecated
     public BuildAction newBuild(final Set<QName> supportedFeatures) {
-        return new BuildAction(warnOnNull(supportedFeatures), StatementParserMode.DEFAULT_MODE);
+        return new BuildAction(warnOnNull(supportedFeatures), null, StatementParserMode.DEFAULT_MODE);
     }
 
     /**
@@ -82,9 +84,12 @@ public final class CrossSourceStatementReactor {
      *
      * @param supportedFeatures The set of supported features in the final SchemaContext, if present.
      * @return A new {@link BuildAction}.
+     *
+     * @deprecated Use {@link #newBuild(StatementParserConfiguration)} instead.
      */
+    @Deprecated
     public BuildAction newBuild(final Optional<Set<QName>> supportedFeatures) {
-        return new BuildAction(supportedFeatures.orElse(null), StatementParserMode.DEFAULT_MODE);
+        return new BuildAction(supportedFeatures.orElse(null), null, StatementParserMode.DEFAULT_MODE);
     }
 
     /**
@@ -93,9 +98,12 @@ public final class CrossSourceStatementReactor {
      * @param statementParserMode Parser mode to use
      * @return A new {@link BuildAction}.
      * @throws NullPointerException if statementParserMode is null
+     *
+     * @deprecated Use {@link #newBuild(StatementParserConfiguration)} instead.
      */
+    @Deprecated
     public BuildAction newBuild(final StatementParserMode statementParserMode) {
-        return new BuildAction(null, statementParserMode);
+        return new BuildAction(null, null, statementParserMode);
     }
 
     /**
@@ -106,12 +114,12 @@ public final class CrossSourceStatementReactor {
      * @return A new {@link BuildAction}.
      * @throws NullPointerException if statementParserMode is null
      *
-     * @deprecated Use {@link #newBuild(StatementParserMode, Optional)} instead.
+     * @deprecated Use {@link #newBuild(StatementParserConfiguration)} instead.
      */
     @Deprecated
     public BuildAction newBuild(final StatementParserMode statementParserMode,
             final Set<QName> supportedFeatures) {
-        return new BuildAction(warnOnNull(supportedFeatures), statementParserMode);
+        return new BuildAction(warnOnNull(supportedFeatures), null, statementParserMode);
     }
 
     /**
@@ -122,10 +130,25 @@ public final class CrossSourceStatementReactor {
      *                          encountered should be supported.
      * @return A new {@link BuildAction}.
      * @throws NullPointerException if statementParserMode is null
+     *
+     * @deprecated Use {@link #newBuild(StatementParserConfiguration)} instead.
      */
+    @Deprecated
     public BuildAction newBuild(final StatementParserMode statementParserMode,
             final Optional<Set<QName>> supportedFeatures) {
-        return new BuildAction(supportedFeatures.orElse(null), statementParserMode);
+        return new BuildAction(supportedFeatures.orElse(null), null, statementParserMode);
+    }
+
+    /**
+     * Start a new reactor build using the specified statement parser configuration
+     *
+     * @param statementReactorConfig statement parser configuration
+     * @return A new {@link BuildAction}.
+     */
+    public BuildAction newBuild(final StatementParserConfiguration statementReactorConfig) {
+        return new BuildAction(statementReactorConfig.getSupportedFeatures().orElse(null),
+                statementReactorConfig.getModulesWithSupportedDeviations().orElse(null),
+                statementReactorConfig.getStatementParserMode());
     }
 
     private static <T> T warnOnNull(final T obj) {
@@ -160,9 +183,10 @@ public final class CrossSourceStatementReactor {
     public class BuildAction {
         private final BuildGlobalContext context;
 
-        BuildAction(final Set<QName> supportedFeatures, final StatementParserMode statementParserMode) {
+        BuildAction(final Set<QName> supportedFeatures, final Set<QNameModule> modulesWithSupportedDeviations,
+                    final StatementParserMode statementParserMode) {
             this.context = new BuildGlobalContext(supportedTerminology, supportedValidation, statementParserMode,
-                supportedFeatures);
+                supportedFeatures, modulesWithSupportedDeviations);
         }
 
         /**

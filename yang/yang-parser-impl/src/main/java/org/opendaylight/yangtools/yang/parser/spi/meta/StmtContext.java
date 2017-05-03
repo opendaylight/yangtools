@@ -122,6 +122,16 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     SupportedByFeatures getSupportedByFeatures();
 
+    enum DeviationsSupported {
+        UNDEFINED, SUPPORTED, NOT_SUPPORTED
+    }
+
+    /**
+     * Return enum constant which specifies if the root statement context supports deviation resolution
+     * @return enum constant which specifies if the root statement context supports deviation resolution
+     */
+    DeviationsSupported getDeviationsSupported();
+
     void appendCopyHistory(CopyType typeOfCopy, CopyHistory toAppend);
 
     StatementContextBase<?, ?, ?> getOriginalCtx();
@@ -173,6 +183,13 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
                 Class<N> namespace, KT key, StmtContext<?, ?, ?> stmt);
 
         void setSupportedByFeatures(boolean isSupported);
+
+        /**
+         * Set deviation resolution support of the root statement context
+         * @param deviationsSupported
+         *            true if the root statement context supports deviation resolution, false otherwise
+         */
+        void setDeviationsSupported(boolean deviationsSupported);
 
         /**
          * Set version of root statement context.

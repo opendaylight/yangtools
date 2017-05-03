@@ -13,6 +13,7 @@ import java.net.URI;
 import java.util.Date;
 import java.util.NavigableMap;
 import java.util.Optional;
+import java.util.Set;
 import java.util.TreeMap;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -43,6 +44,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModulesWithSupportedDeviations;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModulesWithSupportedDeviations.SupportedModules;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ModuleEffectiveStatementImpl;
@@ -143,6 +146,8 @@ public class ModuleStatementSupport extends
 
         final QNameModule qNameModule = QNameModule.create(moduleNs.get(), revisionDate.orElse(null)).intern();
 
+        setDeviationSupport(stmt, qNameModule);
+
         final StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>> possibleDuplicateModule =
                 stmt.getFromNamespace(NamespaceToModule.class, qNameModule);
         if (possibleDuplicateModule != null && possibleDuplicateModule != stmt) {
@@ -171,6 +176,22 @@ public class ModuleStatementSupport extends
 
         if (stmt.isEnabledSemanticVersioning()) {
             addToSemVerModuleNamespace(stmt);
+        }
+    }
+
+    private static void setDeviationSupport(
+            final Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt,
+            final QNameModule qNameModule) {
+        final Set<QNameModule> modulesWithSupportedDeviations = stmt.getFromNamespace(
+                ModulesWithSupportedDeviations.class, SupportedModules.SUPPORTED_MODULES);
+        if (modulesWithSupportedDeviations == null) {
+            stmt.setDeviationsSupported(true);
+        } else {
+            if (modulesWithSupportedDeviations.contains(qNameModule)) {
+                stmt.setDeviationsSupported(true);
+            } else {
+                stmt.setDeviationsSupported(false);
+            }
         }
     }
 

@@ -83,6 +83,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private StatementMap substatements = StatementMap.empty();
 
     private SupportedByFeatures supportedByFeatures = SupportedByFeatures.UNDEFINED;
+    private DeviationsSupported deviationsSupported = DeviationsSupported.UNDEFINED;
     private CopyHistory copyHistory = CopyHistory.original();
     private boolean isSupportedToBuildEffective = true;
     private ModelProcessingPhase completedPhase = null;
@@ -140,6 +141,17 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     @Override
     public void setSupportedByFeatures(final boolean isSupported) {
         this.supportedByFeatures = isSupported ? SupportedByFeatures.SUPPORTED : SupportedByFeatures.NOT_SUPPORTED;
+    }
+
+    @Override
+    public DeviationsSupported getDeviationsSupported() {
+        return deviationsSupported;
+    }
+
+    @Override
+    public void setDeviationsSupported(final boolean deviationsSupported) {
+        this.deviationsSupported = deviationsSupported ? DeviationsSupported.SUPPORTED
+                : DeviationsSupported.NOT_SUPPORTED;
     }
 
     @Override

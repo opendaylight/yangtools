@@ -1,0 +1,12 @@
+module bar {
+    namespace bar-ns;
+    prefix bar-prefix;
+
+    revision 2017-04-26;
+
+    deviation "/my-bar-cont" {
+        deviate not-supported;
+    }
+
+    container my-bar-cont {}
+}

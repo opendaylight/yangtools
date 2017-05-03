@@ -26,19 +26,18 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.util.concurrent.ExceptionMapper;
 import org.opendaylight.yangtools.util.concurrent.ReflectiveExceptionMapper;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.StatementParserConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -71,11 +70,11 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
 
     @Override
     public CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
-            final Collection<SourceIdentifier> requiredSources, final StatementParserMode statementParserMode,
-            final Set<QName> supportedFeatures) {
+            final Collection<SourceIdentifier> requiredSources, final StatementParserConfiguration stmtParserConfig) {
+        final StatementParserMode stmtParserMode = stmtParserConfig.getStatementParserMode();
         return createSchemaContext(requiredSources,
-                statementParserMode == StatementParserMode.SEMVER_MODE ? this.semVerCache : this.cache,
-                new AssembleSources(Optional.ofNullable(supportedFeatures), statementParserMode));
+                stmtParserMode == StatementParserMode.SEMVER_MODE ? this.semVerCache : this.cache,
+                new AssembleSources(stmtParserConfig));
     }
 
     private ListenableFuture<ASTSchemaSource> requestSource(final SourceIdentifier identifier) {
@@ -174,20 +173,18 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
 
     private static final class AssembleSources implements AsyncFunction<List<ASTSchemaSource>, SchemaContext> {
 
-        private final Optional<Set<QName>> supportedFeatures;
-        private final StatementParserMode statementParserMode;
+        private final StatementParserConfiguration statementParserConfiguration;
         private final Function<ASTSchemaSource, SourceIdentifier> getIdentifier;
 
-        private AssembleSources(final Optional<Set<QName>> supportedFeatures,
-                final StatementParserMode statementParserMode) {
-            this.supportedFeatures = supportedFeatures;
-            this.statementParserMode = Preconditions.checkNotNull(statementParserMode);
-            switch (statementParserMode) {
-            case SEMVER_MODE:
-                this.getIdentifier = ASTSchemaSource::getSemVerIdentifier;
-                break;
-            default:
-                this.getIdentifier = ASTSchemaSource::getIdentifier;
+        private AssembleSources(final StatementParserConfiguration statementParserConfiguration) {
+            this.statementParserConfiguration = statementParserConfiguration;
+
+            switch (statementParserConfiguration.getStatementParserMode()) {
+                case SEMVER_MODE:
+                    this.getIdentifier = ASTSchemaSource::getSemVerIdentifier;
+                    break;
+                default:
+                    this.getIdentifier = ASTSchemaSource::getIdentifier;
             }
         }
 
@@ -200,8 +197,9 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
 
             LOG.debug("Resolving dependency reactor {}", deps);
 
-            final DependencyResolver res = this.statementParserMode == StatementParserMode.SEMVER_MODE
-                    ? SemVerDependencyResolver.create(deps) : RevisionDependencyResolver.create(deps);
+            final DependencyResolver res = statementParserConfiguration.getStatementParserMode()
+                    == StatementParserMode.SEMVER_MODE ? SemVerDependencyResolver.create(deps)
+                    : RevisionDependencyResolver.create(deps);
             if (!res.getUnresolvedSources().isEmpty()) {
                 LOG.debug("Omitting models {} due to unsatisfied imports {}", res.getUnresolvedSources(),
                     res.getUnsatisfiedImports());
@@ -211,7 +209,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
 
             final Map<SourceIdentifier, ParserRuleContext> asts = Maps.transformValues(srcs, ASTSchemaSource::getAST);
             final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(
-                statementParserMode, supportedFeatures);
+                statementParserConfiguration);
 
             for (final Entry<SourceIdentifier, ParserRuleContext> e : asts.entrySet()) {
                 final ParserRuleContext parserRuleCtx = e.getValue();
