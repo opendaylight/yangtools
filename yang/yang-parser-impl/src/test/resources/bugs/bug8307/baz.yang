@@ -1,0 +1,12 @@
+module baz {
+    namespace baz-ns;
+    prefix baz-prefix;
+
+    revision 2017-04-26;
+
+    deviation "/my-baz-cont" {
+        deviate not-supported;
+    }
+
+    container my-baz-cont {}
+}

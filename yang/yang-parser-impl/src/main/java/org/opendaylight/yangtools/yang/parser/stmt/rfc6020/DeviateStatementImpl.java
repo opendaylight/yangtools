@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Infere
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.DeviationsSupported;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeviateEffectiveStatementImpl;
@@ -107,6 +108,10 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
                 EffectiveStatement<DeviateKind, DeviateStatement>> deviateStmtCtx) {
             final DeviateKind deviateKind = deviateStmtCtx.getStatementArgument();
             getSubstatementValidatorForDeviate(deviateKind).validate(deviateStmtCtx);
+
+            if (deviateStmtCtx.getRoot().getDeviationsSupported() != DeviationsSupported.SUPPORTED) {
+                return;
+            }
 
             final ModelActionBuilder deviateAction = deviateStmtCtx.newInferenceAction(
                     ModelProcessingPhase.EFFECTIVE_MODEL);

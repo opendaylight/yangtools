@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.CheckedFuture;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -34,7 +35,7 @@ public interface SchemaContextFactory {
      */
     default CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
             @Nonnull final Collection<SourceIdentifier> requiredSources) {
-        return createSchemaContext(requiredSources, StatementParserMode.DEFAULT_MODE);
+        return createSchemaContext(requiredSources, StatementParserConfiguration.getDefault());
     }
 
     /**
@@ -48,7 +49,10 @@ public interface SchemaContextFactory {
      * @return A checked future, which will produce a schema context, or fail
      *         with an explanation why the creation of the schema context
      *         failed.
+     *
+     * @deprecated use {@link #createSchemaContext(Collection, StatementParserConfiguration)} instead
      */
+    @Deprecated
     default CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
             final Collection<SourceIdentifier> requiredSources, final StatementParserMode statementParserMode) {
         return createSchemaContext(requiredSources, statementParserMode, null);
@@ -66,7 +70,10 @@ public interface SchemaContextFactory {
      * @return A checked future, which will produce a schema context, or fail
      *         with an explanation why the creation of the schema context
      *         failed.
+     *
+     * @deprecated use {@link #createSchemaContext(Collection, StatementParserConfiguration)} instead
      */
+    @Deprecated
     default CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
             @Nonnull final Collection<SourceIdentifier> requiredSources, final Set<QName> supportedFeatures) {
         return createSchemaContext(requiredSources, StatementParserMode.DEFAULT_MODE, supportedFeatures);
@@ -86,8 +93,30 @@ public interface SchemaContextFactory {
      * @return A checked future, which will produce a schema context, or fail
      *         with an explanation why the creation of the schema context
      *         failed.
+     *
+     * @deprecated use {@link #createSchemaContext(Collection, StatementParserConfiguration)} instead
+     */
+    @Deprecated
+    default CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
+            Collection<SourceIdentifier> requiredSources, StatementParserMode statementParserMode,
+            Set<QName> supportedFeatures) {
+        final StatementParserConfiguration stmtParserConfig = new StatementParserConfiguration.Builder(
+                statementParserMode).setSupportedFeatures(Optional.ofNullable(supportedFeatures)).build();
+        return createSchemaContext(requiredSources, stmtParserConfig);
+    }
+
+    /**
+     * Create a new schema context containing specified sources, pulling in any
+     * dependencies they may have.
+     *
+     * @param requiredSources
+     *            a collection of sources which are required to be present
+     * @param statementParserConfiguration
+     *            configuration of statement parser
+     * @return A checked future, which will produce a schema context, or fail
+     *         with an explanation why the creation of the schema context
+     *         failed.
      */
     CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
-            Collection<SourceIdentifier> requiredSources, StatementParserMode statementParserMode,
-            Set<QName> supportedFeatures);
+            Collection<SourceIdentifier> requiredSources, StatementParserConfiguration statementParserConfiguration);
 }

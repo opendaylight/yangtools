@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
@@ -49,6 +50,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModulesWithSupportedDeviations;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModulesWithSupportedDeviations.SupportedModules;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
@@ -84,7 +87,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports,
             final Map<ValidationBundleType, Collection<?>> supportedValidation,
-            final StatementParserMode statementParserMode, final Set<QName> supportedFeatures) {
+            final StatementParserMode statementParserMode) {
         this.supports = Preconditions.checkNotNull(supports, "BuildGlobalContext#supports cannot be null");
 
         switch (statementParserMode) {
@@ -102,10 +105,6 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
             addToNs(ValidationBundlesNamespace.class, validationBundle.getKey(), validationBundle.getValue());
         }
 
-        if (supportedFeatures != null) {
-            addToNs(SupportedFeaturesNamespace.class, SupportedFeatures.SUPPORTED_FEATURES,
-                    ImmutableSet.copyOf(supportedFeatures));
-        }
         this.supportedVersions = ImmutableSet.copyOf(supports.get(ModelProcessingPhase.INIT).getSupportedVersions());
     }
 
@@ -127,6 +126,20 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         Preconditions.checkState(currentPhase == ModelProcessingPhase.INIT,
                 "Add library source is allowed in ModelProcessingPhase.INIT only");
         libSources.add(new SourceSpecificContext(this, libSource));
+    }
+
+    void setSupportedFeatures(final Optional<Set<QName>> supportedFeatures) {
+        if (supportedFeatures.isPresent()) {
+            addToNs(SupportedFeaturesNamespace.class, SupportedFeatures.SUPPORTED_FEATURES,
+                    ImmutableSet.copyOf(supportedFeatures.get()));
+        }
+    }
+
+    void setModulesWithSupportedDeviations(final Optional<Set<QNameModule>> modulesWithSupportedDeviations) {
+        if (modulesWithSupportedDeviations.isPresent()) {
+            addToNs(ModulesWithSupportedDeviations.class, SupportedModules.SUPPORTED_MODULES,
+                    ImmutableSet.copyOf(modulesWithSupportedDeviations.get()));
+        }
     }
 
     @Override
