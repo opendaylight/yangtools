@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba068154_5c04fa7d",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-05-04T08:05:51Z",
+      "side": 1,
+      "message": "Please mention in the javadoc that the method for SubstatementContexts returns UNDEFINED regardless RootStatementContext supports deviations or not.",
+      "range": {
+        "startLine": 129,
+        "startChar": 0,
+        "endLine": 132,
+        "endChar": 7
+      },
+      "revId": "9fba0a74983897984004b6a4bd51f9fe57924a4a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba068154_dcf74a8b",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-05-04T08:05:51Z",
+      "side": 1,
+      "message": "Please consider whether boolean return type would be sufficient enough... ?",
+      "range": {
+        "startLine": 133,
+        "startChar": 4,
+        "endLine": 133,
+        "endChar": 23
+      },
+      "revId": "9fba0a74983897984004b6a4bd51f9fe57924a4a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba068154_5cdd1a14",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/DeviateStatementImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-05-04T08:05:51Z",
+      "side": 1,
+      "message": "what if it is UNDEFINED ? Based on this condition it is SUPPORTED in fact.",
+      "range": {
+        "startLine": 112,
+        "startChar": 12,
+        "endLine": 114,
+        "endChar": 13
+      },
+      "revId": "9fba0a74983897984004b6a4bd51f9fe57924a4a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba068154_1cad5289",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/ModuleStatementSupport.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-05-04T08:05:51Z",
+      "side": 1,
+      "message": "stmt.setDeviationsSupported(modulesWithSupportedDeviations.contains(qNameModule));",
+      "range": {
+        "startLine": 190,
+        "startChar": 0,
+        "endLine": 194,
+        "endChar": 13
+      },
+      "revId": "9fba0a74983897984004b6a4bd51f9fe57924a4a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
