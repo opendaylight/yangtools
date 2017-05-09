@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "ba068154_ecaa4fd3",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/StatementParserConfiguration.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-05-09T09:18:50Z",
+      "side": 1,
+      "message": "I can\u0027t say I like this, why do we need this in the newBuild()/setFoo() approach?",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 44,
+        "endChar": 47
+      },
+      "revId": "4da2be95e2207ae176b421214b9d8bdf6c3e1fb0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba068154_ce3b02ea",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/BuildGlobalContext.java",
         "patchSetId": 2
@@ -13,6 +36,30 @@
       "writtenOn": "2017-05-09T08:40:24Z",
       "side": 1,
       "message": "I would prefer not using Optional here... (the same below)",
+      "range": {
+        "startLine": 131,
+        "startChar": 36,
+        "endLine": 131,
+        "endChar": 44
+      },
+      "revId": "4da2be95e2207ae176b421214b9d8bdf6c3e1fb0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba068154_6c5f7f0f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/BuildGlobalContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 131,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-05-09T09:18:50Z",
+      "side": 1,
+      "message": "Agreed. Builder pattern, i.e. start off with all features and if you need to restrict them set them *once*. When you are setting them require them to be non-null.",
+      "parentUuid": "ba068154_ce3b02ea",
       "range": {
         "startLine": 131,
         "startChar": 36,
