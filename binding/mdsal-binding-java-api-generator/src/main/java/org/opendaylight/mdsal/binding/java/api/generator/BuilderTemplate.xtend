@@ -53,7 +53,7 @@ class BuilderTemplate extends BaseTemplate {
     /**
      * Constant with the name of the BuilderFor interface
      */
-     val static BUILDERFOR = Builder.simpleName;
+    val static BUILDERFOR = Builder.simpleName;
 
     /**
      * Constant with suffix for the classes which are generated from the builder classes.
@@ -210,6 +210,11 @@ class BuilderTemplate extends BaseTemplate {
         }
     }
 
+    override isLocalInnerClass(String importedTypePackageName) {
+        // Builders do not have inner types
+        return false;
+    }
+
     /**
      * Template method which generates JAVA class body for builder class and for IMPL class.
      *
@@ -217,7 +222,7 @@ class BuilderTemplate extends BaseTemplate {
      */
     override body() '''
         «wrapToDocumentation(formatDataForJavaDoc(type))»
-        public class «type.name»«BUILDER» implements «BUILDERFOR» <«type.importedName»> {
+        public class «type.name»«BUILDER» implements «BUILDERFOR»<«type.importedName»> {
 
             «generateFields(false)»
 
