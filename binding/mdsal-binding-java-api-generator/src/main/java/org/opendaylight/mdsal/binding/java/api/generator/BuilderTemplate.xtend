@@ -473,8 +473,8 @@ class BuilderTemplate extends BaseTemplate {
         «ENDFOR»
         «IF augmentField !== null»
 
-            public «type.name»«BUILDER» add«augmentField.name.toFirstUpper»(«Class.importedName»<? extends «augmentField.returnType.importedName»> augmentationType, «augmentField.returnType.importedName» augmentation) {
-                if (augmentation == null) {
+            public «type.name»«BUILDER» add«augmentField.name.toFirstUpper»(«Class.importedName»<? extends «augmentField.returnType.importedName»> augmentationType, «augmentField.returnType.importedName» augmentationValue) {
+                if (augmentationValue == null) {
                     return remove«augmentField.name.toFirstUpper»(augmentationType);
                 }
 
@@ -482,7 +482,7 @@ class BuilderTemplate extends BaseTemplate {
                     this.«augmentField.name» = new «HashMap.importedName»<>();
                 }
 
-                this.«augmentField.name».put(augmentationType, augmentation);
+                this.«augmentField.name».put(augmentationType, augmentationValue);
                 return this;
             }
 
