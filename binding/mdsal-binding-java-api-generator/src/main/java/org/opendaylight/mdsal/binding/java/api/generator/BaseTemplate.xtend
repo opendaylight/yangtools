@@ -361,7 +361,7 @@ abstract class BaseTemplate {
                         «ELSE»
                             builder.append(«property.fieldName»);
                         «ENDIF»
-                     }
+                    }
                 «ENDFOR»
                 return builder.append(']').toString();
             }
