@@ -58,20 +58,19 @@ class EnumTemplate extends BaseTemplate {
         public enum «enums.name» {
             «writeEnumeration(enums)»
 
-
-            «String.importedName» name;
-            int value;
             private static final java.util.Map<java.lang.Integer, «enums.name»> VALUE_MAP;
 
             static {
                 final com.google.common.collect.ImmutableMap.Builder<java.lang.Integer, «enums.name»> b = com.google.common.collect.ImmutableMap.builder();
-                for («enums.name» enumItem : «enums.name».values())
-                {
+                for («enums.name» enumItem : «enums.name».values()) {
                     b.put(enumItem.value, enumItem);
                 }
 
                 VALUE_MAP = b.build();
             }
+
+            private final «String.importedName» name;
+            private final int value;
 
             private «enums.name»(int value, «String.importedName» name) {
                 this.value = value;
@@ -95,7 +94,7 @@ class EnumTemplate extends BaseTemplate {
             }
 
             /**
-             * @param valueArg
+             * @param valueArg integer value
              * @return corresponding «enums.name» item
              */
             public static «enums.name» forValue(int valueArg) {
