@@ -1,0 +1,17 @@
+module baz {
+    namespace baz;
+    prefix b;
+
+    typedef my-leafref {
+        type leafref {
+            path "/b:root/b:target";
+        }
+        description "baz-leafref";
+    }
+
+    container root {
+        leaf target {
+            type string;
+        }
+    }
+}

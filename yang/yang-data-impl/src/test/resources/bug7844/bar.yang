@@ -1,0 +1,11 @@
+module bar {
+    namespace bar;
+    prefix bar;
+
+    import baz { prefix baz; revision-date 1970-01-01; }
+
+    typedef bar-leafref {
+        type baz:my-leafref;
+        description "bar-leafref";
+    }
+}

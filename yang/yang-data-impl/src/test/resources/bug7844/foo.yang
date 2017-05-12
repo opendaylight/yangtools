@@ -1,0 +1,15 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    import bar { prefix bar; revision-date 1970-01-01; }
+
+    leaf my-leaf {
+        type foo-leafref;
+    }
+
+    typedef foo-leafref {
+        type bar:bar-leafref;
+        description "foo-leafref";
+    }
+}
