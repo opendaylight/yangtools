@@ -15,7 +15,6 @@ import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -261,7 +260,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
 
                 @Override
                 public InputStream openStream() throws IOException {
-                    return new FileInputStream(cachedSource);
+                    return Files.newInputStream(cachedSource.toPath());
                 }
             };
         }

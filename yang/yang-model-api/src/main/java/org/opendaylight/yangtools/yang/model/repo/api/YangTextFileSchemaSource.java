@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.Delegator;
 
@@ -36,7 +36,7 @@ final class YangTextFileSchemaSource extends YangTextSchemaSource implements Del
 
     @Override
     public InputStream openStream() throws IOException {
-        return new FileInputStream(file);
+        return Files.newInputStream(file.toPath());
     }
 
     @Override
