@@ -58,75 +58,76 @@ abstract class DataObjectSerializerSource extends AbstractSource {
      */
     protected abstract CharSequence getSerializerBody();
 
-    protected final CharSequence leafNode(final String localName, final CharSequence value) {
+    protected static final CharSequence leafNode(final String localName, final CharSequence value) {
         return invoke(STREAM, "leafNode", escape(localName), value);
     }
 
-    protected final CharSequence startLeafSet(final String localName,final CharSequence expected) {
-        return invoke(STREAM, "startLeafSet", escape(localName),expected);
+    protected static final CharSequence startLeafSet(final String localName,final CharSequence expected) {
+        return invoke(STREAM, "startLeafSet", escape(localName), expected);
     }
 
-    protected final CharSequence startOrderedLeafSet(final String localName, final CharSequence expected) {
-        return invoke(STREAM, "startOrderedLeafSet", escape(localName),expected);
+    protected static final CharSequence startOrderedLeafSet(final String localName, final CharSequence expected) {
+        return invoke(STREAM, "startOrderedLeafSet", escape(localName), expected);
     }
 
-    protected final CharSequence leafSetEntryNode(final CharSequence value) {
+    protected static final CharSequence leafSetEntryNode(final CharSequence value) {
         return invoke(STREAM, "leafSetEntryNode", value);
     }
 
-    protected final CharSequence startContainerNode(final CharSequence type, final CharSequence expected) {
-        return invoke(STREAM, "startContainerNode", (type),expected);
+    protected static final CharSequence startContainerNode(final CharSequence type, final CharSequence expected) {
+        return invoke(STREAM, "startContainerNode", type, expected);
     }
 
-    protected final CharSequence escape(final String localName) {
+    protected static final CharSequence escape(final String localName) {
         return '"' + localName + '"';
     }
 
-    protected final CharSequence startUnkeyedList(final CharSequence type, final CharSequence expected) {
-        return invoke(STREAM, "startUnkeyedList", (type),expected);
+    protected static final CharSequence startUnkeyedList(final CharSequence type, final CharSequence expected) {
+        return invoke(STREAM, "startUnkeyedList", type, expected);
     }
 
-    protected final CharSequence startUnkeyedListItem(final CharSequence expected) {
-        return invoke(STREAM, "startUnkeyedListItem",expected);
+    protected static final CharSequence startUnkeyedListItem(final CharSequence expected) {
+        return invoke(STREAM, "startUnkeyedListItem", expected);
     }
 
-    protected final CharSequence startMapNode(final CharSequence type,final CharSequence expected) {
-        return invoke(STREAM, "startMapNode", (type),expected);
+    protected static final CharSequence startMapNode(final CharSequence type,final CharSequence expected) {
+        return invoke(STREAM, "startMapNode", type, expected);
     }
 
-    protected final CharSequence startOrderedMapNode(final CharSequence type,final CharSequence expected) {
-        return invoke(STREAM, "startOrderedMapNode", (type),expected);
+    protected static final CharSequence startOrderedMapNode(final CharSequence type,final CharSequence expected) {
+        return invoke(STREAM, "startOrderedMapNode", type, expected);
     }
 
-    protected final CharSequence startMapEntryNode(final CharSequence key, final CharSequence expected) {
-        return invoke(STREAM,"startMapEntryNode",key,expected);
+    protected static final CharSequence startMapEntryNode(final CharSequence key, final CharSequence expected) {
+        return invoke(STREAM, "startMapEntryNode", key, expected);
     }
 
-    protected final CharSequence startAugmentationNode(final CharSequence key) {
-        return invoke(STREAM,"startAugmentationNode",key);
+    protected static final CharSequence startAugmentationNode(final CharSequence key) {
+        return invoke(STREAM, "startAugmentationNode", key);
     }
 
-    protected final CharSequence startChoiceNode(final CharSequence localName,final CharSequence expected) {
-        return invoke(STREAM, "startChoiceNode", (localName),expected);
+    protected static final CharSequence startChoiceNode(final CharSequence localName,final CharSequence expected) {
+        return invoke(STREAM, "startChoiceNode", localName, expected);
     }
 
-    protected final CharSequence startCaseNode(final CharSequence localName,final CharSequence expected) {
-        return invoke(STREAM, "startCase", (localName),expected);
+    protected static final CharSequence startCaseNode(final CharSequence localName,final CharSequence expected) {
+        return invoke(STREAM, "startCase", localName, expected);
     }
 
-    protected final CharSequence anyxmlNode(final String name, final String value) throws IllegalArgumentException {
-        return invoke(STREAM, "anyxmlNode", escape(name),name);
+    protected static final CharSequence anyxmlNode(final String name, final String value)
+            throws IllegalArgumentException {
+        return invoke(STREAM, "anyxmlNode", escape(name), name);
     }
 
-    protected final CharSequence endNode() {
+    protected static final CharSequence endNode() {
         return invoke(STREAM, "endNode");
     }
 
-    protected final CharSequence forEach(final String iterable,final Type valueType,final CharSequence body) {
+    protected static final CharSequence forEach(final String iterable,final Type valueType,final CharSequence body) {
         return forEach(iterable, ITERATOR, valueType.getFullyQualifiedName(), CURRENT, body);
     }
 
-    protected final CharSequence classReference(final Type type) {
+    protected static final CharSequence classReference(final Type type) {
         return type.getFullyQualifiedName() + ".class";
     }
 

@@ -22,7 +22,6 @@ import javassist.CtMethod;
 import javassist.Modifier;
 import javassist.NotFoundException;
 import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
-import org.opendaylight.mdsal.binding.generator.util.ClassCustomizer;
 import org.opendaylight.mdsal.binding.generator.util.JavassistUtils;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.util.Types;
@@ -197,32 +196,24 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
          * care of this before calling instantiatePrototype(), as that will call our customizer with the lock held,
          * hence any code generation will end up being blocked on the javassist lock.
          */
-        final String body = ClassLoaderUtils.withClassLoader(type.getClassLoader(), new Supplier<String>() {
-                @Override
-                public String get() {
-                    return source.getSerializerBody().toString();
-                }
-            }
-        );
+        final String body = ClassLoaderUtils.withClassLoader(type.getClassLoader(),
+            (Supplier<String>) () -> source.getSerializerBody().toString());
 
         try {
-            product = javassist.instantiatePrototype(DataObjectSerializerPrototype.class.getName(), serializerName, new ClassCustomizer() {
-                @Override
-                public void customizeClass(final CtClass cls) throws CannotCompileException, NotFoundException {
-                    // Generate any static fields
-                    for (final StaticConstantDefinition def : source.getStaticConstants()) {
-                        final CtField field = new CtField(javassist.asCtClass(def.getType()), def.getName(), cls);
-                        field.setModifiers(Modifier.PRIVATE + Modifier.STATIC);
-                        cls.addField(field);
-                    }
-
-                    // Replace serialize() -- may reference static fields
-                    final CtMethod serializeTo = cls.getDeclaredMethod(SERIALIZE_METHOD_NAME, serializeArguments);
-                    serializeTo.setBody(body);
-
-                    // The prototype is not visible, so we need to take care of that
-                    cls.setModifiers(Modifier.setPublic(cls.getModifiers()));
+            product = javassist.instantiatePrototype(DataObjectSerializerPrototype.class.getName(), serializerName, cls -> {
+                // Generate any static fields
+                for (final StaticConstantDefinition def : source.getStaticConstants()) {
+                    final CtField field = new CtField(javassist.asCtClass(def.getType()), def.getName(), cls);
+                    field.setModifiers(Modifier.PRIVATE + Modifier.STATIC);
+                    cls.addField(field);
                 }
+
+                // Replace serialize() -- may reference static fields
+                final CtMethod serializeTo = cls.getDeclaredMethod(SERIALIZE_METHOD_NAME, serializeArguments);
+                serializeTo.setBody(body);
+
+                // The prototype is not visible, so we need to take care of that
+                cls.setModifiers(Modifier.setPublic(cls.getModifiers()));
             });
         } catch (final NotFoundException e) {
             LOG.error("Failed to instatiate serializer {}", source, e);

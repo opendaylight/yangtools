@@ -136,11 +136,11 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
                         LOG.warn("Node {} will be ignored. AnyXml is not yet supported from binding aware code." +
                                 "Binding Independent code can be used to serialize anyXml nodes.", schemaChild.getPath());
                         continue;
-                    } else {
-                        throw new IllegalStateException(
-                                String.format("Unable to find type for child node %s. Expected child nodes: %s",
-                                        schemaChild.getPath(), getterToType));
                     }
+
+                    throw new IllegalStateException(
+                        String.format("Unable to find type for child node %s. Expected child nodes: %s",
+                            schemaChild.getPath(), getterToType));
                 }
                 emitChild(b, getter, childType, schemaChild);
             }
@@ -186,7 +186,7 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
         }
     }
 
-    private StringBuilder tryToUseCacheElse(final String getterName, final CharSequence statement) {
+    private static StringBuilder tryToUseCacheElse(final String getterName, final CharSequence statement) {
         final StringBuilder b = new StringBuilder();
 
         b.append("if ( ");
@@ -194,7 +194,7 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
         b.append(invoke(SERIALIZER, "serialize", getterName)).append("== null");
         b.append(") {");
         b.append(statement);
-        b.append("}");
+        b.append('}');
         return b;
     }
 
