@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba068154_adc14f30",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/leafref/LeafRefContextTreeBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-05-15T07:45:21Z",
+      "side": 1,
+      "message": "whitespace and a missing comment -- isn\u0027t the instanceof check really just a null check?",
+      "range": {
+        "startLine": 154,
+        "startChar": 0,
+        "endLine": 156,
+        "endChar": 9
+      },
+      "revId": "c3336787f5e57637b4f7900196982452d0ca05cb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
