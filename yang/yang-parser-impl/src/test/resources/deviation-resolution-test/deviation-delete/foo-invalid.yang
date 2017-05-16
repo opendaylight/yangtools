@@ -2,15 +2,16 @@ module foo {
     namespace foo;
     prefix foo;
 
+    import bar {
+        prefix bar;
+        revision-date 2017-01-20;
+    }
+
     revision 2017-01-20;
 
-    deviation "/my-leaf" {
+    deviation "/bar:my-leaf" {
         deviate delete {
             units "seconds";
         }
-    }
-
-    leaf my-leaf {
-        type int32;
     }
 }

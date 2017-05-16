@@ -28,13 +28,15 @@ public class Bug7440Test {
 
     @Test
     public void testRestrictedTypeParentSchemaPathInDeviate() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/bugs/bug7440/foo.yang");
+        final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/bugs/bug7440");
         assertNotNull(schemaContext);
 
         final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2016-12-23");
 
         final Module foo = schemaContext.findModuleByName("foo", revision);
         assertNotNull(foo);
+        final Module bar = schemaContext.findModuleByName("bar", revision);
+        assertNotNull(bar);
 
         final Set<Deviation> deviations = foo.getDeviations();
         assertEquals(1, deviations.size());
@@ -44,8 +46,8 @@ public class Bug7440Test {
         assertEquals(1, deviates.size());
         final DeviateDefinition deviateReplace = deviates.iterator().next();
 
-        final SchemaPath deviatedTypePath = SchemaPath.create(true, QName.create(foo.getQNameModule(), "test-leaf"),
-                QName.create(foo.getQNameModule(), "uint32"));
+        final SchemaPath deviatedTypePath = SchemaPath.create(true, QName.create(bar.getQNameModule(), "test-leaf"),
+                QName.create(bar.getQNameModule(), "uint32"));
 
         final TypeDefinition<?> deviatedType = deviateReplace.getDeviatedType();
         assertEquals(deviatedTypePath, deviatedType.getPath());

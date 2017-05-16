@@ -1,0 +1,20 @@
+module bar-imp {
+    namespace "bimp-ns";
+    prefix "bimp";
+
+    revision 2016-09-22;
+
+    container bar-container-1 {
+        leaf bar-leaf-1 {
+            type string;
+        }
+    }
+
+    container bar-container-2 {
+        must "a = b";
+
+        leaf bar-leaf-2 {
+            type string;
+        }
+    }
+}

@@ -14,7 +14,6 @@ import static org.junit.Assert.assertNull;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import com.google.common.collect.ImmutableSet;
-import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -41,9 +40,9 @@ public class IfFeatureResolutionTest {
                 QName.create("foo-namespace", "1970-01-01", "test-feature-3"),
                 QName.create("bar-namespace", "1970-01-01", "imp-feature"));
 
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(
-            Optional.of(supportedFeatures));
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(FOO_MODULE, BAR_MODULE);
+        reactor.setSupportedFeatures(supportedFeatures);
 
         final SchemaContext schemaContext = reactor.buildEffective();
         assertNotNull(schemaContext);
@@ -275,9 +274,9 @@ public class IfFeatureResolutionTest {
 
     @Test
     public void testNoFeaturesSupported() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(
-            Optional.of(ImmutableSet.of()));
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(FOO_MODULE, BAR_MODULE);
+        reactor.setSupportedFeatures(ImmutableSet.of());
 
         final SchemaContext schemaContext = reactor.buildEffective();
         assertNotNull(schemaContext);

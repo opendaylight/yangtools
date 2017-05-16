@@ -1,0 +1,84 @@
+module bar {
+    namespace bar;
+    prefix bar;
+    yang-version 1.1;
+
+    revision 2017-01-20;
+
+    leaf my-leaf {
+        type int32;
+        units seconds;
+        default 100;
+        bar:custom-property-without-arg;
+    }
+
+    leaf-list my-leaf-list {
+        type string;
+        default "def-val-1";
+        default "def-val-2";
+        must "a = 1 or b = 2";
+        must "x != y";
+    }
+
+    list my-list {
+        key key-leaf;
+
+        unique "my-leaf-a my-leaf-b";
+        unique "my-leaf-c my-leaf-d";
+        bar:custom-property "arg";
+        bar:custom-property "another arg";
+
+        leaf key-leaf {
+            type string;
+        }
+
+        leaf my-leaf-a {
+            type string;
+        }
+
+        leaf my-leaf-b {
+            type string;
+        }
+
+        leaf my-leaf-c {
+            type string;
+        }
+
+        leaf my-leaf-d {
+            type string;
+        }
+    }
+
+    container my-cont {
+        uses my-grouping {
+            refine my-used-leaf {
+                default "def-val-added-by-refine";
+                bar:custom-property-without-arg;
+            }
+        }
+    }
+
+    augment "/my-cont" {
+        leaf my-aug-leaf {
+            type int32;
+            default "def-val";
+            units "minutes";
+            must "x = 1";
+            bar:custom-property-without-arg;
+        }
+    }
+
+    grouping my-grouping {
+        leaf my-used-leaf {
+            type int32;
+            units "days";
+            must "y = 5";
+        }
+    }
+
+    extension custom-property {
+        argument name;
+    }
+
+    extension custom-property-without-arg;
+}
