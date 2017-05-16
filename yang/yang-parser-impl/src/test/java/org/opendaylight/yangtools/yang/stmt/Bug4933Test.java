@@ -15,6 +15,7 @@ import static org.junit.Assert.fail;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -26,7 +27,9 @@ public class Bug4933Test {
         SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug4933/correct");
         assertNotNull(context);
 
-        Set<Deviation> deviations = context.getModules().iterator().next().getDeviations();
+        final Module foo = context.findModuleByName("foo", null);
+
+        Set<Deviation> deviations = foo.getDeviations();
         assertEquals(4, deviations.size());
     }
 

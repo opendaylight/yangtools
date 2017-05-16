@@ -119,7 +119,10 @@ public class EffectiveModuleTest {
         assertEquals(1, deviations.size());
         final Deviation deviationStmt = deviations.iterator().next();
         assertNotNull(deviationStmt);
-        assertEquals(contSchemaPath, deviationStmt.getTargetPath());
+        final QNameModule importedModuleQName = QNameModule.create(URI.create("imported"), revision);
+        final QName importedContQName = QName.create(importedModuleQName, "cont");
+        final SchemaPath importedContSchemaPath = SchemaPath.create(true, importedContQName);
+        assertEquals(importedContSchemaPath, deviationStmt.getTargetPath());
         assertEquals(DeviateKind.ADD, deviationStmt.getDeviates().iterator().next().getDeviateType());
         assertEquals("deviate reference", deviationStmt.getReference());
 

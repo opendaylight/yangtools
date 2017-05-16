@@ -1,0 +1,11 @@
+module bar {
+    namespace bar;
+    prefix bar;
+
+    revision 2017-01-20;
+
+    leaf my-leaf {
+        type int32;
+        config false;
+    }
+}

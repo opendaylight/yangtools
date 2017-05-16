@@ -1,0 +1,65 @@
+module bar {
+    namespace bar;
+    prefix bar;
+    yang-version 1.1;
+
+    revision 2017-01-20;
+
+    leaf my-leaf {
+        type int32;
+        default 100;
+        units kilobytes;
+    }
+
+    leaf-list my-leaf-list-test {
+        type string;
+        min-elements 5;
+        max-elements 10;
+        config false;
+    }
+
+    choice my-choice {
+        mandatory true;
+        bar:custom-property "original arg";
+        case c1 {
+            leaf c1-leaf {
+                type string;
+            }
+        }
+
+        case c2 {
+            leaf c2-leaf {
+                type string;
+            }
+        }
+    }
+
+    augment "/my-cont" {
+        leaf my-aug-leaf {
+            type int32;
+            default "def-val";
+            units "minutes";
+            bar:custom-property "arg";
+        }
+    }
+
+    container my-cont {
+        uses my-grouping {
+            refine my-used-leaf {
+                default "def-val-added-by-refine";
+                bar:custom-property "arg";
+            }
+        }
+    }
+
+    grouping my-grouping {
+        leaf my-used-leaf {
+            type int32;
+            units "days";
+        }
+    }
+
+    extension custom-property {
+        argument name;
+    }
+}

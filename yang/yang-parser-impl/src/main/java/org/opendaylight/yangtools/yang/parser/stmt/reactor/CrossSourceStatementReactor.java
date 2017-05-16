@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.ByteSource;
 import java.io.IOException;
@@ -18,7 +19,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
@@ -56,7 +59,7 @@ public final class CrossSourceStatementReactor {
     }
 
     /**
-     * Start a new reactor build using default statement parser mode and enabling all features.
+     * Start a new reactor build using the default statement parser mode with all features and deviations enabled.
      *
      * @return A new {@link BuildAction}.
      */
@@ -65,67 +68,99 @@ public final class CrossSourceStatementReactor {
     }
 
     /**
-     * Start a new reactor build using default statement parser mode and only specified features.
+     * Start a new reactor build using the default statement parser mode and enabling only the specified features
+     * and all deviations.
      *
      * @param supportedFeatures The set of supported features in the final SchemaContext
      * @return A new {@link BuildAction}.
      *
-     * @deprecated Use {@link #newBuild(Optional)} instead.
+     * @deprecated Use {@link #newBuild()} and then call setSupportedFeatures() on the created BuildAction instead.
      */
     @Deprecated
     public BuildAction newBuild(final Set<QName> supportedFeatures) {
-        return new BuildAction(warnOnNull(supportedFeatures), StatementParserMode.DEFAULT_MODE);
+        final BuildAction buildAction = newBuild();
+        if (supportedFeatures != null) {
+            buildAction.setSupportedFeatures(supportedFeatures);
+        }
+
+        return buildAction;
     }
 
     /**
-     * Start a new reactor build using default statement parser mode and only specified features.
+     * Start a new reactor build using the default statement parser mode and enabling only the specified features
+     * and all deviations.
      *
      * @param supportedFeatures The set of supported features in the final SchemaContext, if present.
      * @return A new {@link BuildAction}.
+     *
+     * @deprecated Use {@link #newBuild()} and then call setSupportedFeatures() on the created BuildAction instead.
      */
+    @Deprecated
     public BuildAction newBuild(final Optional<Set<QName>> supportedFeatures) {
-        return new BuildAction(supportedFeatures.orElse(null), StatementParserMode.DEFAULT_MODE);
+        final BuildAction buildAction = newBuild();
+        if (supportedFeatures.isPresent()) {
+            buildAction.setSupportedFeatures(supportedFeatures.get());
+        }
+
+        return buildAction;
     }
 
     /**
-     * Start a new reactor build using specified statement parser mode and enabling all features.
+     * Start a new reactor build using the specified statement parser mode and enabling all features and deviations.
      *
      * @param statementParserMode Parser mode to use
      * @return A new {@link BuildAction}.
      * @throws NullPointerException if statementParserMode is null
      */
     public BuildAction newBuild(final StatementParserMode statementParserMode) {
-        return new BuildAction(null, statementParserMode);
+        return new BuildAction(statementParserMode);
     }
 
     /**
-     * Start a new reactor build using default statement parser mode and only specified features.
+     * Start a new reactor build using the specified statement parser mode and enabling only the specified features
+     * and all deviations.
      *
      * @param statementParserMode Parser mode to use
      * @param supportedFeatures The set of supported features in the final SchemaContext
      * @return A new {@link BuildAction}.
      * @throws NullPointerException if statementParserMode is null
      *
-     * @deprecated Use {@link #newBuild(StatementParserMode, Optional)} instead.
+     * @deprecated Use {@link #newBuild(StatementParserMode)} and then call setSupportedFeatures()
+     * on the created BuildAction instead.
      */
     @Deprecated
     public BuildAction newBuild(final StatementParserMode statementParserMode,
             final Set<QName> supportedFeatures) {
-        return new BuildAction(warnOnNull(supportedFeatures), statementParserMode);
+        final BuildAction buildAction = new BuildAction(statementParserMode);
+        if (supportedFeatures != null) {
+            buildAction.setSupportedFeatures(supportedFeatures);
+        }
+
+        return buildAction;
     }
 
     /**
-     * Start a new reactor build using default statement parser mode and only specified features.
+     * Start a new reactor build using the specified statement parser mode and enabling only the specified features
+     * and all deviations.
      *
      * @param statementParserMode Parser mode to use
      * @param supportedFeatures The set of supported features in the final SchemaContext, or absent if all features
      *                          encountered should be supported.
      * @return A new {@link BuildAction}.
      * @throws NullPointerException if statementParserMode is null
+     *
+     * @deprecated Use {@link #newBuild(StatementParserMode)} and then call setSupportedFeatures()
+     * on the created BuildAction instead.
      */
+    @Deprecated
     public BuildAction newBuild(final StatementParserMode statementParserMode,
             final Optional<Set<QName>> supportedFeatures) {
-        return new BuildAction(supportedFeatures.orElse(null), statementParserMode);
+        final BuildAction buildAction = new BuildAction(statementParserMode);
+        if (supportedFeatures.isPresent()) {
+            buildAction.setSupportedFeatures(supportedFeatures.get());
+        }
+
+        return buildAction;
     }
 
     private static <T> T warnOnNull(final T obj) {
@@ -159,10 +194,12 @@ public final class CrossSourceStatementReactor {
 
     public class BuildAction {
         private final BuildGlobalContext context;
+        private boolean supportedFeaturesSet = false;
+        private boolean modulesDeviatedByModulesSet = false;
 
-        BuildAction(final Set<QName> supportedFeatures, final StatementParserMode statementParserMode) {
-            this.context = new BuildGlobalContext(supportedTerminology, supportedValidation, statementParserMode,
-                supportedFeatures);
+        BuildAction(@Nonnull final StatementParserMode statementParserMode) {
+            this.context = new BuildGlobalContext(supportedTerminology,supportedValidation,
+                    Preconditions.checkNotNull(statementParserMode));
         }
 
         /**
@@ -207,6 +244,36 @@ public final class CrossSourceStatementReactor {
             for (final StatementStreamSource libSource : libSources) {
                 context.addLibSource(libSource);
             }
+        }
+
+        /**
+         * Set supported features based on which all if-feature statements in the
+         * parsed YANG modules will be resolved.
+         *
+         * @param supportedFeatures
+         *            Set of supported features in the final SchemaContext.
+         *            If the set is empty, no features encountered will be supported.
+         */
+        public void setSupportedFeatures(@Nonnull final Set<QName> supportedFeatures) {
+            Preconditions.checkState(!supportedFeaturesSet, "Supported features should be set only once.");
+            context.setSupportedFeatures(Preconditions.checkNotNull(supportedFeatures));
+            supportedFeaturesSet = true;
+        }
+
+        /**
+         * Set YANG modules which can be deviated by specified modules during the parsing process.
+         * Map key (QNameModule) denotes a module which can be deviated by the modules in the Map value.
+         *
+         * @param modulesDeviatedByModules
+         *            Map of YANG modules (Map key) which can be deviated by specified modules (Map value) in the final
+         *            SchemaContext. If the map is empty, no deviations encountered will be supported.
+         */
+        public void setModulesWithSupportedDeviations(
+                @Nonnull final Map<QNameModule, Set<QNameModule>> modulesDeviatedByModules) {
+            Preconditions.checkState(!modulesDeviatedByModulesSet,
+                    "Modules with supported deviations should be set only once.");
+            context.setModulesDeviatedByModules(Preconditions.checkNotNull(modulesDeviatedByModules));
+            modulesDeviatedByModulesSet = true;
         }
 
         /**

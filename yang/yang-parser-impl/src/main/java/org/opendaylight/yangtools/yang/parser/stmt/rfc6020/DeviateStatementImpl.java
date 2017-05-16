@@ -10,9 +10,11 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -31,6 +33,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules.SupportedModules;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeviateEffectiveStatementImpl;
 import org.slf4j.Logger;
@@ -108,11 +113,15 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
             final DeviateKind deviateKind = deviateStmtCtx.getStatementArgument();
             getSubstatementValidatorForDeviate(deviateKind).validate(deviateStmtCtx);
 
-            final ModelActionBuilder deviateAction = deviateStmtCtx.newInferenceAction(
-                    ModelProcessingPhase.EFFECTIVE_MODEL);
-
             final SchemaNodeIdentifier deviationTarget =
                     (SchemaNodeIdentifier) deviateStmtCtx.getParentContext().getStatementArgument();
+
+            if (!isDeviationSupported(deviateStmtCtx, deviationTarget)) {
+                return;
+            }
+
+            final ModelActionBuilder deviateAction = deviateStmtCtx.newInferenceAction(
+                    ModelProcessingPhase.EFFECTIVE_MODEL);
 
             final Prerequisite<StmtContext<DeviateKind, DeviateStatement, EffectiveStatement<DeviateKind,
                     DeviateStatement>>> sourceCtxPrerequisite =
@@ -153,6 +162,27 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
                                     "Deviation target '%s' not found.", deviationTarget);
                         }
                     });
+        }
+
+        private static boolean isDeviationSupported(final StmtContext.Mutable<DeviateKind, DeviateStatement,
+                EffectiveStatement<DeviateKind, DeviateStatement>> deviateStmtCtx,
+                final SchemaNodeIdentifier deviationTarget) {
+            final Map<QNameModule, Set<QNameModule>> modulesDeviatedByModules = deviateStmtCtx.getFromNamespace(
+                    ModulesDeviatedByModules.class, SupportedModules.SUPPORTED_MODULES);
+            if (modulesDeviatedByModules == null) {
+                return true;
+            }
+
+            final QNameModule currentModule = deviateStmtCtx.getFromNamespace(ModuleCtxToModuleQName.class,
+                    deviateStmtCtx.getRoot());
+            final QNameModule targetModule = deviationTarget.getLastComponent().getModule();
+
+            final Set<QNameModule> deviationModulesSupportedByTargetModule = modulesDeviatedByModules.get(targetModule);
+            if (deviationModulesSupportedByTargetModule != null) {
+                return deviationModulesSupportedByTargetModule.contains(currentModule);
+            }
+
+            return false;
         }
 
         private static void performDeviateAdd(final StatementContextBase<?, ?, ?> deviateStmtCtx,

@@ -1,0 +1,15 @@
+module bar {
+    namespace bar-ns;
+    prefix bar;
+
+    container my-container {
+        leaf-list my-leaf-list {
+            type string;
+            max-elements 5;
+            must "0 != 1";
+        }
+    }
+
+    container my-container2 {
+    }
+}
