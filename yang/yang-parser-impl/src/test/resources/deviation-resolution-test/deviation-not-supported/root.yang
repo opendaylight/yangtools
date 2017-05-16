@@ -9,47 +9,19 @@ module root {
 
     revision 2017-01-20;
 
-    deviation "/my-cont-a/my-leaf-a1" {
+    deviation "/imp:my-cont-a/imp:my-leaf-a1" {
         deviate not-supported;
     }
 
-    deviation "/my-cont-a/my-leaf-a2" {
+    deviation "/imp:my-cont-a/imp:my-leaf-a2" {
         deviate not-supported;
     }
 
-    deviation "/my-cont-b" {
+    deviation "/imp:my-cont-b" {
         deviate not-supported;
     }
 
     deviation "/imp:my-cont-c/imp:my-leaf-c3" {
         deviate not-supported;
-    }
-
-    container my-cont-a {
-        leaf my-leaf-a1 {
-            type int8;
-        }
-
-        leaf my-leaf-a2 {
-            type int16;
-        }
-
-        leaf my-leaf-a3 {
-            type int32;
-        }
-    }
-
-    container my-cont-b {
-        leaf my-leaf-b1 {
-            type int8;
-        }
-
-        leaf my-leaf-b2 {
-            type int16;
-        }
-
-        leaf my-leaf-b3 {
-            type int32;
-        }
     }
 }

@@ -36,7 +36,7 @@ module root {
     rpc rpc1 {
     }
 
-    deviation /cont {
+    deviation /imp-pref:cont {
         deviate add {
         }
         reference "deviate reference";

@@ -1,0 +1,12 @@
+module foo {
+    namespace foo-ns;
+    prefix foo-prefix;
+
+    revision 2017-05-16;
+
+    container my-foo-cont-a {}
+
+    container my-foo-cont-b {}
+
+    container my-foo-cont-c {}
+}

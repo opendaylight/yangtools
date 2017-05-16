@@ -34,12 +34,14 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline
 public class DeviationStmtTest {
 
     private static final StatementStreamSource FOO_MODULE = sourceForResource("/deviation-stmt-test/foo.yang");
+    private static final StatementStreamSource FOO_IMP_MODULE = sourceForResource("/deviation-stmt-test/foo-imp.yang");
     private static final StatementStreamSource BAR_MODULE = sourceForResource("/deviation-stmt-test/bar.yang");
+    private static final StatementStreamSource BAR_IMP_MODULE = sourceForResource("/deviation-stmt-test/bar-imp.yang");
 
     @Test
     public void testDeviationAndDeviate() throws ReactorException, ParseException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(FOO_MODULE, BAR_MODULE);
+        reactor.addSources(FOO_MODULE, FOO_IMP_MODULE, BAR_MODULE, BAR_IMP_MODULE);
 
         final SchemaContext schemaContext = reactor.buildEffective();
         assertNotNull(schemaContext);

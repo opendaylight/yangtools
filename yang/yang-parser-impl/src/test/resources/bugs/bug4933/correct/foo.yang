@@ -3,36 +3,29 @@ module foo {
     namespace "foo";
     prefix foo;
 
-    container my-container {
-        leaf-list my-leaf-list {
-            type string;
-            max-elements 5;
-            must "0 != 1";
-        }
+    import bar {
+        prefix bar;
     }
 
-    deviation /my-container/my-leaf-list {
+    deviation /bar:my-container/bar:my-leaf-list {
         deviate add {
             min-elements 1;
         }
     }
 
-    deviation /my-container/my-leaf-list {
+    deviation /bar:my-container/bar:my-leaf-list {
         deviate replace {
             max-elements 10;
         }
     }
 
-    deviation /my-container/my-leaf-list {
+    deviation /bar:my-container/bar:my-leaf-list {
         deviate delete {
             must "0 != 1";
         }
     }
 
-    container my-container2 {
-    }
-
-    deviation /my-container2 {
+    deviation /bar:my-container2 {
         deviate not-supported;
     }
 }

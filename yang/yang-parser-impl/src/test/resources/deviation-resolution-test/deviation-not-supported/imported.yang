@@ -4,6 +4,34 @@ module imported {
 
     revision 2017-01-20;
 
+    container my-cont-a {
+        leaf my-leaf-a1 {
+            type int8;
+        }
+
+        leaf my-leaf-a2 {
+            type int16;
+        }
+
+        leaf my-leaf-a3 {
+            type int32;
+        }
+    }
+
+    container my-cont-b {
+        leaf my-leaf-b1 {
+            type int8;
+        }
+
+        leaf my-leaf-b2 {
+            type int16;
+        }
+
+        leaf my-leaf-b3 {
+            type int32;
+        }
+    }
+
     container my-cont-c {
         leaf my-leaf-c1 {
             type int8;

@@ -14,8 +14,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.PrintStream;
 import java.util.Date;
 import org.junit.Test;
@@ -46,22 +48,19 @@ public class DeviationResolutionTest {
 
         final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2017-01-20");
 
-        final Module rootModule = schemaContext.findModuleByName("root", revision);
-        assertNotNull(rootModule);
+        final Module importedModule = schemaContext.findModuleByName("imported", revision);
+        assertNotNull(importedModule);
 
-        final ContainerSchemaNode myContA = (ContainerSchemaNode) rootModule.getDataChildByName(
-                QName.create(rootModule.getQNameModule(), "my-cont-a"));
+        final ContainerSchemaNode myContA = (ContainerSchemaNode) importedModule.getDataChildByName(
+                QName.create(importedModule.getQNameModule(), "my-cont-a"));
         assertNotNull(myContA);
 
         assertEquals(1, myContA.getChildNodes().size());
-        assertNotNull(myContA.getDataChildByName(QName.create(rootModule.getQNameModule(), "my-leaf-a3")));
+        assertNotNull(myContA.getDataChildByName(QName.create(importedModule.getQNameModule(), "my-leaf-a3")));
 
-        final ContainerSchemaNode myContB = (ContainerSchemaNode) rootModule.getDataChildByName(
-                QName.create(rootModule.getQNameModule(), "my-cont-b"));
+        final ContainerSchemaNode myContB = (ContainerSchemaNode) importedModule.getDataChildByName(
+                QName.create(importedModule.getQNameModule(), "my-cont-b"));
         assertNull(myContB);
-
-        final Module importedModule = schemaContext.findModuleByName("imported", revision);
-        assertNotNull(importedModule);
 
         final ContainerSchemaNode myContC = (ContainerSchemaNode) importedModule.getDataChildByName(
                 QName.create(importedModule.getQNameModule(), "my-cont-c"));
@@ -74,17 +73,18 @@ public class DeviationResolutionTest {
 
     @Test
     public void testDeviateAdd() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSource(
-                "/deviation-resolution-test/deviation-add/foo.yang");
+        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(
+                sourceForResource("/deviation-resolution-test/deviation-add/foo.yang"),
+                sourceForResource("/deviation-resolution-test/deviation-add/bar.yang"));
         assertNotNull(schemaContext);
 
         final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2017-01-20");
 
-        final Module fooModule = schemaContext.findModuleByName("foo", revision);
-        assertNotNull(fooModule);
+        final Module barModule = schemaContext.findModuleByName("bar", revision);
+        assertNotNull(barModule);
 
-        final LeafListSchemaNode myLeafList = (LeafListSchemaNode) fooModule.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "my-leaf-list"));
+        final LeafListSchemaNode myLeafList = (LeafListSchemaNode) barModule.getDataChildByName(
+                QName.create(barModule.getQNameModule(), "my-leaf-list"));
         assertNotNull(myLeafList);
 
         assertFalse(myLeafList.isConfiguration());
@@ -93,27 +93,27 @@ public class DeviationResolutionTest {
         assertEquals(5, myLeafList.getConstraints().getMinElements().intValue());
         assertNotNull(myLeafList.getType().getUnits());
 
-        final ListSchemaNode myList = (ListSchemaNode) fooModule.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "my-list"));
+        final ListSchemaNode myList = (ListSchemaNode) barModule.getDataChildByName(
+                QName.create(barModule.getQNameModule(), "my-list"));
         assertNotNull(myList);
         assertEquals(2, myList.getUniqueConstraints().size());
 
-        final ChoiceSchemaNode myChoice = (ChoiceSchemaNode) fooModule.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "my-choice"));
+        final ChoiceSchemaNode myChoice = (ChoiceSchemaNode) barModule.getDataChildByName(
+                QName.create(barModule.getQNameModule(), "my-choice"));
         assertNotNull(myChoice);
         assertEquals("c2", myChoice.getDefaultCase());
 
-        final RpcDefinition myRpc = fooModule.getRpcs().iterator().next();
+        final RpcDefinition myRpc = barModule.getRpcs().iterator().next();
         final ContainerSchemaNode input = myRpc.getInput();
         assertEquals(2, input.getConstraints().getMustConstraints().size());
         final ContainerSchemaNode output = myRpc.getOutput();
         assertEquals(2, output.getConstraints().getMustConstraints().size());
 
-        final NotificationDefinition myNotification = fooModule.getNotifications().iterator().next();
+        final NotificationDefinition myNotification = barModule.getNotifications().iterator().next();
         assertEquals(2, myNotification.getConstraints().getMustConstraints().size());
 
-        final AnyXmlSchemaNode myAnyxml = (AnyXmlSchemaNode) fooModule.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "my-anyxml"));
+        final AnyXmlSchemaNode myAnyxml = (AnyXmlSchemaNode) barModule.getDataChildByName(
+                QName.create(barModule.getQNameModule(), "my-anyxml"));
         assertNotNull(myAnyxml);
         assertTrue(myAnyxml.getConstraints().isMandatory());
         assertEquals(2, myAnyxml.getUnknownSchemaNodes().size());
@@ -121,17 +121,18 @@ public class DeviationResolutionTest {
 
     @Test
     public void testDeviateReplace() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSource(
-                "/deviation-resolution-test/deviation-replace/foo.yang");
+        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(
+                sourceForResource("/deviation-resolution-test/deviation-replace/foo.yang"),
+                sourceForResource("/deviation-resolution-test/deviation-replace/bar.yang"));
         assertNotNull(schemaContext);
 
         final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2017-01-20");
 
-        final Module fooModule = schemaContext.findModuleByName("foo", revision);
-        assertNotNull(fooModule);
+        final Module barModule = schemaContext.findModuleByName("bar", revision);
+        assertNotNull(barModule);
 
-        final LeafSchemaNode myLeaf = (LeafSchemaNode) fooModule.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "my-leaf"));
+        final LeafSchemaNode myLeaf = (LeafSchemaNode) barModule.getDataChildByName(
+                QName.create(barModule.getQNameModule(), "my-leaf"));
         assertNotNull(myLeaf);
 
         assertTrue(myLeaf.getType() instanceof UnsignedIntegerTypeDefinition);
@@ -140,28 +141,28 @@ public class DeviationResolutionTest {
         assertNotNull(myLeaf.getDefault());
         assertEquals("10", myLeaf.getDefault());
 
-        final LeafListSchemaNode myLeafList = (LeafListSchemaNode) fooModule.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "my-leaf-list-test"));
+        final LeafListSchemaNode myLeafList = (LeafListSchemaNode) barModule.getDataChildByName(
+                QName.create(barModule.getQNameModule(), "my-leaf-list-test"));
         assertNotNull(myLeafList);
 
         assertEquals(6, myLeafList.getConstraints().getMaxElements().intValue());
         assertEquals(3, myLeafList.getConstraints().getMinElements().intValue());
         assertTrue(myLeafList.isConfiguration());
 
-        final ChoiceSchemaNode myChoice = (ChoiceSchemaNode) fooModule.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "my-choice"));
+        final ChoiceSchemaNode myChoice = (ChoiceSchemaNode) barModule.getDataChildByName(
+                QName.create(barModule.getQNameModule(), "my-choice"));
         assertNotNull(myChoice);
 
         assertFalse(myChoice.getConstraints().isMandatory());
         assertEquals(1, myChoice.getUnknownSchemaNodes().size());
         assertEquals("new arg", myChoice.getUnknownSchemaNodes().iterator().next().getNodeParameter());
 
-        final ContainerSchemaNode myCont = (ContainerSchemaNode) fooModule.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "my-cont"));
+        final ContainerSchemaNode myCont = (ContainerSchemaNode) barModule.getDataChildByName(
+                QName.create(barModule.getQNameModule(), "my-cont"));
         assertNotNull(myCont);
 
         final LeafSchemaNode myAugLeaf = (LeafSchemaNode) myCont.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "my-aug-leaf"));
+                QName.create(barModule.getQNameModule(), "my-aug-leaf"));
         assertNotNull(myAugLeaf);
         assertTrue(myAugLeaf.getType() instanceof UnsignedIntegerTypeDefinition);
         assertNotNull(myAugLeaf.getUnits());
@@ -172,7 +173,7 @@ public class DeviationResolutionTest {
         assertEquals("new arg", myAugLeaf.getUnknownSchemaNodes().iterator().next().getNodeParameter());
 
         final LeafSchemaNode myUsedLeaf = (LeafSchemaNode) myCont.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "my-used-leaf"));
+                QName.create(barModule.getQNameModule(), "my-used-leaf"));
         assertNotNull(myUsedLeaf);
         assertTrue(myUsedLeaf.getType() instanceof UnsignedIntegerTypeDefinition);
         assertNotNull(myUsedLeaf.getUnits());
@@ -185,43 +186,44 @@ public class DeviationResolutionTest {
 
     @Test
     public void testDeviateDelete() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSource(
-                "/deviation-resolution-test/deviation-delete/foo.yang");
+        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(
+                sourceForResource("/deviation-resolution-test/deviation-delete/foo.yang"),
+                sourceForResource("/deviation-resolution-test/deviation-delete/bar.yang"));
         assertNotNull(schemaContext);
 
         final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2017-01-20");
 
-        final Module fooModule = schemaContext.findModuleByName("foo", revision);
-        assertNotNull(fooModule);
+        final Module barModule = schemaContext.findModuleByName("bar", revision);
+        assertNotNull(barModule);
 
-        final LeafSchemaNode myLeaf = (LeafSchemaNode) fooModule.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "my-leaf"));
+        final LeafSchemaNode myLeaf = (LeafSchemaNode) barModule.getDataChildByName(
+                QName.create(barModule.getQNameModule(), "my-leaf"));
         assertNotNull(myLeaf);
 
         assertNull(myLeaf.getDefault());
         assertNull(myLeaf.getUnits());
         assertEquals(0, myLeaf.getUnknownSchemaNodes().size());
 
-        final LeafListSchemaNode myLeafList = (LeafListSchemaNode) fooModule.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "my-leaf-list"));
+        final LeafListSchemaNode myLeafList = (LeafListSchemaNode) barModule.getDataChildByName(
+                QName.create(barModule.getQNameModule(), "my-leaf-list"));
         assertNotNull(myLeafList);
 
         assertEquals(0, myLeafList.getDefaults().size());
         assertEquals(0, myLeafList.getConstraints().getMustConstraints().size());
 
-        final ListSchemaNode myList = (ListSchemaNode) fooModule.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "my-list"));
+        final ListSchemaNode myList = (ListSchemaNode) barModule.getDataChildByName(
+                QName.create(barModule.getQNameModule(), "my-list"));
         assertNotNull(myList);
 
         assertEquals(0, myList.getUniqueConstraints().size());
         assertEquals(0, myList.getUnknownSchemaNodes().size());
 
-        final ContainerSchemaNode myCont = (ContainerSchemaNode) fooModule.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "my-cont"));
+        final ContainerSchemaNode myCont = (ContainerSchemaNode) barModule.getDataChildByName(
+                QName.create(barModule.getQNameModule(), "my-cont"));
         assertNotNull(myCont);
 
         final LeafSchemaNode myAugLeaf = (LeafSchemaNode) myCont.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "my-aug-leaf"));
+                QName.create(barModule.getQNameModule(), "my-aug-leaf"));
         assertNotNull(myAugLeaf);
         assertNull(myAugLeaf.getDefault());
         assertNull(myAugLeaf.getUnits());
@@ -229,7 +231,7 @@ public class DeviationResolutionTest {
         assertEquals(0, myAugLeaf.getUnknownSchemaNodes().size());
 
         final LeafSchemaNode myUsedLeaf = (LeafSchemaNode) myCont.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "my-used-leaf"));
+                QName.create(barModule.getQNameModule(), "my-used-leaf"));
         assertNotNull(myUsedLeaf);
         assertNull(myUsedLeaf.getDefault());
         assertNull(myUsedLeaf.getUnits());
@@ -240,7 +242,9 @@ public class DeviationResolutionTest {
     @Test
     public void shouldFailOnInvalidYang10Model() throws Exception {
         try {
-            StmtTestUtils.parseYangSource("/deviation-resolution-test/deviation-add/foo10-invalid.yang");
+            StmtTestUtils.parseYangSources(
+                    sourceForResource("/deviation-resolution-test/deviation-add/foo10-invalid.yang"),
+                    sourceForResource("/deviation-resolution-test/deviation-add/bar10-invalid.yang"));
             fail("An exception should have been thrown.");
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
@@ -252,7 +256,9 @@ public class DeviationResolutionTest {
     @Test
     public void shouldFailOnInvalidYang10Model2() throws Exception {
         try {
-            StmtTestUtils.parseYangSource("/deviation-resolution-test/deviation-delete/foo10-invalid.yang");
+            StmtTestUtils.parseYangSources(
+                    sourceForResource("/deviation-resolution-test/deviation-delete/foo10-invalid.yang"),
+                    sourceForResource("/deviation-resolution-test/deviation-delete/bar10-invalid.yang"));
             fail("An exception should have been thrown.");
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
@@ -264,12 +270,14 @@ public class DeviationResolutionTest {
     @Test
     public void shouldFailOnInvalidDeviationTarget() throws Exception {
         try {
-            StmtTestUtils.parseYangSource("/deviation-resolution-test/foo-invalid-deviation-target.yang");
+            StmtTestUtils.parseYangSources(sourceForResource(
+                    "/deviation-resolution-test/foo-invalid-deviation-target.yang"),
+                    sourceForResource("/deviation-resolution-test/bar.yang"));
             fail("An exception should have been thrown.");
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof InferenceException);
-            assertTrue(cause.getMessage().startsWith("(foo?revision=2017-01-20)my-cont is not a valid deviation " +
+            assertTrue(cause.getMessage().startsWith("(bar?revision=2017-01-20)my-cont is not a valid deviation " +
                     "target for substatement (urn:ietf:params:xml:ns:yang:yin:1)max-elements."));
         }
     }
@@ -277,26 +285,30 @@ public class DeviationResolutionTest {
     @Test
     public void shouldFailOnInvalidDeviationPath() throws Exception {
         try {
-            StmtTestUtils.parseYangSource("/deviation-resolution-test/foo-invalid-deviation-path.yang");
+            StmtTestUtils.parseYangSources(
+                    sourceForResource("/deviation-resolution-test/foo-invalid-deviation-path.yang"),
+                    sourceForResource("/deviation-resolution-test/bar.yang"));
             fail("An exception should have been thrown.");
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause().getCause();
             assertTrue(cause instanceof InferenceException);
-            assertTrue(cause.getMessage().startsWith("Deviation target 'Absolute{path=[(foo?revision=2017-01-20)invalid, " +
-                    "(foo?revision=2017-01-20)path]}' not found"));
+            assertTrue(cause.getMessage().startsWith("Deviation target 'Absolute{path=[(bar?revision=2017-01-20)" +
+                    "invalid, (bar?revision=2017-01-20)path]}' not found"));
         }
     }
 
     @Test
     public void shouldFailOnInvalidDeviateAdd() throws Exception {
         try {
-            StmtTestUtils.parseYangSource("/deviation-resolution-test/deviation-add/foo-invalid.yang");
+            StmtTestUtils.parseYangSources(
+                    sourceForResource("/deviation-resolution-test/deviation-add/foo-invalid.yang"),
+                    sourceForResource("/deviation-resolution-test/deviation-add/bar-invalid.yang"));
             fail("An exception should have been thrown.");
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof InferenceException);
             assertTrue(cause.getMessage().startsWith("Deviation cannot add substatement (urn:ietf:params:xml:ns:yang" +
-                    ":yin:1)config to target node (foo?revision=2017-01-20)my-leaf because it is already defined in" +
+                    ":yin:1)config to target node (bar?revision=2017-01-20)my-leaf because it is already defined in" +
                     " target and can appear only once."));
         }
     }
@@ -304,13 +316,15 @@ public class DeviationResolutionTest {
     @Test
     public void shouldFailOnInvalidDeviateAdd2() throws Exception {
         try {
-            StmtTestUtils.parseYangSource("/deviation-resolution-test/deviation-add/foo-invalid-2.yang");
+            StmtTestUtils.parseYangSources(
+                    sourceForResource("/deviation-resolution-test/deviation-add/foo-invalid-2.yang"),
+                    sourceForResource("/deviation-resolution-test/deviation-add/bar-invalid-2.yang"));
             fail("An exception should have been thrown.");
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof InferenceException);
             assertTrue(cause.getMessage().startsWith("Deviation cannot add substatement (urn:ietf:params:xml:ns:yang" +
-                    ":yin:1)default to target node (foo?revision=2017-01-20)my-leaf because it is already defined in" +
+                    ":yin:1)default to target node (bar?revision=2017-01-20)my-leaf because it is already defined in" +
                     " target and can appear only once."));
         }
     }
@@ -318,13 +332,15 @@ public class DeviationResolutionTest {
     @Test
     public void shouldFailOnInvalidDeviateAdd3() throws Exception {
         try {
-            StmtTestUtils.parseYangSource("/deviation-resolution-test/deviation-add/foo-invalid-4.yang");
+            StmtTestUtils.parseYangSources(
+                    sourceForResource("/deviation-resolution-test/deviation-add/foo-invalid-4.yang"),
+                    sourceForResource("/deviation-resolution-test/deviation-add/bar-invalid-4.yang"));
             fail("An exception should have been thrown.");
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof InferenceException);
             assertTrue(cause.getMessage().startsWith("Deviation cannot add substatement (urn:ietf:params:xml:ns:yang" +
-                    ":yin:1)default to target node (foo?revision=2017-02-01)my-used-leaf because it is already " +
+                    ":yin:1)default to target node (bar?revision=2017-02-01)my-used-leaf because it is already " +
                     "defined in target and can appear only once."));
         }
     }
@@ -332,13 +348,15 @@ public class DeviationResolutionTest {
     @Test
     public void shouldFailOnInvalidDeviateReplace() throws Exception {
         try {
-            StmtTestUtils.parseYangSource("/deviation-resolution-test/deviation-replace/foo-invalid.yang");
+            StmtTestUtils.parseYangSources(
+                    sourceForResource("/deviation-resolution-test/deviation-replace/foo-invalid.yang"),
+                    sourceForResource("/deviation-resolution-test/deviation-replace/bar-invalid.yang"));
             fail("An exception should have been thrown.");
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof InferenceException);
             assertTrue(cause.getMessage().startsWith("Deviation cannot replace substatement " +
-                    "(urn:ietf:params:xml:ns:yang:yin:1)units in target node (foo?revision=2017-01-20)my-leaf " +
+                    "(urn:ietf:params:xml:ns:yang:yin:1)units in target node (bar?revision=2017-01-20)my-leaf " +
                     "because it does not exist in target node."));
         }
     }
@@ -351,11 +369,13 @@ public class DeviationResolutionTest {
 
         System.setOut(new PrintStream(output, true, "UTF-8"));
 
-        StmtTestUtils.parseYangSource("/deviation-resolution-test/deviation-replace/foo-invalid-2.yang");
+        StmtTestUtils.parseYangSources(
+                sourceForResource("/deviation-resolution-test/deviation-replace/foo-invalid-2.yang"),
+                sourceForResource("/deviation-resolution-test/deviation-replace/bar-invalid-2.yang"));
 
         testLog = output.toString();
         assertTrue(testLog.contains("Deviation cannot replace substatement (urn:ietf:params:xml:ns:yang:yin:1)default" +
-                " in target leaf-list (foo?revision=2017-01-20)my-leaf-list because a leaf-list can have multiple " +
+                " in target leaf-list (bar?revision=2017-01-20)my-leaf-list because a leaf-list can have multiple " +
                 "default statements."));
         System.setOut(stdout);
     }
@@ -368,11 +388,13 @@ public class DeviationResolutionTest {
 
         System.setOut(new PrintStream(output, true, "UTF-8"));
 
-        StmtTestUtils.parseYangSource("/deviation-resolution-test/deviation-delete/foo-invalid.yang");
+        StmtTestUtils.parseYangSources(
+                sourceForResource("/deviation-resolution-test/deviation-delete/foo-invalid.yang"),
+                sourceForResource("/deviation-resolution-test/deviation-delete/bar-invalid.yang"));
 
         testLog = output.toString();
         assertTrue(testLog.contains("Deviation cannot delete substatement (urn:ietf:params:xml:ns:yang:yin:1)units " +
-                "with argument 'seconds' in target node (foo?revision=2017-01-20)my-leaf because it does not exist " +
+                "with argument 'seconds' in target node (bar?revision=2017-01-20)my-leaf because it does not exist " +
                 "in the target node."));
         System.setOut(stdout);
     }
@@ -380,7 +402,9 @@ public class DeviationResolutionTest {
     @Test
     public void shouldFailOnInvalidDeviateAddSubstatement() throws Exception {
         try {
-            StmtTestUtils.parseYangSource("/deviation-resolution-test/deviation-add/foo-invalid-3.yang");
+            StmtTestUtils.parseYangSources(
+                    sourceForResource("/deviation-resolution-test/deviation-add/foo-invalid-3.yang"),
+                    sourceForResource("/deviation-resolution-test/deviation-add/bar-invalid-3.yang"));
             fail("An exception should have been thrown.");
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
@@ -392,7 +416,9 @@ public class DeviationResolutionTest {
     @Test
     public void shouldFailOnInvalidDeviateReplaceSubstatement() throws Exception {
         try {
-            StmtTestUtils.parseYangSource("/deviation-resolution-test/deviation-replace/foo-invalid-3.yang");
+            StmtTestUtils.parseYangSources(
+                    sourceForResource("/deviation-resolution-test/deviation-replace/foo-invalid-3.yang"),
+                    sourceForResource("/deviation-resolution-test/deviation-replace/bar-invalid-3.yang"));
             fail("An exception should have been thrown.");
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
@@ -404,7 +430,9 @@ public class DeviationResolutionTest {
     @Test
     public void shouldFailOnInvalidDeviateDeleteSubstatement() throws Exception {
         try {
-            StmtTestUtils.parseYangSource("/deviation-resolution-test/deviation-delete/foo-invalid-2.yang");
+            StmtTestUtils.parseYangSources(
+                    sourceForResource("/deviation-resolution-test/deviation-delete/foo-invalid-2.yang"),
+                    sourceForResource("/deviation-resolution-test/deviation-delete/bar-invalid-2.yang"));
             fail("An exception should have been thrown.");
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();

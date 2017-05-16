@@ -3,4 +3,6 @@ module imported {
     prefix imported;
 
     revision "2000-01-01";
+
+    container cont {}
 }
