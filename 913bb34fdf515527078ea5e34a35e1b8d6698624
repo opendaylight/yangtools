@@ -46,6 +46,30 @@
       "revId": "913bb34fdf515527078ea5e34a35e1b8d6698624",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba068154_f9ddd215",
+        "filename": "yang/yang-data-impl/src/test/resources/bug7844/bar.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-05-16T09:55:04Z",
+      "side": 1,
+      "message": "If my understanding is correct, it should work fine. However, I extended current unit test to cover also this case plus some others.",
+      "parentUuid": "ba068154_d39f105e",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 5
+      },
+      "revId": "913bb34fdf515527078ea5e34a35e1b8d6698624",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
