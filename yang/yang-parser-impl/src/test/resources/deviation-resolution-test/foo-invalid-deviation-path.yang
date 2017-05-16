@@ -2,9 +2,14 @@ module foo {
     namespace foo;
     prefix foo;
 
+    import bar {
+        prefix bar;
+        revision-date 2017-01-20;
+    }
+
     revision 2017-01-20;
 
-    deviation "/invalid/path" {
+    deviation "/bar:invalid/bar:path" {
         deviate not-supported;
     }
 

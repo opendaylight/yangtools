@@ -2,67 +2,58 @@ module bar {
     namespace bar-namespace;
     prefix bar-prefix;
 
+    import bar-imp {
+        prefix bimp;
+        revision-date 2016-09-22;
+    }
+
     revision "2016-09-22";
 
-    deviation "/bar-container-1" {
+    deviation "/bimp:bar-container-1" {
         deviate add {
             must "a != b";
         }
         bar-prefix:bar-extension;
     }
 
-    deviation "/bar-container-2" {
+    deviation "/bimp:bar-container-2" {
         deviate delete {
             must "a = b";
         }
     }
 
-    deviation "/bar-container-2" {
+    deviation "/bimp:bar-container-2" {
         deviate add {
             config false;
         }
     }
 
-    deviation "/bar-container-1/bar-leaf-1" {
+    deviation "/bimp:bar-container-1/bimp:bar-leaf-1" {
         deviate add {
             default "def-val";
         }
         description "desc";
     }
 
-    deviation "/bar-container-1/bar-leaf-1" {
+    deviation "/bimp:bar-container-1/bimp:bar-leaf-1" {
         deviate add {
             config false;
         }
         description "another desc";
     }
 
-    deviation "/bar-container-2/bar-leaf-2" {
+    deviation "/bimp:bar-container-2/bimp:bar-leaf-2" {
         deviate add {
             default "def-val";
         }
         reference "ref";
     }
 
-    deviation "/bar-container-2/bar-leaf-2" {
+    deviation "/bimp:bar-container-2/bimp:bar-leaf-2" {
         deviate add {
             config false;
         }
         reference "another ref";
-    }
-
-    container bar-container-1 {
-        leaf bar-leaf-1 {
-            type string;
-        }
-    }
-
-    container bar-container-2 {
-        must "a = b";
-
-        leaf bar-leaf-2 {
-            type string;
-        }
     }
 
     extension bar-extension {}

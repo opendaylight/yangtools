@@ -70,10 +70,13 @@ class SystemTestUtils {
             final StatementStreamSource[] libSources, final Set<QName> supportedFeatures) throws ReactorException {
         Preconditions.checkArgument(testSources != null && testSources.length > 0, "No yang sources");
 
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-                .newBuild(supportedFeatures);
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(testSources);
         reactor.addLibSources(libSources);
+
+        if (supportedFeatures != null) {
+            reactor.setSupportedFeatures(supportedFeatures);
+        }
 
         return reactor.buildEffective();
     }

@@ -2,17 +2,18 @@ module foo {
     namespace foo-ns;
     prefix foo-prfx;
 
+    import bar {
+        prefix bar;
+        revision-date 2016-12-23;
+    }
+
     revision 2016-12-23;
 
-    deviation "/test-leaf" {
+    deviation "/bar:test-leaf" {
         deviate replace {
             type uint32 {
                 range "5..50";
             }
         }
-    }
-
-    leaf test-leaf {
-        type int32;
     }
 }
