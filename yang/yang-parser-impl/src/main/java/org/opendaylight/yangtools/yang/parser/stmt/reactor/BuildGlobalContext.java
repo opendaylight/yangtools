@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
@@ -30,6 +31,7 @@ import java.util.Set;
 import java.util.SortedMap;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
@@ -49,6 +51,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules.SupportedModules;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
@@ -84,7 +88,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports,
             final Map<ValidationBundleType, Collection<?>> supportedValidation,
-            final StatementParserMode statementParserMode, final Set<QName> supportedFeatures) {
+            final StatementParserMode statementParserMode) {
         this.supports = Preconditions.checkNotNull(supports, "BuildGlobalContext#supports cannot be null");
 
         switch (statementParserMode) {
@@ -102,10 +106,6 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
             addToNs(ValidationBundlesNamespace.class, validationBundle.getKey(), validationBundle.getValue());
         }
 
-        if (supportedFeatures != null) {
-            addToNs(SupportedFeaturesNamespace.class, SupportedFeatures.SUPPORTED_FEATURES,
-                    ImmutableSet.copyOf(supportedFeatures));
-        }
         this.supportedVersions = ImmutableSet.copyOf(supports.get(ModelProcessingPhase.INIT).getSupportedVersions());
     }
 
@@ -127,6 +127,16 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         Preconditions.checkState(currentPhase == ModelProcessingPhase.INIT,
                 "Add library source is allowed in ModelProcessingPhase.INIT only");
         libSources.add(new SourceSpecificContext(this, libSource));
+    }
+
+    void setSupportedFeatures(final Set<QName> supportedFeatures) {
+        addToNs(SupportedFeaturesNamespace.class, SupportedFeatures.SUPPORTED_FEATURES,
+                    ImmutableSet.copyOf(supportedFeatures));
+    }
+
+    void setModulesDeviatedByModules(final Map<QNameModule, Set<QNameModule>> modulesDeviatedByModules) {
+        addToNs(ModulesDeviatedByModules.class, SupportedModules.SUPPORTED_MODULES,
+                    ImmutableMap.copyOf(modulesDeviatedByModules));
     }
 
     @Override

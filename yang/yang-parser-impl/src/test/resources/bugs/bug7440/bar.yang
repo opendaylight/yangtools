@@ -1,0 +1,10 @@
+module bar {
+    namespace bar-ns;
+    prefix bar;
+
+    revision 2016-12-23;
+
+    leaf test-leaf {
+            type int32;
+        }
+}

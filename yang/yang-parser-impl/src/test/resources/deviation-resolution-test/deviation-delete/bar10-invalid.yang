@@ -1,0 +1,10 @@
+module bar {
+    namespace bar;
+    prefix bar;
+
+    revision 2017-01-20;
+
+    leaf-list my-leaf-list {
+        type int32;
+    }
+}

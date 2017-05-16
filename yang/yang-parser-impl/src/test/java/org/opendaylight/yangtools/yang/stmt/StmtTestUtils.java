@@ -115,8 +115,11 @@ public class StmtTestUtils {
             final Set<QName> supportedFeatures, final Collection<? extends StatementStreamSource> sources)
             throws SourceException, ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(
-            statementParserMode, supportedFeatures);
+            statementParserMode);
         reactor.addSources(sources);
+        if (supportedFeatures != null) {
+            reactor.setSupportedFeatures(supportedFeatures);
+        }
 
         return reactor.buildEffective();
     }
@@ -265,10 +268,12 @@ public class StmtTestUtils {
     private static SchemaContext parseYangSources(final StatementStreamSource[] yangSources,
             final StatementStreamSource[] libSources, final Set<QName> supportedFeatures) throws ReactorException {
 
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-                .newBuild(supportedFeatures);
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(yangSources);
         reactor.addLibSources(libSources);
+        if (supportedFeatures != null) {
+            reactor.setSupportedFeatures(supportedFeatures);
+        }
 
         return reactor.buildEffective();
     }
