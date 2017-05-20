@@ -20,7 +20,7 @@ final class RandomPrefixInstanceIdentifierSerializer extends AbstractStringInsta
     private final DataSchemaContextTree schemaTree;
 
 
-    RandomPrefixInstanceIdentifierSerializer(SchemaContext ctx) {
+    RandomPrefixInstanceIdentifierSerializer(final SchemaContext ctx) {
         schemaTree = DataSchemaContextTree.from(ctx);
     }
 
