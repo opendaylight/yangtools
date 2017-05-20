@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 
+@Deprecated
 class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNormalizedNodeStreamWriter<Object> {
     private enum ContainerType {
         CONTAINER,
@@ -34,91 +35,93 @@ class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNormalizedN
 
     private final Deque<ContainerType> containerTypeStack = new ArrayDeque<>();
 
-    private SchemalessXMLStreamNormalizedNodeStreamWriter(XMLStreamWriter writer) {
+    private SchemalessXMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer) {
         super(writer);
     }
 
-    static NormalizedNodeStreamWriter newInstance(XMLStreamWriter writer) {
+    static NormalizedNodeStreamWriter newInstance(final XMLStreamWriter writer) {
         return new SchemalessXMLStreamNormalizedNodeStreamWriter(writer);
     }
 
     @Override
-    public void leafNode(NodeIdentifier name, Object value, Map<QName, String> attributes) throws IOException {
+    public void leafNode(final NodeIdentifier name, final Object value, final Map<QName, String> attributes)
+            throws IOException {
         writeElement(name.getNodeType(), value, attributes, null);
     }
 
     @Override
-    public void leafSetEntryNode(QName name, Object value, Map<QName, String> attributes) throws IOException {
+    public void leafSetEntryNode(final QName name, final Object value, final Map<QName, String> attributes)
+            throws IOException {
         writeElement(name, value, attributes, null);
     }
 
     @Override
-    public void leafNode(NodeIdentifier name, Object value) throws IOException {
+    public void leafNode(final NodeIdentifier name, final Object value) throws IOException {
         writeElement(name.getNodeType(), value, Collections.emptyMap(), null);
     }
 
     @Override
-    public void leafSetEntryNode(QName name, Object value) throws IOException {
+    public void leafSetEntryNode(final QName name, final Object value) throws IOException {
         writeElement(name, value, Collections.emptyMap(), null);
     }
 
     @Override
-    public void startLeafSet(NodeIdentifier name, int childSizeHint) throws IOException {
+    public void startLeafSet(final NodeIdentifier name, final int childSizeHint) throws IOException {
         containerTypeStack.push(ContainerType.LEAF_SET);
     }
 
     @Override
-    public void startOrderedLeafSet(NodeIdentifier name, int childSizeHint)
+    public void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint)
             throws IOException, IllegalArgumentException {
         containerTypeStack.push(ContainerType.LEAF_SET);
     }
 
     @Override
-    public void startContainerNode(NodeIdentifier name, int childSizeHint) throws IOException {
+    public void startContainerNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
         containerTypeStack.push(ContainerType.CONTAINER);
         startElement(name.getNodeType());
     }
 
     @Override
-    public void startChoiceNode(NodeIdentifier name, int childSizeHint) throws IOException {
+    public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
         containerTypeStack.push(ContainerType.CHOICE);
     }
 
     @Override
-    public void startAugmentationNode(AugmentationIdentifier identifier) throws IOException {
+    public void startAugmentationNode(final AugmentationIdentifier identifier) throws IOException {
         containerTypeStack.push(ContainerType.AUGMENTATION);
     }
 
     @Override
-    public void anyxmlNode(NodeIdentifier name, Object value) throws IOException {
+    public void anyxmlNode(final NodeIdentifier name, final Object value) throws IOException {
         anyxmlNode(name.getNodeType(), value);
     }
 
     @Override
-    public void startYangModeledAnyXmlNode(NodeIdentifier name, int childSizeHint) throws IOException {
+    public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
         containerTypeStack.push(ContainerType.ANY_XML);
         startElement(name.getNodeType());
     }
 
     @Override
-    protected void writeValue(XMLStreamWriter xmlWriter, QName qname, @Nonnull Object value, Object context)
-            throws XMLStreamException {
+    protected void writeValue(final XMLStreamWriter xmlWriter, final QName qname, @Nonnull final Object value,
+            final Object context) throws XMLStreamException {
         xmlWriter.writeCharacters(value.toString());
     }
 
     @Override
-    protected void startList(NodeIdentifier name) {
+    protected void startList(final NodeIdentifier name) {
         containerTypeStack.push(ContainerType.LIST);
     }
 
     @Override
-    protected void startListItem(PathArgument name) throws IOException {
+    protected void startListItem(final PathArgument name) throws IOException {
         containerTypeStack.push(ContainerType.LIST_ITEM);
         startElement(name.getNodeType());
     }
 
     @Override
-    protected void endNode(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException {
+    protected void endNode(final XMLStreamWriter xmlWriter) throws IOException, XMLStreamException {
         ContainerType type = containerTypeStack.pop();
         switch(type) {
         case CONTAINER:
