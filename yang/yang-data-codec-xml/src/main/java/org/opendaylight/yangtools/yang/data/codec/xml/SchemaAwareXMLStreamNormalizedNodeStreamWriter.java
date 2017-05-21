@@ -8,11 +8,9 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import com.google.common.base.Strings;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Map.Entry;
 import javax.annotation.Nonnull;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -45,23 +43,6 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     static NormalizedNodeStreamWriter newInstance(final XMLStreamWriter writer, final SchemaContext context,
             final SchemaPath path) {
         return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context, path);
-    }
-
-    @Override
-    protected void writeAttributes(@Nonnull final Map<QName, String> attributes) throws IOException {
-        for (final Entry<QName, String> qNameStringEntry : attributes.entrySet()) {
-            try {
-                final String namespace = qNameStringEntry.getKey().getNamespace().toString();
-
-                if (Strings.isNullOrEmpty(namespace)) {
-                    writer.writeAttribute(qNameStringEntry.getKey().getLocalName(), qNameStringEntry.getValue());
-                } else {
-                    writer.writeAttribute(namespace, qNameStringEntry.getKey().getLocalName(), qNameStringEntry.getValue());
-                }
-            } catch (final XMLStreamException e) {
-                throw new IOException("Unable to emit attribute " + qNameStringEntry, e);
-            }
-        }
     }
 
     @Override
@@ -103,7 +84,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     }
 
     @Override
-    public void leafNode(NodeIdentifier name, Object value, Map<QName, String> attributes) throws IOException {
+    public void leafNode(final NodeIdentifier name, final Object value, final Map<QName, String> attributes) throws IOException {
         final LeafSchemaNode schema = tracker.leafNode(name);
         writeElement(schema.getQName(), value, attributes, schema);
     }
