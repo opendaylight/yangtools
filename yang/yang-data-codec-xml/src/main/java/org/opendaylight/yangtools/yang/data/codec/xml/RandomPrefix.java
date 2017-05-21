@@ -33,7 +33,7 @@ class RandomPrefix {
     }
 
     RandomPrefix(final NamespaceContext context) {
-        this.context = Preconditions.checkNotNull(context);
+        this.context = context;
     }
 
     Iterable<Entry<URI, String>> getPrefixes() {
