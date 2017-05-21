@@ -67,15 +67,20 @@ public final class JsonParserStream implements Closeable, Flushable {
     private final DataSchemaNode parentNode;
 
     private JsonParserStream(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
-            final DataSchemaNode parentNode) {
+            final JSONCodecFactory codecs, final DataSchemaNode parentNode) {
         this.schema = Preconditions.checkNotNull(schemaContext);
         this.writer = Preconditions.checkNotNull(writer);
-        this.codecs = JSONCodecFactory.create(schemaContext);
+        this.codecs = Preconditions.checkNotNull(codecs);
         this.parentNode = parentNode;
     }
 
+    private JsonParserStream(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
+            final DataSchemaNode parentNode) {
+        this(writer, schemaContext, JSONCodecFactory.getShared(schemaContext), parentNode);
+    }
+
     public static JsonParserStream create(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
-            final SchemaNode parentNode ) {
+            final SchemaNode parentNode) {
         if (parentNode instanceof RpcDefinition) {
             return new JsonParserStream(writer, schemaContext, new RpcAsContainer((RpcDefinition) parentNode));
         }
@@ -219,19 +224,17 @@ public final class JsonParserStream implements Closeable, Flushable {
                 final NamespaceAndName namespaceAndName = resolveNamespace(jsonElementName, parentSchema);
                 final String localName = namespaceAndName.getName();
                 addNamespace(namespaceAndName.getUri());
-                if (namesakes.contains(jsonElementName)) {
+                if (!namesakes.add(jsonElementName)) {
                     throw new JsonSyntaxException("Duplicate name " + jsonElementName + " in JSON input.");
                 }
-                namesakes.add(jsonElementName);
 
-                final Deque<DataSchemaNode> childDataSchemaNodes =
-                        ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, localName, getCurrentNamespace());
-                if (childDataSchemaNodes.isEmpty()) {
-                    throw new IllegalStateException("Schema for node with name " + localName + " and namespace "
-                            + getCurrentNamespace() + " doesn't exist.");
-                }
+                final Deque<DataSchemaNode> childDataSchemaNodes = ParserStreamUtils.findSchemaNodeByNameAndNamespace(
+                    parentSchema, localName, getCurrentNamespace());
+                Preconditions.checkState(!childDataSchemaNodes.isEmpty(),
+                    "Schema for node with name %s and namespace %s does not exist.", localName, getCurrentNamespace());
 
-                final AbstractNodeDataWithSchema newChild = ((CompositeNodeDataWithSchema) parent).addChild(childDataSchemaNodes);
+                final AbstractNodeDataWithSchema newChild = ((CompositeNodeDataWithSchema) parent)
+                        .addChild(childDataSchemaNodes);
                 if (newChild instanceof AnyXmlNodeDataWithSchema) {
                     readAnyXmlValue(in, (AnyXmlNodeDataWithSchema) newChild, jsonElementName);
                 } else {
@@ -356,8 +359,6 @@ public final class JsonParserStream implements Closeable, Flushable {
     private URI getCurrentNamespace() {
         return namespaces.peek();
     }
-
-
 
     private static class NamespaceAndName {
         private final URI uri;
