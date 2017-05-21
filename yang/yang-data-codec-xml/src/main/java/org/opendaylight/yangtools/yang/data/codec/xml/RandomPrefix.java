@@ -29,11 +29,11 @@ class RandomPrefix {
     private final NamespaceContext context;
 
     RandomPrefix() {
-        this.context = null;
+        this(null);
     }
 
     RandomPrefix(final NamespaceContext context) {
-        this.context = Preconditions.checkNotNull(context);
+        this.context = context;
     }
 
     Iterable<Entry<URI, String>> getPrefixes() {
