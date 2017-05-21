@@ -10,18 +10,19 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import java.net.URI;
 import java.util.Map.Entry;
 import javax.annotation.Nonnull;
+import javax.xml.namespace.NamespaceContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.util.AbstractStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 final class RandomPrefixInstanceIdentifierSerializer extends AbstractStringInstanceIdentifierCodec {
-    private final RandomPrefix prefixes = new RandomPrefix();
     private final DataSchemaContextTree schemaTree;
+    private final RandomPrefix prefixes;
 
-
-    RandomPrefixInstanceIdentifierSerializer(SchemaContext ctx) {
-        schemaTree = DataSchemaContextTree.from(ctx);
+    RandomPrefixInstanceIdentifierSerializer(final SchemaContext schemaContext, final NamespaceContext nsContext) {
+        schemaTree = DataSchemaContextTree.from(schemaContext);
+        prefixes = new RandomPrefix(nsContext);
     }
 
     Iterable<Entry<URI, String>> getPrefixes() {

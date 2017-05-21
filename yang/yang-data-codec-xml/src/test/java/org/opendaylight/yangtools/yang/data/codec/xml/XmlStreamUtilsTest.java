@@ -76,7 +76,7 @@ public class XmlStreamUtilsTest {
         name = getAttrQName("namespace2", "2012-12-12", "attr", Optional.absent());
         final Map.Entry<QName, String> attributeEntryNoPrefix = new AbstractMap.SimpleEntry<>(name, "value");
 
-        final RandomPrefix randomPrefix = new RandomPrefix();
+        final RandomPrefix randomPrefix = new RandomPrefix(null);
         XMLStreamWriterUtils.writeAttribute(writer, attributeEntry, randomPrefix);
         XMLStreamWriterUtils.writeAttribute(writer, attributeEntryNoPrefix, randomPrefix);
 

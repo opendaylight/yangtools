@@ -28,12 +28,8 @@ class RandomPrefix {
     private final BiMap<URI, String> prefixes = HashBiMap.create();
     private final NamespaceContext context;
 
-    RandomPrefix() {
-        this.context = null;
-    }
-
     RandomPrefix(final NamespaceContext context) {
-        this.context = Preconditions.checkNotNull(context);
+        this.context = context;
     }
 
     Iterable<Entry<URI, String>> getPrefixes() {
@@ -44,6 +40,13 @@ class RandomPrefix {
         String prefix = prefixes.get(namespace);
         if (prefix != null) {
             return prefix;
+        }
+
+        if (context != null) {
+            prefix = context.getPrefix(namespace.toString());
+            if (prefix != null) {
+                return prefix;
+            }
         }
 
         do {
