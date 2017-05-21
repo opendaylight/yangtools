@@ -11,10 +11,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
@@ -27,7 +27,7 @@ public class RandomPrefixTest {
     @Test
     public void testEncodeDecode() throws Exception {
 
-        final List<String> allGenerated = Lists.newArrayList();
+        final List<String> allGenerated = new ArrayList<>(MAX_COUNTER);
         for (int i = 0; i < MAX_COUNTER; i++) {
             final String encoded = RandomPrefix.encode(i);
             assertEquals(RandomPrefix.decode(encoded), i);
@@ -37,14 +37,14 @@ public class RandomPrefixTest {
         assertEquals(allGenerated.size(), MAX_COUNTER);
         assertEquals("dPT", allGenerated.get(MAX_COUNTER - 1));
         assertEquals("a", allGenerated.get(0));
-        assertEquals(allGenerated.size(), Sets.newHashSet(allGenerated).size());
+        assertEquals(allGenerated.size(), new HashSet<>(allGenerated).size());
     }
 
     @Test
     public void testQNameWithPrefix() throws Exception {
-        final RandomPrefix a = new RandomPrefix();
+        final RandomPrefix a = new RandomPrefix(null);
 
-        final List<String> allGenerated = Lists.newArrayList();
+        final List<String> allGenerated = new ArrayList<>();
         for (int i = 0; i < MAX_COUNTER; i++) {
             final String prefix = RandomPrefix.encode(i);
             final URI uri = new URI("localhost:" + prefix);
@@ -65,7 +65,7 @@ public class RandomPrefixTest {
 
     @Test
     public void test2QNames1Namespace() throws Exception {
-        final RandomPrefix a = new RandomPrefix();
+        final RandomPrefix a = new RandomPrefix(null);
 
         final URI uri = URI.create("localhost");
         final QName qName = QName.create(QNameModule.create(uri, new Date()), "local-name");
@@ -76,7 +76,7 @@ public class RandomPrefixTest {
 
     @Test
     public void testQNameNoPrefix() throws Exception {
-        final RandomPrefix a = new RandomPrefix();
+        final RandomPrefix a = new RandomPrefix(null);
 
         final URI uri = URI.create("localhost");
         QName qName = QName.create(uri, new Date(), "local-name");

@@ -8,9 +8,14 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URI;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.XMLConstants;
@@ -63,10 +68,14 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         TRANSFORMER_FACTORY = f;
     }
 
+    private static final Set<String> BROKEN_NAMESPACES = ConcurrentHashMap.newKeySet();
+
+    private final RandomPrefix prefixes;
     final XMLStreamWriter writer;
 
     XMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer) {
         this.writer = Preconditions.checkNotNull(writer);
+        this.prefixes = new RandomPrefix(writer.getNamespaceContext());
     }
 
     /**
@@ -77,7 +86,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
      * @return A new {@link NormalizedNodeStreamWriter}
      */
     public static NormalizedNodeStreamWriter create(final XMLStreamWriter writer, final SchemaContext context) {
-        return create( writer, context, SchemaPath.ROOT);
+        return create(writer, context, SchemaPath.ROOT);
     }
 
     /**
@@ -106,8 +115,6 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         return SchemalessXMLStreamNormalizedNodeStreamWriter.newInstance(writer);
     }
 
-    abstract void writeAttributes(@Nonnull final Map<QName, String> attributes) throws IOException;
-
     abstract void writeValue(final XMLStreamWriter xmlWriter, final QName qname,
             @Nonnull final Object value, T context) throws IOException, XMLStreamException;
 
@@ -116,6 +123,40 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     abstract void startListItem(final PathArgument name) throws IOException;
 
     abstract void endNode(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException;
+
+    private void writeAttributes(@Nonnull final Map<QName, String> attributes) throws IOException {
+        for (final Entry<QName, String> qNameStringEntry : attributes.entrySet()) {
+            try {
+                final QName qname = qNameStringEntry.getKey();
+                final String namespace = qname.getNamespace().toString();
+
+                if (!Strings.isNullOrEmpty(namespace)) {
+                    final String prefix = getPrefix(qname.getNamespace(), namespace);
+                    writer.writeAttribute(prefix, namespace, qname.getLocalName(), qNameStringEntry.getValue());
+                } else {
+                    writer.writeAttribute(qname.getLocalName(), qNameStringEntry.getValue());
+                }
+            } catch (final XMLStreamException e) {
+                throw new IOException("Unable to emit attribute " + qNameStringEntry, e);
+            }
+        }
+    }
+
+    private String getPrefix(final URI uri, final String str) throws XMLStreamException {
+        final String prefix = writer.getPrefix(str);
+        if (prefix != null) {
+            return prefix;
+        }
+
+        // This is needed to recover from attributes emitted while the namespace was not declared. Ordinarily
+        // attribute namespaces would be bound in the writer, so the resulting XML is efficient, but we cannot rely
+        // on that having been done.
+        if (BROKEN_NAMESPACES.add(str)) {
+            LOG.info("Namespace {} was not bound, please fix the caller", str, new Throwable());
+        }
+
+        return prefixes.encodePrefix(uri);
+    }
 
     private void writeStartElement(final QName qname) throws XMLStreamException {
         String ns = qname.getNamespace().toString();
