@@ -40,7 +40,7 @@ import org.w3c.dom.Node;
 public class DomSerializerTestUtils {
     static final Document DOC = XmlDocumentUtils.getDocument();
     static final Element DATA = DOC.createElement("data");
-    static final NodeSerializerDispatcher MOCK_DISPATCHER = Mockito.mock(NodeSerializerDispatcher.class);
+    static final NodeSerializerDispatcher<Element> MOCK_DISPATCHER = Mockito.mock(NodeSerializerDispatcher.class);
     static final XmlCodecProvider CODEC_PROVIDER = TypeDefinitionAwareCodec::from;
 
     private DomSerializerTestUtils() {
@@ -76,11 +76,11 @@ public class DomSerializerTestUtils {
         }
     }
 
-    public static QName generateQname(String name) {
+    public static QName generateQname(final String name) {
         return QName.create("dom-serializer-test", "2016-01-01", name);
     }
 
-    public static void testResults(String node, Element element) {
+    public static void testResults(final String node, final Element element) {
         DATA.appendChild(element);
         final String tempXml = toString(DATA);
 

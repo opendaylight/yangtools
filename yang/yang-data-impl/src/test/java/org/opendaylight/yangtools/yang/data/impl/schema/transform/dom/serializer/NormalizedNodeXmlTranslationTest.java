@@ -167,7 +167,7 @@ public class NormalizedNodeXmlTranslationTest {
 
         final NormalizedNodeBuilder<NodeWithValue, Object, LeafSetEntryNode<Object>> leafList1Builder = Builders
                 .leafSetEntryBuilder().withNodeIdentifier(
-                        new NodeWithValue(getNodeIdentifier("leafList").getNodeType(), "a"));
+                        new NodeWithValue<>(getNodeIdentifier("leafList").getNodeType(), "a"));
 
         leafList1Builder.withValue("a");
 
