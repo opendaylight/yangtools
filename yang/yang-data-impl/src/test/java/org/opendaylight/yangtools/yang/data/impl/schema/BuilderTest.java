@@ -15,12 +15,12 @@ import static org.mockito.Mockito.mock;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -146,12 +146,11 @@ public class BuilderTest {
                 .build();
         final LinkedList<LeafSetNode<?>> mapEntryNodeColl = new LinkedList<>();
         mapEntryNodeColl.add((LeafSetNode<?>)orderedLeafSet);
-        final UnmodifiableCollection<?> leafSetCollection = (UnmodifiableCollection<?>)orderedLeafSet.getValue();
+        final Collection<?> leafSetCollection = orderedLeafSet.getValue();
         final NormalizedNode<?, ?> orderedMapNodeSchemaAware = ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(leafList)
                 .withChildValue("baz")
                 .build();
-        final UnmodifiableCollection<?> SchemaAwareleafSetCollection = (UnmodifiableCollection<?>)orderedMapNodeSchemaAware
-                .getValue();
+        final Collection<?> SchemaAwareleafSetCollection = orderedMapNodeSchemaAware.getValue();
         final NormalizedNode<?, ?> orderedLeafSetShemaAware = ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(leafList,
                 (LeafSetNode<?>)orderedLeafSet)
                 .build();
