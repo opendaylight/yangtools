@@ -1,7 +1,7 @@
 module semantic-version {
     sv:semantic-version "0.0.1";
 
-    namespace "urn:opendaylight:yang:extension:semantic-version";
+    namespace "http://openconfig.net/yang/openconfig-ext";
     prefix sv;
     yang-version 1;
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:bar="bar"
-        xmlns:sv="urn:opendaylight:yang:extension:semantic-version" name="bar">
+        xmlns:sv="http://openconfig.net/yang/openconfig-ext" name="bar">
     <yang-version value="1"></yang-version>
     <namespace uri="bar"></namespace>
     <prefix value="bar"></prefix>

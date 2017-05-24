@@ -42,7 +42,7 @@ public class SemanticVersionComplexTest {
 
         final Module foo = context.findModuleByNamespace(URI.create("foo")).iterator().next();
         final Module semVer = context.findModuleByNamespace(
-            URI.create("urn:opendaylight:yang:extension:semantic-version")).iterator().next();
+            URI.create("http://openconfig.net/yang/openconfig-ext")).iterator().next();
 
         // check module versions
         assertEquals(SemVer.valueOf("1.3.95"), semVer.getSemanticVersion());
@@ -88,7 +88,7 @@ public class SemanticVersionComplexTest {
 
         final Module foo = context.findModuleByNamespace(URI.create("foo")).iterator().next();
         final Module semVer = context.findModuleByNamespace(URI.create(
-            "urn:opendaylight:yang:extension:semantic-version")).iterator().next();
+            "http://openconfig.net/yang/openconfig-ext")).iterator().next();
 
         // check module versions
         assertEquals(SemVer.valueOf("2.5.50"), semVer.getSemanticVersion());

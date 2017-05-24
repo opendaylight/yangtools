@@ -23,7 +23,7 @@ public enum SupportedExtensionsMapping implements StatementDefinition {
     ANYXML_SCHEMA_LOCATION("urn:opendaylight:yang:extension:yang-ext", "2013-07-09",
         AnyxmlSchemaLocationStatementImpl.class, AnyxmlSchemaLocationEffectiveStatementImpl.class,
         "anyxml-schema-location", "target-node", false),
-    SEMANTIC_VERSION("urn:opendaylight:yang:extension:semantic-version", "2016-02-02",
+    SEMANTIC_VERSION("http://openconfig.net/yang/openconfig-ext", "2016-02-02",
         SemanticVersionStatementImpl.class, SemanticVersionEffectiveStatementImpl.class,
         "semantic-version", "semantic-version", false);
 

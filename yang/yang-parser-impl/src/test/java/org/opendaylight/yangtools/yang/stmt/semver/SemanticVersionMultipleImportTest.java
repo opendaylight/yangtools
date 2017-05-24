@@ -56,7 +56,7 @@ public class SemanticVersionMultipleImportTest {
         assertNotNull(context);
 
         Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
-        Module semVer = context.findModuleByNamespace(new URI("urn:opendaylight:yang:extension:semantic-version"))
+        Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
                 .iterator().next();
 
         assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion());
@@ -72,7 +72,7 @@ public class SemanticVersionMultipleImportTest {
         assertNotNull(context);
 
         Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
-        Module semVer = context.findModuleByNamespace(new URI("urn:opendaylight:yang:extension:semantic-version"))
+        Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
                 .iterator().next();
 
         assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion());

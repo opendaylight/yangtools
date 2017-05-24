@@ -28,7 +28,7 @@ public class SemanticVersionIgnoringRevisionTest {
 
         Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
         Module bar = context.findModuleByNamespace(new URI("bar")).iterator().next();
-        Module semVer = context.findModuleByNamespace(new URI("urn:opendaylight:yang:extension:semantic-version"))
+        Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
                 .iterator().next();
 
         assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion());
@@ -43,7 +43,7 @@ public class SemanticVersionIgnoringRevisionTest {
         assertNotNull(context);
 
         Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
-        Module semVer = context.findModuleByNamespace(new URI("urn:opendaylight:yang:extension:semantic-version"))
+        Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
                 .iterator().next();
         Module bar = StmtTestUtils.findImportedModule(context, foo, "bar");
 
