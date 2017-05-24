@@ -431,12 +431,8 @@ class SchemaContextEmitter {
     }
 
     private void emitTypeNodeDerived(final TypeDefinition<?> typeDefinition) {
-        final TypeDefinition<?> baseType;
-        if (typeDefinition.getBaseType() != null) {
-            baseType = typeDefinition.getBaseType();
-        } else {
-            baseType = typeDefinition;
-        }
+        final TypeDefinition<?> b = typeDefinition.getBaseType();
+        final TypeDefinition<?> baseType = b == null ? typeDefinition : b;
         writer.startTypeNode(baseType.getQName());
         emitTypeBodyNodes(typeDefinition);
         writer.endNode();
@@ -535,49 +531,60 @@ class SchemaContextEmitter {
     }
 
     private static String toLengthString(final List<LengthConstraint> list) {
-        final StringBuilder lengthStr = new StringBuilder();
-        final Iterator<LengthConstraint> constIt = list.iterator();
-        while (constIt.hasNext()) {
-            final LengthConstraint current = constIt.next();
-            if (current.getMin() == current.getMax()) {
-                lengthStr.append(current.getMin());
-            } else {
-                lengthStr.append(current.getMin());
-                lengthStr.append("..");
-                lengthStr.append(current.getMax());
-            }
-            if (constIt.hasNext()) {
-                lengthStr.append("|");
-            }
+        final Iterator<LengthConstraint> it = list.iterator();
+        if (!it.hasNext()) {
+            return "";
         }
-        return lengthStr.toString();
+
+        final StringBuilder sb = new StringBuilder();
+        boolean haveNext;
+        do {
+            final LengthConstraint current = it.next();
+            haveNext = it.hasNext();
+            appendRange(sb, current.getMin(), current.getMax(), haveNext);
+        } while (haveNext);
+
+        return sb.toString();
     }
 
     private static String toRangeString(final List<RangeConstraint> list) {
-        final StringBuilder lengthStr = new StringBuilder();
-        final Iterator<RangeConstraint> constIt = list.iterator();
-        while (constIt.hasNext()) {
-            final RangeConstraint current = constIt.next();
-            if (current.getMin() == current.getMax()) {
-                lengthStr.append(current.getMin());
-            } else {
-                lengthStr.append(current.getMin());
-                lengthStr.append("..");
-                lengthStr.append(current.getMax());
-            }
-            if (constIt.hasNext()) {
-                lengthStr.append("|");
-            }
+        final Iterator<RangeConstraint> it = list.iterator();
+        if (!it.hasNext()) {
+            return "";
         }
-        return lengthStr.toString();
+
+        final StringBuilder sb = new StringBuilder();
+        boolean haveNext;
+        do {
+            final RangeConstraint current = it.next();
+            haveNext = it.hasNext();
+            appendRange(sb, current.getMin(), current.getMax(), haveNext);
+        } while (haveNext);
+
+        return sb.toString();
+    }
+
+    private static void appendRange(final StringBuilder sb, final Number min, final Number max,
+            final boolean haveNext) {
+        sb.append(min);
+        if (!min.equals(max)) {
+            sb.append("..");
+            sb.append(max);
+        }
+        if (haveNext) {
+            sb.append('|');
+        }
     }
 
     private void emitPatternNode(final PatternConstraint pattern) {
         writer.startPatternNode(pattern.getRawRegularExpression());
-        emitErrorMessageNode(pattern.getErrorMessage()); // FIXME: BUG-2444: Optional
-        emitErrorAppTagNode(pattern.getErrorAppTag()); // FIXME: BUG-2444: Optional
+        // FIXME: BUG-2444: Optional
+        emitErrorMessageNode(pattern.getErrorMessage());
+        // FIXME: BUG-2444: Optional
+        emitErrorAppTagNode(pattern.getErrorAppTag());
         emitDescriptionNode(pattern.getDescription());
-        emitReferenceNode(pattern.getReference()); // FIXME: BUG-2444: Optional
+        // FIXME: BUG-2444: Optional
+        emitReferenceNode(pattern.getReference());
         writer.endNode();
     }
 
@@ -586,7 +593,6 @@ class SchemaContextEmitter {
             writer.startDefaultNode(object.toString());
             writer.endNode();
         }
-
     }
 
     private void emitEnumSpecification(final EnumTypeDefinition typeDefinition) {
@@ -606,8 +612,7 @@ class SchemaContextEmitter {
 
     private void emitLeafrefSpecification(final LeafrefTypeDefinition typeDefinition) {
         emitPathNode(typeDefinition.getPathStatement());
-        // FIXME: BUG-2444: requireInstanceNode /Optional removed with (RFC6020 - Errata ID
-        // 2949)
+        // FIXME: BUG-2444: requireInstanceNode /Optional removed with (RFC6020 - Errata ID 2949)
         // Added in Yang 1.1
     }
 
@@ -1164,7 +1169,7 @@ class SchemaContextEmitter {
 
     private static boolean isExplicitStatement(final ContainerSchemaNode node) {
         return node instanceof EffectiveStatement
-                && ((EffectiveStatement) node).getDeclared().getStatementSource() == StatementSource.DECLARATION;
+                && ((EffectiveStatement<?, ?>) node).getDeclared().getStatementSource() == StatementSource.DECLARATION;
     }
 
     private void emitNotificationNode(final NotificationDefinition notification) {
