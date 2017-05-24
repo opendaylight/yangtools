@@ -19,6 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.type.DerivedTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,10 +51,10 @@ public final class LeafInterner {
             final T ret = (T) INTERNER.intern(sample);
             LOG.trace("Interned object {} to {}", sample, ret);
             return ret;
-        } else {
-            // Non-empty attributes, do not intern
-            return sample;
         }
+
+        // Non-empty attributes, do not intern
+        return sample;
     }
 
     /**
@@ -63,14 +65,23 @@ public final class LeafInterner {
      * @return An interner instance
      */
     @Nonnull public static <T extends LeafNode<?>> Interner<T> forSchema(@Nullable final LeafSchemaNode schema) {
-        if (schema != null) {
-            final TypeDefinition<?> type = schema.getType();
-            if (type instanceof BooleanTypeDefinition || type instanceof EnumTypeDefinition ||
-                    type instanceof IdentityrefTypeDefinition) {
-                return LeafInterner::intern;
-            }
+        if (schema != null && isLowCardinality(schema.getType())) {
+            return LeafInterner::intern;
         }
 
         return Preconditions::checkNotNull;
+    }
+
+    private static boolean isLowCardinality(final TypeDefinition<?> type) {
+        return type instanceof BooleanTypeDefinition
+                || type instanceof EnumTypeDefinition
+                || type instanceof IdentityrefTypeDefinition
+                || type instanceof IntegerTypeDefinition && isLowCardinalityInt((IntegerTypeDefinition) type);
+    }
+
+    private static boolean isLowCardinalityInt(final IntegerTypeDefinition type) {
+        // int8 has low enough range
+        // FIXME: once IntegerTypeDefinition#RangeRestrictions is fixed, we can efficiently examine other types
+        return DerivedTypes.isInt8(type);
     }
 }
