@@ -190,8 +190,8 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     }
 
     @Override
-    public boolean isEnabledSemanticVersioning() {
-        return sourceContext.isEnabledSemanticVersioning();
+    public boolean isEnabledOpenconfigVersioning() {
+        return sourceContext.isEnabledOpenconfigVersioning();
     }
 
     @Override

@@ -16,7 +16,7 @@ public enum ModelProcessingPhase {
      * Preliminary cross-source relationship resolution phase which collects
      * available module names and module namespaces. It is necessary in order to
      * correct resolution of unknown statements used in linkage phase (e.g.
-     * semantic version of yang modules).
+     * openconfig version of yang modules).
      */
     SOURCE_PRE_LINKAGE(INIT),
     /**

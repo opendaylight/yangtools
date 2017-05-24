@@ -1,0 +1,18 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+    yang-version 1;
+
+    import openconfig-extensions { prefix oc-ext; revision-date 2017-01-29; oc-ext:openconfig-version "0.0.1"; }
+    import bar { prefix bar; revision-date 2017-04-06; oc-ext:openconfig-version "2016.4.5"; }
+
+    revision 2016-01-01 {
+        description "test";
+    }
+    
+    oc-ext:openconfig-version "2016.1.1";
+
+    container foo-root {
+        uses bar:grp;
+    }
+}

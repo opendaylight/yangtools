@@ -61,7 +61,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     boolean isConfiguration();
 
-    boolean isEnabledSemanticVersioning();
+    boolean isEnabledOpenconfigVersioning();
 
     @Nonnull
     <K, V, KT extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(

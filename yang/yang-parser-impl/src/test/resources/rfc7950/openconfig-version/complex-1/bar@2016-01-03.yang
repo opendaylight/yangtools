@@ -1,0 +1,24 @@
+module bar {
+    namespace "bar";
+    prefix bar;
+    yang-version 1.1;
+
+    import openconfig-extensions { prefix oc-ext; oc-ext:openconfig-version "1.2.012"; }
+    import foobar { prefix foobar; oc-ext:openconfig-version "2.25.3"; }
+
+    revision "2016-01-03" {
+        description "Imported version";
+    }
+    oc-ext:openconfig-version "1.2.6";
+
+    container root {
+        container test-container {
+            uses foobar:test-grouping;
+        }
+    }
+
+    leaf-list should-present {
+        type string;
+        description "List of strings";
+    }
+}

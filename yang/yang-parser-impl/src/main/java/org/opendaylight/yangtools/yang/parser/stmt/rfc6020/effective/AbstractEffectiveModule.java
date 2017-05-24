@@ -93,8 +93,8 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
         final YangVersionEffectiveStatementImpl yangVersionStmt = firstEffective(YangVersionEffectiveStatementImpl.class);
         this.yangVersion = (yangVersionStmt == null) ? YangVersion.VERSION_1 : yangVersionStmt.argument();
 
-        final SemanticVersionEffectiveStatementImpl semanticVersionStmt = firstEffective(SemanticVersionEffectiveStatementImpl.class);
-        this.semanticVersion = (semanticVersionStmt == null) ? DEFAULT_SEMANTIC_VERSION : semanticVersionStmt.argument();
+        final OpenconfigVersionEffectiveStatementImpl semanticVersionStmt = firstEffective(OpenconfigVersionEffectiveStatementImpl.class);
+        this.semanticVersion = (semanticVersionStmt == null) ? DEFAULT_OPENCONFIG_VERSION : semanticVersionStmt.argument();
 
         final OrganizationEffectiveStatementImpl organizationStmt = firstEffective(OrganizationEffectiveStatementImpl.class);
         this.organization = (organizationStmt == null) ? null : organizationStmt.argument();
@@ -250,7 +250,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
 
         this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
-        if (ctx.isEnabledSemanticVersioning()) {
+        if (ctx.isEnabledOpenconfigVersioning()) {
             this.imports = ImmutableSet.copyOf(importsInit);
         } else {
             this.imports = ImmutableSet.copyOf(resolveModuleImports(importsInit, ctx));
@@ -412,7 +412,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
     }
 
     @Override
-    public SemVer getSemanticVersion() {
+    public SemVer getOpenconfigVersion() {
         return semanticVersion;
     }
 

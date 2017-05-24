@@ -61,9 +61,9 @@ import org.opendaylight.yangtools.concepts.SemVer;
 @Immutable
 public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIdentifier, NotificationNodeContainer {
     /**
-     * Default semantic version of Module.
+     * Default openconfig version of Module.
      */
-    SemVer DEFAULT_SEMANTIC_VERSION = SemVer.create(0, 0, 0);
+    SemVer DEFAULT_OPENCONFIG_VERSION = SemVer.create(0, 0, 0);
 
     /**
      * Returns the prefix of the module
