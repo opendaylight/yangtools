@@ -8,12 +8,12 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -105,6 +105,7 @@ public class ImmutableOrderedMapNodeBuilder implements CollectionNodeBuilder<Map
 
     @Override
     public OrderedMapNode build() {
+        value = ImmutableMap.copyOf(value);
         dirty = true;
         return new ImmutableOrderedMapNode(nodeIdentifier, value);
     }
@@ -122,9 +123,11 @@ public class ImmutableOrderedMapNodeBuilder implements CollectionNodeBuilder<Map
         return withoutChild(key);
     }
 
-    protected static final class ImmutableOrderedMapNode extends AbstractImmutableNormalizedNode<NodeIdentifier, Collection<MapEntryNode>> implements Immutable, OrderedMapNode {
+    protected static final class ImmutableOrderedMapNode extends
+            AbstractImmutableNormalizedNode<NodeIdentifier, Collection<MapEntryNode>> implements Immutable,
+            OrderedMapNode {
 
-        private final Map<NodeIdentifierWithPredicates, MapEntryNode> children;
+        final Map<NodeIdentifierWithPredicates, MapEntryNode> children;
 
         ImmutableOrderedMapNode(final NodeIdentifier nodeIdentifier,
                          final Map<NodeIdentifierWithPredicates, MapEntryNode> children) {
@@ -159,7 +162,7 @@ public class ImmutableOrderedMapNodeBuilder implements CollectionNodeBuilder<Map
 
         @Override
         public Collection<MapEntryNode> getValue() {
-            return UnmodifiableCollection.create(children.values());
+            return children.values();
         }
     }
 }
