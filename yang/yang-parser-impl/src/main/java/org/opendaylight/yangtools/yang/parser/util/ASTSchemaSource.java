@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
-import static org.opendaylight.yangtools.yang.model.api.Module.DEFAULT_SEMANTIC_VERSION;
+import static org.opendaylight.yangtools.yang.model.api.Module.DEFAULT_OPENCONFIG_VERSION;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
@@ -19,7 +19,7 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
-import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.OpenconfigVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
 
@@ -48,12 +48,12 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
     public static final Function<ASTSchemaSource, ParserRuleContext> GET_AST = ASTSchemaSource::getAST;
 
     private final YangModelDependencyInfo depInfo;
-    private final SemVerSourceIdentifier semVerId;
+    private final OpenconfigVerSourceIdentifier semVerId;
     private final ParserRuleContext tree;
     private final SourceIdentifier id;
     private final String symbolicName;
 
-    private ASTSchemaSource(@Nonnull final SourceIdentifier id, @Nonnull final SemVerSourceIdentifier semVerId,
+    private ASTSchemaSource(@Nonnull final SourceIdentifier id, @Nonnull final OpenconfigVerSourceIdentifier semVerId,
             @Nonnull final ParserRuleContext tree, @Nonnull final YangModelDependencyInfo depInfo,
             @Nullable final String symbolicName) {
         this.depInfo = Preconditions.checkNotNull(depInfo);
@@ -76,7 +76,7 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
             throws YangSyntaxErrorException {
         final YangModelDependencyInfo depInfo = YangModelDependencyInfo.fromAST(name, tree);
         final SourceIdentifier id = getSourceId(depInfo);
-        final SemVerSourceIdentifier semVerId = getSemVerSourceId(depInfo);
+        final OpenconfigVerSourceIdentifier semVerId = getOpenconfigVerSourceId(depInfo);
         return new ASTSchemaSource(id, semVerId, tree, depInfo, null);
     }
 
@@ -86,12 +86,12 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
                 : RevisionSourceIdentifier.create(name, depInfo.getFormattedRevision());
     }
 
-    private static SemVerSourceIdentifier getSemVerSourceId(final YangModelDependencyInfo depInfo) {
+    private static OpenconfigVerSourceIdentifier getOpenconfigVerSourceId(final YangModelDependencyInfo depInfo) {
         return depInfo.getFormattedRevision() == null
-                ? SemVerSourceIdentifier.create(depInfo.getName(),
-                    depInfo.getSemanticVersion().or(DEFAULT_SEMANTIC_VERSION))
-                        : SemVerSourceIdentifier.create(depInfo.getName(), depInfo.getFormattedRevision(),
-                            depInfo.getSemanticVersion().or(DEFAULT_SEMANTIC_VERSION));
+                ? OpenconfigVerSourceIdentifier.create(depInfo.getName(),
+                    depInfo.getOpenconfigVersion().or(DEFAULT_OPENCONFIG_VERSION))
+                        : OpenconfigVerSourceIdentifier.create(depInfo.getName(), depInfo.getFormattedRevision(),
+                            depInfo.getOpenconfigVersion().or(DEFAULT_OPENCONFIG_VERSION));
     }
 
     /**
@@ -158,11 +158,11 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
         final YangModelDependencyInfo depInfo = YangModelDependencyInfo.fromAST(identifier.getName(), tree);
         final SourceIdentifier id = getSourceId(depInfo);
 
-        final SemVerSourceIdentifier semVerId;
-        if (identifier instanceof SemVerSourceIdentifier && !depInfo.getSemanticVersion().isPresent()) {
-            semVerId = (SemVerSourceIdentifier) identifier;
+        final OpenconfigVerSourceIdentifier semVerId;
+        if (identifier instanceof OpenconfigVerSourceIdentifier && !depInfo.getOpenconfigVersion().isPresent()) {
+            semVerId = (OpenconfigVerSourceIdentifier) identifier;
         } else {
-            semVerId = getSemVerSourceId(depInfo);
+            semVerId = getOpenconfigVerSourceId(depInfo);
         }
 
         return new ASTSchemaSource(id, semVerId, tree, depInfo, symbolicName);
@@ -179,7 +179,7 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
         return Optional.ofNullable(symbolicName);
     }
 
-    public SemVerSourceIdentifier getSemVerIdentifier() {
+    public OpenconfigVerSourceIdentifier getSemVerIdentifier() {
         return semVerId;
     }
 

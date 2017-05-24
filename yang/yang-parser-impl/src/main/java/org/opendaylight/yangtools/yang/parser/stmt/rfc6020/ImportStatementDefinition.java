@@ -39,13 +39,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionModuleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.OpenconfigVersionModuleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.OpenconfigVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToSemVerModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToOpenconfigVerModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
@@ -58,7 +58,7 @@ public class ImportStatementDefinition extends
             .builder(YangStmtMapping.IMPORT)
             .addMandatory(YangStmtMapping.PREFIX)
             .addOptional(YangStmtMapping.REVISION_DATE)
-            .addOptional(SupportedExtensionsMapping.SEMANTIC_VERSION)
+            .addOptional(SupportedExtensionsMapping.OPENCONFIG_VERSION)
             .build();
 
     public ImportStatementDefinition() {
@@ -123,8 +123,8 @@ public class ImportStatementDefinition extends
     @Override
     public void onLinkageDeclared(
             final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt) {
-        if (stmt.isEnabledSemanticVersioning()) {
-            SemanticVersionImport.onLinkageDeclared(stmt);
+        if (stmt.isEnabledOpenconfigVersioning()) {
+            OpenconfigVersionImport.onLinkageDeclared(stmt);
         } else {
             RevisionImport.onLinkageDeclared(stmt);
         }
@@ -219,8 +219,8 @@ public class ImportStatementDefinition extends
         }
     }
 
-    private static class SemanticVersionImport {
-        private SemanticVersionImport() {
+    private static class OpenconfigVersionImport {
+        private OpenconfigVersionImport() {
             throw new UnsupportedOperationException("Utility class");
         }
 
@@ -245,7 +245,7 @@ public class ImportStatementDefinition extends
                     if (importedModuleEntry != null) {
                         importedModule = importedModuleEntry.getValue();
                         importedModuleIdentifier = importedModule.getFromNamespace(ModuleCtxToModuleIdentifier.class, importedModule);
-                        semVerModuleIdentifier = createSemVerModuleIdentifier(importedModuleIdentifier, importedModuleEntry.getKey());
+                        semVerModuleIdentifier = createOpenconfigVerModuleIdentifier(importedModuleIdentifier, importedModuleEntry.getKey());
                     } else {
                         throw new InferenceException(stmt.getStatementSourceReference(),
                                 "Unable to find module compatible with requested import [%s(%s)].", impIdentifier
@@ -255,7 +255,7 @@ public class ImportStatementDefinition extends
                     linkageTarget.get().addToNs(ImportedModuleContext.class, importedModuleIdentifier, importedModule);
                     final String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
                     stmt.addToNs(ImpPrefixToModuleIdentifier.class, impPrefix, importedModuleIdentifier);
-                    stmt.addToNs(ImpPrefixToSemVerModuleIdentifier.class, impPrefix, semVerModuleIdentifier);
+                    stmt.addToNs(ImpPrefixToOpenconfigVerModuleIdentifier.class, impPrefix, semVerModuleIdentifier);
 
                     final URI modNs = firstAttributeOf(importedModule.declaredSubstatements(), NamespaceStatement.class);
                     stmt.addToNs(URIStringToImpPrefix.class, modNs.toString(), impPrefix);
@@ -273,9 +273,9 @@ public class ImportStatementDefinition extends
         }
 
         private static SemVer getRequestedImportVersion(final Mutable<?, ?, ?> impStmt) {
-            SemVer requestedImportVersion = impStmt.getFromNamespace(SemanticVersionNamespace.class, impStmt);
+            SemVer requestedImportVersion = impStmt.getFromNamespace(OpenconfigVersionNamespace.class, impStmt);
             if (requestedImportVersion == null) {
-                requestedImportVersion = Module.DEFAULT_SEMANTIC_VERSION;
+                requestedImportVersion = Module.DEFAULT_OPENCONFIG_VERSION;
             }
             return requestedImportVersion;
         }
@@ -283,7 +283,7 @@ public class ImportStatementDefinition extends
         private static Entry<SemVer, StmtContext<?, ?, ?>> findRecentCompatibleModuleEntry(final String moduleName,
                 final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> impStmt) {
             NavigableMap<SemVer, StmtContext<?, ?, ?>> allRelevantModulesMap = impStmt.getFromNamespace(
-                    SemanticVersionModuleNamespace.class, moduleName);
+                    OpenconfigVersionModuleNamespace.class, moduleName);
             if (allRelevantModulesMap == null) {
                 return null;
             }
@@ -303,7 +303,7 @@ public class ImportStatementDefinition extends
                     Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_IMP));
         }
 
-        private static ModuleIdentifier createSemVerModuleIdentifier(final ModuleIdentifier importedModuleIdentifier,
+        private static ModuleIdentifier createOpenconfigVerModuleIdentifier(final ModuleIdentifier importedModuleIdentifier,
                 final SemVer semVer) {
             return ModuleIdentifierImpl.create(importedModuleIdentifier.getName(),
                 Optional.ofNullable(importedModuleIdentifier.getNamespace()),

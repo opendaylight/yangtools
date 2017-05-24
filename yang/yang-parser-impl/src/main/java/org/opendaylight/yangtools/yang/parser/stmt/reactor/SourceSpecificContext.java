@@ -90,8 +90,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         this.source = Preconditions.checkNotNull(source);
     }
 
-    boolean isEnabledSemanticVersioning(){
-        return currentContext.isEnabledSemanticVersioning();
+    boolean isEnabledOpenconfigVersioning(){
+        return currentContext.isEnabledOpenconfigVersioning();
     }
 
     ModelProcessingPhase getInProgressPhase() {

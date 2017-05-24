@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToSemVerModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToOpenconfigVerModuleIdentifier;
 
 public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, ImportStatement> implements
         ModuleImport {
@@ -42,15 +42,15 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
                     ctx.getStatementSourceReference());
         }
 
-        if (!ctx.isEnabledSemanticVersioning()) {
+        if (!ctx.isEnabledOpenconfigVersioning()) {
             RevisionDateEffectiveStatementImpl revisionDateStmt = firstEffective(RevisionDateEffectiveStatementImpl.class);
             this.revision = (revisionDateStmt == null) ? SimpleDateFormatUtil.DEFAULT_DATE_IMP : revisionDateStmt
                     .argument();
-            this.semVer = Module.DEFAULT_SEMANTIC_VERSION;
+            this.semVer = Module.DEFAULT_OPENCONFIG_VERSION;
         } else {
-            ModuleIdentifier importedModuleIdentifier = ctx.getFromNamespace(ImpPrefixToSemVerModuleIdentifier.class, prefix);
+            ModuleIdentifier importedModuleIdentifier = ctx.getFromNamespace(ImpPrefixToOpenconfigVerModuleIdentifier.class, prefix);
             revision = importedModuleIdentifier.getRevision();
-            semVer = importedModuleIdentifier.getSemanticVersion();
+            semVer = importedModuleIdentifier.getOpenconfigVersion();
         }
 
         DescriptionEffectiveStatementImpl descriptionStmt = firstEffective(DescriptionEffectiveStatementImpl.class);
@@ -71,7 +71,7 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
     }
 
     @Override
-    public SemVer getSemanticVersion() {
+    public SemVer getOpenconfigVersion() {
         return semVer;
     }
 
@@ -115,7 +115,7 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).add("moduleName", getModuleName())
-                .add("revision", getRevision()).add("semantic version", getSemanticVersion())
+                .add("revision", getRevision()).add("openconfig version", getOpenconfigVersion())
                 .add("prefix", getPrefix()).add("description", getDescription())
                 .add("reference", getReference()).toString();
     }

@@ -21,14 +21,14 @@ final class ModuleImportImpl implements ModuleImport {
     private final String prefix;
 
     public ModuleImportImpl(final String moduleName, final Date revision, final String prefix) {
-        this(moduleName, revision, prefix, Module.DEFAULT_SEMANTIC_VERSION);
+        this(moduleName, revision, prefix, Module.DEFAULT_OPENCONFIG_VERSION);
     }
 
     public ModuleImportImpl(final String moduleName, final Date revision, final String prefix, final SemVer semVer) {
         this.moduleName = Preconditions.checkNotNull(moduleName, "Module name must not be null.");
         this.revision = revision;
         this.prefix = Preconditions.checkNotNull(prefix, "Import prefix must not be null.");
-        this.semVer = Preconditions.checkNotNull(semVer, "Semantic version of module must not be null.");
+        this.semVer = Preconditions.checkNotNull(semVer, "Openconfig version of module must not be null.");
     }
 
     @Override
@@ -42,7 +42,7 @@ final class ModuleImportImpl implements ModuleImport {
     }
 
     @Override
-    public SemVer getSemanticVersion() {
+    public SemVer getOpenconfigVersion() {
         return semVer;
     }
 
@@ -83,7 +83,7 @@ final class ModuleImportImpl implements ModuleImport {
         if (!Objects.equals(getPrefix(), other.getPrefix())) {
             return false;
         }
-        if (!Objects.equals(getSemanticVersion(), other.getSemanticVersion())) {
+        if (!Objects.equals(getOpenconfigVersion(), other.getOpenconfigVersion())) {
             return false;
         }
         return true;

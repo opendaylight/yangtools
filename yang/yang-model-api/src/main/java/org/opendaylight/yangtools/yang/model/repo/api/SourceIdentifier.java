@@ -95,7 +95,7 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
     }
 
     /**
-     * Return an interned reference to a equivalent SemVerSourceIdentifier.
+     * Return an interned reference to a equivalent OpenconfigVerSourceIdentifier.
      *
      * @return Interned reference, or this object if it was interned.
      */
@@ -124,14 +124,14 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
 
     /**
      * <p>
-     * Since we've got two ways of model versioning (revision &amp; semantic version),
+     * Since we've got two ways of model versioning (revision &amp; openconfig version),
      * this method shouldn't be called directly anymore. Eventually, callers of this method
      * should be notified before method gets deleted.
      * @deprecated use either
      * <ul>
-     * <li>{@link SemVerSourceIdentifier#create(String, SemVer)}</li>
-     * <li>{@link SemVerSourceIdentifier#create(String, Optional, SemVer)}</li>
-     * <li>{@link SemVerSourceIdentifier#create(String, String, SemVer)}</li>
+     * <li>{@link OpenconfigVerSourceIdentifier#create(String, SemVer)}</li>
+     * <li>{@link OpenconfigVerSourceIdentifier#create(String, Optional, SemVer)}</li>
+     * <li>{@link OpenconfigVerSourceIdentifier#create(String, String, SemVer)}</li>
      * </ul>
      * or
      * <ul>

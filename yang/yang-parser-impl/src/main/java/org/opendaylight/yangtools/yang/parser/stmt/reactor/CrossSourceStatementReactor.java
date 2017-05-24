@@ -235,7 +235,7 @@ public final class CrossSourceStatementReactor {
          * are present in resulting SchemaContext. Any other library sources are
          * ignored and this also applies to error reporting.
          *
-         * Library sources are not supported in semantic version mode currently.
+         * Library sources are not supported in openconfig version mode currently.
          *
          * @param libSources
          *            yang sources which should be added into library sources

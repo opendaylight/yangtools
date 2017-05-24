@@ -55,17 +55,16 @@ public interface ModuleIdentifier {
     Date getRevision();
 
     /**
-     * Returns the semantic version of yang module.
+     * Returns the openconfig version of yang module.
      *
-     * If the semantic version is not specified, default semantic version of
+     * If the openconfig version is not specified, default openconfig version of
      * module is returned.
      *
-     * @return SemVer semantic version of yang module which is specified as
+     * @return SemVer openconfig version of yang module which is specified as
      *         argument of
-     *         (urn:opendaylight:yang:extension:semantic-version?revision
-     *         =2016-02-02)semantic-version statement
+     *         (http://openconfig.net/yang/openconfig-ext)openconfig-version statement
      */
-    default SemVer getSemanticVersion() {
-        return Module.DEFAULT_SEMANTIC_VERSION;
+    default SemVer getOpenconfigVersion() {
+        return Module.DEFAULT_OPENCONFIG_VERSION;
     }
 }

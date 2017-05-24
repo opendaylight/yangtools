@@ -30,8 +30,8 @@ import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionModuleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.OpenconfigVersionModuleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.OpenconfigVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
@@ -77,7 +77,7 @@ public class ModuleStatementSupport extends
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
             .addOptional(YangStmtMapping.YANG_VERSION)
-            .addOptional(SupportedExtensionsMapping.SEMANTIC_VERSION)
+            .addOptional(SupportedExtensionsMapping.OPENCONFIG_VERSION)
             .build();
 
     public ModuleStatementSupport() {
@@ -169,25 +169,25 @@ public class ModuleStatementSupport extends
         stmt.addToNs(ModuleIdentifierToModuleQName.class, moduleIdentifier, qNameModule);
         stmt.addToNs(ImpPrefixToModuleIdentifier.class, modulePrefix, moduleIdentifier);
 
-        if (stmt.isEnabledSemanticVersioning()) {
-            addToSemVerModuleNamespace(stmt);
+        if (stmt.isEnabledOpenconfigVersioning()) {
+            addToOpenconfigVerModuleNamespace(stmt);
         }
     }
 
-    private static void addToSemVerModuleNamespace(
+    private static void addToOpenconfigVerModuleNamespace(
             final Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt) {
         final String moduleName = stmt.getStatementArgument();
         NavigableMap<SemVer, StmtContext<?, ?, ?>> modulesMap = stmt.getFromNamespace(
-                SemanticVersionModuleNamespace.class, moduleName);
+                OpenconfigVersionModuleNamespace.class, moduleName);
         if (modulesMap == null) {
             modulesMap = new TreeMap<>();
         }
-        SemVer moduleSemVer = stmt.getFromNamespace(SemanticVersionNamespace.class, stmt);
+        SemVer moduleSemVer = stmt.getFromNamespace(OpenconfigVersionNamespace.class, stmt);
         if(moduleSemVer == null) {
-            moduleSemVer = Module.DEFAULT_SEMANTIC_VERSION;
+            moduleSemVer = Module.DEFAULT_OPENCONFIG_VERSION;
         }
         modulesMap.put(moduleSemVer, stmt);
-        stmt.addToNs(SemanticVersionModuleNamespace.class, moduleName, modulesMap);
+        stmt.addToNs(OpenconfigVersionModuleNamespace.class, moduleName, modulesMap);
     }
 
     @Override

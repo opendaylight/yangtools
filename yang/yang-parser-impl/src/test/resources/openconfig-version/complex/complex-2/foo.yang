@@ -1,0 +1,13 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+    yang-version 1;
+
+    import openconfig-extensions { prefix oc-ext; oc-ext:openconfig-version "2.5.40"; }
+    import bar { prefix bar; oc-ext:openconfig-version "4.1.1"; }
+
+    revision "2016-02-01" {
+        description "Initial version";
+    }
+    oc-ext:openconfig-version "2.32.2";
+}

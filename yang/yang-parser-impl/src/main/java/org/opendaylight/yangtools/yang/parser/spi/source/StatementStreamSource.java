@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
  * supplied statement definition map. This step is used as preparatory cross-source
  * relationship resolution phase which collects available module names and namespaces.
  * It is necessary in order to correct resolution of unknown statements used by linkage
- * phase (e.g. semantic version of yang modules).
+ * phase (e.g. openconfig version of yang modules).
  * </li>
  * <li>{@link #writeLinkage(StatementWriter, QNameToStatementDefinition, PrefixToModule)} -
  * Source MUST emit only statements related in linkage, which are present in

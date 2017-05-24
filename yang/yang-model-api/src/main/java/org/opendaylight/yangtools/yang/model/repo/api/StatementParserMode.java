@@ -16,8 +16,8 @@ public enum StatementParserMode {
      */
     DEFAULT_MODE,
     /**
-     * Semantic version mode of statement parser. If it is enabled, module
-     * imports are processed on the basis of semantic versions.
+     * Openconfig version mode of statement parser. If it is enabled, module
+     * imports are processed on the basis of openconfig versions.
      */
-    SEMVER_MODE
+    OPENCONFIG_VER_MODE
 }
