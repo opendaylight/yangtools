@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -39,7 +38,7 @@ public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T,
 
     protected ImmutableOrderedLeafSetNodeBuilder(final ImmutableOrderedLeafSetNode<T> node) {
         nodeIdentifier = node.getIdentifier();
-        value = node.getChildren();
+        value = node.children;
         dirty = true;
     }
 
@@ -65,19 +64,20 @@ public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T,
     @Override
     public ListNodeBuilder<T, LeafSetEntryNode<T>> withChild(final LeafSetEntryNode<T> child) {
         checkDirty();
-        this.value.put(child.getIdentifier(), child);
+        value.put(child.getIdentifier(), child);
         return this;
     }
 
     @Override
     public ListNodeBuilder<T, LeafSetEntryNode<T>> withoutChild(final PathArgument key) {
         checkDirty();
-        this.value.remove(key);
+        value.remove(key);
         return this;
     }
 
     @Override
     public OrderedLeafSetNode<T> build() {
+        value = ImmutableMap.copyOf(value);
         dirty = true;
         return new ImmutableOrderedLeafSetNode<>(nodeIdentifier, value);
     }
@@ -109,14 +109,14 @@ public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T,
 
     @Override
     public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(final T childValue) {
-        return withChildValue(childValue, Collections.emptyMap());
+        return withChildValue(childValue, ImmutableMap.of());
     }
 
     protected static final class ImmutableOrderedLeafSetNode<T> extends
             AbstractImmutableNormalizedNode<NodeIdentifier, Collection<LeafSetEntryNode<T>>> implements
             Immutable, OrderedLeafSetNode<T> {
 
-        private final Map<NodeWithValue, LeafSetEntryNode<T>> children;
+        final Map<NodeWithValue, LeafSetEntryNode<T>> children;
 
         ImmutableOrderedLeafSetNode(final NodeIdentifier nodeIdentifier,
                 final Map<NodeWithValue, LeafSetEntryNode<T>> children) {
@@ -139,10 +139,6 @@ public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T,
             return children.hashCode();
         }
 
-        private Map<NodeWithValue, LeafSetEntryNode<T>> getChildren() {
-            return Collections.unmodifiableMap(children);
-        }
-
         @Override
         protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
             return children.equals(((ImmutableOrderedLeafSetNode<?>) other).children);
@@ -155,7 +151,7 @@ public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T,
 
         @Override
         public Collection<LeafSetEntryNode<T>> getValue() {
-            return UnmodifiableCollection.create(children.values());
+            return children.values();
         }
     }
 
