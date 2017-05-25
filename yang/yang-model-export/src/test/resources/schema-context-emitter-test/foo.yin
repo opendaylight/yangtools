@@ -2,12 +2,6 @@
     <yang-version value="1"></yang-version>
     <namespace uri="foo-namespace"></namespace>
     <prefix value="foo-prefix"></prefix>
-    <organization>
-        <text></text>
-    </organization>
-    <contact>
-        <text></text>
-    </contact>
     <revision date="2016-08-05"></revision>
     <extension name="test-extension">
         <status value="current"></status>

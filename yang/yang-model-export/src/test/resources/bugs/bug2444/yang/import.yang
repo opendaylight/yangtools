@@ -1,0 +1,7 @@
+module import {
+    namespace "import";
+    prefix i;
+    yang-version 1.1;
+
+    import action { description "txt"; reference "ref"; prefix ac; revision-date 1970-01-01; }
+}
