@@ -78,7 +78,7 @@ public class Bug7844Test {
         assertTrue(myLeafCtx == targetCtx.getReferencedByLeafRefCtxByName(foo("my-leaf")));
     }
 
-    private void assertLeafRef(final LeafRefContext leafRefToTest, final LeafRefPath expectedLeafRefPath) {
+    private static void assertLeafRef(final LeafRefContext leafRefToTest, final LeafRefPath expectedLeafRefPath) {
         assertNotNull(leafRefToTest);
         assertNotNull(expectedLeafRefPath);
         assertTrue(leafRefToTest.getReferencedByChilds().isEmpty());

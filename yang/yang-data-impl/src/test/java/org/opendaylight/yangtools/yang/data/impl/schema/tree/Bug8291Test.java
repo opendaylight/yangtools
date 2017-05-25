@@ -57,7 +57,7 @@ public class Bug8291Test {
         writeInnerList(inMemoryDataTree);
     }
 
-    private void writeInnerList(final InMemoryDataTree inMemoryDataTree) throws DataValidationFailedException {
+    private static void writeInnerList(final InMemoryDataTree inMemoryDataTree) throws DataValidationFailedException {
         final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(
                 YangInstanceIdentifier.create(
