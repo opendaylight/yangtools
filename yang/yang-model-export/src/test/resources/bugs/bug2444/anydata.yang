@@ -1,0 +1,21 @@
+module anydata {
+    namespace anydata;
+    prefix ad;
+    yang-version 1.1;
+
+    anydata my-anydata {
+        when "1!=0";
+        must "1==1";
+        config true;
+        mandatory true;
+        if-feature "my-feature-1 or my-feature-2";
+        status deprecated;
+        description "decs";
+        reference "ref";
+        ad:my-ext "arg-val";
+    }
+
+    extension my-ext {
+        argument my-arg;
+    }
+}
