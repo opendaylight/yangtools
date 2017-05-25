@@ -1,0 +1,16 @@
+module default {
+    namespace default;
+    prefix def;
+    yang-version 1.1;
+
+    leaf-list my-leaflist-1 {
+        type string;
+        default "def-val-1";
+        default "def-val-2";
+        default "def-val-3";
+    }
+
+    leaf-list my-leaflist-2 {
+        type string;
+    }
+}

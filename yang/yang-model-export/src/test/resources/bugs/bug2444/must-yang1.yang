@@ -1,0 +1,15 @@
+module must-yang1 {
+    namespace "must-yang1";
+    prefix muy1;
+    yang-version 1;
+
+    notification n {
+    }
+
+    rpc r {
+        input {
+        }
+        output {
+        }
+    }
+}

@@ -1,0 +1,29 @@
+module must {
+    namespace "must";
+    prefix mu;
+    yang-version 1.1;
+
+    notification n {
+        must "1!=0";
+    }
+
+    rpc r {
+        input {
+            must "1!=0";
+        }
+        output {
+            must "1!=0";
+        }
+    }
+
+    container root {
+        action a {
+            input {
+                must "1!=0";
+            }
+            output {
+                must "1!=0";
+            }
+        }
+    }
+}

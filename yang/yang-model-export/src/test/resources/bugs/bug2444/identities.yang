@@ -1,0 +1,29 @@
+module identities {
+    namespace identities;
+    prefix iden;
+    yang-version 1.1;
+
+    identity id-a;
+    identity id-b;
+    identity id-c;
+
+    identity derived-id {
+        base id-a;
+        base id-b;
+        base id-c;
+    }
+
+    leaf idref-leaf {
+        type identityref {
+            base id-a;
+            base id-b;
+            base id-c;
+        }
+    }
+
+    leaf idref-leaf-2 {
+        type identityref {
+            base derived-id;
+        }
+    }
+}
