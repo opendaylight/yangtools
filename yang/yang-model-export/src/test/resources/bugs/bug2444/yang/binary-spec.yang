@@ -1,0 +1,15 @@
+module binary-spec {
+    namespace "binary-spec";
+    prefix bin;
+
+    leaf bin-leaf {
+        type binary {
+            length "1..99";
+        }
+    }
+
+    leaf bin-leaf-2 {
+        type binary {
+        }
+    }
+}
