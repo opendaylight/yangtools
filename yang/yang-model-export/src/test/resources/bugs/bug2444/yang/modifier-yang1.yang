@@ -1,0 +1,11 @@
+module modifier-yang1 {
+    namespace modifier-yang1;
+    prefix my1;
+    yang-version 1;
+
+    leaf my-leaf {
+        type string {
+            pattern ".*";
+        }
+    }
+}

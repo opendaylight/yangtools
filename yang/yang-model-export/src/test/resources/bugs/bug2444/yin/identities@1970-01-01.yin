@@ -1,0 +1,40 @@
+<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:iden="identities"
+    name="identities">
+    <yang-version value="1.1"></yang-version>
+    <namespace uri="identities"></namespace>
+    <prefix value="iden"></prefix>
+    <revision date="1970-01-01"></revision>
+    <identity name="id-a">
+        <status value="current"></status>
+    </identity>
+    <identity name="id-b">
+        <status value="current"></status>
+    </identity>
+    <identity name="id-c">
+        <status value="current"></status>
+    </identity>
+    <identity name="derived-id">
+        <base name="id-a"></base>
+        <base name="id-b"></base>
+        <base name="id-c"></base>
+        <status value="current"></status>
+    </identity>
+    <leaf name="idref-leaf">
+        <type name="identityref">
+            <base name="id-a"></base>
+            <base name="id-b"></base>
+            <base name="id-c"></base>
+        </type>
+        <config value="true"></config>
+        <mandatory value="false"></mandatory>
+        <status value="current"></status>
+    </leaf>
+    <leaf name="idref-leaf-2">
+        <type name="identityref">
+            <base name="derived-id"></base>
+        </type>
+        <config value="true"></config>
+        <mandatory value="false"></mandatory>
+        <status value="current"></status>
+    </leaf>
+</module>
