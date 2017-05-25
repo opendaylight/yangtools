@@ -9,8 +9,10 @@ package org.opendaylight.yangtools.yang.model.export;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
 import com.google.common.primitives.UnsignedInteger;
 import java.net.URI;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -18,14 +20,17 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
+import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 
 @Beta
 @NotThreadSafe
-final class SchemaToStatementWriterAdaptor implements Rfc6020ModuleWriter {
+final class SchemaToStatementWriterAdaptor implements YangModuleWriter {
 
     private final StatementTextWriter writer;
 
@@ -33,7 +38,7 @@ final class SchemaToStatementWriterAdaptor implements Rfc6020ModuleWriter {
         this.writer = Preconditions.checkNotNull(writer);
     }
 
-    public static Rfc6020ModuleWriter from(final StatementTextWriter writer) {
+    public static YangModuleWriter from(final StatementTextWriter writer) {
         return new SchemaToStatementWriterAdaptor(writer);
     }
 
@@ -405,5 +410,40 @@ final class SchemaToStatementWriterAdaptor implements Rfc6020ModuleWriter {
     public void startWhenNode(final RevisionAwareXPath revisionAwareXPath) {
         writer.startStatement(YangStmtMapping.WHEN);
         writer.writeArgument(revisionAwareXPath);
+    }
+
+    @Override
+    public void startAnydataNode(final QName qName) {
+        writer.startStatement(YangStmtMapping.ANYDATA);
+        writer.writeArgument(qName);
+    }
+
+    @Override
+    public void startActionNode(final QName qName) {
+        writer.startStatement(YangStmtMapping.ACTION);
+        writer.writeArgument(qName);
+    }
+
+    @Override
+    public void startModifierNode(final ModifierKind modifier) {
+        writer.startStatement(YangStmtMapping.MODIFIER);
+        writer.writeArgument(modifier.getKeyword());
+    }
+
+    @Override
+    public void startUniqueNode(final UniqueConstraint uniqueConstraint) {
+        writer.startStatement(YangStmtMapping.UNIQUE);
+        final StringBuilder uniqueStr = new StringBuilder();
+        final Collection<Relative> tag = uniqueConstraint.getTag();
+
+        final Iterator<Relative> iter = tag.iterator();
+        while (iter.hasNext()) {
+            uniqueStr.append(
+                    String.join("/", Iterables.transform(iter.next().getPathFromRoot(), qn -> qn.getLocalName())));
+            if (iter.hasNext()) {
+                uniqueStr.append(' ');
+            }
+        }
+        writer.writeArgument(uniqueStr.toString());
     }
 }

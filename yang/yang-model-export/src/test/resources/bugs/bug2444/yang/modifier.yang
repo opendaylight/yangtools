@@ -1,0 +1,13 @@
+module modifier {
+    namespace modifier;
+    prefix m;
+    yang-version 1.1;
+
+    leaf my-leaf {
+        type string {
+            pattern ".*" {
+                modifier invert-match;
+            }
+        }
+    }
+}

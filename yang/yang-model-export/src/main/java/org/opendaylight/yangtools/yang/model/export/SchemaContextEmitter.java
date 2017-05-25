@@ -13,6 +13,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.primitives.UnsignedInteger;
 import java.net.URI;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +25,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
+import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -45,6 +49,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -52,6 +57,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -70,6 +76,7 @@ import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefi
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
@@ -81,26 +88,31 @@ import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
 @NotThreadSafe
 class SchemaContextEmitter {
 
-    private final Rfc6020ModuleWriter writer;
+    private final YangModuleWriter writer;
     private final boolean emitInstantiated;
     private final boolean emitUses;
     private final Map<QName, StatementDefinition> extensions;
+    private final YangVersion yangVersion;
 
-    SchemaContextEmitter(final Rfc6020ModuleWriter writer, final Map<QName, StatementDefinition> extensions) {
-        this(writer, extensions,false, true);
+    SchemaContextEmitter(final YangModuleWriter writer, final Map<QName, StatementDefinition> extensions,
+            final YangVersion yangVersion) {
+        this(writer, extensions, yangVersion, false, true);
     }
 
-    SchemaContextEmitter(final Rfc6020ModuleWriter writer, final Map<QName, StatementDefinition> extensions, final boolean emitInstantiated, final boolean emitUses) {
+    SchemaContextEmitter(final YangModuleWriter writer, final Map<QName, StatementDefinition> extensions,
+            final YangVersion yangVersion, final boolean emitInstantiated, final boolean emitUses) {
         this.writer = Preconditions.checkNotNull(writer);
         this.emitInstantiated = emitInstantiated;
         this.emitUses = emitUses;
         this.extensions = Preconditions.checkNotNull(extensions);
+        this.yangVersion = yangVersion;
     }
 
-    static void writeToStatementWriter(final Module module, final SchemaContext ctx, final StatementTextWriter statementWriter) {
-        final Rfc6020ModuleWriter yangSchemaWriter = SchemaToStatementWriterAdaptor.from(statementWriter);
+    static void writeToStatementWriter(final Module module, final SchemaContext ctx,
+            final StatementTextWriter statementWriter) {
+        final YangModuleWriter yangSchemaWriter = SchemaToStatementWriterAdaptor.from(statementWriter);
         final Map<QName, StatementDefinition> extensions = ExtensionStatement.mapFrom(ctx.getExtensions());
-        new SchemaContextEmitter(yangSchemaWriter,extensions).emitModule(module);
+        new SchemaContextEmitter(yangSchemaWriter, extensions, YangVersion.parse(module.getYangVersion()).orElse(null)).emitModule(module);
     }
 
     void emitModule(final Module input) {
@@ -141,9 +153,8 @@ class SchemaContextEmitter {
     }
 
     private void emitMetaNodes(final Module input) {
-
-        emitOrganizationNode(input.getOrganization()); // FIXME: BUG-2444: Optional
-        emitContact(input.getContact()); // FIXME: BUG-2444: Optional
+        emitOrganizationNode(input.getOrganization());
+        emitContact(input.getContact());
         emitDescriptionNode(input.getDescription());
         emitReferenceNode(input.getReference());
     }
@@ -177,6 +188,9 @@ class SchemaContextEmitter {
         for (final IdentitySchemaNode identity : input.getIdentities()) {
             emitIdentity(identity);
         }
+        for (final Deviation deviation : input.getDeviations()) {
+            emitDeviation(deviation);
+        }
 
         emitDataNodeContainer(input);
 
@@ -186,13 +200,8 @@ class SchemaContextEmitter {
         for (final RpcDefinition rpc : input.getRpcs()) {
             emitRpc(rpc);
         }
-        for (final NotificationDefinition notification : input.getNotifications()) {
-            emitNotificationNode(notification);
-        }
-        for (final Deviation deviation : input.getDeviations()) {
-            emitDeviation(deviation);
-        }
 
+        emitNotifications(input.getNotifications());
     }
 
     private void emitDataNodeContainer(final DataNodeContainer input) {
@@ -228,6 +237,8 @@ class SchemaContextEmitter {
             emitChoice((ChoiceSchemaNode) child);
         } else if (child instanceof AnyXmlSchemaNode) {
             emitAnyxml((AnyXmlSchemaNode) child);
+        } else if (child instanceof AnyDataSchemaNode) {
+            emitAnydata((AnyDataSchemaNode) child);
         } else {
             throw new UnsupportedOperationException("Not supported DataSchemaNode type " + child.getClass());
         }
@@ -240,6 +251,8 @@ class SchemaContextEmitter {
 
     private void emitImport(final ModuleImport importNode) {
         writer.startImportNode(importNode.getModuleName());
+        emitDescriptionNode(importNode.getDescription());
+        emitReferenceNode(importNode.getReference());
         emitPrefixNode(importNode.getPrefix());
         emitRevisionDateNode(importNode.getRevision());
         writer.endNode();
@@ -287,15 +300,17 @@ class SchemaContextEmitter {
     }
 
     private void emitOrganizationNode(final String input) {
-        writer.startOrganizationNode(input);
-        writer.endNode();
-
+        if (!Strings.isNullOrEmpty(input)) {
+            writer.startOrganizationNode(input);
+            writer.endNode();
+        }
     }
 
     private void emitContact(final String input) {
-        writer.startContactNode(input);
-        writer.endNode();
-
+        if (!Strings.isNullOrEmpty(input)) {
+            writer.startContactNode(input);
+            writer.endNode();
+        }
     }
 
     private void emitDescriptionNode(@Nullable final String input) {
@@ -364,20 +379,22 @@ class SchemaContextEmitter {
 
     private void emitIdentity(final IdentitySchemaNode identity) {
         writer.startIdentityNode(identity.getQName());
-        if (identity.getBaseIdentity() != null) {
-            emitBase(identity.getBaseIdentity().getQName());
-        }
+        emitBaseIdentities(identity.getBaseIdentities());
         emitStatusNode(identity.getStatus());
         emitDescriptionNode(identity.getDescription());
         emitReferenceNode(identity.getReference());
         writer.endNode();
+    }
 
+    private void emitBaseIdentities(final Set<IdentitySchemaNode> identities) {
+        for (final IdentitySchemaNode identitySchemaNode : identities) {
+            emitBase(identitySchemaNode.getQName());
+        }
     }
 
     private void emitBase(final QName qName) {
         writer.startBaseNode(qName);
         writer.endNode();
-
     }
 
     private void emitFeature(final FeatureDefinition definition) {
@@ -461,8 +478,7 @@ class SchemaContextEmitter {
         } else if (typeDef instanceof UnionTypeDefinition) {
             emitUnionSpecification((UnionTypeDefinition) typeDef);
         } else if (typeDef instanceof BinaryTypeDefinition) {
-            // FIXME: BUG-2444:  Is this realy NOOP?
-            // should at least support length statement
+            emitLength(((BinaryTypeDefinition) typeDef).getLengthConstraints());
         } else if (typeDef instanceof BooleanTypeDefinition || typeDef instanceof EmptyTypeDefinition) {
             // NOOP
         } else {
@@ -583,9 +599,21 @@ class SchemaContextEmitter {
         // FIXME: BUG-2444: Optional
         emitErrorAppTagNode(pattern.getErrorAppTag());
         emitDescriptionNode(pattern.getDescription());
-        // FIXME: BUG-2444: Optional
-        emitReferenceNode(pattern.getReference());
+        emitModifier(pattern.getModifier());
         writer.endNode();
+    }
+
+    private void emitModifier(final ModifierKind modifier) {
+        if(modifier != null) {
+            writer.startModifierNode(modifier);
+            writer.endNode();
+        }
+    }
+
+    private void emitDefaultNodes(final Collection<String> defaults) {
+        for (final String defaultValue : defaults) {
+            emitDefaultNode(defaultValue);
+        }
     }
 
     private void emitDefaultNode(@Nullable final Object object) {
@@ -612,8 +640,9 @@ class SchemaContextEmitter {
 
     private void emitLeafrefSpecification(final LeafrefTypeDefinition typeDefinition) {
         emitPathNode(typeDefinition.getPathStatement());
-        // FIXME: BUG-2444: requireInstanceNode /Optional removed with (RFC6020 - Errata ID 2949)
-        // Added in Yang 1.1
+        if (YangVersion.VERSION_1_1 == yangVersion) {
+            emitRequireInstanceNode(typeDefinition.requireInstance());
+        }
     }
 
     private void emitPathNode(final RevisionAwareXPath revisionAwareXPath) {
@@ -631,7 +660,7 @@ class SchemaContextEmitter {
     }
 
     private void emitIdentityrefSpecification(final IdentityrefTypeDefinition typeDefinition) {
-        emitBase(typeDefinition.getIdentity().getQName());
+        emitBaseIdentities(typeDefinition.getIdentities());
     }
 
     private void emitUnionSpecification(final UnionTypeDefinition typeDefinition) {
@@ -753,6 +782,8 @@ class SchemaContextEmitter {
         emitDocumentedNode(grouping);
         emitDataNodeContainer(grouping);
         emitUnknownStatementNodes(grouping.getUnknownSchemaNodes());
+        emitNotifications(grouping.getNotifications());
+        emitActions(grouping.getActions());
         writer.endNode();
 
     }
@@ -770,6 +801,8 @@ class SchemaContextEmitter {
         emitDocumentedNode(child);
         emitDataNodeContainer(child);
         emitUnknownStatementNodes(child.getUnknownSchemaNodes());
+        emitNotifications(child.getNotifications());
+        emitActions(child.getActions());
         writer.endNode();
 
     }
@@ -779,7 +812,6 @@ class SchemaContextEmitter {
         for (final MustDefinition mustCondition : constraints.getMustConstraints()) {
             emitMust(mustCondition);
         }
-
     }
 
     private void emitLeaf(final LeafSchemaNode child) {
@@ -804,10 +836,11 @@ class SchemaContextEmitter {
         emitWhen(child.getConstraints().getWhenCondition());
         // FIXME: BUG-2444: *(ifFeatureNode )
         emitTypeNode(child.getPath(), child.getType());
+        emitUnitsNode(child.getType().getUnits());
         // FIXME: BUG-2444: unitsNode /Optional
         emitMustNodes(child.getConstraints().getMustConstraints());
         emitConfigNode(child.isConfiguration());
-
+        emitDefaultNodes(child.getDefaults());
         emitMinElementsNode(child.getConstraints().getMinElements());
         emitMaxElementsNode(child.getConstraints().getMaxElements());
         emitOrderedBy(child.isUserOrdered());
@@ -824,7 +857,7 @@ class SchemaContextEmitter {
         // FIXME: BUG-2444: *(ifFeatureNode )
         emitMustNodes(child.getConstraints().getMustConstraints());
         emitKey(child.getKeyDefinition());
-        // FIXME: BUG-2444: *(uniqueNode )
+        emitUniqueConstraints(child.getUniqueConstraints());
         emitConfigNode(child.isConfiguration());
         emitMinElementsNode(child.getConstraints().getMinElements());
         emitMaxElementsNode(child.getConstraints().getMaxElements());
@@ -832,6 +865,8 @@ class SchemaContextEmitter {
         emitDocumentedNode(child);
         emitDataNodeContainer(child);
         emitUnknownStatementNodes(child.getUnknownSchemaNodes());
+        emitNotifications(child.getNotifications());
+        emitActions(child.getActions());
         writer.endNode();
 
     }
@@ -849,10 +884,15 @@ class SchemaContextEmitter {
         }
     }
 
-    @SuppressWarnings("unused")
-    private void emitUnique(final String input) {
-        // FIXME: BUG-2444: writer.startUniqueNode(uniqueArgStr)); Nodeend
+    private void emitUniqueConstraints(final Collection<UniqueConstraint> uniqueConstraints) {
+        for (final UniqueConstraint uniqueConstraint : uniqueConstraints) {
+            emitUnique(uniqueConstraint);
+        }
+    }
 
+    private void emitUnique(final UniqueConstraint uniqueConstraint) {
+        writer.startUniqueNode(uniqueConstraint);
+        writer.endNode();
     }
 
     private void emitChoice(final ChoiceSchemaNode choice) {
@@ -885,18 +925,26 @@ class SchemaContextEmitter {
 
     }
 
-    private void emitAnyxml(final AnyXmlSchemaNode child) {
-        writer.startAnyxmlNode(child.getQName());
-
-        emitWhen(child.getConstraints().getWhenCondition());
-        // FIXME: BUG-2444: *(ifFeatureNode )
-        emitMustNodes(child.getConstraints().getMustConstraints());
-        emitConfigNode(child.isConfiguration());
-        emitMandatoryNode(child.getConstraints().isMandatory());
-        emitDocumentedNode(child);
-        emitUnknownStatementNodes(child.getUnknownSchemaNodes());
+    private void emitAnyxml(final AnyXmlSchemaNode anyxml) {
+        writer.startAnyxmlNode(anyxml.getQName());
+        emitBodyOfDataSchemaNode(anyxml);
         writer.endNode();
+    }
 
+    private void emitAnydata(final AnyDataSchemaNode anydata) {
+        writer.startAnydataNode(anydata.getQName());
+        emitBodyOfDataSchemaNode(anydata);
+        writer.endNode();
+    }
+
+    private void emitBodyOfDataSchemaNode(final DataSchemaNode dataSchemaNode) {
+        emitWhen(dataSchemaNode.getConstraints().getWhenCondition());
+        // FIXME: BUG-2444: *(ifFeatureNode )
+        emitMustNodes(dataSchemaNode.getConstraints().getMustConstraints());
+        emitConfigNode(dataSchemaNode.isConfiguration());
+        emitMandatoryNode(dataSchemaNode.getConstraints().isMandatory());
+        emitDocumentedNode(dataSchemaNode);
+        emitUnknownStatementNodes(dataSchemaNode.getUnknownSchemaNodes());
     }
 
     private void emitUsesNode(final UsesNode usesNode) {
@@ -1088,6 +1136,8 @@ class SchemaContextEmitter {
             }
         }
         emitUnknownStatementNodes(augmentation.getUnknownSchemaNodes());
+        emitNotifications(augmentation.getNotifications());
+        emitActions(augmentation.getActions());
         writer.endNode();
     }
 
@@ -1129,6 +1179,11 @@ class SchemaContextEmitter {
 
     private void emitRpc(final RpcDefinition rpc) {
         writer.startRpcNode(rpc.getQName());
+        emitOperationBody(rpc);
+        writer.endNode();
+    }
+
+    private void emitOperationBody(final OperationDefinition rpc) {
         // FIXME: BUG-2444: *(ifFeatureNode )
         emitStatusNode(rpc.getStatus());
         emitDescriptionNode(rpc.getDescription());
@@ -1143,13 +1198,24 @@ class SchemaContextEmitter {
         emitInput(rpc.getInput());
         emitOutput(rpc.getOutput());
         emitUnknownStatementNodes(rpc.getUnknownSchemaNodes());
-        writer.endNode();
+    }
 
+    private void emitActions(final Set<ActionDefinition> actions) {
+        for (final ActionDefinition actionDefinition : actions) {
+            emitAction(actionDefinition);
+        }
+    }
+
+    private void emitAction(final ActionDefinition action) {
+        writer.startActionNode(action.getQName());
+        emitOperationBody(action);
+        writer.endNode();
     }
 
     private void emitInput(@Nonnull final ContainerSchemaNode input) {
         if (isExplicitStatement(input)) {
             writer.startInputNode();
+            emitConstraints(input.getConstraints());
             emitDataNodeContainer(input);
             emitUnknownStatementNodes(input.getUnknownSchemaNodes());
             writer.endNode();
@@ -1160,6 +1226,7 @@ class SchemaContextEmitter {
     private void emitOutput(@Nonnull final ContainerSchemaNode output) {
         if (isExplicitStatement(output)) {
             writer.startOutputNode();
+            emitConstraints(output.getConstraints());
             emitDataNodeContainer(output);
             emitUnknownStatementNodes(output.getUnknownSchemaNodes());
             writer.endNode();
@@ -1172,9 +1239,16 @@ class SchemaContextEmitter {
                 && ((EffectiveStatement<?, ?>) node).getDeclared().getStatementSource() == StatementSource.DECLARATION;
     }
 
+    private void emitNotifications(final Set<NotificationDefinition> notifications) {
+        for (final NotificationDefinition notification : notifications) {
+            emitNotificationNode(notification);
+        }
+    }
+
     private void emitNotificationNode(final NotificationDefinition notification) {
         writer.startNotificationNode(notification.getQName());
         // FIXME: BUG-2444: *(ifFeatureNode )
+        emitConstraints(notification.getConstraints());
         emitDocumentedNode(notification);
         emitDataNodeContainer(notification);
         emitUnknownStatementNodes(notification.getUnknownSchemaNodes());
