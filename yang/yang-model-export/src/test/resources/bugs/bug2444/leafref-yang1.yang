@@ -1,0 +1,15 @@
+module leafref-yang1 {
+    namespace leafref-yang1;
+    prefix lr;
+    yang-version 1;
+
+    leaf my-leafref-3 {
+        type leafref {
+            path "/target";
+        }
+    }
+
+    leaf target {
+        type string;
+    }
+}

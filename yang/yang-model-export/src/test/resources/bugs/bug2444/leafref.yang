@@ -1,0 +1,29 @@
+module leafref {
+    namespace leafref;
+    prefix lr;
+    yang-version 1.1;
+
+    leaf my-leafref {
+        type leafref {
+            path "/target";
+            require-instance false;
+        }
+    }
+
+    leaf my-leafref-2 {
+        type leafref {
+            path "/target";
+            require-instance true;
+        }
+    }
+
+    leaf my-leafref-3 {
+        type leafref {
+            path "/target";
+        }
+    }
+
+    leaf target {
+        type string;
+    }
+}
