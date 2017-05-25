@@ -1,0 +1,29 @@
+module unique {
+    namespace unique;
+    prefix u;
+
+    list l {
+        key id;
+        leaf id {
+            type string;
+        }
+
+        unique "c1/c2/my-leaf-2 my-leaf-1";
+        unique "my-leaf-1 my-container/my-leaf-3";
+        leaf my-leaf-1 {
+            type string;
+        }
+        container c1 {
+            container c2 {
+                leaf my-leaf-2 {
+                    type string;
+                }
+            }
+        }
+        container my-container {
+            leaf my-leaf-3 {
+                type string;
+            }
+        }
+    }
+}

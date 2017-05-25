@@ -15,9 +15,11 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 
-interface Rfc6020ModuleWriter {
+interface YangModuleWriter {
 
     void endNode();
 
@@ -140,5 +142,13 @@ interface Rfc6020ModuleWriter {
     void startYinElementNode(boolean yinElement);
 
     void startWhenNode(RevisionAwareXPath revisionAwareXPath);
+
+    void startAnydataNode(QName qName);
+
+    void startActionNode(QName qName);
+
+    void startModifierNode(ModifierKind modifier);
+
+    void startUniqueNode(UniqueConstraint uniqueConstraint);
 
 }

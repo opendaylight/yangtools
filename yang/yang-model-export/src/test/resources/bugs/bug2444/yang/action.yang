@@ -1,0 +1,34 @@
+module action {
+    namespace action;
+    prefix ac;
+    yang-version 1.1;
+
+    container root {
+        action a {
+            if-feature "my-feature-1 or my-feature-2";
+            status deprecated;
+            description "decs";
+            reference "ref";
+            typedef my-type {
+                type string;
+            }
+            grouping my-grp {
+                container con-in-grp {
+                }
+            }
+            input {
+                container i {
+                }
+            }
+            output {
+                container o {
+                }
+            }
+            ac:my-ext "arg-val";
+        }
+    }
+    
+    extension my-ext {
+        argument my-arg;
+    }
+}

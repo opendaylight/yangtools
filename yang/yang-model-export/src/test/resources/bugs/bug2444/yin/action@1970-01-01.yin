@@ -1,0 +1,54 @@
+<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:ac="action"
+    name="action">
+    <yang-version value="1.1"></yang-version>
+    <namespace uri="action"></namespace>
+    <prefix value="ac"></prefix>
+    <revision date="1970-01-01"></revision>
+    <extension name="my-ext">
+        <argument name="my-arg">
+            <yin-element value="false"></yin-element>
+        </argument>
+        <status value="current"></status>
+    </extension>
+    <container name="root">
+        <presence value="false"></presence>
+        <config value="true"></config>
+        <status value="current"></status>
+        <action name="a">
+            <status value="deprecated"></status>
+            <description>
+                <text>decs</text>
+            </description>
+            <reference>
+                <text>ref</text>
+            </reference>
+            <typedef name="my-type">
+                <type name="string"></type>
+                <status value="current"></status>
+            </typedef>
+            <grouping name="my-grp">
+                <status value="current"></status>
+                <container name="con-in-grp">
+                    <presence value="false"></presence>
+                    <config value="true"></config>
+                    <status value="current"></status>
+                </container>
+            </grouping>
+            <input>
+                <container name="i">
+                    <presence value="false"></presence>
+                    <config value="true"></config>
+                    <status value="current"></status>
+                </container>
+            </input>
+            <output>
+                <container name="o">
+                    <presence value="false"></presence>
+                    <config value="true"></config>
+                    <status value="current"></status>
+                </container>
+            </output>
+            <ac:my-ext ac:my-arg="arg-val"></ac:my-ext>
+        </action>
+    </container>
+</module>
