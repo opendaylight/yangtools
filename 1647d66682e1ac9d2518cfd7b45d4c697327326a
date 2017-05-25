@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7af0899e_3f63e8b2",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/SupportedExtensionsMapping.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 28,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-05-25T15:04:21Z",
+      "side": 1,
+      "message": "This should match https://github.com/openconfig/public/blob/master/release/models/openconfig-extensions.yang. I think we want to make it work for any revision, too..",
+      "range": {
+        "startLine": 26,
+        "startChar": 0,
+        "endLine": 28,
+        "endChar": 55
+      },
+      "revId": "1647d66682e1ac9d2518cfd7b45d4c697327326a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7af0899e_1fbeecff",
+        "filename": "yang/yang-parser-impl/src/test/resources/semantic-version/semver-shared-schema-repository/semantic-version.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-05-25T15:04:21Z",
+      "side": 1,
+      "message": "can you actually update this to the openconfig-extensions model, please?",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 25
+      },
+      "revId": "1647d66682e1ac9d2518cfd7b45d4c697327326a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
