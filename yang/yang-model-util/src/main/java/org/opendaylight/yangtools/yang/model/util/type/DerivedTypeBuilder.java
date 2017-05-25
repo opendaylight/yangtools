@@ -43,6 +43,7 @@ public abstract class DerivedTypeBuilder<T extends TypeDefinition<T>> extends Ty
     }
 
     public void setDefaultValue(@Nonnull final Object defaultValue) {
+        //https://git.opendaylight.org/gerrit/#/c/14820/9/yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/ConstraintsValidator.java
         this.defaultValue = Preconditions.checkNotNull(defaultValue);
     }
 

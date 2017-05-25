@@ -1,0 +1,31 @@
+module foo {
+    namespace foo;
+    prefix foo;
+    
+    typedef my-type {
+        type string {
+            length 1..10;
+        }
+        default "default123456789";
+    }
+    
+    typedef my-type-2 {
+        type my-type {
+            length 1..2;
+        }
+        default "def-val";
+    }
+    
+    typedef ranged-type {
+        type int16 {
+            range 1..10;
+        }
+        default "7";
+    }
+    
+    typedef ranged-type-2 {
+        type ranged-type {
+            range 1..5;
+        }
+    }
+}

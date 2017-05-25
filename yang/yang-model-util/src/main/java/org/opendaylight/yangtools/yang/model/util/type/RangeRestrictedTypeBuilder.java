@@ -12,6 +12,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
@@ -39,7 +41,7 @@ public abstract class RangeRestrictedTypeBuilder<T extends TypeDefinition<T>> ex
     private static List<RangeConstraint> ensureResolvedRanges(final List<RangeConstraint> unresolved,
             final List<RangeConstraint> baseRangeConstraints) {
         // First check if we need to resolve anything at all
-        for (RangeConstraint c : unresolved) {
+        for (final RangeConstraint c : unresolved) {
             if (c.getMax() instanceof UnresolvedNumber || c.getMin() instanceof UnresolvedNumber) {
                 return resolveRanges(unresolved, baseRangeConstraints);
             }
@@ -53,7 +55,7 @@ public abstract class RangeRestrictedTypeBuilder<T extends TypeDefinition<T>> ex
             final List<RangeConstraint> baseRangeConstraints) {
         final Builder<RangeConstraint> builder = ImmutableList.builder();
 
-        for (RangeConstraint c : unresolved) {
+        for (final RangeConstraint c : unresolved) {
             final Number max = c.getMax();
             final Number min = c.getMin();
 
@@ -76,7 +78,7 @@ public abstract class RangeRestrictedTypeBuilder<T extends TypeDefinition<T>> ex
 
     private static List<RangeConstraint> ensureTypedRanges(final List<RangeConstraint> ranges,
             final Class<? extends Number> clazz) {
-        for (RangeConstraint c : ranges) {
+        for (final RangeConstraint c : ranges) {
             if (!clazz.isInstance(c.getMin()) || !clazz.isInstance(c.getMax())) {
                 return typedRanges(ranges, clazz);
             }
@@ -91,14 +93,14 @@ public abstract class RangeRestrictedTypeBuilder<T extends TypeDefinition<T>> ex
 
         final Builder<RangeConstraint> builder = ImmutableList.builder();
 
-        for (RangeConstraint c : ranges) {
+        for (final RangeConstraint c : ranges) {
             if (!clazz.isInstance(c.getMin()) || !clazz.isInstance(c.getMax())) {
                 final Number min, max;
 
                 try {
                     min = function.apply(c.getMin());
                     max = function.apply(c.getMax());
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     throw new IllegalArgumentException(String.format("Constraint %s does not fit into range of %s",
                         c, clazz.getSimpleName()), e);
                 }
@@ -114,7 +116,7 @@ public abstract class RangeRestrictedTypeBuilder<T extends TypeDefinition<T>> ex
 
     private static boolean rangeCovered(final List<RangeConstraint> where,
             final RangeConstraint what) {
-        for (RangeConstraint c : where) {
+        for (final RangeConstraint c : where) {
             if (NumberUtil.isRangeCovered(what.getMin(), what.getMax(), c.getMin(), c.getMax())) {
                 return true;
             }
@@ -137,13 +139,52 @@ public abstract class RangeRestrictedTypeBuilder<T extends TypeDefinition<T>> ex
         final List<RangeConstraint> typedRanges = ensureTypedRanges(resolvedRanges, clazz);
 
         // Now verify if new ranges are strict subset of base ranges
-        for (RangeConstraint c : typedRanges) {
+        for (final RangeConstraint c : typedRanges) {
             if (!rangeCovered(baseRangeConstraints, c)) {
                 throw new InvalidRangeConstraintException(c, "Range constraint %s is not a subset of parent constraints %s",
                     c, baseRangeConstraints);
             }
         }
 
+        // Now verify if new ranges match default value
+        final Object defaultValueObj = getBaseType().getDefaultValue();
+        if (defaultValueObj != null) {
+            Number defaultVal = null;
+            try {
+                defaultVal = getNumber(defaultValueObj);
+            } catch (final ParseException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            boolean match = false;
+            for (final RangeConstraint c : typedRanges) {
+                if (isInRange(defaultVal, c)) {
+                    match = true;
+                    break;
+                }
+            }
+            if (!match) {
+                throw new InvalidRangeConstraintException(typedRanges.iterator().next(),
+                        String.format("default value %s does not match specified ranges %s", defaultVal, typedRanges.iterator().next().toString()));
+            }
+        }
+
         return typedRanges;
+    }
+
+    private static Number getNumber(final Object defaultValueObj) throws ParseException {
+        if(defaultValueObj instanceof Number) {
+            return (Number) defaultValueObj;
+        } else if(defaultValueObj instanceof String) {
+            return NumberFormat.getInstance().parse((String)defaultValueObj);
+        }
+
+        throw new IllegalArgumentException("Default value must be instace of Number or String");
+    }
+
+    private static boolean isInRange(final Number defaultValue, final RangeConstraint c) {
+        final double doubleValue = defaultValue.doubleValue();
+        return Double.compare(c.getMin().doubleValue(), doubleValue) <= 0
+                && Double.compare(c.getMax().doubleValue(), doubleValue) >= 0;
     }
 }

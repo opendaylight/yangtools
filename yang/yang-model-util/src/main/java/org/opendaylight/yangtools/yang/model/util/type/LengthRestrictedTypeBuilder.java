@@ -38,7 +38,7 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> e
     private static List<LengthConstraint> ensureResolvedLengths(final List<LengthConstraint> unresolved,
             final List<LengthConstraint> baseRangeConstraints) {
         // First check if we need to resolve anything at all
-        for (LengthConstraint c : unresolved) {
+        for (final LengthConstraint c : unresolved) {
             if (c.getMax() instanceof UnresolvedNumber || c.getMin() instanceof UnresolvedNumber) {
                 return resolveLengths(unresolved, baseRangeConstraints);
             }
@@ -52,7 +52,7 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> e
             final List<LengthConstraint> baseLengthConstraints) {
         final Builder<LengthConstraint> builder = ImmutableList.builder();
 
-        for (LengthConstraint c : unresolved) {
+        for (final LengthConstraint c : unresolved) {
             final Number max = c.getMax();
             final Number min = c.getMin();
 
@@ -74,7 +74,7 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> e
 
     private static List<LengthConstraint> ensureTypedLengths(final List<LengthConstraint> lengths,
             final Class<? extends Number> clazz) {
-        for (LengthConstraint c : lengths) {
+        for (final LengthConstraint c : lengths) {
             if (!clazz.isInstance(c.getMin()) || !clazz.isInstance(c.getMax())) {
                 return typedLengths(lengths, clazz);
             }
@@ -89,14 +89,14 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> e
 
         final Builder<LengthConstraint> builder = ImmutableList.builder();
 
-        for (LengthConstraint c : lengths) {
+        for (final LengthConstraint c : lengths) {
             if (!clazz.isInstance(c.getMin()) || !clazz.isInstance(c.getMax())) {
                 final Number min, max;
 
                 try {
                     min = function.apply(c.getMin());
                     max = function.apply(c.getMax());
-                } catch (NumberFormatException e) {
+                } catch (final NumberFormatException e) {
                     throw new IllegalArgumentException(String.format("Constraint %s does not fit into range of %s",
                         c, clazz.getSimpleName()), e);
                 }
@@ -112,7 +112,7 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> e
 
     private static boolean lengthCovered(final List<LengthConstraint> where,
             final LengthConstraint what) {
-        for (LengthConstraint c : where) {
+        for (final LengthConstraint c : where) {
             if (NumberUtil.isRangeCovered(what.getMin(), what.getMax(), c.getMin(), c.getMax())) {
                 return true;
             }
@@ -151,14 +151,37 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> e
         final Class<? extends Number> clazz = baseLengths.get(0).getMin().getClass();
         final List<LengthConstraint> typedLengths = ensureTypedLengths(resolvedLengths, clazz);
 
-        // Now verify if new ranges are strict subset of base ranges
-        for (LengthConstraint c : typedLengths) {
+        // Now verify if new length constraints are strict subset of base ranges
+        for (final LengthConstraint c : typedLengths) {
             if (!lengthCovered(baseLengths, c)) {
                 throw new InvalidLengthConstraintException(c, "Length constraint %s is not a subset of parent constraints %s",
                 c, baseLengths);
             }
         }
 
+        // Now verify if new length constraints match default value
+        final Object defaultValueObj = getBaseType().getDefaultValue();
+        if (defaultValueObj != null) {
+            final String defaultVal = defaultValueObj.toString();
+            boolean match = false;
+            for (final LengthConstraint l : typedLengths) {
+                if (matchLength(defaultVal, l)) {
+                    match = true;
+                    break;
+                }
+            }
+            if (!match) {
+                throw new InvalidLengthConstraintException(typedLengths.iterator().next(),
+                        String.format("default value %s does not match specified lengths %s", defaultVal, typedLengths.iterator().next().toString()));
+            }
+        }
+
         return buildType(typedLengths);
+    }
+
+    private static boolean matchLength(final String defaultValue, final LengthConstraint l) {
+        final int length = defaultValue.length();
+        return Double.compare(l.getMin().doubleValue(), length) <= 0
+                && Double.compare(l.getMax().doubleValue(), length) >= 0;
     }
 }

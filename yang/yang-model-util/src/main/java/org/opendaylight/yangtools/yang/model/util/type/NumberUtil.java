@@ -114,4 +114,9 @@ final class NumberUtil {
         return NumberUtil.NUMBER_COMPARATOR.compare(min, superMin) >= 0 &&
                 NumberUtil.NUMBER_COMPARATOR.compare(max, superMax) <= 0;
     }
+
+    public static boolean isInBounds(final Number value, final Number min, final Number max) {
+        return NUMBER_COMPARATOR.compare(min, value) <= 0
+                && NUMBER_COMPARATOR.compare(max, value) >= 0;
+    }
 }
