@@ -1,0 +1,35 @@
+module notification {
+    namespace "notification";
+    prefix n;
+    yang-version 1.1;
+
+    notification n1 {
+        container c {
+        }
+    }
+
+    container r {
+        notification n2 {
+        }
+    }
+
+    list l {
+        key "id";
+        leaf id {
+            type int16;
+        }
+        notification n3 {
+        }
+    }
+
+    augment "/r" {
+        uses grp;
+        notification n4 {
+        }
+    }
+
+    grouping grp {
+        notification n5 {
+        }
+    }
+}
