@@ -18,10 +18,11 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 
 @Beta
 @NotThreadSafe
@@ -405,5 +406,23 @@ final class SchemaToStatementWriterAdaptor implements Rfc6020ModuleWriter {
     public void startWhenNode(final RevisionAwareXPath revisionAwareXPath) {
         writer.startStatement(YangStmtMapping.WHEN);
         writer.writeArgument(revisionAwareXPath);
+    }
+
+    @Override
+    public void startAnydataNode(final QName qName) {
+        writer.startStatement(YangStmtMapping.ANYDATA);
+        writer.writeArgument(qName);
+    }
+
+    @Override
+    public void startActionNode(final QName qName) {
+        writer.startStatement(YangStmtMapping.ACTION);
+        writer.writeArgument(qName);
+    }
+
+    @Override
+    public void startModifierNode(final ModifierKind modifier) {
+        writer.startStatement(YangStmtMapping.MODIFIER);
+        writer.writeArgument(modifier.getKeyword());
     }
 }

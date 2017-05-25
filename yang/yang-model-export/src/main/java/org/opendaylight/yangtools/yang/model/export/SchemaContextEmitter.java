@@ -24,6 +24,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
+import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -45,6 +47,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -70,6 +73,7 @@ import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefi
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
@@ -192,7 +196,6 @@ class SchemaContextEmitter {
         for (final Deviation deviation : input.getDeviations()) {
             emitDeviation(deviation);
         }
-
     }
 
     private void emitDataNodeContainer(final DataNodeContainer input) {
@@ -228,6 +231,8 @@ class SchemaContextEmitter {
             emitChoice((ChoiceSchemaNode) child);
         } else if (child instanceof AnyXmlSchemaNode) {
             emitAnyxml((AnyXmlSchemaNode) child);
+        } else if (child instanceof AnyDataSchemaNode) {
+            emitAnydata((AnyDataSchemaNode) child);
         } else {
             throw new UnsupportedOperationException("Not supported DataSchemaNode type " + child.getClass());
         }
@@ -240,6 +245,8 @@ class SchemaContextEmitter {
 
     private void emitImport(final ModuleImport importNode) {
         writer.startImportNode(importNode.getModuleName());
+        emitDescriptionNode(importNode.getDescription());
+        emitReferenceNode(importNode.getReference());
         emitPrefixNode(importNode.getPrefix());
         emitRevisionDateNode(importNode.getRevision());
         writer.endNode();
@@ -578,7 +585,15 @@ class SchemaContextEmitter {
         emitErrorAppTagNode(pattern.getErrorAppTag()); // FIXME: BUG-2444: Optional
         emitDescriptionNode(pattern.getDescription());
         emitReferenceNode(pattern.getReference()); // FIXME: BUG-2444: Optional
+        emitModifier(pattern.getModifier());
         writer.endNode();
+    }
+
+    private void emitModifier(final ModifierKind modifier) {
+        if(modifier != null) {
+            writer.startModifierNode(modifier);
+            writer.endNode();
+        }
     }
 
     private void emitDefaultNode(@Nullable final Object object) {
@@ -748,6 +763,7 @@ class SchemaContextEmitter {
         emitDocumentedNode(grouping);
         emitDataNodeContainer(grouping);
         emitUnknownStatementNodes(grouping.getUnknownSchemaNodes());
+        emitActions(grouping.getActions());
         writer.endNode();
 
     }
@@ -765,6 +781,7 @@ class SchemaContextEmitter {
         emitDocumentedNode(child);
         emitDataNodeContainer(child);
         emitUnknownStatementNodes(child.getUnknownSchemaNodes());
+        emitActions(child.getActions());
         writer.endNode();
 
     }
@@ -827,6 +844,7 @@ class SchemaContextEmitter {
         emitDocumentedNode(child);
         emitDataNodeContainer(child);
         emitUnknownStatementNodes(child.getUnknownSchemaNodes());
+        emitActions(child.getActions());
         writer.endNode();
 
     }
@@ -880,18 +898,26 @@ class SchemaContextEmitter {
 
     }
 
-    private void emitAnyxml(final AnyXmlSchemaNode child) {
-        writer.startAnyxmlNode(child.getQName());
-
-        emitWhen(child.getConstraints().getWhenCondition());
-        // FIXME: BUG-2444: *(ifFeatureNode )
-        emitMustNodes(child.getConstraints().getMustConstraints());
-        emitConfigNode(child.isConfiguration());
-        emitMandatoryNode(child.getConstraints().isMandatory());
-        emitDocumentedNode(child);
-        emitUnknownStatementNodes(child.getUnknownSchemaNodes());
+    private void emitAnyxml(final AnyXmlSchemaNode anyxml) {
+        writer.startAnyxmlNode(anyxml.getQName());
+        emitBodyOfDataSchemaNode(anyxml);
         writer.endNode();
+    }
 
+    private void emitAnydata(final AnyDataSchemaNode anydata) {
+        writer.startAnydataNode(anydata.getQName());
+        emitBodyOfDataSchemaNode(anydata);
+        writer.endNode();
+    }
+
+    private void emitBodyOfDataSchemaNode(final DataSchemaNode dataSchemaNode) {
+        emitWhen(dataSchemaNode.getConstraints().getWhenCondition());
+        // FIXME: BUG-2444: *(ifFeatureNode )
+        emitMustNodes(dataSchemaNode.getConstraints().getMustConstraints());
+        emitConfigNode(dataSchemaNode.isConfiguration());
+        emitMandatoryNode(dataSchemaNode.getConstraints().isMandatory());
+        emitDocumentedNode(dataSchemaNode);
+        emitUnknownStatementNodes(dataSchemaNode.getUnknownSchemaNodes());
     }
 
     private void emitUsesNode(final UsesNode usesNode) {
@@ -1083,6 +1109,7 @@ class SchemaContextEmitter {
             }
         }
         emitUnknownStatementNodes(augmentation.getUnknownSchemaNodes());
+        emitActions(augmentation.getActions());
         writer.endNode();
     }
 
@@ -1124,6 +1151,11 @@ class SchemaContextEmitter {
 
     private void emitRpc(final RpcDefinition rpc) {
         writer.startRpcNode(rpc.getQName());
+        emitOperationBody(rpc);
+        writer.endNode();
+    }
+
+    private void emitOperationBody(final OperationDefinition rpc) {
         // FIXME: BUG-2444: *(ifFeatureNode )
         emitStatusNode(rpc.getStatus());
         emitDescriptionNode(rpc.getDescription());
@@ -1138,13 +1170,24 @@ class SchemaContextEmitter {
         emitInput(rpc.getInput());
         emitOutput(rpc.getOutput());
         emitUnknownStatementNodes(rpc.getUnknownSchemaNodes());
-        writer.endNode();
+    }
 
+    private void emitActions(final Set<ActionDefinition> actions) {
+        for (final ActionDefinition actionDefinition : actions) {
+            emitAction(actionDefinition);
+        }
+    }
+
+    private void emitAction(final ActionDefinition action) {
+        writer.startActionNode(action.getQName());
+        emitOperationBody(action);
+        writer.endNode();
     }
 
     private void emitInput(@Nonnull final ContainerSchemaNode input) {
         if (isExplicitStatement(input)) {
             writer.startInputNode();
+            emitConstraints(input.getConstraints());
             emitDataNodeContainer(input);
             emitUnknownStatementNodes(input.getUnknownSchemaNodes());
             writer.endNode();
@@ -1155,6 +1198,7 @@ class SchemaContextEmitter {
     private void emitOutput(@Nonnull final ContainerSchemaNode output) {
         if (isExplicitStatement(output)) {
             writer.startOutputNode();
+            emitConstraints(output.getConstraints());
             emitDataNodeContainer(output);
             emitUnknownStatementNodes(output.getUnknownSchemaNodes());
             writer.endNode();
@@ -1170,6 +1214,7 @@ class SchemaContextEmitter {
     private void emitNotificationNode(final NotificationDefinition notification) {
         writer.startNotificationNode(notification.getQName());
         // FIXME: BUG-2444: *(ifFeatureNode )
+        emitConstraints(notification.getConstraints());
         emitDocumentedNode(notification);
         emitDataNodeContainer(notification);
         emitUnknownStatementNodes(notification.getUnknownSchemaNodes());
