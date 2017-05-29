@@ -18,7 +18,7 @@ public interface NotificationNodeContainer {
      * All implementations should override this method.
      * The default definition of this method is used in YANG 1.0 (RFC6020) implementations of
      * AugmentationSchema, GroupingDefinition, ListSchemaNode and ContainerSchemaNode
-     * which do not allow action statements.
+     * which do not allow notification statements.
      * These YANG statements have been changed in YANG 1.1 (RFC7950) and can now contain notification statements.
      *
      * The default definition is also used by implementations of ContainerSchemaNode which do not support
