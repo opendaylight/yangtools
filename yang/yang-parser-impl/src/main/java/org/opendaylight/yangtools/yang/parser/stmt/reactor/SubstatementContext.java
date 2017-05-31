@@ -74,7 +74,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
             final StatementSourceReference ref, final String rawArgument) {
         super(def, ref, rawArgument);
         this.parent = Preconditions.checkNotNull(parent, "Parent must not be null");
-        this.argument = def.parseArgumentValue(this, rawArgument);
+        this.argument = def.parseArgumentValue(this, rawStatementArgument());
     }
 
     @SuppressWarnings("unchecked")
@@ -254,7 +254,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         if (argument instanceof String) {
             // FIXME: This may yield illegal argument exceptions
             final StatementContextBase<?, ?, ?> originalCtx = getOriginalCtx();
-            final QName qname = (originalCtx != null) ? Utils.qNameFromArgument(originalCtx, (String) argument) : Utils
+            final QName qname = originalCtx != null ? Utils.qNameFromArgument(originalCtx, (String) argument) : Utils
                     .qNameFromArgument(this, (String) argument);
             return parentPath.createChild(qname);
         }

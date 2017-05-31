@@ -11,6 +11,8 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.math.BigDecimal;
@@ -20,6 +22,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -66,9 +69,33 @@ public final class TypeUtils {
     public static final String UINT64 = "uint64";
     public static final String UNION = "union";
 
-    private static final Set<String> BUILT_IN_TYPES =
-            ImmutableSet.of(BINARY, BITS, BOOLEAN, DECIMAL64, EMPTY, ENUMERATION, IDENTITY_REF, INSTANCE_IDENTIFIER,
-                    INT8, INT16, INT32, INT64, LEAF_REF, STRING, UINT8, UINT16, UINT32, UINT64, UNION);
+    private static final Map<String, String> BUILT_IN_TYPES;
+
+    static {
+        final Builder<String, String> b = ImmutableMap.builder();
+
+        b.put(BINARY, BINARY);
+        b.put(BITS, BITS);
+        b.put(BOOLEAN, BOOLEAN);
+        b.put(DECIMAL64, DECIMAL64);
+        b.put(EMPTY, EMPTY);
+        b.put(ENUMERATION, ENUMERATION);
+        b.put(IDENTITY_REF,IDENTITY_REF);
+        b.put(INSTANCE_IDENTIFIER, INSTANCE_IDENTIFIER);
+        b.put(INT8, INT8);
+        b.put(INT16, INT16);
+        b.put(INT32, INT32);
+        b.put(INT64, INT64);
+        b.put(LEAF_REF, LEAF_REF);
+        b.put(STRING, STRING);
+        b.put(UINT8, UINT8);
+        b.put(UINT16, UINT16);
+        b.put(UINT32, UINT32);
+        b.put(UINT64, UINT64);
+        b.put(UNION, UNION);
+
+        BUILT_IN_TYPES = b.build();
+    }
 
     private static final Set<String> TYPE_BODY_STMTS = ImmutableSet.of(
         DECIMAL64, ENUMERATION, LEAF_REF, IDENTITY_REF, BITS, UNION);
@@ -210,7 +237,7 @@ public final class TypeUtils {
     }
 
     public static boolean isYangBuiltInTypeString(final String typeName) {
-        return BUILT_IN_TYPES.contains(typeName);
+        return BUILT_IN_TYPES.containsKey(typeName);
     }
 
 
@@ -275,6 +302,10 @@ public final class TypeUtils {
         return !Strings.isNullOrEmpty(defaultValue) && yangVersion == YangVersion.VERSION_1_1
                 && isRelevantForIfFeatureCheck(typeStmt)
                 && isAnyDefaultValueMarkedWithIfFeature(typeStmt, defaultValues);
+    }
+
+    static String findBuiltinString(final String rawArgument) {
+        return BUILT_IN_TYPES.get(rawArgument);
     }
 
     private static boolean isRelevantForIfFeatureCheck(final TypeEffectiveStatement<?> typeStmt) {
