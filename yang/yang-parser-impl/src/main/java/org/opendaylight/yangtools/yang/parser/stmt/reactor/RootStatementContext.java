@@ -61,7 +61,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
         final StatementSourceReference ref, final String rawArgument) {
         super(def, ref, rawArgument);
         this.sourceContext = Preconditions.checkNotNull(sourceContext);
-        this.argument = def.parseArgumentValue(this, rawArgument);
+        this.argument = def.parseArgumentValue(this, rawStatementArgument());
     }
 
     RootStatementContext(final SourceSpecificContext sourceContext, final StatementDefinitionContext<A, D, E> def,
