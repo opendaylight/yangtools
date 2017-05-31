@@ -95,7 +95,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             final String rawArgument) {
         this.definition = Preconditions.checkNotNull(def);
         this.statementDeclSource = Preconditions.checkNotNull(ref);
-        this.rawArgument = rawArgument;
+        this.rawArgument = def.internArgument(rawStatementArgument());
     }
 
     StatementContextBase(final StatementContextBase<A, D, E> original) {

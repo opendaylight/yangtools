@@ -122,4 +122,8 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
     public boolean hasArgumentSpecificSubDefinitions() {
         return support.hasArgumentSpecificSupports();
     }
+
+    String internArgument(final String rawArgument) {
+        return support.internArgument(rawArgument);
+    }
 }
