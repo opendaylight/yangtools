@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -395,8 +396,20 @@ public final class SchemaContextUtil {
 
         if (foundNode == null && parent instanceof ChoiceSchemaNode) {
             foundNode = ((ChoiceSchemaNode) parent).getCaseNodeByName(current);
+
             if (foundNode != null && nextPath.iterator().hasNext()) {
                 foundNode = findNodeIn(foundNode, nextPath);
+            }
+
+            if (foundNode == null) {
+                // fallback that tries to map into one of the child cases
+                for (final ChoiceCaseNode caseNode : ((ChoiceSchemaNode) parent).getCases()) {
+                    final DataSchemaNode maybeChild = caseNode.getDataChildByName(current);
+                    if (maybeChild != null) {
+                        foundNode = findNodeIn(maybeChild, nextPath);
+                        break;
+                    }
+                }
             }
         }
 
