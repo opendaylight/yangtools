@@ -252,6 +252,12 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
         public StatementSupport<?, ?, ?> getSupportSpecificForArgument(final String argument) {
             return ARGUMENT_SPECIFIC_SUPPORTS.get(argument);
         }
+
+        @Override
+        public String internArgument(final String rawArgument) {
+            final String found = TypeUtils.findBuiltinString(rawArgument);
+            return found != null ? found : rawArgument;
+        }
     }
 
     @Nonnull
