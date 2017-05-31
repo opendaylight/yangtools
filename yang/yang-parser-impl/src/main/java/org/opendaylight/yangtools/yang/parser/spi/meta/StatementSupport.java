@@ -179,4 +179,14 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      */
     @Nullable
     StatementSupport<?, ?, ?> getSupportSpecificForArgument(String argument);
+
+    /**
+     * Given a raw string representation of an argument, try to use a shared representation
+     *
+     * @param rawArgument Argument string
+     * @return A potentially-shard instance
+     */
+    default String internArgument(final String rawArgument) {
+        return rawArgument;
+    }
 }
