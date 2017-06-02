@@ -67,6 +67,8 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
      */
     private boolean haveConfiguration;
     private boolean configuration;
+    private boolean wasCheckedIfInYangDataExtensionBody;
+    private boolean isInYangDataExtensionBody;
 
     private volatile SchemaPath schemaPath;
 
@@ -295,6 +297,13 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
     @Override
     public boolean isConfiguration() {
+        // if this statement is within a 'yang-data' extension body, config substatements are ignored as if
+        // they were not declared. As 'yang-data' is always a top-level node, all configs that are within it are
+        // automatically true
+        if (isInYangDataExtensionBody()) {
+            return true;
+        }
+
         if (haveConfiguration) {
             return configuration;
         }
@@ -319,6 +328,23 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         configuration = isConfig;
         haveConfiguration = true;
         return isConfig;
+    }
+
+    @Override
+    public boolean isInYangDataExtensionBody() {
+        if (wasCheckedIfInYangDataExtensionBody) {
+            return isInYangDataExtensionBody;
+        }
+
+        final boolean parentIsInYangDataExtensionBody = parent.isInYangDataExtensionBody();
+        if (parentIsInYangDataExtensionBody) {
+            isInYangDataExtensionBody = parentIsInYangDataExtensionBody;
+        } else {
+            isInYangDataExtensionBody = StmtContextUtils.hasYangDataExtensionParent(this);
+        }
+
+        wasCheckedIfInYangDataExtensionBody = true;
+        return isInYangDataExtensionBody;
     }
 
     @Override

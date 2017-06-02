@@ -190,6 +190,11 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     }
 
     @Override
+    public boolean isInYangDataExtensionBody() {
+        return false;
+    }
+
+    @Override
     public boolean isEnabledSemanticVersioning() {
         return sourceContext.isEnabledSemanticVersioning();
     }

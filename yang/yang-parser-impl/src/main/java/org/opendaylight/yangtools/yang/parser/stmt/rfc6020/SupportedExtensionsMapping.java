@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AnyxmlSchemaLocationEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.OpenconfigVersionEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.YangDataEffectiveStatementImpl;
 
 @Beta
 public enum SupportedExtensionsMapping implements StatementDefinition {
@@ -25,7 +26,9 @@ public enum SupportedExtensionsMapping implements StatementDefinition {
         "anyxml-schema-location", "target-node", false),
     OPENCONFIG_VERSION("http://openconfig.net/yang/openconfig-ext",
         OpenconfigVersionStatementImpl.class, OpenconfigVersionEffectiveStatementImpl.class,
-        "openconfig-version", "semver", false);
+        "openconfig-version", "semver", false),
+    YANG_DATA("urn:ietf:params:xml:ns:yang:ietf-restconf", "2017-01-26", YangDataStatementImpl.class,
+            YangDataEffectiveStatementImpl.class, "yang-data", "name", true);
 
     private final Class<? extends DeclaredStatement<?>> type;
     private final Class<? extends EffectiveStatement<?, ?>> effectiveType;
