@@ -212,6 +212,14 @@ public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIden
     List<UnknownSchemaNode> getUnknownSchemaNodes();
 
     /**
+     * Returns 'yang-data' nodes defined in the module
+     *
+     * @return 'yang-data' nodes defined in the module
+     */
+    @Nonnull
+    Set<YangDataSchemaNode> getYangDataSchemaNodes();
+
+    /**
      * Get YANG source.
      *
      * @return YANG text of this module, or null if the source is not available.
