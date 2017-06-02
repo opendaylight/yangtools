@@ -84,7 +84,7 @@ import org.xml.sax.SAXException;
 
 @RunWith(Parameterized.class)
 public class NormalizedNodeXmlTranslationTest {
-    private static final Logger logger = LoggerFactory.getLogger(NormalizedNodeXmlTranslationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NormalizedNodeXmlTranslationTest.class);
     private final SchemaContext schema;
 
     @Parameterized.Parameters()
@@ -288,7 +288,7 @@ public class NormalizedNodeXmlTranslationTest {
         }
 
         System.err.println(built);
-        logger.info("{}", built);
+        LOG.info("{}", built);
 
         final Element elementNS = XmlDocumentUtils.getDocument().createElementNS(
                 containerNode.getQName().getNamespace().toString(), containerNode.getQName().getLocalName());

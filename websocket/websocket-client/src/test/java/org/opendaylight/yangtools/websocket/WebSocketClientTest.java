@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 @Deprecated
 public class WebSocketClientTest {
-    private static final Logger logger = LoggerFactory.getLogger(WebSocketClientTest.class.toString());
+    private static final Logger LOG = LoggerFactory.getLogger(WebSocketClientTest.class);
     private static final String MESSAGE = "Take me to your leader!";
     private Thread webSocketServerThread;
 
@@ -47,7 +47,7 @@ public class WebSocketClientTest {
             webSocketServerThread.start();
             port = webSocketServer.getPort().get();
         } catch (Exception e) {
-            logger.trace("Error starting websocket server");
+            LOG.trace("Error starting websocket server");
         }
     }
 
@@ -57,7 +57,7 @@ public class WebSocketClientTest {
         URI uri = null;
         try {
             uri = new URI(String.format("ws://localhost:%d/websocket", port));
-            logger.info("CLIENT: " + uri);
+            LOG.info("CLIENT: " + uri);
             ClientMessageCallback messageCallback = new ClientMessageCallback();
             WebSocketIClient wsClient = new WebSocketIClient(uri,messageCallback);
             try {
@@ -74,14 +74,14 @@ public class WebSocketClientTest {
 
                 webSocketServerThread.interrupt();
             } catch (InterruptedException e) {
-                logger.info("WebSocket client couldn't connect to : " + uri);
+                LOG.info("WebSocket client couldn't connect to : " + uri);
                 Assert.fail("WebSocker client could not connect to : " + uri);
             } catch (ExecutionException | TimeoutException toe) {
-                logger.info("Message not received");
+                LOG.info("Message not received");
                 Assert.fail(toe.toString());
             }
         } catch (URISyntaxException e) {
-            logger.info("There is an error in URL sytnax {}",e);
+            LOG.info("There is an error in URL sytnax {}",e);
             Assert.fail("There is an error in URL sytnax");
         }
     }
@@ -89,7 +89,7 @@ public class WebSocketClientTest {
     private class ClientMessageCallback implements org.opendaylight.yangtools.websocket.client.callback.ClientMessageCallback {
         @Override
         public void onMessageReceived(final Object message) {
-            logger.info("received message {}",message);
+            LOG.info("received message {}",message);
             messageReceived.set(true);
         }
     }

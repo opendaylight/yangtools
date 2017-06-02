@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractImmutableNormalizedValueNode<K extends PathArgument, V> extends
         AbstractImmutableNormalizedNode<K, V> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractImmutableNormalizedValueNode.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractImmutableNormalizedValueNode.class);
     @Nullable
     private final V value;
 
@@ -26,7 +26,7 @@ public abstract class AbstractImmutableNormalizedValueNode<K extends PathArgumen
              * Null value is allowed for empty type definition so it should be debug,
              * but still we are logging it in case we need to debug missing values.
              */
-            LOGGER.debug("The value of node {} is null",nodeIdentifier.getNodeType());
+            LOG.debug("The value of node {} is null",nodeIdentifier.getNodeType());
         }
         this.value = value;
     }
