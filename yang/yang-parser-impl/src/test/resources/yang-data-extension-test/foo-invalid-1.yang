@@ -1,0 +1,15 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    import ietf-restconf {
+        prefix rc;
+        revision-date 2017-01-26;
+    }
+
+    revision 2017-06-01;
+
+    rc:yang-data "my-yang-data" {
+        // missing top level container = should throw an exception
+    }
+}

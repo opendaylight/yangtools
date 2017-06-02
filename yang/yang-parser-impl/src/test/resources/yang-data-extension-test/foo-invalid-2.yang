@@ -1,0 +1,25 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    import ietf-restconf {
+        prefix rc;
+        revision-date 2017-01-26;
+    }
+
+    revision 2017-06-01;
+
+    rc:yang-data "my-yang-data" {
+        // two top level containers, but only one is allowed = should throw an exception
+        container cont-1 {}
+        uses grp-1;
+    }
+
+    grouping grp-1 {
+        uses grp-2;
+    }
+
+    grouping grp-2 {
+        container cont-2 {}
+    }
+}

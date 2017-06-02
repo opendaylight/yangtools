@@ -43,6 +43,7 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.YangDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -72,6 +73,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
     private final List<ExtensionDefinition> extensionNodes;
     private final Set<IdentitySchemaNode> identities;
     private final List<UnknownSchemaNode> unknownNodes;
+    private final Set<YangDataSchemaNode> yangDataSchemaNodes;
     private final Map<QName, DataSchemaNode> childNodes;
     private final Set<GroupingDefinition> groupings;
     private final Set<UsesNode> uses;
@@ -169,6 +171,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
         effectiveSubstatements.addAll(substatementsOfSubmodules);
 
         final List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
+        final Set<YangDataSchemaNode> yangDataSchemaNodesInit = new HashSet<>();
         final Set<AugmentationSchema> augmentationsInit = new LinkedHashSet<>();
         final Set<ModuleImport> importsInit = new HashSet<>();
         final Set<NotificationDefinition> notificationsInit = new HashSet<>();
@@ -187,6 +190,9 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 unknownNodesInit.add((UnknownSchemaNode) effectiveStatement);
+            }
+            if (effectiveStatement instanceof YangDataSchemaNode) {
+                yangDataSchemaNodesInit.add((YangDataSchemaNode) effectiveStatement);
             }
             if (effectiveStatement instanceof AugmentationSchema) {
                 augmentationsInit.add((AugmentationSchema) effectiveStatement);
@@ -249,6 +255,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
         }
 
         this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
+        this.yangDataSchemaNodes = ImmutableSet.copyOf(yangDataSchemaNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
         if (ctx.isEnabledOpenconfigVersioning()) {
             this.imports = ImmutableSet.copyOf(importsInit);
@@ -382,6 +389,11 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;
+    }
+
+    @Override
+    public Set<YangDataSchemaNode> getYangDataSchemaNodes() {
+        return yangDataSchemaNodes;
     }
 
     @Override
