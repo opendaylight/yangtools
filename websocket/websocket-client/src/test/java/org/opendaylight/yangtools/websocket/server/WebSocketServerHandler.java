@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  */
 @Deprecated
 public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> {
-    private static final Logger logger = LoggerFactory.getLogger(WebSocketServerHandler.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(WebSocketServerHandler.class);
 
     private static final String WEBSOCKET_PATH = "/websocket";
 
@@ -111,7 +111,7 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
 
         // Send the uppercase string back.
         String request = ((TextWebSocketFrame) frame).text();
-        logger.debug(String.format("%s received %s", ctx.channel(), request));
+        LOG.debug(String.format("%s received %s", ctx.channel(), request));
         ctx.channel().write(new TextWebSocketFrame(request.toUpperCase()));
     }
 
@@ -134,7 +134,7 @@ public class WebSocketServerHandler extends SimpleChannelInboundHandler<Object> 
 
     @Override
     public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause) throws Exception {
-        logger.info("Exception caught {}",cause);
+        LOG.info("Exception caught {}",cause);
         ctx.close();
     }
 

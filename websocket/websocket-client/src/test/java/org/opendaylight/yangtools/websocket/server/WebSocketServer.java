@@ -64,7 +64,7 @@ public class WebSocketServer implements Runnable {
     private final ServerBootstrap bootstrap = new ServerBootstrap();
     private final EventLoopGroup bossGroup = new NioEventLoopGroup();
     private final EventLoopGroup workerGroup = new NioEventLoopGroup();
-    private static final Logger logger = LoggerFactory.getLogger(WebSocketServer.class.toString());
+    private static final Logger LOG = LoggerFactory.getLogger(WebSocketServer.class);
 
 
     public WebSocketServer(final int inPort) {
@@ -77,7 +77,7 @@ public class WebSocketServer implements Runnable {
         try {
             startServer();
         } catch (Exception e) {
-            logger.info("Exception occured while starting webSocket server {}",e);
+            LOG.info("Exception occured while starting webSocket server {}",e);
         }
     }
 
@@ -98,8 +98,8 @@ public class WebSocketServer implements Runnable {
             } catch (ClassCastException cce) {
                 throw new ExecutionException("Unknown socket address type", cce);
             }
-            logger.info("Web socket server started at port " + port.get() + '.');
-            logger.info("Open your browser and navigate to http://localhost:" + port.get() + '/');
+            LOG.info("Web socket server started at port " + port.get() + '.');
+            LOG.info("Open your browser and navigate to http://localhost:" + port.get() + '/');
 
             try {
                 ch.closeFuture().sync();

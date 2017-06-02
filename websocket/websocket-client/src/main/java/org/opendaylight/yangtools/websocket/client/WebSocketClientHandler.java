@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 @Deprecated
 public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WebSocketClientHandler.class.toString());
+    private static final Logger LOG = LoggerFactory.getLogger(WebSocketClientHandler.class);
     private final WebSocketClientHandshaker handshaker;
     private final ClientMessageCallback messageListener;
 
@@ -74,7 +74,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 
     @Override
     public void channelInactive(final ChannelHandlerContext ctx) throws Exception {
-        LOGGER.info("WebSocket Client disconnected!");
+        LOG.info("WebSocket Client disconnected!");
     }
 
     @Override
@@ -83,7 +83,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
         Channel ch = ctx.channel();
         if (!handshaker.isHandshakeComplete()) {
             handshaker.finishHandshake(ch, (FullHttpResponse) msg);
-            LOGGER.info("WebSocket Client connected!");
+            LOG.info("WebSocket Client connected!");
             handshakeFuture.setSuccess();
             return;
         }
@@ -102,12 +102,12 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 
         if (frame instanceof TextWebSocketFrame) {
             TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
-            LOGGER.info("WebSocket Client received message: "
+            LOG.info("WebSocket Client received message: "
                     + textFrame.text());
         } else if (frame instanceof PongWebSocketFrame) {
-            LOGGER.info("WebSocket Client received pong");
+            LOG.info("WebSocket Client received pong");
         } else if (frame instanceof CloseWebSocketFrame) {
-            LOGGER.info("WebSocket Client received closing");
+            LOG.info("WebSocket Client received closing");
             ch.close();
         }
     }
