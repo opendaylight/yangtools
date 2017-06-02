@@ -1,0 +1,20 @@
+module bar {
+    namespace bar;
+    prefix bar;
+
+    import ietf-restconf {
+        prefix rc;
+        revision-date 2017-01-26;
+    }
+
+    revision 2017-06-01;
+
+    container cont {
+        rc:yang-data "my-yang-data" {
+            // only one top-level container is allowed, but in this case it does not matter
+            // as the whole yang-data node is ignored (because it does not appear as a top-level statement)
+            container top-level-cont {}
+            container another-top-level-cont {}
+        }
+    }
+}

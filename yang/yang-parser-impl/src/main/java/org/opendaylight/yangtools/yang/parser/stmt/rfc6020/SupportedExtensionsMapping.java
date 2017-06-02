@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AnyxmlSchemaLocationEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.SemanticVersionEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.YangDataEffectiveStatementImpl;
 
 @Beta
 public enum SupportedExtensionsMapping implements StatementDefinition {
@@ -25,7 +26,9 @@ public enum SupportedExtensionsMapping implements StatementDefinition {
         "anyxml-schema-location", "target-node", false),
     SEMANTIC_VERSION("urn:opendaylight:yang:extension:semantic-version", "2016-02-02",
         SemanticVersionStatementImpl.class, SemanticVersionEffectiveStatementImpl.class,
-        "semantic-version", "semantic-version", false);
+        "semantic-version", "semantic-version", false),
+    YANG_DATA("urn:ietf:params:xml:ns:yang:ietf-restconf", "2017-01-26", YangDataStatementImpl.class,
+            YangDataEffectiveStatementImpl.class, "yang-data", "name", true);
 
     private final Class<? extends DeclaredStatement<?>> type;
     private final Class<? extends EffectiveStatement<?, ?>> effectiveType;
