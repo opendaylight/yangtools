@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamesp
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.RootStatementContext;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangDataStatementImpl;
 
 public final class StmtContextUtils {
     public static final Splitter LIST_KEY_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
@@ -205,6 +206,16 @@ public final class StmtContextUtils {
         return false;
     }
 
+    /**
+     * Checks if the statement context has a 'yang-data' extension node as its parent.
+     *
+     * @param stmtCtx statement context to be checked
+     * @return true if the parent node is a 'yang-data' node, otherwise false
+     */
+    public static boolean hasYangDataExtensionParent(final StmtContext<?, ?, ?> stmtCtx) {
+        return producesDeclared(stmtCtx.getParentContext(), YangDataStatementImpl.class);
+    }
+
     public static boolean isUnknownStatement(final StmtContext<?, ?, ?> stmtCtx) {
         return producesDeclared(stmtCtx, UnknownStatementImpl.class);
     }
@@ -264,6 +275,10 @@ public final class StmtContextUtils {
         boolean containsIfFeature = false;
         for (final StatementContextBase<?, ?, ?> stmt : stmtContext.declaredSubstatements()) {
             if (YangStmtMapping.IF_FEATURE.equals(stmt.getPublicDefinition())) {
+                if (stmtContext.isInYangDataExtensionBody()) {
+                    break;
+                }
+
                 containsIfFeature = true;
                 if (((Predicate<Set<QName>>) stmt.getStatementArgument()).test(supportedFeatures)) {
                     isSupported = true;
