@@ -33,7 +33,7 @@ import java.util.function.BiFunction;
 public final class EvenMoreObjects {
 
     @SuppressWarnings("unchecked")
-    public static <T> boolean equalsHelper(T self, Object other, BooleanEqualsFunction<T> equals) {
+    public static <T> boolean equalsHelper(final T self, final Object other, final BooleanEqualsFunction<T> equals) {
         if (other == self) {
             return true;
         }
@@ -43,7 +43,7 @@ public final class EvenMoreObjects {
         if (self.getClass() != other.getClass()) {
             return false;
         }
-        return equals.apply(self, (T) other);
+        return equals.apply(self, (T) other).booleanValue();
     }
 
     @FunctionalInterface

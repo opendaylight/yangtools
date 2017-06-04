@@ -33,10 +33,10 @@ public final class PropertyUtils {
      * @param defaultValue the default value
      * @return the System property as an int or the <code>defaultValue</code> if not found.
      */
-    public static int getIntSystemProperty( String propName, int defaultValue ) {
+    public static int getIntSystemProperty(String propName, int defaultValue) {
         int propValue = defaultValue;
         String strValue = System.getProperty(propName);
-        if (!Strings.isNullOrEmpty(strValue) && !strValue.trim().isEmpty() ) {
+        if (!Strings.isNullOrEmpty(strValue) && !strValue.trim().isEmpty()) {
             try {
                 propValue = Integer.parseInt(strValue);
             } catch (NumberFormatException e) {

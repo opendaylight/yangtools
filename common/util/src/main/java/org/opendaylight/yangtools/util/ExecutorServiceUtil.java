@@ -24,9 +24,10 @@ import org.slf4j.LoggerFactory;
 public final class ExecutorServiceUtil {
     private static final class WaitInQueueExecutionHandler implements RejectedExecutionHandler {
         @Override
+        @SuppressWarnings("checkstyle:parameterName")
         public void rejectedExecution(final Runnable r, final ThreadPoolExecutor executor) {
-            if (executor.isShutdown() ) {
-                throw new RejectedExecutionException( "Executor has been shutdown." );
+            if (executor.isShutdown()) {
+                throw new RejectedExecutionException("Executor has been shutdown.");
             }
 
             try {
@@ -57,6 +58,7 @@ public final class ExecutorServiceUtil {
     public static <E> BlockingQueue<E> offerFailingBlockingQueue(final BlockingQueue<E> delegate) {
         return new ForwardingBlockingQueue<E>() {
             @Override
+            @SuppressWarnings("checkstyle:parameterName")
             public boolean offer(@Nonnull final E o) {
                 return false;
             }
@@ -83,8 +85,7 @@ public final class ExecutorServiceUtil {
      * timeout period. If the timeout elapses before termination, the executor is forcefully
      * shutdown.
      */
-    public static void tryGracefulShutdown(final ExecutorService executor, long timeout,
-            TimeUnit unit ) {
+    public static void tryGracefulShutdown(final ExecutorService executor, final long timeout, final TimeUnit unit) {
 
         executor.shutdown();
 

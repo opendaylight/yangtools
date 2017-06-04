@@ -37,9 +37,9 @@ public final class MappingCheckedFuture<V, X extends Exception> extends Abstract
 
     private final Function<Exception, X> mapper;
 
-    private MappingCheckedFuture( final ListenableFuture<V> delegate, final Function<Exception, X> mapper ) {
-        super( delegate );
-        this.mapper = Preconditions.checkNotNull( mapper );
+    private MappingCheckedFuture(final ListenableFuture<V> delegate, final Function<Exception, X> mapper) {
+        super(delegate);
+        this.mapper = Preconditions.checkNotNull(mapper);
     }
 
     /**
@@ -51,17 +51,18 @@ public final class MappingCheckedFuture<V, X extends Exception> extends Abstract
      * @return a new <code>MappingCheckedFuture</code>
      */
     public static <V, X extends Exception> MappingCheckedFuture<V, X> create(
-            final ListenableFuture<V> delegate, final Function<Exception, X> mapper ) {
+            final ListenableFuture<V> delegate, final Function<Exception, X> mapper) {
         return new MappingCheckedFuture<>(delegate, mapper);
     }
 
     @Override
-    protected X mapException( @Nonnull final Exception e ) {
-        return mapper.apply( e );
+    @SuppressWarnings("checkstyle:parameterName")
+    protected X mapException(@Nonnull final Exception e) {
+        return mapper.apply(e);
     }
 
-    private ExecutionException wrapInExecutionException( final String message, final Exception e ) {
-        return new ExecutionException( message, mapException( e ) );
+    private ExecutionException wrapInExecutionException(final String message, final Exception ex) {
+        return new ExecutionException(message, mapException(ex));
     }
 
     @Override
@@ -70,26 +71,26 @@ public final class MappingCheckedFuture<V, X extends Exception> extends Abstract
             return super.get();
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw wrapInExecutionException( "Operation was interrupted", e );
+            throw wrapInExecutionException("Operation was interrupted", e);
         } catch (final CancellationException e) {
-            throw wrapInExecutionException( "Operation was cancelled", e );
+            throw wrapInExecutionException("Operation was cancelled", e);
         } catch (final ExecutionException e) {
-            throw wrapInExecutionException( e.getMessage(), e );
+            throw wrapInExecutionException(e.getMessage(), e);
         }
     }
 
     @Override
-    public V get( final long timeout, @Nonnull final TimeUnit unit )
+    public V get(final long timeout, @Nonnull final TimeUnit unit)
             throws InterruptedException, ExecutionException, TimeoutException {
         try {
-            return super.get( timeout, unit );
+            return super.get(timeout, unit);
         } catch (final InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw wrapInExecutionException( "Operation was interrupted", e );
+            throw wrapInExecutionException("Operation was interrupted", e);
         } catch (final CancellationException e) {
-            throw wrapInExecutionException( "Operation was cancelled", e );
+            throw wrapInExecutionException("Operation was cancelled", e);
         } catch (final ExecutionException e) {
-            throw wrapInExecutionException( e.getMessage(), e );
+            throw wrapInExecutionException(e.getMessage(), e);
         }
     }
 }

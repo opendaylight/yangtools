@@ -56,7 +56,7 @@ public final class WritableObjects {
      * @throws NullPointerException if output is null
      */
     public static void writeLong(final DataOutput out, final long value, final int flags) throws IOException {
-        Preconditions.checkArgument((flags & 0xFFFFFF0F) == 0, "Invalid flags {}", flags);
+        Preconditions.checkArgument((flags & 0xFFFFFF0F) == 0, "Invalid flags %s", flags);
         final int bytes = valueBytes(value);
         out.writeByte(bytes | flags);
         writeValue(out, value, bytes);
@@ -109,27 +109,27 @@ public final class WritableObjects {
      */
     public static long readLongBody(final @Nonnull DataInput in, final byte header) throws IOException {
         int bytes = header & 0xF;
-        if (bytes < 8) {
-            if (bytes > 0) {
-                long value = 0;
-                if (bytes >= 4) {
-                    bytes -= 4;
-                    value = (in.readInt() & 0xFFFFFFFFL) << (bytes * Byte.SIZE);
-                }
-                if (bytes >= 2) {
-                    bytes -= 2;
-                    value |= in.readUnsignedShort() << (bytes * Byte.SIZE);
-                }
-                if (bytes > 0) {
-                    value |= in.readUnsignedByte();
-                }
-                return value;
-            } else {
-                return 0;
-            }
-        } else {
+        if (bytes >= 8) {
             return in.readLong();
         }
+
+        if (bytes <= 0) {
+            return 0;
+        }
+
+        long value = 0;
+        if (bytes >= 4) {
+            bytes -= 4;
+            value = (in.readInt() & 0xFFFFFFFFL) << bytes * Byte.SIZE;
+        }
+        if (bytes >= 2) {
+            bytes -= 2;
+            value |= in.readUnsignedShort() << bytes * Byte.SIZE;
+        }
+        if (bytes > 0) {
+            value |= in.readUnsignedByte();
+        }
+        return value;
     }
 
     /**
@@ -183,11 +183,11 @@ public final class WritableObjects {
             int left = bytes;
             if (left >= 4) {
                 left -= 4;
-                out.writeInt((int)(value >>> (left * Byte.SIZE)));
+                out.writeInt((int)(value >>> left * Byte.SIZE));
             }
             if (left >= 2) {
                 left -= 2;
-                out.writeShort((int)(value >>> (left * Byte.SIZE)));
+                out.writeShort((int)(value >>> left * Byte.SIZE));
             }
             if (left > 0) {
                 out.writeByte((int)(value & 0xFF));
@@ -203,15 +203,13 @@ public final class WritableObjects {
         if ((value & 0xFFFFFFFF00000000L) != 0) {
             if ((value & 0xFFFF000000000000L) != 0) {
                 return (value & 0xFF00000000000000L) != 0 ? 8 : 7;
-            } else {
-                return (value & 0x0000FF0000000000L) != 0 ? 6 : 5;
             }
+            return (value & 0x0000FF0000000000L) != 0 ? 6 : 5;
         } else if ((value & 0x00000000FFFFFFFFL) != 0) {
             if ((value & 0x00000000FFFF0000L) != 0) {
                 return (value & 0x00000000FF000000L) != 0 ? 4 : 3;
-            } else {
-                return (value & 0x000000000000FF00L) != 0 ? 2 : 1;
             }
+            return (value & 0x000000000000FF00L) != 0 ? 2 : 1;
         } else {
             return 0;
         }
