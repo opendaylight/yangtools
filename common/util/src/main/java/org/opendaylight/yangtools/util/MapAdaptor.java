@@ -45,23 +45,12 @@ public final class MapAdaptor {
     }
 
     private static int getProperty(final String name, final int defaultValue) {
-        try {
-            final String p = System.getProperty(name);
-            if (p != null) {
-                try {
-                    int pi = Integer.valueOf(p);
-                    if (pi <= 0) {
-                        LOG.warn("Ignoring illegal value of {}: has to be a positive number", name);
-                    } else {
-                        return pi;
-                    }
-                } catch (NumberFormatException e) {
-                    LOG.warn("Ignoring non-numerical value of {}", name, e);
-                }
-            }
-        } catch (Exception e) {
-            LOG.debug("Failed to get {}", name, e);
+        final int val = Integer.getInteger(name, defaultValue).intValue();
+        if (val > 0) {
+            return val;
         }
+
+        LOG.warn("Ignoring illegal value of {}: has to be a positive number", name);
         return defaultValue;
     }
 

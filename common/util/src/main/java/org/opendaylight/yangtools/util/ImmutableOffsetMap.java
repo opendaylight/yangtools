@@ -115,36 +115,36 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
      * All other maps are converted to an {@link ImmutableOffsetMap} with the
      * same iteration order as input.
      *
-     * @param m
+     * @param map
      *            Input map, may not be null.
      * @return An isolated, immutable copy of the input map
      */
-    @Nonnull public static <K, V> Map<K, V> orderedCopyOf(@Nonnull final Map<K, V> m) {
+    @Nonnull public static <K, V> Map<K, V> orderedCopyOf(@Nonnull final Map<K, V> map) {
         // Prevent a copy. Note that ImmutableMap is not listed here because of its potentially larger keySet overhead.
-        if (m instanceof ImmutableOffsetMap || m instanceof SharedSingletonMap) {
-            return m;
+        if (map instanceof ImmutableOffsetMap || map instanceof SharedSingletonMap) {
+            return map;
         }
 
         // Familiar and efficient to copy
-        if (m instanceof MutableOffsetMap) {
-            return ((MutableOffsetMap<K, V>) m).toUnmodifiableMap();
+        if (map instanceof MutableOffsetMap) {
+            return ((MutableOffsetMap<K, V>) map).toUnmodifiableMap();
         }
 
-        final int size = m.size();
+        final int size = map.size();
         if (size == 0) {
             // Shares a single object
             return ImmutableMap.of();
         }
         if (size == 1) {
             // Efficient single-entry implementation
-            final Entry<K, V> e = m.entrySet().iterator().next();
+            final Entry<K, V> e = map.entrySet().iterator().next();
             return SharedSingletonMap.orderedOf(e.getKey(), e.getValue());
         }
 
-        final Map<K, Integer> offsets = OffsetMapCache.orderedOffsets(m.keySet());
+        final Map<K, Integer> offsets = OffsetMapCache.orderedOffsets(map.keySet());
         @SuppressWarnings("unchecked")
         final V[] array = (V[]) new Object[offsets.size()];
-        for (Entry<K, V> e : m.entrySet()) {
+        for (Entry<K, V> e : map.entrySet()) {
             array[offsets.get(e.getKey())] = e.getValue();
         }
 
@@ -162,36 +162,36 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
      * All other maps are converted to an {@link ImmutableOffsetMap}. Iterator
      * order is not guaranteed to be retained.
      *
-     * @param m
+     * @param map
      *            Input map, may not be null.
      * @return An isolated, immutable copy of the input map
      */
-    @Nonnull public static <K, V> Map<K, V> unorderedCopyOf(@Nonnull final Map<K, V> m) {
+    @Nonnull public static <K, V> Map<K, V> unorderedCopyOf(@Nonnull final Map<K, V> map) {
         // Prevent a copy. Note that ImmutableMap is not listed here because of its potentially larger keySet overhead.
-        if (m instanceof ImmutableOffsetMap || m instanceof SharedSingletonMap) {
-            return m;
+        if (map instanceof ImmutableOffsetMap || map instanceof SharedSingletonMap) {
+            return map;
         }
 
         // Familiar and efficient to copy
-        if (m instanceof MutableOffsetMap) {
-            return ((MutableOffsetMap<K, V>) m).toUnmodifiableMap();
+        if (map instanceof MutableOffsetMap) {
+            return ((MutableOffsetMap<K, V>) map).toUnmodifiableMap();
         }
 
-        final int size = m.size();
+        final int size = map.size();
         if (size == 0) {
             // Shares a single object
             return ImmutableMap.of();
         }
         if (size == 1) {
             // Efficient single-entry implementation
-            final Entry<K, V> e = m.entrySet().iterator().next();
+            final Entry<K, V> e = map.entrySet().iterator().next();
             return SharedSingletonMap.unorderedOf(e.getKey(), e.getValue());
         }
 
-        final Map<K, Integer> offsets = OffsetMapCache.unorderedOffsets(m.keySet());
+        final Map<K, Integer> offsets = OffsetMapCache.unorderedOffsets(map.keySet());
         @SuppressWarnings("unchecked")
         final V[] array = (V[]) new Object[offsets.size()];
-        for (Entry<K, V> e : m.entrySet()) {
+        for (Entry<K, V> e : map.entrySet()) {
             array[offsets.get(e.getKey())] = e.getValue();
         }
 
@@ -224,27 +224,27 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
     }
 
     @Override
-    public final boolean equals(final Object o) {
-        if (o == this) {
+    public final boolean equals(final Object obj) {
+        if (obj == this) {
             return true;
         }
-        if (!(o instanceof Map)) {
+        if (!(obj instanceof Map)) {
             return false;
         }
 
-        if (o instanceof ImmutableOffsetMap) {
-            final ImmutableOffsetMap<?, ?> om = (ImmutableOffsetMap<?, ?>) o;
+        if (obj instanceof ImmutableOffsetMap) {
+            final ImmutableOffsetMap<?, ?> om = (ImmutableOffsetMap<?, ?>) obj;
 
             // If the offset match, the arrays have to match, too
             if (offsets.equals(om.offsets)) {
                 return Arrays.deepEquals(objects, om.objects);
             }
-        } else if (o instanceof MutableOffsetMap) {
+        } else if (obj instanceof MutableOffsetMap) {
             // Let MutableOffsetMap do the actual work.
-            return o.equals(this);
+            return obj.equals(this);
         }
 
-        final Map<?, ?> other = (Map<?, ?>)o;
+        final Map<?, ?> other = (Map<?, ?>)obj;
 
         // Size and key sets have to match
         if (size() != other.size() || !keySet().equals(other.keySet())) {
@@ -298,6 +298,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public final void putAll(@Nonnull final Map<? extends K, ? extends V> m) {
         throw new UnsupportedOperationException();
     }
@@ -328,11 +329,11 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
     public final String toString() {
         final StringBuilder sb = new StringBuilder("{");
         final Iterator<K> it = offsets.keySet().iterator();
-        int i = 0;
+        int offset = 0;
         while (it.hasNext()) {
             sb.append(it.next());
             sb.append('=');
-            sb.append(objects[i++]);
+            sb.append(objects[offset++]);
 
             if (it.hasNext()) {
                 sb.append(", ");

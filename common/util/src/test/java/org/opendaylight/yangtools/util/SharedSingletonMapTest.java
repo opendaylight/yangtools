@@ -84,32 +84,32 @@ public class SharedSingletonMapTest {
         assertTrue(m.equals(t));
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testEmptyOrderedCopyOf() {
         SharedSingletonMap.orderedCopyOf(ImmutableMap.of());
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testEmptyUnorderedCopyOf() {
         SharedSingletonMap.unorderedCopyOf(ImmutableMap.of());
     }
 
-    @Test(expected=UnsupportedOperationException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void testClear() {
         create().clear();
     }
 
-    @Test(expected=UnsupportedOperationException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void testPut() {
         create().put(null, null);
     }
 
-    @Test(expected=UnsupportedOperationException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void testPutAll() {
         create().putAll(Collections.singletonMap("", ""));
     }
 
-    @Test(expected=UnsupportedOperationException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void testRemove() {
         create().remove(null);
     }

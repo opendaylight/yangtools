@@ -80,7 +80,7 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
      */
     public DeadlockDetectingListeningExecutorService(final ExecutorService delegate,
             @Nonnull final Supplier<Exception> deadlockExceptionSupplier,
-            @Nullable final Executor listenableFutureExecutor ) {
+            @Nullable final Executor listenableFutureExecutor) {
         super(delegate, listenableFutureExecutor);
         this.deadlockExceptionFunction = Preconditions.checkNotNull(deadlockExceptionSupplier);
     }

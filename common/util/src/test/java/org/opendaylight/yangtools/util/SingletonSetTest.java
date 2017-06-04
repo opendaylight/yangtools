@@ -73,37 +73,37 @@ public class SingletonSetTest {
         assertFalse(it.hasNext());
     }
 
-    @Test(expected=UnsupportedOperationException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void testRejectedAdd() {
         final SingletonSet<?> s = nullSet();
         s.add(null);
     }
 
-    @Test(expected=UnsupportedOperationException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void testRejectedAddAll() {
         final SingletonSet<?> s = nullSet();
         s.addAll(null);
     }
 
-    @Test(expected=UnsupportedOperationException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void testRejectedClear() {
         final SingletonSet<?> s = nullSet();
         s.clear();
     }
 
-    @Test(expected=UnsupportedOperationException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void testRejectedRemove() {
         final SingletonSet<?> s = nullSet();
         s.remove(null);
     }
 
-    @Test(expected=UnsupportedOperationException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void testRejectedRemoveAll() {
         final SingletonSet<?> s = nullSet();
         s.removeAll(null);
     }
 
-    @Test(expected=UnsupportedOperationException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void testRejectedRetainAll() {
         final SingletonSet<?> s = nullSet();
         s.retainAll(null);

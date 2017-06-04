@@ -27,6 +27,7 @@ public abstract class AbstractUUIDIdentifier<T extends AbstractUUIDIdentifier<T>
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public final int compareTo(@Nonnull final T o) {
         return getValue().compareTo(o.getValue());
     }

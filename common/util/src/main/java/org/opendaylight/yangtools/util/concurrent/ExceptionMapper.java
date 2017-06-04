@@ -19,7 +19,8 @@ import java.util.concurrent.ExecutionException;
  *
  * <p>
  * This mapper is intended to be used with
- * {@link com.google.common.util.concurrent.Futures#makeChecked(com.google.common.util.concurrent.ListenableFuture, Function)}
+ * {@link com.google.common.util.concurrent.Futures#makeChecked(
+ * com.google.common.util.concurrent.ListenableFuture, Function)}
  * <ul>
  * <li>if exception is the specified type or one of its subclasses, it returns
  * original exception.
@@ -71,34 +72,34 @@ public abstract class ExceptionMapper<X extends Exception> implements Function<E
 
     @SuppressWarnings("unchecked")
     @Override
-    public X apply(final Exception e) {
+    public X apply(final Exception input) {
 
         // If exception is of the specified type,return it.
-        if (exceptionType.isAssignableFrom( e.getClass())) {
-            return (X) e;
+        if (exceptionType.isAssignableFrom(input.getClass())) {
+            return (X) input;
         }
 
         // If exception is ExecutionException whose cause is of the specified
         // type, return the cause.
-        if (e instanceof ExecutionException && e.getCause() != null) {
-            if (exceptionType.isAssignableFrom(e.getCause().getClass())) {
-                return (X) e.getCause();
+        if (input instanceof ExecutionException && input.getCause() != null) {
+            if (exceptionType.isAssignableFrom(input.getCause().getClass())) {
+                return (X) input.getCause();
             }
-            return newWithCause(opName + " execution failed", e.getCause());
+            return newWithCause(opName + " execution failed", input.getCause());
         }
 
         // Otherwise return an instance of the specified type with the original
         // cause.
 
-        if (e instanceof InterruptedException) {
-            return newWithCause(opName + " was interupted.", e);
+        if (input instanceof InterruptedException) {
+            return newWithCause(opName + " was interupted.", input);
         }
 
-        if (e instanceof CancellationException ) {
-            return newWithCause(opName + " was cancelled.", e);
+        if (input instanceof CancellationException) {
+            return newWithCause(opName + " was cancelled.", input);
         }
 
         // We really shouldn't get here but need to cover it anyway for completeness.
-        return newWithCause(opName + " encountered an unexpected failure", e);
+        return newWithCause(opName + " encountered an unexpected failure", input);
     }
 }

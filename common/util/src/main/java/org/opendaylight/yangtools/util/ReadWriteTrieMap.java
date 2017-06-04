@@ -93,6 +93,7 @@ final class ReadWriteTrieMap<K, V> implements Map<K, V> {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public void putAll(@Nonnull final Map<? extends K, ? extends V> m) {
         for (Entry<? extends K, ? extends V> e : m.entrySet()) {
             put(e.getKey(), e.getValue());
@@ -121,8 +122,8 @@ final class ReadWriteTrieMap<K, V> implements Map<K, V> {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        return delegate.equals(o);
+    public boolean equals(final Object obj) {
+        return delegate.equals(obj);
     }
 
     @Override

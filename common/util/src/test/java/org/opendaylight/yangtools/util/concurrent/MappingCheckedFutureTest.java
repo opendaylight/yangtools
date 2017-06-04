@@ -8,11 +8,11 @@
 
 package org.opendaylight.yangtools.util.concurrent;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.google.common.util.concurrent.CheckedFuture;
@@ -32,35 +32,37 @@ import org.junit.Test;
 public class MappingCheckedFutureTest {
 
     interface FutureInvoker {
-        void invokeGet( CheckedFuture<?,?> future ) throws Exception;
-        Throwable extractWrappedTestEx( Exception from );
+        void invokeGet(CheckedFuture<?,?> future) throws Exception;
+
+        Throwable extractWrappedTestEx(Exception from);
     }
 
-    @SuppressWarnings("serial")
     static class TestException extends Exception {
-        TestException( final String message, final Throwable cause ) {
-            super( message, cause );
+        private static final long serialVersionUID = 1L;
+
+        TestException(final String message, final Throwable cause) {
+            super(message, cause);
         }
     }
 
-    static final ExceptionMapper<TestException> MAPPER =  new ExceptionMapper<TestException>(
-                                                                      "Test", TestException.class ) {
+    static final ExceptionMapper<TestException> MAPPER = new ExceptionMapper<TestException>(
+                                                                      "Test", TestException.class) {
 
         @Override
-        protected TestException newWithCause( final String message, final Throwable cause ) {
-            return new TestException( message, cause );
+        protected TestException newWithCause(final String message, final Throwable cause) {
+            return new TestException(message, cause);
         }
     };
 
     static final FutureInvoker GET = new FutureInvoker() {
         @Override
-        public void invokeGet( final CheckedFuture<?,?> future ) throws Exception {
+        public void invokeGet(final CheckedFuture<?, ?> future) throws Exception {
             future.get();
         }
 
         @Override
-        public Throwable extractWrappedTestEx( final Exception from ) {
-            if (from instanceof ExecutionException ) {
+        public Throwable extractWrappedTestEx(final Exception from) {
+            if (from instanceof ExecutionException) {
                 return from.getCause();
             }
 
@@ -70,13 +72,13 @@ public class MappingCheckedFutureTest {
 
     static final FutureInvoker TIMED_GET = new FutureInvoker() {
         @Override
-        public void invokeGet( final CheckedFuture<?,?> future ) throws Exception {
-            future.get( 1, TimeUnit.HOURS );
+        public void invokeGet(final CheckedFuture<?, ?> future) throws Exception {
+            future.get(1, TimeUnit.HOURS);
         }
 
         @Override
-        public Throwable extractWrappedTestEx( final Exception from ) {
-            if (from instanceof ExecutionException ) {
+        public Throwable extractWrappedTestEx(final Exception from) {
+            if (from instanceof ExecutionException) {
                 return from.getCause();
             }
 
@@ -86,139 +88,128 @@ public class MappingCheckedFutureTest {
 
     static final FutureInvoker CHECKED_GET = new FutureInvoker() {
         @Override
-        public void invokeGet( final CheckedFuture<?,?> future ) throws Exception {
+        public void invokeGet(final CheckedFuture<?,?> future) throws Exception {
             future.checkedGet();
         }
 
         @Override
-        public Throwable extractWrappedTestEx( final Exception from ) {
+        public Throwable extractWrappedTestEx(final Exception from) {
             return from;
         }
     };
 
     static final FutureInvoker TIMED_CHECKED_GET = new FutureInvoker() {
         @Override
-        public void invokeGet( final CheckedFuture<?,?> future ) throws Exception {
-            future.checkedGet( 50, TimeUnit.MILLISECONDS );
+        public void invokeGet(final CheckedFuture<?,?> future) throws Exception {
+            future.checkedGet(50, TimeUnit.MILLISECONDS);
         }
 
         @Override
-        public Throwable extractWrappedTestEx( final Exception from ) {
+        public Throwable extractWrappedTestEx(final Exception from) {
             return from;
         }
     };
 
     @Test
     public void testGet() throws Exception {
-
         SettableFuture<String> delegate = SettableFuture.create();
-        MappingCheckedFuture<String,TestException> future = MappingCheckedFuture.create( delegate, MAPPER );
-        delegate.set( "test" );
-        assertEquals( "get", "test", future.get() );
+        MappingCheckedFuture<String,TestException> future = MappingCheckedFuture.create(delegate, MAPPER);
+        delegate.set("test");
+        assertEquals("get", "test", future.get());
     }
 
     @Test
     public void testGetWithExceptions() throws Exception {
-
-        testExecutionException( GET, new RuntimeException() );
-        testExecutionException( GET, new TestException( "mock", null ) );
-        testCancellationException( GET );
-        testInterruptedException( GET );
+        testExecutionException(GET, new RuntimeException());
+        testExecutionException(GET, new TestException("mock", null));
+        testCancellationException(GET);
+        testInterruptedException(GET);
     }
 
     @Test
     public void testTimedGet() throws Exception {
-
         SettableFuture<String> delegate = SettableFuture.create();
-        MappingCheckedFuture<String,TestException> future = MappingCheckedFuture.create( delegate, MAPPER );
-        delegate.set( "test" );
-        assertEquals( "get", "test", future.get( 50, TimeUnit.MILLISECONDS ) );
+        MappingCheckedFuture<String,TestException> future = MappingCheckedFuture.create(delegate, MAPPER);
+        delegate.set("test");
+        assertEquals("get", "test", future.get(50, TimeUnit.MILLISECONDS));
     }
 
     @Test
     public void testTimedGetWithExceptions() throws Exception {
-
-        testExecutionException( TIMED_GET, new RuntimeException() );
-        testCancellationException( TIMED_GET );
-        testInterruptedException( TIMED_GET );
+        testExecutionException(TIMED_GET, new RuntimeException());
+        testCancellationException(TIMED_GET);
+        testInterruptedException(TIMED_GET);
     }
 
     @Test
     public void testCheckedGetWithExceptions() throws Exception {
-
-        testExecutionException( CHECKED_GET, new RuntimeException() );
-        testCancellationException( CHECKED_GET );
-        testInterruptedException( CHECKED_GET );
+        testExecutionException(CHECKED_GET, new RuntimeException());
+        testCancellationException(CHECKED_GET);
+        testInterruptedException(CHECKED_GET);
     }
 
     @Test
     public void testTimedCheckedWithExceptions() throws Exception {
-
-        testExecutionException( TIMED_CHECKED_GET, new RuntimeException() );
-        testCancellationException( TIMED_CHECKED_GET );
-        testInterruptedException( TIMED_CHECKED_GET );
+        testExecutionException(TIMED_CHECKED_GET, new RuntimeException());
+        testCancellationException(TIMED_CHECKED_GET);
+        testInterruptedException(TIMED_CHECKED_GET);
     }
 
-    private static void testExecutionException( final FutureInvoker invoker, final Throwable cause ) {
-
+    @SuppressWarnings("checkstyle:illegalCatch")
+    private static void testExecutionException(final FutureInvoker invoker, final Throwable cause) {
         SettableFuture<String> delegate = SettableFuture.create();
-        MappingCheckedFuture<String,TestException> mappingFuture =
-                                                        MappingCheckedFuture.create( delegate, MAPPER );
+        MappingCheckedFuture<String, TestException> mappingFuture = MappingCheckedFuture.create(delegate, MAPPER);
 
-        delegate.setException( cause );
+        delegate.setException(cause);
 
         try {
-            invoker.invokeGet( mappingFuture );
-            fail( "Expected exception thrown" );
-        } catch( Exception e ) {
-            Throwable expectedTestEx = invoker.extractWrappedTestEx( e );
-            assertNotNull( "Expected returned exception is null", expectedTestEx );
-            assertEquals( "Exception type", TestException.class, expectedTestEx.getClass() );
+            invoker.invokeGet(mappingFuture);
+            fail("Expected exception thrown");
+        } catch (Exception e) {
+            Throwable expectedTestEx = invoker.extractWrappedTestEx(e);
+            assertNotNull("Expected returned exception is null", expectedTestEx);
+            assertEquals("Exception type", TestException.class, expectedTestEx.getClass());
 
-            if (cause instanceof TestException ) {
-                assertNull( "Expected null cause", expectedTestEx.getCause() );
+            if (cause instanceof TestException) {
+                assertNull("Expected null cause", expectedTestEx.getCause());
             } else {
-                assertSame( "TestException cause", cause, expectedTestEx.getCause() );
+                assertSame("TestException cause", cause, expectedTestEx.getCause());
             }
         }
     }
 
-    private static void testCancellationException( final FutureInvoker invoker ) {
-
+    @SuppressWarnings("checkstyle:illegalCatch")
+    private static void testCancellationException(final FutureInvoker invoker) {
         SettableFuture<String> delegate = SettableFuture.create();
-        MappingCheckedFuture<String,TestException> mappingFuture =
-                                                        MappingCheckedFuture.create( delegate, MAPPER );
+        MappingCheckedFuture<String, TestException> mappingFuture = MappingCheckedFuture.create(delegate, MAPPER);
 
-        mappingFuture.cancel( false );
+        mappingFuture.cancel(false);
 
         try {
-            invoker.invokeGet( mappingFuture );
-            fail( "Expected exception thrown" );
-        } catch( Exception e ) {
-            Throwable expectedTestEx = invoker.extractWrappedTestEx( e );
-            assertNotNull( "Expected returned exception is null", expectedTestEx );
-            assertEquals( "Exception type", TestException.class, expectedTestEx.getClass() );
-            assertEquals( "TestException cause type", CancellationException.class,
-                          expectedTestEx.getCause().getClass() );
+            invoker.invokeGet(mappingFuture);
+            fail("Expected exception thrown");
+        } catch (Exception e) {
+            Throwable expectedTestEx = invoker.extractWrappedTestEx(e);
+            assertNotNull("Expected returned exception is null", expectedTestEx);
+            assertEquals("Exception type", TestException.class, expectedTestEx.getClass());
+            assertEquals("TestException cause type", CancellationException.class, expectedTestEx.getCause().getClass());
         }
     }
 
-    private static void testInterruptedException( final FutureInvoker invoker ) throws Exception {
-
+    @SuppressWarnings("checkstyle:illegalCatch")
+    private static void testInterruptedException(final FutureInvoker invoker) throws Exception {
         SettableFuture<String> delegate = SettableFuture.create();
-        final MappingCheckedFuture<String,TestException> mappingFuture =
-                                                        MappingCheckedFuture.create( delegate, MAPPER );
+        final MappingCheckedFuture<String, TestException> mappingFuture = MappingCheckedFuture.create(delegate, MAPPER);
 
         final AtomicReference<AssertionError> assertError = new AtomicReference<>();
-        final CountDownLatch doneLatch = new CountDownLatch( 1 );
+        final CountDownLatch doneLatch = new CountDownLatch(1);
         Thread thread = new Thread() {
-
             @Override
             public void run() {
                 try {
                     doInvoke();
-                } catch( AssertionError e ) {
-                    assertError.set( e );
+                } catch (AssertionError e) {
+                    assertError.set(e);
                 } finally {
                     doneLatch.countDown();
                 }
@@ -226,23 +217,23 @@ public class MappingCheckedFutureTest {
 
             void doInvoke() {
                 try {
-                    invoker.invokeGet( mappingFuture );
-                    fail( "Expected exception thrown" );
-                } catch( Exception e ) {
-                    Throwable expectedTestEx = invoker.extractWrappedTestEx( e );
-                    assertNotNull( "Expected returned exception is null", expectedTestEx );
-                    assertEquals( "Exception type", TestException.class, expectedTestEx.getClass() );
-                    assertEquals( "TestException cause type", InterruptedException.class,
-                                  expectedTestEx.getCause().getClass() );
+                    invoker.invokeGet(mappingFuture);
+                    fail("Expected exception thrown");
+                } catch (Exception e) {
+                    Throwable expectedTestEx = invoker.extractWrappedTestEx(e);
+                    assertNotNull("Expected returned exception is null", expectedTestEx);
+                    assertEquals("Exception type", TestException.class, expectedTestEx.getClass());
+                    assertEquals("TestException cause type", InterruptedException.class,
+                                  expectedTestEx.getCause().getClass());
                 }
             }
         };
         thread.start();
 
         thread.interrupt();
-        assertEquals( "get call completed", true, doneLatch.await( 5, TimeUnit.SECONDS ) );
+        assertTrue("get call completed", doneLatch.await(5, TimeUnit.SECONDS));
 
-        if (assertError.get() != null ) {
+        if (assertError.get() != null) {
             throw assertError.get();
         }
     }

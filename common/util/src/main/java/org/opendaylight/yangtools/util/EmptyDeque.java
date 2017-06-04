@@ -40,16 +40,19 @@ public final class EmptyDeque<E> extends AbstractQueue<E> implements Deque<E>, I
     }
 
     @Override
-    public boolean offer(final E entry) {
+    @SuppressWarnings("checkstyle:parameterName")
+    public boolean offer(final E e) {
         return false;
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean offerFirst(final E e) {
         return false;
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean offerLast(final E e) {
         return false;
     }
@@ -105,16 +108,19 @@ public final class EmptyDeque<E> extends AbstractQueue<E> implements Deque<E>, I
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public <T> T[] toArray(final T[] a) {
         return Preconditions.checkNotNull(a);
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public void addFirst(final E e) {
         add(e);
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public void addLast(final E e) {
         add(e);
     }
@@ -140,16 +146,19 @@ public final class EmptyDeque<E> extends AbstractQueue<E> implements Deque<E>, I
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean removeFirstOccurrence(final Object o) {
         return false;
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean removeLastOccurrence(final Object o) {
         return false;
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public void push(final E e) {
         addFirst(e);
     }
