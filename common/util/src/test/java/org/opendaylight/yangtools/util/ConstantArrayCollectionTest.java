@@ -54,7 +54,7 @@ public class ConstantArrayCollectionTest {
         assertFalse(c.contains(""));
         assertFalse(c.contains(1));
 
-        assertTrue(c.containsAll(Collections.<String>emptyList()));
+        assertTrue(c.containsAll(Collections.emptyList()));
         assertFalse(c.containsAll(Collections.singleton("")));
         assertFalse(c.containsAll(Collections.singleton(1)));
     }

@@ -9,6 +9,7 @@
 package org.opendaylight.yangtools.util.concurrent;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.concurrent.CountDownLatch;
@@ -40,59 +41,57 @@ public class CountingRejectedExecutionHandlerTest {
     @Test
     public void testCallerRunsPolicyHandler() throws InterruptedException {
 
-        int nTasks = 5;
-        CountDownLatch tasksRunLatch = new CountDownLatch( 1 );
-        CountDownLatch blockLatch = new CountDownLatch( 1 );
+        CountDownLatch tasksRunLatch = new CountDownLatch(1);
+        CountDownLatch blockLatch = new CountDownLatch(1);
 
-        executor = new ThreadPoolExecutor( 1, 1, 0, TimeUnit.SECONDS,
-                ExecutorServiceUtil.offerFailingBlockingQueue(new LinkedBlockingQueue<>() ) );
+        executor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS,
+                ExecutorServiceUtil.offerFailingBlockingQueue(new LinkedBlockingQueue<>()));
 
-        CountingRejectedExecutionHandler countingHandler =
-                CountingRejectedExecutionHandler.newCallerRunsPolicy();
-        executor.setRejectedExecutionHandler( countingHandler );
+        CountingRejectedExecutionHandler countingHandler = CountingRejectedExecutionHandler.newCallerRunsPolicy();
+        executor.setRejectedExecutionHandler(countingHandler);
 
-        executor.execute( new Task( tasksRunLatch, blockLatch ) );
+        executor.execute(new Task(tasksRunLatch, blockLatch));
 
-        for (int i = 0; i < nTasks - 1; i++) {
-            executor.execute( new Task( null, null, null, null, 0 ) );
+        int tasks = 5;
+        for (int i = 0; i < tasks - 1; i++) {
+            executor.execute(new Task(null, null, null, null, 0));
         }
 
-        assertEquals( "getRejectedTaskCount", nTasks - 1, countingHandler.getRejectedTaskCount() );
+        assertEquals("getRejectedTaskCount", tasks - 1, countingHandler.getRejectedTaskCount());
 
         blockLatch.countDown();
 
-        assertEquals( "Tasks complete", true, tasksRunLatch.await( 5, TimeUnit.SECONDS ) );
+        assertTrue("Tasks complete", tasksRunLatch.await(5, TimeUnit.SECONDS));
     }
 
     @Test
     public void testAbortPolicyHandler() throws InterruptedException {
 
-        int nTasks = 5;
-        CountDownLatch tasksRunLatch = new CountDownLatch( 1 );
-        CountDownLatch blockLatch = new CountDownLatch( 1 );
+        CountDownLatch tasksRunLatch = new CountDownLatch(1);
+        CountDownLatch blockLatch = new CountDownLatch(1);
 
-        executor = new ThreadPoolExecutor( 1, 1, 0, TimeUnit.SECONDS,
-                ExecutorServiceUtil.offerFailingBlockingQueue(new LinkedBlockingQueue<>() ) );
+        executor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS,
+                ExecutorServiceUtil.offerFailingBlockingQueue(new LinkedBlockingQueue<>()));
 
-        CountingRejectedExecutionHandler countingHandler =
-                CountingRejectedExecutionHandler.newAbortPolicy();
-        executor.setRejectedExecutionHandler( countingHandler );
+        CountingRejectedExecutionHandler countingHandler = CountingRejectedExecutionHandler.newAbortPolicy();
+        executor.setRejectedExecutionHandler(countingHandler);
 
-        executor.execute( new Task( tasksRunLatch, blockLatch ) );
+        executor.execute(new Task(tasksRunLatch, blockLatch));
 
-        for (int i = 0; i < nTasks - 1; i++) {
+        int tasks = 5;
+        for (int i = 0; i < tasks - 1; i++) {
             try {
-                executor.execute( new Task( null, null, null, null, 0 ) );
-                fail( "Expected RejectedExecutionException" );
-            } catch( RejectedExecutionException e ) {
+                executor.execute(new Task(null, null, null, null, 0));
+                fail("Expected RejectedExecutionException");
+            } catch (RejectedExecutionException e) {
                 // Expected
             }
         }
 
-        assertEquals( "getRejectedTaskCount", nTasks - 1, countingHandler.getRejectedTaskCount() );
+        assertEquals("getRejectedTaskCount", tasks - 1, countingHandler.getRejectedTaskCount());
 
         blockLatch.countDown();
 
-        assertEquals( "Tasks complete", true, tasksRunLatch.await( 5, TimeUnit.SECONDS ) );
+        assertTrue("Tasks complete", tasksRunLatch.await(5, TimeUnit.SECONDS));
     }
 }

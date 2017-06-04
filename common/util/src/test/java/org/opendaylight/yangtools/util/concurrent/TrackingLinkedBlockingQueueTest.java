@@ -9,6 +9,8 @@
 package org.opendaylight.yangtools.util.concurrent;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.Arrays;
@@ -24,79 +26,75 @@ public class TrackingLinkedBlockingQueueTest {
 
     @Test
     public void testOffer() throws InterruptedException {
+        TrackingLinkedBlockingQueue<String> queue = new TrackingLinkedBlockingQueue<>(2);
 
-        TrackingLinkedBlockingQueue<String> queue = new TrackingLinkedBlockingQueue<>( 2 );
+        assertTrue("offer", queue.offer("1"));
+        assertEquals("getLargestQueueSize", 1, queue.getLargestQueueSize());
+        assertEquals("size", 1, queue.size());
 
-        assertEquals( "offer", true, queue.offer( "1" ) );
-        assertEquals( "getLargestQueueSize", 1, queue.getLargestQueueSize() );
-        assertEquals( "size", 1, queue.size() );
+        assertTrue("offer", queue.offer("2", 1, TimeUnit.MILLISECONDS));
+        assertEquals("getLargestQueueSize", 2, queue.getLargestQueueSize());
+        assertEquals("size", 2, queue.size());
 
-        assertEquals( "offer", true, queue.offer( "2", 1, TimeUnit.MILLISECONDS ) );
-        assertEquals( "getLargestQueueSize", 2, queue.getLargestQueueSize() );
-        assertEquals( "size", 2, queue.size() );
+        assertFalse("offer", queue.offer("3"));
+        assertEquals("getLargestQueueSize", 2, queue.getLargestQueueSize());
+        assertEquals("size", 2, queue.size());
 
-        assertEquals( "offer", false, queue.offer( "3" ) );
-        assertEquals( "getLargestQueueSize", 2, queue.getLargestQueueSize() );
-        assertEquals( "size", 2, queue.size() );
-
-        assertEquals( "offer", false, queue.offer( "4", 1, TimeUnit.MILLISECONDS ) );
-        assertEquals( "getLargestQueueSize", 2, queue.getLargestQueueSize() );
-        assertEquals( "size", 2, queue.size() );
+        assertFalse("offer", queue.offer("4", 1, TimeUnit.MILLISECONDS));
+        assertEquals("getLargestQueueSize", 2, queue.getLargestQueueSize());
+        assertEquals("size", 2, queue.size());
     }
 
     @Test
     public void testPut() throws InterruptedException {
-
         TrackingLinkedBlockingQueue<String> queue = new TrackingLinkedBlockingQueue<>();
 
-        queue.put( "1" );
-        assertEquals( "getLargestQueueSize", 1, queue.getLargestQueueSize() );
-        assertEquals( "size", 1, queue.size() );
+        queue.put("1");
+        assertEquals("getLargestQueueSize", 1, queue.getLargestQueueSize());
+        assertEquals("size", 1, queue.size());
 
-        queue.put( "2" );
-        assertEquals( "getLargestQueueSize", 2, queue.getLargestQueueSize() );
-        assertEquals( "size", 2, queue.size() );
+        queue.put("2");
+        assertEquals("getLargestQueueSize", 2, queue.getLargestQueueSize());
+        assertEquals("size", 2, queue.size());
     }
 
     @Test
     public void testAdd() {
+        TrackingLinkedBlockingQueue<String> queue = new TrackingLinkedBlockingQueue<>(2);
 
-        TrackingLinkedBlockingQueue<String> queue = new TrackingLinkedBlockingQueue<>( 2 );
+        assertTrue("add", queue.add("1"));
+        assertEquals("getLargestQueueSize", 1, queue.getLargestQueueSize());
+        assertEquals("size", 1, queue.size());
 
-        assertEquals( "add", true, queue.add( "1" ) );
-        assertEquals( "getLargestQueueSize", 1, queue.getLargestQueueSize() );
-        assertEquals( "size", 1, queue.size() );
-
-        assertEquals( "add", true, queue.add( "2" ) );
-        assertEquals( "getLargestQueueSize", 2, queue.getLargestQueueSize() );
-        assertEquals( "size", 2, queue.size() );
+        assertTrue("add", queue.add("2"));
+        assertEquals("getLargestQueueSize", 2, queue.getLargestQueueSize());
+        assertEquals("size", 2, queue.size());
 
         try {
-            queue.add( "3" );
-            fail( "Expected IllegalStateException" );
-        } catch( IllegalStateException e ) {
+            queue.add("3");
+            fail("Expected IllegalStateException");
+        } catch (IllegalStateException e) {
             // Expected
-            assertEquals( "getLargestQueueSize", 2, queue.getLargestQueueSize() );
-            assertEquals( "size", 2, queue.size() );
+            assertEquals("getLargestQueueSize", 2, queue.getLargestQueueSize());
+            assertEquals("size", 2, queue.size());
         }
     }
 
     @Test
     public void testAddAll() {
+        TrackingLinkedBlockingQueue<String> queue = new TrackingLinkedBlockingQueue<>(3);
 
-        TrackingLinkedBlockingQueue<String> queue = new TrackingLinkedBlockingQueue<>( 3 );
-
-        queue.addAll( Arrays.asList( "1", "2" ) );
-        assertEquals( "getLargestQueueSize", 2, queue.getLargestQueueSize() );
-        assertEquals( "size", 2, queue.size() );
+        queue.addAll(Arrays.asList("1", "2"));
+        assertEquals("getLargestQueueSize", 2, queue.getLargestQueueSize());
+        assertEquals("size", 2, queue.size());
 
         try {
-            queue.addAll( Arrays.asList( "3", "4" ) );
-            fail( "Expected IllegalStateException" );
-        } catch( IllegalStateException e ) {
+            queue.addAll(Arrays.asList("3", "4"));
+            fail("Expected IllegalStateException");
+        } catch (IllegalStateException e) {
             // Expected
-            assertEquals( "getLargestQueueSize", 3, queue.getLargestQueueSize() );
-            assertEquals( "size", 3, queue.size() );
+            assertEquals("getLargestQueueSize", 3, queue.getLargestQueueSize());
+            assertEquals("size", 3, queue.size());
         }
     }
 }

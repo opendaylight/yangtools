@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 
 public interface Identifiable<T> {
     /**
-     * Return this objects Identifier
+     * Return this objects Identifier.
      *
      * @return Object's identifier, must not be null.
      */

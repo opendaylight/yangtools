@@ -33,7 +33,8 @@ public final class ClassLoaderUtils {
     /**
      * Runs {@link Supplier} with provided {@link ClassLoader}.
      *
-     * <p>Invokes supplies function and makes sure that original {@link ClassLoader}
+     * <p>
+     * Invokes supplies function and makes sure that original {@link ClassLoader}
      * is context {@link ClassLoader} after execution.
      *
      * @param cls {@link ClassLoader} to be used.
@@ -57,6 +58,7 @@ public final class ClassLoaderUtils {
     /**
      * Runs {@link Callable} with provided {@link ClassLoader}.
      *
+     * <p>
      * Invokes supplies function and makes sure that original {@link ClassLoader}
      * is context {@link ClassLoader} after execution.
      *

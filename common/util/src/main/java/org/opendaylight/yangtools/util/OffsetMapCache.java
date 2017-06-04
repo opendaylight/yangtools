@@ -74,6 +74,18 @@ final class OffsetMapCache {
         return unorderedOffsets(args instanceof Set ? (Set<T>)args : ImmutableSet.copyOf(args));
     }
 
+    @SuppressWarnings("unchecked")
+    private static <T> Map<T, Integer> unorderedOffsets(final Set<T> args) {
+        final Map<T, Integer> existing = (Map<T, Integer>) UNORDERED_CACHE.getIfPresent(args);
+        if (existing != null) {
+            return existing;
+        }
+
+        final Map<T, Integer> newMap = createMap(args);
+        final Map<?, Integer> raced = UNORDERED_CACHE.asMap().putIfAbsent(newMap.keySet(), newMap);
+        return raced == null ? newMap : (Map<T, Integer>)raced;
+    }
+
     static <K, V> V[] adjustedArray(final Map<K, Integer> offsets, final List<K> keys, final V[] array) {
         Verify.verify(offsets.size() == keys.size(), "Offsets %s do not match keys %s", offsets, keys);
 
@@ -94,35 +106,23 @@ final class OffsetMapCache {
 
     private static <T> Map<T, Integer> createMap(final Collection<T> keys) {
         final Builder<T, Integer> b = ImmutableMap.builder();
-        int i = 0;
+        int counter = 0;
 
         for (T arg : keys) {
-            b.put(arg, i++);
+            b.put(arg, counter++);
         }
 
         return b.build();
-    }
-
-    @SuppressWarnings("unchecked")
-    private static <T> Map<T, Integer> unorderedOffsets(final Set<T> args) {
-        final Map<T, Integer> existing = (Map<T, Integer>) UNORDERED_CACHE.getIfPresent(args);
-        if (existing != null) {
-            return existing;
-        }
-
-        final Map<T, Integer> newMap = createMap(args);
-        final Map<?, Integer> raced = UNORDERED_CACHE.asMap().putIfAbsent(newMap.keySet(), newMap);
-        return raced == null ? newMap : (Map<T, Integer>)raced;
     }
 
     private static <K, V> V[] adjustArray(final Map<K, Integer> offsets, final List<K> keys, final V[] array) {
         @SuppressWarnings("unchecked")
         final V[] ret = (V[]) Array.newInstance(array.getClass().getComponentType(), array.length);
 
-        int i = 0;
+        int offset = 0;
         for (final K k : keys) {
             final Integer o = Verify.verifyNotNull(offsets.get(k), "Key %s not present in offsets %s", k, offsets);
-            ret[o] = array[i++];
+            ret[o] = array[offset++];
         }
 
         return ret;
