@@ -44,7 +44,7 @@ public class ModuleStatementRfc7950Support extends ModuleStatementSupport {
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
             .addMandatory(YangStmtMapping.YANG_VERSION)
-            .addOptional(SupportedExtensionsMapping.OPENCONFIG_VERSION)
+            .addOptional(SupportedExtensionsMapping.SEMANTIC_VERSION)
             .build();
 
     @Override

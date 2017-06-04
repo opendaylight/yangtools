@@ -1,0 +1,24 @@
+module bar {
+    namespace "bar";
+    prefix bar;
+    yang-version 1.1;
+
+    import semantic-version { prefix sv; sv:semantic-version "1.2.012"; }
+    import foobar { prefix foobar; sv:semantic-version "2.25.3"; }
+
+    revision "2016-01-03" {
+        description "Imported version";
+    }
+    sv:semantic-version "1.2.6";
+
+    container root {
+        container test-container {
+            uses foobar:test-grouping;
+        }
+    }
+
+    leaf-list should-present {
+        type string;
+        description "List of strings";
+    }
+}

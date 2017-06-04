@@ -1,0 +1,23 @@
+module foobar {
+    namespace "foobar";
+    prefix foobar;
+    yang-version 1.1;
+
+    import semantic-version { prefix sv; sv:semantic-version "1.3.95"; }
+
+    revision "2016-02-28" {
+        description "Imported version";
+    }
+    sv:semantic-version "2.26.465";
+
+    grouping test-grouping {
+        leaf name {
+            type string;
+            description "Name";
+        }
+        leaf number {
+            type uint32;
+            description "Number";
+        }
+    }
+}

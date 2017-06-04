@@ -34,12 +34,12 @@ public final class ModuleIdentifierImpl implements ModuleIdentifier {
             final SemVer semVer) {
         this.name = checkNotNull(name);
         this.qnameModule = QNameModule.create(namespace.orElse(null), revision.orElse(null));
-        this.semVer = (semVer == null ? Module.DEFAULT_OPENCONFIG_VERSION : semVer);
+        this.semVer = (semVer == null ? Module.DEFAULT_SEMANTIC_VERSION : semVer);
     }
 
     public static ModuleIdentifier create(final String name, final Optional<URI> namespace,
             final Optional<Date> revision) {
-        return create(name, namespace, revision, Module.DEFAULT_OPENCONFIG_VERSION);
+        return create(name, namespace, revision, Module.DEFAULT_SEMANTIC_VERSION);
     }
 
     public static ModuleIdentifier create(final String name, final Optional<URI> namespace,
@@ -58,7 +58,7 @@ public final class ModuleIdentifierImpl implements ModuleIdentifier {
     }
 
     @Override
-    public SemVer getOpenconfigVersion() {
+    public SemVer getSemanticVersion() {
         return semVer;
     }
 
@@ -106,7 +106,7 @@ public final class ModuleIdentifierImpl implements ModuleIdentifier {
             return false;
         }
 
-        if (!Objects.equals(getOpenconfigVersion(), other.getOpenconfigVersion())) {
+        if (!Objects.equals(getSemanticVersion(), other.getSemanticVersion())) {
             return false;
         }
 

@@ -24,7 +24,7 @@ public class ImportStatementRfc7950Support extends ImportStatementDefinition {
             .builder(YangStmtMapping.IMPORT)
             .addMandatory(YangStmtMapping.PREFIX)
             .addOptional(YangStmtMapping.REVISION_DATE)
-            .addOptional(SupportedExtensionsMapping.OPENCONFIG_VERSION)
+            .addOptional(SupportedExtensionsMapping.SEMANTIC_VERSION)
             .addOptional(YangStmtMapping.DESCRIPTION)
             .addOptional(YangStmtMapping.REFERENCE)
             .build();
