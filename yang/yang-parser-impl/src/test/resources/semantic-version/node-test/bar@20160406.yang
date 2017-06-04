@@ -1,0 +1,22 @@
+module bar {
+    namespace "bar";
+    prefix bar;
+    yang-version 1;
+
+    import semantic-version { prefix sv; revision-date 2016-02-02; sv:semantic-version "0.0.1"; }
+    
+    revision 2016-04-06 {
+        description "test";
+    }
+    
+    sv:semantic-version "2016.4.6";
+
+    grouping grp {
+        container con20160404 {
+        }
+        container con20160405 {
+        }
+        container con20160406 {
+        }
+    }
+}

@@ -175,7 +175,7 @@ abstract class DependencyResolver {
         }
 
         @Override
-        public SemVer getOpenconfigVersion() {
+        public SemVer getSemanticVersion() {
             return null;
         }
 

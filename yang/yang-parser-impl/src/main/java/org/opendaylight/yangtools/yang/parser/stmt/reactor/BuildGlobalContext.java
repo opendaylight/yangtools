@@ -80,7 +80,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     private final Map<ModelProcessingPhase, StatementSupportBundle> supports;
     private final Set<SourceSpecificContext> sources = new HashSet<>();
     private final Set<YangVersion> supportedVersions;
-    private final boolean enabledOpenconfigVersions;
+    private final boolean enabledSemanticVersions;
 
     private Set<SourceSpecificContext> libSources = new HashSet<>();
     private ModelProcessingPhase currentPhase = ModelProcessingPhase.INIT;
@@ -93,10 +93,10 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
         switch (statementParserMode) {
             case DEFAULT_MODE:
-                enabledOpenconfigVersions = false;
+                enabledSemanticVersions = false;
                 break;
-            case OPENCONFIG_VER_MODE:
-                enabledOpenconfigVersions = true;
+            case SEMVER_MODE:
+                enabledSemanticVersions = true;
                 break;
             default:
                 throw new IllegalArgumentException("Unhandled parser mode " + statementParserMode);
@@ -109,8 +109,8 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         this.supportedVersions = ImmutableSet.copyOf(supports.get(ModelProcessingPhase.INIT).getSupportedVersions());
     }
 
-    boolean isEnabledOpenconfigVersioning() {
-        return enabledOpenconfigVersions;
+    boolean isEnabledSemanticVersioning() {
+        return enabledSemanticVersions;
     }
 
     StatementSupportBundle getSupportsForPhase(final ModelProcessingPhase currentPhase) {
@@ -122,8 +122,8 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     }
 
     void addLibSource(@Nonnull final StatementStreamSource libSource) {
-        Preconditions.checkState(!isEnabledOpenconfigVersioning(),
-                "Library sources are not supported in openconfig version mode currently.");
+        Preconditions.checkState(!isEnabledSemanticVersioning(),
+                "Library sources are not supported in semantic version mode currently.");
         Preconditions.checkState(currentPhase == ModelProcessingPhase.INIT,
                 "Add library source is allowed in ModelProcessingPhase.INIT only");
         libSources.add(new SourceSpecificContext(this, libSource));

@@ -322,8 +322,8 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     }
 
     @Override
-    public boolean isEnabledOpenconfigVersioning() {
-        return parent.isEnabledOpenconfigVersioning();
+    public boolean isEnabledSemanticVersioning() {
+        return parent.isEnabledSemanticVersioning();
     }
 
     @Override

@@ -648,8 +648,8 @@ public class SchemaContextProxyTest {
                 }
 
                 @Override
-                public SemVer getOpenconfigVersion() {
-                    return module.getOpenconfigVersion();
+                public SemVer getSemanticVersion() {
+                    return module.getSemanticVersion();
                 }
 
                 @Override

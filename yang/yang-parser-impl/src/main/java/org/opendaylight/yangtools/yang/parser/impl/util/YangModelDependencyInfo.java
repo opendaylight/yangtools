@@ -120,11 +120,11 @@ public abstract class YangModelDependencyInfo {
     }
 
     /**
-     * Returns openconfig version of module
+     * Returns semantic version of module
      *
-     * @return openconfig version
+     * @return semantic version
      */
-    public Optional<SemVer> getOpenconfigVersion() {
+    public Optional<SemVer> getSemanticVersion() {
         return semVer;
     }
 
@@ -224,7 +224,7 @@ public abstract class YangModelDependencyInfo {
     private static YangModelDependencyInfo parseModuleContext(final StatementContext module, final String sourceName) {
         final String name = Utils.stringFromStringContext(module.argument(), getReference(sourceName, module));
         final String latestRevision = getLatestRevision(module, sourceName);
-        final Optional<SemVer> semVer = Optional.fromNullable(getOpenconfigVersion(module, sourceName));
+        final Optional<SemVer> semVer = Optional.fromNullable(getSemanticVersion(module, sourceName));
         final ImmutableSet<ModuleImport> imports = parseImports(module, sourceName);
         final ImmutableSet<ModuleImport> includes = parseIncludes(module, sourceName);
 
@@ -245,7 +245,7 @@ public abstract class YangModelDependencyInfo {
                         getReference(sourceName, subStatementContext));
                 final Date revisionDate = (revisionDateStr == null) ? null : QName
                         .parseRevision(revisionDateStr);
-                final Optional<SemVer> importSemVer = Optional.fromNullable(getOpenconfigVersion(subStatementContext, sourceName));
+                final Optional<SemVer> importSemVer = Optional.fromNullable(getSemanticVersion(subStatementContext, sourceName));
                 result.add(new ModuleImportImpl(importedModuleName,
                         revisionDate, importSemVer));
             }
@@ -253,10 +253,10 @@ public abstract class YangModelDependencyInfo {
         return ImmutableSet.copyOf(result);
     }
 
-    private static SemVer getOpenconfigVersion(final StatementContext statement, final String sourceName) {
+    private static SemVer getSemanticVersion(final StatementContext statement, final String sourceName) {
         final List<StatementContext> subStatements = statement.statement();
         String semVerString = null;
-        final String semVerStmtName = SupportedExtensionsMapping.OPENCONFIG_VERSION.getStatementName().getLocalName();
+        final String semVerStmtName = SupportedExtensionsMapping.SEMANTIC_VERSION.getStatementName().getLocalName();
         for (final StatementContext subStatement : subStatements) {
             final String subStatementName = Utils.trimPrefix(subStatement.keyword().getText());
             if (semVerStmtName.equals(subStatementName)) {
@@ -387,7 +387,8 @@ public abstract class YangModelDependencyInfo {
         @Override
         public String toString() {
             return "Module [name=" + getName() + ", revision=" + getRevision() + ", semanticVersion="
-                    + getOpenconfigVersion().or(Module.DEFAULT_OPENCONFIG_VERSION) + ", dependencies=" + getDependencies() + "]";
+                    + getSemanticVersion().or(Module.DEFAULT_SEMANTIC_VERSION) + ", dependencies=" + getDependencies()
+                    + "]";
         }
     }
 
@@ -444,7 +445,7 @@ public abstract class YangModelDependencyInfo {
         public ModuleImportImpl(final String moduleName, final Date revision, final Optional<SemVer> semVer) {
             this.name = Preconditions.checkNotNull(moduleName, "Module name must not be null.");
             this.revision = revision;
-            this.semVer = semVer.or(Module.DEFAULT_OPENCONFIG_VERSION);
+            this.semVer = semVer.or(Module.DEFAULT_SEMANTIC_VERSION);
         }
 
         @Override
@@ -458,7 +459,7 @@ public abstract class YangModelDependencyInfo {
         }
 
         @Override
-        public SemVer getOpenconfigVersion() {
+        public SemVer getSemanticVersion() {
             return this.semVer;
         }
 
@@ -504,7 +505,7 @@ public abstract class YangModelDependencyInfo {
                 return false;
             }
 
-            if (!Objects.equals(getOpenconfigVersion(), other.getOpenconfigVersion())) {
+            if (!Objects.equals(getSemanticVersion(), other.getSemanticVersion())) {
                 return false;
             }
             return true;
@@ -513,7 +514,7 @@ public abstract class YangModelDependencyInfo {
         @Override
         public String toString() {
             return "ModuleImportImpl [name=" + name + ", revision="
-                    + QName.formattedRevision(revision) + ", semanticVersion=" + getOpenconfigVersion() + "]";
+                    + QName.formattedRevision(revision) + ", semanticVersion=" + getSemanticVersion() + "]";
         }
     }
 }

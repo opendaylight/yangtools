@@ -30,10 +30,10 @@ public interface ModuleImport extends DocumentedNode {
     Date getRevision();
 
     /**
-     * @return Openconfig version of module to import
+     * @return Semantic version of module to import
      */
-    default SemVer getOpenconfigVersion() {
-        return Module.DEFAULT_OPENCONFIG_VERSION;
+    default SemVer getSemanticVersion() {
+        return Module.DEFAULT_SEMANTIC_VERSION;
     }
 
     /**

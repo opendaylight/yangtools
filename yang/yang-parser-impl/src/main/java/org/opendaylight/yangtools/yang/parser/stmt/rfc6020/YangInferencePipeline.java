@@ -31,8 +31,8 @@ import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedIdentitiesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.OpenconfigVersionModuleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.OpenconfigVersionNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionModuleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.AnyxmlSchemaLocationNamespace;
@@ -42,7 +42,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModule
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToOpenconfigVerModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToSemVerModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
@@ -143,10 +143,10 @@ public final class YangInferencePipeline {
             .addSupport(sourceLocal(BelongsToModuleContext.class))
             .addSupport(sourceLocal(QNameToStatementDefinition.class))
             .addSupport(sourceLocal(BelongsToPrefixToModuleName.class))
-            .addSupport(new OpenconfigVersionStatementImpl.OpenconfigVersionSupport())
-            .addSupport(global(OpenconfigVersionNamespace.class))
-            .addSupport(global(OpenconfigVersionModuleNamespace.class))
-            .addSupport(sourceLocal(ImpPrefixToOpenconfigVerModuleIdentifier.class))
+            .addSupport(new SemanticVersionStatementImpl.SemanticVersionSupport())
+            .addSupport(global(SemanticVersionNamespace.class))
+            .addSupport(global(SemanticVersionModuleNamespace.class))
+            .addSupport(sourceLocal(ImpPrefixToSemVerModuleIdentifier.class))
             .build();
 
     public static final StatementSupportBundle STMT_DEF_BUNDLE = StatementSupportBundle

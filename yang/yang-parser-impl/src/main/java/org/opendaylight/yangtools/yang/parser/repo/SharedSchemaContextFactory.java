@@ -74,7 +74,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
             final Collection<SourceIdentifier> requiredSources, final StatementParserMode statementParserMode,
             final Set<QName> supportedFeatures) {
         return createSchemaContext(requiredSources,
-                statementParserMode == StatementParserMode.OPENCONFIG_VER_MODE ? this.semVerCache : this.cache,
+                statementParserMode == StatementParserMode.SEMVER_MODE ? this.semVerCache : this.cache,
                 new AssembleSources(Optional.ofNullable(supportedFeatures), statementParserMode));
     }
 
@@ -183,7 +183,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
             this.supportedFeatures = supportedFeatures;
             this.statementParserMode = Preconditions.checkNotNull(statementParserMode);
             switch (statementParserMode) {
-            case OPENCONFIG_VER_MODE:
+            case SEMVER_MODE:
                 this.getIdentifier = ASTSchemaSource::getSemVerIdentifier;
                 break;
             default:
@@ -200,8 +200,8 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
 
             LOG.debug("Resolving dependency reactor {}", deps);
 
-            final DependencyResolver res = this.statementParserMode == StatementParserMode.OPENCONFIG_VER_MODE
-                    ? OpenconfigVerDependencyResolver.create(deps) : RevisionDependencyResolver.create(deps);
+            final DependencyResolver res = this.statementParserMode == StatementParserMode.SEMVER_MODE
+                    ? SemVerDependencyResolver.create(deps) : RevisionDependencyResolver.create(deps);
             if (!res.getUnresolvedSources().isEmpty()) {
                 LOG.debug("Omitting models {} due to unsatisfied imports {}", res.getUnresolvedSources(),
                     res.getUnsatisfiedImports());
