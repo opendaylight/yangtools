@@ -9,6 +9,7 @@
 package org.opendaylight.yangtools.util.concurrent;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -66,7 +67,7 @@ public class QueuedNotificationManagerTest {
 
             try {
                 if (sleepTime > 0) {
-                    Uninterruptibles.sleepUninterruptibly( sleepTime, TimeUnit.MILLISECONDS);
+                    Uninterruptibles.sleepUninterruptibly(sleepTime, TimeUnit.MILLISECONDS);
                 }
 
                 if (cacheNotifications) {
@@ -146,14 +147,13 @@ public class QueuedNotificationManagerTest {
         }
     }
 
-    @Test(timeout=10000)
+    @Test(timeout = 10000)
     public void testNotificationsWithSingleListener() {
 
-        queueExecutor = Executors.newFixedThreadPool( 2 );
+        queueExecutor = Executors.newFixedThreadPool(2);
         NotificationManager<TestListener<Integer>, Integer> manager = new QueuedNotificationManager<>(queueExecutor,
-                new TestNotifier<>(), 10, "TestMgr" );
+                new TestNotifier<>(), 10, "TestMgr");
 
-        int initialCount = 6;
         int nNotifications = 100;
 
         TestListener<Integer> listener = new TestListener<>(nNotifications, 1);
@@ -174,13 +174,14 @@ public class QueuedNotificationManagerTest {
 
         List<Integer> expNotifications = new ArrayList<>(nNotifications);
         expNotifications.addAll(Arrays.asList(1, 2, 3, 4, 5, 6));
+        int initialCount = 6;
         for (int i = 1; i <= nNotifications - initialCount; i++) {
             Integer v = Integer.valueOf(initialCount + i);
             expNotifications.add(v);
             manager.submitNotification(listener, v);
         }
 
-        listener.verifyNotifications( expNotifications );
+        listener.verifyNotifications(expNotifications);
     }
 
     @Test
@@ -190,11 +191,11 @@ public class QueuedNotificationManagerTest {
         queueExecutor = Executors.newFixedThreadPool(nListeners);
         final ExecutorService stagingExecutor = Executors.newFixedThreadPool(nListeners);
         final NotificationManager<TestListener<Integer>, Integer> manager = new QueuedNotificationManager<>(
-                queueExecutor, new TestNotifier<>(), 5000, "TestMgr" );
+                queueExecutor, new TestNotifier<>(), 5000, "TestMgr");
 
         final int nNotifications = 100000;
 
-        LOG.info("Testing {} listeners with {} notifications each...",  nListeners, nNotifications);
+        LOG.info("Testing {} listeners with {} notifications each...", nListeners, nNotifications);
 
         final Integer[] notifications = new Integer[nNotifications];
         for (int i = 1; i <= nNotifications; i++) {
@@ -243,13 +244,13 @@ public class QueuedNotificationManagerTest {
         }
     }
 
-    @Test(timeout=10000)
+    @Test(timeout = 10000)
     public void testNotificationsWithListenerRuntimeEx() {
 
         queueExecutor = Executors.newFixedThreadPool(1);
         NotificationManager<TestListener<Integer>, Integer> manager =
-                new QueuedNotificationManager<>( queueExecutor, new TestNotifier<>(),
-                10, "TestMgr" );
+                new QueuedNotificationManager<>(queueExecutor, new TestNotifier<>(),
+                10, "TestMgr");
 
 
         TestListener<Integer> listener = new TestListener<>(2, 1);
@@ -263,21 +264,21 @@ public class QueuedNotificationManagerTest {
         listener.verifyNotifications();
     }
 
-    @Test(timeout=10000)
+    @Test(timeout = 10000)
     public void testNotificationsWithListenerJVMError() {
 
         final CountDownLatch errorCaughtLatch = new CountDownLatch(1);
         queueExecutor = new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS, new LinkedBlockingQueue<>()) {
-             @Override
-             public void execute(final Runnable command) {
-                 super.execute(() -> {
-                     try {
-                         command.run();
-                     } catch (Error e) {
-                         errorCaughtLatch.countDown();
-                     }
-                 });
-             }
+            @Override
+            public void execute(final Runnable command) {
+                super.execute(() -> {
+                    try {
+                        command.run();
+                    } catch (Error e) {
+                        errorCaughtLatch.countDown();
+                    }
+                });
+            }
         };
 
         NotificationManager<TestListener<Integer>, Integer> manager = new QueuedNotificationManager<>(queueExecutor,
@@ -288,8 +289,7 @@ public class QueuedNotificationManagerTest {
 
         manager.submitNotification(listener, 1);
 
-        assertEquals("JVM Error caught", true, Uninterruptibles.awaitUninterruptibly(
-                                                       errorCaughtLatch, 5, TimeUnit.SECONDS));
+        assertTrue("JVM Error caught", Uninterruptibles.awaitUninterruptibly(errorCaughtLatch, 5, TimeUnit.SECONDS));
 
         manager.submitNotification(listener, 2);
 

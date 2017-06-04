@@ -63,7 +63,7 @@ public class ListenerRegistry<T extends EventListener> implements Iterable<Liste
     private class ListenerRegistrationImpl<P extends EventListener> extends AbstractObjectRegistration<P> implements
             ListenerRegistration<P> {
 
-        public ListenerRegistrationImpl(final P instance) {
+        ListenerRegistrationImpl(final P instance) {
             super(instance);
         }
 

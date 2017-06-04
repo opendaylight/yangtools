@@ -38,15 +38,15 @@ public abstract class AbstractIdentifier<T> implements Identifier {
     }
 
     @Override
-    public final boolean equals(final Object o) {
-        if (this == o) {
+    public final boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (o == null) {
+        if (obj == null) {
             return false;
         }
 
-        return getClass().equals(o.getClass()) && value.equals(((AbstractIdentifier<?>)o).value);
+        return getClass().equals(obj.getClass()) && value.equals(((AbstractIdentifier<?>)obj).value);
     }
 
     @Override

@@ -85,6 +85,7 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean contains(final Object o) {
         return delegate.contains(o);
     }
@@ -95,36 +96,43 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public <T> T[] toArray(@Nonnull final T[] a) {
         return delegate.toArray(a);
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean containsAll(@Nonnull final Collection<?> c) {
         return delegate.containsAll(c);
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean add(final E e) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean addAll(@Nonnull final Collection<? extends E> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean remove(final Object o) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean removeAll(@Nonnull final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean retainAll(@Nonnull final Collection<?> c) {
         throw new UnsupportedOperationException();
     }

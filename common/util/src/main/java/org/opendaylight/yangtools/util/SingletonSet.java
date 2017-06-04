@@ -29,6 +29,7 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
         private static final long serialVersionUID = 1L;
 
         @Override
+        @SuppressWarnings("checkstyle:parameterName")
         public boolean contains(final Object o) {
             return o == null;
         }
@@ -85,7 +86,7 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
     }
 
     @Nonnull
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "checkstyle:parameterName" })
     @Override
     public final <T> T[] toArray(@Nonnull final T[] a) {
         if (a.length > 0) {
@@ -97,16 +98,19 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public final boolean add(final E e) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public final boolean remove(final Object o) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public final boolean containsAll(@Nonnull final Collection<?> c) {
         if (c.isEmpty()) {
             return true;
@@ -119,16 +123,19 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public final boolean addAll(@Nonnull final Collection<? extends E> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public final boolean retainAll(@Nonnull final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public final boolean removeAll(@Nonnull final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
@@ -171,6 +178,7 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
         }
 
         @Override
+        @SuppressWarnings("checkstyle:parameterName")
         public boolean contains(final Object o) {
             return element.equals(o);
         }

@@ -22,6 +22,8 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXNotRecognizedException;
+import org.xml.sax.SAXNotSupportedException;
 
 /**
  * Set of utility methods for instantiating parser that deal with untrusted XML sources.
@@ -31,6 +33,7 @@ import org.xml.sax.SAXException;
 @Beta
 public final class UntrustedXML {
     private static final DocumentBuilderFactory DBF;
+
     static {
         final DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
         f.setCoalescing(true);
@@ -52,6 +55,7 @@ public final class UntrustedXML {
     }
 
     private static final SAXParserFactory SPF;
+
     static {
         final SAXParserFactory f = SAXParserFactory.newInstance();
         f.setNamespaceAware(true);
@@ -62,7 +66,7 @@ public final class UntrustedXML {
             f.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
             f.setFeature("http://xml.org/sax/features/external-general-entities", false);
             f.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-        } catch (final Exception e) {
+        } catch (final SAXNotRecognizedException | SAXNotSupportedException | ParserConfigurationException e) {
             throw new ExceptionInInitializerError(e);
         }
 
@@ -70,6 +74,7 @@ public final class UntrustedXML {
     }
 
     private static final XMLInputFactory XIF;
+
     static {
         final XMLInputFactory f = XMLInputFactory.newInstance();
 

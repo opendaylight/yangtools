@@ -29,12 +29,12 @@ public class CountingRejectedExecutionHandler implements RejectedExecutionHandle
      *
      * @param delegate the backing RejectedExecutionHandler.
      */
-    public CountingRejectedExecutionHandler( final RejectedExecutionHandler delegate ) {
-        this.delegate = Preconditions.checkNotNull( delegate );
+    public CountingRejectedExecutionHandler(final RejectedExecutionHandler delegate) {
+        this.delegate = Preconditions.checkNotNull(delegate);
     }
 
     @Override
-    public void rejectedExecution( final Runnable task, final ThreadPoolExecutor executor ) {
+    public void rejectedExecution(final Runnable task, final ThreadPoolExecutor executor) {
         rejectedTaskCounter.increment();
         delegate.rejectedExecution(task, executor);
     }

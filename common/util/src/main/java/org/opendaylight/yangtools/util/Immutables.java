@@ -31,19 +31,19 @@ public final class Immutables {
      * <p>Note: This method may return false to immutable objects which
      * immutability is not known, was defined not using concepts term.
      *
-     * @param o
+     * @param obj
      *            Reference to check
      * @return true if object is known to be immutable false otherwise.
      */
-    public static boolean isImmutable(final Object o) {
-        Preconditions.checkArgument(o != null,"Object should not be null");
-        if (o instanceof Mutable) {
+    public static boolean isImmutable(final Object obj) {
+        Preconditions.checkArgument(obj != null,"Object should not be null");
+        if (obj instanceof Mutable) {
             return false;
-        } else if (o instanceof Immutable) {
+        } else if (obj instanceof Immutable) {
             return true;
-        } else if (o instanceof String) {
+        } else if (obj instanceof String) {
             return true;
-        } else if (KNOWN_IMMUTABLES.contains(o.getClass())) {
+        } else if (KNOWN_IMMUTABLES.contains(obj.getClass())) {
             return true;
         }
         return false;
