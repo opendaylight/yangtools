@@ -13,7 +13,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 
-public abstract class ForwardingNormalizedNodeStreamAttributeWriter extends ForwardingNormalizedNodeStreamWriter implements NormalizedNodeStreamAttributeWriter {
+public abstract class ForwardingNormalizedNodeStreamAttributeWriter extends ForwardingNormalizedNodeStreamWriter
+        implements NormalizedNodeStreamAttributeWriter {
     @Override
     protected abstract NormalizedNodeStreamAttributeWriter delegate();
 
@@ -24,7 +25,8 @@ public abstract class ForwardingNormalizedNodeStreamAttributeWriter extends Forw
     }
 
     @Override
-    public void leafSetEntryNode(final QName name, final Object value, final Map<QName, String> attributes) throws IOException {
+    public void leafSetEntryNode(final QName name, final Object value, final Map<QName, String> attributes)
+            throws IOException {
         delegate().leafSetEntryNode(name, value, attributes);
     }
 

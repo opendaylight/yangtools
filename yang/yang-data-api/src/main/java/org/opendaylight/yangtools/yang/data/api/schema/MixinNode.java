@@ -8,11 +8,9 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 /**
- *
  * Marker interface for nodes, which are mixins - their content
  * belongs to parent node and in serialized form this node
  * does not exists, but it's children are present.
- *
  */
 public interface MixinNode {
 

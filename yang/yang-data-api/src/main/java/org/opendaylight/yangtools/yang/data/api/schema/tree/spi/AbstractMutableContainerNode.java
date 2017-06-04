@@ -25,7 +25,8 @@ abstract class AbstractMutableContainerNode implements MutableTreeNode {
     private NormalizedNode<?, ?> data;
     private Version subtreeVersion;
 
-    protected AbstractMutableContainerNode(final AbstractContainerNode parent, final Map<PathArgument, TreeNode> children) {
+    protected AbstractMutableContainerNode(final AbstractContainerNode parent,
+            final Map<PathArgument, TreeNode> children) {
         this.data = parent.getData();
         this.version = parent.getVersion();
         this.subtreeVersion = parent.getSubtreeVersion();

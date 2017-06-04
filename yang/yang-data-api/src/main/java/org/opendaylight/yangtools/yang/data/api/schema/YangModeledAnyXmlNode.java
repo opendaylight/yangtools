@@ -24,7 +24,9 @@ public interface YangModeledAnyXmlNode extends AttributesContainer, DataContaine
         DataContainerChild<NodeIdentifier, Collection<DataContainerChild<? extends PathArgument, ?>>> {
 
     /**
-     * @return DataSchemaNode - schema of contained XML data
+     * Returns the schema corresponding to the node's datea.
+     *
+     * @return schema of contained XML data
      */
     @Nonnull
     ContainerSchemaNode getSchemaOfAnyXmlData();

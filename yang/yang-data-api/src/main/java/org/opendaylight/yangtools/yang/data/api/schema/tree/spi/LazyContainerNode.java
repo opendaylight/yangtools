@@ -24,8 +24,8 @@ final class LazyContainerNode extends AbstractModifiedContainerNode {
         this(data, version, MapAdaptor.getDefaultInstance().initialSnapshot(1), subtreeVersion);
     }
 
-    LazyContainerNode(final NormalizedNode<?, ?> data, final Version version, final Map<PathArgument, TreeNode> children,
-            final Version subtreeVersion) {
+    LazyContainerNode(final NormalizedNode<?, ?> data, final Version version,
+            final Map<PathArgument, TreeNode> children, final Version subtreeVersion) {
         super(data, version, children, subtreeVersion);
     }
 

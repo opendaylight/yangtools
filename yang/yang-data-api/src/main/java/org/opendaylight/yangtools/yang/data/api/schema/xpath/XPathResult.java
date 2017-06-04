@@ -14,13 +14,12 @@ import javax.annotation.Nonnull;
  * Base interface for various things an XPath evaluation can return.
  *
  * @param <T> type of returned value
- *
- * FIXME: do we want to support all the modes of
- *        <a href="http://www.w3.org/TR/DOM-Level-3-XPath/xpath.html#XPathResultType">DOM XPath</a> ?
- *        The default DataTree (yang-data-impl) implementation can support ORDERED_NODE_SNAPSHOT_TYPE. The clustered
- *        datastore may want to implement ORDERED_NODE_ITERATOR_TYPE (via iterators).
  */
 @Beta
+// FIXME: do we want to support all the modes of
+//        <a href="http://www.w3.org/TR/DOM-Level-3-XPath/xpath.html#XPathResultType">DOM XPath</a> ?
+//        The default DataTree (yang-data-impl) implementation can support ORDERED_NODE_SNAPSHOT_TYPE. The clustered
+//        datastore may want to implement ORDERED_NODE_ITERATOR_TYPE (via iterators).
 public interface XPathResult<T> {
     /**
      * Get the value contained in this result.

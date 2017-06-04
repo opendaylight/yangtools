@@ -15,6 +15,7 @@ import javax.annotation.Nonnull;
  * expense of additional processing being performed on them. The decision to optimize a particular expression is left
  * to the user's discretion.
  *
+ * <p>
  * Implementations supporting profile-driven and similar optimizations which depend on data being gathered during
  * evaluation should not implement this interface, but rather perform these optimizations transparently behind the
  * scenes. That implies the users can expect those optimizations not interfering with the user's ability to evaluate

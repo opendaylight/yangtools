@@ -84,12 +84,11 @@ public class DeadlockDetectingListeningExecutorServiceTest {
 
         ListenableFuture<String> future = executor.submit(() -> "foo");
 
-        assertEquals( "Future result", "foo", future.get( 5, TimeUnit.SECONDS));
+        assertEquals("Future result", "foo", future.get(5, TimeUnit.SECONDS));
 
         // Test submit with Runnable.
 
-        executor.submit(() -> {
-        }).get();
+        executor.submit(() -> { }).get();
 
         // Test submit with Runnable and value.
 
@@ -99,6 +98,7 @@ public class DeadlockDetectingListeningExecutorServiceTest {
     }
 
     @Test
+    @SuppressWarnings("checkstyle:illegalThrows")
     public void testNonBlockingSubmitOnExecutorThread() throws Throwable {
 
         executor = newExecutor();
@@ -110,6 +110,7 @@ public class DeadlockDetectingListeningExecutorServiceTest {
         testNonBlockingSubmitOnExecutorThread(EXECUTE, SUBMIT_CALLABLE);
     }
 
+    @SuppressWarnings("checkstyle:illegalThrows")
     void testNonBlockingSubmitOnExecutorThread(final InitialInvoker initialInvoker, final Invoker invoker)
             throws Throwable {
 
@@ -123,6 +124,7 @@ public class DeadlockDetectingListeningExecutorServiceTest {
             }
 
             @Override
+            @SuppressWarnings("checkstyle:parameterName")
             public void onFailure(@Nonnull final Throwable t) {
                 caughtEx.set(t);
                 futureCompletedLatch.countDown();
@@ -140,7 +142,7 @@ public class DeadlockDetectingListeningExecutorServiceTest {
     }
 
     @Test
-    public void testBlockingSubmitOnExecutorThread() throws Exception {
+    public void testBlockingSubmitOnExecutorThread() throws InterruptedException {
 
         executor = newExecutor();
 
@@ -151,8 +153,9 @@ public class DeadlockDetectingListeningExecutorServiceTest {
         testBlockingSubmitOnExecutorThread(EXECUTE, SUBMIT_CALLABLE);
     }
 
+    @SuppressWarnings("checkstyle:illegalCatch")
     void testBlockingSubmitOnExecutorThread(final InitialInvoker initialInvoker, final Invoker invoker)
-            throws Exception {
+            throws InterruptedException {
 
         final AtomicReference<Throwable> caughtEx = new AtomicReference<>();
         final CountDownLatch latch = new CountDownLatch(1);
@@ -161,9 +164,9 @@ public class DeadlockDetectingListeningExecutorServiceTest {
 
             try {
                 invoker.invokeExecutor(executor, null).get();
-            } catch(ExecutionException e) {
+            } catch (ExecutionException e) {
                 caughtEx.set(e.getCause());
-            } catch(Throwable e) {
+            } catch (Throwable e) {
                 caughtEx.set(e);
             } finally {
                 latch.countDown();
@@ -172,7 +175,7 @@ public class DeadlockDetectingListeningExecutorServiceTest {
 
         initialInvoker.invokeExecutor(executor, task);
 
-        assertTrue("Task did not complete - executor likely deadlocked", latch.await( 5, TimeUnit.SECONDS));
+        assertTrue("Task did not complete - executor likely deadlocked", latch.await(5, TimeUnit.SECONDS));
         assertNotNull("Expected exception thrown", caughtEx.get());
         assertEquals("Caught exception type", TestDeadlockException.class, caughtEx.get().getClass());
     }

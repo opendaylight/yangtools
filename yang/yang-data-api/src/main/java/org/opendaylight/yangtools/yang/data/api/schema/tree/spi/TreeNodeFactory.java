@@ -30,8 +30,8 @@ public final class TreeNodeFactory {
      * {@link TreeNodeFactory#createTreeNodeRecursively}. Each call to <code>createTreeNodeRecursively</code>
      * calls either {@link #createNormalizedNodeRecursively} or {@link #createOrderedNodeRecursively}
      * which depends on type of child node.
-     * <br> The root node that is returned holds reference to data node and whole subtree of children also containing references
-     * to data nodes.
+     * <br> The root node that is returned holds reference to data node and whole subtree of children also containing
+     * references to data nodes.
      *
      * @param version version of indexed data
      * @param data reference to data node
@@ -52,11 +52,13 @@ public final class TreeNodeFactory {
 
     /**
      * Method creates and returns Normalized Node Container as root and recursively creates whole subtree
-     * from all of the container child iterables stored in {@link org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer#getValue()}
+     * from all of the container child iterables stored in
+     * {@link org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer#getValue()}
      * <br>
-     * The reason why is this method called recursively is that in background method calls {@link TreeNodeFactory#createTreeNodeRecursively}
-     * for each child stored in NormalizedNode and after each child is created the method calls again {@link #createNormalizedNodeRecursively} method
-     * until all of the children are resolved.
+     * The reason why is this method called recursively is that in background method calls
+     * {@link TreeNodeFactory#createTreeNodeRecursively} for each child stored in NormalizedNode and after each child
+     * is created the method calls again {@link #createNormalizedNodeRecursively} method until all of the children are
+     * resolved.
      *
      * @param version version of indexed data
      * @param container Normalized Node Container
@@ -71,11 +73,13 @@ public final class TreeNodeFactory {
 
     /**
      * Method creates and returns Ordered Node Container as root and recursively creates whole subtree
-     * from all of the container child iterables stored in {@link org.opendaylight.yangtools.yang.data.api.schema.OrderedNodeContainer#getValue()}
+     * from all of the container child iterables stored in
+     * {@link org.opendaylight.yangtools.yang.data.api.schema.OrderedNodeContainer#getValue()}
      * <br>
-     * The reason why is this method called recursively is that in background method calls {@link TreeNodeFactory#createTreeNodeRecursively}
-     * for each child stored in NormalizedNode and after each child is created the method calls again {@link #createNormalizedNodeRecursively} method
-     * until all of the children are resolved.
+     * The reason why is this method called recursively is that in background method calls
+     * {@link TreeNodeFactory#createTreeNodeRecursively} for each child stored in NormalizedNode and after each child
+     * is created the method calls again {@link #createNormalizedNodeRecursively} method until all of the children are
+     * resolved.
      *
      * @param version version of indexed data
      * @param container Ordered Node Container
@@ -101,7 +105,8 @@ public final class TreeNodeFactory {
     public static TreeNode createTreeNodeRecursively(final NormalizedNode<?, ?> data, final Version version) {
         if (data instanceof NormalizedNodeContainer<?, ?, ?>) {
             @SuppressWarnings("unchecked")
-            NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container = (NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>>) data;
+            NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container =
+                (NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>>) data;
             return createNormalizedNodeRecursively(version, container);
 
         }

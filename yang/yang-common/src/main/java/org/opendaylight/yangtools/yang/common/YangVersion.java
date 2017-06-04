@@ -37,7 +37,7 @@ public enum YangVersion {
     private final String str;
     private String reference;
 
-    private YangVersion(final String str, final String reference) {
+    YangVersion(final String str, final String reference) {
         this.str = Preconditions.checkNotNull(str);
         this.reference = Preconditions.checkNotNull(reference);
     }

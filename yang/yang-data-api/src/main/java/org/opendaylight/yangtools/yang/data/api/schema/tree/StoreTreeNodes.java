@@ -28,7 +28,8 @@ public final class StoreTreeNodes {
     }
 
     /**
-     * Finds a node in tree
+     * Finds a node in tree.
+     *
      * @param <T>
      *          Store tree node type.
      * @param tree Data Tree
@@ -47,27 +48,27 @@ public final class StoreTreeNodes {
     public static <T extends StoreTreeNode<T>> T findNodeChecked(final T tree, final YangInstanceIdentifier path) {
         T current = tree;
 
-        int i = 1;
+        int depth = 1;
         for (PathArgument pathArg : path.getPathArguments()) {
             Optional<T> potential = current.getChild(pathArg);
             if (!potential.isPresent()) {
                 throw new IllegalArgumentException(String.format("Child %s is not present in tree.",
-                        path.getAncestor(i)));
+                        path.getAncestor(depth)));
             }
             current = potential.get();
-            ++i;
+            ++depth;
         }
         return current;
     }
 
     /**
-     * Finds a node or closest parent in  the tree
+     * Finds a node or closest parent in the tree.
+     *
      * @param <T>
      *          Store tree node type.
      * @param tree Data Tree
      * @param path Path to the node
      * @return Map.Entry Entry with key which is path to closest parent and value is parent node.
-     *
      */
     public static <T extends StoreTreeNode<T>> Entry<YangInstanceIdentifier, T> findClosest(final T tree,
             final YangInstanceIdentifier path) {
@@ -101,7 +102,8 @@ public final class StoreTreeNodes {
         return new SimpleImmutableEntry<>(path.getAncestor(nesting - 1), parent.get());
     }
 
-    public static <T extends StoreTreeNode<T>> Optional<T> getChild(final Optional<T> parent, final PathArgument child) {
+    public static <T extends StoreTreeNode<T>> Optional<T> getChild(final Optional<T> parent,
+            final PathArgument child) {
         if (parent.isPresent()) {
             return parent.get().getChild(child);
         }

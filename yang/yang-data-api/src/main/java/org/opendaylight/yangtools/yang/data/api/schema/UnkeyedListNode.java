@@ -10,9 +10,7 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
-
 /**
- *
  * Containment node, which contains {@link UnkeyedListEntryNode} of the same type, which may
  * be quickly retrieved using key.
  *
@@ -24,10 +22,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * Ordering of the elements is user-defined during construction of instance of this
  * interface. Ordered view of elements (iteration)
  * is provided by {@link #getValue()} call.
- *
  */
-public interface UnkeyedListNode extends
-    DataContainerChild<NodeIdentifier, Collection<UnkeyedListEntryNode>>,
+public interface UnkeyedListNode extends DataContainerChild<NodeIdentifier, Collection<UnkeyedListEntryNode>>,
     OrderedNodeContainer<UnkeyedListEntryNode> {
 
 }

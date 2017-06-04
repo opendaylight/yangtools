@@ -50,8 +50,8 @@ final class StackedReversePathArguments extends PathArgumentList {
         return ret;
     }
 
-
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean contains(final Object o) {
         final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
         return Iterators.contains(iterator(), srch);
@@ -63,12 +63,14 @@ final class StackedReversePathArguments extends PathArgumentList {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public int indexOf(final Object o) {
         final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
         return super.indexOf(srch);
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public int lastIndexOf(final Object o) {
         final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
 

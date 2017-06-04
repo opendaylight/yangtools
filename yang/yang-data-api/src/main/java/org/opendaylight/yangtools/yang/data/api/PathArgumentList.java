@@ -24,32 +24,37 @@ abstract class PathArgumentList extends AbstractList<PathArgument> {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public final boolean remove(final Object o) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public final boolean addAll(@Nonnull final Collection<? extends PathArgument> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
+    public final boolean addAll(final int index, final Collection<? extends PathArgument> c) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public final boolean removeAll(@Nonnull final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public final boolean retainAll(@Nonnull final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public final void clear() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public final boolean addAll(final int index, final Collection<? extends PathArgument> c) {
         throw new UnsupportedOperationException();
     }
 }

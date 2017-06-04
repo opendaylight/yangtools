@@ -30,7 +30,8 @@ public class DataTreeCandidateNodesTest {
     @Test
     public void testFromNormalizedNode() {
         final NormalizedNode<?, ?> mockedNormalizedNode = mock(NormalizedNode.class);
-        final DataTreeCandidateNode dataTreeCandidateNode = DataTreeCandidateNodes.fromNormalizedNode(mockedNormalizedNode);
+        final DataTreeCandidateNode dataTreeCandidateNode = DataTreeCandidateNodes.fromNormalizedNode(
+                mockedNormalizedNode);
         assertNotNull(dataTreeCandidateNode);
     }
 

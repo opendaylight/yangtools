@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 /**
  * DataTree configuration class.
  *
+ * <p>
  * TreeConfig supports currently the following options:
  * <ul>
  * <li>treeType</li>
@@ -24,6 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
  * <li>enable/disable mandatory nodes validation</li>
  * </ul>
  *
+ * <p>
  * TreeConfig can be easily extended in order to support further data tree
  * configuration options, like following:
  * <ul>
@@ -32,9 +34,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
  * <li>other schema aware validation options</li>
  * </ul>
  *
+ * <p>
  * This can be useful when strict validation is not required or useful for some
  * reasons.
- *
  */
 @Beta
 public class DataTreeConfiguration implements Immutable {
@@ -81,12 +83,12 @@ public class DataTreeConfiguration implements Immutable {
     public static DataTreeConfiguration getDefault(final TreeType treeType) {
         Preconditions.checkNotNull(treeType);
         switch (treeType) {
-        case CONFIGURATION:
-            return DEFAULT_CONFIGURATION;
-        case OPERATIONAL:
-            return DEFAULT_OPERATIONAL;
-        default:
-            return new DataTreeConfiguration(treeType, YangInstanceIdentifier.EMPTY, false, true);
+            case CONFIGURATION:
+                return DEFAULT_CONFIGURATION;
+            case OPERATIONAL:
+                return DEFAULT_OPERATIONAL;
+            default:
+                return new DataTreeConfiguration(treeType, YangInstanceIdentifier.EMPTY, false, true);
         }
     }
 

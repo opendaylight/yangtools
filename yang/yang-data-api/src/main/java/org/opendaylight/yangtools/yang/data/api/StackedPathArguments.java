@@ -19,7 +19,7 @@ final class StackedPathArguments extends PathArgumentList {
     private final List<PathArgument> base;
     private final List<PathArgument> stack;
 
-    public StackedPathArguments(@Nonnull final YangInstanceIdentifier base, @Nonnull final List<PathArgument> stack) {
+    StackedPathArguments(@Nonnull final YangInstanceIdentifier base, @Nonnull final List<PathArgument> stack) {
         Verify.verify(!stack.isEmpty());
         this.base = base.getPathArguments();
         this.stack = stack;
@@ -31,6 +31,7 @@ final class StackedPathArguments extends PathArgumentList {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean contains(final Object o) {
         final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
         return stack.contains(srch) || base.contains(srch);
@@ -45,6 +46,7 @@ final class StackedPathArguments extends PathArgumentList {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public int indexOf(final Object o) {
         final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
 
@@ -59,6 +61,7 @@ final class StackedPathArguments extends PathArgumentList {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public int lastIndexOf(final Object o) {
         final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
 

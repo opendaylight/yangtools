@@ -7,18 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
+import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
-import com.google.common.base.Preconditions;
-
 /**
- * Exception thrown when a proposed change fails validation before being
- * applied into the datastore. This can have multiple reasons, for example
- * the datastore has been concurrently modified such that a conflicting
- * node is present, or the modification is structurally incorrect.
+ * Exception thrown when a proposed change fails validation before being applied into the datastore. This can have
+ * multiple reasons, for example the datastore has been concurrently modified such that a conflicting node is present,
+ * or the modification is structurally incorrect.
  */
 public class DataValidationFailedException extends Exception {
     private static final long serialVersionUID = 1L;
+
     private final YangInstanceIdentifier path;
 
     /**
@@ -30,14 +29,16 @@ public class DataValidationFailedException extends Exception {
     public DataValidationFailedException(final YangInstanceIdentifier path, final String message) {
         this(path, message, null);
     }
+
     /**
-     * Create a new instance, initializing
+     * Create a new instance, initializing the cause.
      *
      * @param path Object path which caused this exception
      * @param message Specific message describing the failure
      * @param cause Exception which triggered this failure, may be null
      */
-    public DataValidationFailedException(final YangInstanceIdentifier path, final String message, final Throwable cause) {
+    public DataValidationFailedException(final YangInstanceIdentifier path, final String message,
+            final Throwable cause) {
         super(message, cause);
         this.path = Preconditions.checkNotNull(path);
     }

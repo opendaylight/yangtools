@@ -14,11 +14,12 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 /**
  * Node which is not leaf, but has child {@link NormalizedNode}s as its valzue.
  *
- *
+ * <p>
  * NormalizedNodeContainer does not have a value, but it has a child
  * nodes. Definition of possible and valid child nodes is introduced
  * in subclasses of this interface.
  *
+ * <p>
  * This interface should not be used directly, but rather use of of derived subinterfaces
  * such as {@link DataContainerNode}, {@link MapNode}, {@link LeafSetNode}.
  *
@@ -29,8 +30,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * @param <V>
  *            Child Node type
  */
-public interface NormalizedNodeContainer<I extends PathArgument, K extends PathArgument, V extends NormalizedNode<? extends K, ?>>
-        extends NormalizedNode<I, Collection<V>> {
+public interface NormalizedNodeContainer<I extends PathArgument, K extends PathArgument,
+       V extends NormalizedNode<? extends K, ?>> extends NormalizedNode<I, Collection<V>> {
 
     @Override
     I getIdentifier();

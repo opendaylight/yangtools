@@ -11,16 +11,15 @@ import java.util.Collection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
- *
  * Normalized Node container which preserves user supplied ordering
  * and allows addressing of child elements by position.
  *
  * @param <V> child type
  */
-public interface OrderedNodeContainer<V extends NormalizedNode<?, ?>> extends MixinNode, NormalizedNode<NodeIdentifier, Collection<V>> {
-
+public interface OrderedNodeContainer<V extends NormalizedNode<?, ?>> extends MixinNode,
+       NormalizedNode<NodeIdentifier, Collection<V>> {
     /**
-     * Returns child node by position
+     * Returns child node by position.
      *
      * @param position Position of child node
      * @return Child Node
@@ -29,7 +28,7 @@ public interface OrderedNodeContainer<V extends NormalizedNode<?, ?>> extends Mi
     V getChild(int position);
 
     /**
-     * Returns count of child nodes
+     * Returns count of child nodes.
      *
      * @return count of child nodes.
      */

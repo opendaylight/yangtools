@@ -11,9 +11,9 @@ import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 
 /**
+ * Leaf node with multiplicity 0...n.
  *
- * Leaf node with multiplicity 0...n
- *
+ * <p>
  * Leaf node has a value, but no child nodes in the data tree, schema
  * for leaf node and its value is described by
  * {@link org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode}.
@@ -23,19 +23,17 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
  */
 public interface LeafSetEntryNode<T> extends AttributesContainer, NormalizedNode<NodeWithValue, T>,
         ValueNode<NodeWithValue, T> {
-
     /**
      * Returns {@link NodeWithValue} which identifies this leaf set entry.
-     *
      * Returned {@link NodeWithValue} contains same value as this node.
      *
+     * <p>
      * <h3>Implementation notes</h3> Invocation of
      * {@link NodeWithValue#getValue()} on returned instance of
      * {@link NodeWithValue} must returns
      * same value as invocation of {@link #getValue()}, such as
      * following condition is allways met:
      * <code>true == this.getIdentifier().getValue().equals(this.getValue())</code>
-     *
      *
      * @return {@link NodeWithValue} which identifies this leaf set entry.
      */

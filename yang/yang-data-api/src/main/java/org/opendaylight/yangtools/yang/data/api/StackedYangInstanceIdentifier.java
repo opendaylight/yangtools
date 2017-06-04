@@ -41,7 +41,8 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
     private transient volatile StackedPathArguments pathArguments;
     private transient volatile StackedReversePathArguments reversePathArguments;
 
-    StackedYangInstanceIdentifier(final YangInstanceIdentifier parent, final PathArgument pathArgument, final int hash) {
+    StackedYangInstanceIdentifier(final YangInstanceIdentifier parent, final PathArgument pathArgument,
+            final int hash) {
         super(hash);
         this.parent = Preconditions.checkNotNull(parent);
         this.pathArgument = Preconditions.checkNotNull(pathArgument);

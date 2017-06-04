@@ -48,5 +48,5 @@ public interface DataTreeTip {
      * equals implementation must result in identity comparison.
      */
     @Override
-    boolean equals(Object o);
+    boolean equals(Object obj);
 }

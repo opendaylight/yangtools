@@ -23,12 +23,12 @@ final class YangInstanceIdentifierBuilder implements InstanceIdentifierBuilder {
     private final HashCodeBuilder<PathArgument> hash;
     private final List<PathArgument> path;
 
-    public YangInstanceIdentifierBuilder() {
+    YangInstanceIdentifierBuilder() {
         this.hash = new HashCodeBuilder<>();
         this.path = new ArrayList<>();
     }
 
-    public YangInstanceIdentifierBuilder(final Iterable<PathArgument> prefix, final int hash) {
+    YangInstanceIdentifierBuilder(final Iterable<PathArgument> prefix, final int hash) {
         this.path = Lists.newArrayList(prefix);
         this.hash = new HashCodeBuilder<>(hash);
     }

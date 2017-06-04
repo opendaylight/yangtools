@@ -11,12 +11,9 @@ import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
- *
  * Container of attributes, which may be attached to nodes.
- *
  */
 public interface AttributesContainer {
-
     /**
      * Returns immutable map of QName and value of the attribute.
      *
@@ -25,12 +22,10 @@ public interface AttributesContainer {
     Map<QName, String> getAttributes();
 
     /**
-     * Returns attribute value by supplied QName
-     *
+     * Returns attribute value by supplied QName.
      *
      * @param name Attribute name
      * @return Value of attribute if present, null otherwise.
      */
     Object getAttributeValue(QName name);
-
 }

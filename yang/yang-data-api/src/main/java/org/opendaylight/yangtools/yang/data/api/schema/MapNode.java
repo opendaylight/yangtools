@@ -15,14 +15,12 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * Containment node, which contains {@link MapEntryNode} of the same type, which may
  * be quickly retrieved using key.
  *
+ * <p>
  * This node maps to the list node in YANG schema, schema and semantics of this node,
  * its children and key construction is  defined by YANG <code>list</code>
  * statement and its <code>key</code> and <code>ordered-by</code> substatements.
- *
  */
-public interface MapNode extends //
-        MixinNode,
-        DataContainerChild<NodeIdentifier, Collection<MapEntryNode>>,
+public interface MapNode extends MixinNode, DataContainerChild<NodeIdentifier, Collection<MapEntryNode>>,
         NormalizedNodeContainer<NodeIdentifier, NodeIdentifierWithPredicates, MapEntryNode> {
 
 }

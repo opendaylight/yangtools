@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 /**
- *
  * Map node which preserves user-supplied ordering.
  *
  * <p>
@@ -18,7 +17,6 @@ package org.opendaylight.yangtools.yang.data.api.schema;
  * <p>
  * Except preserving user-ordering all other semantics and behaviour is same as
  * in {@link MapNode}.
- *
  */
 public interface OrderedMapNode extends MapNode, OrderedNodeContainer<MapEntryNode> {
 

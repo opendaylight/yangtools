@@ -46,18 +46,18 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  * which conceptually is XPath expression minimized to uniquely identify element
  * in data tree which conforms to constraints maintained by YANG Model,
  * effectively this makes Instance Identifier a path to element in data tree.
- * </p>
+ *
  * <p>
  * Constraints put in YANG specification on instance-identifier allowed it to be
  * effectively represented in Java and it's evaluation does not require
  * full-blown XPath processor.
- * </p>
- * <h3>Path Arguments</h3>
+ *
  * <p>
+ * <h3>Path Arguments</h3>
  * Path to the node represented in instance identifier consists of
  * {@link PathArgument} which carries necessary information to uniquely identify
  * node on particular level in the subtree.
- * </p>
+ *
  * <ul>
  * <li>{@link NodeIdentifier} - Identifier of node, which has cardinality
  * <code>0..1</code> in particular subtree in data tree.</li>
@@ -68,7 +68,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  * <li>{@link AugmentationIdentifier} - Identifier of instance of
  * <code>augmentation</code> node.</li>
  * </ul>
- *
  *
  * @see <a href="http://tools.ietf.org/html/rfc6020#section-9.13">RFC6020</a>
  */
@@ -92,7 +91,9 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
     }
 
     @Nonnull abstract YangInstanceIdentifier createRelativeIdentifier(int skipFromRoot);
+
     @Nonnull abstract Collection<PathArgument> tryPathArguments();
+
     @Nonnull abstract Collection<PathArgument> tryReversePathArguments();
 
     /**
@@ -127,7 +128,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * @return Ancestor {@link YangInstanceIdentifier}
      * @throws IllegalArgumentException if the specified depth is negative or is greater than the depth of this object.
      */
-   @Nonnull public abstract YangInstanceIdentifier getAncestor(int depth);
+    @Nonnull public abstract YangInstanceIdentifier getAncestor(int depth);
 
     /**
      * Returns an ordered iteration of path arguments.
@@ -170,18 +171,6 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         return create(Arrays.asList(path));
     }
 
-    @Override
-    public final int hashCode() {
-        /*
-         * The caching is safe, since the object contract requires
-         * immutability of the object and all objects referenced from this
-         * object.
-         * Used lists, maps are immutable. Path Arguments (elements) are also
-         * immutable, since the PathArgument contract requires immutability.
-         */
-        return hash;
-    }
-
     boolean pathArgumentsEqual(final YangInstanceIdentifier other) {
         return Iterables.elementsEqual(getPathArguments(), other.getPathArguments());
     }
@@ -203,7 +192,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
     }
 
     /**
-     * Constructs a new Instance Identifier with new {@link NodeIdentifier} added to the end of path arguments
+     * Constructs a new Instance Identifier with new {@link NodeIdentifier} added to the end of path arguments.
      *
      * @param name QName of {@link NodeIdentifier}
      * @return Instance Identifier with additional path argument added to the end.
@@ -213,8 +202,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
     }
 
     /**
-     *
-     * Constructs a new Instance Identifier with new {@link PathArgument} added to the end of path arguments
+     * Constructs a new Instance Identifier with new {@link PathArgument} added to the end of path arguments.
      *
      * @param arg Path argument which should be added to the end
      * @return Instance Identifier with additional path argument added to the end.
@@ -315,6 +303,18 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         return ret;
     }
 
+    @Override
+    public final int hashCode() {
+        /*
+         * The caching is safe, since the object contract requires
+         * immutability of the object and all objects referenced from this
+         * object.
+         * Used lists, maps are immutable. Path Arguments (elements) are also
+         * immutable, since the PathArgument contract requires immutability.
+         */
+        return hash;
+    }
+
     private static int hashCode(final Object value) {
         if (value == null) {
             return 0;
@@ -340,7 +340,8 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
     // Static factories & helpers
 
     /**
-     * Returns a new InstanceIdentifier with only one path argument of type {@link NodeIdentifier} with supplied QName
+     * Returns a new InstanceIdentifier with only one path argument of type {@link NodeIdentifier} with supplied
+     * QName.
      *
      * @param name QName of first node identifier
      * @return Instance Identifier with only one path argument of type {@link NodeIdentifier}
@@ -359,7 +360,6 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
     }
 
     /**
-     *
      * Returns new builder for InstanceIdentifier with path arguments copied from original instance identifier.
      *
      * @param origin InstanceIdentifier from which path arguments are copied.
@@ -370,17 +370,19 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
     }
 
     /**
-     * Path argument / component of InstanceIdentifier
-     *
+     * Path argument / component of InstanceIdentifier.
      * Path argument uniquely identifies node in data tree on particular
      * level.
+     *
      * <p>
      * This interface itself is used as common parent for actual
      * path arguments types and should not be implemented by user code.
+     *
      * <p>
      * Path arguments SHOULD contain only minimum of information
      * required to uniquely identify node on particular subtree level.
      *
+     * <p>
      * For actual path arguments types see:
      * <ul>
      * <li>{@link NodeIdentifier} - Identifier of container or leaf
@@ -394,6 +396,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * If applicable returns unique QName of data node as defined in YANG
          * Schema.
          *
+         * <p>
          * This method may return null, if the corresponding schema node, does
          * not have QName associated, such as in cases of augmentations.
          *
@@ -413,7 +416,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         String toRelativeString(PathArgument previous);
     }
 
-    private static abstract class AbstractPathArgument implements PathArgument {
+    private abstract static class AbstractPathArgument implements PathArgument {
         private static final long serialVersionUID = -4546547994250849340L;
         private final QName nodeType;
         private transient int hashValue;
@@ -429,6 +432,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         @Override
+        @SuppressWarnings("checkstyle:parameterName")
         public int compareTo(@Nonnull final PathArgument o) {
             return nodeType.compareTo(o.getNodeType());
         }
@@ -628,16 +632,16 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
     }
 
     /**
-     * Composite path argument identifying a {@link org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode} node in
-     * particular subtree.
+     * Composite path argument identifying a {@link org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode}
+     * node in particular subtree.
      *
+     * <p>
      * Augmentation is uniquely identified by set of all possible child nodes.
      * This is possible
      * to identify instance of augmentation,
      * since RFC6020 states that <code>augment</code> that augment
      * statement must not add multiple nodes from same namespace
      * / module to the target node.
-     *
      *
      * @see <a href="http://tools.ietf.org/html/rfc6020#section-7.15">RFC6020</a>
      */
@@ -652,9 +656,8 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         /**
-         *
          * Construct new augmentation identifier using supplied set of possible
-         * child nodes
+         * child nodes.
          *
          * @param childNames
          *            Set of possible child nodes.
@@ -664,7 +667,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         /**
-         * Returns set of all possible child nodes
+         * Returns set of all possible child nodes.
          *
          * @return set of all possible child nodes.
          */
@@ -683,15 +686,15 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         @Override
-        public boolean equals(final Object o) {
-            if (this == o) {
+        public boolean equals(final Object obj) {
+            if (this == obj) {
                 return true;
             }
-            if (!(o instanceof AugmentationIdentifier)) {
+            if (!(obj instanceof AugmentationIdentifier)) {
                 return false;
             }
 
-            AugmentationIdentifier that = (AugmentationIdentifier) o;
+            AugmentationIdentifier that = (AugmentationIdentifier) obj;
             return childNames.equals(that.childNames);
         }
 
@@ -701,6 +704,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         @Override
+        @SuppressWarnings("checkstyle:parameterName")
         public int compareTo(@Nonnull final PathArgument o) {
             if (!(o instanceof AugmentationIdentifier)) {
                 return -1;
@@ -712,9 +716,9 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
             if (thisSize == otherSize) {
                 Iterator<QName> otherIterator = otherChildNames.iterator();
                 for (QName name : childNames) {
-                    int c = name.compareTo(otherIterator.next());
-                    if (c != 0) {
-                        return c;
+                    int child = name.compareTo(otherIterator.next());
+                    if (child != 0) {
+                        return child;
                     }
                 }
                 return 0;
@@ -727,7 +731,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
     }
 
     /**
-     * Fluent Builder of Instance Identifier instances
+     * Fluent Builder of Instance Identifier instances.
      */
     public interface InstanceIdentifierBuilder extends Builder<YangInstanceIdentifier> {
         /**
@@ -747,7 +751,8 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         InstanceIdentifierBuilder node(QName nodeType);
 
         /**
-         * Adds {@link NodeIdentifierWithPredicates} with supplied QName and key values to path arguments of resulting instance identifier.
+         * Adds {@link NodeIdentifierWithPredicates} with supplied QName and key values to path arguments of resulting
+         * instance identifier.
          *
          * @param nodeType QName of {@link NodeIdentifierWithPredicates} which will be added
          * @param keyValues Map of key components and their respective values for {@link NodeIdentifierWithPredicates}
@@ -766,8 +771,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         InstanceIdentifierBuilder nodeWithKey(QName nodeType, QName key, Object value);
 
         /**
-         *
-         * Builds an {@link YangInstanceIdentifier} with path arguments from this builder
+         * Builds an {@link YangInstanceIdentifier} with path arguments from this builder.
          *
          * @return {@link YangInstanceIdentifier}
          */

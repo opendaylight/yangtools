@@ -8,10 +8,9 @@
 package org.opendaylight.yangtools.yang.data.api.codec;
 
 import java.util.Set;
-
 import org.opendaylight.yangtools.concepts.Codec;
 
-public interface BitsCodec<T> extends Codec<T, Set<String>>{
+public interface BitsCodec<T> extends Codec<T, Set<String>> {
     @Override
     T serialize(Set<String> data);
 

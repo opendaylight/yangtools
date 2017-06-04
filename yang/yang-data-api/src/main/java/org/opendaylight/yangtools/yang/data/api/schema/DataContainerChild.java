@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.api.schema;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
- *
  * Marker interface for direct children of {@link DataContainerNode}.
  *
  * <h3>Implementation notes</h3>
@@ -23,13 +22,12 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * <li>{@link ChoiceNode}
  * <li>{@link MapNode}
  * <li>{@link AugmentationNode}
- *</ul>
+ * </ul>
  *
  * @param <K> Path Argument Type which is used to identify node
  * @param <V> Value type
  */
 public interface DataContainerChild<K extends PathArgument,V> extends NormalizedNode<K, V> {
-
     @Override
     K getIdentifier();
 }

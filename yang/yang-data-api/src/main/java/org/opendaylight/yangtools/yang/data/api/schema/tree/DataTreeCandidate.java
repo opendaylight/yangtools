@@ -48,5 +48,5 @@ public interface DataTreeCandidate {
      * equals implementation must result in identity comparison.
      */
     @Override
-    boolean equals(Object o);
+    boolean equals(Object obj);
 }

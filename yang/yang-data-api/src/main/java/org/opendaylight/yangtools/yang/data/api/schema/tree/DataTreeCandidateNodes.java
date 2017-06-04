@@ -28,42 +28,45 @@ public final class DataTreeCandidateNodes {
 
     /**
      * Applies the {@code node} to the {@code cursor}, note that if the top node of (@code node} is RootNode
-     * you need to use {@link #applyRootedNodeToCursor(DataTreeModificationCursor, YangInstanceIdentifier, DataTreeCandidateNode) applyRootedNodeToCursor}
-     * method that works with rooted node candidates
+     * you need to use {@link #applyRootedNodeToCursor(DataTreeModificationCursor, YangInstanceIdentifier,
+     * DataTreeCandidateNode) applyRootedNodeToCursor} method that works with rooted node candidates.
+     *
      * @param cursor cursor from the modification we want to apply the {@code node} to
      * @param node candidate tree to apply
      */
     public static void applyToCursor(final DataTreeModificationCursor cursor, final DataTreeCandidateNode node) {
         switch (node.getModificationType()) {
-        case DELETE:
-            cursor.delete(node.getIdentifier());
-            break;
-        case SUBTREE_MODIFIED:
+            case DELETE:
+                cursor.delete(node.getIdentifier());
+                break;
+            case SUBTREE_MODIFIED:
                 cursor.enter(node.getIdentifier());
                 AbstractNodeIterator iterator = new ExitingNodeIterator(null, node.getChildNodes().iterator());
-            do {
-                iterator = iterator.next(cursor);
-            } while (iterator != null);
-            break;
-        case UNMODIFIED:
-            // No-op
-            break;
-        case WRITE:
-            cursor.write(node.getIdentifier(), node.getDataAfter().get());
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
+                do {
+                    iterator = iterator.next(cursor);
+                } while (iterator != null);
+                break;
+            case UNMODIFIED:
+                // No-op
+                break;
+            case WRITE:
+                cursor.write(node.getIdentifier(), node.getDataAfter().get());
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
         }
     }
 
     /**
      * Applies the {@code node} that is rooted(doesn't have an identifier) in tree A to tree B's {@code cursor}
-     * at location specified by {@code rootPath}
+     * at location specified by {@code rootPath}.
+     *
      * @param cursor cursor from the modification we want to apply the {@code node} to
      * @param rootPath path in the {@code cursor}'s tree we want to apply to candidate to
      * @param node candidate tree to apply
      */
-    public static void applyRootedNodeToCursor(final DataTreeModificationCursor cursor, final YangInstanceIdentifier rootPath, final DataTreeCandidateNode node) {
+    public static void applyRootedNodeToCursor(final DataTreeModificationCursor cursor,
+            final YangInstanceIdentifier rootPath, final DataTreeCandidateNode node) {
         switch (node.getModificationType()) {
             case DELETE:
                 cursor.delete(rootPath.getLastPathArgument());
@@ -116,26 +119,26 @@ public final class DataTreeCandidateNodes {
             while (iterator.hasNext()) {
                 final DataTreeCandidateNode node = iterator.next();
                 switch (node.getModificationType()) {
-                case DELETE:
-                    cursor.delete(node.getIdentifier());
-                    break;
-                case APPEARED:
-                case DISAPPEARED:
-                case SUBTREE_MODIFIED:
-                    final Collection<DataTreeCandidateNode> children = node.getChildNodes();
-                    if (!children.isEmpty()) {
-                        cursor.enter(node.getIdentifier());
+                    case DELETE:
+                        cursor.delete(node.getIdentifier());
+                        break;
+                    case APPEARED:
+                    case DISAPPEARED:
+                    case SUBTREE_MODIFIED:
+                        final Collection<DataTreeCandidateNode> children = node.getChildNodes();
+                        if (!children.isEmpty()) {
+                            cursor.enter(node.getIdentifier());
                             return new ExitingNodeIterator(this, children.iterator());
-                    }
-                    break;
-                case UNMODIFIED:
-                    // No-op
-                    break;
-                case WRITE:
-                    cursor.write(node.getIdentifier(), node.getDataAfter().get());
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
+                        }
+                        break;
+                    case UNMODIFIED:
+                        // No-op
+                        break;
+                    case WRITE:
+                        cursor.write(node.getIdentifier(), node.getDataAfter().get());
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
                 }
             }
             exitNode(cursor);
@@ -168,7 +171,7 @@ public final class DataTreeCandidateNodes {
 
         private final AbstractNodeIterator parent;
 
-        public ExitingNodeIterator(@Nullable final AbstractNodeIterator parent,
+        ExitingNodeIterator(@Nullable final AbstractNodeIterator parent,
                 @Nonnull final Iterator<DataTreeCandidateNode> iterator) {
             super(iterator);
             this.parent = parent;

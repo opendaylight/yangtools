@@ -34,12 +34,14 @@ public final class NormalizedNodes {
         throw new UnsupportedOperationException("Utility class should not be instantiated");
     }
 
-    public static Optional<NormalizedNode<?, ?>> findNode(final YangInstanceIdentifier rootPath, final NormalizedNode<?, ?> rootNode, final YangInstanceIdentifier childPath) {
+    public static Optional<NormalizedNode<?, ?>> findNode(final YangInstanceIdentifier rootPath,
+            final NormalizedNode<?, ?> rootNode, final YangInstanceIdentifier childPath) {
         final Optional<YangInstanceIdentifier> relativePath = childPath.relativeTo(rootPath);
         return relativePath.isPresent() ? findNode(rootNode, relativePath.get()) : Optional.absent();
     }
 
-    public static Optional<NormalizedNode<?, ?>> findNode(final Optional<NormalizedNode<?, ?>> parent, final Iterable<PathArgument> relativePath) {
+    public static Optional<NormalizedNode<?, ?>> findNode(final Optional<NormalizedNode<?, ?>> parent,
+            final Iterable<PathArgument> relativePath) {
         checkNotNull(parent, "Parent must not be null");
         checkNotNull(relativePath, "Relative path must not be null");
 
@@ -51,19 +53,23 @@ public final class NormalizedNodes {
         return currentNode;
     }
 
-    public static Optional<NormalizedNode<?, ?>> findNode(final Optional<NormalizedNode<?, ?>> parent, final PathArgument... relativePath) {
+    public static Optional<NormalizedNode<?, ?>> findNode(final Optional<NormalizedNode<?, ?>> parent,
+            final PathArgument... relativePath) {
         return findNode(parent, Arrays.asList(relativePath));
     }
 
-    public static Optional<NormalizedNode<?, ?>> findNode(final NormalizedNode<?, ?> parent, final Iterable<PathArgument> relativePath) {
+    public static Optional<NormalizedNode<?, ?>> findNode(final NormalizedNode<?, ?> parent,
+            final Iterable<PathArgument> relativePath) {
         return findNode(Optional.fromNullable(parent), relativePath);
     }
 
-    public static Optional<NormalizedNode<?, ?>> findNode(final NormalizedNode<?, ?> parent, final PathArgument... relativePath) {
+    public static Optional<NormalizedNode<?, ?>> findNode(final NormalizedNode<?, ?> parent,
+            final PathArgument... relativePath) {
         return findNode(parent, Arrays.asList(relativePath));
     }
 
-    public static Optional<NormalizedNode<?, ?>> findNode(final NormalizedNode<?, ?> tree, final YangInstanceIdentifier path) {
+    public static Optional<NormalizedNode<?, ?>> findNode(final NormalizedNode<?, ?> tree,
+            final YangInstanceIdentifier path) {
         checkNotNull(tree, "Tree must not be null");
         checkNotNull(path, "Path must not be null");
 
@@ -71,7 +77,8 @@ public final class NormalizedNodes {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public static Optional<NormalizedNode<?, ?>> getDirectChild(final NormalizedNode<?, ?> node, final PathArgument pathArg) {
+    public static Optional<NormalizedNode<?, ?>> getDirectChild(final NormalizedNode<?, ?> node,
+            final PathArgument pathArg) {
         if (node instanceof LeafNode<?> || node instanceof LeafSetEntryNode<?>) {
             return Optional.absent();
         } else if (node instanceof DataContainerNode<?>) {
@@ -117,8 +124,8 @@ public final class NormalizedNodes {
 
     private static String toStringTree(final PathArgument identifier) {
         if (identifier instanceof NodeIdentifierWithPredicates) {
-            return identifier.getNodeType().getLocalName() +
-                    ((NodeIdentifierWithPredicates) identifier).getKeyValues().values();
+            return identifier.getNodeType().getLocalName()
+                + ((NodeIdentifierWithPredicates) identifier).getKeyValues().values();
         } else if (identifier instanceof AugmentationIdentifier) {
             return "augmentation";
         } else {

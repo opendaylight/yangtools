@@ -7,9 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-
 import com.google.common.base.Optional;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
  * A tree node which has references to its child leaves. This are typically
@@ -20,7 +19,7 @@ import com.google.common.base.Optional;
 public interface StoreTreeNode<C extends StoreTreeNode<C>> {
 
     /**
-     * Returns a direct child of the node
+     * Returns a direct child of the node.
      *
      * @param child Identifier of child
      * @return Optional with node if the child is existing, {@link Optional#absent()} otherwise.

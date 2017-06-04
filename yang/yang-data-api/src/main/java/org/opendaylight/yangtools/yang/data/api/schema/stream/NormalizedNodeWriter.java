@@ -68,20 +68,20 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
     }
 
     /**
-     * Create a new writer backed by a {@link NormalizedNodeStreamWriter}. Unlike the simple {@link #forStreamWriter(NormalizedNodeStreamWriter)}
-     * method, this allows the caller to switch off RFC6020 XML compliance, providing better
-     * throughput. The reason is that the XML mapping rules in RFC6020 require the encoding
-     * to emit leaf nodes which participate in a list's key first and in the order in which
-     * they are defined in the key. For JSON, this requirement is completely relaxed and leaves
-     * can be ordered in any way we see fit. The former requires a bit of work: first a lookup
-     * for each key and then for each emitted node we need to check whether it was already
-     * emitted.
+     * Create a new writer backed by a {@link NormalizedNodeStreamWriter}. Unlike the simple
+     * {@link #forStreamWriter(NormalizedNodeStreamWriter)} method, this allows the caller to switch off RFC6020 XML
+     * compliance, providing better throughput. The reason is that the XML mapping rules in RFC6020 require
+     * the encoding to emit leaf nodes which participate in a list's key first and in the order in which they are
+     * defined in the key. For JSON, this requirement is completely relaxed and leaves can be ordered in any way we
+     * see fit. The former requires a bit of work: first a lookup for each key and then for each emitted node we need
+     * to check whether it was already emitted.
      *
      * @param writer Back-end writer
      * @param orderKeyLeaves whether the returned instance should be RFC6020 XML compliant.
      * @return A new instance.
      */
-    public static NormalizedNodeWriter forStreamWriter(final NormalizedNodeStreamWriter writer, final boolean orderKeyLeaves) {
+    public static NormalizedNodeWriter forStreamWriter(final NormalizedNodeStreamWriter writer,
+            final boolean orderKeyLeaves) {
         return orderKeyLeaves ? new OrderedNormalizedNodeWriter(writer) : new NormalizedNodeWriter(writer);
     }
 
@@ -142,7 +142,8 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         } else if (node instanceof LeafNode) {
             final LeafNode<?> nodeAsLeaf = (LeafNode<?>)node;
             if (writer instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) writer).leafNode(nodeAsLeaf.getIdentifier(), nodeAsLeaf.getValue(), nodeAsLeaf.getAttributes());
+                ((NormalizedNodeStreamAttributeWriter) writer).leafNode(nodeAsLeaf.getIdentifier(),
+                    nodeAsLeaf.getValue(), nodeAsLeaf.getAttributes());
             } else {
                 writer.leafNode(nodeAsLeaf.getIdentifier(), nodeAsLeaf.getValue());
             }
@@ -186,7 +187,8 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         if (node instanceof ContainerNode) {
             final ContainerNode n = (ContainerNode) node;
             if (writer instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) writer).startContainerNode(n.getIdentifier(), childSizeHint(n.getValue()), n.getAttributes());
+                ((NormalizedNodeStreamAttributeWriter) writer).startContainerNode(n.getIdentifier(),
+                    childSizeHint(n.getValue()), n.getAttributes());
             } else {
                 writer.startContainerNode(n.getIdentifier(), childSizeHint(n.getValue()));
             }
@@ -195,7 +197,8 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         if (node instanceof YangModeledAnyXmlNode) {
             final YangModeledAnyXmlNode n = (YangModeledAnyXmlNode) node;
             if (writer instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) writer).startYangModeledAnyXmlNode(n.getIdentifier(), childSizeHint(n.getValue()), n.getAttributes());
+                ((NormalizedNodeStreamAttributeWriter) writer).startYangModeledAnyXmlNode(n.getIdentifier(),
+                    childSizeHint(n.getValue()), n.getAttributes());
             } else {
                 writer.startYangModeledAnyXmlNode(n.getIdentifier(), childSizeHint(n.getValue()));
             }
@@ -259,7 +262,8 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
             final NormalizedNodeStreamWriter nnWriter = getWriter();
             if (nnWriter instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) nnWriter).startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()), node.getAttributes());
+                ((NormalizedNodeStreamAttributeWriter) nnWriter).startMapEntryNode(node.getIdentifier(),
+                    childSizeHint(node.getValue()), node.getAttributes());
             } else {
                 nnWriter.startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()));
             }

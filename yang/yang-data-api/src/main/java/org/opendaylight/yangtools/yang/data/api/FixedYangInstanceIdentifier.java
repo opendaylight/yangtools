@@ -15,8 +15,10 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 
 final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implements Cloneable {
-    static final FixedYangInstanceIdentifier EMPTY_INSTANCE = new FixedYangInstanceIdentifier(ImmutableList.of(), new HashCodeBuilder<>().build());
+    static final FixedYangInstanceIdentifier EMPTY_INSTANCE = new FixedYangInstanceIdentifier(ImmutableList.of(),
+            new HashCodeBuilder<>().build());
     private static final long serialVersionUID = 1L;
+
     private final ImmutableList<PathArgument> path;
     private transient volatile YangInstanceIdentifier parent;
 
@@ -98,7 +100,7 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
 
     @Override
     public PathArgument getLastPathArgument() {
-        return path.isEmpty()? null : path.get(path.size() - 1);
+        return path.isEmpty() ? null : path.get(path.size() - 1);
     }
 
     @Nonnull

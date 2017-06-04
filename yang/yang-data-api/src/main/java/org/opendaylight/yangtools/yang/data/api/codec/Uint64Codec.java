@@ -12,14 +12,14 @@ import java.math.BigInteger;
 import org.opendaylight.yangtools.concepts.Codec;
 
 /**
- * FIXME: Should be changed to {@link UnsignedLong}
+ * FIXME: Should be changed to {@link UnsignedLong}.
  *
  * @author ttkacik
  *
  * @param <T>
  *          Output type of serialization.
  */
-public interface Uint64Codec<T> extends Codec<T,BigInteger> {
+public interface Uint64Codec<T> extends Codec<T, BigInteger> {
     @Override
     T serialize(BigInteger data);
 

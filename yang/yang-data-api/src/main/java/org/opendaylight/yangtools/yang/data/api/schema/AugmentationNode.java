@@ -15,30 +15,26 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 /**
  * Data instance of <code>augment</code> associated with parent node.
  *
+ * <p>
  * Augmentation is addition of subtree defined by other external YANG Model and
  * is schema for subtree is described by instance of  {@link AugmentationSchema}
  * associated with parent node of this node.
  *
+ * <p>
  * Augmentation node MUST NOT be direct child of other augmentation node.
- *
  */
 public interface AugmentationNode extends MixinNode, DataContainerNode<AugmentationIdentifier>,
     DataContainerChild<AugmentationIdentifier, Collection<DataContainerChild<? extends PathArgument, ?>>> {
 
     /**
-     * Gets identifier of augmentation node
-     *
-     * Returned identifier of augmentation node contains all possible
+     * Gets identifier of augmentation node. Returned identifier of augmentation node contains all possible
      * direct child QNames.
      *
-     * This is sufficient to identify instance of augmentation,
-     * since RFC6020 states that <code>augment</code> that augment
-     * statement must not add multiple nodes from same namespace
-     * / module
-     * to the target node.
+     * <p>
+     * This is sufficient to identify instance of augmentation, since RFC6020 states that <code>augment</code>
+     * that augment statement must not add multiple nodes from same namespace / module to the target node.
      *
      * @return Identifier which uniquelly identifies augmentation in particular subtree.
-     *
      */
     @Override
     AugmentationIdentifier getIdentifier();

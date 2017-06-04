@@ -23,15 +23,18 @@ import org.slf4j.LoggerFactory;
 @Beta
 public final class DataTreeCandidates {
     private static final Logger LOG = LoggerFactory.getLogger(DataTreeCandidates.class);
+
     private DataTreeCandidates() {
         throw new UnsupportedOperationException();
     }
 
-    public static DataTreeCandidate newDataTreeCandidate(final YangInstanceIdentifier rootPath, final DataTreeCandidateNode rootNode) {
+    public static DataTreeCandidate newDataTreeCandidate(final YangInstanceIdentifier rootPath,
+            final DataTreeCandidateNode rootNode) {
         return new DefaultDataTreeCandidate(rootPath, rootNode);
     }
 
-    public static DataTreeCandidate fromNormalizedNode(final YangInstanceIdentifier rootPath, final NormalizedNode<?, ?> node) {
+    public static DataTreeCandidate fromNormalizedNode(final YangInstanceIdentifier rootPath,
+            final NormalizedNode<?, ?> node) {
         return new DefaultDataTreeCandidate(rootPath, new NormalizedNodeDataTreeCandidateNode(node));
     }
 
@@ -39,7 +42,8 @@ public final class DataTreeCandidates {
         DataTreeCandidateNodes.applyToCursor(cursor, candidate.getRootNode());
     }
 
-    public static void applyToModification(final DataTreeModification modification, final DataTreeCandidate candidate) {
+    public static void applyToModification(final DataTreeModification modification,
+            final DataTreeCandidate candidate) {
         if (modification instanceof CursorAwareDataTreeModification) {
             applyToCursorAwareModification((CursorAwareDataTreeModification) modification, candidate);
             return;
@@ -48,28 +52,28 @@ public final class DataTreeCandidates {
         final DataTreeCandidateNode node = candidate.getRootNode();
         final YangInstanceIdentifier path = candidate.getRootPath();
         switch (node.getModificationType()) {
-        case DELETE:
-            modification.delete(path);
-            LOG.debug("Modification {} deleted path {}", modification, path);
-            break;
-        case SUBTREE_MODIFIED:
-            LOG.debug("Modification {} modified path {}", modification, path);
+            case DELETE:
+                modification.delete(path);
+                LOG.debug("Modification {} deleted path {}", modification, path);
+                break;
+            case SUBTREE_MODIFIED:
+                LOG.debug("Modification {} modified path {}", modification, path);
 
-            NodeIterator iterator = new NodeIterator(null, path, node.getChildNodes().iterator());
-            do {
-                iterator = iterator.next(modification);
-            } while (iterator != null);
-            break;
-        case UNMODIFIED:
-            LOG.debug("Modification {} unmodified path {}", modification, path);
-            // No-op
-            break;
-        case WRITE:
-            modification.write(path, node.getDataAfter().get());
-            LOG.debug("Modification {} written path {}", modification, path);
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
+                NodeIterator iterator = new NodeIterator(null, path, node.getChildNodes().iterator());
+                do {
+                    iterator = iterator.next(modification);
+                } while (iterator != null);
+                break;
+            case UNMODIFIED:
+                LOG.debug("Modification {} unmodified path {}", modification, path);
+                // No-op
+                break;
+            case WRITE:
+                modification.write(path, node.getDataAfter().get());
+                LOG.debug("Modification {} written path {}", modification, path);
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
         }
     }
 
@@ -92,7 +96,7 @@ public final class DataTreeCandidates {
         private final YangInstanceIdentifier path;
         private final NodeIterator parent;
 
-        public NodeIterator(@Nullable final NodeIterator parent, @Nonnull final YangInstanceIdentifier path,
+        NodeIterator(@Nullable final NodeIterator parent, @Nonnull final YangInstanceIdentifier path,
                 @Nonnull final Iterator<DataTreeCandidateNode> iterator) {
             this.iterator = Preconditions.checkNotNull(iterator);
             this.path = Preconditions.checkNotNull(path);
@@ -105,25 +109,25 @@ public final class DataTreeCandidates {
                 final YangInstanceIdentifier child = path.node(node.getIdentifier());
 
                 switch (node.getModificationType()) {
-                case DELETE:
-                    modification.delete(child);
-                    LOG.debug("Modification {} deleted path {}", modification, child);
-                    break;
-                case APPEARED:
-                case DISAPPEARED:
-                case SUBTREE_MODIFIED:
-                    LOG.debug("Modification {} modified path {}", modification, child);
-                    return new NodeIterator(this, child, node.getChildNodes().iterator());
-                case UNMODIFIED:
-                    LOG.debug("Modification {} unmodified path {}", modification, child);
-                    // No-op
-                    break;
-                case WRITE:
-                    modification.write(child, node.getDataAfter().get());
-                    LOG.debug("Modification {} written path {}", modification, child);
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
+                    case DELETE:
+                        modification.delete(child);
+                        LOG.debug("Modification {} deleted path {}", modification, child);
+                        break;
+                    case APPEARED:
+                    case DISAPPEARED:
+                    case SUBTREE_MODIFIED:
+                        LOG.debug("Modification {} modified path {}", modification, child);
+                        return new NodeIterator(this, child, node.getChildNodes().iterator());
+                    case UNMODIFIED:
+                        LOG.debug("Modification {} unmodified path {}", modification, child);
+                        // No-op
+                        break;
+                    case WRITE:
+                        modification.write(child, node.getDataAfter().get());
+                        LOG.debug("Modification {} written path {}", modification, child);
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
                 }
             }
 

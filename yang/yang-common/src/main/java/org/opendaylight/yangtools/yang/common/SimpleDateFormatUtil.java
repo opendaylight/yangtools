@@ -15,27 +15,27 @@ import java.util.Date;
 public final class SimpleDateFormatUtil {
 
     /**
-     * revision format according to Yang spec
+     * revision format according to Yang spec.
      */
     private static final String REVISION_SIMPLE_DATE = "yyyy-MM-dd";
 
     /**
-     * default Yang date that is used when date is not present
+     * default Yang date that is used when date is not present.
      */
     private static final String DEFAULT_DATE = "1970-01-01";
 
     /**
-     * {@link SimpleDateFormatUtil#DEFAULT_DATE} for revision statement
+     * {@link SimpleDateFormatUtil#DEFAULT_DATE} for revision statement.
      */
     public static final Date DEFAULT_DATE_REV;
 
     /**
-     * {@link SimpleDateFormatUtil#DEFAULT_DATE} for import statement
+     * {@link SimpleDateFormatUtil#DEFAULT_DATE} for import statement.
      */
     public static final Date DEFAULT_DATE_IMP;
 
     /**
-     * {@link SimpleDateFormatUtil#DEFAULT_DATE} for belongs-to statement
+     * {@link SimpleDateFormatUtil#DEFAULT_DATE} for belongs-to statement.
      */
     public static final Date DEFAULT_BELONGS_TO_DATE;
 

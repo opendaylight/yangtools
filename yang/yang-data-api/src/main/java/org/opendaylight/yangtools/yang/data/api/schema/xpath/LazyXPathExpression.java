@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
  * Asynchronous interface to evaluation. It is functionally the same as an XPathExpression, but allows for asynchronous
  * execution of evaluation of the expression.
  *
+ * <p>
  * FIXME: Whether or not the resulting XPathResult can perform blocking calls is up for grabs, but implementations are
  *        definitely allowed to perform things like on-demand data transformation from foreign object and data models.
  *
@@ -34,16 +35,14 @@ public interface LazyXPathExpression {
      * {@link XPathResult} at some point it the future. If it fails to match anything, it {@link Future#get()} will
      * return {@link Optional#absent()}.
      *
+     * <p>
      * FIXME: The amount of overhead an implementation can incur on the user as data from the resulting
      *        {@link XPathResult} is being accessed is left UNDEFINED.
-     *
      *        Specifically, the user is expected to store each result returned directly or indirectly in a local
      *        variable instead of repeated calls to the result's methods, as these may incur CPU processing overhead.
-     *
      *        Furthermore all method invocations can throw {@link LazyXPathExpressionException}, which the users are
      *        expected to handle gracefully. RESILIENT USERS ARE EXPECTED TO CATCH {@link LazyXPathExpressionException}
      *        AND RECOVER IN THE SAME MANNER THEY WOULD IF AN {@link XPathExpressionException} WOULD HAVE BEEN THROWN.
-     *
      *        [ FIXME: would it be appropriate to allow implementations to SneakyThrow {@link XPathExpressionException}
      *                 and not introduce a RuntimeExpcetion ? ]
      *

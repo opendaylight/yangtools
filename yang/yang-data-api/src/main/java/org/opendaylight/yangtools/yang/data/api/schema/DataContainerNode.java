@@ -11,11 +11,10 @@ import java.util.Collection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
- *
  * Abstract node which does not have value but contains valid {@link DataContainerChild} nodes.
- *
  * Schema of this node is described by instance of {@link org.opendaylight.yangtools.yang.model.api.DataNodeContainer}.
  *
+ * <p>
  * <h2>Implementation notes</h2>
  * This interface should not be implemented directly, but rather implementing one of it's subclasses
  * <ul>
@@ -30,14 +29,12 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  */
 public interface DataContainerNode<K extends PathArgument> extends //
         NormalizedNodeContainer<K, PathArgument, DataContainerChild<? extends PathArgument, ?>> {
-
     /**
-     * Returns iteration of all child nodes
-     *
+     * Returns iteration of all child nodes.
      * Order of returned child nodes may be defined by subinterfaces.
      *
-     * <b>Implementation Notes:</b>
      * <p>
+     * <b>Implementation Notes:</b>
      * All nodes returned in this iterable, MUST also be accessible via
      * {@link #getChild(PathArgument)} using their associated identifier.
      *

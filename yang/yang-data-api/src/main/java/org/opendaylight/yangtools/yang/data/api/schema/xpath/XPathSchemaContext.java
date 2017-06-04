@@ -24,6 +24,7 @@ public interface XPathSchemaContext {
     /**
      * Compile an XPath expression for execution on {@link XPathDocument}s produced by this context.
      *
+     * <p>
      * The user must provide a prefix-to-mapping {@link Converter}, which will be used to convert any prefixes found
      * in the XPath expression being compiled in the resulting context.
      *

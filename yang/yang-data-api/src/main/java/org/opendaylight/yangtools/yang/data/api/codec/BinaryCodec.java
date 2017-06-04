@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.api.codec;
 
 import org.opendaylight.yangtools.concepts.Codec;
 
-public interface BinaryCodec<T> extends Codec<T, byte[]>{
+public interface BinaryCodec<T> extends Codec<T, byte[]> {
     @Override
     T serialize(byte[] data);
 

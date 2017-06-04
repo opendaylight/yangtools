@@ -40,9 +40,9 @@ public class FastThreadPoolExecutor extends ThreadPoolExecutor {
      * @param threadPrefix
      *            the name prefix for threads created by this executor.
      */
-    public FastThreadPoolExecutor( final int maximumPoolSize, final int maximumQueueSize, final String threadPrefix ) {
-        this( maximumPoolSize, maximumQueueSize, DEFAULT_IDLE_TIMEOUT_IN_SEC, TimeUnit.SECONDS,
-              threadPrefix );
+    public FastThreadPoolExecutor(final int maximumPoolSize, final int maximumQueueSize, final String threadPrefix) {
+        this(maximumPoolSize, maximumQueueSize, DEFAULT_IDLE_TIMEOUT_IN_SEC, TimeUnit.SECONDS,
+              threadPrefix);
     }
 
     /**
@@ -59,51 +59,51 @@ public class FastThreadPoolExecutor extends ThreadPoolExecutor {
      * @param threadPrefix
      *            the name prefix for threads created by this executor.
      */
-    public FastThreadPoolExecutor( final int maximumPoolSize, final int maximumQueueSize, final long keepAliveTime,
-            final TimeUnit unit, final String threadPrefix ) {
+    public FastThreadPoolExecutor(final int maximumPoolSize, final int maximumQueueSize, final long keepAliveTime,
+            final TimeUnit unit, final String threadPrefix) {
         // We use all core threads (the first 2 parameters below equal) so, when a task is submitted,
         // if the thread limit hasn't been reached, a new thread will be spawned to execute
         // the task even if there is an existing idle thread in the pool. This is faster than
         // handing the task to an existing idle thread via the queue. Once the thread limit is
         // reached, subsequent tasks will be queued. If the queue is full, tasks will be rejected.
 
-        super( maximumPoolSize, maximumPoolSize, keepAliveTime, unit,
-                new TrackingLinkedBlockingQueue<>(maximumQueueSize) );
+        super(maximumPoolSize, maximumPoolSize, keepAliveTime, unit,
+                new TrackingLinkedBlockingQueue<>(maximumQueueSize));
 
         this.threadPrefix = threadPrefix;
         this.maximumQueueSize = maximumQueueSize;
 
-        setThreadFactory( new ThreadFactoryBuilder().setDaemon( true )
-                                                 .setNameFormat( threadPrefix + "-%d" ).build() );
+        setThreadFactory(new ThreadFactoryBuilder().setDaemon(true)
+                                                 .setNameFormat(threadPrefix + "-%d").build());
 
         if (keepAliveTime > 0) {
             // Need to specifically configure core threads to timeout.
-            allowCoreThreadTimeOut( true );
+            allowCoreThreadTimeOut(true);
         }
 
-        setRejectedExecutionHandler( CountingRejectedExecutionHandler.newAbortPolicy() );
+        setRejectedExecutionHandler(CountingRejectedExecutionHandler.newAbortPolicy());
     }
 
     public long getLargestQueueSize() {
         return ((TrackingLinkedBlockingQueue<?>)getQueue()).getLargestQueueSize();
     }
 
-    protected ToStringHelper addToStringAttributes( final ToStringHelper toStringHelper ) {
+    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
         return toStringHelper;
     }
 
     @Override
     public final String toString() {
-        return addToStringAttributes( MoreObjects.toStringHelper( this )
-                .add( "Thread Prefix", threadPrefix )
-                .add( "Current Thread Pool Size", getPoolSize() )
-                .add( "Largest Thread Pool Size", getLargestPoolSize() )
-                .add( "Max Thread Pool Size", getMaximumPoolSize() )
-                .add( "Current Queue Size", getQueue().size() )
-                .add( "Largest Queue Size", getLargestQueueSize() )
-                .add( "Max Queue Size", maximumQueueSize )
-                .add( "Active Thread Count", getActiveCount() )
-                .add( "Completed Task Count", getCompletedTaskCount() )
-                .add( "Total Task Count", getTaskCount() ) ).toString();
+        return addToStringAttributes(MoreObjects.toStringHelper(this)
+                .add("Thread Prefix", threadPrefix)
+                .add("Current Thread Pool Size", getPoolSize())
+                .add("Largest Thread Pool Size", getLargestPoolSize())
+                .add("Max Thread Pool Size", getMaximumPoolSize())
+                .add("Current Queue Size", getQueue().size())
+                .add("Largest Queue Size", getLargestQueueSize())
+                .add("Max Queue Size", maximumQueueSize)
+                .add("Active Thread Count", getActiveCount())
+                .add("Completed Task Count", getCompletedTaskCount())
+                .add("Total Task Count", getTaskCount())).toString();
     }
 }

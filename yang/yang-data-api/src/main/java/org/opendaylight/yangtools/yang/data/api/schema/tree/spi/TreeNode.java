@@ -16,12 +16,15 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
  * A very basic data tree node. It has a version (when it was last modified), a subtree version (when any of its
  * children were modified) and some read-only data.
  *
+ * <p>
  * Semantic difference between these two is important when dealing with modifications involving parent/child
  * relationships and what operations can be execute concurrently without creating a data dependency conflict.
  *
+ * <p>
  * A replace/delete operation cannot be applied to this node if the subtree version does not match. This mismatch
  * still allows modifications to its descendants.
  *
+ * <p>
  * A mismatch in node version indicates a replacement, preventing a modification of descendants or itself.
  */
 // FIXME: BUG-2399: clarify that versioning rules are not enforced for non-presence containers, as they are not

@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  * implementation. Users are expected to resolve these via their service resolution framework, be it
  * {@link java.util.ServiceLoader}, OSGi or similar.
  *
+ * <p>
  * Implementations are required to support {@link java.util.ServiceLoader}.
  */
 public interface XPathSchemaContextFactory {

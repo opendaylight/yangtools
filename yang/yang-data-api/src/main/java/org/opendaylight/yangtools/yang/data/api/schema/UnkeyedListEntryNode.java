@@ -11,14 +11,12 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 
 /**
  * List entry node, which does not have value, but child nodes.
- *
  * Represents an instance of data, which schema is instance of
  * {@link org.opendaylight.yangtools.yang.model.api.ListSchemaNode} with key undefined.
  *
+ * <p>
  * This nodes itself does not contain any ordering information, user supplied
  * ordering is preserved by parent node, which is instance of {@link UnkeyedListNode}.
- *
- *
  */
 public interface UnkeyedListEntryNode extends DataContainerNode<NodeIdentifier> {
 

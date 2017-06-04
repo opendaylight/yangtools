@@ -14,7 +14,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 
-public abstract class ForwardingNormalizedNodeStreamWriter extends ForwardingObject implements NormalizedNodeStreamWriter {
+public abstract class ForwardingNormalizedNodeStreamWriter extends ForwardingObject
+        implements NormalizedNodeStreamWriter {
     @Override
     protected abstract NormalizedNodeStreamWriter delegate();
 

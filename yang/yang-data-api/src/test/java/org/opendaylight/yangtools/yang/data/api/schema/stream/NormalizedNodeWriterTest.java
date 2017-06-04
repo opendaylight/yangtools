@@ -69,8 +69,8 @@ public class NormalizedNodeWriterTest {
     @Test
     public void testNormalizedNodeWriter() throws IOException {
         final NormalizedNodeStreamWriter loggingNormalizedNodeStreamWriter = new LoggingNormalizedNodeStreamWriter();
-        final NormalizedNodeWriter orderedNormalizedNodeWriter = NormalizedNodeWriter.forStreamWriter
-                (loggingNormalizedNodeStreamWriter);
+        final NormalizedNodeWriter orderedNormalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
+                loggingNormalizedNodeStreamWriter);
 
         assertEquals(loggingNormalizedNodeStreamWriter, orderedNormalizedNodeWriter.getWriter());
 
@@ -136,8 +136,8 @@ public class NormalizedNodeWriterTest {
         orderedNormalizedNodeWriter.flush();
         orderedNormalizedNodeWriter.close();
 
-        final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter
-                (loggingNormalizedNodeStreamWriter, false);
+        final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
+                loggingNormalizedNodeStreamWriter, false);
 
         assertNotNull(normalizedNodeWriter.write(mockedMapEntryNode));
 

@@ -61,7 +61,8 @@ public class NormalizedNodeDataTreeCandidateNodeTest {
         doReturn(Optional.absent()).when(mockedNormalizedNodeContainer).getChild(any(PathArgument.class));
         assertNull(normalizedNodeDataTreeCandidateNode2.getModifiedChild(mockedPathArgument));
 
-        doReturn(Optional.of(mockedChildNormNode1)).when(mockedNormalizedNodeContainer).getChild(any(PathArgument.class));
+        doReturn(Optional.of(mockedChildNormNode1)).when(mockedNormalizedNodeContainer).getChild(
+                any(PathArgument.class));
         assertNotNull(normalizedNodeDataTreeCandidateNode2.getModifiedChild(mockedPathArgument));
     }
 }

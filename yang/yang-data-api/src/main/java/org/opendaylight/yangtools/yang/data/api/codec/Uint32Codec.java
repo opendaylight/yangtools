@@ -11,15 +11,14 @@ import com.google.common.primitives.UnsignedLong;
 import org.opendaylight.yangtools.concepts.Codec;
 
 /**
- *
- * FIXME: Should be changed to {@link UnsignedLong}
+ * FIXME: Should be changed to {@link UnsignedLong}.
  *
  * @author ttkacik
  *
  * @param <T>
  *          Output type of serialization.
  */
-public interface Uint32Codec<T>  extends Codec<T,Long> {
+public interface Uint32Codec<T> extends Codec<T, Long> {
     @Override
     T serialize(Long data);
 
