@@ -24,7 +24,7 @@ public class ListenerRegistryTest {
 
     private TestEventListener testEventListener;
     private ExtendedTestEventListener extendedTestEventListener;
-    private ListenerRegistry<TestEventListener> listenerRegistry;
+    private ListenerRegistry<TestEventListener> registry;
 
     @Rule
     public ExpectedException expException = ExpectedException.none();
@@ -33,46 +33,48 @@ public class ListenerRegistryTest {
     public void init() {
         testEventListener = new TestEventListener() {};
         extendedTestEventListener = new ExtendedTestEventListener() {};
-        listenerRegistry = new ListenerRegistry<>();
+        registry = new ListenerRegistry<>();
     }
 
     @Test
     public void testCreateNewInstance() {
-        assertNotNull("Intance of listener registry shouldn't be null.", listenerRegistry);
+        assertNotNull("Intance of listener registry shouldn't be null.", registry);
     }
 
     @Test
     public void tetGetListenersMethod() {
-        assertTrue("Listener regisdtry should have any listeners.", Iterables.isEmpty(listenerRegistry.getListeners()));
+        assertTrue("Listener registry should have any listeners.", Iterables.isEmpty(registry.getListeners()));
     }
 
     @Test
     public void testRegisterMethod() {
 
-        final ListenerRegistration<TestEventListener> listenerRegistration = listenerRegistry.register(testEventListener);
+        final ListenerRegistration<TestEventListener> listenerRegistration = registry.register(testEventListener);
         assertEquals("Listeners should be the same.", testEventListener, listenerRegistration.getInstance());
 
         expException.expect(IllegalArgumentException.class);
         expException.expectMessage("Listener should not be null.");
-        listenerRegistry.register(null);
+        registry.register(null);
     }
 
     @Test
     public void testRegisterWithType() {
-        final ListenerRegistration<ExtendedTestEventListener> listenerRegistration = listenerRegistry.registerWithType(extendedTestEventListener);
+        final ListenerRegistration<ExtendedTestEventListener> listenerRegistration = registry.registerWithType(
+            extendedTestEventListener);
         assertEquals("Listeners should be the same.", extendedTestEventListener, listenerRegistration.getInstance());
     }
 
     @Test
     public void testIteratorMethod() {
-        final Iterator<ListenerRegistration<TestEventListener>> listenerIterator = listenerRegistry.iterator();
+        final Iterator<ListenerRegistration<TestEventListener>> listenerIterator = registry.iterator();
         assertNotNull("Listener iterator shouldn't be null.", listenerIterator);
     }
 
     @Test
     public void testCreateMethod() {
-        final ListenerRegistry<EventListener> emptyListenerRegistry = ListenerRegistry.create();
-        assertTrue("List of listeners in listener registry should be empty.", Iterables.isEmpty(emptyListenerRegistry.getListeners()));
+        final ListenerRegistry<EventListener> emptyRegistry = ListenerRegistry.create();
+        assertTrue("List of listeners in listener registry should be empty.",
+            Iterables.isEmpty(emptyRegistry.getListeners()));
     }
 
     interface TestEventListener extends EventListener {

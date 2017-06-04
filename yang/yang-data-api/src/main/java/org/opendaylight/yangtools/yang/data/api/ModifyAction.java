@@ -12,7 +12,7 @@ import java.util.Arrays;
 // TODO rename to ModifyOperation
 
 /**
- * https://tools.ietf.org/html/rfc6241#section-7.2
+ * See https://tools.ietf.org/html/rfc6241#section-7.2.
  */
 public enum ModifyAction {
     MERGE(true), REPLACE(true), CREATE(false), DELETE(false), REMOVE(false), NONE(true, false);
@@ -40,12 +40,12 @@ public enum ModifyAction {
     private final boolean asDefaultPermitted;
     private final boolean onElementPermitted;
 
-    private ModifyAction(final boolean asDefaultPermitted, final boolean onElementPermitted) {
+    ModifyAction(final boolean asDefaultPermitted, final boolean onElementPermitted) {
         this.asDefaultPermitted = asDefaultPermitted;
         this.onElementPermitted = onElementPermitted;
     }
 
-    private ModifyAction(final boolean asDefaultPermitted) {
+    ModifyAction(final boolean asDefaultPermitted) {
         this(asDefaultPermitted, true);
     }
 

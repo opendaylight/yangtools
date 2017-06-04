@@ -51,13 +51,16 @@ public class ReadWriteTrieMapTest {
         final Collection<String> trieMapValues = readWriteTrieMap.values();
         assertEquals("Size of values should be '3'.", 3, trieMapValues.size());
 
-        assertTrue("Entry set of readWriteTrieMap and trieMap should by equals.", convertSetEntryToMap(readWriteTrieMap.entrySet()).equals(trieMap));
+        assertTrue("Entry set of readWriteTrieMap and trieMap should by equals.",
+            convertSetEntryToMap(readWriteTrieMap.entrySet()).equals(trieMap));
 
         trieMap.put("2", "two");
         final ReadWriteTrieMap<String, String> readWriteTrieMap2 = new ReadWriteTrieMap<>(trieMap, 4);
 
-        assertFalse("Objects readWriteTrieMap and readOnlyTrieMap2 should be different.", readWriteTrieMap.equals(readWriteTrieMap2));
-        assertFalse("Hash codes of object readWriteTrieMap and readOnelyTrieMap2 should be different.", readWriteTrieMap.hashCode() == readWriteTrieMap2.hashCode());
+        assertFalse("Objects readWriteTrieMap and readOnlyTrieMap2 should be different.",
+            readWriteTrieMap.equals(readWriteTrieMap2));
+        assertFalse("Hash codes of object readWriteTrieMap and readOnelyTrieMap2 should be different.",
+            readWriteTrieMap.hashCode() == readWriteTrieMap2.hashCode());
 
         final Map<String, String> readOnlyTrieMap = readWriteTrieMap.toReadOnly();
         readWriteTrieMap.clear();
@@ -65,7 +68,7 @@ public class ReadWriteTrieMapTest {
         assertEquals("Size of readOnlyTrieMap should be '6'.", 6, readOnlyTrieMap.size());
     }
 
-    public Map<String, String> convertSetEntryToMap(Set<Entry<String, String>> input) {
+    public Map<String, String> convertSetEntryToMap(final Set<Entry<String, String>> input) {
         Map<String, String> resultMap = new HashMap<>();
         for (Entry<String, String> entry : input) {
             resultMap.put(entry.getKey(), entry.getValue());

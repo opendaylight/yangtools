@@ -28,16 +28,15 @@ public class EvenMoreObjectsTest {
 
     @Test
     public void nullEqualsNull() {
-        assertTrue(EvenMoreObjects.equalsHelper(null, null, (one, another) -> true));
+        assertTrue(EvenMoreObjects.equalsHelper(null, null, (one, another) -> Boolean.TRUE));
     }
 
     private static class Thing {
-
         String name;
         Integer age;
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             return EvenMoreObjects.equalsHelper(this, obj,
                 (one, another) -> Objects.equals(one.name, another.name) && Objects.equals(one.age, another.age));
         }
@@ -52,12 +51,10 @@ public class EvenMoreObjectsTest {
             return MoreObjects.toStringHelper(this).add("name", name).add("age", age).toString();
         }
 
-        Thing(String name, Integer age) {
+        Thing(final String name, final Integer age) {
             super();
             this.name = name;
             this.age = age;
         }
-
     }
-
 }

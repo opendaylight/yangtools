@@ -16,11 +16,12 @@ public class OperationFailedExceptionTest {
 
     @Test
     public void testOperationFailedException() {
-        final Throwable cause = new Throwable( "mock cause" );
+        final Throwable cause = new Throwable("mock cause");
         final RpcError rpcErrorShort = RpcResultBuilder.newError(RpcError.ErrorType.RPC, "tag", "msg");
         final OperationFailedException operationFailedException1 = new OperationFailedException("error msg", cause,
                 rpcErrorShort);
-        final OperationFailedException operationFailedException2 = new OperationFailedException("error msg", rpcErrorShort);
+        final OperationFailedException operationFailedException2 = new OperationFailedException("error msg",
+                rpcErrorShort);
         assertEquals(operationFailedException1.getErrorList(), operationFailedException2.getErrorList());
         assertTrue(operationFailedException1.toString().contains("error msg"));
     }

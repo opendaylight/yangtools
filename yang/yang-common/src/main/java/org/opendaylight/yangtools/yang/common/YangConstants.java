@@ -71,7 +71,7 @@ public final class YangConstants {
         URI.create("urn:ietf:params:netconf:capability:yang-library:1.0");
 
     /**
-     * Prefix for YANG-specific XPath functions
+     * Prefix for YANG-specific XPath functions.
      */
     public static final String YANG_XPATH_FUNCTIONS_PREFIX = "yang";
 
