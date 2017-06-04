@@ -80,17 +80,17 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
         return new Unordered<>(key, value);
     }
 
-    public static <K, V> SharedSingletonMap<K, V> orderedCopyOf(final Map<K, V> m) {
-        Preconditions.checkArgument(m.size() == 1);
+    public static <K, V> SharedSingletonMap<K, V> orderedCopyOf(final Map<K, V> map) {
+        Preconditions.checkArgument(map.size() == 1);
 
-        final Entry<K, V> e = m.entrySet().iterator().next();
+        final Entry<K, V> e = map.entrySet().iterator().next();
         return new Ordered<>(e.getKey(), e.getValue());
     }
 
-    public static <K, V> SharedSingletonMap<K, V> unorderedCopyOf(final Map<K, V> m) {
-        Preconditions.checkArgument(m.size() == 1);
+    public static <K, V> SharedSingletonMap<K, V> unorderedCopyOf(final Map<K, V> map) {
+        Preconditions.checkArgument(map.size() == 1);
 
-        final Entry<K, V> e = m.entrySet().iterator().next();
+        final Entry<K, V> e = map.entrySet().iterator().next();
         return new Unordered<>(e.getKey(), e.getValue());
     }
 
@@ -148,6 +148,7 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public final void putAll(@Nonnull final Map<? extends K, ? extends V> m) {
         throw new UnsupportedOperationException();
     }

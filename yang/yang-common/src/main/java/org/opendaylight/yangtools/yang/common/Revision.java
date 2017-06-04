@@ -73,6 +73,7 @@ public abstract class Revision implements Comparable<Revision>, Serializable {
 
         private String str;
 
+        @SuppressWarnings("checkstyle:redundantModifier")
         public Proxy() {
             // For Externalizable
         }
@@ -130,6 +131,7 @@ public abstract class Revision implements Comparable<Revision>, Serializable {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public final int compareTo(final Revision o) {
         return toDate().compareTo(o.toDate());
     }
