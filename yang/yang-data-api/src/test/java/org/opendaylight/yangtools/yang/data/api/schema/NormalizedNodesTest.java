@@ -41,7 +41,8 @@ public class NormalizedNodesTest {
         final DataContainerNode<?> mockedDataContainerNode = mock(DataContainerNode.class);
         final ContainerNode mockedContainerNode = mock(ContainerNode.class);
         doReturn(Optional.of(mockedContainerNode)).when(mockedDataContainerNode).getChild(any(PathArgument.class));
-        assertEquals(mockedContainerNode, NormalizedNodes.getDirectChild(mockedDataContainerNode, mockedPathArgument).get());
+        assertEquals(mockedContainerNode, NormalizedNodes.getDirectChild(mockedDataContainerNode, mockedPathArgument)
+                .get());
 
         final MapNode mockedMapNode = mock(MapNode.class);
         final QName listQName = QName.create("test-ns", "test-list");
@@ -50,7 +51,8 @@ public class NormalizedNodesTest {
                 new NodeIdentifierWithPredicates(listQName, listKeyQName, "str-value");
         final MapEntryNode mockedMapEntryNode = mock(MapEntryNode.class);
         doReturn(Optional.of(mockedMapEntryNode)).when(mockedMapNode).getChild(any(NodeIdentifierWithPredicates.class));
-        assertEquals(mockedMapEntryNode, NormalizedNodes.getDirectChild(mockedMapNode, nodeIdentifierWithPredicates).get());
+        assertEquals(mockedMapEntryNode, NormalizedNodes.getDirectChild(mockedMapNode, nodeIdentifierWithPredicates)
+                .get());
         assertEquals(Optional.absent(), NormalizedNodes.getDirectChild(mockedMapNode, mockedPathArgument));
 
         final LeafSetNode<?> mockedLeafSetNode = mock(LeafSetNode.class);
@@ -122,7 +124,7 @@ public class NormalizedNodesTest {
 
         stringTree = NormalizedNodes.toStringTree(mockedAugmentationNode);
         assertNotNull(stringTree);
-        assertEquals("augmentation {\n    list-node {\n        list-node[key-leaf-value] {\n            leaf-node " +
-                "str-value-1\n        }\n    }\n}\n", stringTree);
+        assertEquals("augmentation {\n    list-node {\n        list-node[key-leaf-value] {\n            leaf-node "
+                + "str-value-1\n        }\n    }\n}\n", stringTree);
     }
 }

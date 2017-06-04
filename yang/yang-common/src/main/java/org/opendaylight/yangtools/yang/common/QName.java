@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * The QName from XML consists of local name of element and XML namespace, but
  * for our use, we added module revision to it.
  *
+ * <p>
  * In YANG context QName is full name of defined node, type, procedure or
  * notification. QName consists of XML namespace, YANG model revision and local
  * name of defined type. It is used to prevent name clashes between nodes with
@@ -43,11 +44,10 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * node in the YANG module</li>
  * </ul>
  *
+ * <p>
  * QName may also have <code>prefix</code> assigned, but prefix does not
  * affect equality and identity of two QNames and carry only information
  * which may be useful for serializers / deserializers.
- *
- *
  */
 public final class QName implements Immutable, Serializable, Comparable<QName> {
     private static final Interner<QName> INTERNER = Interners.newWeakInterner();
@@ -97,7 +97,8 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
 
     private static String checkLocalName(final String localName) {
         Preconditions.checkArgument(localName != null, "Parameter 'localName' may not be null.");
-		Preconditions.checkArgument(!Strings.isNullOrEmpty(localName), "Parameter 'localName' must be a non-empty string.");
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(localName),
+                "Parameter 'localName' must be a non-empty string.");
 
         for (final char c : ILLEGAL_CHARACTERS) {
             if (localName.indexOf(c) != -1) {
@@ -128,94 +129,6 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
             return new QName((URI) null, localName);
         }
         throw new IllegalArgumentException("Invalid input:" + input);
-    }
-
-    /**
-     * Get the module component of the QName.
-     *
-     * @return Module component
-     */
-    public QNameModule getModule() {
-        return module;
-    }
-
-    /**
-     * Returns XMLNamespace assigned to the YANG module.
-     *
-     * @return XMLNamespace assigned to the YANG module.
-     */
-    public URI getNamespace() {
-        return module.getNamespace();
-    }
-
-    /**
-     * Returns YANG schema identifier which were defined for this node in the
-     * YANG module
-     *
-     * @return YANG schema identifier which were defined for this node in the
-     *         YANG module
-     */
-    public String getLocalName() {
-        return localName;
-    }
-
-    /**
-     * Returns revision of the YANG module if the module has defined revision,
-     * otherwise returns <code>null</code>
-     *
-     * @return revision of the YANG module if the module has defined revision,
-     *         otherwise returns <code>null</code>
-     */
-    public Date getRevision() {
-        return module.getRevision();
-    }
-
-    /**
-     * Return an interned reference to a equivalent QName.
-     *
-     * @return Interned reference, or this object if it was interned.
-     */
-    public QName intern() {
-        // We also want to make sure we keep the QNameModule cached
-        final QNameModule cacheMod = module.intern();
-
-        // Identity comparison is here on purpose, as we are deciding whether to potentially store 'qname' into the
-        // interner. It is important that it does not hold user-supplied reference (such a String instance from
-        // parsing of an XML document).
-        final QName template = cacheMod == module ? this : QName.create(cacheMod, localName.intern());
-
-        return INTERNER.intern(template);
-    }
-
-    @Override
-    public int hashCode() {
-        if (hash == 0) {
-            hash = Objects.hash(module, localName);
-        }
-        return hash;
-    }
-
-    /**
-     *
-     * Compares the specified object with this list for equality.  Returns
-     * <tt>true</tt> if and only if the specified object is also instance of
-     * {@link QName} and its {@link #getLocalName()}, {@link #getNamespace()} and
-     * {@link #getRevision()} are equals to same properties of this instance.
-     *
-     * @param obj the object to be compared for equality with this QName
-     * @return <tt>true</tt> if the specified object is equal to this QName
-     *
-     */
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof QName)) {
-            return false;
-        }
-        final QName other = (QName) obj;
-        return Objects.equals(localName, other.localName) && module.equals(other.module);
     }
 
     public static QName create(final QName base, final String localName) {
@@ -290,14 +203,6 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         return create(namespaceUri, revisionDate, localName);
     }
 
-    private static URI parseNamespace(final String namespace) {
-        try {
-            return new URI(namespace);
-        } catch (final URISyntaxException ue) {
-            throw new IllegalArgumentException(String.format("Namespace '%s' is not a valid URI", namespace), ue);
-        }
-    }
-
     /**
      * Creates new QName.
      *
@@ -313,6 +218,101 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      */
     public static QName create(final String namespace, final String localName) {
         return create(parseNamespace(namespace), null, localName);
+    }
+
+    /**
+     * Get the module component of the QName.
+     *
+     * @return Module component
+     */
+    public QNameModule getModule() {
+        return module;
+    }
+
+    /**
+     * Returns XMLNamespace assigned to the YANG module.
+     *
+     * @return XMLNamespace assigned to the YANG module.
+     */
+    public URI getNamespace() {
+        return module.getNamespace();
+    }
+
+    /**
+     * Returns YANG schema identifier which were defined for this node in the
+     * YANG module.
+     *
+     * @return YANG schema identifier which were defined for this node in the
+     *         YANG module
+     */
+    public String getLocalName() {
+        return localName;
+    }
+
+    /**
+     * Returns revision of the YANG module if the module has defined revision,
+     * otherwise returns <code>null</code>.
+     *
+     * @return revision of the YANG module if the module has defined revision,
+     *         otherwise returns <code>null</code>
+     */
+    public Date getRevision() {
+        return module.getRevision();
+    }
+
+    /**
+     * Return an interned reference to a equivalent QName.
+     *
+     * @return Interned reference, or this object if it was interned.
+     */
+    public QName intern() {
+        // We also want to make sure we keep the QNameModule cached
+        final QNameModule cacheMod = module.intern();
+
+        // Identity comparison is here on purpose, as we are deciding whether to potentially store 'qname' into the
+        // interner. It is important that it does not hold user-supplied reference (such a String instance from
+        // parsing of an XML document).
+        final QName template = cacheMod == module ? this : QName.create(cacheMod, localName.intern());
+
+        return INTERNER.intern(template);
+    }
+
+    @Override
+    public int hashCode() {
+        if (hash == 0) {
+            hash = Objects.hash(module, localName);
+        }
+        return hash;
+    }
+
+    /**
+     * Compares the specified object with this list for equality.  Returns
+     * <tt>true</tt> if and only if the specified object is also instance of
+     * {@link QName} and its {@link #getLocalName()}, {@link #getNamespace()} and
+     * {@link #getRevision()} are equals to same properties of this instance.
+     *
+     * @param obj the object to be compared for equality with this QName
+     * @return <tt>true</tt> if the specified object is equal to this QName
+     *
+     */
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof QName)) {
+            return false;
+        }
+        final QName other = (QName) obj;
+        return Objects.equals(localName, other.localName) && module.equals(other.module);
+    }
+
+    private static URI parseNamespace(final String namespace) {
+        try {
+            return new URI(namespace);
+        } catch (final URISyntaxException ue) {
+            throw new IllegalArgumentException(String.format("Namespace '%s' is not a valid URI", namespace), ue);
+        }
     }
 
     @Override
@@ -331,9 +331,9 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     /**
-     * Return string representation of revision in format
-     * <code>YYYY-mm-dd</code>
+     * Return string representation of revision in format <code>YYYY-mm-dd</code>
      *
+     * <p>
      * YANG Specification defines format for <code>revision</code> as
      * YYYY-mm-dd. This format for revision is reused accross multiple places
      * such as capabilities URI, YANG modules, etc.
@@ -354,6 +354,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         return create(getNamespace(), null, localName);
     }
 
+    @SuppressWarnings("checkstyle:illegalCatch")
     public static Date parseRevision(final String formatedDate) {
         try {
             return getRevisionFormat().parse(formatedDate);
@@ -367,6 +368,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * Formats {@link Date} representing revision to format
      * <code>YYYY-mm-dd</code>
      *
+     * <p>
      * YANG Specification defines format for <code>revision</code> as
      * YYYY-mm-dd. This format for revision is reused accross multiple places
      * such as capabilities URI, YANG modules, etc.
@@ -383,9 +385,9 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     /**
-     *
      * Compares this QName to other, without comparing revision.
      *
+     * <p>
      * Compares instance of this to other instance of QName and returns true if
      * both instances have equal <code>localName</code> ({@link #getLocalName()}
      * ) and <code>namespace</code> ({@link #getNamespace()}).

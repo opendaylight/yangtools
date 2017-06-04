@@ -46,18 +46,18 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  * which conceptually is XPath expression minimized to uniquely identify element
  * in data tree which conforms to constraints maintained by YANG Model,
  * effectively this makes Instance Identifier a path to element in data tree.
- * </p>
+ *
  * <p>
  * Constraints put in YANG specification on instance-identifier allowed it to be
  * effectively represented in Java and it's evaluation does not require
  * full-blown XPath processor.
- * </p>
+ *
  * <h3>Path Arguments</h3>
  * <p>
  * Path to the node represented in instance identifier consists of
  * {@link PathArgument} which carries necessary information to uniquely identify
  * node on particular level in the subtree.
- * </p>
+ *
  * <ul>
  * <li>{@link NodeIdentifier} - Identifier of node, which has cardinality
  * <code>0..1</code> in particular subtree in data tree.</li>
@@ -68,7 +68,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  * <li>{@link AugmentationIdentifier} - Identifier of instance of
  * <code>augmentation</code> node.</li>
  * </ul>
- *
  *
  * @see <a href="http://tools.ietf.org/html/rfc6020#section-9.13">RFC6020</a>
  */
@@ -92,7 +91,9 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
     }
 
     @Nonnull abstract YangInstanceIdentifier createRelativeIdentifier(int skipFromRoot);
+
     @Nonnull abstract Collection<PathArgument> tryPathArguments();
+
     @Nonnull abstract Collection<PathArgument> tryReversePathArguments();
 
     /**
@@ -213,7 +214,6 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
     }
 
     /**
-     *
      * Constructs a new Instance Identifier with new {@link PathArgument} added to the end of path arguments
      *
      * @param arg Path argument which should be added to the end
@@ -359,7 +359,6 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
     }
 
     /**
-     *
      * Returns new builder for InstanceIdentifier with path arguments copied from original instance identifier.
      *
      * @param origin InstanceIdentifier from which path arguments are copied.
@@ -628,8 +627,8 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
     }
 
     /**
-     * Composite path argument identifying a {@link org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode} node in
-     * particular subtree.
+     * Composite path argument identifying a {@link org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode}
+     * node in particular subtree.
      *
      * Augmentation is uniquely identified by set of all possible child nodes.
      * This is possible
@@ -637,7 +636,6 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * since RFC6020 states that <code>augment</code> that augment
      * statement must not add multiple nodes from same namespace
      * / module to the target node.
-     *
      *
      * @see <a href="http://tools.ietf.org/html/rfc6020#section-7.15">RFC6020</a>
      */
@@ -652,7 +650,6 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         /**
-         *
          * Construct new augmentation identifier using supplied set of possible
          * child nodes
          *
@@ -747,7 +744,8 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         InstanceIdentifierBuilder node(QName nodeType);
 
         /**
-         * Adds {@link NodeIdentifierWithPredicates} with supplied QName and key values to path arguments of resulting instance identifier.
+         * Adds {@link NodeIdentifierWithPredicates} with supplied QName and key values to path arguments of resulting
+         * instance identifier.
          *
          * @param nodeType QName of {@link NodeIdentifierWithPredicates} which will be added
          * @param keyValues Map of key components and their respective values for {@link NodeIdentifierWithPredicates}
@@ -766,7 +764,6 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         InstanceIdentifierBuilder nodeWithKey(QName nodeType, QName key, Object value);
 
         /**
-         *
          * Builds an {@link YangInstanceIdentifier} with path arguments from this builder
          *
          * @return {@link YangInstanceIdentifier}

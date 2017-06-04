@@ -149,6 +149,7 @@ public final class QNameModule implements Immutable, Serializable {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(QNameModule.class).omitNullValues().add("ns", getNamespace()).add("rev", getFormattedRevision()).toString();
+        return MoreObjects.toStringHelper(QNameModule.class).omitNullValues().add("ns", getNamespace())
+            .add("rev", getFormattedRevision()).toString();
     }
 }

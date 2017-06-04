@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import static org.junit.Assert.assertFalse;
+
 import org.junit.Test;
 
 public class VersionTest {
@@ -19,7 +20,7 @@ public class VersionTest {
 
         assertFalse(v1.equals(v2));
         assertFalse(v2.equals(v1));
-     }
+    }
 
     @Test
     public void testNext() {

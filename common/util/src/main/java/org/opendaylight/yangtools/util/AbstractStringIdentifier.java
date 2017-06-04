@@ -27,6 +27,7 @@ public abstract class AbstractStringIdentifier<T extends AbstractStringIdentifie
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public final int compareTo(@Nonnull final T o) {
         return getValue().compareTo(o.getValue());
     }

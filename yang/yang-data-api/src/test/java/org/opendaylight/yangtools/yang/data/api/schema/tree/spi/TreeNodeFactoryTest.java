@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;

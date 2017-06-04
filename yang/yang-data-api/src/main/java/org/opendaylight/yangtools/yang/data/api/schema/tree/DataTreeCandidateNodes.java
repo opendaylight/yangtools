@@ -28,31 +28,32 @@ public final class DataTreeCandidateNodes {
 
     /**
      * Applies the {@code node} to the {@code cursor}, note that if the top node of (@code node} is RootNode
-     * you need to use {@link #applyRootedNodeToCursor(DataTreeModificationCursor, YangInstanceIdentifier, DataTreeCandidateNode) applyRootedNodeToCursor}
-     * method that works with rooted node candidates
+     * you need to use {@link #applyRootedNodeToCursor(DataTreeModificationCursor, YangInstanceIdentifier,
+     * DataTreeCandidateNode) applyRootedNodeToCursor} method that works with rooted node candidates
+     *
      * @param cursor cursor from the modification we want to apply the {@code node} to
      * @param node candidate tree to apply
      */
     public static void applyToCursor(final DataTreeModificationCursor cursor, final DataTreeCandidateNode node) {
         switch (node.getModificationType()) {
-        case DELETE:
-            cursor.delete(node.getIdentifier());
-            break;
-        case SUBTREE_MODIFIED:
+            case DELETE:
+                cursor.delete(node.getIdentifier());
+                break;
+            case SUBTREE_MODIFIED:
                 cursor.enter(node.getIdentifier());
                 AbstractNodeIterator iterator = new ExitingNodeIterator(null, node.getChildNodes().iterator());
-            do {
-                iterator = iterator.next(cursor);
-            } while (iterator != null);
-            break;
-        case UNMODIFIED:
-            // No-op
-            break;
-        case WRITE:
-            cursor.write(node.getIdentifier(), node.getDataAfter().get());
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
+                do {
+                    iterator = iterator.next(cursor);
+                } while (iterator != null);
+                break;
+            case UNMODIFIED:
+                // No-op
+                break;
+            case WRITE:
+                cursor.write(node.getIdentifier(), node.getDataAfter().get());
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
         }
     }
 

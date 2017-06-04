@@ -36,23 +36,24 @@ public class TrackingLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
     private volatile int largestQueueSize = 0;
 
     /**
-     * @see LinkedBlockingQueue#LinkedBlockingQueue
+     * See {@link LinkedBlockingQueue#LinkedBlockingQueue()}.
      */
     public TrackingLinkedBlockingQueue() {
         super();
     }
 
     /**
-     * @see LinkedBlockingQueue#LinkedBlockingQueue(Collection)
+     * See {@link LinkedBlockingQueue#LinkedBlockingQueue(Collection)}.
      */
-    public TrackingLinkedBlockingQueue( final Collection<? extends E> c ) {
+    @SuppressWarnings("checkstyle:parameterName")
+    public TrackingLinkedBlockingQueue(final Collection<? extends E> c) {
         super(c);
     }
 
     /**
-     * @see LinkedBlockingQueue#LinkedBlockingQueue(int)
+     * See {@link LinkedBlockingQueue#LinkedBlockingQueue(int)}.
      */
-    public TrackingLinkedBlockingQueue( final int capacity ) {
+    public TrackingLinkedBlockingQueue(final int capacity) {
         super(capacity);
     }
 
@@ -67,8 +68,9 @@ public class TrackingLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean offer(final E e, final long timeout, final TimeUnit unit) throws InterruptedException {
-        if (super.offer( e, timeout, unit ) ) {
+        if (super.offer(e, timeout, unit)) {
             updateLargestQueueSize();
             return true;
         }
@@ -77,8 +79,9 @@ public class TrackingLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean offer(@Nonnull final E e) {
-        if (super.offer( e ) ) {
+        if (super.offer(e)) {
             updateLargestQueueSize();
             return true;
         }
@@ -87,22 +90,25 @@ public class TrackingLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
     }
 
     @Override
-    public void put( final E e ) throws InterruptedException {
-        super.put( e );
+    @SuppressWarnings("checkstyle:parameterName")
+    public void put(final E e) throws InterruptedException {
+        super.put(e);
         updateLargestQueueSize();
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean add(final E e) {
-        boolean result = super.add( e );
+        boolean result = super.add(e);
         updateLargestQueueSize();
         return result;
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean addAll(final Collection<? extends E> c) {
         try {
-            return super.addAll( c );
+            return super.addAll(c);
         } finally {
             updateLargestQueueSize();
         }

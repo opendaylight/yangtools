@@ -50,7 +50,7 @@ public class OperationFailedException extends Exception {
         super(Preconditions.checkNotNull(message), cause);
 
         if (errors != null && errors.length > 0) {
-            errorList = ImmutableList.copyOf( Arrays.asList( errors ) );
+            errorList = ImmutableList.copyOf(Arrays.asList(errors));
         } else {
             // Add a default RpcError.
             errorList = ImmutableList.of(RpcResultBuilder.newError(ErrorType.APPLICATION, null,
@@ -69,7 +69,7 @@ public class OperationFailedException extends Exception {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper( this ).add( "message", getMessage() )
-                .add( "errorList", errorList ).toString();
+        return MoreObjects.toStringHelper(this).add("message", getMessage())
+                .add("errorList", errorList).toString();
     }
 }
