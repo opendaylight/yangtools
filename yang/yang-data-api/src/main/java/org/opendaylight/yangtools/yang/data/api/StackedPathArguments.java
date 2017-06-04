@@ -19,7 +19,7 @@ final class StackedPathArguments extends PathArgumentList {
     private final List<PathArgument> base;
     private final List<PathArgument> stack;
 
-    public StackedPathArguments(@Nonnull final YangInstanceIdentifier base, @Nonnull final List<PathArgument> stack) {
+    StackedPathArguments(@Nonnull final YangInstanceIdentifier base, @Nonnull final List<PathArgument> stack) {
         Verify.verify(!stack.isEmpty());
         this.base = base.getPathArguments();
         this.stack = stack;

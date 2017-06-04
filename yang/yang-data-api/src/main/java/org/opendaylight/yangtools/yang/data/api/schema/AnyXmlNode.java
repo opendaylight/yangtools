@@ -20,8 +20,10 @@ public interface AnyXmlNode extends AttributesContainer, DataContainerChild<Node
     NodeIdentifier getIdentifier();
 
     /**
+     * Return value represented as a DOMSource. Returned source contains top level element
+     * that duplicates the anyxml node.
+     *
      * @return anyxml node value represented as DOMSource.
-     * Returned source contains top level element that duplicates the anyxml node.
      */
     @Override
     DOMSource getValue();

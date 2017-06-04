@@ -32,6 +32,7 @@ public class ModifyActionTest {
             ModifyAction.fromXmlValue("exception call");
             fail();
         } catch (IllegalArgumentException e) {
+            // Expected
         }
     }
 }

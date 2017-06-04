@@ -118,13 +118,14 @@ public class QueuedNotificationManager<L, N> implements NotificationManager<L, N
      * @deprecated Use {@link #create(Executor, BatchedInvoker, int, String)} instead.
      */
     @Deprecated
+    @SuppressWarnings("checkstyle:illegalCatch")
     public QueuedNotificationManager(final Executor executor, final Invoker<L, N> listenerInvoker,
             final int maxQueueCapacity, final String name) {
-        this(executor, (BatchedInvoker<L, N>)(l, c) -> c.forEach(n -> {
+        this(executor, (BatchedInvoker<L, N>)(listener, notifications) -> notifications.forEach(n -> {
             try {
-                listenerInvoker.invokeListener(l, n);
+                listenerInvoker.invokeListener(listener, n);
             } catch (Exception e) {
-                LOG.error("{}: Error notifying listener {} with {}", name, l, n, e);
+                LOG.error("{}: Error notifying listener {} with {}", name, listener, n, e);
             }
 
         }), maxQueueCapacity, name);
@@ -280,7 +281,7 @@ public class QueuedNotificationManager<L, N> implements NotificationManager<L, N
             if (obj == this) {
                 return true;
             }
-            return (obj instanceof ListenerKey<?>) && listener == ((ListenerKey<?>) obj).listener;
+            return obj instanceof ListenerKey<?> && listener == ((ListenerKey<?>) obj).listener;
         }
 
         @Override
@@ -426,6 +427,7 @@ public class QueuedNotificationManager<L, N> implements NotificationManager<L, N
             }
         }
 
+        @SuppressWarnings("checkstyle:illegalCatch")
         private void invokeListener(final Collection<N> notifications) {
             LOG.debug("{}: Invoking listener {} with notification: {}", name, listenerKey, notifications);
             try {

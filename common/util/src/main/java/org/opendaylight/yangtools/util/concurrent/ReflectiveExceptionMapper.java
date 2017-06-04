@@ -29,7 +29,8 @@ public final class ReflectiveExceptionMapper<X extends Exception> extends Except
     protected X newWithCause(final String message, final Throwable cause) {
         try {
             return ctor.newInstance(message, cause);
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException e) {
             throw new IllegalStateException("Failed to instantiate exception " + ctor.getDeclaringClass(), e);
         }
     }

@@ -49,6 +49,7 @@ public interface RpcError {
 
     /**
      * Returns a short string that identifies the general type of error condition.
+     *
      * <p>
      * The following outlines suggested values as defined by netconf (<a href="https://tools.ietf.org/html/rfc6241#page-89">RFC 6241</a>):
      * <pre>
@@ -93,7 +94,6 @@ public interface RpcError {
     String getMessage();
 
     /**
-     *
      * Returns a string containing additional information to provide extended
      * and/or implementation-specific debugging information.
      *
@@ -102,7 +102,6 @@ public interface RpcError {
     String getInfo();
 
     /**
-     *
      * Returns an exception cause.
      *
      * @return a Throwable if the error was triggered by exception, null otherwise.

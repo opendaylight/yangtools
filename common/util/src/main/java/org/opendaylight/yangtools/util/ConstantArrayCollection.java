@@ -43,6 +43,7 @@ final class ConstantArrayCollection<E> implements Collection<E>, Serializable {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean contains(final Object o) {
         for (Object wlk : array) {
             if (o.equals(wlk)) {
@@ -56,19 +57,19 @@ final class ConstantArrayCollection<E> implements Collection<E>, Serializable {
     @Override
     public Iterator<E> iterator() {
         return new UnmodifiableIterator<E>() {
-            private int i = 0;
+            private int offset = 0;
 
             @Override
             public boolean hasNext() {
-                return i < array.length;
+                return offset < array.length;
             }
 
             @Override
             public E next() {
-                if (i >= array.length) {
+                if (offset >= array.length) {
                     throw new NoSuchElementException();
                 }
-                return array[i++];
+                return array[offset++];
             }
         };
     }
@@ -80,7 +81,7 @@ final class ConstantArrayCollection<E> implements Collection<E>, Serializable {
     }
 
     @Nonnull
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "checkstyle:parameterName" })
     @Override
     public <T> T[] toArray(@Nonnull final T[] a) {
         if (a.length < array.length) {
@@ -95,16 +96,19 @@ final class ConstantArrayCollection<E> implements Collection<E>, Serializable {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean add(final E e) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean remove(final Object o) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean containsAll(@Nonnull final Collection<?> c) {
         for (Object o : c) {
             if (!contains(o)) {
@@ -116,16 +120,19 @@ final class ConstantArrayCollection<E> implements Collection<E>, Serializable {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean addAll(@Nonnull final Collection<? extends E> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean removeAll(@Nonnull final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean retainAll(@Nonnull final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
@@ -163,10 +170,10 @@ final class ConstantArrayCollection<E> implements Collection<E>, Serializable {
         }
 
         final StringBuilder sb = new StringBuilder("[");
-        int i = 0;
-        while (i < array.length - 1) {
-            sb.append(String.valueOf(array[i++])).append(", ");
+        int offset = 0;
+        while (offset < array.length - 1) {
+            sb.append(String.valueOf(array[offset++])).append(", ");
         }
-        return sb.append(String.valueOf(array[i])).append(']').toString();
+        return sb.append(String.valueOf(array[offset])).append(']').toString();
     }
 }

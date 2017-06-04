@@ -90,6 +90,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      * completely, but if they do use them, they are expected to be resilient in
      * face of missing and mismatched hints, which is to say the user can
      * specify startLeafSet(..., 1) and then call leafNode() 15 times.
+     *
      * <p>
      * The acceptable hint values are non-negative integers and this constant,
      * all other values will result, based on implementation preference, in the
@@ -98,7 +99,6 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
     int UNKNOWN_SIZE = -1;
 
     /**
-     *
      * Emits a leaf node event with supplied value.
      *
      * @param name
@@ -117,8 +117,8 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
     void leafNode(NodeIdentifier name, Object value) throws IOException;
 
     /**
-     *
      * Emits a start of leaf set (leaf-list).
+     *
      * <p>
      * Emits start of leaf set, during writing leaf set event, only
      * {@link #leafSetEntryNode(QName, Object)} calls are valid. Leaf set event is
@@ -143,8 +143,8 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
     void startLeafSet(NodeIdentifier name, int childSizeHint) throws IOException;
 
     /**
-     *
      * Emits a start of leaf set (leaf-list).
+     *
      * <p>
      * Emits start of leaf set, during writing leaf set event, only
      * {@link #leafSetEntryNode(QName, Object)} calls are valid. Leaf set event is
@@ -169,7 +169,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
     void startOrderedLeafSet(NodeIdentifier name, int childSizeHint) throws IOException, IllegalArgumentException;
 
     /**
-     * Emits a leaf set entry node
+     * Emits a leaf set entry node.
      *
      * @param name
      *            name of the node as defined in the schema.
@@ -184,7 +184,6 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
     void leafSetEntryNode(QName name, Object value) throws IOException;
 
     /**
-     *
      * Emits start of new container.
      *
      * <p>
@@ -221,7 +220,6 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
     void startContainerNode(NodeIdentifier name, int childSizeHint) throws IOException;
 
     /**
-     *
      * Emits start of unkeyed list node event.
      *
      * <p>
@@ -276,7 +274,6 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
     void startUnkeyedListItem(NodeIdentifier name, int childSizeHint) throws IOException;
 
     /**
-     *
      * Emits start of map node event.
      *
      * <p>
@@ -304,7 +301,6 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
     void startMapNode(NodeIdentifier name, int childSizeHint) throws IOException;
 
     /**
-     *
      * Emits start of map entry.
      *
      * <p>
@@ -339,7 +335,6 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
     void startMapEntryNode(NodeIdentifierWithPredicates identifier, int childSizeHint) throws IOException;
 
     /**
-     *
      * Emits start of map node event.
      *
      * <p>
@@ -367,8 +362,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
     void startOrderedMapNode(NodeIdentifier name, int childSizeHint) throws IOException;
 
     /**
-     *
-     *
+     * Emits start of a choice node event.
      *
      * @param name
      *            name of node as defined in schema, namespace and revision are
@@ -433,38 +427,37 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
     void anyxmlNode(NodeIdentifier name, Object value) throws IOException;
 
     /**
-    *
-    * Emits start of new yang modeled anyXml node.
-    *
-    * <p>
-    * End of yang modeled anyXml node event is emitted by invoking {@link #endNode()}.
-    *
-    * <p>
-    * Valid sub-events are:
-    * <ul>
-    * <li>{@link #leafNode}</li>
-    * <li>{@link #startContainerNode}</li>
-    * <li>{@link #startLeafSet}</li>
-    * <li>{@link #startMapNode}</li>
-    * <li>{@link #startUnkeyedList}</li>
-    * </ul>
-    *
-    * @param name
-    *            name of node as defined in schema, namespace and revision are
-    *            derived from parent node.
-    * @param childSizeHint
-    *            Non-negative count of expected direct child nodes or
-    *            {@link #UNKNOWN_SIZE} if count is unknown. This is only hint
-    *            and should not fail writing of child events, if there are more
-    *            events than count.
-    * @throws IllegalArgumentException
-    *             If emitted node is invalid in current context or was emitted
-    *             multiple times.
-    * @throws IllegalStateException
-    *             If node was emitted inside <code>map</code>,
-    *             <code>choice</code> <code>unkeyed list</code> node.
-    * @throws IOException if an underlying IO error occurs
-    */
+     * Emits start of new yang modeled anyXml node.
+     *
+     * <p>
+     * End of yang modeled anyXml node event is emitted by invoking {@link #endNode()}.
+     *
+     * <p>
+     * Valid sub-events are:
+     * <ul>
+     * <li>{@link #leafNode}</li>
+     * <li>{@link #startContainerNode}</li>
+     * <li>{@link #startLeafSet}</li>
+     * <li>{@link #startMapNode}</li>
+     * <li>{@link #startUnkeyedList}</li>
+     * </ul>
+     *
+     * @param name
+     *            name of node as defined in schema, namespace and revision are
+     *            derived from parent node.
+     * @param childSizeHint
+     *            Non-negative count of expected direct child nodes or
+     *            {@link #UNKNOWN_SIZE} if count is unknown. This is only hint
+     *            and should not fail writing of child events, if there are more
+     *            events than count.
+     * @throws IllegalArgumentException
+     *             If emitted node is invalid in current context or was emitted
+     *             multiple times.
+     * @throws IllegalStateException
+     *             If node was emitted inside <code>map</code>,
+     *             <code>choice</code> <code>unkeyed list</code> node.
+     * @throws IOException if an underlying IO error occurs
+     */
     void startYangModeledAnyXmlNode(NodeIdentifier name, int childSizeHint) throws IOException;
 
     /**

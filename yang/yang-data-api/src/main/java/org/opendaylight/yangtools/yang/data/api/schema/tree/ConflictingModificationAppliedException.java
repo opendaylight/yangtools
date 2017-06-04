@@ -12,22 +12,17 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 /**
  * Exception thrown when a proposed change fails validation before being
  * applied into the Data Tree because the Data Tree has been modified
- * in way that a conflicting
- * node is present.
+ * in way that a conflicting node is present.
  */
 public class ConflictingModificationAppliedException extends DataValidationFailedException {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
 
-    public ConflictingModificationAppliedException(final YangInstanceIdentifier path, final String message, final Throwable cause) {
+    public ConflictingModificationAppliedException(final YangInstanceIdentifier path, final String message,
+            final Throwable cause) {
         super(path, message, cause);
     }
 
     public ConflictingModificationAppliedException(final YangInstanceIdentifier path, final String message) {
         super(path, message);
     }
-
 }

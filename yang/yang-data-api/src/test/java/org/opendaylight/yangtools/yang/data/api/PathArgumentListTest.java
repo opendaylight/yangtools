@@ -18,7 +18,6 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nonnull;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -56,36 +55,42 @@ public class PathArgumentListTest {
             l.remove(null);
             fail();
         } catch (UnsupportedOperationException e) {
+            // Expected
         }
 
         try {
             l.addAll(null);
             fail();
         } catch (UnsupportedOperationException e) {
+            // Expected
         }
 
         try {
             l.removeAll(null);
             fail();
         } catch (UnsupportedOperationException e) {
+            // Expected
         }
 
         try {
             l.retainAll(null);
             fail();
         } catch (UnsupportedOperationException e) {
+            // Expected
         }
 
         try {
             l.clear();
             fail();
         } catch (UnsupportedOperationException e) {
+            // Expected
         }
 
         try {
             l.addAll(0, null);
             fail();
         } catch (UnsupportedOperationException e) {
+            // Expected
         }
     }
 
@@ -98,13 +103,14 @@ public class PathArgumentListTest {
         final QName qNameLeaf = QName.create(qNameModule, "leaf-a");
         final Map<QName, Object> entryLeaf = new HashMap<>();
         entryLeaf.put(qNameList, "leaf");
-        final YangInstanceIdentifier.NodeIdentifierWithPredicates nodeIdentifierWithPredicates = new YangInstanceIdentifier
-                .NodeIdentifierWithPredicates(qNameList , entryLeaf);
+        final YangInstanceIdentifier.NodeIdentifierWithPredicates nodeIdentifierWithPredicates =
+            new YangInstanceIdentifier.NodeIdentifierWithPredicates(qNameList , entryLeaf);
         final YangInstanceIdentifier yangInstanceIdentifier = YangInstanceIdentifier.of(qNameRoot).node(qNameList)
                 .node(nodeIdentifierWithPredicates).node(qNameLeaf);
         final PathArgument pathArgumentToRoot = yangInstanceIdentifier.getAncestor(1).getPathArguments().iterator()
                 .next();
-        final StackedPathArguments stackedPathArguments = (StackedPathArguments)yangInstanceIdentifier.getPathArguments();
+        final StackedPathArguments stackedPathArguments = (StackedPathArguments)yangInstanceIdentifier
+            .getPathArguments();
         assertTrue(yangInstanceIdentifier.pathArgumentsEqual(yangInstanceIdentifier));
         assertEquals(pathArgumentToRoot, stackedPathArguments.get(0));
         assertEquals(4, stackedPathArguments.size());
@@ -112,8 +118,8 @@ public class PathArgumentListTest {
         assertEquals(0, stackedPathArguments.indexOf(pathArgumentToRoot));
         assertEquals(0, stackedPathArguments.lastIndexOf(pathArgumentToRoot));
 
-        final StackedReversePathArguments stackedReversePathArguments = (StackedReversePathArguments)yangInstanceIdentifier
-                .getReversePathArguments();
+        final StackedReversePathArguments stackedReversePathArguments =
+            (StackedReversePathArguments)yangInstanceIdentifier.getReversePathArguments();
         final QName rootQname = pathArgumentToRoot.getNodeType();
         final QName leafQname = stackedReversePathArguments.get(0).getNodeType();
         assertEquals(qNameRoot, rootQname);
@@ -134,6 +140,7 @@ public class PathArgumentListTest {
             stackedYangInstanceIdentifier.getAncestor(12);
             fail();
         } catch (IllegalArgumentException e) {
+            // Expected
         }
     }
 }

@@ -28,7 +28,8 @@ public final class StoreTreeNodes {
     }
 
     /**
-     * Finds a node in tree
+     * Finds a node in tree.
+     *
      * @param <T>
      *          Store tree node type.
      * @param tree Data Tree
@@ -61,7 +62,8 @@ public final class StoreTreeNodes {
     }
 
     /**
-     * Finds a node or closest parent in  the tree
+     * Finds a node or closest parent in the tree.
+     *
      * @param <T>
      *          Store tree node type.
      * @param tree Data Tree

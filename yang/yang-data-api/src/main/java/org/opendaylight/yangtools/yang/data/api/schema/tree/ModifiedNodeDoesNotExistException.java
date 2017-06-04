@@ -15,24 +15,19 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
  * modified or written did not exist when transaction started
  * and still does not exists when transaction is processed.
  *
+ * <p>
  * Note if node existed in first place and was removed by other transaction,
  * thrown exception should be {@link ConflictingModificationAppliedException}.
- *
- *
  */
 public class ModifiedNodeDoesNotExistException extends DataValidationFailedException {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
 
-    public ModifiedNodeDoesNotExistException(final YangInstanceIdentifier path, final String message, final Throwable cause) {
+    public ModifiedNodeDoesNotExistException(final YangInstanceIdentifier path, final String message,
+            final Throwable cause) {
         super(path, message, cause);
     }
 
     public ModifiedNodeDoesNotExistException(final YangInstanceIdentifier path, final String message) {
         super(path, message);
     }
-
 }

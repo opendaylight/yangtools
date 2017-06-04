@@ -7,9 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-
 import com.google.common.base.Preconditions;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 /**
  * Exception thrown when a proposed change fails validation before being
@@ -19,6 +18,7 @@ import com.google.common.base.Preconditions;
  */
 public class DataValidationFailedException extends Exception {
     private static final long serialVersionUID = 1L;
+
     private final YangInstanceIdentifier path;
 
     /**
@@ -30,8 +30,9 @@ public class DataValidationFailedException extends Exception {
     public DataValidationFailedException(final YangInstanceIdentifier path, final String message) {
         this(path, message, null);
     }
+
     /**
-     * Create a new instance, initializing
+     * Create a new instance, initializing the cause.
      *
      * @param path Object path which caused this exception
      * @param message Specific message describing the failure
