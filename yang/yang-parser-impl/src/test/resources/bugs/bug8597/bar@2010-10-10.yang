@@ -1,0 +1,6 @@
+module bar {
+    namespace "bar";
+    prefix bar;
+
+    revision 2010-10-10;
+}

@@ -1,0 +1,8 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+    yang-version 1.1;
+
+    import bar { prefix bar; revision-date 1970-01-01; reference "bar-ref"; description "bar-desc"; }
+    import baz { prefix baz; reference "baz-ref"; description "baz-desc"; }
+}
