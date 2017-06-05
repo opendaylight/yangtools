@@ -44,7 +44,6 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
@@ -411,20 +410,6 @@ public final class Utils {
             return "false";
         } else {
             return input;
-        }
-    }
-
-    public static Status parseStatus(final String value) {
-        switch (value) {
-            case "current":
-                return Status.CURRENT;
-            case "deprecated":
-                return Status.DEPRECATED;
-            case "obsolete":
-                return Status.OBSOLETE;
-            default:
-                LOG.warn("Invalid 'status' statement: {}", value);
-                return null;
         }
     }
 
