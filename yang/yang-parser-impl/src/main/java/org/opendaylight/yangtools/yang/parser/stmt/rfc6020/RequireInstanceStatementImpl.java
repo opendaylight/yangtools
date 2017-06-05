@@ -34,7 +34,7 @@ public class RequireInstanceStatementImpl extends
 
         @Override
         public Boolean parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-            return Boolean.valueOf(value);
+            return Utils.parseBoolean(ctx, value);
         }
 
         @Override
