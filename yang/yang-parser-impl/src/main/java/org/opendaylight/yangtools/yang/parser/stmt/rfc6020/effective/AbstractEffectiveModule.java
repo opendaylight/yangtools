@@ -25,8 +25,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -53,7 +51,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> extends
         AbstractEffectiveDocumentedNode<String, D> implements Module, MutableStatement {
@@ -251,11 +248,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
 
         this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
-        if (ctx.isEnabledSemanticVersioning()) {
-            this.imports = ImmutableSet.copyOf(importsInit);
-        } else {
-            this.imports = ImmutableSet.copyOf(resolveModuleImports(importsInit, ctx));
-        }
+        this.imports = ImmutableSet.copyOf(importsInit);
         this.notifications = ImmutableSet.copyOf(notificationsInit);
         this.rpcs = ImmutableSet.copyOf(rpcsInit);
         this.deviations = ImmutableSet.copyOf(deviationsInit);
@@ -269,22 +262,6 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
         this.typeDefinitions = ImmutableSet.copyOf(mutableTypeDefinitions);
         this.uses = ImmutableSet.copyOf(mutableUses);
 
-    }
-
-    private static Set<ModuleImport> resolveModuleImports(final Set<ModuleImport> importsInit,
-            final StmtContext<String, ? extends DeclaredStatement<String>, ? extends EffectiveStatement<String, ?>> ctx) {
-        final Set<ModuleImport> resolvedModuleImports = new LinkedHashSet<>();
-        for (final ModuleImport moduleImport : importsInit) {
-            if (moduleImport.getRevision().equals(SimpleDateFormatUtil.DEFAULT_DATE_IMP)) {
-                final QNameModule impModuleQName = Utils.getModuleQNameByPrefix(ctx, moduleImport.getPrefix());
-                final ModuleImport resolvedModuleImport = new ModuleImportImpl(moduleImport.getModuleName(),
-                        impModuleQName.getRevision(), moduleImport.getPrefix());
-                resolvedModuleImports.add(resolvedModuleImport);
-            } else {
-                resolvedModuleImports.add(moduleImport);
-            }
-        }
-        return resolvedModuleImports;
     }
 
     @Override
