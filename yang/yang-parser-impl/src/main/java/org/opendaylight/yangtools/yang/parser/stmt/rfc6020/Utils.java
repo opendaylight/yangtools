@@ -30,6 +30,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.RegEx;
 import javax.xml.xpath.XPath;
@@ -401,6 +402,18 @@ public final class Utils {
     public static DeviateKind parseDeviateFromString(final StmtContext<?, ?, ?> ctx, final String deviateKeyword) {
         return SourceException.throwIfNull(KEYWORD_TO_DEVIATE_MAP.get(deviateKeyword),
             ctx.getStatementSourceReference(), "String '%s' is not valid deviate argument", deviateKeyword);
+    }
+
+    static @Nonnull Boolean parseBoolean(final StmtContext<?, ?, ?> ctx, final String input) {
+        if ("true".equals(input)) {
+            return Boolean.TRUE;
+        } else if ("false".equals(input)) {
+            return Boolean.FALSE;
+        } else {
+            throw new SourceException(ctx.getStatementSourceReference(),
+                "Invalid '%s' statement %s '%s', it can be either 'true' or 'false'",
+                ctx.getPublicDefinition().getStatementName(), ctx.getPublicDefinition().getArgumentName(), input);
+        }
     }
 
     static String internBoolean(final String input) {
