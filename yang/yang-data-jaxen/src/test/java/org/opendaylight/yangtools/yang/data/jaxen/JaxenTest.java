@@ -77,8 +77,8 @@ public class JaxenTest {
         xpathSchemaContext = new JaxenSchemaContextFactory().createContext(schemaContext);
         assertNotNull(xpathSchemaContext);
 
-        xpathExpression = xpathSchemaContext.compileExpression(createSchemaPath(), createPrefixes(), createXPath
-                (false));
+        xpathExpression = xpathSchemaContext.compileExpression(createSchemaPath(), createPrefixes(), createXPath(
+                    false));
         assertNotNull(xpathExpression);
 
         xpathDocument = xpathSchemaContext.createDocument(createNormalizedNodes());
@@ -91,8 +91,8 @@ public class JaxenTest {
                 .evaluate(xpathDocument, createYangInstanceIdentifier(false));
         assertNotNull(resultExpressionEvaluate);
         assertTrue(resultExpressionEvaluate.isPresent());
-        XPathResult<?> xPathResult = resultExpressionEvaluate.get();
-        Object value = ((XPathNodesetResult) xPathResult).getValue().iterator().next().getValue();
+        XPathResult<?> xpathResult = resultExpressionEvaluate.get();
+        Object value = ((XPathNodesetResult) xpathResult).getValue().iterator().next().getValue();
         assertNotNull(value);
         assertEquals("three", value);
 
@@ -135,14 +135,14 @@ public class JaxenTest {
         Optional<? extends XPathResult<?>> resultExpressionEvaluate = xpathExpressionWithPredicates
                 .evaluate(xpathDocument, createYangInstanceIdentifier(true));
         assertTrue(resultExpressionEvaluate.isPresent());
-        XPathResult<?> xPathResult = resultExpressionEvaluate.get();
-        Object value = ((XPathNodesetResult) xPathResult).getValue().iterator().next().getValue();
+        XPathResult<?> xpathResult = resultExpressionEvaluate.get();
+        Object value = ((XPathNodesetResult) xpathResult).getValue().iterator().next().getValue();
         assertEquals("two", value);
     }
 
     @Test(expected = VerifyException.class)
     public void testIsMethodsInNodeNavigator() {
-        assertNotNull(navigator.isDocument("test"));
+        assertTrue(navigator.isDocument("test"));
     }
 
     @Test(expected = XPathExpressionException.class)
@@ -163,18 +163,19 @@ public class JaxenTest {
             function.call(context, list);
             fail();
         } catch (VerifyException e) {
+            // Expected
         }
 
         yangFun.getFunction("urn:opendaylight.test2", "test2", "root");
     }
 
-    /**
-     * @return container-a -> container-b -> leaf-d
-     *         list-a -> list-b -> leaf-b
+    /*
+     * container-a -> container-b -> leaf-d
+     *           list-a -> list-b -> leaf-b
      */
-    private YangInstanceIdentifier createYangInstanceIdentifier(Boolean withPredicates) {
-        YangInstanceIdentifier testYangInstanceIdentifier = YangInstanceIdentifier.of(containerAQName).node
-                (containerBQName).node(leafDQName);
+    private YangInstanceIdentifier createYangInstanceIdentifier(final boolean withPredicates) {
+        YangInstanceIdentifier testYangInstanceIdentifier = YangInstanceIdentifier.of(containerAQName).node(
+                containerBQName).node(leafDQName);
         if (withPredicates) {
             final Map<QName, Object> keys1 = new HashMap<>();
             keys1.put(leafAQName, "bar");
@@ -194,12 +195,8 @@ public class JaxenTest {
         return testYangInstanceIdentifier;
     }
 
-    private static String createXPath(boolean withPredicates) {
-        String xPath = "/container-a/container-b/leaf-d";
-        if (withPredicates) {
-            xPath = "/list-a[leaf-a='bar']/list-b[leaf-b='two']/leaf-b";
-        }
-        return xPath;
+    private static String createXPath(final boolean withPredicates) {
+        return withPredicates ? "/list-a[leaf-a='bar']/list-b[leaf-b='two']/leaf-b" : "/container-a/container-b/leaf-d";
     }
 
     private Converter<String, QNameModule> createPrefixes() {
@@ -209,14 +206,12 @@ public class JaxenTest {
         return Maps.asConverter(currentConverter);
     }
 
-    /**
-     * @return rootQName -> listAQName -> leafAQName
-     */
+    // rootQName -> listAQName -> leafAQName
     private  SchemaPath createSchemaPath() {
         return SchemaPath.create(true, rootQName, listAQName, leafAQName);
     }
 
-    private SchemaContext createSchemaContext() throws IOException, URISyntaxException, ReactorException {
+    private static SchemaContext createSchemaContext() throws IOException, URISyntaxException, ReactorException {
         return YangParserTestUtils.parseYangSources("/test/documentTest");
     }
 

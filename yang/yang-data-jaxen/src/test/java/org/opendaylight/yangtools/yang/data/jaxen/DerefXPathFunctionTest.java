@@ -90,10 +90,11 @@ public class DerefXPathFunctionTest {
 
         final XPathSchemaContext jaxenSchemaContext = jaxenSchemaContextFactory.createContext(schemaContext);
 
-        final LeafNode<?> referencedLeafNode = Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(referencedLeaf))
-                .withValue("referenced-leaf-node-value").build();
+        final LeafNode<?> referencedLeafNode = Builders.leafBuilder().withNodeIdentifier(
+            new NodeIdentifier(referencedLeaf)).withValue("referenced-leaf-node-value").build();
 
-        final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNodeForIIdTest(referencedLeafNode));
+        final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNodeForIIdTest(
+            referencedLeafNode));
 
         final BiMap<String, QNameModule> converterBiMap = HashBiMap.create();
         converterBiMap.put("foo-prefix", fooModule);

@@ -32,7 +32,8 @@ final class JaxenSchemaContext implements XPathSchemaContext {
     @Nonnull
     @Override
     public XPathExpression compileExpression(@Nonnull final SchemaPath schemaPath,
-            final Converter<String, QNameModule> prefixes, @Nonnull final String xpath) throws XPathExpressionException {
+            final Converter<String, QNameModule> prefixes, @Nonnull final String xpath)
+            throws XPathExpressionException {
         try {
             return JaxenXPath.create(prefixes, schemaPath, xpath);
         } catch (JaxenException e) {

@@ -22,11 +22,13 @@ final class ConverterNamespaceContext extends Converter<String, QNameModule> imp
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     protected QNameModule doForward(@Nonnull final String a) {
         return delegate.convert(a);
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     protected String doBackward(@Nonnull final QNameModule b) {
         return delegate.reverse().convert(b);
     }

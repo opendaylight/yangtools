@@ -47,7 +47,7 @@ public class DerivedFromXPathFunctionTest {
     private static JaxenSchemaContextFactory jaxenSchemaContextFactory;
 
     private static QNameModule barModule;
-    private static QName myContainer; 
+    private static QName myContainer;
     private static QName myList;
     private static QName keyLeaf;
     private static QName idrefLeaf;
@@ -181,7 +181,8 @@ public class DerivedFromXPathFunctionTest {
             getDerivedFromResult(derivedFromFunction, normalizedNodeContext, "unknown-prefix:id-a3");
             fail("Function call should have failed on unresolved prefix of the identity argument.");
         } catch (IllegalArgumentException ex) {
-            assertEquals("Cannot resolve prefix 'unknown-prefix' from identity 'unknown-prefix:id-a3'.", ex.getMessage());
+            assertEquals("Cannot resolve prefix 'unknown-prefix' from identity 'unknown-prefix:id-a3'.",
+                ex.getMessage());
         }
     }
 
@@ -242,8 +243,8 @@ public class DerivedFromXPathFunctionTest {
             fail("Function call should have failed on unknown identity argument.");
         } catch (IllegalArgumentException ex) {
             assertTrue(ex.getMessage().startsWith(
-                    "Identity (foo-ns?revision=2017-04-03)id-a333 does not have a corresponding identity schema " +
-                    "node in the module"));
+                    "Identity (foo-ns?revision=2017-04-03)id-a333 does not have a corresponding identity schema "
+                    + "node in the module"));
         }
     }
 

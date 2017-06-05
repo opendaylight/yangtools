@@ -42,26 +42,22 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
     private static final String NODE_IDENTIFIER_STR = "([A-Za-z_][A-Za-z0-9_\\.-]*:)?([A-Za-z_][A-Za-z0-9_\\.-]*)";
 
     /**
-     * Pattern matching node-identifier YANG ABNF token
+     * Pattern matching node-identifier YANG ABNF token.
      */
     private static final Pattern NODE_IDENTIFIER_PATTERN = Pattern.compile(NODE_IDENTIFIER_STR);
 
     /**
-     * Matcher matching WSP YANG ABNF token
-     *
+     * Matcher matching WSP YANG ABNF token.
      */
     private static final CharMatcher WSP = CharMatcher.anyOf(" \t");
 
     /**
      * Matcher matching IDENTIFIER first char token.
-     *
      */
     private static final CharMatcher IDENTIFIER_FIRST_CHAR = CharMatcher.inRange('a', 'z')
             .or(CharMatcher.inRange('A', 'Z')).or(CharMatcher.is('_')).precomputed();
     /**
-     *
-     * Matcher matching IDENTIFIER token
-     *
+     * Matcher matching IDENTIFIER token.
      */
     private static final CharMatcher IDENTIFIER = IDENTIFIER_FIRST_CHAR.or(CharMatcher.inRange('0', '9'))
             .or(CharMatcher.anyOf(".-")).precomputed();
@@ -74,7 +70,7 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
     private static final char PRECONDITION_START = '[';
     private static final char PRECONDITION_END = ']';
 
-    private final String xPathString;
+    private final String xpathString;
     private final SchemaContext schemaContext;
     private final TypedSchemaNode schemaNode;
     private final NormalizedNodeContext currentNodeCtx;
@@ -82,9 +78,9 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
 
     private int offset = 0;
 
-    LeafrefXPathStringParsingPathArgumentBuilder(final String xPathString, final SchemaContext schemaContext,
+    LeafrefXPathStringParsingPathArgumentBuilder(final String xpathString, final SchemaContext schemaContext,
             final TypedSchemaNode schemaNode, final NormalizedNodeContext currentNodeCtx) {
-        this.xPathString = xPathString;
+        this.xpathString = xpathString;
         this.schemaContext = schemaContext;
         this.schemaNode = schemaNode;
         this.currentNodeCtx = currentNodeCtx;
@@ -106,10 +102,10 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
         final QName name = nextQName();
         if (allCharactersConsumed() || SLASH == currentChar()) {
             return new NodeIdentifier(name);
-        } else {
-            checkValid(PRECONDITION_START == currentChar(), "Last element must be identifier, predicate or '/'");
-            return computeIdentifierWithPredicate(name);
         }
+
+        checkValid(PRECONDITION_START == currentChar(), "Last element must be identifier, predicate or '/'");
+        return computeIdentifierWithPredicate(name);
     }
 
     private PathArgument computeIdentifierWithPredicate(final QName name) {
@@ -134,7 +130,7 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
     }
 
     private Object nextCurrentFunctionPathValue() {
-        final String xPathSubStr = xPathString.substring(offset);
+        final String xPathSubStr = xpathString.substring(offset);
         final String pathKeyExpression = xPathSubStr.substring(0, xPathSubStr.indexOf(PRECONDITION_END));
         final String relPathKeyExpression = pathKeyExpression.substring(CURRENT_FUNCTION_INVOCATION_STR.length());
 
@@ -167,7 +163,7 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
             } else {
                 throw new IllegalArgumentException(String.format(
                         "Could not parse leafref path '%s'. Offset: %s : Reason: Malformed path component: '%s'.",
-                        xPathString, offset, pathComponent));
+                        xpathString, offset, pathComponent));
             }
         }
 
@@ -180,7 +176,6 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
     }
 
     /**
-     *
      * Returns following QName and sets offset to end of QName.
      *
      * @return following QName.
@@ -188,7 +183,8 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
     private QName nextQName() {
         // Consume prefix or identifier
         final String maybePrefix = nextIdentifier();
-        final String prefix, localName;
+        final String prefix;
+        final String localName;
         if (!allCharactersConsumed() && COLON == currentChar()) {
             // previous token is prefix;
             prefix = maybePrefix;
@@ -202,14 +198,12 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
     }
 
     /**
-     * Returns true if all characters from input string
-     * were consumed.
+     * Returns true if all characters from input string were consumed.
      *
-     * @return true if all characters from input string
-     * were consumed.
+     * @return true if all characters from input string were consumed.
      */
     private boolean allCharactersConsumed() {
-        return offset == xPathString.length();
+        return offset == xpathString.length();
     }
 
     private QName createQName(final String prefix, final String localName) {
@@ -231,7 +225,6 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
     }
 
     /**
-     *
      * Skips current char if it equals expected otherwise fails parsing.
      *
      * @param expected Expected character
@@ -243,20 +236,19 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
     }
 
     /**
-     *
      * Fails parsing if condition is not met.
      *
-     * In case of error provides pointer to failed leafref,
-     * offset on which failure occured with explanation.
+     * <p>
+     * In case of error provides pointer to failed leafref, offset on which failure occured with explanation.
      *
      * @param condition Fails parsing if {@code condition} is false
      * @param errorMsg Error message which will be provided to user.
-     * @param attributes
+     * @param attributes Message attributes
      */
     private void checkValid(final boolean condition, final String errorMsg, final Object... attributes) {
         if (!condition) {
             throw new IllegalArgumentException(String.format(
-                    "Could not parse leafref path '%s'. Offset: %s : Reason: %s", xPathString, offset,
+                    "Could not parse leafref path '%s'. Offset: %s : Reason: %s", xpathString, offset,
                     String.format(errorMsg, attributes)));
         }
     }
@@ -267,19 +259,18 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
      * @return character at current offset.
      */
     private char currentChar() {
-        return xPathString.charAt(offset);
+        return xpathString.charAt(offset);
     }
 
     /**
-     * Increases processing offset by 1
+     * Increments processing offset by 1.
      */
     private void skipCurrentChar() {
         offset++;
     }
 
     /**
-     * Skip whitespace characters, sets offset to first following
-     * non-whitespace character.
+     * Skip whitespace characters, sets offset to first following non-whitespace character.
      */
     private void skipWhitespaces() {
         nextSequenceEnd(WSP);
@@ -293,13 +284,14 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
      */
     private String nextIdentifier() {
         int start = offset;
-        checkValid(IDENTIFIER_FIRST_CHAR.matches(currentChar()), "Identifier must start with character from set 'a-zA-Z_'");
+        checkValid(IDENTIFIER_FIRST_CHAR.matches(currentChar()),
+                "Identifier must start with character from set 'a-zA-Z_'");
         nextSequenceEnd(IDENTIFIER);
-        return xPathString.substring(start, offset);
+        return xpathString.substring(start, offset);
     }
 
     private void nextSequenceEnd(final CharMatcher matcher) {
-        while (!allCharactersConsumed() && matcher.matches(xPathString.charAt(offset))) {
+        while (!allCharactersConsumed() && matcher.matches(xpathString.charAt(offset))) {
             offset++;
         }
     }

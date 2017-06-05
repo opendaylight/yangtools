@@ -29,7 +29,8 @@ final class NormalizedNodeContextSupport extends ContextSupport {
         this.root = new NormalizedNodeContext(this, navigator.getRootNode(), null);
     }
 
-    static NormalizedNodeContextSupport create(final JaxenDocument document, final Converter<String, QNameModule> prefixes) {
+    static NormalizedNodeContextSupport create(final JaxenDocument document,
+            final Converter<String, QNameModule> prefixes) {
         final ConverterNamespaceContext context = new ConverterNamespaceContext(prefixes);
         final NormalizedNodeNavigator navigator = new NormalizedNodeNavigator(context, document);
 

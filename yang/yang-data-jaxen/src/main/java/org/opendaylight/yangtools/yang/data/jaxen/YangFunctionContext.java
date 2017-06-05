@@ -68,7 +68,7 @@ final class YangFunctionContext implements FunctionContext {
         }
 
         Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
-        return ((NormalizedNodeContext) context);
+        return (NormalizedNodeContext) context;
     };
 
     // re-match(string subject, string pattern) function as per https://tools.ietf.org/html/rfc7950#section-10.2.1
@@ -103,7 +103,8 @@ final class YangFunctionContext implements FunctionContext {
 
         final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
         final SchemaContext schemaContext = getSchemaContext(currentNodeContext);
-        final TypedSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext, currentNodeContext);
+        final TypedSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext,
+                currentNodeContext);
 
         final Object nodeValue = currentNodeContext.getNode().getValue();
 
@@ -114,8 +115,9 @@ final class YangFunctionContext implements FunctionContext {
 
         if (correspondingSchemaNode.getType() instanceof LeafrefTypeDefinition) {
             final LeafrefTypeDefinition leafrefType = (LeafrefTypeDefinition) correspondingSchemaNode.getType();
-            final RevisionAwareXPath xPath = leafrefType.getPathStatement();
-            return getNodeReferencedByLeafref(xPath, currentNodeContext, schemaContext, correspondingSchemaNode, nodeValue);
+            final RevisionAwareXPath xpath = leafrefType.getPathStatement();
+            return getNodeReferencedByLeafref(xpath, currentNodeContext, schemaContext, correspondingSchemaNode,
+                    nodeValue);
         }
 
         return null;
@@ -137,11 +139,11 @@ final class YangFunctionContext implements FunctionContext {
         return null;
     }
 
-    private static NormalizedNode<?, ?> getNodeReferencedByLeafref(final RevisionAwareXPath xPath,
+    private static NormalizedNode<?, ?> getNodeReferencedByLeafref(final RevisionAwareXPath xpath,
             final NormalizedNodeContext currentNodeContext, final SchemaContext schemaContext,
             final TypedSchemaNode correspondingSchemaNode, final Object nodeValue) {
-        final NormalizedNode<?, ?> referencedNode = xPath.isAbsolute() ? getNodeReferencedByAbsoluteLeafref(xPath,
-                currentNodeContext, schemaContext, correspondingSchemaNode) : getNodeReferencedByRelativeLeafref(xPath,
+        final NormalizedNode<?, ?> referencedNode = xpath.isAbsolute() ? getNodeReferencedByAbsoluteLeafref(xpath,
+                currentNodeContext, schemaContext, correspondingSchemaNode) : getNodeReferencedByRelativeLeafref(xpath,
                 currentNodeContext, schemaContext, correspondingSchemaNode);
 
         if (referencedNode instanceof LeafSetNode) {
@@ -155,11 +157,11 @@ final class YangFunctionContext implements FunctionContext {
         return null;
     }
 
-    private static NormalizedNode<?, ?> getNodeReferencedByAbsoluteLeafref(final RevisionAwareXPath xPath,
+    private static NormalizedNode<?, ?> getNodeReferencedByAbsoluteLeafref(final RevisionAwareXPath xpath,
             final NormalizedNodeContext currentNodeContext, final SchemaContext schemaContext,
             final TypedSchemaNode correspondingSchemaNode) {
         final LeafrefXPathStringParsingPathArgumentBuilder builder = new LeafrefXPathStringParsingPathArgumentBuilder(
-                xPath.toString(), schemaContext, correspondingSchemaNode, currentNodeContext);
+                xpath.toString(), schemaContext, correspondingSchemaNode, currentNodeContext);
         final List<PathArgument> pathArguments = builder.build();
         final NormalizedNodeNavigator navigator = (NormalizedNodeNavigator) currentNodeContext.getNavigator();
         final NormalizedNode<?, ?> rootNode = navigator.getRootNode();
@@ -174,11 +176,11 @@ final class YangFunctionContext implements FunctionContext {
         return null;
     }
 
-    private static NormalizedNode<?, ?> getNodeReferencedByRelativeLeafref(final RevisionAwareXPath xPath,
+    private static NormalizedNode<?, ?> getNodeReferencedByRelativeLeafref(final RevisionAwareXPath xpath,
             final NormalizedNodeContext currentNodeContext, final SchemaContext schemaContext,
             final TypedSchemaNode correspondingSchemaNode) {
         NormalizedNodeContext relativeNodeContext = currentNodeContext;
-        final StringBuilder xPathStringBuilder = new StringBuilder(xPath.toString());
+        final StringBuilder xPathStringBuilder = new StringBuilder(xpath.toString());
         // strip the relative path of all ../ at the beginning
         while (xPathStringBuilder.indexOf("../") == 0) {
             xPathStringBuilder.delete(0, 3);
@@ -226,7 +228,8 @@ final class YangFunctionContext implements FunctionContext {
 
         final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
         final SchemaContext schemaContext = getSchemaContext(currentNodeContext);
-        final TypedSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext, currentNodeContext);
+        final TypedSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext,
+            currentNodeContext);
 
         if (!(correspondingSchemaNode.getType() instanceof IdentityrefTypeDefinition)) {
             return Boolean.FALSE;
@@ -249,14 +252,17 @@ final class YangFunctionContext implements FunctionContext {
         return Boolean.valueOf(ancestorIdentities.contains(identityArgSchemaNode));
     };
 
-    // derived-from-or-self(node-set nodes, string identity) function as per https://tools.ietf.org/html/rfc7950#section-10.4.2
+    // derived-from-or-self(node-set nodes, string identity) function as per
+    // https://tools.ietf.org/html/rfc7950#section-10.4.2
     private static final Function DERIVED_FROM_OR_SELF_FUNCTION = (context, args) -> {
         if (args == null || args.size() != 1) {
-            throw new FunctionCallException("derived-from-or-self() takes two arguments: node-set nodes, string identity");
+            throw new FunctionCallException(
+                "derived-from-or-self() takes two arguments: node-set nodes, string identity");
         }
 
         if (!(args.get(0) instanceof String)) {
-            throw new FunctionCallException("Argument 'identity' of derived-from-or-self() function should be a String.");
+            throw new FunctionCallException(
+                "Argument 'identity' of derived-from-or-self() function should be a String.");
         }
 
         final String identityArg = (String) args.get(0);
@@ -265,7 +271,8 @@ final class YangFunctionContext implements FunctionContext {
 
         final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
         final SchemaContext schemaContext = getSchemaContext(currentNodeContext);
-        final TypedSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext, currentNodeContext);
+        final TypedSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext,
+            currentNodeContext);
 
         if (!(correspondingSchemaNode.getType() instanceof IdentityrefTypeDefinition)) {
             return Boolean.FALSE;
@@ -347,8 +354,8 @@ final class YangFunctionContext implements FunctionContext {
             }
         }
 
-        throw new IllegalArgumentException(String.format("Identity %s does not have a corresponding" +
-                " identity schema node in the module %s.", identityQName, module));
+        throw new IllegalArgumentException(String.format("Identity %s does not have a corresponding"
+                    + " identity schema node in the module %s.", identityQName, module));
     }
 
     // enum-value(node-set nodes) function as per https://tools.ietf.org/html/rfc7950#section-10.5.1
@@ -391,7 +398,8 @@ final class YangFunctionContext implements FunctionContext {
                 enumName, enumerationType));
     }
 
-    // bit-is-set(node-set nodes, string bit-name) function as per https://tools.ietf.org/html/rfc7950#section-10.6.1
+    // bit-is-set(node-set nodes, string bit-name) function as per
+    // https://tools.ietf.org/html/rfc7950#section-10.6.1
     private static final Function BIT_IS_SET_FUNCTION = (context, args) -> {
         if (args == null || args.size() != 1) {
             throw new FunctionCallException("bit-is-set() takes two arguments: node-set nodes, string bit-name");
@@ -407,7 +415,8 @@ final class YangFunctionContext implements FunctionContext {
 
         final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
         final SchemaContext schemaContext = getSchemaContext(currentNodeContext);
-        final TypedSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext, currentNodeContext);
+        final TypedSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext,
+            currentNodeContext);
 
         final TypeDefinition<?> nodeType = correspondingSchemaNode.getType();
         if (!(nodeType instanceof BitsTypeDefinition)) {
@@ -499,6 +508,8 @@ final class YangFunctionContext implements FunctionContext {
                     return ENUM_VALUE_FUNCTION;
                 case "re-match":
                     return REMATCH_FUNCTION;
+                default:
+                    break;
             }
         }
 

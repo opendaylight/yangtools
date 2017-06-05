@@ -67,8 +67,8 @@ final class JaxenXPath implements XPathExpression {
     }
 
     @Override
-    public Optional<? extends XPathResult<?>> evaluate(@Nonnull final XPathDocument document, @Nonnull final YangInstanceIdentifier path)
-            throws XPathExpressionException {
+    public Optional<? extends XPathResult<?>> evaluate(@Nonnull final XPathDocument document,
+            @Nonnull final YangInstanceIdentifier path) throws XPathExpressionException {
         Preconditions.checkArgument(document instanceof JaxenDocument);
 
         final NormalizedNodeContextSupport contextSupport = NormalizedNodeContextSupport.create(
@@ -87,7 +87,7 @@ final class JaxenXPath implements XPathExpression {
             return Optional.of((XPathNumberResult) () -> (Number) result);
         } else if (result instanceof Boolean) {
             return Optional.of((XPathBooleanResult) () -> (Boolean) result);
-        } else if (result != null){
+        } else if (result != null) {
             return Optional.of((XPathNodesetResult) () -> {
                 // XXX: Will this really work, or do we need to perform deep transformation?
                 return Lists.transform((List<NormalizedNodeContext>) result, NormalizedNodeContext::getNode);

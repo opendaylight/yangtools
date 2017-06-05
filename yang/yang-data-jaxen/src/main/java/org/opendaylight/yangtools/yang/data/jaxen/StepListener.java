@@ -14,18 +14,23 @@ import org.jaxen.expr.ProcessingInstructionNodeStep;
 import org.jaxen.expr.TextNodeStep;
 
 abstract class StepListener {
+
     void onAll(final AllNodeStep step) {
 
     }
+
     void onComment(final CommentNodeStep step) {
 
     }
+
     void onName(final NameStep step) {
 
     }
+
     void onProcessingInstruction(final ProcessingInstructionNodeStep step) {
 
     }
+
     void onTest(final TextNodeStep step) {
 
     }

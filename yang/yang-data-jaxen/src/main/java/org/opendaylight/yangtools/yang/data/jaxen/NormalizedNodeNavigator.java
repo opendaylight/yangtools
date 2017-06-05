@@ -213,6 +213,17 @@ final class NormalizedNodeNavigator extends DefaultNavigator implements NamedAcc
     }
 
     @Override
+    public Iterator<NormalizedNodeContext> getChildAxisIterator(final Object contextNode) {
+        final NormalizedNodeContext ctx = cast(contextNode);
+        final NormalizedNode<?, ?> node = ctx.getNode();
+        if (node instanceof DataContainerNode) {
+            return Iterators.transform(((DataContainerNode<?>) node).getValue().iterator(), ctx);
+        }
+
+        return null;
+    }
+
+    @Override
     public Iterator<NormalizedNodeContext> getChildAxisIterator(final Object contextNode, final String localName,
             final String namespacePrefix, final String namespaceURI) {
         final NormalizedNodeContext ctx = cast(contextNode);
@@ -241,8 +252,23 @@ final class NormalizedNodeNavigator extends DefaultNavigator implements NamedAcc
     }
 
     @Override
-    public Iterator<? extends Entry<?, ?>> getAttributeAxisIterator(final Object contextNode, final String localName, final String namespacePrefix,
-            final String namespaceURI) {
+    public Iterator<? extends Entry<?, ?>> getAttributeAxisIterator(final Object contextNode) {
+        final NormalizedNode<?, ?> node = contextNode(contextNode);
+        if (node instanceof AttributesContainer) {
+            final Map<QName, String> attributes = ((AttributesContainer) node).getAttributes();
+            if (attributes.isEmpty()) {
+                return null;
+            }
+
+            return attributes.entrySet().iterator();
+        }
+
+        return null;
+    }
+
+    @Override
+    public Iterator<? extends Entry<?, ?>> getAttributeAxisIterator(final Object contextNode, final String localName,
+            final String namespacePrefix, final String namespaceURI) {
         final NormalizedNode<?, ?> node = contextNode(contextNode);
         if (node instanceof AttributesContainer) {
             final Map<QName, String> attributes = ((AttributesContainer) node).getAttributes();
@@ -259,50 +285,27 @@ final class NormalizedNodeNavigator extends DefaultNavigator implements NamedAcc
     }
 
     @Override
-    public Iterator<NormalizedNodeContext> getChildAxisIterator(final Object contextNode) {
-        final NormalizedNodeContext ctx = cast(contextNode);
-        final NormalizedNode<?, ?> node = ctx.getNode();
-        if (node instanceof DataContainerNode) {
-            return Iterators.transform(((DataContainerNode<?>) node).getValue().iterator(), ctx);
-        }
-
-        return null;
-    }
-
-    @Override
     public Iterator<NormalizedNodeContext> getParentAxisIterator(final Object contextNode) {
         final NormalizedNodeContext parent = cast(contextNode).getParent();
         return parent == null ? null : Iterators.singletonIterator(parent);
     }
 
     @Override
-    public Iterator<NormalizedNodeContext> getAncestorAxisIterator(final Object contextNode) throws UnsupportedAxisException {
+    public Iterator<NormalizedNodeContext> getAncestorAxisIterator(final Object contextNode)
+            throws UnsupportedAxisException {
         final NormalizedNodeContext parent = cast(contextNode).getParent();
         return parent == null ? null : new NormalizedNodeContextIterator(parent);
     }
 
     @Override
-    public Iterator<? extends Entry<?, ?>> getAttributeAxisIterator(final Object contextNode) {
-        final NormalizedNode<?, ?> node = contextNode(contextNode);
-        if (node instanceof AttributesContainer) {
-            final Map<QName, String> attributes = ((AttributesContainer) node).getAttributes();
-            if (attributes.isEmpty()) {
-                return null;
-            }
-
-            return attributes.entrySet().iterator();
-        }
-
-        return null;
-    }
-
-    @Override
-    public Iterator<NormalizedNodeContext> getSelfAxisIterator(final Object contextNode) throws UnsupportedAxisException {
+    public Iterator<NormalizedNodeContext> getSelfAxisIterator(final Object contextNode)
+            throws UnsupportedAxisException {
         return Iterators.singletonIterator(cast(contextNode));
     }
 
     @Override
-    public Iterator<NormalizedNodeContext> getAncestorOrSelfAxisIterator(final Object contextNode) throws UnsupportedAxisException {
+    public Iterator<NormalizedNodeContext> getAncestorOrSelfAxisIterator(final Object contextNode)
+            throws UnsupportedAxisException {
         return new NormalizedNodeContextIterator(cast(contextNode));
     }
 

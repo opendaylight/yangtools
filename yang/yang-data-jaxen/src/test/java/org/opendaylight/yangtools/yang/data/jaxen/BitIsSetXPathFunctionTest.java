@@ -49,7 +49,7 @@ public class BitIsSetXPathFunctionTest {
     private static JaxenSchemaContextFactory jaxenSchemaContextFactory;
 
     private static QNameModule fooModule;
-    private static QName myContainer; 
+    private static QName myContainer;
     private static QName myList;
     private static QName flags;
     private static QName ordinaryLeaf;
@@ -131,7 +131,8 @@ public class BitIsSetXPathFunctionTest {
         assertNotNull(schemaContext);
 
         final XPathSchemaContext jaxenSchemaContext = jaxenSchemaContextFactory.createContext(schemaContext);
-        final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNode(invalidNodeValueType));
+        final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNode(
+                    invalidNodeValueType));
 
         final BiMap<String, QNameModule> converterBiMap = HashBiMap.create();
         converterBiMap.put("foo-prefix", fooModule);

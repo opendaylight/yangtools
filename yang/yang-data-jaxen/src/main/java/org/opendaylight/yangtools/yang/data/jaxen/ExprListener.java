@@ -22,6 +22,7 @@ abstract class ExprListener {
     void enterBinaryExpr(final BinaryExpr expr) {
 
     }
+
     void exitBinaryExpr(final BinaryExpr expr) {
 
     }

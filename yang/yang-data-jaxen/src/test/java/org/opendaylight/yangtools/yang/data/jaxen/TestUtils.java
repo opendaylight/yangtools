@@ -40,7 +40,7 @@ final class TestUtils {
     }
 
     /**
-     * Returns a test document
+     * Returns a test document.
      *
      * <pre>
      * root
@@ -58,7 +58,7 @@ final class TestUtils {
      *                  leaf-d "three"
      * </pre>
      *
-     * @return
+     * @return A test document instance.
      */
     public static NormalizedNode<?, ?> createNormalizedNodes() {
         return ImmutableContainerNodeBuilder
@@ -76,9 +76,8 @@ final class TestUtils {
                         .build())
                 .withChild(ImmutableContainerNodeBuilder.create()
                         .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(CONTAINER_A_QNAME))
-                        .withChild(ImmutableContainerNodeBuilder.create().
-                                withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier
-                                        (CONTAINER_B_QNAME))
+                        .withChild(ImmutableContainerNodeBuilder.create()
+                            .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(CONTAINER_B_QNAME))
                                 .withChild(ImmutableNodes.leafNode(LEAF_D_QNAME, THREE))
                                 .build())
                         .build())
