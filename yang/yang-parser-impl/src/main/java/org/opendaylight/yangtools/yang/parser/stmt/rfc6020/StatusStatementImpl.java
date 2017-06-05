@@ -55,6 +55,19 @@ public class StatusStatementImpl extends AbstractDeclaredStatement<Status>
         }
 
         @Override
+        public String internArgument(final String rawArgument) {
+            if ("current".equals(rawArgument)) {
+                return "current";
+            } else if ("deprecated".equals(rawArgument)) {
+                return "deprecated";
+            } else if ("obsolete".equals(rawArgument)) {
+                return "obsolete";
+            } else {
+                return rawArgument;
+            }
+        }
+
+        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }
