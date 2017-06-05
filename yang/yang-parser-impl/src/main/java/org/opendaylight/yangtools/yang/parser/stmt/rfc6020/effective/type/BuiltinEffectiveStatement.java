@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Map;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -18,8 +20,37 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
-abstract class AbstractBuiltinEffectiveStatement implements TypeEffectiveStatement<TypeStatement> {
+/**
+ * Common shared effective statements for built-in types.
+ */
+public enum BuiltinEffectiveStatement implements TypeEffectiveStatement<TypeStatement> {
+    BINARY(BaseTypes.binaryType()),
+    BOOLEAN(BaseTypes.booleanType()),
+    EMPTY(BaseTypes.emptyType()),
+    INSTANCE_IDENTIFIER(BaseTypes.instanceIdentifierType()),
+    INT8(BaseTypes.int8Type()),
+    INT16(BaseTypes.int16Type()),
+    INT32(BaseTypes.int32Type()),
+    INT64(BaseTypes.int64Type()),
+    STRING(BaseTypes.stringType()),
+    UINT8(BaseTypes.uint8Type()),
+    UINT16(BaseTypes.uint16Type()),
+    UINT32(BaseTypes.uint32Type()),
+    UINT64(BaseTypes.uint64Type());
+
+    private final TypeDefinition<?> typedef;
+
+    BuiltinEffectiveStatement(final TypeDefinition<?> typedef) {
+        this.typedef = Preconditions.checkNotNull(typedef);
+    }
+
+    @Override
+    public @Nonnull TypeDefinition<?> getTypeDefinition() {
+        return typedef;
+    }
+
     @Override
     public final TypeStatement getDeclared() {
         return null;

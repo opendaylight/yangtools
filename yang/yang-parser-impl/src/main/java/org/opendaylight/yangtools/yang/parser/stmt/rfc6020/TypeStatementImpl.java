@@ -50,7 +50,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.TypeDefEffe
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BinaryTypeEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitsTypeEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BooleanTypeEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BuiltinEffectiveStatements;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BuiltinEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.DecimalTypeEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EmptyTypeEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EnumTypeEffectiveStatementImpl;
@@ -118,43 +118,43 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
             final TypeEffectiveStatement<TypeStatement> typeStmt;
             switch (ctx.getStatementArgument()) {
                 case TypeUtils.BINARY:
-                    typeStmt = BuiltinEffectiveStatements.BINARY;
+                    typeStmt = BuiltinEffectiveStatement.BINARY;
                     break;
                 case TypeUtils.BOOLEAN:
-                    typeStmt = BuiltinEffectiveStatements.BOOLEAN;
+                    typeStmt = BuiltinEffectiveStatement.BOOLEAN;
                     break;
                 case TypeUtils.EMPTY:
-                    typeStmt = BuiltinEffectiveStatements.EMPTY;
+                    typeStmt = BuiltinEffectiveStatement.EMPTY;
                     break;
                 case TypeUtils.INSTANCE_IDENTIFIER:
-                    typeStmt = BuiltinEffectiveStatements.INSTANCE_IDENTIFIER;
+                    typeStmt = BuiltinEffectiveStatement.INSTANCE_IDENTIFIER;
                     break;
             case TypeUtils.INT8:
-                typeStmt = BuiltinEffectiveStatements.INT8;
+                typeStmt = BuiltinEffectiveStatement.INT8;
                 break;
             case TypeUtils.INT16:
-                typeStmt = BuiltinEffectiveStatements.INT16;
+                typeStmt = BuiltinEffectiveStatement.INT16;
                 break;
             case TypeUtils.INT32:
-                typeStmt = BuiltinEffectiveStatements.INT32;
+                typeStmt = BuiltinEffectiveStatement.INT32;
                 break;
             case TypeUtils.INT64:
-                typeStmt = BuiltinEffectiveStatements.INT64;
+                typeStmt = BuiltinEffectiveStatement.INT64;
                 break;
             case TypeUtils.STRING:
-                typeStmt = BuiltinEffectiveStatements.STRING;
+                typeStmt = BuiltinEffectiveStatement.STRING;
                 break;
             case TypeUtils.UINT8:
-                typeStmt = BuiltinEffectiveStatements.UINT8;
+                typeStmt = BuiltinEffectiveStatement.UINT8;
                 break;
             case TypeUtils.UINT16:
-                typeStmt = BuiltinEffectiveStatements.UINT16;
+                typeStmt = BuiltinEffectiveStatement.UINT16;
                 break;
             case TypeUtils.UINT32:
-                typeStmt = BuiltinEffectiveStatements.UINT32;
+                typeStmt = BuiltinEffectiveStatement.UINT32;
                 break;
             case TypeUtils.UINT64:
-                typeStmt = BuiltinEffectiveStatements.UINT64;
+                typeStmt = BuiltinEffectiveStatement.UINT64;
                 break;
             default:
                 final QName qname = Utils.qNameFromArgument(ctx, ctx.getStatementArgument());
