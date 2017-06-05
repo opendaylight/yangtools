@@ -21,3 +21,6 @@ META-INF
 .pmd
 .factorypath
 .fbExcludeFilterFile
+
+# Vim
+.*.sw?
