@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.util.Collection;
@@ -36,6 +38,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules.SupportedModules;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeviateEffectiveStatementImpl;
 import org.slf4j.Logger;
@@ -84,6 +87,14 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
 
     public static class Definition extends AbstractStatementSupport<DeviateKind, DeviateStatement,
             EffectiveStatement<DeviateKind, DeviateStatement>> {
+        private static final Map<String, DeviateKind> KEYWORD_TO_DEVIATE_MAP;
+        static {
+            final Builder<String, DeviateKind> keywordToDeviateMapBuilder = ImmutableMap.builder();
+            for (final DeviateKind deviate : DeviateKind.values()) {
+                keywordToDeviateMapBuilder.put(deviate.getKeyword(), deviate);
+            }
+            KEYWORD_TO_DEVIATE_MAP = keywordToDeviateMapBuilder.build();
+        }
 
         private static final Set<YangStmtMapping> SINGLETON_STATEMENTS = ImmutableSet.of(
                 YangStmtMapping.UNITS, YangStmtMapping.CONFIG, YangStmtMapping.MANDATORY,
@@ -93,15 +104,19 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
             super(YangStmtMapping.DEVIATE);
         }
 
-        @Override public DeviateKind parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-            return Utils.parseDeviateFromString(ctx, value);
+        @Override
+        public DeviateKind parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+            return SourceException.throwIfNull(KEYWORD_TO_DEVIATE_MAP.get(value),
+                ctx.getStatementSourceReference(), "String '%s' is not valid deviate argument", value);
         }
 
-        @Override public DeviateStatement createDeclared(final StmtContext<DeviateKind, DeviateStatement, ?> ctx) {
+        @Override
+        public DeviateStatement createDeclared(final StmtContext<DeviateKind, DeviateStatement, ?> ctx) {
             return new DeviateStatementImpl(ctx);
         }
 
-        @Override public EffectiveStatement<DeviateKind, DeviateStatement> createEffective(
+        @Override
+        public EffectiveStatement<DeviateKind, DeviateStatement> createEffective(
                 final StmtContext<DeviateKind, DeviateStatement, EffectiveStatement<DeviateKind,
                         DeviateStatement>> ctx) {
             return new DeviateEffectiveStatementImpl(ctx);
@@ -128,9 +143,9 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
                     deviateAction.requiresCtx(deviateStmtCtx, ModelProcessingPhase.EFFECTIVE_MODEL);
 
             final Prerequisite<StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>> targetCtxPrerequisite =
-                    (Prerequisite<StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>>) deviateAction
-                    .mutatesEffectiveCtx(deviateStmtCtx.getRoot(), SchemaNodeIdentifierBuildNamespace.class,
-                            deviationTarget);
+                    deviateAction
+            .mutatesEffectiveCtx(deviateStmtCtx.getRoot(), SchemaNodeIdentifierBuildNamespace.class,
+                    deviationTarget);
 
                     deviateAction.apply(new InferenceAction() {
                         @Override
@@ -157,7 +172,7 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
                         }
 
                         @Override
-                        public void prerequisiteFailed(Collection<? extends Prerequisite<?>> failed) {
+                        public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
                             throw new InferenceException(deviateStmtCtx.getParentContext().getStatementSourceReference(),
                                     "Deviation target '%s' not found.", deviationTarget);
                         }
@@ -202,8 +217,8 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
 
             final StatementDefinition stmtToBeAdded = stmtCtxToBeAdded.getPublicDefinition();
 
-            if (SINGLETON_STATEMENTS.contains(stmtToBeAdded) || (YangStmtMapping.DEFAULT.equals(stmtToBeAdded)
-                    && YangStmtMapping.LEAF.equals(targetCtx.getPublicDefinition()))) {
+            if (SINGLETON_STATEMENTS.contains(stmtToBeAdded) || YangStmtMapping.DEFAULT.equals(stmtToBeAdded)
+                    && YangStmtMapping.LEAF.equals(targetCtx.getPublicDefinition())) {
                 final Iterable<StatementContextBase<?, ?, ?>> targetCtxSubstatements = Iterables.concat(
                         targetCtx.declaredSubstatements(), targetCtx.effectiveSubstatements());
 
