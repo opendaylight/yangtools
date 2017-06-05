@@ -25,7 +25,7 @@ public abstract class AbstractModuleStringInstanceIdentifierCodec extends Abstra
     /**
      * Resolve a string prefix into the corresponding module.
      *
-     * @param prefix
+     * @param prefix Prefix
      * @return module mapped to prefix, or null if the module cannot be resolved
      */
     protected abstract Module moduleForPrefix(@Nonnull String prefix);

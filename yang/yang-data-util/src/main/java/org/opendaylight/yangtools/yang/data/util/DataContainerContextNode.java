@@ -40,14 +40,6 @@ class DataContainerContextNode<T extends PathArgument> extends
         return register(potential);
     }
 
-    private DataSchemaContextNode<?> fromLocalSchema(final PathArgument child) {
-        if (child instanceof AugmentationIdentifier) {
-            return fromSchemaAndQNameChecked(schema, ((AugmentationIdentifier) child).getPossibleChildNames()
-                    .iterator().next());
-        }
-        return fromSchemaAndQNameChecked(schema, child.getNodeType());
-    }
-
     @Override
     public DataSchemaContextNode<?> getChild(final QName child) {
         DataSchemaContextNode<?> potential = byQName.get(child);
@@ -58,6 +50,14 @@ class DataContainerContextNode<T extends PathArgument> extends
         return register(potential);
     }
 
+    private DataSchemaContextNode<?> fromLocalSchema(final PathArgument child) {
+        if (child instanceof AugmentationIdentifier) {
+            return fromSchemaAndQNameChecked(schema, ((AugmentationIdentifier) child).getPossibleChildNames()
+                    .iterator().next());
+        }
+        return fromSchemaAndQNameChecked(schema, child.getNodeType());
+    }
+
     protected DataSchemaContextNode<?> fromLocalSchemaAndQName(final DataNodeContainer schema2, final QName child) {
         return fromSchemaAndQNameChecked(schema2, child);
     }
@@ -65,8 +65,8 @@ class DataContainerContextNode<T extends PathArgument> extends
     private DataSchemaContextNode<?> register(final DataSchemaContextNode<?> potential) {
         if (potential != null) {
             byArg.put(potential.getIdentifier(), potential);
-            for (QName qName : potential.getQNameIdentifiers()) {
-                byQName.put(qName, potential);
+            for (QName qname : potential.getQNameIdentifiers()) {
+                byQName.put(qname, potential);
             }
         }
         return potential;

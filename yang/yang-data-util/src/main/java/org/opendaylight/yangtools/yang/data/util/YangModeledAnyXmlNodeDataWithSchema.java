@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 
 final class YangModeledAnyXmlNodeDataWithSchema extends CompositeNodeDataWithSchema {
 
-    public YangModeledAnyXmlNodeDataWithSchema(final YangModeledAnyXmlSchemaNode yangModeledAnyXml) {
+    YangModeledAnyXmlNodeDataWithSchema(final YangModeledAnyXmlSchemaNode yangModeledAnyXml) {
         super(yangModeledAnyXml);
     }
 
@@ -24,5 +24,4 @@ final class YangModeledAnyXmlNodeDataWithSchema extends CompositeNodeDataWithSch
         super.write(writer);
         writer.endNode();
     }
-
 }

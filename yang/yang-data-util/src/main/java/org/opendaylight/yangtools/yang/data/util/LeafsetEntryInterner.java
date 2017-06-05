@@ -25,10 +25,12 @@ import org.slf4j.LoggerFactory;
  * Utility class for sharing instances of {@link LeafSetEntryNode}s which have low cardinality -- e.g. those which hold
  * boolean or enumeration values. Instances containing attributes are not interned.
  *
+ * <p>
  * Such objects have cardinality which is capped at the product of QNAMES * TYPE_CARDINALITY, where QNAMES is the total
  * number of different QNames where the type is used and TYPE_CARDINALITY is the number of possible values for the type.
  * Boolean has cardinality of 2, enumerations have cardinality equal to the number of enum statements.
  *
+ * <p>
  * The theory here is that we tend to have a large number (100K+) of entries in a few places, which could end up hogging
  * the heap retained via the DataTree with duplicate objects (same QName, same value, different object). Using this
  * utility, such objects will end up reusing the same object, preventing this overhead.
@@ -70,8 +72,8 @@ public final class LeafsetEntryInterner {
     @Nullable public static LeafsetEntryInterner forSchema(@Nullable final LeafListSchemaNode schema) {
         if (schema != null) {
             final TypeDefinition<?> type = schema.getType();
-            if (type instanceof BooleanTypeDefinition || type instanceof EnumTypeDefinition ||
-                    type instanceof IdentityrefTypeDefinition) {
+            if (type instanceof BooleanTypeDefinition || type instanceof EnumTypeDefinition
+                    || type instanceof IdentityrefTypeDefinition) {
                 return INSTANCE;
             }
         }

@@ -39,9 +39,10 @@ import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
 
     /**
-     * nodes which were added to schema via augmentation and are present in data input
+     * nodes which were added to schema via augmentation and are present in data input.
      */
-    private final Multimap<AugmentationSchema, AbstractNodeDataWithSchema> augmentationsToChild = ArrayListMultimap.create();
+    private final Multimap<AugmentationSchema, AbstractNodeDataWithSchema> augmentationsToChild =
+        ArrayListMultimap.create();
 
     /**
      * remaining data nodes (which aren't added via augment). Every of one them should have the same QName.
@@ -50,6 +51,15 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
 
     public CompositeNodeDataWithSchema(final DataSchemaNode schema) {
         super(schema);
+    }
+
+    private AbstractNodeDataWithSchema addChild(final DataSchemaNode schema) {
+        AbstractNodeDataWithSchema newChild = addSimpleChild(schema);
+        return newChild == null ? addCompositeChild(schema) : newChild;
+    }
+
+    public void addChild(final AbstractNodeDataWithSchema newChild) {
+        children.add(newChild);
     }
 
     public AbstractNodeDataWithSchema addChild(final Deque<DataSchemaNode> schemas) {
@@ -131,8 +141,9 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
                     CaseNodeDataWithSchema casePrevious = ((ChoiceNodeDataWithSchema) nodeDataWithSchema).getCase();
 
                     Preconditions.checkArgument(casePrevious.getSchema().getQName().equals(caseCandidate.getQName()),
-                        "Data from case %s are specified but other data from case %s were specified earlier. Data aren't from the same case.",
-                        caseCandidate.getQName(), casePrevious.getSchema().getQName());
+                        "Data from case %s are specified but other data from case %s were specified earlier."
+                        + " Data aren't from the same case.", caseCandidate.getQName(),
+                        casePrevious.getSchema().getQName());
 
                     return casePrevious;
                 }
@@ -169,15 +180,6 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
         }
     }
 
-    private AbstractNodeDataWithSchema addChild(final DataSchemaNode schema) {
-        AbstractNodeDataWithSchema newChild = addSimpleChild(schema);
-        return newChild == null ? addCompositeChild(schema) : newChild;
-    }
-
-    public void addChild(final AbstractNodeDataWithSchema newChild) {
-        children.add(newChild);
-    }
-
     /**
      * Return a hint about how may children we are going to generate.
      * @return Size of currently-present node list.
@@ -191,7 +193,8 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
         for (AbstractNodeDataWithSchema child : children) {
             child.write(writer);
         }
-        for (Entry<AugmentationSchema, Collection<AbstractNodeDataWithSchema>> augmentationToChild : augmentationsToChild.asMap().entrySet()) {
+        for (Entry<AugmentationSchema, Collection<AbstractNodeDataWithSchema>> augmentationToChild
+                : augmentationsToChild.asMap().entrySet()) {
             final Collection<AbstractNodeDataWithSchema> childsFromAgumentation = augmentationToChild.getValue();
             if (!childsFromAgumentation.isEmpty()) {
                 // FIXME: can we get the augmentation schema?
@@ -214,7 +217,8 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
      * @param child child node
      * @return augmentation schema
      */
-    private static AugmentationSchema findCorrespondingAugment(final DataSchemaNode parent, final DataSchemaNode child) {
+    private static AugmentationSchema findCorrespondingAugment(final DataSchemaNode parent,
+            final DataSchemaNode child) {
         if (parent instanceof AugmentationTarget && !(parent instanceof ChoiceSchemaNode)) {
             for (AugmentationSchema augmentation : ((AugmentationTarget) parent).getAvailableAugmentations()) {
                 DataSchemaNode childInAugmentation = augmentation.getDataChildByName(child.getQName());
@@ -226,7 +230,8 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
         return null;
     }
 
-    public static YangInstanceIdentifier.AugmentationIdentifier getNodeIdentifierForAugmentation(final AugmentationSchema schema) {
+    public static YangInstanceIdentifier.AugmentationIdentifier getNodeIdentifierForAugmentation(
+            final AugmentationSchema schema) {
         final Collection<QName> qnames = Collections2.transform(schema.getChildNodes(), DataSchemaNode::getQName);
         return new YangInstanceIdentifier.AugmentationIdentifier(ImmutableSet.copyOf(qnames));
     }

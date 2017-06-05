@@ -138,16 +138,11 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
     /**
      * Returns a DataContextNodeOperation for provided child node
      *
+     * <p>
      * If supplied child is added by Augmentation this operation returns a
      * DataContextNodeOperation for augmentation, otherwise returns a
      * DataContextNodeOperation for child as call for
      * {@link #fromDataSchemaNode(DataSchemaNode)}.
-     *
-     *
-     * @param parent
-     * @param parentAug
-     * @param child
-     * @return
      */
     @Nullable static DataSchemaContextNode<?> fromAugmentation(final DataNodeContainer parent,
             final AugmentationTarget parentAug, final DataSchemaNode child) {

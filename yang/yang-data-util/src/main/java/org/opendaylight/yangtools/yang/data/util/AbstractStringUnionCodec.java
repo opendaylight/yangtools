@@ -30,6 +30,7 @@ public abstract class AbstractStringUnionCodec implements Codec<String, Object> 
     protected abstract Codec<String, Object> codecFor(final TypeDefinition<?> type);
 
     @Override
+    @SuppressWarnings("checkstyle:illegalCatch")
     public final String serialize(final Object data) {
         for (final TypeDefinition<?> type : typeDefinition.getTypes()) {
             Codec<String, Object> codec = codecFor(type);
@@ -48,6 +49,7 @@ public abstract class AbstractStringUnionCodec implements Codec<String, Object> 
     }
 
     @Override
+    @SuppressWarnings("checkstyle:illegalCatch")
     public Object deserialize(final String stringRepresentation) {
         if (stringRepresentation == null) {
             return null;

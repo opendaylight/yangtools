@@ -17,7 +17,8 @@ import org.opendaylight.yangtools.yang.data.api.codec.IdentityrefCodec;
  * prefix:name tuple. Typical uses are RESTCONF/JSON (module:name) and XML (prefix:name).
  */
 @Beta
-public abstract class AbstractStringIdentityrefCodec extends AbstractNamespaceCodec implements IdentityrefCodec<String> {
+public abstract class AbstractStringIdentityrefCodec extends AbstractNamespaceCodec
+        implements IdentityrefCodec<String> {
     @Override
     public String serialize(final QName data) {
         return appendQName(new StringBuilder(), data).toString();

@@ -10,9 +10,7 @@ package org.opendaylight.yangtools.yang.data.util;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class OrderedMapMixinContextNode extends UnorderedMapMixinContextNode {
-
-    public OrderedMapMixinContextNode(final ListSchemaNode list) {
+    OrderedMapMixinContextNode(final ListSchemaNode list) {
         super(list);
     }
-
 }

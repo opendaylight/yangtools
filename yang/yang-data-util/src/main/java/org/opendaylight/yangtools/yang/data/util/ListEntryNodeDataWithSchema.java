@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -23,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 public class ListEntryNodeDataWithSchema extends CompositeNodeDataWithSchema {
 
-    private final Map<QName, SimpleNodeDataWithSchema> qNameToKeys = new HashMap<>();
+    private final Map<QName, SimpleNodeDataWithSchema> qnameToKeys = new HashMap<>();
 
     public ListEntryNodeDataWithSchema(final DataSchemaNode schema) {
         super(schema);
@@ -33,15 +32,14 @@ public class ListEntryNodeDataWithSchema extends CompositeNodeDataWithSchema {
     public void addChild(final AbstractNodeDataWithSchema newChild) {
         final DataSchemaNode childSchema = newChild.getSchema();
         if (childSchema instanceof LeafSchemaNode && isPartOfKey((LeafSchemaNode) childSchema)) {
-            qNameToKeys.put(childSchema.getQName(), (SimpleNodeDataWithSchema)newChild);
+            qnameToKeys.put(childSchema.getQName(), (SimpleNodeDataWithSchema)newChild);
         }
         super.addChild(newChild);
     }
 
     private boolean isPartOfKey(final LeafSchemaNode potentialKey) {
-        List<QName> keys = ((ListSchemaNode) getSchema()).getKeyDefinition();
-        for (QName qName : keys) {
-            if (qName.equals(potentialKey.getQName())) {
+        for (QName qname : ((ListSchemaNode) getSchema()).getKeyDefinition()) {
+            if (qname.equals(potentialKey.getQName())) {
                 return true;
             }
         }
@@ -59,12 +57,13 @@ public class ListEntryNodeDataWithSchema extends CompositeNodeDataWithSchema {
             return;
         }
 
-        Preconditions.checkState(keyDef.size() == qNameToKeys.size(), "Input is missing some of the keys of %s", getSchema().getQName());
+        Preconditions.checkState(keyDef.size() == qnameToKeys.size(), "Input is missing some of the keys of %s",
+                getSchema().getQName());
 
         // Need to restore schema order...
         final Map<QName, Object> predicates = new LinkedHashMap<>();
         for (QName qname : keyDef) {
-            predicates.put(qname, qNameToKeys.get(qname).getValue());
+            predicates.put(qname, qnameToKeys.get(qname).getValue());
         }
 
         writer.nextDataSchemaNode(getSchema());

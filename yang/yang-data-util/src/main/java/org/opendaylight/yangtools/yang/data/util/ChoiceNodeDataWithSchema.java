@@ -14,9 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 /**
- *
- * childs - empty augment - only one element can be
- *
+ * childs - empty augment - only one element can be.
  */
 class ChoiceNodeDataWithSchema extends CompositeNodeDataWithSchema {
 

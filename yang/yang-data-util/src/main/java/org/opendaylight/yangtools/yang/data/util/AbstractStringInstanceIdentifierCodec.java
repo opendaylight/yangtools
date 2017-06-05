@@ -24,7 +24,8 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * prefix:name tuple. Typical uses are RESTCONF/JSON (module:name) and XML (prefix:name).
  */
 @Beta
-public abstract class AbstractStringInstanceIdentifierCodec extends AbstractNamespaceCodec implements InstanceIdentifierCodec<String> {
+public abstract class AbstractStringInstanceIdentifierCodec extends AbstractNamespaceCodec
+        implements InstanceIdentifierCodec<String> {
 
     @Override
     public final String serialize(final YangInstanceIdentifier data) {
@@ -67,21 +68,22 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
     }
 
     /**
-     *
      * Returns DataSchemaContextTree associated with SchemaContext for which
      * serialization / deserialization occurs.
      *
+     * <p>
      * Implementations MUST provide non-null Data Tree context, in order
      * for correct serialization / deserialization of PathArguments,
      * since XML representation does not have Augmentation arguments
      * and does not provide path arguments for cases.
      *
+     * <p>
      * This effectively means same input XPath representation of Path Argument
      * may result in different YangInstanceIdentifiers if models are different
      * in uses of choices and cases.
      *
      * @return DataSchemaContextTree associated with SchemaContext for which
-     * serialization / deserialization occurs.
+     *         serialization / deserialization occurs.
      */
     protected abstract @Nonnull DataSchemaContextTree getDataContextTree();
 

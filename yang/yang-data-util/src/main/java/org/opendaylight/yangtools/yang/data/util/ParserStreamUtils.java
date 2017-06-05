@@ -27,11 +27,8 @@ public final class ParserStreamUtils {
 
     /**
      * Returns stack of schema nodes via which it was necessary to pass to get schema node with specified
-     * {@code childName} and {@code namespace}
+     * {@code childName} and {@code namespace}.
      *
-     * @param dataSchemaNode
-     * @param childName
-     * @param namespace
      * @return stack of schema nodes via which it was passed through. If found schema node is direct child then stack
      *         contains only one node. If it is found under choice and case then stack should contains 2*n+1 element
      *         (where n is number of choices through it was passed)
@@ -49,8 +46,8 @@ public final class ParserStreamUtils {
                     final QName childQName = childNode.getQName();
 
                     if (childQName.getLocalName().equals(childName) && childQName.getNamespace().equals(namespace)) {
-                        if (potentialChildNode == null ||
-                                childQName.getRevision().after(potentialChildNode.getQName().getRevision())) {
+                        if (potentialChildNode == null
+                                || childQName.getRevision().after(potentialChildNode.getQName().getRevision())) {
                             potentialChildNode = childNode;
                         }
                     }
@@ -65,8 +62,8 @@ public final class ParserStreamUtils {
         // try to find data schema node in choice (looking for first match)
         for (final ChoiceSchemaNode choiceNode : childChoices) {
             for (final ChoiceCaseNode concreteCase : choiceNode.getCases()) {
-                final Deque<DataSchemaNode> resultFromRecursion = findSchemaNodeByNameAndNamespace(concreteCase, childName,
-                        namespace);
+                final Deque<DataSchemaNode> resultFromRecursion = findSchemaNodeByNameAndNamespace(concreteCase,
+                        childName, namespace);
                 if (!resultFromRecursion.isEmpty()) {
                     resultFromRecursion.push(concreteCase);
                     resultFromRecursion.push(choiceNode);

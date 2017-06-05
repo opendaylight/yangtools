@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 /**
  * Iterator which lazily parses {@link PathArgument} from string representation.
  *
+ * <p>
  * Note that invocation of {@link #hasNext()} or {@link #next()} may result in
  * throwing of {@link IllegalArgumentException} if underlying string representation
  * is not correctly serialized or does not represent instance identifier valid
@@ -31,7 +32,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 class XpathStringParsingPathArgumentBuilder implements Builder<Collection<PathArgument>> {
 
     /**
-     * Matcher matching WSP YANG ABNF token
+     * Matcher matching WSP YANG ABNF token.
      */
     private static final CharMatcher WSP = CharMatcher.anyOf(" \t");
 
@@ -42,7 +43,7 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Collection<PathAr
             .or(CharMatcher.inRange('A', 'Z')).or(CharMatcher.is('_')).precomputed();
 
     /**
-     * Matcher matching IDENTIFIER token
+     * Matcher matching IDENTIFIER token.
      */
     private static final CharMatcher IDENTIFIER = IDENTIFIER_FIRST_CHAR.or(CharMatcher.inRange('0', '9'))
             .or(CharMatcher.anyOf(".-")).precomputed();
@@ -182,11 +183,9 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Collection<PathAr
     }
 
     /**
-     * Returns true if all characters from input string
-     * were consumed.
+     * Returns true if all characters from input string were consumed.
      *
-     * @return true if all characters from input string
-     * were consumed.
+     * @return true if all characters from input string were consumed.
      */
     private boolean allCharactersConsumed() {
         return offset == data.length();
@@ -206,12 +205,12 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Collection<PathAr
     /**
      * Fails parsing if a condition is not met.
      *
+     * <p>
      * In case of error provides pointer to failed instance identifier,
      * offset on which failure occurred with explanation.
      *
      * @param condition Fails parsing if {@code condition} is false
      * @param errorMsg Error message which will be provided to user.
-     * @param attributes
      */
     private void checkValid(final boolean condition, final String errorMsg, final Object... attributes) {
         if (!condition) {
@@ -248,15 +247,14 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Collection<PathAr
     }
 
     /**
-     * Increases processing offset by 1
+     * Increases processing offset by 1.
      */
     private void skipCurrentChar() {
         offset++;
     }
 
     /**
-     * Skip whitespace characters, sets offset to first following
-     * non-whitespace character.
+     * Skip whitespace characters, sets offset to first following non-whitespace character.
      */
     private void skipWhitespaces() {
         nextSequenceEnd(WSP);

@@ -15,10 +15,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 class UnorderedMapMixinContextNode extends AbstractMixinContextNode<NodeIdentifier> {
-
     private final ListItemContextNode innerNode;
 
-    public UnorderedMapMixinContextNode(final ListSchemaNode list) {
+    UnorderedMapMixinContextNode(final ListSchemaNode list) {
         super(NodeIdentifier.create(list.getQName()), list);
         this.innerNode = new ListItemContextNode(new NodeIdentifierWithPredicates(list.getQName(),
                 Collections.emptyMap()), list);
@@ -39,5 +38,4 @@ class UnorderedMapMixinContextNode extends AbstractMixinContextNode<NodeIdentifi
         }
         return null;
     }
-
 }

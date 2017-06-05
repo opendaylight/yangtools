@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
  * Pre-computed CodecCache. All possible codecs are created upfront at instantiation time, after which they are
  * available for the cost of a constant lookup.
  *
+ * <p>
  * Instantiation needs to occur through {@link LazyCodecCache#toPrecomputed()} after the lazy cache has been fully
  * populated.
  *

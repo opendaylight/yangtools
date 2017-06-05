@@ -98,17 +98,29 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
     }
 
     protected abstract T binaryCodec(BinaryTypeDefinition type);
+
     protected abstract T booleanCodec(BooleanTypeDefinition type);
+
     protected abstract T bitsCodec(BitsTypeDefinition type);
+
     protected abstract T emptyCodec(EmptyTypeDefinition type);
+
     protected abstract T enumCodec(EnumTypeDefinition type);
+
     protected abstract T identityRefCodec(IdentityrefTypeDefinition type, QNameModule module);
+
     protected abstract T instanceIdentifierCodec(InstanceIdentifierTypeDefinition type);
+
     protected abstract T intCodec(IntegerTypeDefinition type);
+
     protected abstract T decimalCodec(DecimalTypeDefinition type);
+
     protected abstract T stringCodec(StringTypeDefinition type);
+
     protected abstract T uintCodec(UnsignedIntegerTypeDefinition type);
+
     protected abstract T unionCodec(UnionTypeDefinition type, List<T> codecs);
+
     protected abstract T unknownCodec(UnknownTypeDefinition type);
 
     private T getSimpleCodecFor(final TypeDefinition<?> type) {

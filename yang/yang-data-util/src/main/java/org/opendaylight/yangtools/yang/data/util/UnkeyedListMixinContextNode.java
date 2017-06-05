@@ -16,7 +16,7 @@ class UnkeyedListMixinContextNode extends AbstractMixinContextNode<NodeIdentifie
 
     private final UnkeyedListItemContextNode innerNode;
 
-    public UnkeyedListMixinContextNode(final ListSchemaNode list) {
+    UnkeyedListMixinContextNode(final ListSchemaNode list) {
         super(NodeIdentifier.create(list.getQName()), list);
         this.innerNode = new UnkeyedListItemContextNode(list);
     }
