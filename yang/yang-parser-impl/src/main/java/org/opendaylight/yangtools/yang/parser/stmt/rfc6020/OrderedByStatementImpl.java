@@ -55,6 +55,17 @@ public class OrderedByStatementImpl extends AbstractDeclaredStatement<String> im
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }
+
+        @Override
+        public String internArgument(final String rawArgument) {
+            if ("user".equals(rawArgument)) {
+                return "user";
+            } else if ("system".equals(rawArgument)) {
+                return "system";
+            } else {
+                return rawArgument;
+            }
+        }
     }
 
     @Nonnull
