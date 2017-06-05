@@ -64,9 +64,11 @@ public abstract class AbstractObjectCache implements ObjectCache {
      * Key used in the underlying map. It is essentially a soft reference, with
      * slightly special properties.
      *
+     * <p>
      * It acts as a proxy for the object it refers to and essentially delegates
      * to it. There are three exceptions here:
      *
+     * <p>
      * 1) This key needs to have a cached hash code. The requirement is that the
      *    key needs to be able to look itself up after the reference to the object
      *    has been cleared (and thus we can no longer look it up from there). One

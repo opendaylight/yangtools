@@ -25,13 +25,15 @@ public class ArgumentsExtractorVerifier implements VerificationMode {
         InvocationsFinder finder = new InvocationsFinder();
         List<Invocation> actualInvocations = finder.findInvocations(data.getAllInvocations(), data.getWanted());
         if (actualInvocations.size() != 1) {
-            throw new MockitoException("This verifier can only be used with 1 invocation, got " + actualInvocations.size());
+            throw new MockitoException("This verifier can only be used with 1 invocation, got "
+                    + actualInvocations.size());
         }
         Invocation invocation = actualInvocations.get(0);
         arguments = invocation.getArguments();
         invocation.markVerified();
 
     }
+
     public Object[] getArguments() {
         return arguments;
     }

@@ -11,13 +11,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 
+import com.google.common.base.FinalizableReferenceQueue;
+import com.google.common.cache.CacheBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.objcache.ObjectCache;
-
-import com.google.common.base.FinalizableReferenceQueue;
-import com.google.common.cache.CacheBuilder;
 
 public class CacheTest {
     private FinalizableReferenceQueue queue;

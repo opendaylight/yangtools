@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.concepts.ProductAwareBuilder;
  * indexes and spend some CPU cycles on walking the index to potentially
  * end up with a reused object.
  *
+ * <p>
  * Note that the cached objects should really be semantically {@link Immutable}.
  * This interface does not enforce that interface contract simply because
  * there are third-party objects which fulfill this contract.

@@ -27,19 +27,19 @@ public final class ObjectCacheFactory {
     @GuardedBy("this")
     private static synchronized IObjectCacheFactory initialize() {
         // Double-check under lock
-        IObjectCacheFactory f = factory;
-        if (f != null) {
-            return f;
+        IObjectCacheFactory fa = factory;
+        if (fa != null) {
+            return fa;
         }
 
         try {
-            f = StaticObjectCacheBinder.getInstance().getProductCacheFactory();
-            factory = f;
+            fa = StaticObjectCacheBinder.getInstance().getProductCacheFactory();
+            factory = fa;
         } catch (NoClassDefFoundError e) {
-            f = NoopObjectCacheBinder.INSTANCE.getProductCacheFactory();
+            fa = NoopObjectCacheBinder.INSTANCE.getProductCacheFactory();
         }
 
-        return f;
+        return fa;
     }
 
     public static synchronized void reset() {
@@ -54,11 +54,11 @@ public final class ObjectCacheFactory {
      * @return Object cache instance.
      */
     public static ObjectCache getObjectCache(@Nonnull final Class<?> objClass) {
-        IObjectCacheFactory f = factory;
-        if (f == null) {
-            f = initialize();
+        IObjectCacheFactory fa = factory;
+        if (fa == null) {
+            fa = initialize();
         }
 
-        return f.getObjectCache(Preconditions.checkNotNull(objClass));
+        return fa.getObjectCache(Preconditions.checkNotNull(objClass));
     }
 }

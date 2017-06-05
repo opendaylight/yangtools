@@ -13,12 +13,11 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import com.google.common.base.FinalizableReferenceQueue;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.objcache.spi.AbstractObjectCache.SoftKey;
-
-import com.google.common.base.FinalizableReferenceQueue;
 
 public class SoftKeyTest {
     private FinalizableReferenceQueue queue;
