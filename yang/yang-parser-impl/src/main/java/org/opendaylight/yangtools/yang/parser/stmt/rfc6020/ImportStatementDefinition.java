@@ -58,7 +58,7 @@ public class ImportStatementDefinition extends
             .builder(YangStmtMapping.IMPORT)
             .addMandatory(YangStmtMapping.PREFIX)
             .addOptional(YangStmtMapping.REVISION_DATE)
-            .addOptional(SupportedExtensionsMapping.SEMANTIC_VERSION)
+            .addOptional(SupportedExtensionsMapping.OPENCONFIG_VERSION)
             .build();
 
     public ImportStatementDefinition() {

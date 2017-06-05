@@ -77,7 +77,7 @@ public class ModuleStatementSupport extends
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
             .addOptional(YangStmtMapping.YANG_VERSION)
-            .addOptional(SupportedExtensionsMapping.SEMANTIC_VERSION)
+            .addOptional(SupportedExtensionsMapping.OPENCONFIG_VERSION)
             .build();
 
     public ModuleStatementSupport() {

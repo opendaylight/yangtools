@@ -256,7 +256,7 @@ public abstract class YangModelDependencyInfo {
     private static SemVer getSemanticVersion(final StatementContext statement, final String sourceName) {
         final List<StatementContext> subStatements = statement.statement();
         String semVerString = null;
-        final String semVerStmtName = SupportedExtensionsMapping.SEMANTIC_VERSION.getStatementName().getLocalName();
+        final String semVerStmtName = SupportedExtensionsMapping.OPENCONFIG_VERSION.getStatementName().getLocalName();
         for (final StatementContext subStatement : subStatements) {
             final String subStatementName = Utils.trimPrefix(subStatement.keyword().getText());
             if (semVerStmtName.equals(subStatementName)) {
