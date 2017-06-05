@@ -16,8 +16,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,7 +23,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -41,7 +38,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -85,15 +81,6 @@ public final class Utils {
     private static final String YANG_XPATH_FUNCTIONS_STRING =
             "(re-match|deref|derived-from(-or-self)?|enum-value|bit-is-set)(\\()";
     private static final Pattern YANG_XPATH_FUNCTIONS_PATTERN = Pattern.compile(YANG_XPATH_FUNCTIONS_STRING);
-
-    private static final Map<String, DeviateKind> KEYWORD_TO_DEVIATE_MAP;
-    static {
-        final Builder<String, DeviateKind> keywordToDeviateMapBuilder = ImmutableMap.builder();
-        for (final DeviateKind deviate : DeviateKind.values()) {
-            keywordToDeviateMapBuilder.put(deviate.getKeyword(), deviate);
-        }
-        KEYWORD_TO_DEVIATE_MAP = keywordToDeviateMapBuilder.build();
-    }
 
     private static final ThreadLocal<XPathFactory> XPATH_FACTORY = new ThreadLocal<XPathFactory>() {
         @Override
@@ -399,11 +386,6 @@ public final class Utils {
                 .isAssignableFrom(UnknownStatementImpl.class);
     }
 
-    public static DeviateKind parseDeviateFromString(final StmtContext<?, ?, ?> ctx, final String deviateKeyword) {
-        return SourceException.throwIfNull(KEYWORD_TO_DEVIATE_MAP.get(deviateKeyword),
-            ctx.getStatementSourceReference(), "String '%s' is not valid deviate argument", deviateKeyword);
-    }
-
     static String internBoolean(final String input) {
         if ("true".equals(input)) {
             return "true";
@@ -462,10 +444,7 @@ public final class Utils {
     }
 
     public static boolean belongsToTheSameModule(final QName targetStmtQName, final QName sourceStmtQName) {
-        if (targetStmtQName.getModule().equals(sourceStmtQName.getModule())) {
-            return true;
-        }
-        return false;
+        return targetStmtQName.getModule().equals(sourceStmtQName.getModule());
     }
 
     public static SourceIdentifier createSourceIdentifier(final RootStatementContext<?, ?, ?> root) {
