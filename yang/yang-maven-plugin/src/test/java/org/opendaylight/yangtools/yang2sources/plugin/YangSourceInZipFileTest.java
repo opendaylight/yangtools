@@ -23,7 +23,7 @@ public class YangSourceInZipFileTest {
     public void yangSourceInZipFileTest() throws Exception {
         final ZipFile file = Mockito.mock(ZipFile.class);
         final ZipEntry entry = Mockito.mock(ZipEntry.class);
-        Mockito.when(entry.getSize()).thenReturn(519l);
+        Mockito.when(entry.getSize()).thenReturn(519L);
         final InputStream inputStream = Mockito.mock(InputStream.class);
         Mockito.when(file.getInputStream(entry)).thenReturn(inputStream);
         final YangSourceInZipFile yangSource = new YangSourceInZipFile(file, entry);

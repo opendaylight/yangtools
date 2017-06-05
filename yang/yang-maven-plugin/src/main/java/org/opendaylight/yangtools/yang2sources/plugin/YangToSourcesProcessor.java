@@ -118,6 +118,7 @@ class YangToSourcesProcessor {
         }
     }
 
+    @SuppressWarnings("checkstyle:illegalCatch")
     private ContextHolder processYang() throws MojoExecutionException {
         SchemaContext resolveSchemaContext;
         List<Closeable> closeables = new ArrayList<>();
@@ -220,8 +221,8 @@ class YangToSourcesProcessor {
         } catch (Exception e) {
             LOG.error("{} Unable to parse {} files from {}", LOG_PREFIX, Util.YANG_SUFFIX, yangFilesRootDir, e);
             Throwable rootCause = Throwables.getRootCause(e);
-            throw new MojoExecutionException(LOG_PREFIX + " Unable to parse " + Util.YANG_SUFFIX + " files from " +
-                    yangFilesRootDir, rootCause);
+            throw new MojoExecutionException(LOG_PREFIX + " Unable to parse " + Util.YANG_SUFFIX + " files from "
+                    + yangFilesRootDir, rootCause);
         }
     }
 
@@ -261,8 +262,9 @@ class YangToSourcesProcessor {
     }
 
     /**
-     * Call generate on every generator from plugin configuration
+     * Call generate on every generator from plugin configuration.
      */
+    @SuppressWarnings("checkstyle:illegalCatch")
     private void generateSources(final ContextHolder context) throws MojoFailureException {
         if (codeGenerators.size() == 0) {
             LOG.warn("{} No code generators provided", LOG_PREFIX);
@@ -289,21 +291,21 @@ class YangToSourcesProcessor {
     }
 
     /**
-     * Instantiate generator from class and call required method
+     * Instantiate generator from class and call required method.
      */
     private void generateSourcesWithOneGenerator(final ContextHolder context, final CodeGeneratorArg codeGeneratorCfg)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
 
         codeGeneratorCfg.check();
 
-        BasicCodeGenerator g = getInstance(codeGeneratorCfg.getCodeGeneratorClass(), BasicCodeGenerator.class);
+        final BasicCodeGenerator g = getInstance(codeGeneratorCfg.getCodeGeneratorClass(), BasicCodeGenerator.class);
         LOG.info("{} Code generator instantiated from {}", LOG_PREFIX, codeGeneratorCfg.getCodeGeneratorClass());
 
         final File outputDir = codeGeneratorCfg.getOutputBaseDir(project);
 
         if (outputDir == null) {
-            throw new NullPointerException("outputBaseDir is null. Please provide a valid outputBaseDir value in the " +
-                    "pom.xml");
+            throw new NullPointerException("outputBaseDir is null. Please provide a valid outputBaseDir value in the "
+                    + "pom.xml");
         }
 
         project.addCompileSourceRoot(outputDir.getAbsolutePath());
@@ -337,7 +339,7 @@ class YangToSourcesProcessor {
     }
 
     /**
-     * Instantiate object from fully qualified class name
+     * Instantiate object from fully qualified class name.
      */
     private static <T> T getInstance(final String codeGeneratorClass, final Class<T> baseType) throws
             ClassNotFoundException, InstantiationException, IllegalAccessException {

@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
 final class Util {
 
     /**
-     * It isn't desirable to create instances of this class
+     * It isn't desirable to create instances of this class.
      */
     private Util() {
     }
@@ -54,7 +54,8 @@ final class Util {
 
     private static final Logger LOG = LoggerFactory.getLogger(Util.class);
 
-    static Collection<File> listFiles(final File root, final Collection<File> excludedFiles) throws FileNotFoundException {
+    static Collection<File> listFiles(final File root, final Collection<File> excludedFiles)
+            throws FileNotFoundException {
         if (!root.exists()) {
             LOG.warn("{} YANG source directory {} not found. No code will be generated.", YangToSourcesProcessor
                     .LOG_PREFIX, root.toString());
@@ -168,8 +169,8 @@ final class Util {
             if (artifact.getGroupId().equals(d.getGroupId()) && artifact.getArtifactId().equals(d.getArtifactId())) {
                 if (!(artifact.getVersion().equals(d.getVersion()))) {
                     LOG.warn("{} Dependency resolution conflict:", YangToSourcesProcessor.LOG_PREFIX);
-                    LOG.warn("{} '{}' dependency [{}] has different version than one declared in current project [{}]" +
-                                    ". It is recommended to fix this problem because it may cause compilation errors.",
+                    LOG.warn("{} '{}' dependency [{}] has different version than one declared in current project [{}]"
+                            + ". It is recommended to fix this problem because it may cause compilation errors.",
                             YangToSourcesProcessor.LOG_PREFIX, YangToSourcesMojo.PLUGIN_NAME, artifact, d);
                 }
             }
@@ -204,6 +205,7 @@ final class Util {
         }
     }
 
+    @SuppressWarnings("checkstyle:illegalCatch")
     static YangsInZipsResult findYangFilesInDependenciesAsStream(final MavenProject project)
             throws MojoFailureException {
         List<YangSourceFromDependency> yangsFromDependencies = new ArrayList<>();
@@ -256,16 +258,12 @@ final class Util {
     }
 
     /**
-     * Find all dependencies which contains yang sources
-     *
+     * Find all dependencies which contains yang sources.
      * Returns collection of YANG files and Zip files which contains YANG files.
      *
-     * FIXME: Rename to what class is actually doing.
-     *
-     * @param project
-     * @return
-     * @throws MojoFailureException
      */
+    //  FIXME: Rename to what class is actually doing.
+    @SuppressWarnings("checkstyle:illegalCatch")
     static Collection<File> findYangFilesInDependencies(final MavenProject project) throws MojoFailureException {
         final List<File> yangsFilesFromDependencies = new ArrayList<>();
 

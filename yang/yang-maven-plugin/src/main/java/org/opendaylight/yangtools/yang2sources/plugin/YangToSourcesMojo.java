@@ -45,7 +45,8 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * </ol></li>
  * </ol>
  */
-@Mojo(name = "generate-sources", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true)
+@Mojo(name = "generate-sources", defaultPhase = LifecyclePhase.GENERATE_SOURCES,
+    requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true)
 public final class YangToSourcesMojo extends AbstractMojo {
     public static final String PLUGIN_NAME = "org.opendaylight.yangtools:yang-maven-plugin";
 
@@ -82,15 +83,15 @@ public final class YangToSourcesMojo extends AbstractMojo {
     @Component
     private RepositorySystem repoSystem;
 
-    @Parameter( readonly = true, defaultValue = "${localRepository}" )
+    @Parameter(readonly = true, defaultValue = "${localRepository}")
     private ArtifactRepository localRepository;
 
-    @Parameter( readonly = true, defaultValue = "${project.remoteArtifactRepositories}" )
+    @Parameter(readonly = true, defaultValue = "${project.remoteArtifactRepositories}")
     private List<ArtifactRepository> remoteRepos;
 
     // When set to "true", then the execution of the plugin is disabled
-    @Parameter( property = "yang.skip" )
-    private String yang_skip;
+    @Parameter(property = "yang.skip")
+    private String yangSkip;
 
     public YangToSourcesMojo() {
     }
@@ -118,7 +119,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
             yangToSourcesProcessor = new YangToSourcesProcessor(buildContext, yangFilesRootFile,
                     excludedFiles, codeGeneratorArgs, project, inspectDependencies);
         }
-        yangToSourcesProcessor.conditionalExecute("true".equals(yang_skip));
+        yangToSourcesProcessor.conditionalExecute("true".equals(yangSkip));
     }
 
     private static List<CodeGeneratorArg> processCodeGenerators(final CodeGeneratorArg[] codeGenerators) {

@@ -21,7 +21,7 @@ class GeneratedDirectories {
 
     private final File targetGeneratedSources;
 
-    public GeneratedDirectories(MavenProject project) {
+    GeneratedDirectories(MavenProject project) {
         this.targetGeneratedSources = new File(project.getBuild().getDirectory(), "generated-sources");
     }
 

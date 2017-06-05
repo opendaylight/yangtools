@@ -17,7 +17,7 @@ class YangSourceFromFile extends YangSourceFromDependency {
 
     private final File source;
 
-    public YangSourceFromFile(File source) {
+    YangSourceFromFile(File source) {
         this.source = Preconditions.checkNotNull(source);
     }
 

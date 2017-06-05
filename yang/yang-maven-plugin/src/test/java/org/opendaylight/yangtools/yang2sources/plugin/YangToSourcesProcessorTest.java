@@ -30,7 +30,7 @@ public class YangToSourcesProcessorTest {
     private final YangProvider inspectDependencies = Mockito.mock(YangProvider.class);
 
     @Test
-    public void yangToSourcesProcessotTest(){
+    public void yangToSourcesProcessotTest() {
         Mockito.when(this.buildContext.getPath()).thenReturn("path");
         YangToSourcesProcessor processor = new YangToSourcesProcessor(buildContext, yangFilesRootDir,
             ImmutableList.of(), project, dep, inspectDependencies);

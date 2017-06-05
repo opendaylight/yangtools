@@ -93,8 +93,8 @@ public class GenerateSourcesTest {
         private static MavenProject project;
 
         @Override
-        public Collection<File> generateSources(final SchemaContext context, final File outputBaseDir, final Set<Module> currentModules)
-                throws IOException {
+        public Collection<File> generateSources(final SchemaContext context, final File outputBaseDir,
+                final Set<Module> currentModules) throws IOException {
             called++;
             outputDir = outputBaseDir;
             return Lists.newArrayList();

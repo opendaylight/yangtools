@@ -37,7 +37,7 @@ public class YangToSourcesMojoTest {
     private YangToSourcesProcessor proc;
 
     @Test
-    public void yangToSourceMojoTest() throws Exception{
+    public void yangToSourceMojoTest() throws Exception {
         Mockito.when(this.project.getPlugin(YangToSourcesMojo.PLUGIN_NAME)).thenReturn(this.plugin);
 
         this.mojo = new YangToSourcesMojo();

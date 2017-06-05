@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  */
 public interface BasicCodeGenerator {
     /**
-     * Generate sources from provided {@link SchemaContext}
+     * Generate sources from provided {@link SchemaContext}.
      *
      * @param context
      *            parsed from YANG files
@@ -42,7 +42,7 @@ public interface BasicCodeGenerator {
             throws IOException;
 
     /**
-     * Generate sources from provided {@link SchemaContext}
+     * Generate sources from provided {@link SchemaContext}.
      *
      * @param context
      *            parsed from YANG files
@@ -54,7 +54,6 @@ public interface BasicCodeGenerator {
      * @param moduleResourcePathResolver
      *            Function converting a local module to the packaged resource path
      * @return collection of files that were generated from schema context
-     * @throws IOException
      */
     default Collection<File> generateSources(final SchemaContext context, final File outputBaseDir,
             final Set<Module> currentModules,
@@ -64,17 +63,13 @@ public interface BasicCodeGenerator {
 
     /**
      * Provided map contains all configuration that was set in pom for code
-     * generator in additionalConfiguration tag
-     *
-     * @param additionalConfiguration
+     * generator in additionalConfiguration tag.
      */
     void setAdditionalConfig(Map<String, String> additionalConfiguration);
 
     /**
      * Provided folder is marked as resources and its content will be packaged
-     * in resulting jar. Feel free to add necessary resources
-     *
-     * @param resourceBaseDir
+     * in resulting jar. Feel free to add necessary resources.
      */
     void setResourceBaseDir(File resourceBaseDir);
 }

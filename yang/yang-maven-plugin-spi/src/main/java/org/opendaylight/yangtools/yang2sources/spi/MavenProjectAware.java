@@ -16,8 +16,6 @@ public interface MavenProjectAware {
     /**
      * Provided maven project object. Any additional information about current
      * maven project can be accessed from it.
-     *
-     * @param project
      */
     void setMavenProject(MavenProject project);
 }

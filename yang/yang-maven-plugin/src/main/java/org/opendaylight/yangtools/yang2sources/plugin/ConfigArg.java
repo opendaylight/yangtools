@@ -14,7 +14,7 @@ import java.util.Map;
 import org.apache.maven.project.MavenProject;
 
 /**
- * Base complex configuration arguments
+ * Base complex configuration arguments.
  */
 public abstract class ConfigArg {
 
