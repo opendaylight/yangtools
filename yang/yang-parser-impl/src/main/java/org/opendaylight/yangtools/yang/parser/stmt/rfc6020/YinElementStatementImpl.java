@@ -49,6 +49,11 @@ public class YinElementStatementImpl extends AbstractDeclaredStatement<Boolean>
         }
 
         @Override
+        public String internArgument(final String rawArgument) {
+            return Utils.internBoolean(rawArgument);
+        }
+
+        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }

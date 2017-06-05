@@ -49,6 +49,11 @@ public class RequireInstanceStatementImpl extends
         }
 
         @Override
+        public String internArgument(final String rawArgument) {
+            return Utils.internBoolean(rawArgument);
+        }
+
+        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }
@@ -56,6 +61,6 @@ public class RequireInstanceStatementImpl extends
 
     @Override
     public boolean getValue() {
-        return argument();
+        return argument().booleanValue();
     }
 }

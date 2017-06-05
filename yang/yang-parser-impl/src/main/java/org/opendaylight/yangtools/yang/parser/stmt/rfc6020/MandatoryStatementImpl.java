@@ -62,6 +62,11 @@ public class MandatoryStatementImpl extends AbstractDeclaredStatement<Boolean> i
         }
 
         @Override
+        public String internArgument(final String rawArgument) {
+            return Utils.internBoolean(rawArgument);
+        }
+
+        @Override
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }

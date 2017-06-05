@@ -119,7 +119,7 @@ public final class Utils {
         final List<String> keyTokens = SPACE_SPLITTER.splitToList(value);
 
         // to detect if key contains duplicates
-        if ((new HashSet<>(keyTokens)).size() < keyTokens.size()) {
+        if (new HashSet<>(keyTokens).size() < keyTokens.size()) {
             // FIXME: report all duplicate keys
             throw new SourceException(ctx.getStatementSourceReference(), "Duplicate value in list key: %s", value);
         }
@@ -404,17 +404,27 @@ public final class Utils {
             ctx.getStatementSourceReference(), "String '%s' is not valid deviate argument", deviateKeyword);
     }
 
+    static String internBoolean(final String input) {
+        if ("true".equals(input)) {
+            return "true";
+        } else if ("false".equals(input)) {
+            return "false";
+        } else {
+            return input;
+        }
+    }
+
     public static Status parseStatus(final String value) {
         switch (value) {
-        case "current":
-            return Status.CURRENT;
-        case "deprecated":
-            return Status.DEPRECATED;
-        case "obsolete":
-            return Status.OBSOLETE;
-        default:
-            LOG.warn("Invalid 'status' statement: {}", value);
-            return null;
+            case "current":
+                return Status.CURRENT;
+            case "deprecated":
+                return Status.DEPRECATED;
+            case "obsolete":
+                return Status.OBSOLETE;
+            default:
+                LOG.warn("Invalid 'status' statement: {}", value);
+                return null;
         }
     }
 
