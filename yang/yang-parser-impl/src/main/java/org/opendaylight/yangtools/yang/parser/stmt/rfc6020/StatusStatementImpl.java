@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.StatusEffectiveStatementImpl;
 
 public class StatusStatementImpl extends AbstractDeclaredStatement<Status>
@@ -39,7 +40,17 @@ public class StatusStatementImpl extends AbstractDeclaredStatement<Status>
 
         @Override
         public Status parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-            return Utils.parseStatus(value);
+            switch (value) {
+                case "current":
+                    return Status.CURRENT;
+                case "deprecated":
+                    return Status.DEPRECATED;
+                case "obsolete":
+                    return Status.OBSOLETE;
+                default:
+                    throw new SourceException(ctx.getStatementSourceReference(),
+                        "Invalid status '%s', must be one of 'current', 'deprecated' or 'obsolete'", value);
+            }
         }
 
         @Override
