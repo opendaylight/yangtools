@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3afa9182_e8b6be89",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/Module.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-06-05T09:48:52Z",
+      "side": 1,
+      "message": "I think we should just filter getUnknownSchemaNodes(), or not expose this method at all...",
+      "range": {
+        "startLine": 214,
+        "startChar": 0,
+        "endLine": 220,
+        "endChar": 53
+      },
+      "revId": "09c5859c3cbeef4c25e9129972129009d7b81e58",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
