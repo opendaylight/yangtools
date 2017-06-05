@@ -34,7 +34,7 @@ public class YinElementStatementImpl extends AbstractDeclaredStatement<Boolean>
 
         @Override
         public Boolean parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-            return Boolean.valueOf(value);
+            return Utils.parseBoolean(ctx, value);
         }
 
         @Override
@@ -61,6 +61,6 @@ public class YinElementStatementImpl extends AbstractDeclaredStatement<Boolean>
 
     @Override
     public boolean getValue() {
-        return argument();
+        return argument().booleanValue();
     }
 }
