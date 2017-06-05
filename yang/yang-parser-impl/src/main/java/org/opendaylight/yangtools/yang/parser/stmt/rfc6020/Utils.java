@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.RegEx;
 import javax.xml.xpath.XPath;
@@ -270,6 +271,18 @@ public final class Utils {
     public static StatementContextBase<?, ?, ?> findNode(final StmtContext<?, ?, ?> rootStmtCtx,
             final SchemaNodeIdentifier node) {
         return (StatementContextBase<?, ?, ?>) rootStmtCtx.getFromNamespace(SchemaNodeIdentifierBuildNamespace.class, node);
+    }
+
+    static @Nonnull Boolean parseBoolean(final StmtContext<?, ?, ?> ctx, final String input) {
+        if ("true".equals(input)) {
+            return Boolean.TRUE;
+        } else if ("false".equals(input)) {
+            return Boolean.FALSE;
+        } else {
+            throw new SourceException(ctx.getStatementSourceReference(),
+                "Invalid '%s' statement %s '%s', it can be either 'true' or 'false'",
+                ctx.getPublicDefinition().getStatementName(), ctx.getPublicDefinition().getArgumentName(), input);
+        }
     }
 
     static String internBoolean(final String input) {
