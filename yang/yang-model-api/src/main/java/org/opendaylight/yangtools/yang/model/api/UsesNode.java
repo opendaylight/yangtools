@@ -26,7 +26,6 @@ public interface UsesNode extends DocumentedNode.WithStatus {
     @Nonnull SchemaPath getGroupingPath();
 
     /**
-     *
      * Returns augmentations which were specified in this uses node.
      *
      * @return Set of augment statements defined under this uses node
@@ -35,7 +34,7 @@ public interface UsesNode extends DocumentedNode.WithStatus {
 
     /**
      * Returns <code>true</code> if the data node was added by augmentation,
-     * otherwise returns <code>false</code>
+     * otherwise returns <code>false</code>.
      *
      * @return <code>true</code> if the data node was added by augmentation,
      *         otherwise returns <code>false</code>
@@ -44,7 +43,7 @@ public interface UsesNode extends DocumentedNode.WithStatus {
 
     /**
      * Returns <code>true</code> if the data node was added by uses statement,
-     * otherwise returns <code>false</code>
+     * otherwise returns <code>false</code>.
      *
      * @return <code>true</code> if the data node was added by uses statement,
      *         otherwise returns <code>false</code>
@@ -61,8 +60,9 @@ public interface UsesNode extends DocumentedNode.WithStatus {
     @Nonnull Map<SchemaPath, SchemaNode> getRefines();
 
     /**
-     * Returns when statement
+     * Returns when statement.
      *
+     * <p>
      * If when condition is present node defined by the parent data definition
      * statement is only valid when the returned XPath expression conceptually
      * evaluates to "true" for a particular instance, then the node defined by

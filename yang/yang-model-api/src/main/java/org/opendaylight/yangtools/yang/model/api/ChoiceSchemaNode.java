@@ -25,7 +25,6 @@ public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget {
     Set<ChoiceCaseNode> getCases();
 
     /**
-     *
      * Returns the concrete case according to specified Q name.
      *
      * @param name
@@ -46,8 +45,7 @@ public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget {
     ChoiceCaseNode getCaseNodeByName(String name);
 
     /**
-     *
-     * Returns name of case which is in the choice specified as default
+     * Returns name of case which is in the choice specified as default.
      *
      * @return string with the name of case which is specified in the argument
      *         of the YANG <code>default</code> substatement of

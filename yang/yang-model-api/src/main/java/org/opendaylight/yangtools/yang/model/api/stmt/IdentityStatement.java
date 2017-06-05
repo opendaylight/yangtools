@@ -19,11 +19,14 @@ public interface IdentityStatement extends DeclaredStatement<QName>, Documentati
     @Nonnull QName getName();
 
     /**
+     * Returns the base identity.
      * @deprecated use {@link #getBases()} instead
      *
      * @return base statement
      */
-    @Deprecated @Nullable BaseStatement getBase();
+    @Deprecated
+    @Nullable
+    BaseStatement getBase();
 
     // FIXME: version 2.0.0: make this method non-default
     @Nonnull default Collection<? extends BaseStatement> getBases() {

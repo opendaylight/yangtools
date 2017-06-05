@@ -9,21 +9,19 @@ package org.opendaylight.yangtools.yang.model.api;
 
 /**
  * Interface describing YANG 'grouping' statement.
+ *
  * <p>
  * It is used to define a reusable block of nodes, which may be used locally in
- * the module, in modules that include it, and by other modules that import from
- * it.
- * </p>
+ * the module, in modules that include it, and by other modules that import from it.
  */
-public interface GroupingDefinition extends DataNodeContainer, SchemaNode, NotificationNodeContainer, ActionNodeContainer {
-
+public interface GroupingDefinition extends DataNodeContainer, SchemaNode, NotificationNodeContainer,
+       ActionNodeContainer {
     /**
      * Returns <code>true</code> if the data node was added by uses statement,
-     * otherwise returns <code>false</code>
+     * otherwise returns <code>false</code>.
      *
      * @return <code>true</code> if the data node was added by uses statement,
      *         otherwise returns <code>false</code>
      */
     boolean isAddedByUses();
-
 }

@@ -21,13 +21,13 @@ import javax.annotation.Nonnull;
  * This interface was modeled according to definition in <a
  * href="https://tools.ietf.org/html/rfc6020#section-7.10">[RFC-6020] The anyxml
  * Statement</a>
- *
- *
  */
 @Beta
 public interface YangModeledAnyXmlSchemaNode extends AnyXmlSchemaNode {
 
     /**
+     * Returns the root schema node of the data in this anyxml node.
+     *
      * @return DataSchemaNode - schema of contained XML data
      */
     @Nonnull

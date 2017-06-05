@@ -16,7 +16,6 @@ import javax.annotation.Nullable;
  * Node which can have documentation assigned.
  */
 public interface DocumentedNode {
-
     /**
      * All implementations should override this method.
      * The default definition of this method is used only in YANG 1.0 (RFC6020) implementations of
@@ -53,9 +52,8 @@ public interface DocumentedNode {
     }
 
     interface WithStatus extends DocumentedNode {
-
         /**
-         * Returns status of the instance of the type <code>SchemaNode</code>
+         * Returns status of the instance of the type <code>SchemaNode</code>.
          *
          * @return status of this node which represents the argument of the YANG
          *         <code>status</code> substatement

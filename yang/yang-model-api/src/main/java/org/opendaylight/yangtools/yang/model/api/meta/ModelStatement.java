@@ -11,9 +11,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Model statement
- *
- * There are two base types of model statements:
+ * Model statement. There are two base types of model statements:
  * <ul>
  * <li>{@link DeclaredStatement} - Statement representation as was defined in original
  * source. This representation could be used during computation of effective model
@@ -39,7 +37,7 @@ public interface ModelStatement<A> {
     @Nonnull StatementDefinition statementDefinition();
 
     /**
-     * Returns statement argument
+     * Returns statement argument.
      *
      * @return statement argument or null if statement does not have argument.
      */

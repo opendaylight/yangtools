@@ -29,5 +29,6 @@ public interface SchemaRepository {
      */
     SchemaContextFactory createSchemaContextFactory(@Nonnull SchemaSourceFilter filter);
 
-    <T extends SchemaSourceRepresentation> CheckedFuture<T, SchemaSourceException> getSchemaSource(@Nonnull SourceIdentifier id, @Nonnull Class<T> represetation);
+    <T extends SchemaSourceRepresentation> CheckedFuture<T, SchemaSourceException> getSchemaSource(
+            @Nonnull SourceIdentifier id, @Nonnull Class<T> represetation);
 }

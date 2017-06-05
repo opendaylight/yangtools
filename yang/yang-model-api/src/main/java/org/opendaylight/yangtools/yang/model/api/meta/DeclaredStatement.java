@@ -12,7 +12,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Represents declared statement
+ * Represents declared statement.
  *
  * @param <A> Argument type ({@link Void} if statement does not have argument.)
  */

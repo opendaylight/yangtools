@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 /**
+ * Allows access to module source.
+ *
  * @deprecated This interface is a violation of the effective model contract. To look up the source of a particular
  *             module use a {@link org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository} or a similar
  *             lookup table.

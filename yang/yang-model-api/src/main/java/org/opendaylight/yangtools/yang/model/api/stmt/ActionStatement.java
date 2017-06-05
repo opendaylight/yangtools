@@ -13,8 +13,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 /**
- * Represents YANG action statement
+ * Represents YANG action statement.
  *
+ * <p>
  * The "action" statement is used to define an operation connected to a
  * specific container or list data node.  It takes one argument, which
  * is an identifier, followed by a block of substatements that holds

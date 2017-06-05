@@ -11,13 +11,11 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
- *
  * Contains the method for getting the details about YANG <code>identity</code>.
  */
 public interface IdentityTypeDefinition extends TypeDefinition<IdentityTypeDefinition> {
-
     /**
-     * Returns the name of the YANG identity
+     * Returns the name of the YANG identity.
      *
      * @return QName of the YANG identity
      */

@@ -74,15 +74,19 @@ public interface TypeStatement extends DeclaredStatement<String> {
     interface IdentityRefSpecification extends TypeStatement {
 
         /**
+         * Returns the base identity.
          * @deprecated use {@link #getBases()} instead
          *
          * @return base statement
          */
-        @Deprecated @Nonnull BaseStatement getBase();
+        @Deprecated
+        @Nonnull BaseStatement getBase();
 
         /**
-         * @return collection of base statements (in YANG 1.1 models) or a collection containing just one base statement
-         * (in YANG 1.0 models)
+         * Returns the base statements.
+         *
+         * @return collection of base statements (in YANG 1.1 models) or a collection containing just one base
+         *         statement (in YANG 1.0 models)
          */
         @Nonnull Collection<? extends BaseStatement> getBases();
     }

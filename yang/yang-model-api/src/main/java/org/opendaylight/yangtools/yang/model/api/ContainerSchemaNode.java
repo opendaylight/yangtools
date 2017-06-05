@@ -15,8 +15,9 @@ package org.opendaylight.yangtools.yang.model.api;
  */
 public interface ContainerSchemaNode extends DataNodeContainer,
         AugmentationTarget, DataSchemaNode, NotificationNodeContainer, ActionNodeContainer {
-
     /**
+     * Returns true if this container is marked as presence.
+     *
      * @return true, if presence of this container has an explicit meaning,
      *         false otherwise
      */

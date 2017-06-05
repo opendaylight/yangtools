@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
  */
 public interface IdentifierNamespace<K,V> {
     /**
-     * Returns value associated with supplied identifier
+     * Returns value associated with supplied identifier.
      *
      * @param identifier Identifier of value
      * @return value or null, if identifier is not present in namespace.

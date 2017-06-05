@@ -34,10 +34,12 @@ public interface SchemaSourceProvider<T extends SchemaSourceRepresentation> {
      * the newest available revision, or throws {@link MissingSchemaSourceException}.
      * </ul>
      *
+     * <p>
      * In either case the returned representation is required to report a non-null
      * revision in the {@link SourceIdentifier} returned from
      * {@link SchemaSourceRepresentation#getIdentifier()}.
      *
+     * <p>
      * Implementations are not required to provide constant behavior in time, notably
      * this different invocation of this method may produce different results.
      *

@@ -548,6 +548,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         @Override
+        @SuppressWarnings("checkstyle:equalsHashCode")
         public boolean equals(final Object obj) {
             if (!super.equals(obj)) {
                 return false;
@@ -612,6 +613,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         @Override
+        @SuppressWarnings("checkstyle:equalsHashCode")
         public boolean equals(final Object obj) {
             if (!super.equals(obj)) {
                 return false;

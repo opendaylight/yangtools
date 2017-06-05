@@ -14,7 +14,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 
 /**
- * Statement which can contain action statements
+ * Statement which can contain action statements.
  */
 @Beta
 public interface ActionStatementContainer {

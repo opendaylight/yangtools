@@ -13,8 +13,9 @@ import com.google.common.base.Preconditions;
 import java.util.Objects;
 
 /**
- * YANG Schema revision source identifier
+ * YANG Schema revision source identifier.
  *
+ * <p>
  * Simple transfer object represents revision identifier of source for YANG
  * schema (module or submodule), which consists of
  * <ul>
@@ -22,10 +23,12 @@ import java.util.Objects;
  * <li>Module revision (optional) ({link {@link #getRevision()})
  * </ul>
  *
+ * <p>
  * Revision source identifier is designated to be carry only necessary
  * information to look-up YANG model source and to be used by various
  * SchemaSourceProviders.
  *
+ * <p>
  * <b>Note:</b>On source retrieval layer it is impossible to distinguish between
  * YANG module and/or submodule unless source is present.
  *
@@ -38,7 +41,6 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
     private static final long serialVersionUID = 1L;
 
     /**
-     *
      * Creates new YANG Schema revision source identifier for sources without
      * a revision.
      *
@@ -62,7 +64,6 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
     }
 
     /**
-     *
      * Creates new YANG Schema revision source identifier.
      *
      * @param name
@@ -76,7 +77,6 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
     }
 
     /**
-     *
      * Creates new YANG Schema revision source identifier.
      *
      * @param moduleName

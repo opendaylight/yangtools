@@ -57,7 +57,7 @@ public interface SchemaContext extends ContainerSchemaNode {
 
     /**
      * Returns extencion definition instances which are defined as the direct
-     * subelements in all YANG modules in the context
+     * subelements in all YANG modules in the context.
      *
      * @return set of <code>ExtensionDefinition</code> instances which
      *         represents nodes defined via <code>extension</code> YANG keyword
@@ -81,7 +81,6 @@ public interface SchemaContext extends ContainerSchemaNode {
     Module findModuleByName(final String name, final Date revision);
 
     /**
-     *
      * Returns module instance (from the context) with concrete namespace.
      *
      * @param namespace
@@ -97,8 +96,8 @@ public interface SchemaContext extends ContainerSchemaNode {
      * Returns module instance based on given namespace and revision. If
      * revision is not specified, returns module with newest revision.
      *
-     * @param namespace
-     * @param revision
+     * @param namespace Module namespace, may be null
+     * @param revision Module revision, may be null
      * @return Matching module or null if a match is not found
      */
     default Module findModuleByNamespaceAndRevision(final URI namespace, final Date revision) {
@@ -116,9 +115,10 @@ public interface SchemaContext extends ContainerSchemaNode {
     /**
      * Get yang source code represented as string for matching
      * {@link org.opendaylight.yangtools.yang.model.api.ModuleIdentifier}.
+     *
      * @param moduleIdentifier must provide a non-null
-     * {@link org.opendaylight.yangtools.yang.model.api.ModuleIdentifier#getName()},
-     * other methods might return null.
+     *        {@link org.opendaylight.yangtools.yang.model.api.ModuleIdentifier#getName()}, other methods might return
+     *        null.
      * @return value iif matching module is found in schema context.
      */
     Optional<String> getModuleSource(ModuleIdentifier moduleIdentifier);
@@ -127,5 +127,4 @@ public interface SchemaContext extends ContainerSchemaNode {
      * Get all module and submodule identifiers.
      */
     Set<ModuleIdentifier> getAllModuleIdentifiers();
-
 }

@@ -16,6 +16,7 @@ import javax.annotation.Nullable;
  * It takes one argument, which is an identifier, followed by a block of
  * substatements that holds detailed anydata information.
  *
+ * <p>
  * The "anydata" statement is used to represent an unknown set of nodes
  * that can be modeled with YANG, except anyxml, but for which the data
  * model is not known at module design time.  It is possible, though not
@@ -25,8 +26,9 @@ import javax.annotation.Nullable;
  */
 @Beta
 public interface AnyDataSchemaNode extends DataSchemaNode {
-
     /**
+     * Schema of XML data.
+     *
      * @return schema of contained XML data or null if it is not provided
      */
     @Nullable ContainerSchemaNode getSchemaOfAnyData();

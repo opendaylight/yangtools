@@ -23,9 +23,11 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 /**
  * Base class of YANG Schema source identifiers.
  *
+ * <p>
  * Source identifiers are designated to be carry only necessary information to
  * look-up YANG model source and to be used by various SchemaSourceProviders.
  *
+ * <p>
  * (For further reference see: http://tools.ietf.org/html/rfc6020#section-5.2
  * and http://tools.ietf.org/html/rfc6022#section-3.1 ).
  */
@@ -43,9 +45,9 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
     /**
      * Simplified compiled revision pattern in format YYYY-mm-dd, which checks
      * only distribution of number elements.
+     *
      * <p>
-     * For checking if supplied string is real date, use
-     * {@link SimpleDateFormatUtil} instead.
+     * For checking if supplied string is real date, use {@link SimpleDateFormatUtil} instead.
      */
     public static final Pattern REVISION_PATTERN = Pattern.compile(REVISION_PATTERN_STR);
 
@@ -56,7 +58,6 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
     private final String name;
 
     /**
-     *
      * Creates new YANG Schema source identifier for sources without revision.
      *
      * @param name
@@ -104,7 +105,7 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
     }
 
     /**
-     * Returns model name
+     * Returns model name.
      *
      * @return model name
      */
@@ -123,7 +124,6 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
     }
 
     /**
-     * <p>
      * Since we've got two ways of model versioning (revision &amp; semantic version),
      * this method shouldn't be called directly anymore. Eventually, callers of this method
      * should be notified before method gets deleted.
@@ -132,8 +132,7 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      * <li>{@link SemVerSourceIdentifier#create(String, SemVer)}</li>
      * <li>{@link SemVerSourceIdentifier#create(String, Optional, SemVer)}</li>
      * <li>{@link SemVerSourceIdentifier#create(String, String, SemVer)}</li>
-     * </ul>
-     * or
+     * </ul>or
      * <ul>
      * <li>{@link RevisionSourceIdentifier#create(String)}</li>
      * <li>{@link RevisionSourceIdentifier#create(String, String)}</li>
@@ -142,13 +141,10 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      *
      * @param moduleName
      *            Name of schema
-
      * @param revision
      *            Revision of source in format YYYY-mm-dd. If not present,
      *            default value will be used.
-     *
      * @return particular SourceIdentifier instance
-     *
      */
     @Deprecated
     public static SourceIdentifier create(final String moduleName, final Optional<String> revision) {
@@ -158,11 +154,11 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
     /**
      * Returns filename for this YANG module as specified in RFC 6020.
      *
-     * Returns filename in format <code>name ['@' revision] '.yang'</code>
      * <p>
-     * Where revision is date in format YYYY-mm-dd.
-     * <p>
+     * Returns filename in format <code>name ['@' revision] '.yang'</code>,
+     * where revision is date in format YYYY-mm-dd.
      *
+     * <p>
      * @see <a href="http://tools.ietf.org/html/rfc6020#section-5.2">RFC6020</a>
      *
      * @return Filename for this source identifier.
@@ -175,9 +171,9 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
     /**
      * Returns filename for this YANG module as specified in RFC 6020.
      *
-     * Returns filename in format <code>moduleName ['@' revision] '.yang'</code>
-     *
-     * Where Where revision-date is in format YYYY-mm-dd.
+     * <p>
+     * Returns filename in format <code>moduleName ['@' revision] '.yang'</code>,
+     * where Where revision-date is in format YYYY-mm-dd.
      *
      * <p>
      * See http://tools.ietf.org/html/rfc6020#section-5.2

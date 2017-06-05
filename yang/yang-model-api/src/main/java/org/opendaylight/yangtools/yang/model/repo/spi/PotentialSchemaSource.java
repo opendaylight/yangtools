@@ -69,14 +69,16 @@ public final class PotentialSchemaSource<T extends SchemaSourceRepresentation> {
     private final SourceIdentifier sourceIdentifier;
     private final int cost;
 
-    private PotentialSchemaSource(final SourceIdentifier sourceIdentifier, final Class<? extends T> representation, final int cost) {
+    private PotentialSchemaSource(final SourceIdentifier sourceIdentifier, final Class<? extends T> representation,
+            final int cost) {
         this.representation = Preconditions.checkNotNull(representation);
         this.sourceIdentifier = Preconditions.checkNotNull(sourceIdentifier);
         Preconditions.checkArgument(cost >= 0, "cost has to be non-negative");
         this.cost = cost;
     }
 
-    public static <T extends SchemaSourceRepresentation> PotentialSchemaSource<T> create(final SourceIdentifier sourceIdentifier, final Class<? extends T> representation, final int cost) {
+    public static <T extends SchemaSourceRepresentation> PotentialSchemaSource<T> create(
+            final SourceIdentifier sourceIdentifier, final Class<? extends T> representation, final int cost) {
         return new PotentialSchemaSource<>(sourceIdentifier, representation, cost);
     }
 

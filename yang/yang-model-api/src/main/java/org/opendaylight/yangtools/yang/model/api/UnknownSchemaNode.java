@@ -10,12 +10,9 @@ package org.opendaylight.yangtools.yang.model.api;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
- *
  * Contains the methods for getting the details about the unknown node.
- *
  */
 public interface UnknownSchemaNode extends SchemaNode {
-
     /**
      * Returns QName instance with the name of the unknown node.
      *
@@ -31,7 +28,6 @@ public interface UnknownSchemaNode extends SchemaNode {
     String getNodeParameter();
 
     /**
-     *
      * Describes whether the node was added through <code>uses</code> YANG
      * keyword.
      *
@@ -41,7 +37,6 @@ public interface UnknownSchemaNode extends SchemaNode {
     boolean isAddedByUses();
 
     /**
-     *
      * Describes whether the node was added through <code>augment</code> YANG
      * statement.
      *
@@ -51,10 +46,9 @@ public interface UnknownSchemaNode extends SchemaNode {
     boolean isAddedByAugmentation();
 
     /**
-     * Get extension definition which identifies this node
+     * Get extension definition which identifies this node.
      *
      * @return extension definition if exists, null otherwise
      */
     ExtensionDefinition getExtensionDefinition();
-
 }

@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 /**
- *
  * Data Schema Node represents abstract supertype from which all data tree
  * definitions are derived.
  *
+ * <p>
  * Contains the method which are used for getting metadata from the schema nodes
  * which contains data.
  *
@@ -23,14 +23,11 @@ package org.opendaylight.yangtools.yang.model.api;
  * @see LeafSchemaNode
  * @see AnyXmlSchemaNode
  * @see AnyDataSchemaNode
- *
- *
  */
 public interface DataSchemaNode extends SchemaNode {
-
     /**
      * Returns <code>true</code> if the data node was added by augmentation,
-     * otherwise returns <code>false</code>
+     * otherwise returns <code>false</code>.
      *
      * @return <code>true</code> if the data node was added by augmentation,
      *         otherwise returns <code>false</code>
@@ -39,7 +36,7 @@ public interface DataSchemaNode extends SchemaNode {
 
     /**
      * Returns <code>true</code> if the data node was added by uses statement,
-     * otherwise returns <code>false</code>
+     * otherwise returns <code>false</code>.
      *
      * @return <code>true</code> if the data node was added by uses statement,
      *         otherwise returns <code>false</code>
@@ -48,7 +45,7 @@ public interface DataSchemaNode extends SchemaNode {
 
     /**
      * Returns <code>true</code> if the data represents configuration data,
-     * otherwise returns <code>false</code>
+     * otherwise returns <code>false</code>.
      *
      * @return <code>true</code> if the data represents configuration data,
      *         otherwise returns <code>false</code>
@@ -56,7 +53,7 @@ public interface DataSchemaNode extends SchemaNode {
     boolean isConfiguration();
 
     /**
-     * Returns the constraints associated with Data Schema Node
+     * Returns the constraints associated with Data Schema Node.
      *
      * @return the constraints associated with Data Schema Node
      */

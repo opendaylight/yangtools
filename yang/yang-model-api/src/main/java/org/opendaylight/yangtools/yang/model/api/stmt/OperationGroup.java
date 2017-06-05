@@ -14,7 +14,7 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
- * Common interface for action and rpc statements
+ * Common interface for action and rpc statements.
  */
 @Beta
 public interface OperationGroup extends DocumentationGroup.WithStatus {

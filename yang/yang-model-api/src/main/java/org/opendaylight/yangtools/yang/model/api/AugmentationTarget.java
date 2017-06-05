@@ -15,10 +15,10 @@ import java.util.Set;
  * input, output, or notification node.
  */
 public interface AugmentationTarget {
-
     /**
+     * Returns augmentations targeting this element.
+     *
      * @return set of augmentations targeting this element.
      */
     Set<AugmentationSchema> getAvailableAugmentations();
-
 }

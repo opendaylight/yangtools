@@ -8,16 +8,14 @@
 package org.opendaylight.yangtools.yang.model.api.meta;
 
 /**
- * Origin of statement
- *
+ * Origin of statement.
  * Represents origin of statement - if it was explicitly present
  * in model representation or if it was inferred from context.
  */
 public enum StatementSource {
 
     /**
-     * Statement was explicitly declared by author
-     * of the supplied model.
+     * Statement was explicitly declared by author of the supplied model.
      */
     DECLARATION,
 
@@ -25,6 +23,7 @@ public enum StatementSource {
      * Statement was derived from context of YANG model / statement
      * and represents effective model.
      *
+     * <p>
      * Effective context nodes are derived from applicable {@link #DECLARATION}
      * statements by interpreting their semantic meaning in context
      * of current statement.

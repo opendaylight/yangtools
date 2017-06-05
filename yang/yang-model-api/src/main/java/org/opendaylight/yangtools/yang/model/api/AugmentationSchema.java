@@ -17,10 +17,10 @@ import java.util.List;
  * from a grouping in a "uses" statement.
  */
 public interface AugmentationSchema extends DataNodeContainer, NotificationNodeContainer, ActionNodeContainer {
-
     /**
-     * Returns when statement
+     * Returns when statement.
      *
+     * <p>
      * If when condition is present node defined by the parent data definition
      * statement is only valid when the returned XPath
      * expression conceptually evaluates to "true"
@@ -32,22 +32,30 @@ public interface AugmentationSchema extends DataNodeContainer, NotificationNodeC
     RevisionAwareXPath getWhenCondition();
 
     /**
+     * Returns description text.
+     *
      * @return textual description of this augment.
      */
     String getDescription();
 
     /**
+     * Returns reference text.
+     *
      * @return textual cross-reference to an external document that provides
      *         additional information relevant to this node.
      */
     String getReference();
 
     /**
+     * Returns status of this node.
+     *
      * @return actual status of this node.
      */
     Status getStatus();
 
     /**
+     * Returns augmentation schema path.
+     *
      * @return SchemaPath that identifies a node in the schema tree. This node
      *         is called the augment's target node. The target node MUST be
      *         either a container, list, choice, case, input, output, or
@@ -57,6 +65,8 @@ public interface AugmentationSchema extends DataNodeContainer, NotificationNodeC
     SchemaPath getTargetPath();
 
     /**
+     * Returns unknown schema node children.
+     *
      * @return collection of all unknown nodes defined in this augmentation
      */
     List<UnknownSchemaNode> getUnknownSchemaNodes();

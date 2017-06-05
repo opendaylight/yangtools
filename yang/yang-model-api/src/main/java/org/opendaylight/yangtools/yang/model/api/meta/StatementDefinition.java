@@ -13,18 +13,19 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
- * Definition / model of YANG {@link DeclaredStatement} and
- * {@link EffectiveStatement}.
+ * Definition / model of YANG {@link DeclaredStatement} and {@link EffectiveStatement}.
  *
+ * <p>
  * Statement concept is defined in RFC6020 section 6.3: <blockquote> A YANG
  * module contains a sequence of statements. Each statement starts with a
  * keyword, followed by zero or one argument </blockquote>
  *
+ * <p>
  * Source: <a href="https://tools.ietf.org/html/rfc6020#section-6.3"> </a>
  */
 public interface StatementDefinition extends Immutable {
     /**
-     * Returns name of the statement
+     * Returns name of the statement.
      *
      * @return Name of the statement
      */
@@ -44,6 +45,7 @@ public interface StatementDefinition extends Immutable {
      * Returns class which represents declared version of statement associated
      * with this definition.
      *
+     * <p>
      * This class should be interface, which provides convenience access to
      * declared substatements.
      *
@@ -56,6 +58,7 @@ public interface StatementDefinition extends Immutable {
     /**
      * Returns class which represents derived behaviour from supplied statement.
      *
+     * <p>
      * This class should be interface, which defines convenience access to
      * statement properties, namespace items and substatements.
      *
@@ -69,7 +72,6 @@ public interface StatementDefinition extends Immutable {
      * Returns true, if argument of statement is represented as value of yin
      * element. If argument of statement is represented as argument of yin
      * element, returns false.
-     *
      *
      * @return returns true, if statement argument is represented as value of
      *         yin element, otherwise returns false.

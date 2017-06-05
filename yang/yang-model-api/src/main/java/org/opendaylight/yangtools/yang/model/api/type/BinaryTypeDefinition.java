@@ -26,10 +26,9 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * Built-In Type</a>
  */
 public interface BinaryTypeDefinition extends TypeDefinition<BinaryTypeDefinition> {
-
     /**
-     * Returns List of number of octets that binary value contains. These are the effective constraints, e.g. they include
-     * any range constraints imposed by base types.
+     * Returns List of number of octets that binary value contains. These are the effective constraints, e.g. they
+     * include any range constraints imposed by base types.
      *
      * @return List of number of octets that binary value contains.
      *

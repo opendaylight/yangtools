@@ -28,8 +28,10 @@ import org.opendaylight.yangtools.concepts.SemVer;
     &nbsp;&nbsp;{@link #getDescription() <b><font color="#b8860b">description</font></b>} "description test";<br>
     &nbsp;&nbsp;{@link #getReference() <b><font color="#008b8b">reference</font></b>} "reference test";<br><br>
 
-    &nbsp;&nbsp;{@link #getOrganization() <b><font color="#606060">organization</font></b>} "John Doe, john.doe@email.com";<br>
-    &nbsp;&nbsp;{@link #getContact() <b><font color="#FF9900">contact</font></b>} "http://www.opendaylight.org/";<br><br>
+    &nbsp;&nbsp;{@link #getOrganization() <b><font color="#606060">organization</font></b>}
+    "John Doe, john.doe@email.com";<br>
+    &nbsp;&nbsp;{@link #getContact() <b><font color="#FF9900">contact</font></b>} "http://www.opendaylight.org/";<br>
+    <br>
 
     &nbsp;&nbsp;{@link #getFeatures() <b><font color="#8b0000">feature</font></b>} feature-test{<br>
     &nbsp;&nbsp;&nbsp;&nbsp; description "description of some feature";<br>
@@ -66,7 +68,7 @@ public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIden
     SemVer DEFAULT_SEMANTIC_VERSION = SemVer.create(0, 0, 0);
 
     /**
-     * Returns the prefix of the module
+     * Returns the prefix of the module.
      *
      * @return string with the module prefix which is specified as argument of
      *         YANG {@link Module <b><font color="#0000FF">prefix</font></b>}
@@ -75,9 +77,7 @@ public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIden
     String getPrefix();
 
     /**
-     * Returns the YANG version.
-     *
-     * Default value is 1.
+     * Returns the YANG version. Default value is 1.
      *
      * @return string with the module YANG version which is specified as
      *         argument of YANG {@link Module <b> <font
@@ -116,6 +116,7 @@ public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIden
     /**
      * Returns the module contact.
      *
+     * <p>
      * The contact represents the person or persons to whom technical queries
      * concerning this module should be sent, such as their name, postal
      * address, telephone number, and electronic mail address.
@@ -142,6 +143,7 @@ public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIden
      * Returns <code>FeatureDefinition</code> instances which contain data from
      * <b>feature</b> statements defined in the module.
      *
+     * <p>
      * The feature is used to define a mechanism by which portions of the schema
      * are marked as conditional.
      *
@@ -215,8 +217,8 @@ public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIden
      * Get YANG source.
      *
      * @return YANG text of this module, or null if the source is not available.
-     * @deprecated Use {@link org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository#getSchemaSource(org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier, Class)}
-     *             instead.
+     * @deprecated Use {@link org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository#getSchemaSource(
+     *             org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier, Class)} instead.
      */
     @Deprecated
     @Nullable String getSource();

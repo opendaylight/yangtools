@@ -8,13 +8,10 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 /**
- *
  * Contains the methods for getting the data which are part of the YANG
  * <code>extensoion</code> statement.
- *
  */
 public interface ExtensionDefinition extends SchemaNode {
-
     /**
      * Returns the <code>String</code> that is the name of argument to the
      * Keyword. If no argument statement is present the method will return
@@ -36,8 +33,7 @@ public interface ExtensionDefinition extends SchemaNode {
      * yin-element statement the return value is by default set to
      * <code>false</code>
      *
-     * <br>
-     * <br>
+     * <p>
      * For more specific definition please look into <a
      * href="https://tools.ietf.org/html/rfc6020#section-7.17.2.2">[RFC-6020]
      * The yin-element Statement</a>

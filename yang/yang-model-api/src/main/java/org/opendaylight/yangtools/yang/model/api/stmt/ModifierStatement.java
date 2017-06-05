@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 /**
  * Represents YANG modifier statement.
  *
+ * <p>
  * The "modifier" statement, which is an optional substatement
  * to the "pattern" statement, takes as an argument the string "invert-match".
  * If a pattern has the "invert-match" modifier present, the type is

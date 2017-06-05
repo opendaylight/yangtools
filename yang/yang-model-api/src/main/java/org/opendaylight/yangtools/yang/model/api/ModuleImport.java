@@ -12,24 +12,29 @@ import org.opendaylight.yangtools.concepts.SemVer;
 
 /**
  * Interface describing YANG 'import' statement.
+ *
  * <p>
  * The import statement makes definitions from one module available inside
  * another module or submodule.
- * </p>
  */
 public interface ModuleImport extends DocumentedNode {
-
     /**
+     * Returns the name of the module to import.
+     *
      * @return Name of the module to import
      */
     String getModuleName();
 
     /**
+     * Returns the module revision to import. May be null.
+     *
      * @return Revision of module to import
      */
     Date getRevision();
 
     /**
+     * Returns the semantic version to import.
+     *
      * @return Semantic version of module to import
      */
     default SemVer getSemanticVersion() {
@@ -37,6 +42,8 @@ public interface ModuleImport extends DocumentedNode {
     }
 
     /**
+     * Returns the prefix associated with the imported module.
+     *
      * @return Prefix used to point to imported module
      */
     String getPrefix();

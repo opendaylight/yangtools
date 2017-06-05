@@ -64,7 +64,7 @@ public class SchemaResolutionException extends SchemaSourceException {
     }
 
     /**
-     * Return YANG schema source identifier consisting of name and revision of the module which caused this exception
+     * Return YANG schema source identifier consisting of name and revision of the module which caused this exception.
      *
      * @return YANG schema source identifier
      */
@@ -90,7 +90,8 @@ public class SchemaResolutionException extends SchemaSourceException {
 
     @Override
     public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this).add("unsatisfiedImports", unsatisfiedImports)).toString();
+        return addToStringAttributes(MoreObjects.toStringHelper(this).add("unsatisfiedImports", unsatisfiedImports))
+            .toString();
     }
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {

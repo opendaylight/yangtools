@@ -30,7 +30,8 @@ public interface SchemaSourceRegistry {
      * @return A registration handle. Invoking {@link SchemaSourceRegistration#close()}
      *         will cancel the registration.
      */
-    <T extends SchemaSourceRepresentation> SchemaSourceRegistration<T> registerSchemaSource(SchemaSourceProvider<? super T> provider, PotentialSchemaSource<T> source);
+    <T extends SchemaSourceRepresentation> SchemaSourceRegistration<T> registerSchemaSource(
+            SchemaSourceProvider<? super T> provider, PotentialSchemaSource<T> source);
 
     /**
      * Register a schema source listener. The listener will be notified as new

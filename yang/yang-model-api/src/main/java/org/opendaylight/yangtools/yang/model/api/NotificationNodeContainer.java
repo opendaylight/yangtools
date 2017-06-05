@@ -21,6 +21,7 @@ public interface NotificationNodeContainer {
      * which do not allow notification statements.
      * These YANG statements have been changed in YANG 1.1 (RFC7950) and can now contain notification statements.
      *
+     * <p>
      * The default definition is also used by implementations of ContainerSchemaNode which do not support
      * notification statements such as InputEffectiveStatementImpl and OutputEffectiveStatementImpl.
      *

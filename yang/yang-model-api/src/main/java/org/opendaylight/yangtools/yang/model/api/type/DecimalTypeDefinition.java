@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * substatement for <code>decimal64</code> built-in type.
  */
 public interface DecimalTypeDefinition extends TypeDefinition<DecimalTypeDefinition> {
-
     /**
      * Returns range constraints for instance of this type.
      *
@@ -27,9 +26,9 @@ public interface DecimalTypeDefinition extends TypeDefinition<DecimalTypeDefinit
     @Nonnull List<RangeConstraint> getRangeConstraints();
 
     /**
-     * Returns integer between 1 and 18 inclusively. <br>
-     * <br>
+     * Returns integer between 1 and 18 inclusively.
      *
+     * <p>
      * The "fraction-digits" statement controls the size of the minimum
      * difference between values of a decimal64 type, by restricting the value
      * space to numbers that are expressible as "i x 10^-n" where n is the

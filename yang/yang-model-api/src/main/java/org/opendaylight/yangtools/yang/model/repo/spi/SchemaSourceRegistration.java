@@ -15,7 +15,8 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation
  * Registration of a schema source.
  */
 @Beta
-public interface SchemaSourceRegistration<T extends SchemaSourceRepresentation> extends ObjectRegistration<PotentialSchemaSource<T>> {
+public interface SchemaSourceRegistration<T extends SchemaSourceRepresentation>
+        extends ObjectRegistration<PotentialSchemaSource<T>> {
     @Override
     void close();
 }

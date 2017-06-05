@@ -23,8 +23,9 @@ import org.opendaylight.yangtools.yang.common.QName;
  */
 public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, DataSchemaNode,
         NotificationNodeContainer, ActionNodeContainer {
-
     /**
+     * Returns the list of leaf identifiers.
+     *
      * @return List of QNames of leaf identifiers of this list
      */
     List<QName> getKeyDefinition();
@@ -39,6 +40,8 @@ public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, D
     boolean isUserOrdered();
 
     /**
+     * Returns unique constraints.
+     *
      * @return Collection of unique constraints of this list schema node
      */
     @Nonnull

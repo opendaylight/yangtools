@@ -12,28 +12,35 @@ import com.google.common.annotations.Beta;
 import java.util.Set;
 
 /**
- * Common interface for an operation
+ * Common interface for an operation.
  */
 @Beta
 public interface OperationDefinition extends SchemaNode {
-
     /**
+     * Returns the set of type definitions declared under this operation.
+     *
      * @return Set of type definitions declared under this operation.
      */
     Set<TypeDefinition<?>> getTypeDefinitions();
 
     /**
+     * Returns the set of grouping statements declared under this operation.
+     *
      * @return Set of grouping statements declared under this operation.
      */
     Set<GroupingDefinition> getGroupings();
 
     /**
+     * Returns definition of input parameters for this operation.
+     *
      * @return Definition of input parameters for this operation.
      *         The substatements of input define nodes under the operation's input node.
      */
     ContainerSchemaNode getInput();
 
     /**
+     * Returns definition of output parameters for this operation.
+     *
      * @return Definition of output parameters for this operation. The
      *         substatements of output define nodes under the operation's output node.
      */

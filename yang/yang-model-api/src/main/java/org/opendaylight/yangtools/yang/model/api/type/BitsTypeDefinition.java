@@ -25,7 +25,6 @@ public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
     @Nonnull List<Bit> getBits();
 
     /**
-     *
      * Contains the methods for accessing the data about the individual bit of
      * <code>bits</code> YANG type.
      */

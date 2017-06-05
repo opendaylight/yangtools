@@ -13,7 +13,6 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
  * Contains the method for getting detail data about unsigned integer.
- *
  * Specifically it is the method for getting the range value.
  */
 public interface UnsignedIntegerTypeDefinition extends TypeDefinition<UnsignedIntegerTypeDefinition> {

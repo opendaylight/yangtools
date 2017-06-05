@@ -53,17 +53,11 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
         return RevisionSourceIdentifier.create(parsed.getKey(), Optional.fromNullable(parsed.getValue()));
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public final SourceIdentifier getIdentifier() {
         return identifier;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Nonnull
     @Override
     public Class<? extends YinTextSchemaSource> getType() {
@@ -94,11 +88,13 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
      * @param delegate Backing ByteSource instance
      * @return A new YinTextSchemaSource
      */
-    public static YinTextSchemaSource delegateForByteSource(final SourceIdentifier identifier, final ByteSource delegate) {
+    public static YinTextSchemaSource delegateForByteSource(final SourceIdentifier identifier,
+            final ByteSource delegate) {
         return new DelegatedYinTextSchemaSource(identifier, delegate);
     }
 
-    private static final class DelegatedYinTextSchemaSource extends YinTextSchemaSource implements Delegator<ByteSource> {
+    private static final class DelegatedYinTextSchemaSource extends YinTextSchemaSource
+            implements Delegator<ByteSource> {
         private final ByteSource delegate;
 
         private DelegatedYinTextSchemaSource(final SourceIdentifier identifier, final ByteSource delegate) {

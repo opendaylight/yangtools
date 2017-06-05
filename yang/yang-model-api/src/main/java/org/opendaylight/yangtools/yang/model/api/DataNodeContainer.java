@@ -40,14 +40,18 @@ public interface DataNodeContainer {
     Set<GroupingDefinition> getGroupings();
 
     /**
+     * Returns the child node corresponding to the specified name.
+     *
      * @param name
-     *            QName of seeked child
+     *            QName of child
      * @return child node of this DataNodeContainer if child with given name is
      *         present, null otherwise
      */
     DataSchemaNode getDataChildByName(QName name);
 
     /**
+     * Returns grouping nodes used ny this container.
+     *
      * @return Set of all uses nodes defined within this DataNodeContainer
      */
     Set<UsesNode> getUses();

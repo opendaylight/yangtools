@@ -109,12 +109,12 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         this.parent = parent;
         this.qname = qname;
 
-        int h = Objects.hashCode(parent);
+        int tmp = Objects.hashCode(parent);
         if (qname != null) {
-            h = h * 31 + qname.hashCode();
+            tmp = tmp * 31 + qname.hashCode();
         }
 
-        hash = h;
+        hash = tmp;
     }
 
     private ImmutableList<QName> getLegacyPath() {

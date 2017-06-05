@@ -25,7 +25,7 @@ public interface ModuleIdentifier {
 
     /**
      * Returns the name of the module which is specified as argument of YANG
-     * {@link Module <b><font color="#FF0000">module</font></b>} keyword
+     * {@link Module <b><font color="#FF0000">module</font></b>} keyword.
      *
      * @return string with the name of the module
      */
@@ -57,6 +57,7 @@ public interface ModuleIdentifier {
     /**
      * Returns the semantic version of yang module.
      *
+     * <p>
      * If the semantic version is not specified, default semantic version of
      * module is returned.
      *

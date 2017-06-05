@@ -13,70 +13,80 @@ import java.util.Collection;
 import java.util.Set;
 
 /**
- * Interface describing YANG 'deviate' statement
+ * Interface describing YANG 'deviate' statement.
  *
+ * <p>
  * The 'deviate' statement defines how the device's implementation of
  * the target node deviates from its original definition.
  * The argument is one of the strings "not-supported", "add", "replace", or "delete".
  */
 @Beta
 public interface DeviateDefinition {
-
     /**
+     * Return deviation kind.
      *
      * @return enum which describes the type of this deviate statement
      */
     DeviateKind getDeviateType();
 
     /**
+     * Returns deviated config value.
      *
      * @return value of the deviated config statement or null if it is not deviated
      */
     Boolean getDeviatedConfig();
 
     /**
+     * Returns deviated default value.
      *
      * @return value of the deviated default statement or null if it is not deviated
      */
     String getDeviatedDefault();
 
     /**
+     * Returns deviated mandatory value.
      *
      * @return value of the deviated mandatory statement or null if it is not deviated
      */
     Boolean getDeviatedMandatory();
 
     /**
+     * Returns deviated max-elements.
      *
      * @return value of the deviated max-elements statement or null if it is not deviated
      */
     Integer getDeviatedMaxElements();
 
     /**
+     * Returns deviated min-elements.
      *
      * @return value of the deviated min-elements statement or null if it is not deviated
      */
     Integer getDeviatedMinElements();
 
     /**
+     * Returns deviated must statements.
      *
      * @return set of the deviated must statements
      */
     Set<MustDefinition> getDeviatedMusts();
 
     /**
+     * Returns deviated type statement.
      *
      * @return deviated type statement or null if it is not deviated
      */
     TypeDefinition<?> getDeviatedType();
 
     /**
+     * Returns deviated unique statements.
      *
      * @return collection of the deviated unique statements
      */
     Collection<UniqueConstraint> getDeviatedUniques();
 
     /**
+     * Returns deviated units statement.
      *
      * @return value of the deviated units statement or null if it is not deviated
      */

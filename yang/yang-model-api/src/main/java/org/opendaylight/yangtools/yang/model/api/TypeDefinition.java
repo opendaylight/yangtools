@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 /**
- *
  * YANG statement <code>typedef</code> contains also substatements
  * <ul>
  * <li><code>default</code> - default value which is compatible with
@@ -26,7 +25,6 @@ package org.opendaylight.yangtools.yang.model.api;
  *            is included in the instance of this type
  */
 public interface TypeDefinition<T extends TypeDefinition<?>> extends SchemaNode {
-
     /**
      * Returns the base type from which this type is derived. If this is yang
      * built-in type, returns null.

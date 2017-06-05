@@ -26,6 +26,8 @@ public enum DeviateKind {
     }
 
     /**
+     * Returns the YANG keyword corresponding to this object.
+     *
      * @return String that corresponds to the yang keyword.
      */
     public String getKeyword() {

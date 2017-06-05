@@ -18,6 +18,7 @@ import javax.annotation.Nonnull;
 /**
  * Enum describing the effect of a YANG modifier statement.
  *
+ * <p>
  * As of YANG 1.1 (RFC7950) there is only one modifier value available and that
  * is "invert-match". If there are more possible values added in the future,
  * this enum can be extended with more enum constants.
@@ -30,23 +31,25 @@ public enum ModifierKind {
 
     private final String keyword;
 
-    private ModifierKind(final String keyword) {
+    ModifierKind(final String keyword) {
         this.keyword = Preconditions.checkNotNull(keyword);
     }
 
     /**
-     * @return String that corresponds to the yang keyword.
+     * YANG keyword of this modifier.
+     *
+     * @return String that corresponds to the YANG keyword.
      */
     public @Nonnull String getKeyword() {
         return keyword;
     }
 
     /**
-     * Returns ModifierKind based on supplied Yang keyword
+     * Returns ModifierKind based on supplied Yang keyword.
      *
      * @param keyword
      *            Yang keyword in string form
-     * @return ModifierKind based on supplied Yang keyword
+     * @return ModifierKind based on supplied YANG keyword
      * @throws NullPointerException if keyword is null
      */
     public static Optional<ModifierKind> parse(final String keyword) {

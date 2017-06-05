@@ -14,8 +14,9 @@ import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
 /**
- * YANG Schema source identifier with specified semantic version
+ * YANG Schema source identifier with specified semantic version.
  *
+ * <p>
  * Simple transfer object represents identifier of source for YANG schema
  * (module or submodule), which consists of
  * <ul>
@@ -24,9 +25,11 @@ import org.opendaylight.yangtools.yang.model.api.Module;
  * <li>(Optional) Module revision ({link {@link #getRevision()}
  * </ul>
  *
+ * <p>
  * Source identifier is designated to be carry only necessary information to
  * look-up YANG model source and to be used by various SchemaSourceProviders.
  *
+ * <p>
  * <b>Note:</b>On source retrieval layer it is impossible to distinguish between
  * YANG module and/or submodule unless source is present.
  *

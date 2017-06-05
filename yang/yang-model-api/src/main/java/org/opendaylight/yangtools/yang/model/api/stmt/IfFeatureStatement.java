@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 /**
  * Represents YANG if-feature statement.
- *
  * The "if-feature" statement makes its parent statement conditional.
  */
 public interface IfFeatureStatement extends DeclaredStatement<Predicate<Set<QName>>> {

@@ -18,9 +18,10 @@
  * YANG source is defined as sequence of statement in
  * <a href="https://tools.ietf.org/html/rfc6020#section-6.3">RFC6020, Section 6.3</a>.
  * this model is also correct for YIN, which is XML serialisation of YANG source.
+ *
  * <p>
- * Statements are represented as instances / subclasses of {@link org.opendaylight.yangtools.yang.model.api.meta.ModelStatement}
- * concept and its two subconcepts which are:
+ * Statements are represented as instances / subclasses of
+ * {@link org.opendaylight.yangtools.yang.model.api.meta.ModelStatement} concept and its two subconcepts which are:
  * <ul>
  * <li>
  * {@link org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement} - this contains navigable
@@ -32,6 +33,7 @@
  * present in YANG specification and/or was introduced in form of extensions.
  * </li>
  * </ul>
+ *
  * <p>
  * Clear separation of declared / effective model is needed, since statement definition also
  * contains information how effective model is computed and there is no one to one mapping
@@ -41,9 +43,10 @@
  * <h2>Identifiers and Namespaces</h2>
  * Effective model of YANG has several identifier types and namespaces, which behaves differently
  * and are mostly used during processing data and/or during computing effective (semantic) model.
- * <p>
- * Common abstraction for various types of namespaces is {@link org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace}
- * from which concrete effective model namespaces are derived.
  *
+ * <p>
+ * Common abstraction for various types of namespaces is
+ * {@link org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace}
+ * from which concrete effective model namespaces are derived.
  */
 package org.opendaylight.yangtools.yang.model.api.meta;

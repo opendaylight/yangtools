@@ -63,8 +63,8 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
         final QName qname = QName.create(rootNs, root.getLocalName());
         Preconditions.checkArgument(RFC6020_YIN_MODULE.equals(qname.getModule()),
             "Root node namepsace %s does not match %s", rootNs, YangConstants.RFC6020_YIN_NAMESPACE);
-        Preconditions.checkArgument(MODULE.getStatementName().equals(qname) ||
-            SUBMODULE.getStatementName().equals(qname), "Root element %s is not a module nor a submodule", qname);
+        Preconditions.checkArgument(MODULE.getStatementName().equals(qname)
+            || SUBMODULE.getStatementName().equals(qname), "Root element %s is not a module nor a submodule", qname);
 
         Preconditions.checkArgument(root instanceof Element, "Root node %s is not an element", root);
         final Element element = (Element)root;
@@ -117,7 +117,8 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
      * @return A {@link YinDomSchemaSource} instance
      * @throws TransformerException when the provided source fails to transform
      */
-    @Nonnull public static YinDomSchemaSource transform(final YinXmlSchemaSource xmlSchemaSource) throws TransformerException {
+    @Nonnull public static YinDomSchemaSource transform(final YinXmlSchemaSource xmlSchemaSource)
+            throws TransformerException {
         final YinDomSchemaSource cast = castSchemaSource(xmlSchemaSource);
         return cast != null ? cast :
             create(xmlSchemaSource.getIdentifier(), transformSource(xmlSchemaSource.getSource()));

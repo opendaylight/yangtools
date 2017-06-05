@@ -23,8 +23,8 @@ public class MissingSchemaSourceException extends SchemaSourceException {
         this(message, id, null);
     }
 
-    public MissingSchemaSourceException(final String s, final SourceIdentifier id, final Throwable t) {
-        super(s, t);
+    public MissingSchemaSourceException(final String message, final SourceIdentifier id, final Throwable cause) {
+        super(message, cause);
         this.id = Preconditions.checkNotNull(id);
     }
 

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
-public interface TypeEffectiveStatement<T extends TypeStatement> extends EffectiveStatement<String, T>, TypeDefinitionAware {
+public interface TypeEffectiveStatement<T extends TypeStatement> extends EffectiveStatement<String, T>,
+       TypeDefinitionAware {
 
 }

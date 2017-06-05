@@ -34,7 +34,7 @@ public interface EffectiveStatement<A, S extends DeclaredStatement<A>> extends M
     S getDeclared();
 
     /**
-     * Returns value associated with supplied identifier
+     * Returns value associated with supplied identifier.
      *
      * @param <K>
      *            Identifier type

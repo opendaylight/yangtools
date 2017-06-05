@@ -29,6 +29,8 @@ public interface IdentityrefTypeDefinition extends TypeDefinition<IdentityrefTyp
     IdentitySchemaNode getIdentity();
 
     /**
+     * Returns the set of identities this reference points to.
+     *
      * @return set of identities to which the instance of this type refers (in YANG 1.1 models) or a set containing
      *         just one identity (in YANG 1.0 models)
      */

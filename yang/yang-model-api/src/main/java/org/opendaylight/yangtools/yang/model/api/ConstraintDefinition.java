@@ -31,7 +31,6 @@ public interface ConstraintDefinition {
      * Specifies the rules which the node which contains <code>must</code> YANG
      * substatement has to match.
      *
-     *
      * @return set of <code>MustDefinition</code> (XPath) instances which
      *         represents the concrete data constraints
      */
@@ -41,8 +40,8 @@ public interface ConstraintDefinition {
      * Expreses if the presence of the data element for which this constraint is
      * specified is|isn't required.
      *
+     * <p>
      * Contains the value of the <b>mandatory</b> YANG substatement.
-     *
      * It is used with YANG statements leaf, choice, anyxml, deviate.
      *
      * @return boolean value:
@@ -59,9 +58,9 @@ public interface ConstraintDefinition {
      * Returns the minimum required number of data elements for node where this
      * constraint is specified.
      *
+     * <p>
      * The returning value equals to value of the argument of the
      * <b>min-elements</b> YANG substatement.
-     *
      * It is used with YANG statements leaf-list, list, deviate.
      *
      * @return integer with minimal number of elements, or null if no minimum is defined
@@ -72,9 +71,9 @@ public interface ConstraintDefinition {
      * Returns the maximum admissible number of data elements for node where
      * this constraint is specified.
      *
+     * <p>
      * The returning value equals to value of the argument of the
      * <b>max-elements</b> YANG substatement.
-     *
      * It is used with YANG statements leaf-list, list, deviate.
      *
      * @return integer with maximum number of elements, or null if no maximum is defined

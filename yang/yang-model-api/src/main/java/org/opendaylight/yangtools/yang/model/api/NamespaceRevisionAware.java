@@ -13,5 +13,6 @@ import java.util.Date;
 public interface NamespaceRevisionAware {
 
     URI getNamespace();
+
     Date getRevision();
 }
