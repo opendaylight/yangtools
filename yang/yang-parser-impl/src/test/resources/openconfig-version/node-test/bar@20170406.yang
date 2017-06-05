@@ -1,0 +1,24 @@
+module bar {
+    namespace "bar";
+    prefix bar;
+    yang-version 1;
+
+    import openconfig-extensions { prefix oc-ext; revision-date 2017-01-29; oc-ext:openconfig-version "0.0.1"; }
+    
+    revision 2017-04-06 {
+        description "test";
+    }
+    
+    oc-ext:openconfig-version "2017.4.6";
+
+    grouping grp {
+        container con20160404 {
+        }
+        container con20160405 {
+        }
+        container con20160406 {
+        }
+        container con20170406 {
+        }
+    }
+}

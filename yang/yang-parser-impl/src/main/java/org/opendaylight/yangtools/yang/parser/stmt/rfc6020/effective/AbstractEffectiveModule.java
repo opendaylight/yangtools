@@ -93,7 +93,8 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
         final YangVersionEffectiveStatementImpl yangVersionStmt = firstEffective(YangVersionEffectiveStatementImpl.class);
         this.yangVersion = (yangVersionStmt == null) ? YangVersion.VERSION_1 : yangVersionStmt.argument();
 
-        final SemanticVersionEffectiveStatementImpl semanticVersionStmt = firstEffective(SemanticVersionEffectiveStatementImpl.class);
+        final OpenconfigVersionEffectiveStatementImpl semanticVersionStmt =
+                firstEffective(OpenconfigVersionEffectiveStatementImpl.class);
         this.semanticVersion = (semanticVersionStmt == null) ? DEFAULT_SEMANTIC_VERSION : semanticVersionStmt.argument();
 
         final OrganizationEffectiveStatementImpl organizationStmt = firstEffective(OrganizationEffectiveStatementImpl.class);

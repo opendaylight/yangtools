@@ -143,7 +143,7 @@ public final class YangInferencePipeline {
             .addSupport(sourceLocal(BelongsToModuleContext.class))
             .addSupport(sourceLocal(QNameToStatementDefinition.class))
             .addSupport(sourceLocal(BelongsToPrefixToModuleName.class))
-            .addSupport(new SemanticVersionStatementImpl.SemanticVersionSupport())
+            .addSupport(new OpenconfigVersionStatementImpl.OpenconfigVersionSupport())
             .addSupport(global(SemanticVersionNamespace.class))
             .addSupport(global(SemanticVersionModuleNamespace.class))
             .addSupport(sourceLocal(ImpPrefixToSemVerModuleIdentifier.class))
