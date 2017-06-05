@@ -41,7 +41,6 @@ public final class NormalizedNodeTransformations {
     }
 
     /**
-     *
      * Returns a {@link NormalizedNode} with QNames replaced by supplied mapping.
      *
      * @param original Original Normalized Node
@@ -54,17 +53,14 @@ public final class NormalizedNodeTransformations {
     }
 
     /**
-     *
      * Returns a {@link NormalizedNode} with QNameModules replaced by supplied mapping.
      *
      * @param original Original Normalized Node
      * @param mapping Map of QNameModules to transform. Not listed QNameModules are preserved.
      * @return Normalized Node with replaced QNameModules.
      */
-
     public static NormalizedNode<?, ?> replaceQNameModules(@Nonnull NormalizedNode<?, ?> original,
             @Nonnull Map<QNameModule, QNameModule> mapping) {
         return transformQNames(original, new QNameModuleReplacementFunction(mapping));
     }
-
 }

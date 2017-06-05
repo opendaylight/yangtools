@@ -22,12 +22,11 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 
 /**
- *
  * Stateless Normalized Node Stream Writer decorator, which performs QName translation.
  *
+ * <p>
  * This class serves as base for Normalized Node Stream Writer decorators with option to transform
  * QNames by user-implemented {@link #transform(QName)} function.
- *
  */
 public abstract class QNameTransformingStreamWriter extends ForwardingObject implements NormalizedNodeStreamWriter {
 
@@ -49,7 +48,7 @@ public abstract class QNameTransformingStreamWriter extends ForwardingObject imp
 
             @Override
             protected NormalizedNodeStreamWriter delegate() {
-              return delegate;
+                return delegate;
             }
 
             @Nonnull
@@ -62,9 +61,7 @@ public abstract class QNameTransformingStreamWriter extends ForwardingObject imp
     }
 
     /**
-     * Returns decorator, which uses supplied map to transform QNames.
-     *
-     * QNames not present in map are left unchanged.
+     * Returns decorator, which uses supplied map to transform QNames. QNames not present in map are left unchanged.
      *
      * @param delegate Underlying normalized node stream writer
      * @param mapping Immutable map which represent mapping from original to new values.
@@ -76,9 +73,8 @@ public abstract class QNameTransformingStreamWriter extends ForwardingObject imp
     }
 
     /**
-     * Returns decorator, which uses supplied map to transform QNameModules.
-     *
-     * QNameModules not present in map are left unchanged.
+     * Returns decorator, which uses supplied map to transform QNameModules. QNameModules not present in map are left
+     * unchanged.
      *
      * @param delegate Underlying normalized node stream writer
      * @param mapping Immutable map which represent mapping from original to new values.
@@ -88,16 +84,6 @@ public abstract class QNameTransformingStreamWriter extends ForwardingObject imp
             final Map<QNameModule, QNameModule> mapping) {
         return fromFunction(delegate, new QNameModuleReplacementFunction(mapping));
     }
-
-    /**
-     * Transforms a QName to new mapping.
-     *
-     * NOTE: If QName should be unchanged implementation needs to return original QName.
-     *
-     * @param key QName to transform.
-     * @return Returns new value of QName.
-     */
-    protected abstract @Nonnull QName transform(@Nonnull QName key);
 
     @Override
     public void leafNode(final NodeIdentifier name, final Object value) throws IOException {
@@ -140,7 +126,8 @@ public abstract class QNameTransformingStreamWriter extends ForwardingObject imp
     }
 
     @Override
-    public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint) throws IOException {
+    public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint)
+            throws IOException {
         delegate().startMapEntryNode(transform(identifier), childSizeHint);
     }
 
@@ -183,6 +170,17 @@ public abstract class QNameTransformingStreamWriter extends ForwardingObject imp
     public void flush() throws IOException {
         delegate().flush();
     }
+
+    /**
+     * Transforms a QName to new mapping.
+     *
+     * <p>
+     * NOTE: If QName should be unchanged implementation needs to return original QName.
+     *
+     * @param key QName to transform.
+     * @return Returns new value of QName.
+     */
+    protected abstract @Nonnull QName transform(@Nonnull QName key);
 
     private NodeIdentifier transform(final NodeIdentifier name) {
         return new NodeIdentifier(transform(name.getNodeType()));
