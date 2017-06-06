@@ -34,19 +34,14 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase.
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class ModifierImpl implements ModelActionBuilder {
+final class ModifierImpl implements ModelActionBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(ModifierImpl.class);
 
     private final Set<AbstractPrerequisite<?>> unsatisfied = new HashSet<>(1);
     private final Set<AbstractPrerequisite<?>> mutations = new HashSet<>(1);
-    private final ModelProcessingPhase phase;
 
     private InferenceAction action;
     private boolean actionApplied = false;
-
-    ModifierImpl(final ModelProcessingPhase phase) {
-        this.phase = Preconditions.checkNotNull(phase);
-    }
 
     private <D> AbstractPrerequisite<D> addReq(final AbstractPrerequisite<D> prereq) {
         LOG.trace("Modifier {} adding prerequisite {}", this, prereq);
@@ -79,10 +74,6 @@ class ModifierImpl implements ModelActionBuilder {
             }
         }
         return unsatisfied.isEmpty();
-    }
-
-    ModelProcessingPhase getPhase() {
-        return phase;
     }
 
     boolean isApplied() {
@@ -305,7 +296,7 @@ class ModifierImpl implements ModelActionBuilder {
         @SuppressWarnings("unchecked")
         @Override
         public boolean phaseFinished(final StatementContextBase<?, ?, ?> context, final ModelProcessingPhase phase) {
-            return resolvePrereq((C) (context));
+            return resolvePrereq((C) context);
         }
     }
 
