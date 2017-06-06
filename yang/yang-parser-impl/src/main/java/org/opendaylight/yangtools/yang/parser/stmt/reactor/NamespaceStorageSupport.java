@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Namesp
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class NamespaceStorageSupport implements NamespaceStorageNode {
 
@@ -39,6 +40,11 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         // NOOP
     }
 
+    /**
+     * Occurs when an item is added to model namespace.
+     *
+     * @throws SourceException instance of SourceException
+     */
     protected <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceElementAdded(final Class<N> type, final K key,
             final V value) {
         // NOOP
