@@ -19,9 +19,9 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespa
 
     abstract static class ValueAddedListener<K> {
         private final NamespaceStorageNode ctxNode;
-        private K key;
+        private final K key;
 
-        public ValueAddedListener(final NamespaceStorageNode contextNode, K key) {
+        public ValueAddedListener(final NamespaceStorageNode contextNode, final K key) {
             this.ctxNode = contextNode;
             this.key = key;
         }
@@ -34,7 +34,7 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespa
             return key;
         }
 
-        void trigger(Object value) {
+        void trigger(final Object value) {
             onValueAdded(key, value);
         }
 
@@ -57,7 +57,7 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespa
     @Override
     public abstract void addTo(final NamespaceStorageNode storage, final K key, final V value);
 
-    protected void notifyListeners(final NamespaceStorageNode storage, Iterator<ValueAddedListener<K>> keyListeners,
+    protected void notifyListeners(final NamespaceStorageNode storage, final Iterator<ValueAddedListener<K>> keyListeners,
             final V value) {
         List<ValueAddedListener<K>> toNotify = new ArrayList<>();
         while (keyListeners.hasNext()) {
@@ -82,7 +82,7 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespa
         addListener(listener.key, listener);
     }
 
-    final void addDerivedNamespace(VirtualNamespaceContext<?, V, ?, K> namespace) {
+    final void addDerivedNamespace(final VirtualNamespaceContext<?, V, ?, K> namespace) {
         derivedNamespaces.add(namespace);
     }
 
