@@ -72,6 +72,7 @@ abstract class UnionXmlCodec<T> implements XmlCodec<T> {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:illegalCatch")
     public final T parseValue(final NamespaceContext ctx, final String str) {
         for (XmlCodec<?> codec : codecs) {
             final Object ret;
@@ -89,6 +90,7 @@ abstract class UnionXmlCodec<T> implements XmlCodec<T> {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:illegalCatch")
     public void writeValue(final XMLStreamWriter ctx, final Object value) throws XMLStreamException {
         for (XmlCodec<?> codec : codecs) {
             if (!codec.getDataType().isInstance(value)) {

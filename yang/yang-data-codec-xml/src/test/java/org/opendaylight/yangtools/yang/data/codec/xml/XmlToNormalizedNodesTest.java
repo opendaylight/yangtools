@@ -79,8 +79,8 @@ public class XmlToNormalizedNodesTest {
 
     @Before
     public void setup() throws URISyntaxException, ParseException {
-        bazModule = QNameModule.create(new URI("baz-namespace"), SimpleDateFormatUtil.getRevisionFormat().parse
-                ("1970-01-01"));
+        bazModule = QNameModule.create(new URI("baz-namespace"), SimpleDateFormatUtil.getRevisionFormat().parse(
+                    "1970-01-01"));
 
         outerContainer = QName.create(bazModule, "outer-container");
 
@@ -239,8 +239,8 @@ public class XmlToNormalizedNodesTest {
             xmlParser.parse(reader);
             fail("XMLStreamException should have been thrown because of unterminated leaf element.");
         } catch (XMLStreamException ex) {
-            assertTrue(ex.getMessage().contains("elementGetText() function expects text only elment but " +
-                    "START_ELEMENT was encountered."));
+            assertTrue(ex.getMessage().contains("elementGetText() function expects text only elment but "
+                        + "START_ELEMENT was encountered."));
         }
     }
 
@@ -262,8 +262,8 @@ public class XmlToNormalizedNodesTest {
             xmlParser.parse(reader);
             fail("XMLStreamException should have been thrown because of unterminated leaf element.");
         } catch (XMLStreamException ex) {
-            assertTrue(ex.getMessage().contains("The element type \"my-leaf-1\" must be terminated by the matching " +
-                    "end-tag \"</my-leaf-1>\"."));
+            assertTrue(ex.getMessage().contains("The element type \"my-leaf-1\" must be terminated by the matching "
+                        + "end-tag \"</my-leaf-1>\"."));
         }
     }
 
@@ -285,8 +285,8 @@ public class XmlToNormalizedNodesTest {
             xmlParser.parse(reader);
             fail("XMLStreamException should have been thrown because of unterminated container element.");
         } catch (XMLStreamException ex) {
-            assertTrue(ex.getMessage().contains("The element type \"my-container-1\" must be terminated by the " +
-                    "matching end-tag \"</my-container-1>\"."));
+            assertTrue(ex.getMessage().contains("The element type \"my-container-1\" must be terminated by the "
+                        + "matching end-tag \"</my-container-1>\"."));
         }
     }
 
@@ -308,8 +308,8 @@ public class XmlToNormalizedNodesTest {
             xmlParser.parse(reader);
             fail("IllegalStateException should have been thrown because of an unexisting container element.");
         } catch (IllegalStateException ex) {
-            assertTrue(ex.getMessage().contains("Schema for node with name my-container-1 and namespace baz-namespace" +
-                    " doesn't exist."));
+            assertTrue(ex.getMessage().contains("Schema for node with name my-container-1 and namespace baz-namespace"
+                        + " doesn't exist."));
         }
     }
 

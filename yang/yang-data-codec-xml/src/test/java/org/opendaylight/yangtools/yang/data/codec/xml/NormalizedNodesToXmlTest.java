@@ -131,11 +131,11 @@ public class NormalizedNodesToXmlTest {
 
         final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(domResult);
 
-        final NormalizedNodeStreamWriter xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create
-                (xmlStreamWriter, schemaContext);
+        final NormalizedNodeStreamWriter xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(
+                xmlStreamWriter, schemaContext);
 
-        final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter
-                (xmlNormalizedNodeStreamWriter);
+        final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
+                xmlNormalizedNodeStreamWriter);
 
         normalizedNodeWriter.write(buildOuterContainerNode());
 

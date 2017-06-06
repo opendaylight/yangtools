@@ -84,7 +84,8 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     }
 
     @Override
-    public void leafNode(final NodeIdentifier name, final Object value, final Map<QName, String> attributes) throws IOException {
+    public void leafNode(final NodeIdentifier name, final Object value, final Map<QName, String> attributes)
+        throws IOException {
         final LeafSchemaNode schema = tracker.leafNode(name);
         writeElement(schema.getQName(), value, attributes, schema);
     }
@@ -101,6 +102,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
         final LeafListSchemaNode schema = tracker.leafSetEntryNode(name);
         writeElement(schema.getQName(), value, Collections.emptyMap(), schema);
     }
+
     @Override
     public void startLeafSet(final NodeIdentifier name, final int childSizeHint) {
         tracker.startLeafSet(name);

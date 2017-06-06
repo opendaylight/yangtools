@@ -60,7 +60,7 @@ public class YangModeledAnyXMLDeserializationTest {
     private SchemaContext schemaContext;
 
     @Before
-    public void Init() throws Exception {
+    public void setUp() throws Exception {
         barModuleQName = QNameModule.create(new URI("bar"), SimpleDateFormatUtil.getRevisionFormat()
                 .parse("1970-01-01"));
         myContainer1 = QName.create(barModuleQName, "my-container-1");
@@ -91,8 +91,9 @@ public class YangModeledAnyXMLDeserializationTest {
         final XMLInputFactory factory = XMLInputFactory.newInstance();
         final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
 
-        final ImmutableContainerNodeBuilder result = (ImmutableContainerNodeBuilder) ImmutableContainerNodeSchemaAwareBuilder
-                        .create(yangModeledAnyXML.getSchemaOfAnyXmlData());
+        final ImmutableContainerNodeBuilder result =
+            (ImmutableContainerNodeBuilder) ImmutableContainerNodeSchemaAwareBuilder.create(
+                    yangModeledAnyXML.getSchemaOfAnyXmlData());
 
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
@@ -112,9 +113,9 @@ public class YangModeledAnyXMLDeserializationTest {
         Optional<DataContainerChild<? extends PathArgument, ?>> child2 = myContainerNode1.getChild(new NodeIdentifier(
                 myLeaf1));
         assertTrue(child2.orNull() instanceof LeafNode);
-        LeafNode<?> LeafNode1 = (LeafNode<?>) child2.get();
+        LeafNode<?> leafNode1 = (LeafNode<?>) child2.get();
 
-        Object leafNode1Value = LeafNode1.getValue();
+        Object leafNode1Value = leafNode1.getValue();
         assertEquals("value1", leafNode1Value);
     }
 
@@ -126,8 +127,8 @@ public class YangModeledAnyXMLDeserializationTest {
         final XMLInputFactory factory = XMLInputFactory.newInstance();
         final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
 
-        final ImmutableContainerNodeBuilder result = (ImmutableContainerNodeBuilder) ImmutableContainerNodeSchemaAwareBuilder
-                .create(schemaContext);
+        final ImmutableContainerNodeBuilder result =
+            (ImmutableContainerNodeBuilder) ImmutableContainerNodeSchemaAwareBuilder.create(schemaContext);
 
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
@@ -156,26 +157,26 @@ public class YangModeledAnyXMLDeserializationTest {
         Optional<DataContainerChild<? extends PathArgument, ?>> child3 = innerContainerNode
                 .getChild(new NodeIdentifier(myLeaf2));
         assertTrue(child3.orNull() instanceof LeafNode);
-        LeafNode<?> LeafNode2 = (LeafNode<?>) child3.get();
+        LeafNode<?> leafNode2 = (LeafNode<?>) child3.get();
 
-        Object leafNode2Value = LeafNode2.getValue();
+        Object leafNode2Value = leafNode2.getValue();
         assertEquals("any-xml-leaf-2-value", leafNode2Value);
 
         Optional<DataContainerChild<? extends PathArgument, ?>> child4 = yangModeledAnyXmlNode
                 .getChild(new NodeIdentifier(myLeaf3));
         assertTrue(child4.orNull() instanceof LeafNode);
-        LeafNode<?> LeafNode3 = (LeafNode<?>) child4.get();
+        LeafNode<?> leafNode3 = (LeafNode<?>) child4.get();
 
-        Object leafNode3Value = LeafNode3.getValue();
+        Object leafNode3Value = leafNode3.getValue();
         assertEquals("any-xml-leaf-3-value", leafNode3Value);
     }
 
     private static class YangModeledAnyXMLSchemaNodeImplTest implements YangModeledAnyXmlSchemaNode {
-        private final QName qName;
+        private final QName qname;
         private final ContainerSchemaNode contentSchema;
 
-        private YangModeledAnyXMLSchemaNodeImplTest(final QName qName, final ContainerSchemaNode contentSchema) {
-            this.qName = qName;
+        private YangModeledAnyXMLSchemaNodeImplTest(final QName qname, final ContainerSchemaNode contentSchema) {
+            this.qname = qname;
             this.contentSchema = contentSchema;
         }
 
@@ -202,7 +203,7 @@ public class YangModeledAnyXMLDeserializationTest {
         @Nonnull
         @Override
         public QName getQName() {
-            return qName;
+            return qname;
         }
 
         @Nonnull

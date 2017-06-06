@@ -104,8 +104,8 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
 
     @Before
     public void setup() throws URISyntaxException, ParseException {
-        foobarModule = QNameModule.create(new URI("foobar-namespace"), SimpleDateFormatUtil.getRevisionFormat().parse
-                ("2016-09-19"));
+        foobarModule = QNameModule.create(new URI("foobar-namespace"), SimpleDateFormatUtil.getRevisionFormat().parse(
+                    "2016-09-19"));
 
         outerContainer = QName.create(foobarModule, "outer-container");
 
@@ -155,8 +155,8 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
         final NormalizedNodeStreamWriter schemalessXmlNormalizedNodeStreamWriter =
                 XMLStreamNormalizedNodeStreamWriter.createSchemaless(xmlStreamWriter);
 
-        final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter
-                (schemalessXmlNormalizedNodeStreamWriter);
+        final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
+                schemalessXmlNormalizedNodeStreamWriter);
 
         normalizedNodeWriter.write(buildOuterContainerNode());
 
@@ -189,8 +189,8 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
                         .withChild(Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(myLeafInList2))
                                 .withValue("listleafvalue22").build()).build()).build();
 
-        OrderedMapNode myOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(new NodeIdentifier(myOrderedList))
-                .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
+        OrderedMapNode myOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
+                new NodeIdentifier(myOrderedList)).withChild(Builders.mapEntryBuilder().withNodeIdentifier(
                         new NodeIdentifierWithPredicates(myOrderedList, myKeyLeafInOrderedList, "olistkeyvalue1"))
                         .withChild(Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(myLeafInOrderedList1))
                                 .withValue("olistleafvalue1").build())
@@ -297,7 +297,8 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
     }
 
     private static Document loadDocument(final String xmlPath) throws IOException, SAXException {
-        final InputStream resourceAsStream = SchemalessXMLStreamNormalizedNodeStreamWriterTest.class.getResourceAsStream(xmlPath);
+        final InputStream resourceAsStream = SchemalessXMLStreamNormalizedNodeStreamWriterTest.class
+            .getResourceAsStream(xmlPath);
         final Document currentConfigElement = readXmlToDocument(resourceAsStream);
         Preconditions.checkNotNull(currentConfigElement);
         return currentConfigElement;

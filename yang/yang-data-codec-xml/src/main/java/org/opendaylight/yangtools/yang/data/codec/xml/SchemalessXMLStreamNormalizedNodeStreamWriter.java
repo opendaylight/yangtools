@@ -43,18 +43,20 @@ class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNormalizedN
     }
 
     @Override
-    public void leafNode(final NodeIdentifier name, final Object value, final Map<QName, String> attributes) throws IOException {
+    public void leafNode(final NodeIdentifier name, final Object value, final Map<QName, String> attributes)
+        throws IOException {
         writeElement(name.getNodeType(), value, attributes, null);
-    }
-
-    @Override
-    public void leafSetEntryNode(final QName name, final Object value, final Map<QName, String> attributes) throws IOException {
-        writeElement(name, value, attributes, null);
     }
 
     @Override
     public void leafNode(final NodeIdentifier name, final Object value) throws IOException {
         writeElement(name.getNodeType(), value, Collections.emptyMap(), null);
+    }
+
+    @Override
+    public void leafSetEntryNode(final QName name, final Object value, final Map<QName, String> attributes)
+        throws IOException {
+        writeElement(name, value, attributes, null);
     }
 
     @Override
@@ -101,7 +103,8 @@ class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNormalizedN
     }
 
     @Override
-    protected void writeValue(final XMLStreamWriter xmlWriter, final QName qname, @Nonnull final Object value, final Object context)
+    protected void writeValue(final XMLStreamWriter xmlWriter, final QName qname, @Nonnull final Object value,
+            final Object context)
             throws XMLStreamException {
         xmlWriter.writeCharacters(value.toString());
     }
@@ -121,13 +124,13 @@ class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNormalizedN
     protected void endNode(final XMLStreamWriter xmlWriter) throws IOException, XMLStreamException {
         ContainerType type = containerTypeStack.pop();
         switch (type) {
-        case CONTAINER:
-        case LIST_ITEM:
-        case ANY_XML:
-            xmlWriter.writeEndElement();
-            break;
-        default:
-            break;
+            case CONTAINER:
+            case LIST_ITEM:
+            case ANY_XML:
+                xmlWriter.writeEndElement();
+                break;
+            default:
+                break;
         }
     }
 }

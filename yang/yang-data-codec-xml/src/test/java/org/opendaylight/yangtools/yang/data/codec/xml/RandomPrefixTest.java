@@ -48,13 +48,13 @@ public class RandomPrefixTest {
         for (int i = 0; i < MAX_COUNTER; i++) {
             final String prefix = RandomPrefix.encode(i);
             final URI uri = new URI("localhost:" + prefix);
-            final QName qName = QName.create(QNameModule.create(uri, new Date()), "local-name");
-            allGenerated.add(a.encodePrefix(qName.getNamespace()));
+            final QName qname = QName.create(QNameModule.create(uri, new Date()), "local-name");
+            allGenerated.add(a.encodePrefix(qname.getNamespace()));
         }
 
         assertEquals(MAX_COUNTER, allGenerated.size());
-        // We are generating MAX_COUNTER_VALUE + 27 prefixes total, so we should encounter a reset in prefix a start from 0 at some point
-        // At the end, there should be only 27 values in RandomPrefix cache
+        // We are generating MAX_COUNTER_VALUE + 27 prefixes total, so we should encounter a reset in prefix a start
+        // from 0 at some point. At the end, there should be only 27 values in RandomPrefix cache
         assertEquals(MAX_COUNTER, Iterables.size(a.getPrefixes()));
         assertThat(allGenerated, CoreMatchers.not(CoreMatchers.hasItem("xml")));
         assertThat(allGenerated, CoreMatchers.not(CoreMatchers.hasItem("xmla")));
@@ -68,10 +68,10 @@ public class RandomPrefixTest {
         final RandomPrefix a = new RandomPrefix(null);
 
         final URI uri = URI.create("localhost");
-        final QName qName = QName.create(QNameModule.create(uri, new Date()), "local-name");
-        final QName qName2 = QName.create(QNameModule.create(uri, new Date()), "local-name");
+        final QName qname = QName.create(QNameModule.create(uri, new Date()), "local-name");
+        final QName qname2 = QName.create(QNameModule.create(uri, new Date()), "local-name");
 
-        assertEquals(a.encodePrefix(qName.getNamespace()), a.encodePrefix(qName2.getNamespace()));
+        assertEquals(a.encodePrefix(qname.getNamespace()), a.encodePrefix(qname2.getNamespace()));
     }
 
     @Test
@@ -79,12 +79,12 @@ public class RandomPrefixTest {
         final RandomPrefix a = new RandomPrefix(null);
 
         final URI uri = URI.create("localhost");
-        QName qName = QName.create(uri, new Date(), "local-name");
-        assertEquals("a", a.encodePrefix(qName.getNamespace()));
-        qName = QName.create(QNameModule.create(uri, new Date()), "local-name");
-        assertEquals("a", a.encodePrefix(qName.getNamespace()));
-        qName = QName.create(QNameModule.create(URI.create("second"), new Date()), "local-name");
-        assertEquals("b", a.encodePrefix(qName.getNamespace()));
+        QName qname = QName.create(uri, new Date(), "local-name");
+        assertEquals("a", a.encodePrefix(qname.getNamespace()));
+        qname = QName.create(QNameModule.create(uri, new Date()), "local-name");
+        assertEquals("a", a.encodePrefix(qname.getNamespace()));
+        qname = QName.create(QNameModule.create(URI.create("second"), new Date()), "local-name");
+        assertEquals("b", a.encodePrefix(qname.getNamespace()));
 
     }
 }

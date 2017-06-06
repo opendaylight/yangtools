@@ -74,7 +74,8 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
 
     @Test
     public void testSerializationOfBaz() throws Exception {
-        final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/anyxml-support/serialization/baz.xml");
+        final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream(
+                "/anyxml-support/serialization/baz.xml");
 
         final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         final XMLStreamReader reader = inputFactory.createXMLStreamReader(resourceAsStream);
@@ -115,8 +116,8 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
         final NormalizedNodeStreamWriter xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter
                 .create(xmlStreamWriter, schemaContext);
 
-        final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter
-                (xmlNormalizedNodeStreamWriter);
+        final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
+                xmlNormalizedNodeStreamWriter);
 
         normalizedNodeWriter.write(transformedInput);
 

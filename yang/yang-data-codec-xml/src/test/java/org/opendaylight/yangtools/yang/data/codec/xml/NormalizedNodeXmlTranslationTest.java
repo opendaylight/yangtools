@@ -103,16 +103,18 @@ public class NormalizedNodeXmlTranslationTest {
     }
 
     private static final String NAMESPACE = "urn:opendaylight:params:xml:ns:yang:controller:test";
-    private static final Date revision;
+    private static final Date REVISION;
+
     static {
         try {
-            revision = SimpleDateFormatUtil.getRevisionFormat().parse("2014-03-13");
+            REVISION = SimpleDateFormatUtil.getRevisionFormat().parse("2014-03-13");
         } catch (final ParseException e) {
             throw new ExceptionInInitializerError(e);
         }
     }
 
     static final XMLOutputFactory XML_FACTORY;
+
     static {
         XML_FACTORY = XMLOutputFactory.newFactory();
         XML_FACTORY.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.FALSE);
@@ -247,7 +249,7 @@ public class NormalizedNodeXmlTranslationTest {
     }
 
     private static NodeIdentifier getNodeIdentifier(final String localName) {
-        return new NodeIdentifier(QName.create(URI.create(NAMESPACE), revision, localName));
+        return new NodeIdentifier(QName.create(URI.create(NAMESPACE), REVISION, localName));
     }
 
     private static AugmentationIdentifier getAugmentIdentifier(final String... childNames) {
@@ -303,8 +305,8 @@ public class NormalizedNodeXmlTranslationTest {
         final NormalizedNodeStreamWriter xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter
                 .create(xmlStreamWriter, schema);
 
-        final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter
-                (xmlNormalizedNodeStreamWriter);
+        final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
+                xmlNormalizedNodeStreamWriter);
 
         normalizedNodeWriter.write(built);
 
