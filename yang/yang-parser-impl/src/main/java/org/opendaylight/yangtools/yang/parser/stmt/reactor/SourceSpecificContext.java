@@ -323,7 +323,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     ModelActionBuilder newInferenceAction(final ModelProcessingPhase phase) {
-        final ModifierImpl action = new ModifierImpl(phase);
+        final ModifierImpl action = new ModifierImpl();
         modifiers.put(phase, action);
         return action;
     }

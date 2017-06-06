@@ -172,7 +172,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          * Create a new inference action to be executed during specified phase. The action cannot be cancelled
          * and will be executed even if its definition remains incomplete.
          *
-         * @param phase Target phase
+         * @param phase Target phase in which the action will resolved.
          * @return A new action builder.
          * @throws NullPointerException if the specified phase is null
          */
