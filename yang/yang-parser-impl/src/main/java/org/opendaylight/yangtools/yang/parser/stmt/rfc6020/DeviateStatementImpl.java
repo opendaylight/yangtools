@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -143,40 +144,39 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
                     deviateAction.requiresCtx(deviateStmtCtx, ModelProcessingPhase.EFFECTIVE_MODEL);
 
             final Prerequisite<StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>> targetCtxPrerequisite =
-                    deviateAction
-            .mutatesEffectiveCtx(deviateStmtCtx.getRoot(), SchemaNodeIdentifierBuildNamespace.class,
-                    deviationTarget);
+                    deviateAction.mutatesEffectiveCtx(deviateStmtCtx.getRoot(),
+                        SchemaNodeIdentifierBuildNamespace.class,  deviationTarget);
 
-                    deviateAction.apply(new InferenceAction() {
-                        @Override
-                        public void apply() throws InferenceException {
-                            // FIXME once BUG-7760 gets fixed, there will be no need for these dirty casts
-                            final StatementContextBase<?, ?, ?> sourceNodeStmtCtx =
-                                    (StatementContextBase<?, ?, ?>) sourceCtxPrerequisite.get();
-                            final StatementContextBase<?, ?, ?> targetNodeStmtCtx =
-                                    (StatementContextBase<?, ?, ?>) targetCtxPrerequisite.get();
+            deviateAction.apply(new InferenceAction() {
+                @Override
+                public void apply(final InferenceContext ctx) throws InferenceException {
+                    // FIXME once BUG-7760 gets fixed, there will be no need for these dirty casts
+                    final StatementContextBase<?, ?, ?> sourceNodeStmtCtx =
+                            (StatementContextBase<?, ?, ?>) sourceCtxPrerequisite.resolve(ctx);
+                    final StatementContextBase<?, ?, ?> targetNodeStmtCtx =
+                            (StatementContextBase<?, ?, ?>) targetCtxPrerequisite.resolve(ctx);
 
-                            switch (deviateKind) {
-                                case NOT_SUPPORTED:
-                                    targetNodeStmtCtx.setIsSupportedToBuildEffective(false);
-                                    break;
-                                case ADD:
-                                    performDeviateAdd(sourceNodeStmtCtx, targetNodeStmtCtx);
-                                    break;
-                                case REPLACE:
-                                    performDeviateReplace(sourceNodeStmtCtx, targetNodeStmtCtx);
-                                    break;
-                                case DELETE:
-                                    performDeviateDelete(sourceNodeStmtCtx, targetNodeStmtCtx);
-                            }
-                        }
+                    switch (deviateKind) {
+                        case NOT_SUPPORTED:
+                            targetNodeStmtCtx.setIsSupportedToBuildEffective(false);
+                            break;
+                        case ADD:
+                            performDeviateAdd(sourceNodeStmtCtx, targetNodeStmtCtx);
+                            break;
+                        case REPLACE:
+                            performDeviateReplace(sourceNodeStmtCtx, targetNodeStmtCtx);
+                            break;
+                        case DELETE:
+                            performDeviateDelete(sourceNodeStmtCtx, targetNodeStmtCtx);
+                    }
+                }
 
-                        @Override
-                        public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                            throw new InferenceException(deviateStmtCtx.getParentContext().getStatementSourceReference(),
-                                    "Deviation target '%s' not found.", deviationTarget);
-                        }
-                    });
+                @Override
+                public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
+                    throw new InferenceException(deviateStmtCtx.getParentContext().getStatementSourceReference(),
+                        "Deviation target '%s' not found.", deviationTarget);
+                }
+            });
         }
 
         private static boolean isDeviationSupported(final StmtContext.Mutable<DeviateKind, DeviateStatement,
@@ -282,7 +282,7 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
             }
         }
 
-        private static void deleteStatement(final StatementContextBase<?, ?, ?> stmtCtxToBeDeleted,
+        private static void deleteStatement(final StmtContext<?, ?, ?> stmtCtxToBeDeleted,
                 final StatementContextBase<?, ?, ?> targetCtx) {
             final StatementDefinition stmtToBeDeleted = stmtCtxToBeDeleted.getPublicDefinition();
             final String stmtArgument = stmtCtxToBeDeleted.rawStatementArgument();
@@ -313,16 +313,16 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
             return firstStmtDef.equals(secondStmtDef) && Objects.equals(firstStmtArg, secondStmtArg);
         }
 
-        private static void validateDeviationTarget(final StatementContextBase<?, ?, ?> deviateSubStmtCtx,
-                final StatementContextBase<?, ?, ?> targetCtx) {
+        private static void validateDeviationTarget(final StmtContext<?, ?, ?> deviateSubStmtCtx,
+                final StmtContext<?, ?, ?> targetCtx) {
             InferenceException.throwIf(!isSupportedDeviationTarget(deviateSubStmtCtx, targetCtx,
                     targetCtx.getRootVersion()), deviateSubStmtCtx.getStatementSourceReference(),
                     "%s is not a valid deviation target for substatement %s.",
                     targetCtx.getStatementArgument(), deviateSubStmtCtx.getPublicDefinition().getStatementName());
         }
 
-        private static boolean isSupportedDeviationTarget(final StatementContextBase<?, ?, ?> deviateSubstatementCtx,
-                final StatementContextBase<?, ?, ?> deviateTargetCtx, final YangVersion yangVersion) {
+        private static boolean isSupportedDeviationTarget(final StmtContext<?, ?, ?> deviateSubstatementCtx,
+                final StmtContext<?, ?, ?> deviateTargetCtx, final YangVersion yangVersion) {
             Set<StatementDefinition> supportedDeviationTargets =
                     YangValidationBundles.SUPPORTED_DEVIATION_TARGETS.get(deviateTargetCtx.getRootVersion(),
                             deviateSubstatementCtx.getPublicDefinition());
