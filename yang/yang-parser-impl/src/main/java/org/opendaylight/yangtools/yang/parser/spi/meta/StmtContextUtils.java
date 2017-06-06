@@ -31,8 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.RootStatementContext;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangDataStatementImpl;
 
@@ -273,7 +271,7 @@ public final class StmtContextUtils {
             final Set<QName> supportedFeatures) {
         boolean isSupported = false;
         boolean containsIfFeature = false;
-        for (final StatementContextBase<?, ?, ?> stmt : stmtContext.declaredSubstatements()) {
+        for (final StmtContext<?, ?, ?> stmt : stmtContext.declaredSubstatements()) {
             if (YangStmtMapping.IF_FEATURE.equals(stmt.getPublicDefinition())) {
                 if (stmtContext.isInYangDataExtensionBody()) {
                     break;
@@ -299,7 +297,7 @@ public final class StmtContextUtils {
      *            statement context
      * @return true if it is a presence container
      */
-    public static boolean isPresenceContainer(final StatementContextBase<?, ?, ?> stmtCtx) {
+    public static boolean isPresenceContainer(final StmtContext<?, ?, ?> stmtCtx) {
         return stmtCtx.getPublicDefinition() == YangStmtMapping.CONTAINER && containsPresenceSubStmt(stmtCtx);
     }
 
@@ -310,11 +308,11 @@ public final class StmtContextUtils {
      *            statement context
      * @return true if it is a non-presence container
      */
-    public static boolean isNonPresenceContainer(final StatementContextBase<?, ?, ?> stmtCtx) {
+    public static boolean isNonPresenceContainer(final StmtContext<?, ?, ?> stmtCtx) {
         return stmtCtx.getPublicDefinition() == YangStmtMapping.CONTAINER && !containsPresenceSubStmt(stmtCtx);
     }
 
-    private static boolean containsPresenceSubStmt(final StatementContextBase<?, ?, ?> stmtCtx) {
+    private static boolean containsPresenceSubStmt(final StmtContext<?, ?, ?> stmtCtx) {
         return findFirstSubstatement(stmtCtx, PresenceStatement.class) != null;
     }
 
@@ -327,7 +325,7 @@ public final class StmtContextUtils {
      * @return true if it is a mandatory leaf, choice, anyxml, list or leaf-list
      *         according to RFC6020.
      */
-    public static boolean isMandatoryNode(final StatementContextBase<?, ?, ?> stmtCtx) {
+    public static boolean isMandatoryNode(final StmtContext<?, ?, ?> stmtCtx) {
         if (!(stmtCtx.getPublicDefinition() instanceof YangStmtMapping)) {
             return false;
         }
@@ -358,7 +356,7 @@ public final class StmtContextUtils {
      *         statement definition and if it is not mandatory leaf, choice,
      *         anyxml, list or leaf-list according to RFC6020
      */
-    public static boolean isNotMandatoryNodeOfType(final StatementContextBase<?, ?, ?> stmtCtx,
+    public static boolean isNotMandatoryNodeOfType(final StmtContext<?, ?, ?> stmtCtx,
             final StatementDefinition stmtDef) {
         return stmtCtx.getPublicDefinition().equals(stmtDef) && !isMandatoryNode(stmtCtx);
     }
@@ -403,8 +401,10 @@ public final class StmtContextUtils {
         Preconditions.checkNotNull(ctx);
         Preconditions.checkNotNull(ancestorType);
         Preconditions.checkNotNull(ancestorChildType);
+
         StmtContext<?, ?, ?> current = ctx.getParentContext();
-        while (!(current instanceof RootStatementContext)) {
+        StmtContext<?, ?, ?> parent = current.getParentContext();
+        while (parent != null) {
             if (ancestorType.equals(current.getPublicDefinition())) {
                 @SuppressWarnings("unchecked")
                 final Class<DT> ancestorChildTypeClass = (Class<DT>) ancestorChildType.getDeclaredRepresentationClass();
@@ -412,7 +412,9 @@ public final class StmtContextUtils {
                     return false;
                 }
             }
-            current = current.getParentContext();
+
+            current = parent;
+            parent = current.getParentContext();
         }
 
         return true;

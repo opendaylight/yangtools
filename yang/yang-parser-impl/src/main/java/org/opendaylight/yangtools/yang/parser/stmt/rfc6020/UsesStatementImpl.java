@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -103,9 +104,9 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
             usesAction.apply(new InferenceAction() {
 
                 @Override
-                public void apply() {
-                    final StatementContextBase<?, ?, ?> targetNodeStmtCtx = (StatementContextBase<?, ?, ?>) targetNodePre.get();
-                    final StatementContextBase<?, ?, ?> sourceGrpStmtCtx = (StatementContextBase<?, ?, ?>) sourceGroupingPre.get();
+                public void apply(final InferenceContext ctx) {
+                    final StatementContextBase<?, ?, ?> targetNodeStmtCtx = (StatementContextBase<?, ?, ?>) targetNodePre.resolve(ctx);
+                    final StatementContextBase<?, ?, ?> sourceGrpStmtCtx = (StatementContextBase<?, ?, ?>) sourceGroupingPre.resolve(ctx);
 
                     try {
                         copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
@@ -198,7 +199,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
      * @throws SourceException
      *             instance of SourceException
      */
-    private static void copyFromSourceToTarget(final StatementContextBase<?, ?, ?> sourceGrpStmtCtx,
+    private static void copyFromSourceToTarget(final StmtContext<?, ?, ?> sourceGrpStmtCtx,
             final StatementContextBase<?, ?, ?> targetCtx,
             final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode) {
         final Collection<StatementContextBase<?, ?, ?>> declared = sourceGrpStmtCtx.declaredSubstatements();
@@ -274,7 +275,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
         }
     }
 
-    private static boolean areFeaturesSupported(final StatementContextBase<?, ?, ?> subStmtCtx) {
+    private static boolean areFeaturesSupported(final Mutable<?, ?, ?> subStmtCtx) {
         /*
          * In case of Yang 1.1, checks whether features are supported.
          */
@@ -345,7 +346,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
         return ALLOWED_TO_ADD_BY_REFINE_DEF_SET.contains(publicDefinition);
     }
 
-    private static boolean isSupportedRefineSubstatement(final StatementContextBase<?, ?, ?> refineSubstatementCtx) {
+    private static boolean isSupportedRefineSubstatement(final StmtContext<?, ?, ?> refineSubstatementCtx) {
         final Collection<?> supportedRefineSubstatements = refineSubstatementCtx.getFromNamespace(
                 ValidationBundlesNamespace.class, ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS);
 
@@ -354,9 +355,8 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                 || StmtContextUtils.isUnknownStatement(refineSubstatementCtx);
     }
 
-    private static boolean isSupportedRefineTarget(final StatementContextBase<?, ?, ?> refineSubstatementCtx,
-            final StatementContextBase<?, ?, ?> refineTargetNodeCtx) {
-
+    private static boolean isSupportedRefineTarget(final StmtContext<?, ?, ?> refineSubstatementCtx,
+            final StmtContext<?, ?, ?> refineTargetNodeCtx) {
         final Collection<?> supportedRefineTargets = YangValidationBundles.SUPPORTED_REFINE_TARGETS
                 .get(refineSubstatementCtx.getPublicDefinition());
 
@@ -365,7 +365,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
     }
 
 
-    private static QNameModule getNewQNameModule(final StatementContextBase<?, ?, ?> targetCtx,
+    private static QNameModule getNewQNameModule(final StmtContext<?, ?, ?> targetCtx,
             final StmtContext<?, ?, ?> stmtContext) {
         if (targetCtx.isRootContext()) {
             return targetCtx.getFromNamespace(ModuleCtxToModuleQName.class, targetCtx);

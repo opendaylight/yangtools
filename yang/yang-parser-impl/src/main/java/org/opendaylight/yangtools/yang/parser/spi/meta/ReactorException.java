@@ -10,20 +10,20 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
-
 public class ReactorException extends Exception {
-
     private static final long serialVersionUID = 1L;
+
     private final ModelProcessingPhase phase;
     private final SourceIdentifier sourceIdentifier;
 
-    public ReactorException(ModelProcessingPhase phase, String message, SourceIdentifier sourceId, Throwable cause) {
+    public ReactorException(final ModelProcessingPhase phase, final String message, final SourceIdentifier sourceId,
+            final Throwable cause) {
         super(message, cause);
         this.phase = Preconditions.checkNotNull(phase);
         this.sourceIdentifier = sourceId;
     }
 
-    public ReactorException(ModelProcessingPhase phase, String message, SourceIdentifier sourceId) {
+    public ReactorException(final ModelProcessingPhase phase, final String message, final SourceIdentifier sourceId) {
         super(message);
         this.phase = Preconditions.checkNotNull(phase);
         this.sourceIdentifier = sourceId;
