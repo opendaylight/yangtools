@@ -51,21 +51,23 @@ import org.w3c.dom.Element;
  */
 public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements NormalizedNodeStreamAttributeWriter {
     private static final Logger LOG = LoggerFactory.getLogger(XMLStreamNormalizedNodeStreamWriter.class);
-    private static final String COM_SUN_TRANSFORMER = "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";
+    private static final String COM_SUN_TRANSFORMER =
+        "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";
 
     private static final TransformerFactory TRANSFORMER_FACTORY;
+
     static {
-        TransformerFactory f = TransformerFactory.newInstance();
-        if (!f.getFeature(StAXResult.FEATURE)) {
+        TransformerFactory fa = TransformerFactory.newInstance();
+        if (!fa.getFeature(StAXResult.FEATURE)) {
             LOG.warn("Platform-default TransformerFactory {} does not support StAXResult, attempting fallback to {}",
-                    f, COM_SUN_TRANSFORMER);
-            f = TransformerFactory.newInstance(COM_SUN_TRANSFORMER, null);
-            if (!f.getFeature(StAXResult.FEATURE)) {
+                    fa, COM_SUN_TRANSFORMER);
+            fa = TransformerFactory.newInstance(COM_SUN_TRANSFORMER, null);
+            if (!fa.getFeature(StAXResult.FEATURE)) {
                 throw new TransformerFactoryConfigurationError("No TransformerFactory supporting StAXResult found.");
             }
         }
 
-        TRANSFORMER_FACTORY = f;
+        TRANSFORMER_FACTORY = fa;
     }
 
     private static final Set<String> BROKEN_NAMESPACES = ConcurrentHashMap.newKeySet();
@@ -90,7 +92,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     }
 
     /**
-     * Create a new writer with the specified context and rooted in the specified schema path
+     * Create a new writer with the specified context and rooted in the specified schema path.
      *
      * @param writer Output {@link XMLStreamWriter}
      * @param context Associated {@link SchemaContext}.
@@ -122,22 +124,20 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
 
     abstract void startListItem(final PathArgument name) throws IOException;
 
-    abstract void endNode(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException;
-
     private void writeAttributes(@Nonnull final Map<QName, String> attributes) throws IOException {
-        for (final Entry<QName, String> qNameStringEntry : attributes.entrySet()) {
+        for (final Entry<QName, String> entry : attributes.entrySet()) {
             try {
-                final QName qname = qNameStringEntry.getKey();
+                final QName qname = entry.getKey();
                 final String namespace = qname.getNamespace().toString();
 
                 if (!Strings.isNullOrEmpty(namespace)) {
                     final String prefix = getPrefix(qname.getNamespace(), namespace);
-                    writer.writeAttribute(prefix, namespace, qname.getLocalName(), qNameStringEntry.getValue());
+                    writer.writeAttribute(prefix, namespace, qname.getLocalName(), entry.getValue());
                 } else {
-                    writer.writeAttribute(qname.getLocalName(), qNameStringEntry.getValue());
+                    writer.writeAttribute(qname.getLocalName(), entry.getValue());
                 }
             } catch (final XMLStreamException e) {
-                throw new IOException("Unable to emit attribute " + qNameStringEntry, e);
+                throw new IOException("Unable to emit attribute " + entry, e);
             }
         }
     }
@@ -203,7 +203,8 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
                 // TODO can the transformer be a constant ? is it thread safe ?
                 final Transformer transformer = TRANSFORMER_FACTORY.newTransformer();
                 // Writer has to be wrapped in a wrapper that ignores endDocument event
-                // EndDocument event forbids any other modification to the writer so a nested anyXml breaks serialization
+                // EndDocument event forbids any other modification to the writer so a nested anyXml breaks
+                // serialization
                 transformer.transform(domSource, new StAXResult(new DelegateWriterNoEndDoc(writer)));
             } catch (final TransformerException e) {
                 throw new IOException("Unable to transform anyXml(" + qname + ") value: " + value, e);
@@ -233,10 +234,21 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     }
 
     @Override
+    public final void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) throws IOException {
+        startListItem(name);
+    }
+
+    @Override
     public final void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint,
                                         final Map<QName, String> attributes) throws IOException {
         startMapEntryNode(identifier, childSizeHint);
         writeAttributes(attributes);
+    }
+
+    @Override
+    public final void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint)
+            throws IOException {
+        startListItem(identifier);
     }
 
     @Override
@@ -245,19 +257,8 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     }
 
     @Override
-    public final void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        startListItem(name);
-    }
-
-    @Override
     public final void startMapNode(final NodeIdentifier name, final int childSizeHint) {
         startList(name);
-    }
-
-    @Override
-    public final void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint)
-            throws IOException {
-        startListItem(identifier);
     }
 
     @Override
@@ -279,6 +280,8 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
             throw new RuntimeException("Unable to serialize xml element " + xml, e);
         }
     }
+
+    abstract void endNode(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException;
 
     @Override
     public final void endNode() throws IOException {
@@ -313,7 +316,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     private static final class DelegateWriterNoEndDoc implements XMLStreamWriter {
         private final XMLStreamWriter writer;
 
-        public DelegateWriterNoEndDoc(final XMLStreamWriter writer) {
+        DelegateWriterNoEndDoc(final XMLStreamWriter writer) {
             this.writer = writer;
         }
 

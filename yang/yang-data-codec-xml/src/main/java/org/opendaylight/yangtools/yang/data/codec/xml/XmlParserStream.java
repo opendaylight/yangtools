@@ -88,6 +88,8 @@ public final class XmlParserStream implements Closeable, Flushable {
     }
 
     /**
+     * Construct a new {@link XmlParserStream}.
+     *
      * @deprecated Use {@link #create(NormalizedNodeStreamWriter, SchemaContext, SchemaNode)} instead.
      */
     @Deprecated
@@ -201,7 +203,8 @@ public final class XmlParserStream implements Closeable, Flushable {
                     DataSchemaNode parentSchema = parent.getSchema();
 
                     final String parentSchemaName = parentSchema.getQName().getLocalName();
-                    if (parentSchemaName.equals(xmlElementName) && in.getEventType() == XMLStreamConstants.END_ELEMENT) {
+                    if (parentSchemaName.equals(xmlElementName)
+                            && in.getEventType() == XMLStreamConstants.END_ELEMENT) {
                         in.nextTag();
                         break;
                     }
@@ -232,6 +235,8 @@ public final class XmlParserStream implements Closeable, Flushable {
             case XMLStreamConstants.END_ELEMENT:
                 in.nextTag();
                 break;
+            default:
+                break;
         }
     }
 
@@ -246,8 +251,8 @@ public final class XmlParserStream implements Closeable, Flushable {
         parentSimpleNode.setValue(translateValueByType(value, parentSimpleNode.getSchema(), nsContext));
     }
 
-    private Object translateValueByType(final String value, final DataSchemaNode node, final NamespaceContext namespaceCtx)
-            throws IOException, SAXException, ParserConfigurationException {
+    private Object translateValueByType(final String value, final DataSchemaNode node,
+            final NamespaceContext namespaceCtx) throws IOException, SAXException, ParserConfigurationException {
         if (node instanceof AnyXmlSchemaNode) {
             /*
              *  FIXME: Figure out some YANG extension dispatch, which will

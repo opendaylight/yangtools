@@ -68,8 +68,8 @@ abstract class XMLStreamWriterUtils {
         }
 
         Preconditions.checkArgument(schemaNode instanceof TypedSchemaNode,
-                "Unable to write value for node %s, only nodes of type: leaf and leaf-list can be written at this point",
-                schemaNode.getQName());
+            "Unable to write value for node %s, only nodes of type: leaf and leaf-list can be written at this point",
+            schemaNode.getQName());
 
         TypeDefinition<?> type = ((TypedSchemaNode) schemaNode).getType();
         if (type instanceof LeafrefTypeDefinition) {
@@ -127,7 +127,7 @@ abstract class XMLStreamWriterUtils {
             final QName qname = (QName) value;
 
             //in case parent is present and same as element namespace write value without namespace
-            if (qname.getNamespace().equals(parent.getNamespace())){
+            if (qname.getNamespace().equals(parent.getNamespace())) {
                 writer.writeCharacters(qname.getLocalName());
             } else {
                 final String ns = qname.getNamespace().toString();

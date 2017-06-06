@@ -128,7 +128,7 @@ public class XmlStreamUtilsTest {
     }
 
     /**
-     * One leafref reference to other leafref via relative references
+     * One leafref reference to other leafref via relative references.
      */
     @Test
     public void testLeafRefRelativeChaining() {

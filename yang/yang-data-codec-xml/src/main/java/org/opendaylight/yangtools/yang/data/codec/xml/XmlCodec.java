@@ -14,11 +14,6 @@ import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.codec.TypeAwareCodec;
 
 interface XmlCodec<T> extends TypeAwareCodec<T, NamespaceContext, XMLStreamWriter> {
-    /**
-     * {@inheritDoc}
-     *
-     * @throws XMLStreamException from {@link XMLStreamWriter}
-     */
     @Override
     void writeValue(XMLStreamWriter ctx, T value) throws XMLStreamException;
 }
