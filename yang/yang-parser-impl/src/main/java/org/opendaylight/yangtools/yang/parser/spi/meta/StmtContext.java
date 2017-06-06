@@ -101,8 +101,14 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     @Nonnull
     Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements();
 
+    /**
+     * Builds {@link DeclaredStatement} for statement context.
+     */
     D buildDeclared();
 
+    /**
+     * Builds {@link EffectiveStatement} for statement context
+     */
     E buildEffective();
 
     boolean isSupportedToBuildEffective();
@@ -178,6 +184,16 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          */
         @Nonnull ModelActionBuilder newInferenceAction(@Nonnull ModelProcessingPhase phase);
 
+        /**
+         * adds statement to namespace map with the key
+         *
+         * @param namespace
+         *            {@link StatementNamespace} child that determines namespace to be added to
+         * @param key
+         *            of type according to namespace class specification
+         * @param stmt
+         *            to be added to namespace map
+         */
         <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(
                 Class<N> namespace, KT key, StmtContext<?, ?, ?> stmt);
 

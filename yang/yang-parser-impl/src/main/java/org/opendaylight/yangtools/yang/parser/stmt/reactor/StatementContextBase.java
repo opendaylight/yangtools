@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
@@ -40,12 +39,14 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.ValueAddedListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends NamespaceStorageSupport implements StmtContext.Mutable<A, D, E> {
 
     /**
-     * event listener when an item is added to model namespace
+     * event listener when an item is added to model namespace.
      */
     interface OnNamespaceItemAdded extends EventListener {
         /**
@@ -55,7 +56,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     /**
-     * event listener when a parsing {@link ModelProcessingPhase} is completed
+     * event listener when a parsing {@link ModelProcessingPhase} is completed.
      */
     interface OnPhaseFinished extends EventListener {
         /**
@@ -65,12 +66,14 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     /**
-     * interface for all mutations within an {@link ModelActionBuilder.InferenceAction}
+     * interface for all mutations within an {@link ModelActionBuilder.InferenceAction}.
      */
     interface ContextMutation {
 
         boolean isFinished();
     }
+
+    private static final Logger LOG = LoggerFactory.getLogger(StatementContextBase.class);
 
     private final StatementDefinitionContext<A, D, E> definition;
     private final StatementSourceReference statementDeclSource;
@@ -364,7 +367,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         Preconditions.checkState(inProgressPhase != ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Declared statement cannot be added in effective phase at: %s", getStatementSourceReference());
 
-        final Optional<StatementContextBase<?, ?, ?>> implicitStatement = definition.beforeSubStatementCreated(this, offset, def, ref, argument);
+        final Optional<StatementContextBase<?, ?, ?>> implicitStatement = definition.beforeSubStatementCreated(this,
+            offset, def, ref, argument);
         if(implicitStatement.isPresent()) {
             final StatementContextBase<?, ?, ?> presentImplicitStmt = implicitStatement.get();
             return presentImplicitStmt.createSubstatement(offset, def, ref, argument);
@@ -386,9 +390,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return substatements.get(offset);
     }
 
-    /**
-     * builds {@link DeclaredStatement} for statement context
-     */
     @Override
     public D buildDeclared() {
         Preconditions.checkArgument(completedPhase == ModelProcessingPhase.FULL_DECLARATION
@@ -399,9 +400,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return declaredInstance;
     }
 
-    /**
-     * builds {@link EffectiveStatement} for statement context
-     */
     @Override
     public E buildEffective() {
         if (effectiveInstance == null) {
@@ -411,7 +409,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     /**
-     * tries to execute current {@link ModelProcessingPhase} of source parsing
+     * tries to execute current {@link ModelProcessingPhase} of source parsing.
      *
      * @param phase
      *            to be executed (completed)
@@ -457,7 +455,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     /**
-     * Occurs on end of {@link ModelProcessingPhase} of source parsing
+     * Occurs on end of {@link ModelProcessingPhase} of source parsing.
      *
      * @param phase
      *            that was to be completed (finished)
@@ -510,13 +508,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         definition().checkNamespaceAllowed(type);
     }
 
-    /**
-     * occurs when an item is added to model namespace
-     *
-     * @throws SourceException instance of SourceException
-     */
     @Override
-    protected <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceElementAdded(final Class<N> type, final K key, final V value) {
+    protected <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceElementAdded(final Class<N> type, final K key,
+            final V value) {
         // definition().onNamespaceElementAdded(this, type, key, value);
     }
 
@@ -524,27 +518,26 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             final OnNamespaceItemAdded listener) throws SourceException {
         final Object potential = getFromNamespace(type, key);
         if (potential != null) {
+            LOG.trace("Listener on {} key {} satisfied immediately", type, key);
             listener.namespaceItemAdded(this, type, key, potential);
             return;
         }
+
         final NamespaceBehaviour<K, V, N> behaviour = getBehaviourRegistry().getNamespaceBehaviour(type);
-        if (behaviour instanceof NamespaceBehaviourWithListeners) {
-            final NamespaceBehaviourWithListeners<K, V, N> casted = (NamespaceBehaviourWithListeners<K, V, N>) behaviour;
-            casted.addValueListener(new ValueAddedListener<K>(this, key) {
-                @Override
-                void onValueAdded(final Object key, final Object value) {
-                    try {
-                        listener.namespaceItemAdded(StatementContextBase.this, type, key, value);
-                    } catch (final SourceException e) {
-                        throw Throwables.propagate(e);
-                    }
-                }
-            });
-        }
+        Preconditions.checkArgument(behaviour instanceof NamespaceBehaviourWithListeners,
+            "Namespace {} does not support listeners", type);
+
+        final NamespaceBehaviourWithListeners<K, V, N> casted = (NamespaceBehaviourWithListeners<K, V, N>) behaviour;
+        casted.addValueListener(new ValueAddedListener<K>(this, key) {
+            @Override
+            void onValueAdded(final Object key, final Object value) {
+                listener.namespaceItemAdded(StatementContextBase.this, type, key, value);
+            }
+        });
     }
 
     /**
-     * @see StatementSupport#getPublicView()
+     * See {@link StatementSupport#getPublicView()}.
      */
     @Nonnull
     @Override
@@ -610,19 +603,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         phaseMutation.put(phase, mutation);
     }
 
-    /**
-     * adds statement to namespace map with the key
-     *
-     * @param namespace
-     *            {@link StatementNamespace} child that determines namespace to be added to
-     * @param key
-     *            of type according to namespace class specification
-     * @param stmt
-     *            to be added to namespace map
-     */
     @Override
-    public <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(final Class<N> namespace, final KT key,
-            final StmtContext<?, ?, ?> stmt) {
+    public <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(final Class<N> namespace,
+            final KT key,final StmtContext<?, ?, ?> stmt) {
         addContextToNamespace(namespace, key, stmt);
     }
 
