@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -287,15 +286,17 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
             final StatementContextBase<?, ?, ?> usesParentCtx) {
 
         final Object refineArgument = refineCtx.getStatementArgument();
-        Preconditions.checkArgument(refineArgument instanceof SchemaNodeIdentifier,
-                "Invalid refine argument %s. It must be instance of SchemaNodeIdentifier. At %s", refineArgument,
-                refineCtx.getStatementSourceReference());
+        InferenceException.throwIf(!(refineArgument instanceof SchemaNodeIdentifier),
+            refineCtx.getStatementSourceReference(),
+            "Invalid refine argument %s. It must be instance of SchemaNodeIdentifier.", refineArgument);
 
         final SchemaNodeIdentifier refineTargetNodeIdentifier = (SchemaNodeIdentifier) refineArgument;
         final StatementContextBase<?, ?, ?> refineTargetNodeCtx = Utils.findNode(usesParentCtx,
                 refineTargetNodeIdentifier);
-        Preconditions.checkArgument(refineTargetNodeCtx != null, "Refine target node %s not found. At %s",
-                refineTargetNodeIdentifier, refineCtx.getStatementSourceReference());
+
+        InferenceException.throwIfNull(refineTargetNodeCtx, refineCtx.getStatementSourceReference(),
+            "Refine target node %s not found.", refineTargetNodeIdentifier);
+
         if (StmtContextUtils.isUnknownStatement(refineTargetNodeCtx)) {
             LOG.debug(
                     "Refine node '{}' in uses '{}' has target node unknown statement '{}'. Refine has been skipped. At line: {}",
