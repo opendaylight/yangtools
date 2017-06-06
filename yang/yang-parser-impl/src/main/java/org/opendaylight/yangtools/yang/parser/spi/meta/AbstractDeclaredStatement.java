@@ -17,7 +17,6 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 /**
  * Utility abstract base class for implementing declared statements.
@@ -26,8 +25,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
  * @param <A> Argument type.
  */
 public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<A> {
-
-
     private final A argument;
     private final String rawArgument;
     private final ImmutableList<? extends DeclaredStatement<?>> substatements;
@@ -44,7 +41,7 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
          * original collection, which may contains references to mutable context.
          */
         substatements = ImmutableList.copyOf(Collections2.transform(context.declaredSubstatements(),
-            StatementContextBase::buildDeclared));
+            StmtContext::buildDeclared));
     }
 
     protected final <S extends DeclaredStatement<?>> S firstDeclared(final Class<S> type) {

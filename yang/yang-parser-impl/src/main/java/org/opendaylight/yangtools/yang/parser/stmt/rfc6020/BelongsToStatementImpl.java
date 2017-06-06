@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -77,8 +78,8 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
 
             belongsToAction.apply(new InferenceAction() {
                 @Override
-                public void apply() {
-                    StmtContext<?, ?, ?> belongsToModuleCtx = belongsToPrereq.get();
+                public void apply(final InferenceContext ctx) {
+                    StmtContext<?, ?, ?> belongsToModuleCtx = belongsToPrereq.resolve(ctx);
 
                     belongsToCtx.addToNs(BelongsToModuleContext.class, belongsToModuleIdentifier, belongsToModuleCtx);
                     belongsToCtx.addToNs(BelongsToPrefixToModuleIdentifier.class,

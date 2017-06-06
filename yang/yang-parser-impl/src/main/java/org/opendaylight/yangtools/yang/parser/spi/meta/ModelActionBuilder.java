@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.EFFECTIVE_MODEL;
 
-import com.google.common.base.Supplier;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -60,7 +59,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  *
  * Action will be executed when:
  * <ul>
- * <li> {@link InferenceAction#apply()} - all prerequisites (and declared forward references) are met,
+ * <li> {@link InferenceAction#apply(InferenceContext)} - all prerequisites (and declared forward references) are met,
  * action could dereference them and start applying changes.
  * </li>
  * <li>{@link InferenceAction#prerequisiteFailed(Collection)} - semantic parser finished all other satisfied
@@ -83,21 +82,23 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  *
  */
 public interface ModelActionBuilder {
+    interface InferenceContext {
+
+    }
 
     @FunctionalInterface
-    interface Prerequisite<T> extends Supplier<T> {
+    interface Prerequisite<T> {
         /**
          * Returns associated prerequisite once it is resolved.
          *
+         * @param ctx Inference context in which the prerequisite was satisfied
          * @return associated prerequisite once it is resolved.
          */
-        @Override
-        T get();
+        T resolve(InferenceContext ctx);
     }
 
     /**
      * User-defined inference action.
-     *
      */
     interface InferenceAction {
 
@@ -112,7 +113,7 @@ public interface ModelActionBuilder {
          *      Note that this exception be used for user to debug YANG sources,
          *      so should provide helpful context to fix issue in sources.
          */
-        void apply() throws InferenceException;
+        void apply(InferenceContext ctx) throws InferenceException;
 
         /**
          * Invoked once one of prerequisites was not met,
@@ -133,14 +134,21 @@ public interface ModelActionBuilder {
     }
 
     /**
-     * Action requires that the specified context transition to complete{@link ModelProcessingPhase#FULL_DECLARATION}
-     * phase.
+     * Action requires that the specified context transition to complete {@link ModelProcessingPhase#FULL_DECLARATION}
+     * phase and produce a declared statement.
      *
-     * @param context Statement context which needs to
-     * @return A {@link Prerequisite} returning the declared statement of the specified context.
+     * @param context Statement context which needs to complete the transition.
+     * @return A {@link Prerequisite} returning the declared statement of the requested context.
      */
     @Nonnull <D extends DeclaredStatement<?>> Prerequisite<D> requiresDeclared(StmtContext<?, ? extends D, ?> context);
 
+    /**
+     * Action requires that the specified context completes specified phase.
+     *
+     * @param context Statement context which needs to complete the transition.
+     * @param phase ModelProcessingPhase which must have completed
+     * @return A {@link Prerequisite} returning the requested context.
+     */
     @Nonnull <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         Prerequisite<StmtContext<A, D, E>> requiresCtx(StmtContext<A, D, E> context, ModelProcessingPhase phase);
 
