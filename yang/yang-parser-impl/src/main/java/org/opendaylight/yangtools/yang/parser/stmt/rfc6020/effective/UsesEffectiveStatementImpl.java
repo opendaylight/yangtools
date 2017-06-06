@@ -11,10 +11,9 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -32,8 +31,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, UsesStatement> implements UsesNode {
     private final SchemaPath groupingPath;
@@ -56,11 +55,10 @@ public final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumente
         addedByUses = ctx.getCopyHistory().contains(CopyType.ADDED_BY_USES);
 
         // initSubstatementCollections
-        final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-        final List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
+        final List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
         final Set<AugmentationSchema> augmentationsInit = new LinkedHashSet<>();
         final Map<SchemaPath, SchemaNode> refinesInit = new HashMap<>();
-        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 final UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
                 unknownNodesInit.add(unknownNode);
@@ -80,7 +78,7 @@ public final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumente
         this.refines = ImmutableMap.copyOf(refinesInit);
 
         final WhenEffectiveStatementImpl whenStmt = firstEffective(WhenEffectiveStatementImpl.class);
-        this.whenCondition = (whenStmt == null) ? null : whenStmt.argument();
+        this.whenCondition = whenStmt == null ? null : whenStmt.argument();
     }
 
     @Nonnull

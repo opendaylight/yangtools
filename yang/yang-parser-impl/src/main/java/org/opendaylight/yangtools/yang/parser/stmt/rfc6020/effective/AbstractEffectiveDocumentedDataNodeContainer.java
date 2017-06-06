@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -44,25 +43,23 @@ abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends Declare
             final StmtContext<A, D, ?> ctx) {
         super(ctx);
 
-        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-
         Map<QName, DataSchemaNode> mutableChildNodes = new LinkedHashMap<>();
         Set<GroupingDefinition> mutableGroupings = new HashSet<>();
         Set<UsesNode> mutableUses = new HashSet<>();
         Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
         Set<DataSchemaNode> mutablePublicChildNodes = new LinkedHashSet<>();
 
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
-            if (effectiveStatement instanceof DataSchemaNode) {
-                final DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;
+        for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
+            if (stmt instanceof DataSchemaNode) {
+                final DataSchemaNode dataSchemaNode = (DataSchemaNode) stmt;
                 if (!mutableChildNodes.containsKey(dataSchemaNode.getQName())) {
                     /**
                      * Add case short hand when augmenting choice with short hand
                      **/
-                    if (this instanceof AugmentationSchema && !(effectiveStatement instanceof ChoiceCaseNode ||
-                            effectiveStatement instanceof ChoiceSchemaNode) &&
-                            (YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(effectiveStatement.statementDefinition())) &&
-                            Boolean.TRUE.equals(ctx.getFromNamespace(AugmentToChoiceNamespace.class, ctx))) {
+                    if (this instanceof AugmentationSchema
+                            && !(stmt instanceof ChoiceCaseNode || stmt instanceof ChoiceSchemaNode)
+                            && YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(stmt.statementDefinition())
+                            && Boolean.TRUE.equals(ctx.getFromNamespace(AugmentToChoiceNamespace.class, ctx))) {
                         final CaseShorthandImpl caseShorthand = new CaseShorthandImpl(dataSchemaNode);
                         mutableChildNodes.put(caseShorthand.getQName(), caseShorthand);
                         mutablePublicChildNodes.add(caseShorthand);
@@ -71,32 +68,32 @@ abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends Declare
                         mutablePublicChildNodes.add(dataSchemaNode);
                     }
                 } else {
-                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
+                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt);
                 }
             }
-            if (effectiveStatement instanceof UsesNode) {
-                UsesNode usesNode = (UsesNode) effectiveStatement;
+            if (stmt instanceof UsesNode) {
+                UsesNode usesNode = (UsesNode) stmt;
                 if (!mutableUses.contains(usesNode)) {
                     mutableUses.add(usesNode);
                 } else {
-                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
+                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt);
                 }
             }
-            if (effectiveStatement instanceof TypeDefEffectiveStatementImpl) {
-                TypeDefEffectiveStatementImpl typeDef = (TypeDefEffectiveStatementImpl) effectiveStatement;
+            if (stmt instanceof TypeDefEffectiveStatementImpl) {
+                TypeDefEffectiveStatementImpl typeDef = (TypeDefEffectiveStatementImpl) stmt;
                 TypeDefinition<?> type = typeDef.getTypeDefinition();
                 if (!mutableTypeDefinitions.contains(type)) {
                     mutableTypeDefinitions.add(type);
                 } else {
-                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
+                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt);
                 }
             }
-            if (effectiveStatement instanceof GroupingDefinition) {
-                GroupingDefinition grp = (GroupingDefinition) effectiveStatement;
+            if (stmt instanceof GroupingDefinition) {
+                GroupingDefinition grp = (GroupingDefinition) stmt;
                 if (!mutableGroupings.contains(grp)) {
                     mutableGroupings.add(grp);
                 } else {
-                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
+                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt);
                 }
             }
         }
