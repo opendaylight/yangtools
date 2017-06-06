@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc7950.effective;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableSet;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -42,10 +41,9 @@ public class ActionEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ac
         this.output = firstEffective(OutputEffectiveStatementImpl.class);
 
         // initSubstatements
-        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
         Set<GroupingDefinition> groupingsInit = new HashSet<>();
         Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof GroupingDefinition) {
                 GroupingDefinition groupingDefinition = (GroupingDefinition) effectiveStatement;
                 groupingsInit.add(groupingDefinition);

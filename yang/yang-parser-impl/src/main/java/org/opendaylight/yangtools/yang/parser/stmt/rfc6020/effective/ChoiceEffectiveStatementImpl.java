@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -49,14 +48,13 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
         this.original = ctx.getOriginalCtx() == null ? null : (ChoiceSchemaNode) ctx.getOriginalCtx().buildEffective();
 
         final DefaultEffectiveStatementImpl defaultStmt = firstEffective(DefaultEffectiveStatementImpl.class);
-        this.defaultCase = (defaultStmt == null) ? null : defaultStmt.argument();
+        this.defaultCase = defaultStmt == null ? null : defaultStmt.argument();
 
         // initSubstatementCollectionsAndFields
-        final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
         final Set<AugmentationSchema> augmentationsInit = new LinkedHashSet<>();
         final SortedSet<ChoiceCaseNode> casesInit = new TreeSet<>(SCHEMA_NODE_COMP);
 
-        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof AugmentationSchema) {
                 final AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
                 augmentationsInit.add(augmentationSchema);
@@ -130,7 +128,7 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
         Preconditions.checkArgument(name != null, "Choice Case string Name cannot be NULL!");
 
         for (final ChoiceCaseNode caseNode : cases) {
-            if (caseNode != null && (caseNode.getQName() != null) && name.equals(caseNode.getQName().getLocalName())) {
+            if (caseNode != null && caseNode.getQName() != null && name.equals(caseNode.getQName().getLocalName())) {
                 return caseNode;
             }
         }

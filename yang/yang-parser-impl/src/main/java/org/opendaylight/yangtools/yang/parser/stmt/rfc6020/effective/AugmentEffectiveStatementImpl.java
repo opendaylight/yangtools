@@ -13,7 +13,6 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -62,14 +61,13 @@ public final class AugmentEffectiveStatementImpl extends
         this.copyOf = ctx.getOriginalCtx() == null ? null : (AugmentationSchema) ctx.getOriginalCtx().buildEffective();
 
         final WhenEffectiveStatementImpl whenStmt = firstEffective(WhenEffectiveStatementImpl.class);
-        this.whenCondition = (whenStmt == null) ? null : whenStmt.argument();
+        this.whenCondition = whenStmt == null ? null : whenStmt.argument();
 
         // initSubstatementCollections
-        final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
         final ImmutableSet.Builder<ActionDefinition> actionsBuilder = ImmutableSet.builder();
         final ImmutableSet.Builder<NotificationDefinition> notificationsBuilder = ImmutableSet.builder();
         final ImmutableList.Builder<UnknownSchemaNode> listBuilder = new ImmutableList.Builder<>();
-        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof ActionDefinition) {
                 actionsBuilder.add((ActionDefinition) effectiveStatement);
             } else if (effectiveStatement instanceof NotificationDefinition) {

@@ -8,15 +8,13 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -36,15 +34,10 @@ public final class RefineEffectiveStatementImpl extends
         refineTargetNode = (SchemaNode) ctx.getEffectOfStatement().iterator().next().buildEffective();
 
         // initSubstatementCollectionsAndFields
-        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
-        for (EffectiveStatement<?, ?> effectiveSubstatement : effectiveSubstatements) {
-            if (effectiveSubstatement instanceof UnknownSchemaNode) {
-                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveSubstatement;
-                unknownNodesInit.add(unknownNode);
-            }
-        }
-        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
+        this.unknownNodes = ImmutableList.copyOf(effectiveSubstatements().stream()
+            .filter(UnknownSchemaNode.class::isInstance)
+            .map(UnknownSchemaNode.class::cast)
+            .collect(Collectors.toList()));
     }
 
     public SchemaNode getRefineTargetNode() {

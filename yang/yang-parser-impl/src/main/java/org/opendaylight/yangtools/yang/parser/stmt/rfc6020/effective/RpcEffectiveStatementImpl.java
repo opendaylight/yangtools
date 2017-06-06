@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.collect.ImmutableSet;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -34,10 +33,9 @@ public class RpcEffectiveStatementImpl extends AbstractEffectiveSchemaNode<RpcSt
         this.output = firstEffective(OutputEffectiveStatementImpl.class);
 
         // initSubstatements
-        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
         Set<GroupingDefinition> groupingsInit = new HashSet<>();
         Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof GroupingDefinition) {
                 GroupingDefinition groupingDefinition = (GroupingDefinition) effectiveStatement;
                 groupingsInit.add(groupingDefinition);
