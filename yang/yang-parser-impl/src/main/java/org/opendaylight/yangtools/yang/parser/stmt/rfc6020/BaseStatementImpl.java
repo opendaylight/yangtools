@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedIdentitiesNamespac
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -78,11 +79,11 @@ public class BaseStatementImpl extends AbstractDeclaredStatement<QName> implemen
 
                 baseIdentityAction.apply(new InferenceAction() {
                     @Override
-                    public void apply() {
-                        List<StmtContext<?, ?, ?>> derivedIdentities =
-                                baseStmtCtx.getFromNamespace(DerivedIdentitiesNamespace.class, baseStmtCtx.getStatementArgument());
+                    public void apply(final InferenceContext ctx) {
+                        List<StmtContext<?, ?, ?>> derivedIdentities = baseStmtCtx.getFromNamespace(
+                            DerivedIdentitiesNamespace.class, baseStmtCtx.getStatementArgument());
                         if (derivedIdentities == null) {
-                            derivedIdentities = new ArrayList<>();
+                            derivedIdentities = new ArrayList<>(1);
                             baseStmtCtx.addToNs(DerivedIdentitiesNamespace.class, baseIdentityQName, derivedIdentities);
                         }
                         derivedIdentities.add(baseParentCtx);
