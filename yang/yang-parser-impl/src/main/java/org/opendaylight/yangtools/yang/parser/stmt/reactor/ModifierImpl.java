@@ -37,6 +37,8 @@ import org.slf4j.LoggerFactory;
 final class ModifierImpl implements ModelActionBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(ModifierImpl.class);
 
+    private final InferenceContext ctx = new InferenceContext() { };
+
     private final Set<AbstractPrerequisite<?>> unsatisfied = new HashSet<>(1);
     private final Set<AbstractPrerequisite<?>> mutations = new HashSet<>(1);
 
@@ -88,7 +90,7 @@ final class ModifierImpl implements ModelActionBuilder {
 
     private void applyAction() {
         Preconditions.checkState(!actionApplied);
-        action.apply();
+        action.apply(ctx);
         actionApplied = true;
     }
 
@@ -244,14 +246,30 @@ final class ModifierImpl implements ModelActionBuilder {
         this.action = Preconditions.checkNotNull(action);
     }
 
+    private static final class TransformedPrerequisite<I, O> implements Prerequisite<O> {
+        private final Function<? super I, O> function;
+        private final Prerequisite<I>  input;
+
+        TransformedPrerequisite(final Prerequisite<I>  input, final Function<? super I, O> function) {
+            this.input = Preconditions.checkNotNull(input);
+            this.function = Preconditions.checkNotNull(function);
+        }
+
+        @Override
+        public O resolve(final InferenceContext ctx) {
+            return function.apply(input.resolve(ctx));
+        }
+    }
+
     private abstract class AbstractPrerequisite<T> implements Prerequisite<T> {
 
         private boolean done = false;
         private T value;
 
         @Override
-        public final T get() {
-            Preconditions.checkState(isDone());
+        public final T resolve(final InferenceContext ctx) {
+            Preconditions.checkState(done);
+            Preconditions.checkArgument(ctx == ModifierImpl.this.ctx);
             return value;
         }
 
@@ -266,7 +284,7 @@ final class ModifierImpl implements ModelActionBuilder {
         }
 
         final <O> Prerequisite<O> transform(final Function<? super T, O> transformation) {
-            return () -> transformation.apply(get());
+            return new TransformedPrerequisite<>(this, transformation);
         }
 
         @Override
