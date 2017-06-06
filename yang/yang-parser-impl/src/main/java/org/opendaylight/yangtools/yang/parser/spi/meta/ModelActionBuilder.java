@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.EFFECTIVE_MODEL;
 
-import com.google.common.base.Supplier;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -83,21 +82,22 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  *
  */
 public interface ModelActionBuilder {
+    interface InferenceContext {
 
-    @FunctionalInterface
-    interface Prerequisite<T> extends Supplier<T> {
+    }
+
+    interface Prerequisite<T> {
         /**
          * Returns associated prerequisite once it is resolved.
          *
+         * @param ctx Inference context in which the prerequisite was satisfied
          * @return associated prerequisite once it is resolved.
          */
-        @Override
-        T get();
+        T resolve(InferenceContext ctx);
     }
 
     /**
      * User-defined inference action.
-     *
      */
     interface InferenceAction {
 
@@ -112,7 +112,7 @@ public interface ModelActionBuilder {
          *      Note that this exception be used for user to debug YANG sources,
          *      so should provide helpful context to fix issue in sources.
          */
-        void apply() throws InferenceException;
+        void apply(InferenceContext ctx) throws InferenceException;
 
         /**
          * Invoked once one of prerequisites was not met,

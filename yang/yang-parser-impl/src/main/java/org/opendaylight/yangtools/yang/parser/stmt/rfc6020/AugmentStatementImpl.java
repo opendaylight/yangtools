@@ -44,7 +44,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StmtOrderingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.RootStatementContext;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AugmentEffectiveStatementImpl;
 import org.slf4j.Logger;
@@ -126,8 +125,9 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
             augmentAction.apply(new ModelActionBuilder.InferenceAction() {
 
                 @Override
-                public void apply() {
-                    final StatementContextBase<?, ?, ?> augmentTargetCtx = (StatementContextBase<?, ?, ?>) target.get();
+                public void apply(final ModelActionBuilder.InferenceContext ctx) {
+                    final StatementContextBase<?, ?, ?> augmentTargetCtx =
+                            (StatementContextBase<?, ?, ?>) target.resolve(ctx);
                     if (!isSupportedAugmentTarget(augmentTargetCtx)
                             || StmtContextUtils.isInExtensionBody(augmentTargetCtx)) {
                         augmentNode.setIsSupportedToBuildEffective(false);
@@ -237,7 +237,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
          * @return true if supplied statement context is conditional augment
          *         statement, otherwise false
          */
-        private static boolean isConditionalAugmentStmt(final StatementContextBase<?, ?, ?> ctx) {
+        private static boolean isConditionalAugmentStmt(final StmtContext<?, ?, ?> ctx) {
             return ctx.getPublicDefinition() == YangStmtMapping.AUGMENT
                     && StmtContextUtils.findFirstSubstatement(ctx, WhenStatement.class) != null;
         }
@@ -255,8 +255,9 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
             }
         }
 
-        private static void validateNodeCanBeCopiedByAugment(final StatementContextBase<?, ?, ?> sourceCtx,
-                final StatementContextBase<?, ?, ?> targetCtx, final CopyType typeOfCopy, final boolean skipCheckOfMandatoryNodes) {
+        private static void validateNodeCanBeCopiedByAugment(final StmtContext<?, ?, ?> sourceCtx,
+                final StatementContextBase<?, ?, ?> targetCtx, final CopyType typeOfCopy,
+                final boolean skipCheckOfMandatoryNodes) {
 
             if (WhenStatement.class.equals(sourceCtx.getPublicDefinition().getDeclaredRepresentationClass())) {
                 return;
@@ -271,7 +272,6 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                     .addAll(targetCtx.declaredSubstatements()).addAll(targetCtx.effectiveSubstatements()).build();
 
             for (final StatementContextBase<?, ?, ?> subStatement : targetSubStatements) {
-
                 final boolean sourceIsDataNode = DataDefinitionStatement.class.isAssignableFrom(sourceCtx
                         .getPublicDefinition().getDeclaredRepresentationClass());
                 final boolean targetIsDataNode = DataDefinitionStatement.class.isAssignableFrom(subStatement
@@ -285,7 +285,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
             }
         }
 
-        private static void checkForMandatoryNodes(final StatementContextBase<?, ?, ?> sourceCtx) {
+        private static void checkForMandatoryNodes(final StmtContext<?, ?, ?> sourceCtx) {
             if (StmtContextUtils.isNonPresenceContainer(sourceCtx)) {
                 /*
                  * We need to iterate over both declared and effective sub-statements,
@@ -304,8 +304,8 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                     sourceCtx.rawStatementArgument());
         }
 
-        private static boolean reguiredCheckOfMandatoryNodes(final StatementContextBase<?, ?, ?> sourceCtx,
-                StatementContextBase<?, ?, ?> targetCtx) {
+        private static boolean reguiredCheckOfMandatoryNodes(final StmtContext<?, ?, ?> sourceCtx,
+                Mutable<?, ?, ?> targetCtx) {
             /*
              * If the statement argument is not QName, it cannot be mandatory
              * statement, therefore return false and skip mandatory nodes validation
@@ -315,7 +315,8 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
             }
             final QName sourceStmtQName = (QName) sourceCtx.getStatementArgument();
 
-            final RootStatementContext<?, ?, ?> root = targetCtx.getRoot();
+            // RootStatementContext, for example
+            final Mutable<?, ?, ?> root = targetCtx.getRoot();
             do {
                 Verify.verify(targetCtx.getStatementArgument() instanceof QName,
                         "Argument of augment target statement must be QName.");
@@ -363,8 +364,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
             return REUSED_DEF_SET.contains(stmtContext.getPublicDefinition());
         }
 
-        static boolean isSupportedAugmentTarget(final StatementContextBase<?, ?, ?> substatementCtx) {
-
+        static boolean isSupportedAugmentTarget(final StmtContext<?, ?, ?> substatementCtx) {
             /*
              * :TODO Substatement must be allowed augment target type e.g.
              * Container, etc... and must not be for example grouping, identity etc.
@@ -373,9 +373,8 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
              * the same QName. We must find the Container and the Grouping must be
              * ignored as disallowed augment target.
              */
-
-            final Collection<?> allowedAugmentTargets = substatementCtx.getFromNamespace(ValidationBundlesNamespace.class,
-                    ValidationBundleType.SUPPORTED_AUGMENT_TARGETS);
+            final Collection<?> allowedAugmentTargets = substatementCtx.getFromNamespace(
+                ValidationBundlesNamespace.class, ValidationBundleType.SUPPORTED_AUGMENT_TARGETS);
 
             // if no allowed target is returned we consider all targets allowed
             return allowedAugmentTargets == null || allowedAugmentTargets.isEmpty()
@@ -386,7 +385,6 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
         protected SubstatementValidator getSubstatementValidator() {
             return SUBSTATEMENT_VALIDATOR;
         }
-
     }
 
     @Nonnull

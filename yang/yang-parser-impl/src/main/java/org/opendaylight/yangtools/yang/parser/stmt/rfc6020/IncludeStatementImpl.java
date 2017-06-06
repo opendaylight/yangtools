@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -86,8 +87,8 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
 
             includeAction.apply(new InferenceAction() {
                 @Override
-                public void apply() {
-                    final StmtContext<?, ?, ?> includedSubModuleContext = requiresCtxPrerequisite.get();
+                public void apply(final InferenceContext ctx) {
+                    final StmtContext<?, ?, ?> includedSubModuleContext = requiresCtxPrerequisite.resolve(ctx);
 
                     stmt.addToNs(IncludedModuleContext.class, includeSubmoduleIdentifier,
                             includedSubModuleContext);
@@ -104,7 +105,7 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
             });
         }
 
-        private static ModuleIdentifier getIncludeSubmoduleIdentifier(final Mutable<String, IncludeStatement, ?> stmt) {
+        private static ModuleIdentifier getIncludeSubmoduleIdentifier(final StmtContext<String, IncludeStatement, ?> stmt) {
 
             final String subModuleName = stmt.getStatementArgument();
 
