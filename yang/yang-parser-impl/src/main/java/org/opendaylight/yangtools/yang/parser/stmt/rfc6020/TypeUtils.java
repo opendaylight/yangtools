@@ -18,7 +18,6 @@ import com.google.common.collect.Iterables;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -316,8 +315,7 @@ public final class TypeUtils {
 
     private static boolean isAnyDefaultValueMarkedWithIfFeature(final TypeEffectiveStatement<?> typeStmt,
             final Set<String> defaultValues) {
-        final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = typeStmt.effectiveSubstatements();
-        for (final EffectiveStatement<?, ?> effectiveSubstatement : effectiveSubstatements) {
+        for (final EffectiveStatement<?, ?> effectiveSubstatement : typeStmt.effectiveSubstatements()) {
             if (YangStmtMapping.BIT.equals(effectiveSubstatement.statementDefinition())) {
                 final QName bitQName = (QName) effectiveSubstatement.argument();
                 if (defaultValues.remove(bitQName.getLocalName()) && containsIfFeature(effectiveSubstatement)) {
