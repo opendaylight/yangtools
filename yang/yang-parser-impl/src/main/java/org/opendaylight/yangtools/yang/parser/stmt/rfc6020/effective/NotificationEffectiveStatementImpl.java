@@ -9,9 +9,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -43,10 +42,9 @@ public class NotificationEffectiveStatementImpl extends
         this.constraints = EffectiveConstraintDefinitionImpl.forParent(this);
 
         // initSubstatementCollections
-        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
+        List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
         Set<AugmentationSchema> augmentationsInit = new LinkedHashSet<>();
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
                 unknownNodesInit.add(unknownNode);

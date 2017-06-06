@@ -12,7 +12,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Collection;
 import java.util.Date;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -70,10 +69,7 @@ public class Bug6972Test {
         final LeafSchemaNode leaf = (LeafSchemaNode) cont.getDataChildByName(leafQName);
         assertNotNull(leaf);
 
-        final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements =
-                ((LeafEffectiveStatementImpl) leaf).effectiveSubstatements();
-
-        for (EffectiveStatement<?, ?> effStmt : effectiveSubstatements) {
+        for (EffectiveStatement<?, ?> effStmt : ((LeafEffectiveStatementImpl) leaf).effectiveSubstatements()) {
             if (effStmt instanceof UnitsEffectiveStatementImpl) {
                 units = (UnitsEffectiveStatementImpl) effStmt;
                 break;
