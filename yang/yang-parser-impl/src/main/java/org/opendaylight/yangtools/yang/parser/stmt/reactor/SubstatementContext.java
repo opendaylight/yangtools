@@ -162,11 +162,11 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
     private void copyStatements(final SubstatementContext<A, D, E> original, final QNameModule newQNameModule,
             final CopyType typeOfCopy) {
-        final Collection<StatementContextBase<?, ?, ?>> declared = original.declaredSubstatements();
+        final Collection<? extends Mutable<?, ?, ?>> declared = original.declaredSubstatements();
         final Collection<StatementContextBase<?, ?, ?>> effective = original.effectiveSubstatements();
-        final Collection<StatementContextBase<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
+        final Collection<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
 
-        for (final StatementContextBase<?, ?, ?> stmtContext : declared) {
+        for (final Mutable<?, ?, ?> stmtContext : declared) {
             if (StmtContextUtils.areFeaturesSupported(stmtContext)) {
                 copySubstatement(stmtContext, newQNameModule, typeOfCopy, buffer);
             }
@@ -179,11 +179,10 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         addEffectiveSubstatements(buffer);
     }
 
-    private void copySubstatement(final StatementContextBase<?, ?, ?> stmtContext,
-            final QNameModule newQNameModule, final CopyType typeOfCopy,
-            final Collection<StatementContextBase<?, ?, ?>> buffer) {
+    private void copySubstatement(final Mutable<?, ?, ?> stmtContext, final QNameModule newQNameModule,
+            final CopyType typeOfCopy, final Collection<Mutable<?, ?, ?>> buffer) {
         if (needToCopyByUses(stmtContext)) {
-            final StatementContextBase<?, ?, ?> copy = stmtContext.createCopy(newQNameModule, this, typeOfCopy);
+            final Mutable<?, ?, ?> copy = stmtContext.createCopy(newQNameModule, this, typeOfCopy);
             LOG.debug("Copying substatement {} for {} as", stmtContext, this, copy);
             buffer.add(copy);
         } else if (isReusedByUses(stmtContext)) {
