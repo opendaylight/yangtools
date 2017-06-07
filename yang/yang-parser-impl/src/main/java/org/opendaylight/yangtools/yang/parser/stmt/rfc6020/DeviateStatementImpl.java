@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Infere
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules;
@@ -124,7 +125,7 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
         }
 
         @Override
-        public void onFullDefinitionDeclared(final StmtContext.Mutable<DeviateKind, DeviateStatement,
+        public void onFullDefinitionDeclared(final Mutable<DeviateKind, DeviateStatement,
                 EffectiveStatement<DeviateKind, DeviateStatement>> deviateStmtCtx) {
             final DeviateKind deviateKind = deviateStmtCtx.getStatementArgument();
             getSubstatementValidatorForDeviate(deviateKind).validate(deviateStmtCtx);
@@ -143,7 +144,7 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
                     DeviateStatement>>> sourceCtxPrerequisite =
                     deviateAction.requiresCtx(deviateStmtCtx, ModelProcessingPhase.EFFECTIVE_MODEL);
 
-            final Prerequisite<StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>> targetCtxPrerequisite =
+            final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> targetCtxPrerequisite =
                     deviateAction.mutatesEffectiveCtx(deviateStmtCtx.getRoot(),
                         SchemaNodeIdentifierBuildNamespace.class,  deviationTarget);
 
@@ -179,7 +180,7 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
             });
         }
 
-        private static boolean isDeviationSupported(final StmtContext.Mutable<DeviateKind, DeviateStatement,
+        private static boolean isDeviationSupported(final Mutable<DeviateKind, DeviateStatement,
                 EffectiveStatement<DeviateKind, DeviateStatement>> deviateStmtCtx,
                 final SchemaNodeIdentifier deviationTarget) {
             final Map<QNameModule, Set<QNameModule>> modulesDeviatedByModules = deviateStmtCtx.getFromNamespace(
@@ -202,13 +203,13 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
 
         private static void performDeviateAdd(final StatementContextBase<?, ?, ?> deviateStmtCtx,
                 final StatementContextBase<?, ?, ?> targetCtx) {
-            for (StatementContextBase<?, ?, ?> originalStmtCtx : deviateStmtCtx.declaredSubstatements()) {
+            for (Mutable<?, ?, ?> originalStmtCtx : deviateStmtCtx.mutableDeclaredSubstatements()) {
                 validateDeviationTarget(originalStmtCtx, targetCtx);
                 addStatement(originalStmtCtx, targetCtx);
             }
         }
 
-        private static void addStatement(final StatementContextBase<?, ?, ?> stmtCtxToBeAdded,
+        private static void addStatement(final Mutable<?, ?, ?> stmtCtxToBeAdded,
                 final StatementContextBase<?, ?, ?> targetCtx) {
             if (StmtContextUtils.isUnknownStatement(stmtCtxToBeAdded)) {
                 targetCtx.addEffectiveSubstatement(stmtCtxToBeAdded.createCopy(targetCtx, CopyType.ORIGINAL));
@@ -219,10 +220,10 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
 
             if (SINGLETON_STATEMENTS.contains(stmtToBeAdded) || YangStmtMapping.DEFAULT.equals(stmtToBeAdded)
                     && YangStmtMapping.LEAF.equals(targetCtx.getPublicDefinition())) {
-                final Iterable<StatementContextBase<?, ?, ?>> targetCtxSubstatements = Iterables.concat(
+                final Iterable<StmtContext<?, ?, ?>> targetCtxSubstatements = Iterables.concat(
                         targetCtx.declaredSubstatements(), targetCtx.effectiveSubstatements());
 
-                for (final StatementContextBase<?, ?, ?> targetCtxSubstatement : targetCtxSubstatements) {
+                for (final StmtContext<?, ?, ?> targetCtxSubstatement : targetCtxSubstatements) {
                     InferenceException.throwIf(stmtToBeAdded.equals(targetCtxSubstatement.getPublicDefinition()),
                             stmtCtxToBeAdded.getStatementSourceReference(), "Deviation cannot add substatement %s " +
                             "to target node %s because it is already defined in target and can appear only once.",
@@ -235,48 +236,48 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
 
         private static void performDeviateReplace(final StatementContextBase<?, ?, ?> deviateStmtCtx,
                 final StatementContextBase<?, ?, ?> targetCtx) {
-            for (StatementContextBase<?, ?, ?> originalStmtCtx : deviateStmtCtx.declaredSubstatements()) {
+            for (Mutable<?, ?, ?> originalStmtCtx : deviateStmtCtx.mutableDeclaredSubstatements()) {
                 validateDeviationTarget(originalStmtCtx, targetCtx);
                 replaceStatement(originalStmtCtx, targetCtx);
             }
         }
 
-        private static void replaceStatement(final StatementContextBase<?, ?, ?> stmtCtxToBeReplaced,
+        private static void replaceStatement(final Mutable<?, ?, ?> originalStmtCtx,
                 final StatementContextBase<?, ?, ?> targetCtx) {
-            final StatementDefinition stmtToBeReplaced = stmtCtxToBeReplaced.getPublicDefinition();
+            final StatementDefinition stmtToBeReplaced = originalStmtCtx.getPublicDefinition();
 
             if (YangStmtMapping.DEFAULT.equals(stmtToBeReplaced)
                     && YangStmtMapping.LEAF_LIST.equals(targetCtx.getPublicDefinition())) {
                 LOG.error("Deviation cannot replace substatement {} in target leaf-list {} because a leaf-list can " +
                         "have multiple default statements. At line: {}", stmtToBeReplaced.getStatementName(),
-                        targetCtx.getStatementArgument(), stmtCtxToBeReplaced.getStatementSourceReference());
+                        targetCtx.getStatementArgument(), originalStmtCtx.getStatementSourceReference());
                 return;
             }
 
-            for (final StatementContextBase<?, ?, ?> targetCtxSubstatement : targetCtx.effectiveSubstatements()) {
+            for (final StmtContext<?, ?, ?> targetCtxSubstatement : targetCtx.effectiveSubstatements()) {
                 if (stmtToBeReplaced.equals(targetCtxSubstatement.getPublicDefinition())) {
                     targetCtx.removeStatementFromEffectiveSubstatements(stmtToBeReplaced);
-                    targetCtx.addEffectiveSubstatement(stmtCtxToBeReplaced.createCopy(targetCtx, CopyType.ORIGINAL));
+                    targetCtx.addEffectiveSubstatement(originalStmtCtx.createCopy(targetCtx, CopyType.ORIGINAL));
                     return;
                 }
             }
 
-            for (final StatementContextBase<?, ?, ?> targetCtxSubstatement : targetCtx.declaredSubstatements()) {
+            for (final Mutable<?, ?, ?> targetCtxSubstatement : targetCtx.mutableDeclaredSubstatements()) {
                 if (stmtToBeReplaced.equals(targetCtxSubstatement.getPublicDefinition())) {
                     targetCtxSubstatement.setIsSupportedToBuildEffective(false);
-                    targetCtx.addEffectiveSubstatement(stmtCtxToBeReplaced.createCopy(targetCtx, CopyType.ORIGINAL));
+                    targetCtx.addEffectiveSubstatement(originalStmtCtx.createCopy(targetCtx, CopyType.ORIGINAL));
                     return;
                 }
             }
 
-            throw new InferenceException(stmtCtxToBeReplaced.getStatementSourceReference(), "Deviation cannot " +
+            throw new InferenceException(originalStmtCtx.getStatementSourceReference(), "Deviation cannot " +
                     "replace substatement %s in target node %s because it does not exist in target node.",
                     stmtToBeReplaced.getStatementName(), targetCtx.getStatementArgument());
         }
 
         private static void performDeviateDelete(final StatementContextBase<?, ?, ?> deviateStmtCtx,
                 final StatementContextBase<?, ?, ?> targetCtx) {
-            for (StatementContextBase<?, ?, ?> originalStmtCtx : deviateStmtCtx.declaredSubstatements()) {
+            for (Mutable<?, ?, ?> originalStmtCtx : deviateStmtCtx.mutableDeclaredSubstatements()) {
                 validateDeviationTarget(originalStmtCtx, targetCtx);
                 deleteStatement(originalStmtCtx, targetCtx);
             }
@@ -287,7 +288,7 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
             final StatementDefinition stmtToBeDeleted = stmtCtxToBeDeleted.getPublicDefinition();
             final String stmtArgument = stmtCtxToBeDeleted.rawStatementArgument();
 
-            for (final StatementContextBase<?, ?, ?> targetCtxSubstatement : targetCtx.effectiveSubstatements()) {
+            for (final Mutable<?, ?, ?> targetCtxSubstatement : targetCtx.mutableEffectiveSubstatements()) {
                 if (statementsAreEqual(stmtToBeDeleted, stmtArgument, targetCtxSubstatement.getPublicDefinition(),
                         targetCtxSubstatement.rawStatementArgument())) {
                     targetCtx.removeStatementFromEffectiveSubstatements(stmtToBeDeleted, stmtArgument);
@@ -295,7 +296,7 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
                 }
             }
 
-            for (final StatementContextBase<?, ?, ?> targetCtxSubstatement : targetCtx.declaredSubstatements()) {
+            for (final Mutable<?, ?, ?> targetCtxSubstatement : targetCtx.mutableDeclaredSubstatements()) {
                 if (statementsAreEqual(stmtToBeDeleted, stmtArgument, targetCtxSubstatement.getPublicDefinition(),
                         targetCtxSubstatement.rawStatementArgument())) {
                     targetCtxSubstatement.setIsSupportedToBuildEffective(false);
