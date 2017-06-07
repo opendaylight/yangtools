@@ -144,7 +144,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
      * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
      */
     @Override
-    public StatementContextBase<?, ?, ?> createCopy(final StatementContextBase<?, ?, ?> newParent,
+    public StatementContextBase<A, D, E> createCopy(final StatementContextBase<?, ?, ?> newParent,
             final CopyType typeOfCopy) {
         return createCopy(null, newParent, typeOfCopy);
     }

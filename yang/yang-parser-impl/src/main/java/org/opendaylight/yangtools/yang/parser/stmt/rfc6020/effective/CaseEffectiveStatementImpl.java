@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public final class CaseEffectiveStatementImpl extends AbstractEffectiveSimpleDataNodeContainer<CaseStatement> implements
         ChoiceCaseNode, DerivableSchemaNode {
@@ -30,20 +29,15 @@ public final class CaseEffectiveStatementImpl extends AbstractEffectiveSimpleDat
         this.original = ctx.getOriginalCtx() == null ? null : (ChoiceCaseNode) ctx.getOriginalCtx().buildEffective();
 
         if (ctx.isConfiguration()) {
-            configuration = isAtLeastOneChildConfiguration(ctx.declaredSubstatements()) ||
-                    isAtLeastOneChildConfiguration(ctx.effectiveSubstatements());
+            configuration = isAtLeastOneChildConfiguration(ctx.declaredSubstatements())
+                    || isAtLeastOneChildConfiguration(ctx.effectiveSubstatements());
         } else {
             configuration = false;
         }
     }
 
-    private static boolean isAtLeastOneChildConfiguration(final Collection<StatementContextBase<?, ?, ?>> substatements) {
-        for (StatementContextBase<?, ?, ?> substatement : substatements) {
-            if (substatement.isConfiguration()) {
-                return true;
-            }
-        }
-        return false;
+    private static boolean isAtLeastOneChildConfiguration(final Collection<? extends StmtContext<?, ?, ?>> children) {
+        return children.stream().anyMatch(StmtContext::isConfiguration);
     }
 
     @Override

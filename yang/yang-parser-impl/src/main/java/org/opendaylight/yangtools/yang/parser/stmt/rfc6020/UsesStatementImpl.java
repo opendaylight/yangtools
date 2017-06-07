@@ -199,7 +199,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
      * @throws SourceException
      *             instance of SourceException
      */
-    private static void copyFromSourceToTarget(final StmtContext<?, ?, ?> sourceGrpStmtCtx,
+    private static void copyFromSourceToTarget(final Mutable<?, ?, ?> sourceGrpStmtCtx,
             final StatementContextBase<?, ?, ?> targetCtx,
             final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode) {
         final Collection<StatementContextBase<?, ?, ?>> declared = sourceGrpStmtCtx.declaredSubstatements();
