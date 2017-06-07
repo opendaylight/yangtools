@@ -19,13 +19,19 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-final class JSONStringInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec
+public final class JSONStringInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec
         implements JSONCodec<YangInstanceIdentifier> {
     private final DataSchemaContextTree dataContextTree;
     private final JSONCodecFactory codecFactory;
     private final SchemaContext context;
 
-    JSONStringInstanceIdentifierCodec(final SchemaContext context, final JSONCodecFactory jsonCodecFactory) {
+    public JSONStringInstanceIdentifierCodec(final SchemaContext context, final JSONCodecFactory jsonCodecFactory) {
+        this(context, jsonCodecFactory, false);
+    }
+
+    public JSONStringInstanceIdentifierCodec(final SchemaContext context, final JSONCodecFactory jsonCodecFactory,
+                                             final boolean allowWildcardIds) {
+        super(allowWildcardIds);
         this.context = Preconditions.checkNotNull(context);
         this.dataContextTree = DataSchemaContextTree.from(context);
         this.codecFactory = Preconditions.checkNotNull(jsonCodecFactory);

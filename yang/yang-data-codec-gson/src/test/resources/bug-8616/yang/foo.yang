@@ -1,0 +1,22 @@
+module foo {
+    yang-version 1;
+    namespace "foo";
+    prefix "foo";
+
+    revision "2017-06-07" {
+    }
+
+    container root {
+        list list-in-container {
+            key id;
+            leaf id {
+                type string;
+            }
+            container container-in-list {
+                leaf leaf-in-container {
+                    type string;
+                }
+            }
+        }
+    }
+}

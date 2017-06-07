@@ -75,12 +75,15 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
 
     private DataSchemaContextNode<?> current;
     private int offset;
+    private final boolean allowWildcardIds;
 
-    XpathStringParsingPathArgumentBuilder(final AbstractStringInstanceIdentifierCodec codec, final String data) {
+    XpathStringParsingPathArgumentBuilder(final AbstractStringInstanceIdentifierCodec codec, final String data,
+                                          final boolean allowWildcardIds) {
         this.codec = Preconditions.checkNotNull(codec);
         this.data = Preconditions.checkNotNull(data);
         this.current = codec.getDataContextTree().getRoot();
         this.offset = 0;
+        this.allowWildcardIds = allowWildcardIds;
     }
 
 
@@ -171,8 +174,16 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
 
     private PathArgument computeIdentifier(final QName name) {
         DataSchemaContextNode<?> currentNode = nextContextNode(name);
-        checkValid(!currentNode.isKeyedEntry(), "Entry %s requires key or value predicate to be present", name);
-        return currentNode.getIdentifier();
+        final boolean isCurrentKeyed = currentNode.isKeyedEntry();
+        final PathArgument currentId = currentNode.getIdentifier();
+
+        checkValid(allowWildcardIds || !isCurrentKeyed, "Entry %s requires key or value predicate to be present", name);
+
+        if (allowWildcardIds && isCurrentKeyed) {
+            return new YangInstanceIdentifier.NodeIdentifier(currentId.getNodeType());
+        } else {
+            return currentId;
+        }
     }
 
 
