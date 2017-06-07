@@ -82,14 +82,14 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private Multimap<ModelProcessingPhase, OnPhaseFinished> phaseListeners = ImmutableMultimap.of();
     private Multimap<ModelProcessingPhase, ContextMutation> phaseMutation = ImmutableMultimap.of();
     private Collection<StatementContextBase<?, ?, ?>> effective = ImmutableList.of();
-    private Collection<StatementContextBase<?, ?, ?>> effectOfStatement = ImmutableList.of();
+    private Collection<StmtContext<?, ?, ?>> effectOfStatement = ImmutableList.of();
     private StatementMap substatements = StatementMap.empty();
 
     private SupportedByFeatures supportedByFeatures = SupportedByFeatures.UNDEFINED;
     private CopyHistory copyHistory = CopyHistory.original();
     private boolean isSupportedToBuildEffective = true;
     private ModelProcessingPhase completedPhase = null;
-    private StatementContextBase<?, ?, ?> originalCtx;
+    private StmtContext<?, ?, ?> originalCtx;
     private D declaredInstance;
     private E effectiveInstance;
     private int order = 0;
@@ -111,12 +111,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public Collection<StatementContextBase<?, ?, ?>> getEffectOfStatement() {
+    public Collection<? extends StmtContext<?, ?, ?>> getEffectOfStatement() {
         return effectOfStatement;
     }
 
     @Override
-    public void addAsEffectOfStatement(final StatementContextBase<?, ?, ?> ctx) {
+    public void addAsEffectOfStatement(final StmtContext<?, ?, ?> ctx) {
         if (effectOfStatement.isEmpty()) {
             effectOfStatement = new ArrayList<>(1);
         }
@@ -124,7 +124,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public void addAsEffectOfStatement(final Collection<StatementContextBase<?, ?, ?>> ctxs) {
+    public void addAsEffectOfStatement(final Collection<? extends StmtContext<?, ?, ?>> ctxs) {
         if (ctxs.isEmpty()) {
             return;
         }
@@ -166,12 +166,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public StatementContextBase<?, ?, ?> getOriginalCtx() {
+    public StmtContext<?, ?, ?> getOriginalCtx() {
         return originalCtx;
     }
 
     @Override
-    public void setOriginalCtx(final StatementContextBase<?, ?, ?> originalCtx) {
+    public void setOriginalCtx(final StmtContext<?, ?, ?> originalCtx) {
         this.originalCtx = originalCtx;
     }
 
@@ -244,7 +244,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return Collections.unmodifiableCollection(effective);
     }
 
-    public void removeStatementsFromEffectiveSubstatements(final Collection<StatementContextBase<?, ?, ?>> substatements) {
+    public void removeStatementsFromEffectiveSubstatements(final Collection<? extends StmtContext<?, ?, ?>> substatements) {
         if (!effective.isEmpty()) {
             effective.removeAll(substatements);
             shrinkEffective();
