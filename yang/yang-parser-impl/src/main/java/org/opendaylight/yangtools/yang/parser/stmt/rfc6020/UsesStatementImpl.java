@@ -50,7 +50,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UsesEffecti
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implements UsesStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .USES)
@@ -83,7 +82,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
 
         @Override
         public void onFullDefinitionDeclared(
-                final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode) {
+                final Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode) {
             if (!usesNode.isSupportedByFeatures()) {
                 return;
             }
@@ -202,18 +201,18 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
     private static void copyFromSourceToTarget(final Mutable<?, ?, ?> sourceGrpStmtCtx,
             final StatementContextBase<?, ?, ?> targetCtx,
             final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode) {
-        final Collection<StatementContextBase<?, ?, ?>> declared = sourceGrpStmtCtx.declaredSubstatements();
-        final Collection<StatementContextBase<?, ?, ?>> effective = sourceGrpStmtCtx.effectiveSubstatements();
-        final Collection<StatementContextBase<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
+        final Collection<? extends Mutable<?, ?, ?>> declared = sourceGrpStmtCtx.mutableDeclaredSubstatements();
+        final Collection<? extends Mutable<?, ?, ?>> effective = sourceGrpStmtCtx.mutableEffectiveSubstatements();
+        final Collection<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
         final QNameModule newQNameModule = getNewQNameModule(targetCtx, sourceGrpStmtCtx);
 
-        for (final StatementContextBase<?, ?, ?> original : declared) {
+        for (final Mutable<?, ?, ?> original : declared) {
             if (original.isSupportedByFeatures()) {
                 copyStatement(original, targetCtx, newQNameModule, buffer);
             }
         }
 
-        for (final StatementContextBase<?, ?, ?> original : effective) {
+        for (final Mutable<?, ?, ?> original : effective) {
             copyStatement(original, targetCtx, newQNameModule, buffer);
         }
 
@@ -221,12 +220,11 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
         usesNode.addAsEffectOfStatement(buffer);
     }
 
-    private static void copyStatement(final StatementContextBase<?, ?, ?> original,
+    private static void copyStatement(final Mutable<?, ?, ?> original,
             final StatementContextBase<?, ?, ?> targetCtx, final QNameModule targetModule,
-            final Collection<StatementContextBase<?, ?, ?>> buffer) {
+            final Collection<Mutable<?, ?, ?>> buffer) {
         if (needToCopyByUses(original)) {
-            final StatementContextBase<?, ?, ?> copy = original.createCopy(targetModule, targetCtx,
-                    CopyType.ADDED_BY_USES);
+            final Mutable<?, ?, ?> copy = original.createCopy(targetModule, targetCtx, CopyType.ADDED_BY_USES);
             buffer.add(copy);
         } else if (isReusedByUsesOnTop(original)) {
             buffer.add(original);
@@ -267,7 +265,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
     public static void resolveUsesNode(
             final Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode,
             final StatementContextBase<?, ?, ?> targetNodeStmtCtx) {
-        for (final StatementContextBase<?, ?, ?> subStmtCtx : usesNode.declaredSubstatements()) {
+        for (final Mutable<?, ?, ?> subStmtCtx : usesNode.mutableDeclaredSubstatements()) {
             if (StmtContextUtils.producesDeclared(subStmtCtx, RefineStatement.class)
                     && areFeaturesSupported(subStmtCtx)) {
                 performRefine(subStmtCtx, targetNodeStmtCtx);
@@ -282,44 +280,44 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
         return !YangVersion.VERSION_1_1.equals(subStmtCtx.getRootVersion()) || subStmtCtx.isSupportedByFeatures();
     }
 
-    private static void performRefine(final StatementContextBase<?, ?, ?> refineCtx,
+    private static void performRefine(final Mutable<?, ?, ?> subStmtCtx,
             final StatementContextBase<?, ?, ?> usesParentCtx) {
 
-        final Object refineArgument = refineCtx.getStatementArgument();
+        final Object refineArgument = subStmtCtx.getStatementArgument();
         InferenceException.throwIf(!(refineArgument instanceof SchemaNodeIdentifier),
-            refineCtx.getStatementSourceReference(),
+            subStmtCtx.getStatementSourceReference(),
             "Invalid refine argument %s. It must be instance of SchemaNodeIdentifier.", refineArgument);
 
         final SchemaNodeIdentifier refineTargetNodeIdentifier = (SchemaNodeIdentifier) refineArgument;
         final StatementContextBase<?, ?, ?> refineTargetNodeCtx = Utils.findNode(usesParentCtx,
                 refineTargetNodeIdentifier);
 
-        InferenceException.throwIfNull(refineTargetNodeCtx, refineCtx.getStatementSourceReference(),
+        InferenceException.throwIfNull(refineTargetNodeCtx, subStmtCtx.getStatementSourceReference(),
             "Refine target node %s not found.", refineTargetNodeIdentifier);
 
         if (StmtContextUtils.isUnknownStatement(refineTargetNodeCtx)) {
             LOG.debug(
                     "Refine node '{}' in uses '{}' has target node unknown statement '{}'. Refine has been skipped. At line: {}",
-                    refineCtx.getStatementArgument(), refineCtx.getParentContext().getStatementArgument(),
-                    refineTargetNodeCtx.getStatementArgument(), refineCtx.getStatementSourceReference());
-            refineCtx.addAsEffectOfStatement(refineTargetNodeCtx);
+                    subStmtCtx.getStatementArgument(), subStmtCtx.getParentContext().getStatementArgument(),
+                    refineTargetNodeCtx.getStatementArgument(), subStmtCtx.getStatementSourceReference());
+            subStmtCtx.addAsEffectOfStatement(refineTargetNodeCtx);
             return;
         }
 
-        addOrReplaceNodes(refineCtx, refineTargetNodeCtx);
-        refineCtx.addAsEffectOfStatement(refineTargetNodeCtx);
+        addOrReplaceNodes(subStmtCtx, refineTargetNodeCtx);
+        subStmtCtx.addAsEffectOfStatement(refineTargetNodeCtx);
     }
 
-    private static void addOrReplaceNodes(final StatementContextBase<?, ?, ?> refineCtx,
+    private static void addOrReplaceNodes(final Mutable<?, ?, ?> subStmtCtx,
             final StatementContextBase<?, ?, ?> refineTargetNodeCtx) {
-        for (final StatementContextBase<?, ?, ?> refineSubstatementCtx : refineCtx.declaredSubstatements()) {
+        for (final Mutable<?, ?, ?> refineSubstatementCtx : subStmtCtx.mutableDeclaredSubstatements()) {
             if (isSupportedRefineSubstatement(refineSubstatementCtx)) {
                 addOrReplaceNode(refineSubstatementCtx, refineTargetNodeCtx);
             }
         }
     }
 
-    private static void addOrReplaceNode(final StatementContextBase<?, ?, ?> refineSubstatementCtx,
+    private static void addOrReplaceNode(final Mutable<?, ?, ?> refineSubstatementCtx,
             final StatementContextBase<?, ?, ?> refineTargetNodeCtx) {
 
         final StatementDefinition refineSubstatementDef = refineSubstatementCtx.getPublicDefinition();
