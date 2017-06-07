@@ -84,7 +84,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
         @Override
         public void onFullDefinitionDeclared(
                 final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode) {
-            if (!StmtContextUtils.areFeaturesSupported(usesNode)) {
+            if (!usesNode.isSupportedByFeatures()) {
                 return;
             }
             super.onFullDefinitionDeclared(usesNode);
@@ -199,7 +199,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
      * @throws SourceException
      *             instance of SourceException
      */
-    private static void copyFromSourceToTarget(final StmtContext<?, ?, ?> sourceGrpStmtCtx,
+    private static void copyFromSourceToTarget(final Mutable<?, ?, ?> sourceGrpStmtCtx,
             final StatementContextBase<?, ?, ?> targetCtx,
             final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode) {
         final Collection<StatementContextBase<?, ?, ?>> declared = sourceGrpStmtCtx.declaredSubstatements();
@@ -208,7 +208,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
         final QNameModule newQNameModule = getNewQNameModule(targetCtx, sourceGrpStmtCtx);
 
         for (final StatementContextBase<?, ?, ?> original : declared) {
-            if (StmtContextUtils.areFeaturesSupported(original)) {
+            if (original.isSupportedByFeatures()) {
                 copyStatement(original, targetCtx, newQNameModule, buffer);
             }
         }
@@ -279,8 +279,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
         /*
          * In case of Yang 1.1, checks whether features are supported.
          */
-        return !YangVersion.VERSION_1_1.equals(subStmtCtx.getRootVersion()) || StmtContextUtils
-                .areFeaturesSupported(subStmtCtx);
+        return !YangVersion.VERSION_1_1.equals(subStmtCtx.getRootVersion()) || subStmtCtx.isSupportedByFeatures();
     }
 
     private static void performRefine(final StatementContextBase<?, ?, ?> refineCtx,

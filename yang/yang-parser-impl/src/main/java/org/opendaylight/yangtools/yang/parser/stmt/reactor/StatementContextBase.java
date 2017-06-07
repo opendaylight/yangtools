@@ -22,7 +22,9 @@ import java.util.EnumMap;
 import java.util.EventListener;
 import java.util.Iterator;
 import java.util.Optional;
+import java.util.Set;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -36,15 +38,17 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
+import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.ValueAddedListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends NamespaceStorageSupport implements StmtContext.Mutable<A, D, E> {
-
     /**
      * event listener when an item is added to model namespace.
      */
@@ -82,14 +86,14 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private Multimap<ModelProcessingPhase, OnPhaseFinished> phaseListeners = ImmutableMultimap.of();
     private Multimap<ModelProcessingPhase, ContextMutation> phaseMutation = ImmutableMultimap.of();
     private Collection<StatementContextBase<?, ?, ?>> effective = ImmutableList.of();
-    private Collection<StatementContextBase<?, ?, ?>> effectOfStatement = ImmutableList.of();
+    private Collection<StmtContext<?, ?, ?>> effectOfStatement = ImmutableList.of();
     private StatementMap substatements = StatementMap.empty();
 
-    private SupportedByFeatures supportedByFeatures = SupportedByFeatures.UNDEFINED;
+    private Boolean supportedByFeatures = null;
     private CopyHistory copyHistory = CopyHistory.original();
     private boolean isSupportedToBuildEffective = true;
     private ModelProcessingPhase completedPhase = null;
-    private StatementContextBase<?, ?, ?> originalCtx;
+    private StmtContext<?, ?, ?> originalCtx;
     private D declaredInstance;
     private E effectiveInstance;
     private int order = 0;
@@ -111,12 +115,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public Collection<StatementContextBase<?, ?, ?>> getEffectOfStatement() {
+    public Collection<? extends StmtContext<?, ?, ?>> getEffectOfStatement() {
         return effectOfStatement;
     }
 
     @Override
-    public void addAsEffectOfStatement(final StatementContextBase<?, ?, ?> ctx) {
+    public void addAsEffectOfStatement(final StmtContext<?, ?, ?> ctx) {
         if (effectOfStatement.isEmpty()) {
             effectOfStatement = new ArrayList<>(1);
         }
@@ -124,7 +128,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public void addAsEffectOfStatement(final Collection<StatementContextBase<?, ?, ?>> ctxs) {
+    public void addAsEffectOfStatement(final Collection<? extends StmtContext<?, ?, ?>> ctxs) {
         if (ctxs.isEmpty()) {
             return;
         }
@@ -136,13 +140,16 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public SupportedByFeatures getSupportedByFeatures() {
-        return supportedByFeatures;
-    }
+    public boolean isSupportedByFeatures() {
+        if (supportedByFeatures == null) {
+            final Set<QName> supportedFeatures = getFromNamespace(SupportedFeaturesNamespace.class,
+                SupportedFeatures.SUPPORTED_FEATURES);
+            // If the set of supported features has not been provided, all features are supported by default.
+            supportedByFeatures = supportedFeatures == null ? Boolean.TRUE
+                    : StmtContextUtils.checkFeatureSupport(this, supportedFeatures);
+        }
 
-    @Override
-    public void setSupportedByFeatures(final boolean isSupported) {
-        this.supportedByFeatures = isSupported ? SupportedByFeatures.SUPPORTED : SupportedByFeatures.NOT_SUPPORTED;
+        return supportedByFeatures.booleanValue();
     }
 
     @Override
@@ -166,12 +173,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public StatementContextBase<?, ?, ?> getOriginalCtx() {
+    public StmtContext<?, ?, ?> getOriginalCtx() {
         return originalCtx;
     }
 
     @Override
-    public void setOriginalCtx(final StatementContextBase<?, ?, ?> originalCtx) {
+    public void setOriginalCtx(final StmtContext<?, ?, ?> originalCtx) {
         this.originalCtx = originalCtx;
     }
 
@@ -244,7 +251,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return Collections.unmodifiableCollection(effective);
     }
 
-    public void removeStatementsFromEffectiveSubstatements(final Collection<StatementContextBase<?, ?, ?>> substatements) {
+    public void removeStatementsFromEffectiveSubstatements(final Collection<? extends StmtContext<?, ?, ?>> substatements) {
         if (!effective.isEmpty()) {
             effective.removeAll(substatements);
             shrinkEffective();

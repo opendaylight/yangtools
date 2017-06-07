@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.AnyxmlSchemaLocationNamespace;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AnyXmlEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.YangModeledAnyXmlEffectiveStatementImpl;
 
@@ -96,7 +95,7 @@ public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implem
         private static Optional<ContainerSchemaNode> getAnyXmlSchema(
                 final StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx,
                 final SchemaNodeIdentifier contentSchemaPath) {
-            final StatementContextBase<?, ?, ?> findNode = Utils.findNode(ctx.getRoot(), contentSchemaPath);
+            final StmtContext<?, ?, ?> findNode = Utils.findNode(ctx.getRoot(), contentSchemaPath);
             if (findNode != null) {
                 final EffectiveStatement<?, ?> anyXmlSchemaNode = findNode.buildEffective();
                 if (anyXmlSchemaNode instanceof ContainerSchemaNode) {

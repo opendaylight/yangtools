@@ -29,12 +29,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangDataStatementImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class StmtContextUtils {
+    private static final Logger LOG = LoggerFactory.getLogger(StmtContextUtils.class);
+
     public static final Splitter LIST_KEY_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
 
     private StmtContextUtils() {
@@ -241,33 +243,7 @@ public final class StmtContextUtils {
         return replaced ? builder.build() : keyStmtCtx.getStatementArgument();
     }
 
-    public static boolean areFeaturesSupported(final StmtContext.Mutable<?, ?, ?> stmtContext) {
-        switch (stmtContext.getSupportedByFeatures()) {
-        case SUPPORTED:
-            return true;
-        case NOT_SUPPORTED:
-            return false;
-        default:
-            break;
-        }
-
-        final Set<QName> supportedFeatures = stmtContext.getFromNamespace(SupportedFeaturesNamespace.class,
-                SupportedFeatures.SUPPORTED_FEATURES);
-        /*
-         * If set of supported features has not been provided, all features are
-         * supported by default.
-         */
-        if (supportedFeatures == null) {
-            stmtContext.setSupportedByFeatures(true);
-            return true;
-        }
-
-        final boolean result = checkFeatureSupport(stmtContext, supportedFeatures);
-        stmtContext.setSupportedByFeatures(result);
-        return result;
-    }
-
-    private static boolean checkFeatureSupport(final StmtContext.Mutable<?, ?, ?> stmtContext,
+    public static boolean checkFeatureSupport(final StmtContext<?, ?, ?> stmtContext,
             final Set<QName> supportedFeatures) {
         boolean isSupported = false;
         boolean containsIfFeature = false;
