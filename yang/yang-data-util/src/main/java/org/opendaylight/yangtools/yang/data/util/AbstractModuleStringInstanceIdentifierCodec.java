@@ -22,6 +22,14 @@ import org.opendaylight.yangtools.yang.model.api.Module;
  */
 @Beta
 public abstract class AbstractModuleStringInstanceIdentifierCodec extends AbstractStringInstanceIdentifierCodec {
+
+    protected AbstractModuleStringInstanceIdentifierCodec() {
+        this(false);
+    }
+
+    protected AbstractModuleStringInstanceIdentifierCodec(final boolean allowWildcardIds) {
+        super(allowWildcardIds);
+    }
     /**
      * Resolve a string prefix into the corresponding module.
      *

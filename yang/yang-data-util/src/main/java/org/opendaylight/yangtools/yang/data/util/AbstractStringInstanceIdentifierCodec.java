@@ -26,6 +26,16 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 @Beta
 public abstract class AbstractStringInstanceIdentifierCodec extends AbstractNamespaceCodec implements InstanceIdentifierCodec<String> {
 
+    private boolean allowWildcardIds;
+
+    protected AbstractStringInstanceIdentifierCodec() {
+        this(false);
+    }
+
+    protected AbstractStringInstanceIdentifierCodec(final boolean allowWildcardIds) {
+        this.allowWildcardIds = allowWildcardIds;
+    }
+
     @Override
     public final String serialize(final YangInstanceIdentifier data) {
         StringBuilder sb = new StringBuilder();
@@ -92,7 +102,7 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
     @Override
     public final YangInstanceIdentifier deserialize(final String data) {
         Preconditions.checkNotNull(data, "Data may not be null");
-        XpathStringParsingPathArgumentBuilder builder = new XpathStringParsingPathArgumentBuilder(this, data);
+        XpathStringParsingPathArgumentBuilder builder = new XpathStringParsingPathArgumentBuilder(this, data, allowWildcardIds);
         return YangInstanceIdentifier.create(builder.build());
     }
 
