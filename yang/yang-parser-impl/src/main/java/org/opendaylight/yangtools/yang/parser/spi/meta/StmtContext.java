@@ -114,9 +114,9 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     Collection<? extends StmtContext<?, ?, ?>> getEffectOfStatement();
 
-    StatementContextBase<A, D, E> createCopy(StatementContextBase<?, ?, ?> newParent, CopyType typeOfCopy);
+    Mutable<A, D, E> createCopy(StatementContextBase<?, ?, ?> newParent, CopyType typeOfCopy);
 
-    StatementContextBase<A, D, E> createCopy(QNameModule newQNameModule, StatementContextBase<?, ?, ?> newParent,
+    Mutable<A, D, E> createCopy(QNameModule newQNameModule, StatementContextBase<?, ?, ?> newParent,
             CopyType typeOfCopy);
 
     CopyHistory getCopyHistory();
@@ -142,23 +142,20 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
             extends StmtContext<A, D, E> {
 
         @Override
-        StmtContext.Mutable<?, ?, ?> getParentContext();
+        Mutable<?, ?, ?> getParentContext();
 
-        <K, V, KT extends K, VT extends V, N extends IdentifierNamespace<K, V>> void addToNs(
-                Class<N> type, KT key, VT value)
-                throws NamespaceNotAvailableException;
+        <K, V, KT extends K, VT extends V, N extends IdentifierNamespace<K, V>> void addToNs(Class<N> type, KT key,
+                VT value) throws NamespaceNotAvailableException;
 
         @Nonnull
         @Override
-        StmtContext.Mutable<?, ?, ?> getRoot();
+        Mutable<?, ?, ?> getRoot();
 
-        @Override
         @Nonnull
-        Collection<StatementContextBase<?, ?, ?>> declaredSubstatements();
+        Collection<? extends Mutable<?, ?, ?>> mutableDeclaredSubstatements();
 
-        @Override
         @Nonnull
-        Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements();
+        Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements();
 
         /**
          * Create a new inference action to be executed during specified phase. The action cannot be cancelled
@@ -180,8 +177,8 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          * @param stmt
          *            to be added to namespace map
          */
-        <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(
-                Class<N> namespace, KT key, StmtContext<?, ?, ?> stmt);
+        <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(Class<N> namespace, KT key,
+                StmtContext<?, ?, ?> stmt);
 
         /**
          * Set version of root statement context.
