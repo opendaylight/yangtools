@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import com.google.common.base.Verify;
-import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -211,11 +211,11 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
             final boolean skipCheckOfMandatoryNodes = YangVersion.VERSION_1_1.equals(sourceCtx.getRootVersion())
                     && isConditionalAugmentStmt(sourceCtx);
 
-            final Collection<StatementContextBase<?, ?, ?>> declared = sourceCtx.declaredSubstatements();
+            final Collection<? extends Mutable<?, ?, ?>> declared = sourceCtx.declaredSubstatements();
             final Collection<StatementContextBase<?, ?, ?>> effective = sourceCtx.effectiveSubstatements();
-            final Collection<StatementContextBase<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
+            final Collection<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
 
-            for (final StatementContextBase<?, ?, ?> originalStmtCtx : declared) {
+            for (final Mutable<?, ?, ?> originalStmtCtx : declared) {
                 if (originalStmtCtx.isSupportedByFeatures()) {
                     copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer, skipCheckOfMandatoryNodes);
                 }
@@ -242,16 +242,16 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                     && StmtContextUtils.findFirstSubstatement(ctx, WhenStatement.class) != null;
         }
 
-        private static void copyStatement(final StatementContextBase<?, ?, ?> original,
+        private static void copyStatement(final Mutable<?, ?, ?> originalStmtCtx,
                 final StatementContextBase<?, ?, ?> target, final CopyType typeOfCopy,
-                final Collection<StatementContextBase<?, ?, ?>> buffer, final boolean skipCheckOfMandatoryNodes) {
-            if (needToCopyByAugment(original)) {
-                validateNodeCanBeCopiedByAugment(original, target, typeOfCopy, skipCheckOfMandatoryNodes);
+                final Collection<Mutable<?, ?, ?>> buffer, final boolean skipCheckOfMandatoryNodes) {
+            if (needToCopyByAugment(originalStmtCtx)) {
+                validateNodeCanBeCopiedByAugment(originalStmtCtx, target, typeOfCopy, skipCheckOfMandatoryNodes);
 
-                final StatementContextBase<?, ?, ?> copy = original.createCopy(target, typeOfCopy);
+                final Mutable<?, ?, ?> copy = originalStmtCtx.createCopy(target, typeOfCopy);
                 buffer.add(copy);
-            } else if (isReusedByAugment(original)) {
-                buffer.add(original);
+            } else if (isReusedByAugment(originalStmtCtx)) {
+                buffer.add(originalStmtCtx);
             }
         }
 
@@ -268,10 +268,10 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                 checkForMandatoryNodes(sourceCtx);
             }
 
-            final List<StatementContextBase<?, ?, ?>> targetSubStatements = new Builder<StatementContextBase<?, ?, ?>>()
+            final List<Mutable<?, ?, ?>> targetSubStatements = ImmutableList.<Mutable<?, ?, ?>>builder()
                     .addAll(targetCtx.declaredSubstatements()).addAll(targetCtx.effectiveSubstatements()).build();
 
-            for (final StatementContextBase<?, ?, ?> subStatement : targetSubStatements) {
+            for (final Mutable<?, ?, ?> subStatement : targetSubStatements) {
                 final boolean sourceIsDataNode = DataDefinitionStatement.class.isAssignableFrom(sourceCtx
                         .getPublicDefinition().getDeclaredRepresentationClass());
                 final boolean targetIsDataNode = DataDefinitionStatement.class.isAssignableFrom(subStatement

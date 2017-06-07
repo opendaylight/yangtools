@@ -23,6 +23,7 @@ import java.util.EventListener;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -237,7 +238,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Nonnull
     @Override
-    public Collection<StatementContextBase<?, ?, ?>> declaredSubstatements() {
+    public Collection<? extends Mutable<?, ?, ?>> declaredSubstatements() {
         return substatements.values();
     }
 
@@ -321,11 +322,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @throws NullPointerException
      *             if statement parameter is null
      */
-    public void addEffectiveSubstatement(final StatementContextBase<?, ?, ?> substatement) {
-        Preconditions.checkNotNull(substatement, "StatementContextBase effective substatement cannot be null at: %s",
-            getStatementSourceReference());
+    public void addEffectiveSubstatement(final Mutable<?, ?, ?> substatement) {
+        // FIXME: BUG-6972: this should not be necessary
+        Preconditions.checkArgument(substatement instanceof StatementContextBase);
+
         beforeAddEffectiveStatement(1);
-        effective.add(substatement);
+        effective.add((StatementContextBase<?, ?, ?>) substatement);
     }
 
     /**
@@ -337,14 +339,16 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @throws NullPointerException
      *             if statement parameter is null
      */
-    public void addEffectiveSubstatements(final Collection<StatementContextBase<?, ?, ?>> substatements) {
+    public void addEffectiveSubstatements(final Collection<? extends Mutable<?, ?, ?>> substatements) {
         if (substatements.isEmpty()) {
             return;
         }
 
         substatements.forEach(Preconditions::checkNotNull);
         beforeAddEffectiveStatement(substatements.size());
-        effective.addAll(substatements);
+
+        // FIXME: BUG-6972: this should not be necessary
+        substatements.stream().map(StatementContextBase.class::cast).collect(Collectors.toCollection(() -> effective));
     }
 
     private void beforeAddEffectiveStatement(final int toAdd) {
