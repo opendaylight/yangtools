@@ -90,7 +90,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      * @return Collection of declared substatements
      */
     @Nonnull
-    Collection<StatementContextBase<?, ?, ?>> declaredSubstatements();
+    Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements();
 
     /**
      * Return effective substatements. These are the statements which are added as this statement's substatements
@@ -99,7 +99,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      * @return Collection of declared substatements
      */
     @Nonnull
-    Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements();
+    Collection<? extends StmtContext<?, ?, ?>> effectiveSubstatements();
 
     /**
      * Builds {@link DeclaredStatement} for statement context.
@@ -173,6 +173,14 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         @Nonnull
         @Override
         StmtContext.Mutable<?, ?, ?> getRoot();
+
+        @Override
+        @Nonnull
+        Collection<StatementContextBase<?, ?, ?>> declaredSubstatements();
+
+        @Override
+        @Nonnull
+        Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements();
 
         /**
          * Create a new inference action to be executed during specified phase. The action cannot be cancelled
