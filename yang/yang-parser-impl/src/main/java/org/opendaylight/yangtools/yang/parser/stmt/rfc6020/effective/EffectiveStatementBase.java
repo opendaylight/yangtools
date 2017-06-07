@@ -17,13 +17,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> implements EffectiveStatement<A, D> {
@@ -36,12 +35,12 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
      *            context of statement.
      */
     protected EffectiveStatementBase(final StmtContext<A, D, ?> ctx) {
-        final Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements = ctx.effectiveSubstatements();
-        final Collection<StatementContextBase<?, ?, ?>> substatementsInit = new ArrayList<>();
+        final Collection<? extends StmtContext<?, ?, ?>> effectiveSubstatements = ctx.effectiveSubstatements();
+        final Collection<StmtContext<?, ?, ?>> substatementsInit = new ArrayList<>();
 
-        final Collection<StatementContextBase<?, ?, ?>> supportedDeclaredSubStmts = Collections2.filter(
-                ctx.declaredSubstatements(), StmtContextUtils::areFeaturesSupported);
-        for (final StatementContextBase<?, ?, ?> declaredSubstatement : supportedDeclaredSubStmts) {
+        final Collection<? extends StmtContext<?, ?, ?>> supportedDeclaredSubStmts = Collections2.filter(
+                ctx.declaredSubstatements(), StmtContext::isSupportedByFeatures);
+        for (final StmtContext<?, ?, ?> declaredSubstatement : supportedDeclaredSubStmts) {
             if (declaredSubstatement.getPublicDefinition().equals(YangStmtMapping.USES)) {
                 substatementsInit.add(declaredSubstatement);
                 substatementsInit.addAll(declaredSubstatement.getEffectOfStatement());
@@ -64,9 +63,9 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
      * @return Filtered substatements
      */
     Collection<? extends EffectiveStatement<?, ?>> initSubstatements(
-            final Collection<StatementContextBase<?, ?, ?>> substatementsInit) {
+            final Collection<? extends StmtContext<?, ?, ?>> substatementsInit) {
         return Collections2.transform(Collections2.filter(substatementsInit,
-            StmtContext::isSupportedToBuildEffective), StatementContextBase::buildEffective);
+            StmtContext::isSupportedToBuildEffective), StmtContext::buildEffective);
     }
 
     @Override

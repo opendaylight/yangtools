@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementExcept
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public final class SubstatementValidator {
     /**
@@ -120,7 +119,7 @@ public final class SubstatementValidator {
             MissingSubstatementException {
 
         final Map<StatementDefinition, Counter> stmtCounts = new HashMap<>();
-        for (StatementContextBase<?, ?, ?> stmtCtx : Iterables.concat(ctx.declaredSubstatements(), ctx.effectiveSubstatements())) {
+        for (StmtContext<?, ?, ?> stmtCtx : Iterables.concat(ctx.declaredSubstatements(), ctx.effectiveSubstatements())) {
             stmtCounts.computeIfAbsent(stmtCtx.getPublicDefinition(), key -> new Counter()).increment();
         }
 

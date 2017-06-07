@@ -134,7 +134,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     }
 
     @Override
-    public StatementContextBase<?, ?, ?> createCopy(final StatementContextBase<?, ?, ?> newParent,
+    public StatementContextBase<A, D, E> createCopy(final StatementContextBase<?, ?, ?> newParent,
             final CopyType typeOfCopy) {
         return createCopy(null, newParent, typeOfCopy);
     }
@@ -168,7 +168,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         final Collection<StatementContextBase<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
 
         for (final StatementContextBase<?, ?, ?> stmtContext : declared) {
-            if (StmtContextUtils.areFeaturesSupported(stmtContext)) {
+            if (stmtContext.isSupportedByFeatures()) {
                 copySubstatement(stmtContext, newQNameModule, typeOfCopy, buffer);
             }
         }
@@ -255,7 +255,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         }
         if (argument instanceof String) {
             // FIXME: This may yield illegal argument exceptions
-            final StatementContextBase<?, ?, ?> originalCtx = getOriginalCtx();
+            final StmtContext<?, ?, ?> originalCtx = getOriginalCtx();
             final QName qname = originalCtx != null ? Utils.qNameFromArgument(originalCtx, (String) argument) : Utils
                     .qNameFromArgument(this, (String) argument);
             return parentPath.createChild(qname);

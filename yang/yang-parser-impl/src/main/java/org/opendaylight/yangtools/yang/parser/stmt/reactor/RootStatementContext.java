@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Namesp
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
@@ -84,7 +83,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
         final Collection<StatementContextBase<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
 
         for (final StatementContextBase<?, ?, ?> stmtContext : declared) {
-            if (StmtContextUtils.areFeaturesSupported(stmtContext)) {
+            if (stmtContext.isSupportedByFeatures()) {
                 buffer.add(stmtContext.createCopy(newQNameModule, this, typeOfCopy));
             }
         }
@@ -144,7 +143,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
      * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
      */
     @Override
-    public StatementContextBase<?, ?, ?> createCopy(final StatementContextBase<?, ?, ?> newParent,
+    public StatementContextBase<A, D, E> createCopy(final StatementContextBase<?, ?, ?> newParent,
             final CopyType typeOfCopy) {
         return createCopy(null, newParent, typeOfCopy);
     }
