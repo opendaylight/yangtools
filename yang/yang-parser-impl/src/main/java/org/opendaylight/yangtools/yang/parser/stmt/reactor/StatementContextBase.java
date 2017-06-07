@@ -85,7 +85,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private Multimap<ModelProcessingPhase, OnPhaseFinished> phaseListeners = ImmutableMultimap.of();
     private Multimap<ModelProcessingPhase, ContextMutation> phaseMutation = ImmutableMultimap.of();
-    private Collection<StatementContextBase<?, ?, ?>> effective = ImmutableList.of();
+    private Collection<Mutable<?, ?, ?>> effective = ImmutableList.of();
     private Collection<StmtContext<?, ?, ?>> effectOfStatement = ImmutableList.of();
     private StatementMap substatements = StatementMap.empty();
 
@@ -237,13 +237,24 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Nonnull
     @Override
-    public Collection<StatementContextBase<?, ?, ?>> declaredSubstatements() {
+    public Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements() {
         return substatements.values();
     }
 
     @Nonnull
     @Override
-    public Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements() {
+    public Collection<? extends Mutable<?, ?, ?>> mutableDeclaredSubstatements() {
+        return substatements.values();
+    }
+
+    @Override
+    public Collection<? extends StmtContext<?, ?, ?>> effectiveSubstatements() {
+        return mutableEffectiveSubstatements();
+    }
+
+    @Nonnull
+    @Override
+    public Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements() {
         if (effective instanceof ImmutableCollection) {
             return effective;
         }
@@ -269,9 +280,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             return;
         }
 
-        final Iterator<StatementContextBase<?, ?, ?>> iterator = effective.iterator();
+        final Iterator<? extends StmtContext<?, ?, ?>> iterator = effective.iterator();
         while (iterator.hasNext()) {
-            final StatementContextBase<?, ?, ?> next = iterator.next();
+            final StmtContext<?, ?, ?> next = iterator.next();
             if (statementDef.equals(next.getPublicDefinition())) {
                 iterator.remove();
             }
@@ -301,9 +312,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             return;
         }
 
-        final Iterator<StatementContextBase<?, ?, ?>> iterator = effective.iterator();
+        final Iterator<Mutable<?, ?, ?>> iterator = effective.iterator();
         while (iterator.hasNext()) {
-            final StatementContextBase<?, ?, ?> next = iterator.next();
+            final Mutable<?, ?, ?> next = iterator.next();
             if (statementDef.equals(next.getPublicDefinition()) && statementArg.equals(next.rawStatementArgument())) {
                 iterator.remove();
             }
@@ -321,9 +332,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @throws NullPointerException
      *             if statement parameter is null
      */
-    public void addEffectiveSubstatement(final StatementContextBase<?, ?, ?> substatement) {
-        Preconditions.checkNotNull(substatement, "StatementContextBase effective substatement cannot be null at: %s",
-            getStatementSourceReference());
+    public void addEffectiveSubstatement(final Mutable<?, ?, ?> substatement) {
         beforeAddEffectiveStatement(1);
         effective.add(substatement);
     }
@@ -337,7 +346,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @throws NullPointerException
      *             if statement parameter is null
      */
-    public void addEffectiveSubstatements(final Collection<StatementContextBase<?, ?, ?>> substatements) {
+    public void addEffectiveSubstatements(final Collection<? extends Mutable<?, ?, ?>> substatements) {
         if (substatements.isEmpty()) {
             return;
         }
@@ -450,8 +459,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         for (final StatementContextBase<?, ?, ?> child : substatements.values()) {
             finished &= child.tryToCompletePhase(phase);
         }
-        for (final StatementContextBase<?, ?, ?> child : effective) {
-            finished &= child.tryToCompletePhase(phase);
+        for (final Mutable<?, ?, ?> child : effective) {
+            if (child instanceof StatementContextBase) {
+                finished &= ((StatementContextBase<?, ?, ?>) child).tryToCompletePhase(phase);
+            }
         }
 
         if (finished) {
