@@ -79,11 +79,11 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
         sourceContext = Preconditions.checkNotNull(original.sourceContext);
         this.argument = original.argument;
 
-        final Collection<StatementContextBase<?, ?, ?>> declared = original.declaredSubstatements();
+        final Collection<? extends Mutable<?, ?, ?>> declared = original.declaredSubstatements();
         final Collection<StatementContextBase<?, ?, ?>> effective = original.effectiveSubstatements();
-        final Collection<StatementContextBase<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
+        final Collection<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
 
-        for (final StatementContextBase<?, ?, ?> stmtContext : declared) {
+        for (final StmtContext.Mutable<?, ?, ?> stmtContext : declared) {
             if (StmtContextUtils.areFeaturesSupported(stmtContext)) {
                 buffer.add(stmtContext.createCopy(newQNameModule, this, typeOfCopy));
             }
