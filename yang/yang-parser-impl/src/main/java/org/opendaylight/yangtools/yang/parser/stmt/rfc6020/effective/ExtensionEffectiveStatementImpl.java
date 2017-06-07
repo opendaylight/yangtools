@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.RecursiveObjectLeaker;
 
 public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, ExtensionStatement>
@@ -112,7 +111,7 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
         final ExtensionEffectiveStatementImpl existing = RecursiveObjectLeaker.lookup(ctx,
             ExtensionEffectiveStatementImpl.class);
         if (existing != null) {
-            // Careful! this not fully initialized!
+            // Careful! this object is not fully initialized!
             return existing;
         }
 
@@ -127,7 +126,7 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
 
     @Override
     Collection<? extends EffectiveStatement<?, ?>> initSubstatements(
-            final Collection<StatementContextBase<?, ?, ?>> substatementsInit) {
+            final Collection<? extends StmtContext<?, ?, ?>> substatementsInit) {
         // WARNING: this leaks an incompletely-initialized object
         RecursiveObjectLeaker.inConstructor(this);
 

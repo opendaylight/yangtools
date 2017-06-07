@@ -106,7 +106,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
         @Override
         public void onFullDefinitionDeclared(
                 final StmtContext.Mutable<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> augmentNode) {
-            if (!StmtContextUtils.areFeaturesSupported(augmentNode)) {
+            if (!augmentNode.isSupportedByFeatures()) {
                 return;
             }
 
@@ -216,7 +216,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
             final Collection<StatementContextBase<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
 
             for (final StatementContextBase<?, ?, ?> originalStmtCtx : declared) {
-                if (StmtContextUtils.areFeaturesSupported(originalStmtCtx)) {
+                if (originalStmtCtx.isSupportedByFeatures()) {
                     copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer, skipCheckOfMandatoryNodes);
                 }
             }

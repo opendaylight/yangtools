@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
@@ -90,7 +89,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      * @return Collection of declared substatements
      */
     @Nonnull
-    Collection<StatementContextBase<?, ?, ?>> declaredSubstatements();
+    Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements();
 
     /**
      * Return effective substatements. These are the statements which are added as this statement's substatements
@@ -99,7 +98,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      * @return Collection of declared substatements
      */
     @Nonnull
-    Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements();
+    Collection<? extends StmtContext<?, ?, ?>> effectiveSubstatements();
 
     /**
      * Builds {@link DeclaredStatement} for statement context.
@@ -113,43 +112,22 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     boolean isSupportedToBuildEffective();
 
-    void setIsSupportedToBuildEffective(boolean isSupportedToBuild);
+    Collection<? extends StmtContext<?, ?, ?>> getEffectOfStatement();
 
-    Collection<StatementContextBase<?, ?, ?>> getEffectOfStatement();
+    StatementContextBase<A, D, E> createCopy(StatementContextBase<?, ?, ?> newParent, CopyType typeOfCopy);
 
-    void addAsEffectOfStatement(StatementContextBase<?, ?, ?> ctx);
-
-    void addAsEffectOfStatement(Collection<StatementContextBase<?, ?, ?>> ctxs);
-
-    StatementContextBase<?, ?, ?> createCopy(
-            StatementContextBase<?, ?, ?> newParent, CopyType typeOfCopy)
-            throws SourceException;
-
-    StatementContextBase<?, ?, ?> createCopy(QNameModule newQNameModule,
-            StatementContextBase<?, ?, ?> newParent, CopyType typeOfCopy)
-            throws SourceException;
+    StatementContextBase<A, D, E> createCopy(QNameModule newQNameModule, StatementContextBase<?, ?, ?> newParent,
+            CopyType typeOfCopy);
 
     CopyHistory getCopyHistory();
 
-    enum SupportedByFeatures {
-        UNDEFINED, SUPPORTED, NOT_SUPPORTED
-    }
+    boolean isSupportedByFeatures();
 
-    SupportedByFeatures getSupportedByFeatures();
-
-    void appendCopyHistory(CopyType typeOfCopy, CopyHistory toAppend);
-
-    StatementContextBase<?, ?, ?> getOriginalCtx();
-
-    void setOriginalCtx(StatementContextBase<?, ?, ?> originalCtx);
+    StmtContext<?, ?, ?> getOriginalCtx();
 
     boolean isRootContext();
 
-    void setOrder(int order);
-
     int getOrder();
-
-    void setCompletedPhase(ModelProcessingPhase completedPhase);
 
     ModelProcessingPhase getCompletedPhase();
 
@@ -174,6 +152,14 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         @Override
         StmtContext.Mutable<?, ?, ?> getRoot();
 
+        @Override
+        @Nonnull
+        Collection<StatementContextBase<?, ?, ?>> declaredSubstatements();
+
+        @Override
+        @Nonnull
+        Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements();
+
         /**
          * Create a new inference action to be executed during specified phase. The action cannot be cancelled
          * and will be executed even if its definition remains incomplete.
@@ -196,8 +182,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          */
         <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(
                 Class<N> namespace, KT key, StmtContext<?, ?, ?> stmt);
-
-        void setSupportedByFeatures(boolean isSupported);
 
         /**
          * Set version of root statement context.
@@ -226,6 +210,10 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          */
         void addRequiredModule(ModuleIdentifier dependency);
 
+        void addAsEffectOfStatement(StmtContext<?, ?, ?> ctx);
+
+        void addAsEffectOfStatement(Collection<? extends StmtContext<?, ?, ?>> ctxs);
+
         /**
          * Set identifier of current root context.
          *
@@ -233,5 +221,16 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          *            of current root context
          */
         void setRootIdentifier(ModuleIdentifier identifier);
+
+        void setIsSupportedToBuildEffective(boolean isSupportedToBuild);
+
+        void appendCopyHistory(CopyType typeOfCopy, CopyHistory toAppend);
+
+        void setOriginalCtx(StmtContext<?, ?, ?> originalCtx);
+
+        void setOrder(int order);
+
+        // FIXME: this seems to be unused, but looks useful.
+        void setCompletedPhase(ModelProcessingPhase completedPhase);
     }
 }
