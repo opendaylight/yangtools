@@ -18,9 +18,9 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToSemVerModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, ImportStatement> implements
         ModuleImport {
@@ -67,7 +67,7 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
          * When 'revision-date' of an import is not specified in yang source, we
          * need to find revision of imported module.
          */
-        final QNameModule importedModule = Utils.getModuleQNameByPrefix(ctx, this.prefix);
+        final QNameModule importedModule = StmtContextUtils.getModuleQNameByPrefix(ctx, this.prefix);
         SourceException.throwIfNull(importedModule, ctx.getStatementSourceReference(),
                 "Unable to find import of module %s with prefix %s.", this.moduleName, this.prefix);
         return importedModule.getRevision();
