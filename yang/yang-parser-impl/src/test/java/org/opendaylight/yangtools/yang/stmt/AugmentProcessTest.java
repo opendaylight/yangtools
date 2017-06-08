@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class AugmentProcessTest {
 
@@ -97,8 +96,7 @@ public class AugmentProcessTest {
         addSources(reactor, MULTIPLE_AUGMENT_ROOT, MULTIPLE_AUGMENT_IMPORTED,
                 MULTIPLE_AUGMENT_SUBMODULE);
 
-        EffectiveSchemaContext result = null;
-        result = reactor.buildEffective();
+        SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
     }
 
@@ -108,8 +106,7 @@ public class AugmentProcessTest {
                 .newBuild();
         addSources(reactor, MULTIPLE_AUGMENT);
 
-        EffectiveSchemaContext result = null;
-        result = reactor.buildEffective();
+        SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
     }
 
@@ -119,8 +116,7 @@ public class AugmentProcessTest {
                 .newBuild();
         addSources(reactor, MULTIPLE_AUGMENT_INCORRECT);
 
-        EffectiveSchemaContext result = null;
-        result = reactor.buildEffective();
+        SchemaContext result = reactor.buildEffective();
         assertNull(result);
     }
 
@@ -129,8 +125,7 @@ public class AugmentProcessTest {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
         addSources(reactor, MULTIPLE_AUGMENT_INCORRECT2);
-        EffectiveSchemaContext result = null;
-        result = reactor.buildEffective();
+        SchemaContext result = reactor.buildEffective();
         assertNull(result);
     }
 
@@ -140,7 +135,7 @@ public class AugmentProcessTest {
                 .newBuild();
         addSources(reactor, AUGMENTED, ROOT);
 
-        final EffectiveSchemaContext root = reactor.buildEffective();
+        final SchemaContext root = reactor.buildEffective();
         assertNotNull(root);
 
         final Module augmentedModule = root.findModuleByName("augmented", null);
