@@ -46,7 +46,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespac
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -233,7 +232,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         Verify.verify(maybeParentPath.isPresent(), "Parent %s does not have a SchemaPath", parent);
         final SchemaPath parentPath = maybeParentPath.get();
 
-        if (Utils.isUnknownNode(this)) {
+        if (StmtContextUtils.isUnknownNode(this)) {
             return parentPath.createChild(getPublicDefinition().getStatementName());
         }
         if (argument instanceof QName) {
@@ -255,8 +254,8 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         if (argument instanceof String) {
             // FIXME: This may yield illegal argument exceptions
             final StmtContext<?, ?, ?> originalCtx = getOriginalCtx();
-            final QName qname = originalCtx != null ? Utils.qNameFromArgument(originalCtx, (String) argument) : Utils
-                    .qNameFromArgument(this, (String) argument);
+            final QName qname = originalCtx != null ? StmtContextUtils.qnameFromArgument(originalCtx, (String) argument)
+                    : StmtContextUtils.qnameFromArgument(this, (String) argument);
             return parentPath.createChild(qname);
         }
         if (argument instanceof SchemaNodeIdentifier

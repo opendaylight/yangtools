@@ -46,6 +46,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.TypeDefEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BinaryTypeEffectiveStatementImpl;
@@ -158,7 +159,7 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
                 typeStmt = BuiltinEffectiveStatements.UINT64;
                 break;
             default:
-                final QName qname = Utils.qNameFromArgument(ctx, ctx.getStatementArgument());
+                final QName qname = StmtContextUtils.qnameFromArgument(ctx, ctx.getStatementArgument());
                 final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> typedef =
                         ctx.getFromNamespace(TypeNamespace.class, qname);
                 SourceException.throwIfNull(typedef, ctx.getStatementSourceReference(), "Type '%s' not found", qname);
@@ -215,7 +216,7 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
                 return;
             }
 
-            final QName typeQName = Utils.qNameFromArgument(stmt, stmt.getStatementArgument());
+            final QName typeQName = StmtContextUtils.qnameFromArgument(stmt, stmt.getStatementArgument());
             final ModelActionBuilder typeAction = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
             final Prerequisite<StmtContext<?, ?, ?>> typePrereq = typeAction.requiresCtx(stmt, TypeNamespace.class,
                     typeQName, ModelProcessingPhase.EFFECTIVE_MODEL);

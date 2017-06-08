@@ -64,7 +64,7 @@ public class RpcStatementImpl extends AbstractDeclaredStatement<QName>
 
         @Override
         public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-            return Utils.qNameFromArgument(ctx, value);
+            return StmtContextUtils.qnameFromArgument(ctx, value);
         }
 
         @Override
