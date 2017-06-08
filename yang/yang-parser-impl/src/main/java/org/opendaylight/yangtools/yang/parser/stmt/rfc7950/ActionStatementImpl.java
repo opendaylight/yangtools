@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ChildSchemaNodes;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.effective.ActionEffectiveStatementImpl;
 
 public class ActionStatementImpl extends AbstractDeclaredStatement<QName> implements ActionStatement {
@@ -65,7 +64,7 @@ public class ActionStatementImpl extends AbstractDeclaredStatement<QName> implem
 
         @Override
         public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-            return Utils.qNameFromArgument(ctx, value);
+            return StmtContextUtils.qnameFromArgument(ctx, value);
         }
 
         @Override
