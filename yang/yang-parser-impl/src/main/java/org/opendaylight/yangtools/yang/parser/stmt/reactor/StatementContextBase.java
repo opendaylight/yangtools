@@ -81,6 +81,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private final StatementDefinitionContext<A, D, E> definition;
     private final StatementSourceReference statementDeclSource;
+    private final StmtContext<?, ?, ?> originalCtx;
+    private final CopyHistory copyHistory;
     private final String rawArgument;
 
     private Multimap<ModelProcessingPhase, OnPhaseFinished> phaseListeners = ImmutableMultimap.of();
@@ -90,10 +92,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private StatementMap substatements = StatementMap.empty();
 
     private Boolean supportedByFeatures = null;
-    private CopyHistory copyHistory = CopyHistory.original();
     private boolean isSupportedToBuildEffective = true;
     private ModelProcessingPhase completedPhase = null;
-    private StmtContext<?, ?, ?> originalCtx;
     private D declaredInstance;
     private E effectiveInstance;
     private int order = 0;
@@ -103,15 +103,24 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.definition = Preconditions.checkNotNull(def);
         this.statementDeclSource = Preconditions.checkNotNull(ref);
         this.rawArgument = def.internArgument(rawArgument);
+        this.copyHistory = CopyHistory.original();
+        this.originalCtx = null;
     }
 
-    StatementContextBase(final StatementContextBase<A, D, E> original) {
+    StatementContextBase(final StatementContextBase<A, D, E> original, final CopyType copyType) {
         this.definition = Preconditions.checkNotNull(original.definition,
                 "Statement context definition cannot be null copying from: %s", original.getStatementSourceReference());
         this.statementDeclSource = Preconditions.checkNotNull(original.statementDeclSource,
                 "Statement context statementDeclSource cannot be null copying from: %s",
                 original.getStatementSourceReference());
         this.rawArgument = original.rawArgument;
+        this.copyHistory = CopyHistory.of(copyType, original.getCopyHistory());
+
+        if (original.getOriginalCtx() != null) {
+            this.originalCtx = original.getOriginalCtx();
+        } else {
+            this.originalCtx = original;
+        }
     }
 
     @Override
@@ -167,17 +176,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return copyHistory;
     }
 
-    final void appendCopyHistory(final CopyType typeOfCopy, final CopyHistory toAppend) {
-        copyHistory = copyHistory.append(typeOfCopy, toAppend);
-    }
-
     @Override
     public StmtContext<?, ?, ?> getOriginalCtx() {
         return originalCtx;
-    }
-
-    final void setOriginalCtx(final StmtContext<?, ?, ?> originalCtx) {
-        this.originalCtx = originalCtx;
     }
 
     @Override
