@@ -49,6 +49,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -68,7 +69,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public class YangParserTest {
@@ -828,7 +828,7 @@ public class YangParserTest {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(yangModule, yangSubmodule);
 
-        final EffectiveSchemaContext result = reactor.buildEffective();
+        final SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
     }
 
@@ -846,7 +846,7 @@ public class YangParserTest {
         reactor.addSources(yangFile1, yangFile2, yangFile3);
         // TODO: change test or create new module in order to respect new statement parser validations
         try {
-            final EffectiveSchemaContext result = reactor.buildEffective();
+            final SchemaContext result = reactor.buildEffective();
         } catch (final Exception e) {
             assertEquals(SomeModifiersUnresolvedException.class, e.getClass());
             assertTrue(e.getCause() instanceof SourceException);

@@ -23,11 +23,11 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class MustAndWhenStmtTest {
 
@@ -39,13 +39,14 @@ public class MustAndWhenStmtTest {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(MUST_MODULE);
 
-        final EffectiveSchemaContext result = reactor.buildEffective();
+        final SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
         final Module testModule = result.findModuleByName("must-test", null);
         assertNotNull(testModule);
 
-        final ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "interface"));
+        final ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(
+            QName.create(testModule.getQNameModule(), "interface"));
         assertNotNull(container);
         assertTrue(container.isPresenceContainer());
 
@@ -72,7 +73,7 @@ public class MustAndWhenStmtTest {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(WHEN_MODULE);
 
-        final EffectiveSchemaContext result = reactor.buildEffective();
+        final SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
         final Module testModule = result.findModuleByName("when-test", null);

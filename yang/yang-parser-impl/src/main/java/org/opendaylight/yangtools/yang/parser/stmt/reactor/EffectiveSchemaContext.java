@@ -5,8 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
+package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -25,10 +27,12 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.util.AbstractSchemaContext;
 import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 
+@VisibleForTesting
 public final class EffectiveSchemaContext extends AbstractSchemaContext {
 
     private final SetMultimap<URI, Module> namespaceToModules;
@@ -39,16 +43,16 @@ public final class EffectiveSchemaContext extends AbstractSchemaContext {
     private final List<EffectiveStatement<?, ?>> rootEffectiveStatements;
     private final Set<ModuleIdentifier> moduleIdentifiers;
 
-    public EffectiveSchemaContext(final List<DeclaredStatement<?>> rootDeclaredStatements,
+    EffectiveSchemaContext(final List<DeclaredStatement<?>> rootDeclaredStatements,
             final List<EffectiveStatement<?, ?>> rootEffectiveStatements) {
         this.rootDeclaredStatements = ImmutableList.copyOf(rootDeclaredStatements);
         this.rootEffectiveStatements = ImmutableList.copyOf(rootEffectiveStatements);
 
         Set<Module> modulesInit = new HashSet<>();
-        for (EffectiveStatement<?, ?> rootEffectiveStatement : rootEffectiveStatements) {
-            if (rootEffectiveStatement instanceof ModuleEffectiveStatementImpl) {
-                Module module = (Module) rootEffectiveStatement;
-                modulesInit.add(module);
+        for (EffectiveStatement<?, ?> stmt : rootEffectiveStatements) {
+            if (stmt.getDeclared() instanceof ModuleStatement) {
+                Verify.verify(stmt instanceof Module);
+                modulesInit.add((Module) stmt);
             }
         }
 
@@ -74,7 +78,7 @@ public final class EffectiveSchemaContext extends AbstractSchemaContext {
         moduleIdentifiers = ImmutableSet.copyOf(modIdBuilder);
     }
 
-    public EffectiveSchemaContext(final Set<Module> modules) {
+    private EffectiveSchemaContext(final Set<Module> modules) {
 
          /*
          * Instead of doing this on each invocation of getModules(), pre-compute
@@ -123,10 +127,12 @@ public final class EffectiveSchemaContext extends AbstractSchemaContext {
         }
     }
 
+    @VisibleForTesting
     public List<DeclaredStatement<?>> getRootDeclaredStatements() {
         return rootDeclaredStatements;
     }
 
+    @VisibleForTesting
     public List<EffectiveStatement<?, ?>> getRootEffectiveStatements() {
         return rootEffectiveStatements;
     }

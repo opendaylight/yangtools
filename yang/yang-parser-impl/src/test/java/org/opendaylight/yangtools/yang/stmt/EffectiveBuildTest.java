@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class EffectiveBuildTest {
 
@@ -49,7 +48,7 @@ public class EffectiveBuildTest {
     public void effectiveBuildTest() throws SourceException, ReactorException {
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(SIMPLE_MODULE);
-        EffectiveSchemaContext result = reactor.buildEffective();
+        SchemaContext result = reactor.buildEffective();
 
         assertNotNull(result);
 
@@ -111,7 +110,7 @@ public class EffectiveBuildTest {
     public void extensionsTest() throws SourceException, ReactorException {
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(YANG_EXT);
-        EffectiveSchemaContext result = reactor.buildEffective();
+        SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
         Set<GroupingDefinition> groupings = result.getGroupings();
