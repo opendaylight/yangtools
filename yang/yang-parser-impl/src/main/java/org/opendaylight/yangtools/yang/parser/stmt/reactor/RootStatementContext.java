@@ -71,7 +71,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
         this.setRootIdentifier(identifier);
     }
 
-    RootStatementContext(final RootStatementContext<A, D, E> original, final QNameModule newQNameModule,
+    private RootStatementContext(final RootStatementContext<A, D, E> original, final QNameModule newQNameModule,
         final CopyType typeOfCopy) {
         super(original);
 
