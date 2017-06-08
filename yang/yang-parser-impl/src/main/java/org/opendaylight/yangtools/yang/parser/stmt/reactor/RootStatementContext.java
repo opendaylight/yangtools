@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
@@ -69,29 +68,6 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
         this(sourceContext, def, ref, rawArgument);
         this.setRootVersion(version);
         this.setRootIdentifier(identifier);
-    }
-
-    private RootStatementContext(final RootStatementContext<A, D, E> original, final QNameModule newQNameModule,
-        final CopyType typeOfCopy) {
-        super(original);
-
-        sourceContext = Preconditions.checkNotNull(original.sourceContext);
-        this.argument = original.argument;
-
-        final Collection<? extends Mutable<?, ?, ?>> declared = original.mutableDeclaredSubstatements();
-        final Collection<? extends Mutable<?, ?, ?>> effective = original.mutableEffectiveSubstatements();
-        final Collection<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
-
-        for (final Mutable<?, ?, ?> stmtContext : declared) {
-            if (stmtContext.isSupportedByFeatures()) {
-                buffer.add(stmtContext.createCopy(newQNameModule, this, typeOfCopy));
-            }
-        }
-        for (final StmtContext<?, ?, ?> stmtContext : effective) {
-            buffer.add(stmtContext.createCopy(newQNameModule, this, typeOfCopy));
-        }
-
-        addEffectiveSubstatements(buffer);
     }
 
     /**
@@ -137,36 +113,16 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
         return argument;
     }
 
-    /**
-     * @return copy of this considering {@link CopyType} (augment, uses)
-     *
-     * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
-     */
     @Override
     public StatementContextBase<A, D, E> createCopy(final StatementContextBase<?, ?, ?> newParent,
             final CopyType typeOfCopy) {
-        return createCopy(null, newParent, typeOfCopy);
+        throw new UnsupportedOperationException("Root context cannot be copied");
     }
 
-    /**
-     * @return copy of this considering {@link CopyType} (augment, uses)
-     *
-     * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
-     */
     @Override
     public StatementContextBase<A, D, E> createCopy(final QNameModule newQNameModule,
             final StatementContextBase<?, ?, ?> newParent, final CopyType typeOfCopy) {
-        final RootStatementContext<A, D, E> copy = new RootStatementContext<>(this, newQNameModule, typeOfCopy);
-
-        copy.appendCopyHistory(typeOfCopy, this.getCopyHistory());
-
-        if (this.getOriginalCtx() != null) {
-            copy.setOriginalCtx(this.getOriginalCtx());
-        } else {
-            copy.setOriginalCtx(this);
-        }
-        definition().onStatementAdded(copy);
-        return copy;
+        throw new UnsupportedOperationException("Root context cannot be copied");
     }
 
     @Nonnull
