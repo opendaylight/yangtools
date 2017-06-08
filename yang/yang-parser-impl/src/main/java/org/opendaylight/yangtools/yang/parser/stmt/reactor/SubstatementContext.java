@@ -82,7 +82,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     private SubstatementContext(final SubstatementContext<A, D, E> original, final QNameModule newQNameModule,
             final StatementContextBase<?, ?, ?> newParent, final CopyType typeOfCopy) {
         super(original);
-        this.parent = newParent;
+        this.parent = Preconditions.checkNotNull(newParent);
 
         if (newQNameModule != null) {
             final A originalArg = original.argument;
@@ -286,11 +286,6 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         }
 
         return Optional.fromNullable(local);
-    }
-
-    @Override
-    public boolean isRootContext() {
-        return false;
     }
 
     @Override

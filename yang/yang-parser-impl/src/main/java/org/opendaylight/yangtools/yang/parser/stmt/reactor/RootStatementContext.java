@@ -175,14 +175,6 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
         return Optional.of(SchemaPath.ROOT);
     }
 
-    /**
-     * @return true
-     */
-    @Override
-    public boolean isRootContext() {
-        return true;
-    }
-
     @Override
     public boolean isConfiguration() {
         return true;

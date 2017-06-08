@@ -47,7 +47,7 @@ public class YangDataStatementImpl extends AbstractDeclaredStatement<String> imp
         }
 
         @Override
-        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, String value) {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
@@ -71,7 +71,7 @@ public class YangDataStatementImpl extends AbstractDeclaredStatement<String> imp
                 EffectiveStatement<String, UnknownStatement<String>>> ctx) {
             // as per https://tools.ietf.org/html/rfc8040#section-8,
             // yang-data is ignored unless it appears as a top-level statement
-            if (!ctx.getParentContext().isRootContext()) {
+            if (ctx.getParentContext().getParentContext() != null) {
                 ctx.setIsSupportedToBuildEffective(false);
             }
         }
