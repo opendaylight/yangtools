@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionModuleName
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleIdentifier;
@@ -116,7 +117,8 @@ public class ModuleStatementSupport extends
 
         stmt.addContext(PreLinkageModuleNamespace.class, moduleName, stmt);
 
-        Optional<Date> revisionDate = Optional.ofNullable(Utils.getLatestRevision(stmt.declaredSubstatements()));
+        Optional<Date> revisionDate = Optional.ofNullable(StmtContextUtils.getLatestRevision(
+            stmt.declaredSubstatements()));
         if (!revisionDate.isPresent()) {
             revisionDate = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
         }
@@ -136,7 +138,8 @@ public class ModuleStatementSupport extends
         SourceException.throwIf(!moduleNs.isPresent(), stmt.getStatementSourceReference(),
             "Namespace of the module [%s] is missing", stmt.getStatementArgument());
 
-        Optional<Date> revisionDate = Optional.ofNullable(Utils.getLatestRevision(stmt.declaredSubstatements()));
+        Optional<Date> revisionDate = Optional.ofNullable(StmtContextUtils.getLatestRevision(
+            stmt.declaredSubstatements()));
         if (!revisionDate.isPresent()) {
             revisionDate = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
         }
