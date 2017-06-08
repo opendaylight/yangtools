@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
@@ -70,7 +71,7 @@ public class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
 
         @Override
         public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-            return Utils.qNameFromArgument(ctx, value);
+            return StmtContextUtils.qnameFromArgument(ctx, value);
         }
 
         @Override
