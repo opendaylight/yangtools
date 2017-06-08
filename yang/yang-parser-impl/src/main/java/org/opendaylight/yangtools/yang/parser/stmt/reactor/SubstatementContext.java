@@ -80,8 +80,8 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
     @SuppressWarnings("unchecked")
     private SubstatementContext(final SubstatementContext<A, D, E> original, final QNameModule newQNameModule,
-            final StatementContextBase<?, ?, ?> newParent, final CopyType typeOfCopy) {
-        super(original);
+            final StatementContextBase<?, ?, ?> newParent, final CopyType copyType) {
+        super(original, copyType);
         this.parent = Preconditions.checkNotNull(newParent);
 
         if (newQNameModule != null) {
@@ -145,14 +145,6 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
                 "Attempted to copy statement %s which has completed phase %s", this, getCompletedPhase());
 
         final SubstatementContext<A, D, E> copy = new SubstatementContext<>(this, newQNameModule, newParent, typeOfCopy);
-
-        copy.appendCopyHistory(typeOfCopy, this.getCopyHistory());
-
-        if (this.getOriginalCtx() != null) {
-            copy.setOriginalCtx(this.getOriginalCtx());
-        } else {
-            copy.setOriginalCtx(this);
-        }
 
         definition().onStatementAdded(copy);
 
