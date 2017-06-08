@@ -137,36 +137,16 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
         return argument;
     }
 
-    /**
-     * @return copy of this considering {@link CopyType} (augment, uses)
-     *
-     * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
-     */
     @Override
     public StatementContextBase<A, D, E> createCopy(final StatementContextBase<?, ?, ?> newParent,
             final CopyType typeOfCopy) {
-        return createCopy(null, newParent, typeOfCopy);
+        throw new UnsupportedOperationException("Root context cannot be copied");
     }
 
-    /**
-     * @return copy of this considering {@link CopyType} (augment, uses)
-     *
-     * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
-     */
     @Override
     public StatementContextBase<A, D, E> createCopy(final QNameModule newQNameModule,
             final StatementContextBase<?, ?, ?> newParent, final CopyType typeOfCopy) {
-        final RootStatementContext<A, D, E> copy = new RootStatementContext<>(this, newQNameModule, typeOfCopy);
-
-        copy.appendCopyHistory(typeOfCopy, this.getCopyHistory());
-
-        if (this.getOriginalCtx() != null) {
-            copy.setOriginalCtx(this.getOriginalCtx());
-        } else {
-            copy.setOriginalCtx(this);
-        }
-        definition().onStatementAdded(copy);
-        return copy;
+        throw new UnsupportedOperationException("Root context cannot be copied");
     }
 
     @Nonnull

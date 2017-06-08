@@ -116,8 +116,18 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     Collection<? extends StmtContext<?, ?, ?>> getEffectOfStatement();
 
+    /**
+     * @return copy of this considering {@link CopyType} (augment, uses)
+     *
+     * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
+     */
     Mutable<A, D, E> createCopy(StatementContextBase<?, ?, ?> newParent, CopyType typeOfCopy);
 
+    /**
+     * @return copy of this considering {@link CopyType} (augment, uses)
+     *
+     * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
+     */
     Mutable<A, D, E> createCopy(QNameModule newQNameModule, StatementContextBase<?, ?, ?> newParent,
             CopyType typeOfCopy);
 
