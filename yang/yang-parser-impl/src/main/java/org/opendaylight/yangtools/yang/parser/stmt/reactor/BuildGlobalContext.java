@@ -30,6 +30,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.util.RecursiveObjectLeaker;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
@@ -60,7 +61,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamesp
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceSpecificContext.PhaseCompletionProgress;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.RecursiveObjectLeaker;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 import org.slf4j.Logger;
