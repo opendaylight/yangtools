@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -42,7 +43,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class TypesResolutionTest {
     private Set<Module> testedModules;
@@ -356,7 +356,7 @@ public class TypesResolutionTest {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(yangFile1, yangFile2, yangFile3);
 
-        final EffectiveSchemaContext result = reactor.buildEffective();
+        final SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
     }
 
@@ -368,7 +368,7 @@ public class TypesResolutionTest {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(yangFile);
 
-        final EffectiveSchemaContext result = reactor.buildEffective();
+        final SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
     }
 
@@ -380,7 +380,7 @@ public class TypesResolutionTest {
         reactor.addSources(yangFile);
 
         try {
-            final EffectiveSchemaContext result = reactor.buildEffective();
+            final SchemaContext result = reactor.buildEffective();
             fail("effective build should fail due to union in list; this is not allowed");
         } catch (Exception e) {
             assertEquals(SomeModifiersUnresolvedException.class, e.getClass());

@@ -23,12 +23,12 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class EffectiveModulesAndSubmodulesTest {
 
@@ -50,7 +50,7 @@ public class EffectiveModulesAndSubmodulesTest {
                 .newBuild();
         reactor.addSources(ROOT_MODULE, IMPORTED_MODULE,
                 SUBMODULE_1, SUBMODULE_2, SUBMODULE_TO_SUBMODULE_1);
-        final EffectiveSchemaContext result = reactor.buildEffective();
+        final SchemaContext result = reactor.buildEffective();
 
         assertNotNull(result);
 
@@ -167,16 +167,15 @@ public class EffectiveModulesAndSubmodulesTest {
 
     }
 
-    private static void getDataChildByNameSubTest(final EffectiveSchemaContext result,
-            final Module root) {
+    private static void getDataChildByNameSubTest(final SchemaContext result, final Module root) {
         final DataSchemaNode containerInRoot = result.getDataChildByName(QName
                 .create(root.getQNameModule(), "container-in-root-module"));
         assertNotNull(containerInRoot);
         assertEquals("desc", containerInRoot.getDescription());
     }
 
-    private static void findModulesSubTest(final EffectiveSchemaContext result, final Module root,
-            final Module imported) throws URISyntaxException {
+    private static void findModulesSubTest(final SchemaContext result, final Module root, final Module imported)
+            throws URISyntaxException {
         final Module foundRoot = result.findModuleByName("root-module",
                 SimpleDateFormatUtil.DEFAULT_DATE_REV);
         final Set<Module> foundRoots = result.findModuleByNamespace(new URI(

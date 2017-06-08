@@ -38,7 +38,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class MoreRevisionsTest {
 
@@ -78,7 +77,7 @@ public class MoreRevisionsTest {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
         reactor.addSource(REVFILE);
-        EffectiveSchemaContext result = reactor.buildEffective();
+        SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
         final Module moduleByName = result.getModules().iterator().next();
         final QNameModule qNameModule = moduleByName.getQNameModule();
@@ -93,7 +92,7 @@ public class MoreRevisionsTest {
 
         reactor.addSources(TED_20130712, TED_20131021, IETF_TYPES);
 
-        EffectiveSchemaContext result = reactor.buildEffective();
+        SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
     }
@@ -106,7 +105,7 @@ public class MoreRevisionsTest {
         reactor.addSources(NETWORK_TOPOLOGY_20130712,
                 NETWORK_TOPOLOGY_20131021, IETF_TYPES);
 
-        EffectiveSchemaContext result = reactor.buildEffective();
+        SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
         Set<Module> modules = result.getModules();
 
@@ -125,7 +124,7 @@ public class MoreRevisionsTest {
                 ISIS_20131021, L3_20130712, L3_20131021, IETF_TYPES,
                 NETWORK_TOPOLOGY_20130712, NETWORK_TOPOLOGY_20131021);
 
-        EffectiveSchemaContext result = reactor.buildEffective();
+        SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
     }
 

@@ -20,12 +20,12 @@ import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class IdentityStmtTest {
 
@@ -50,7 +50,7 @@ public class IdentityStmtTest {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(ILLEGAL_IDENTITY_MODULE);
 
-        EffectiveSchemaContext result = reactor.buildEffective();
+        SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
     }
 
@@ -59,7 +59,7 @@ public class IdentityStmtTest {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(ILLEGAL_IDENTITY_MODULE2);
 
-        EffectiveSchemaContext result = reactor.buildEffective();
+        SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
     }
 
@@ -68,7 +68,7 @@ public class IdentityStmtTest {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(LEGAL_IDENTITY_MODULE, LEGAL_IDENTITY_MODULE2);
 
-        EffectiveSchemaContext result = reactor.buildEffective();
+        SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
     }
 
@@ -77,7 +77,7 @@ public class IdentityStmtTest {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(ILLEGAL_IDENTITY_MODULE3);
 
-        EffectiveSchemaContext result = reactor.buildEffective();
+        SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
     }
 
@@ -86,7 +86,7 @@ public class IdentityStmtTest {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(LEGAL_IDENTITY_MODULE3);
 
-        EffectiveSchemaContext result = reactor.buildEffective();
+        SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
         Module testModule = result.findModuleByName("legal-chained-identity-test", null);
@@ -118,7 +118,7 @@ public class IdentityStmtTest {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(DUPLICATE_IDENTITY_MODULE);
 
-        EffectiveSchemaContext result = reactor.buildEffective();
+        SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
         Module testModule = result.findModuleByName("duplicate-identity-test", null);
