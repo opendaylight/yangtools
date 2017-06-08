@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Verify;
 import org.opendaylight.yangtools.concepts.Immutable;
 
@@ -40,6 +41,10 @@ public final class CopyHistory implements Immutable {
 
     public static CopyHistory original() {
         return ORIGINAL;
+    }
+
+    public static CopyHistory of(final CopyType copyType, final CopyHistory copyHistory) {
+        return ORIGINAL.append(copyType, copyHistory);
     }
 
     private static CopyHistory[] cacheArray(final CopyType lastOperation) {
@@ -82,7 +87,8 @@ public final class CopyHistory implements Immutable {
         return VALUES[lastOperation];
     }
 
-    public CopyHistory append(final CopyType typeOfCopy, final CopyHistory toAppend) {
+    @VisibleForTesting
+    CopyHistory append(final CopyType typeOfCopy, final CopyHistory toAppend) {
         final int newOperations = operations | toAppend.operations | typeOfCopy.bit();
         if (newOperations == operations && typeOfCopy.ordinal() == lastOperation) {
             return this;
@@ -93,7 +99,7 @@ public final class CopyHistory implements Immutable {
 
     @Override
     public int hashCode() {
-        return Integer.hashCode(operations | (lastOperation << Short.SIZE));
+        return Integer.hashCode(operations | lastOperation << Short.SIZE);
     }
 
     @Override
