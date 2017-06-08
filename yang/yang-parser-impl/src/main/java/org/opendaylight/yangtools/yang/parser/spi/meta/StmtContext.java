@@ -36,7 +36,9 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     StatementDefinition getPublicDefinition();
 
     /**
-     * @return context of parent of statement
+     * Return the parent statement context, or null if this is the root statement.
+     *
+     * @return context of parent of statement, or null if this is the root statement.
      */
     @Nullable
     StmtContext<?, ?, ?> getParentContext();
@@ -124,8 +126,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     boolean isSupportedByFeatures();
 
     StmtContext<?, ?, ?> getOriginalCtx();
-
-    boolean isRootContext();
 
     int getOrder();
 

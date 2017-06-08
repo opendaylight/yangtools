@@ -208,7 +208,7 @@ public final class StmtContextUtils {
 
     public static boolean isInExtensionBody(final StmtContext<?, ?, ?> stmtCtx) {
         StmtContext<?, ?, ?> current = stmtCtx;
-        while (!current.getParentContext().isRootContext()) {
+        while (current.getParentContext().getParentContext() != null) {
             current = current.getParentContext();
             if (producesDeclared(current, UnknownStatementImpl.class)) {
                 return true;
