@@ -45,7 +45,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YinStatementSourceImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +68,7 @@ public final class TestUtils {
             }
         }
 
-        EffectiveSchemaContext ctx = reactor.buildEffective();
+        SchemaContext ctx = reactor.buildEffective();
         return ctx.getModules();
     }
 
@@ -81,7 +80,7 @@ public final class TestUtils {
             reactor.addSource(new YangStatementSourceImpl(inputStream));
         }
 
-        EffectiveSchemaContext ctx = reactor.buildEffective();
+        SchemaContext ctx = reactor.buildEffective();
         return ctx.getModules();
     }
 
@@ -92,7 +91,7 @@ public final class TestUtils {
             reactor.addSource(new YinStatementSourceImpl(file.getPath(), true));
         }
 
-        EffectiveSchemaContext ctx = reactor.buildEffective();
+        SchemaContext ctx = reactor.buildEffective();
         return ctx.getModules();
     }
 
@@ -102,7 +101,7 @@ public final class TestUtils {
             reactor.addSource(new YinStatementSourceImpl(inputStream));
         }
 
-        EffectiveSchemaContext ctx = reactor.buildEffective();
+        SchemaContext ctx = reactor.buildEffective();
         return ctx.getModules();
     }
 
@@ -111,14 +110,14 @@ public final class TestUtils {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
             .newBuild();
         reactor.addSource(new YangStatementSourceImpl(stream));
-        EffectiveSchemaContext ctx = reactor.buildEffective();
+        SchemaContext ctx = reactor.buildEffective();
         return ctx.getModules().iterator().next();
     }
 
     public static Module loadYinModule(final InputStream stream) throws SourceException, ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(new YinStatementSourceImpl(stream));
-        EffectiveSchemaContext ctx = reactor.buildEffective();
+        SchemaContext ctx = reactor.buildEffective();
         return ctx.getModules().iterator().next();
     }
 

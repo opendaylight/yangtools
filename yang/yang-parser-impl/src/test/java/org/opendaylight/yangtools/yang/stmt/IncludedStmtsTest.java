@@ -23,12 +23,12 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class IncludedStmtsTest {
 
@@ -42,7 +42,7 @@ public class IncludedStmtsTest {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(ROOT_MODULE, CHILD_MODULE);
 
-        final EffectiveSchemaContext result = reactor.buildEffective();
+        final SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
         final Module testModule = result.findModuleByName("root-module", null);
@@ -65,7 +65,7 @@ public class IncludedStmtsTest {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(ROOT_MODULE, CHILD_MODULE);
 
-        final EffectiveSchemaContext result = reactor.buildEffective();
+        final SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
         final Module testModule = result.findModuleByName("root-module", null);
@@ -86,7 +86,7 @@ public class IncludedStmtsTest {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(ROOT_MODULE, CHILD_MODULE);
 
-        final EffectiveSchemaContext result = reactor.buildEffective();
+        final SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
         final Module testModule = result.findModuleByName("root-module", null);
@@ -109,7 +109,7 @@ public class IncludedStmtsTest {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(ROOT_MODULE, CHILD_MODULE);
 
-        final EffectiveSchemaContext result = reactor.buildEffective();
+        final SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
         final Module testModule = result.findModuleByName("root-module", null);

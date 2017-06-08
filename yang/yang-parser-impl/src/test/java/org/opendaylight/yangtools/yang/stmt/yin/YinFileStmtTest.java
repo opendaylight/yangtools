@@ -17,6 +17,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -24,7 +25,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YinStatementSourceImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 public class YinFileStmtTest {
@@ -50,7 +50,7 @@ public class YinFileStmtTest {
     public void readAndParseYinFileTestModel() throws SourceException, ReactorException {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         addSources(reactor, YIN_FILE, EXT_FILE, EXT_USE_FILE);
-        EffectiveSchemaContext result = reactor.buildEffective();
+        SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
     }
 
@@ -59,7 +59,7 @@ public class YinFileStmtTest {
     public void readAndParseInvalidYinFileTest() throws ReactorException {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         addSources(reactor, INVALID_YIN_FILE);
-        EffectiveSchemaContext result = reactor.buildEffective();
+        SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
     }
 
