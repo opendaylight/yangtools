@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.SubmoduleEffectiveStatementImpl;
@@ -121,9 +122,9 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
             stmt.addToNs(BelongsToPrefixToModuleName.class, prefix, belongsToModuleName);
         }
 
-        private ModuleIdentifier getSubmoduleIdentifier(
+        private static ModuleIdentifier getSubmoduleIdentifier(
                 final Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> stmt) {
-            final Date maybeDate = Utils.getLatestRevision(stmt.declaredSubstatements());
+            final Date maybeDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements());
             final Optional<Date> revisionDate = maybeDate != null ? Optional.of(maybeDate) : DEFAULT_REVISION;
 
             final ModuleIdentifier submoduleIdentifier = ModuleIdentifierImpl.create(stmt.getStatementArgument(),
