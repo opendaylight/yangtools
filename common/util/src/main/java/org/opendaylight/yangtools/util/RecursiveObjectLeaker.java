@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
+package org.opendaylight.yangtools.util;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
@@ -14,6 +14,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map.Entry;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.ThreadSafe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,15 +22,29 @@ import org.slf4j.LoggerFactory;
  * Thread-local hack to make recursive extensions work without too much hassle. The idea is that prior to instantiating
  * an extension, the definition object checks whether it is already present on the stack, recorded object is returned.
  *
+ * <p>
  * If it is not, it will push itself to the stack as unresolved and invoke the constructor. The constructor's lowermost
  * class calls to this class and if the topmost entry is not resolved, it will leak itself.
  *
+ * <p>
  * Upon return from the constructor, the topmost entry is removed and if the queue is empty, the thread-local variable
  * will be cleaned up.
+ *
+ * <p>
+ * WARNING: BE CAREFUL WHEN USING THIS CLASS. IT LEAKS OBJECTS WHICH ARE NOT COMPLETELY INITIALIZED.
+ *
+ * <p>
+ * WARNING: THIS CLASS EAVES THREAD-LOCAL RESIDUE. MAKE SURE IT IS OKAY OR CALL {@link #cleanup()} IN APPROPRIATE
+ *          PLACES.
+ *
+ * <p>
+ * THIS CLASS IS EXTREMELY DANGEROUS (okay, not as much as sun.misc.unsafe). YOU HAVE BEEN WARNED. IF SOMETHING BREAKS
+ * IT IS PROBABLY YOUR FAULT AND YOU ARE ON YOUR OWN.
  *
  * @author Robert Varga
  */
 @Beta
+@ThreadSafe
 public final class RecursiveObjectLeaker {
     // Logging note. Only keys passed can be logged, as objects beng resolved may not be properly constructed.
     private static final Logger LOG = LoggerFactory.getLogger(RecursiveObjectLeaker.class);
