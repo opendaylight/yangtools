@@ -221,10 +221,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
         void setIsSupportedToBuildEffective(boolean isSupportedToBuild);
 
-        void appendCopyHistory(CopyType typeOfCopy, CopyHistory toAppend);
-
-        void setOriginalCtx(StmtContext<?, ?, ?> originalCtx);
-
         void setOrder(int order);
 
         // FIXME: this seems to be unused, but looks useful.
