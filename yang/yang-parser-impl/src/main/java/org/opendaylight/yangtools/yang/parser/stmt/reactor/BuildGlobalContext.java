@@ -52,6 +52,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModulesDeviatedByModules.SupportedModules;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -61,7 +62,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamesp
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceSpecificContext.PhaseCompletionProgress;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -242,7 +242,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     private SomeModifiersUnresolvedException propagateException(final SourceSpecificContext source,
             final RuntimeException cause) throws SomeModifiersUnresolvedException {
-        final SourceIdentifier sourceId = Utils.createSourceIdentifier(source.getRoot());
+        final SourceIdentifier sourceId = StmtContextUtils.createSourceIdentifier(source.getRoot());
         if (!(cause instanceof SourceException)) {
             /*
              * This should not be happening as all our processing should provide SourceExceptions.
@@ -348,7 +348,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
             if (!addedCause) {
                 addedCause = true;
-                final SourceIdentifier sourceId = Utils.createSourceIdentifier(failedSource.getRoot());
+                final SourceIdentifier sourceId = StmtContextUtils.createSourceIdentifier(failedSource.getRoot());
                 buildFailure = new SomeModifiersUnresolvedException(currentPhase, sourceId, sourceEx);
             } else {
                 buildFailure.addSuppressed(sourceEx);

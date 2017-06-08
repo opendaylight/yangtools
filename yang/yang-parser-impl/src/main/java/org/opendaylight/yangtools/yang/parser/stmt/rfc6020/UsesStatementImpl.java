@@ -77,7 +77,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
 
         @Override
         public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-            return Utils.qNameFromArgument(ctx, value);
+            return StmtContextUtils.qnameFromArgument(ctx, value);
         }
 
         @Override
@@ -368,7 +368,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
             return targetCtx.getFromNamespace(ModuleCtxToModuleQName.class, targetCtx);
         }
         if (targetCtx.getPublicDefinition() == YangStmtMapping.AUGMENT) {
-            return Utils.getRootModuleQName(targetCtx);
+            return StmtContextUtils.getRootModuleQName(targetCtx);
         }
 
         final Object targetStmtArgument = targetCtx.getStatementArgument();
