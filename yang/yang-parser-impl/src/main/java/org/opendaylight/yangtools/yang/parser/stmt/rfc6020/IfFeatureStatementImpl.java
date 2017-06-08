@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IfFeatureEffectiveStatementImpl;
 
@@ -55,7 +56,7 @@ public class IfFeatureStatementImpl extends AbstractDeclaredStatement<Predicate<
             if(YangVersion.VERSION_1_1.equals(ctx.getRootVersion())) {
                 return parseIfFeatureExpression(ctx, value);
             } else {
-                final QName qName = Utils.qNameFromArgument(ctx, value);
+                final QName qName = StmtContextUtils.qnameFromArgument(ctx, value);
                 return setQNames -> setQNames.contains(qName);
             }
         }
@@ -126,7 +127,7 @@ public class IfFeatureStatementImpl extends AbstractDeclaredStatement<Predicate<
 
             @Override
             public Predicate<Set<QName>> visitIdentifier_ref_arg(final Identifier_ref_argContext ctx) {
-                final QName featureQName = Utils.qNameFromArgument(stmtCtx, ctx.getText());
+                final QName featureQName = StmtContextUtils.qnameFromArgument(stmtCtx, ctx.getText());
                 return setQNames -> setQNames.contains(featureQName);
             }
         }

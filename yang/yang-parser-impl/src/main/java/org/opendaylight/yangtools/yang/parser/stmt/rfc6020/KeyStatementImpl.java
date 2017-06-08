@@ -46,7 +46,7 @@ public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<Schem
             final Builder<SchemaNodeIdentifier> builder = ImmutableSet.builder();
             int tokens = 0;
             for (String keyToken : StmtContextUtils.LIST_KEY_SPLITTER.split(value)) {
-                builder.add(SchemaNodeIdentifier.create(false, Utils.qNameFromArgument(ctx, keyToken)));
+                builder.add(SchemaNodeIdentifier.create(false, StmtContextUtils.qnameFromArgument(ctx, keyToken)));
                 tokens++;
             }
 
