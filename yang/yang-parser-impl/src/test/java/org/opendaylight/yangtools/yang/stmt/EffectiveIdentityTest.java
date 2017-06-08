@@ -21,13 +21,13 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class EffectiveIdentityTest {
 
@@ -45,7 +45,7 @@ public class EffectiveIdentityTest {
                 .newBuild();
         reactor.addSources(CYCLIC_IDENTITY_TEST);
         try {
-            EffectiveSchemaContext result = reactor.buildEffective();
+            SchemaContext result = reactor.buildEffective();
         } catch (SomeModifiersUnresolvedException e) {
             StmtTestUtils.log(e, "      ");
             throw e;
@@ -59,7 +59,7 @@ public class EffectiveIdentityTest {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
         reactor.addSources(IDENTITY_TEST);
-        EffectiveSchemaContext result = reactor.buildEffective();
+        SchemaContext result = reactor.buildEffective();
 
         assertNotNull(result);
 
