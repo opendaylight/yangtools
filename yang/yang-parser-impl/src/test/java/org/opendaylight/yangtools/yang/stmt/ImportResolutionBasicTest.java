@@ -15,6 +15,7 @@ import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
@@ -23,7 +24,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class ImportResolutionBasicTest {
 
@@ -106,7 +106,7 @@ public class ImportResolutionBasicTest {
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(FOO, IMPORT);
 
-        EffectiveSchemaContext buildEffective = reactor.buildEffective();
+        SchemaContext buildEffective = reactor.buildEffective();
         assertNotNull(buildEffective);
     }
 }

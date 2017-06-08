@@ -19,12 +19,12 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class ExtensionStmtTest {
 
@@ -39,7 +39,7 @@ public class ExtensionStmtTest {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(EXT_DEF_MODULE);
 
-        final EffectiveSchemaContext result = reactor.buildEffective();
+        final SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
         final Module testModule = result.findModuleByName("bar", null);
@@ -59,7 +59,7 @@ public class ExtensionStmtTest {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(EXT_DEF_MODULE2, EXT_USE_MODULE);
 
-        final EffectiveSchemaContext result = reactor.buildEffective();
+        final SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
         final Module testModule1 = result.findModuleByName("ext-typedef", null);

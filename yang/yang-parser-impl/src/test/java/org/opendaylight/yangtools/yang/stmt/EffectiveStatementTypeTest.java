@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -40,7 +41,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.LeafEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitsSpecificationEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Decimal64SpecificationEffectiveStatementImpl;
@@ -53,7 +53,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UnionS
 public class EffectiveStatementTypeTest {
 
     private static final StatementStreamSource IMPORTED_MODULE = sourceForResource("/type-tests/types.yang");
-    private static EffectiveSchemaContext effectiveSchemaContext;
+    private static SchemaContext effectiveSchemaContext;
     private static LeafSchemaNode currentLeaf;
     private static Module types;
 
@@ -384,14 +384,14 @@ public class EffectiveStatementTypeTest {
         currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(),
                 "leaf-length-pattern"));
         assertNotNull(currentLeaf.getType());
-        final LengthConstraint lengthConstraint = ((StringTypeDefinition) (currentLeaf.getType()))
+        final LengthConstraint lengthConstraint = ((StringTypeDefinition) currentLeaf.getType())
                 .getLengthConstraints().get(0);
-        final LengthConstraint lengthConstraintThird = ((StringTypeDefinition) (currentLeaf.getType()))
+        final LengthConstraint lengthConstraintThird = ((StringTypeDefinition) currentLeaf.getType())
                 .getLengthConstraints().get(0);
         currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(),
                 "leaf-length-pattern-second"));
         assertNotNull(currentLeaf.getType());
-        final LengthConstraint lengthConstraintSecond = ((StringTypeDefinition) (currentLeaf.getType()))
+        final LengthConstraint lengthConstraintSecond = ((StringTypeDefinition) currentLeaf.getType())
                 .getLengthConstraints().get(0);
 
         assertEquals(1, lengthConstraint.getMin().intValue());
@@ -413,15 +413,15 @@ public class EffectiveStatementTypeTest {
         currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(),
                 "leaf-length-pattern"));
         assertNotNull(currentLeaf.getType());
-        final PatternConstraintEffectiveImpl patternConstraint = (PatternConstraintEffectiveImpl) ((StringTypeDefinition) (currentLeaf
-                .getType())).getPatternConstraints().get(0);
-        final PatternConstraintEffectiveImpl patternConstraintThird = (PatternConstraintEffectiveImpl) ((StringTypeDefinition) (currentLeaf
-                .getType())).getPatternConstraints().get(0);
+        final PatternConstraintEffectiveImpl patternConstraint = (PatternConstraintEffectiveImpl) ((StringTypeDefinition) currentLeaf
+                .getType()).getPatternConstraints().get(0);
+        final PatternConstraintEffectiveImpl patternConstraintThird = (PatternConstraintEffectiveImpl) ((StringTypeDefinition) currentLeaf
+                .getType()).getPatternConstraints().get(0);
         currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(),
                 "leaf-length-pattern-second"));
         assertNotNull(currentLeaf.getType());
-        final PatternConstraintEffectiveImpl patternConstraintSecond = (PatternConstraintEffectiveImpl) ((StringTypeDefinition) (currentLeaf
-                .getType())).getPatternConstraints().get(0);
+        final PatternConstraintEffectiveImpl patternConstraintSecond = (PatternConstraintEffectiveImpl) ((StringTypeDefinition) currentLeaf
+                .getType()).getPatternConstraints().get(0);
 
         assertEquals("^[0-9a-fA-F]*$", patternConstraint.getRegularExpression());
         assertNull(patternConstraint.getReference());
