@@ -364,7 +364,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
 
     private static QNameModule getNewQNameModule(final StmtContext<?, ?, ?> targetCtx,
             final StmtContext<?, ?, ?> stmtContext) {
-        if (targetCtx.isRootContext()) {
+        if (targetCtx.getParentContext() == null) {
             return targetCtx.getFromNamespace(ModuleCtxToModuleQName.class, targetCtx);
         }
         if (targetCtx.getPublicDefinition() == YangStmtMapping.AUGMENT) {
