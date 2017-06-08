@@ -167,8 +167,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return copyHistory;
     }
 
-    @Override
-    public void appendCopyHistory(final CopyType typeOfCopy, final CopyHistory toAppend) {
+    final void appendCopyHistory(final CopyType typeOfCopy, final CopyHistory toAppend) {
         copyHistory = copyHistory.append(typeOfCopy, toAppend);
     }
 
