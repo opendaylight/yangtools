@@ -46,7 +46,7 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
             final StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
         super(ctx);
 
-        this.original = ctx.getOriginalCtx() == null ? null : (ListSchemaNode) ctx.getOriginalCtx().buildEffective();
+        this.original = (ListSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
 
         final OrderedByEffectiveStatementImpl orderedByStmt = firstEffective(OrderedByEffectiveStatementImpl.class);
         if (orderedByStmt != null && ORDER_BY_USER_KEYWORD.equals(orderedByStmt.argument())) {

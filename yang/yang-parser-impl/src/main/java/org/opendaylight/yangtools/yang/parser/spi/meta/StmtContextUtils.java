@@ -515,7 +515,7 @@ public final class StmtContextUtils {
             }
             if (qNameModule == null
                     && ctx.getCopyHistory().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
-                ctx = ctx.getOriginalCtx();
+                ctx = ctx.getOriginalCtx().orElse(null);
                 qNameModule = StmtContextUtils.getModuleQNameByPrefix(ctx, prefix);
             }
             break;

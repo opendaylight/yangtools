@@ -37,8 +37,7 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
     public LeafListEffectiveStatementImpl(
             final StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
         super(ctx);
-        this.original = ctx.getOriginalCtx() == null ? null : (LeafListSchemaNode) ctx.getOriginalCtx()
-                .buildEffective();
+        this.original = (LeafListSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
 
         final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
             firstSubstatementOfType(TypeEffectiveStatement.class), ctx.getStatementSourceReference(),

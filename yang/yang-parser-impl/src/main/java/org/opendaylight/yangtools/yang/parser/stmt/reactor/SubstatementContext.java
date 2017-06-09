@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -230,7 +230,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         if (argument instanceof QName) {
             final QName qname = (QName) argument;
             if (StmtContextUtils.producesDeclared(this, UsesStatement.class)) {
-                return maybeParentPath.orNull();
+                return maybeParentPath.orElse(null);
             }
 
             final SchemaPath path;
@@ -245,21 +245,20 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         }
         if (argument instanceof String) {
             // FIXME: This may yield illegal argument exceptions
-            final StmtContext<?, ?, ?> originalCtx = getOriginalCtx();
-            final QName qname = originalCtx != null ? StmtContextUtils.qnameFromArgument(originalCtx, (String) argument)
-                    : StmtContextUtils.qnameFromArgument(this, (String) argument);
+            final Optional<StmtContext<?, ?, ?>> originalCtx = getOriginalCtx();
+            final QName qname = StmtContextUtils.qnameFromArgument(originalCtx.orElse(this), (String) argument);
             return parentPath.createChild(qname);
         }
         if (argument instanceof SchemaNodeIdentifier
-                && (StmtContextUtils.producesDeclared(this, AugmentStatement.class) || StmtContextUtils
-                        .producesDeclared(this, RefineStatement.class) || StmtContextUtils
-                .producesDeclared(this, DeviationStatement.class))) {
+                && (StmtContextUtils.producesDeclared(this, AugmentStatement.class)
+                        || StmtContextUtils.producesDeclared(this, RefineStatement.class)
+                        || StmtContextUtils.producesDeclared(this, DeviationStatement.class))) {
 
             return parentPath.createChild(((SchemaNodeIdentifier) argument).getPathFromRoot());
         }
 
         // FIXME: this does not look right
-        return maybeParentPath.orNull();
+        return maybeParentPath.orElse(null);
     }
 
     @Nonnull
@@ -277,7 +276,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
         }
 
-        return Optional.fromNullable(local);
+        return Optional.ofNullable(local);
     }
 
     @Override
