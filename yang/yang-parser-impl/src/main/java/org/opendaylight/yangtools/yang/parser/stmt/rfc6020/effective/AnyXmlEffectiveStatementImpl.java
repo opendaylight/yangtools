@@ -24,7 +24,7 @@ public class AnyXmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNod
     public AnyXmlEffectiveStatementImpl(
             final StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx) {
         super(ctx);
-        this.original = ctx.getOriginalCtx() == null ? null : (AnyXmlSchemaNode) ctx.getOriginalCtx().buildEffective();
+        this.original = (AnyXmlSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
     }
 
     @Override
