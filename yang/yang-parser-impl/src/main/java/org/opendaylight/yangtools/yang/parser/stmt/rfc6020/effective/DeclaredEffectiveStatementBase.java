@@ -13,7 +13,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public abstract class DeclaredEffectiveStatementBase<A, D extends DeclaredStatement<A>> extends
         EffectiveStatementBase<A, D> {
@@ -28,7 +27,7 @@ public abstract class DeclaredEffectiveStatementBase<A, D extends DeclaredStatem
      * @param ctx
      *            context of statement.
      */
-    protected DeclaredEffectiveStatementBase(StmtContext<A, D, ?> ctx) {
+    protected DeclaredEffectiveStatementBase(final StmtContext<A, D, ?> ctx) {
         super(ctx);
 
         this.argument = ctx.getStatementArgument();
@@ -40,12 +39,9 @@ public abstract class DeclaredEffectiveStatementBase<A, D extends DeclaredStatem
          * declared statement.
          */
         @SuppressWarnings("unchecked")
-        final StatementContextBase<A, D, ?> originalCtx = (StatementContextBase<A, D, ?>) ctx.getOriginalCtx();
-        if (originalCtx != null) {
-            ctx = originalCtx;
-        }
-        declaredInstance = Verify.verifyNotNull(ctx.buildDeclared(), "Statement %s failed to build declared statement",
-                ctx);
+        final StmtContext<?, D, ?> lookupCtx = (StmtContext<?, D, ?>) ctx.getOriginalCtx().orElse(ctx);
+        declaredInstance = Verify.verifyNotNull(lookupCtx.buildDeclared(),
+            "Statement %s failed to build declared statement", lookupCtx);
     }
 
     @Nonnull
