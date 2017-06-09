@@ -8,7 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.util;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Table;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Date;
@@ -17,7 +19,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -68,19 +69,13 @@ public final class ModuleDependencySort {
     }
 
     private static List<TopologicalSort.Node> sortInternal(final Iterable<Module> modules) {
-        final Map<String, Map<Date, ModuleNodeImpl>> moduleGraph = createModuleGraph(modules);
-
-        final Set<TopologicalSort.Node> nodes = new HashSet<>();
-        for (final Map<Date, ModuleNodeImpl> map : moduleGraph.values()) {
-            nodes.addAll(map.values());
-        }
-
-        return TopologicalSort.sort(nodes);
+        final Table<String, Date, ModuleNodeImpl> moduleGraph = createModuleGraph(modules);
+        return TopologicalSort.sort(new HashSet<>(moduleGraph.values()));
     }
 
     @VisibleForTesting
-    static Map<String, Map<Date, ModuleNodeImpl>> createModuleGraph(final Iterable<Module> builders) {
-        final Map<String, Map<Date, ModuleNodeImpl>> moduleGraph = new HashMap<>();
+    static Table<String, Date, ModuleNodeImpl> createModuleGraph(final Iterable<Module> builders) {
+        final Table<String, Date, ModuleNodeImpl> moduleGraph = HashBasedTable.create();
 
         processModules(moduleGraph, builders);
         processDependencies(moduleGraph, builders);
@@ -91,7 +86,7 @@ public final class ModuleDependencySort {
     /**
      * Extract module:revision from module builders
      */
-    private static void processDependencies(final Map<String, Map<Date, ModuleNodeImpl>> moduleGraph,
+    private static void processDependencies(final Table<String, Date, ModuleNodeImpl> moduleGraph,
             final Iterable<Module> mmbs) {
         final Map<URI, Module> allNS = new HashMap<>();
 
@@ -123,7 +118,7 @@ public final class ModuleDependencySort {
                 final String toName = imprt.getModuleName();
                 final Date toRevision = imprt.getRevision() == null ? DEFAULT_REVISION : imprt.getRevision();
 
-                final ModuleNodeImpl from = moduleGraph.get(fromName).get(fromRevision);
+                final ModuleNodeImpl from = moduleGraph.get(fromName, fromRevision);
 
                 final ModuleNodeImpl to = getModuleByNameAndRevision(moduleGraph, fromName, fromRevision, toName, toRevision);
 
@@ -151,10 +146,10 @@ public final class ModuleDependencySort {
     /**
      * Get imported module by its name and revision from moduleGraph
      */
-    private static ModuleNodeImpl getModuleByNameAndRevision(final Map<String, Map<Date, ModuleNodeImpl>> moduleGraph,
+    private static ModuleNodeImpl getModuleByNameAndRevision(final Table<String, Date, ModuleNodeImpl> moduleGraph,
             final String fromName, final Date fromRevision, final String toName, final Date toRevision) {
 
-        final Map<Date, ModuleNodeImpl> modulerevs = moduleGraph.get(toName);
+        final Map<Date, ModuleNodeImpl> modulerevs = moduleGraph.row(toName);
         if (modulerevs != null) {
             final ModuleNodeImpl exact = modulerevs.get(toRevision);
             if (exact != null) {
@@ -184,7 +179,7 @@ public final class ModuleDependencySort {
      * Extract dependencies from module builders or modules to fill dependency
      * graph
      */
-    private static void processModules(final Map<String, Map<Date, ModuleNodeImpl>> moduleGraph,
+    private static void processModules(final Table<String, Date, ModuleNodeImpl> moduleGraph,
             final Iterable<Module> modules) {
 
         // Process nodes
@@ -196,7 +191,7 @@ public final class ModuleDependencySort {
                 rev = DEFAULT_REVISION;
             }
 
-            final Map<Date, ModuleNodeImpl> revs = moduleGraph.computeIfAbsent(name, key -> new HashMap<>(2));
+            final Map<Date, ModuleNodeImpl> revs = moduleGraph.row(name);
             if (revs.containsKey(rev)) {
                 throw new YangValidationException(String.format("Module:%s with revision:%s declared twice", name,
                     formatRevDate(rev)));
