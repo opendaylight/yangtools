@@ -33,7 +33,7 @@ public final class AnyDataEffectiveStatementImpl extends AbstractEffectiveDataSc
     public AnyDataEffectiveStatementImpl(
             final StmtContext<QName, AnydataStatement, EffectiveStatement<QName, AnydataStatement>> ctx) {
         super(ctx);
-        this.original = ctx.getOriginalCtx() == null ? null : (AnyDataSchemaNode) ctx.getOriginalCtx().buildEffective();
+        this.original = (AnyDataSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
         /*
          * :TODO we need to determine a way how to set schema of AnyData
          */
