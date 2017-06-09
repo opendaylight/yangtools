@@ -116,11 +116,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.rawArgument = original.rawArgument;
         this.copyHistory = CopyHistory.of(copyType, original.getCopyHistory());
 
-        if (original.getOriginalCtx() != null) {
-            this.originalCtx = original.getOriginalCtx();
-        } else {
-            this.originalCtx = original;
-        }
+        this.originalCtx = original.getOriginalCtx().orElse(original);
     }
 
     @Override
@@ -177,8 +173,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public StmtContext<?, ?, ?> getOriginalCtx() {
-        return originalCtx;
+    public Optional<StmtContext<?, ?, ?>> getOriginalCtx() {
+        return Optional.ofNullable(originalCtx);
     }
 
     @Override
@@ -384,9 +380,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
         final Optional<StatementContextBase<?, ?, ?>> implicitStatement = definition.beforeSubStatementCreated(this,
             offset, def, ref, argument);
-        if(implicitStatement.isPresent()) {
-            final StatementContextBase<?, ?, ?> presentImplicitStmt = implicitStatement.get();
-            return presentImplicitStmt.createSubstatement(offset, def, ref, argument);
+        if (implicitStatement.isPresent()) {
+            return implicitStatement.get().createSubstatement(offset, def, ref, argument);
         }
 
         final StatementContextBase<CA, CD, CE> ret = new SubstatementContext<>(this, def, ref, argument);

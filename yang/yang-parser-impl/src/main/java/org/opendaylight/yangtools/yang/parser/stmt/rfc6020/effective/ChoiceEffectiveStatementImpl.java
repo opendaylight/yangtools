@@ -45,7 +45,7 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
     public ChoiceEffectiveStatementImpl(
             final StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
         super(ctx);
-        this.original = ctx.getOriginalCtx() == null ? null : (ChoiceSchemaNode) ctx.getOriginalCtx().buildEffective();
+        this.original = (ChoiceSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
 
         final DefaultEffectiveStatementImpl defaultStmt = firstEffective(DefaultEffectiveStatementImpl.class);
         this.defaultCase = defaultStmt == null ? null : defaultStmt.argument();

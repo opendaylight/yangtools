@@ -26,7 +26,7 @@ public final class CaseEffectiveStatementImpl extends AbstractEffectiveSimpleDat
     public CaseEffectiveStatementImpl(
             final StmtContext<QName, CaseStatement, EffectiveStatement<QName, CaseStatement>> ctx) {
         super(ctx);
-        this.original = ctx.getOriginalCtx() == null ? null : (ChoiceCaseNode) ctx.getOriginalCtx().buildEffective();
+        this.original = (ChoiceCaseNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
 
         if (ctx.isConfiguration()) {
             configuration = isAtLeastOneChildConfiguration(ctx.declaredSubstatements())
