@@ -48,23 +48,18 @@ public final class EffectiveSchemaContext extends AbstractSchemaContext {
         this.rootDeclaredStatements = ImmutableList.copyOf(rootDeclaredStatements);
         this.rootEffectiveStatements = ImmutableList.copyOf(rootEffectiveStatements);
 
-        Set<Module> modulesInit = new HashSet<>();
+        final Set<Module> modulesInit = new HashSet<>();
         for (EffectiveStatement<?, ?> stmt : rootEffectiveStatements) {
             if (stmt.getDeclared() instanceof ModuleStatement) {
                 Verify.verify(stmt instanceof Module);
                 modulesInit.add((Module) stmt);
             }
         }
+        this.modules = ImmutableSet.copyOf(ModuleDependencySort.sort(modulesInit));
 
-        Module[] moduleArray = new Module[modulesInit.size()];
-        List<Module> sortedModuleList = ModuleDependencySort.sort(modulesInit.toArray(moduleArray));
-        this.modules = ImmutableSet.copyOf(sortedModuleList);
-
-        final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(
-                new TreeMap<>(), MODULE_SET_SUPPLIER);
-        final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(
-                new TreeMap<>(), MODULE_SET_SUPPLIER);
-        Set<ModuleIdentifier> modIdBuilder = new HashSet<>();
+        final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(new TreeMap<>(), MODULE_SET_SUPPLIER);
+        final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(new TreeMap<>(), MODULE_SET_SUPPLIER);
+        final Set<ModuleIdentifier> modIdBuilder = new HashSet<>();
         for (Module m : modulesInit) {
             nameMap.put(m.getName(), m);
             nsMap.put(m.getNamespace(), m);
