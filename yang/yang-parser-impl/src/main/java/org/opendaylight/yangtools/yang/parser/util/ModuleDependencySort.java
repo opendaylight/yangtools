@@ -8,15 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.util;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import java.net.URI;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -25,7 +22,6 @@ import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Node;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.NodeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,13 +35,7 @@ import org.slf4j.LoggerFactory;
 public final class ModuleDependencySort {
 
     private static final Date DEFAULT_REVISION = SimpleDateFormatUtil.DEFAULT_DATE_REV;
-    private static final Logger LOGGER = LoggerFactory.getLogger(ModuleDependencySort.class);
-    private static final Function<Node, Module> TOPOLOGY_FUNCTION = input -> {
-        if (input == null) {
-            return null;
-        }
-        return ((ModuleNodeImpl) input).getReference();
-    };
+    private static final Logger LOG = LoggerFactory.getLogger(ModuleDependencySort.class);
 
     /**
      * It is not desirable to instance this class
@@ -74,13 +64,13 @@ public final class ModuleDependencySort {
     public static List<Module> sort(final Iterable<Module> modules) {
         final List<TopologicalSort.Node> sorted = sortInternal(modules);
         // Cast to Module from Node and return
-        return Lists.transform(sorted, TOPOLOGY_FUNCTION);
+        return Lists.transform(sorted, input -> input == null ? null : ((ModuleNodeImpl) input).getReference());
     }
 
     private static List<TopologicalSort.Node> sortInternal(final Iterable<Module> modules) {
         final Map<String, Map<Date, ModuleNodeImpl>> moduleGraph = createModuleGraph(modules);
 
-        final Set<TopologicalSort.Node> nodes = Sets.newHashSet();
+        final Set<TopologicalSort.Node> nodes = new HashSet<>();
         for (final Map<Date, ModuleNodeImpl> map : moduleGraph.values()) {
             for (final ModuleNodeImpl node : map.values()) {
                 nodes.add(node);
@@ -92,7 +82,7 @@ public final class ModuleDependencySort {
 
     @VisibleForTesting
     static Map<String, Map<Date, ModuleNodeImpl>> createModuleGraph(final Iterable<Module> builders) {
-        final Map<String, Map<Date, ModuleNodeImpl>> moduleGraph = Maps.newHashMap();
+        final Map<String, Map<Date, ModuleNodeImpl>> moduleGraph = new HashMap<>();
 
         processModules(moduleGraph, builders);
         processDependencies(moduleGraph, builders);
@@ -109,27 +99,18 @@ public final class ModuleDependencySort {
 
         // Create edges in graph
         for (final Module module : mmbs) {
-            final Map<String, Date> imported = Maps.newHashMap();
-
-            String fromName;
-            Date fromRevision;
-            Collection<ModuleImport> imports;
-            URI ns;
-
-            fromName = module.getName();
-            fromRevision = module.getRevision();
-            imports = module.getImports();
-            ns = module.getNamespace();
+            final Map<String, Date> imported = new HashMap<>();
+            final String fromName = module.getName();
+            final URI ns = module.getNamespace();
+            Date fromRevision = module.getRevision();
 
             // check for existence of module with same namespace
             if (allNS.containsKey(ns)) {
                 final Module mod = allNS.get(ns);
                 final String name = mod.getName();
-                final Date revision = mod.getRevision();
                 if (!fromName.equals(name)) {
-                    LOGGER.warn(
-                            "Error while sorting module [{}, {}]: module with same namespace ({}) already loaded: [{}, {}]",
-                            fromName, fromRevision, ns, name, revision);
+                    LOG.warn("Error while sorting module [{}, {}]: module with same namespace ({}) already loaded:"
+                        + " [{}, {}]", fromName, fromRevision, ns, name, mod.getRevision());
                 }
             } else {
                 allNS.put(ns, module);
@@ -142,7 +123,7 @@ public final class ModuleDependencySort {
                 fromRevision = DEFAULT_REVISION;
             }
 
-            for (final ModuleImport imprt : imports) {
+            for (final ModuleImport imprt : module.getImports()) {
                 final String toName = imprt.getModuleName();
                 final Date toRevision = imprt.getRevision() == null ? DEFAULT_REVISION : imprt.getRevision();
 
@@ -157,8 +138,9 @@ public final class ModuleDependencySort {
                 if (YangVersion.VERSION_1.toString().equals(module.getYangVersion()) && imported.get(toName) != null
                         && !imported.get(toName).equals(toRevision) && !imported.get(toName).equals(DEFAULT_REVISION)
                         && !toRevision.equals(DEFAULT_REVISION)) {
-                    ex(String.format("Module:%s imported twice with different revisions:%s, %s", toName,
-                            formatRevDate(imported.get(toName)), formatRevDate(toRevision)));
+                    throw new YangValidationException(String.format(
+                        "Module:%s imported twice with different revisions:%s, %s", toName,
+                        formatRevDate(imported.get(toName)), formatRevDate(toRevision)));
                 }
 
                 imported.put(toName, toRevision);
@@ -173,33 +155,31 @@ public final class ModuleDependencySort {
      */
     private static ModuleNodeImpl getModuleByNameAndRevision(final Map<String, Map<Date, ModuleNodeImpl>> moduleGraph,
             final String fromName, final Date fromRevision, final String toName, final Date toRevision) {
-        ModuleNodeImpl to = null;
 
-        if (moduleGraph.get(toName) == null || !moduleGraph.get(toName).containsKey(toRevision)) {
-            // If revision is not specified in import, but module exists
-            // with different revisions, take first
-            if (moduleGraph.get(toName) != null && !moduleGraph.get(toName).isEmpty()
-                    && toRevision.equals(DEFAULT_REVISION)) {
-                to = moduleGraph.get(toName).values().iterator().next();
-                LOGGER.trace(String
-                        .format("Import:%s:%s by module:%s:%s does not specify revision, using:%s:%s for module dependency sort",
-                                toName, formatRevDate(toRevision), fromName, formatRevDate(fromRevision), to.getName(),
-                                formatRevDate(to.getRevision())));
-            } else {
-                LOGGER.warn(String.format("Not existing module imported:%s:%s by:%s:%s", toName,
-                        formatRevDate(toRevision), fromName, formatRevDate(fromRevision)));
-                LOGGER.warn("Available models: {}", moduleGraph);
-                ex(String.format("Not existing module imported:%s:%s by:%s:%s", toName, formatRevDate(toRevision),
-                        fromName, formatRevDate(fromRevision)));
+        final Map<Date, ModuleNodeImpl> modulerevs = moduleGraph.get(toName);
+        if (modulerevs != null) {
+            final ModuleNodeImpl exact = modulerevs.get(toRevision);
+            if (exact != null) {
+                return exact;
             }
-        } else {
-            to = moduleGraph.get(toName).get(toRevision);
-        }
-        return to;
-    }
 
-    private static void ex(final String message) {
-        throw new YangValidationException(message);
+            // If revision is not specified in import, but module exists with different revisions, take first one
+            if (DEFAULT_REVISION.equals(toRevision) && !modulerevs.isEmpty()) {
+                final ModuleNodeImpl first = modulerevs.values().iterator().next();
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Import:{}:{} by module:{}:{} does not specify revision, using:{}:{}"
+                        + " for module dependency sort", toName, formatRevDate(toRevision), fromName,
+                        formatRevDate(fromRevision), first.getName(), formatRevDate(first.getRevision()));
+                }
+                return first;
+            }
+        }
+
+        LOG.warn("Not existing module imported:{}:{} by:{}:{}", toName, formatRevDate(toRevision), fromName,
+            formatRevDate(fromRevision));
+        LOG.warn("Available models: {}", moduleGraph);
+        throw new YangValidationException(String.format("Not existing module imported:%s:%s by:%s:%s", toName,
+            formatRevDate(toRevision), fromName, formatRevDate(fromRevision)));
     }
 
     /**
@@ -219,11 +199,12 @@ public final class ModuleDependencySort {
             }
 
             if (moduleGraph.get(name) == null) {
-                moduleGraph.put(name, Maps.newHashMap());
+                moduleGraph.put(name, new HashMap<>());
             }
 
             if (moduleGraph.get(name).get(rev) != null) {
-                ex(String.format("Module:%s with revision:%s declared twice", name, formatRevDate(rev)));
+                throw new YangValidationException(String.format("Module:%s with revision:%s declared twice", name,
+                    formatRevDate(rev)));
             }
 
             moduleGraph.get(name).put(rev, new ModuleNodeImpl(name, rev, momb));
