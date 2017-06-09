@@ -30,8 +30,7 @@ public final class ContainerEffectiveStatementImpl extends AbstractEffectiveCont
     public ContainerEffectiveStatementImpl(
             final StmtContext<QName, ContainerStatement, EffectiveStatement<QName, ContainerStatement>> ctx) {
         super(ctx);
-        this.original = ctx.getOriginalCtx() == null ? null : (ContainerSchemaNode) ctx.getOriginalCtx()
-                .buildEffective();
+        this.original = (ContainerSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
         final ImmutableSet.Builder<ActionDefinition> actionsBuilder = ImmutableSet.builder();
         final Builder<NotificationDefinition> notificationsBuilder = ImmutableSet.builder();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
