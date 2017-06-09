@@ -60,7 +60,18 @@ public final class ModuleDependencySort {
      *         returned order.
      */
     public static List<Module> sort(final Module... modules) {
-        List<TopologicalSort.Node> sorted = sortInternal(Arrays.asList(modules));
+        return sort(Arrays.asList(modules));
+    }
+
+    /**
+     * Topological sort of module dependency graph.
+     *
+     * @param modules YANG modules
+     * @return Sorted list of Modules. Modules can be further processed in
+     *         returned order.
+     */
+    public static List<Module> sort(final Iterable<Module> modules) {
+        final List<TopologicalSort.Node> sorted = sortInternal(modules);
         // Cast to Module from Node and return
         return Lists.transform(sorted, TOPOLOGY_FUNCTION);
     }
@@ -111,10 +122,10 @@ public final class ModuleDependencySort {
 
             // check for existence of module with same namespace
             if (allNS.containsKey(ns)) {
-                Module mod = allNS.get(ns);
-                String name = mod.getName();
-                Date revision = mod.getRevision();
-                if (!(fromName.equals(name))) {
+                final Module mod = allNS.get(ns);
+                final String name = mod.getName();
+                final Date revision = mod.getRevision();
+                if (!fromName.equals(name)) {
                     LOGGER.warn(
                             "Error while sorting module [{}, {}]: module with same namespace ({}) already loaded: [{}, {}]",
                             fromName, fromRevision, ns, name, revision);
