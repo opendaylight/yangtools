@@ -121,19 +121,6 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
-    public Module findModuleByNamespaceAndRevision(final URI namespace, final Date revision) {
-        if (namespace == null) {
-            return null;
-        }
-        for (Module module : findModuleByNamespace(namespace)) {
-            if (revision == null || revision.equals(module.getRevision())) {
-                return module;
-            }
-        }
-        return null;
-    }
-
-    @Override
     public boolean isAugmenting() {
         return false;
     }
