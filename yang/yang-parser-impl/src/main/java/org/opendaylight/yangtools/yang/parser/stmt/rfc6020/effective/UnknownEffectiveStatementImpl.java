@@ -26,8 +26,8 @@ public final class UnknownEffectiveStatementImpl extends UnknownEffectiveStateme
         super(ctx);
 
         // FIXME: Remove following section after fixing 4380
-        final UnknownSchemaNode original = ctx.getOriginalCtx() == null ? null : (UnknownSchemaNode) ctx
-                .getOriginalCtx().buildEffective();
+        final UnknownSchemaNode original = (UnknownSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective)
+                .orElse(null);
         if (original != null) {
             this.maybeQNameArgument = original.getQName();
         } else {

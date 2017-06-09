@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import com.google.common.base.Optional;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -54,7 +54,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     /**
      * Return the {@link SchemaPath} of this statement. Not all statements have a SchemaPath, in which case
-     * {@link Optional#absent()} is returned.
+     * {@link Optional#empty()} is returned.
      *
      * @return Optional SchemaPath
      */
@@ -135,7 +135,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     boolean isSupportedByFeatures();
 
-    StmtContext<?, ?, ?> getOriginalCtx();
+    Optional<StmtContext<?, ?, ?>> getOriginalCtx();
 
     int getOrder();
 

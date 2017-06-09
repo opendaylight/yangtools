@@ -58,7 +58,7 @@ public final class AugmentEffectiveStatementImpl extends
         this.revision = rootModuleQName.getRevision();
 
         this.order = ctx.getOrder();
-        this.copyOf = ctx.getOriginalCtx() == null ? null : (AugmentationSchema) ctx.getOriginalCtx().buildEffective();
+        this.copyOf = (AugmentationSchema) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
 
         final WhenEffectiveStatementImpl whenStmt = firstEffective(WhenEffectiveStatementImpl.class);
         this.whenCondition = whenStmt == null ? null : whenStmt.argument();
