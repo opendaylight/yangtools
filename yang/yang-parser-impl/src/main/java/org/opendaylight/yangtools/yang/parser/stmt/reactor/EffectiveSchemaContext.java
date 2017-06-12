@@ -29,8 +29,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.util.AbstractSchemaContext;
+import org.opendaylight.yangtools.yang.model.util.ModuleDependencySort;
 import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
-import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 
 @VisibleForTesting
 public final class EffectiveSchemaContext extends AbstractSchemaContext {
