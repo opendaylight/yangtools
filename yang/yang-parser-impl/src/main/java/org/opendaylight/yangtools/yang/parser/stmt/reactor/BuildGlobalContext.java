@@ -275,7 +275,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         }
 
         sealMutableStatements();
-        return new EffectiveSchemaContext(rootStatements, rootEffectiveStatements);
+        return EffectiveSchemaContext.create(rootStatements, rootEffectiveStatements);
     }
 
     private void startPhase(final ModelProcessingPhase phase) {

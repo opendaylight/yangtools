@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveSchemaContext;
+import org.opendaylight.yangtools.yang.model.util.SimpleSchemaContext;
 
 public class Bug6961Test {
 
@@ -41,7 +41,7 @@ public class Bug6961Test {
         final Set<ModuleIdentifier> allModuleIdentifiers = context.getAllModuleIdentifiers();
         assertNotNull(allModuleIdentifiers);
         assertEquals(6, allModuleIdentifiers.size());
-        final SchemaContext schemaContext = EffectiveSchemaContext.resolveSchemaContext(context.getModules());
+        final SchemaContext schemaContext = SimpleSchemaContext.forModules(context.getModules());
         assertNotNull(schemaContext);
         final Set<ModuleIdentifier> allModuleIdentifiersResolved = schemaContext.getAllModuleIdentifiers();
         assertNotNull(allModuleIdentifiersResolved);
