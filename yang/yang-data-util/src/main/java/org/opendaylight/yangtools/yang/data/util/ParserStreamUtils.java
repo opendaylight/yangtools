@@ -38,6 +38,7 @@ public final class ParserStreamUtils {
         final Deque<DataSchemaNode> result = new ArrayDeque<>();
         final List<ChoiceSchemaNode> childChoices = new ArrayList<>();
         DataSchemaNode potentialChildNode = null;
+
         if (dataSchemaNode instanceof DataNodeContainer) {
             for (final DataSchemaNode childNode : ((DataNodeContainer) dataSchemaNode).getChildNodes()) {
                 if (childNode instanceof ChoiceSchemaNode) {
