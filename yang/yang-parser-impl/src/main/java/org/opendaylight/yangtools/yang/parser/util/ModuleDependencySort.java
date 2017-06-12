@@ -19,11 +19,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.opendaylight.yangtools.util.TopologicalSort;
+import org.opendaylight.yangtools.util.TopologicalSort.Node;
+import org.opendaylight.yangtools.util.TopologicalSort.NodeImpl;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.NodeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,12 +65,12 @@ public final class ModuleDependencySort {
      *         returned order.
      */
     public static List<Module> sort(final Iterable<Module> modules) {
-        final List<TopologicalSort.Node> sorted = sortInternal(modules);
+        final List<Node> sorted = sortInternal(modules);
         // Cast to Module from Node and return
         return Lists.transform(sorted, input -> input == null ? null : ((ModuleNodeImpl) input).getReference());
     }
 
-    private static List<TopologicalSort.Node> sortInternal(final Iterable<Module> modules) {
+    private static List<Node> sortInternal(final Iterable<Module> modules) {
         final Table<String, Date, ModuleNodeImpl> moduleGraph = createModuleGraph(modules);
         return TopologicalSort.sort(new HashSet<>(moduleGraph.values()));
     }
