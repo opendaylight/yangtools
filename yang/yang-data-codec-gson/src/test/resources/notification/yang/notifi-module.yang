@@ -1,0 +1,43 @@
+module notifi-module {
+    namespace "notifi:mod";
+    prefix notm;
+
+    revision "2016-11-23" {
+    }
+
+    notification notifi-leaf {
+        leaf lf {
+            type string;
+        }
+    }
+
+    notification notifi-cont {
+        container cont {
+            leaf lf {
+                type string;
+            }
+        }
+    }
+
+    notification notifi-list {
+        list lst {
+            key lf;
+            leaf lf {
+                type string;
+            }
+        }
+    }
+
+    notification notifi-grp {
+        uses grp;
+    }
+
+    grouping grp {
+        leaf lf {
+            type string;
+        }
+    }
+
+    notification notifi-augm {
+    }
+}
