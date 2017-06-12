@@ -79,7 +79,7 @@ public final class EffectiveSchemaContext extends AbstractSchemaContext {
          * Instead of doing this on each invocation of getModules(), pre-compute
          * it once and keep it around -- better than the set we got in.
          */
-        this.modules = ImmutableSet.copyOf(ModuleDependencySort.sort(modules.toArray(new Module[modules.size()])));
+        this.modules = ImmutableSet.copyOf(ModuleDependencySort.sort(modules));
 
          /*
          * The most common lookup is from Namespace->Module.
