@@ -7,7 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
+/**
+ * @deprecated This exception is not produced anywhere and is scheduled for removal.
+ */
 // TODO: switch to checked exception, add YangSemanticException
+@Deprecated
 public class YangParseException extends RuntimeException {
     private static final long serialVersionUID = 1239548963471793178L;
 
@@ -26,6 +30,4 @@ public class YangParseException extends RuntimeException {
     public YangParseException(final String moduleName, final int line, final String errorMsg, final Exception exception) {
         super("Error in module '" + moduleName + "' at line " + line + ": " + errorMsg, exception);
     }
-
-
 }
