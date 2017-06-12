@@ -36,18 +36,9 @@ import org.opendaylight.yangtools.yang.data.util.LeafNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListEntryNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
-import org.opendaylight.yangtools.yang.data.util.RpcAsContainer;
+import org.opendaylight.yangtools.yang.data.util.ContainerSchemaNodes;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -82,7 +73,9 @@ public final class JsonParserStream implements Closeable, Flushable {
     public static JsonParserStream create(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
             final SchemaNode parentNode) {
         if (parentNode instanceof RpcDefinition) {
-            return new JsonParserStream(writer, schemaContext, new RpcAsContainer((RpcDefinition) parentNode));
+            return new JsonParserStream(writer, schemaContext, ContainerSchemaNodes.forRPC((RpcDefinition) parentNode));
+        } else if (parentNode instanceof NotificationDefinition) {
+            return new JsonParserStream(writer, schemaContext, ContainerSchemaNodes.forNotification((NotificationDefinition) parentNode));
         }
         Preconditions.checkArgument(parentNode instanceof DataSchemaNode, "Instance of DataSchemaNode class awaited.");
         return new JsonParserStream(writer, schemaContext, (DataSchemaNode) parentNode);

@@ -18,6 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 
 public final class ParserStreamUtils {
 
@@ -38,6 +40,23 @@ public final class ParserStreamUtils {
         final Deque<DataSchemaNode> result = new ArrayDeque<>();
         final List<ChoiceSchemaNode> childChoices = new ArrayList<>();
         DataSchemaNode potentialChildNode = null;
+
+        if (dataSchemaNode instanceof NotificationNodeContainer) {
+            for (final NotificationDefinition noti : ((NotificationNodeContainer)dataSchemaNode).getNotifications()) {
+                if (noti.getQName().getLocalName().equals(childName)
+                      && noti.getQName().getNamespace().equals(namespace)) {
+                    if (potentialChildNode == null
+                        || noti.getQName().getRevision().after(potentialChildNode.getQName().getRevision())) {
+                        potentialChildNode = dataSchemaNode;
+                    }
+                }
+            }
+        }
+        if (potentialChildNode != null) {
+            result.push(potentialChildNode);
+            return result;
+        }
+
         if (dataSchemaNode instanceof DataNodeContainer) {
             for (final DataSchemaNode childNode : ((DataNodeContainer) dataSchemaNode).getChildNodes()) {
                 if (childNode instanceof ChoiceSchemaNode) {
