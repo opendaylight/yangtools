@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.doReturn;
+
 import java.util.Collections;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -27,17 +28,17 @@ public class BitsTypeTest {
     private BitsTypeDefinition.Bit bit;
 
     @Test
-    public void canCreateBitsType(){
+    public void canCreateBitsType() {
         MockitoAnnotations.initMocks(this);
         doReturn("test").when(bit).getName();
 
-        QName qName = QName.create("TestQName");
-        SchemaPath schemaPath = SchemaPath.create(Collections.singletonList(qName), true);
+        QName qname = QName.create("TestQName");
+        SchemaPath schemaPath = SchemaPath.create(Collections.singletonList(qname), true);
 
         BitsTypeDefinition bitsType = BaseTypes.bitsTypeBuilder(schemaPath).addBit(bit).build();
 
         assertNull("Description is not null", bitsType.getDescription());
-        assertEquals("QName", qName, bitsType.getQName());
+        assertEquals("QName", qname, bitsType.getQName());
         assertNull("Should be null", bitsType.getUnits());
         assertNotEquals("Description should not be null", null, bitsType.toString());
         assertNull("Reference is not null", bitsType.getReference());

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 
 public class BaseTypesTest {

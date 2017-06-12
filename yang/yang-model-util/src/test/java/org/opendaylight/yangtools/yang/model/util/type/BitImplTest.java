@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
@@ -39,7 +40,6 @@ public class BitImplTest {
         QName qnameB2 = QName.create(uriB2, new Date(7000000), "some nameB2");
         SchemaPath schemaPathB = SchemaPath.create(true, qnameB1, qnameB2);
 
-        BitImpl biB;
         BitImpl biA = new BitImpl(schemaPathA, 55L, "description", "reference", Status.CURRENT, emptyList());
 
         assertEquals("biA should equals to itsefl", biA, biA);
@@ -48,7 +48,7 @@ public class BitImplTest {
 
          // // test schemaPath
         biA = new BitImpl(schemaPathA, 55L, "description", "reference", Status.CURRENT, emptyList());
-        biB = new BitImpl(schemaPathB, 55L, "description", "reference", Status.CURRENT, emptyList());
+        VitImpl BitImpl biB = new BitImpl(schemaPathB, 55L, "description", "reference", Status.CURRENT, emptyList());
         assertFalse("biA shouldn't equal to biB", biA.equals(biB));
 
         biA = new BitImpl(schemaPathB, 55L, "description", "reference", Status.CURRENT, emptyList());

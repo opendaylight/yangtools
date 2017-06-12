@@ -13,6 +13,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+
 import com.google.common.base.Optional;
 import java.util.ArrayList;
 import org.junit.Test;
@@ -61,10 +62,10 @@ public class TypeTest {
                 SCHEMA_PATH).build();
         hashCodeEqualsToStringTest(derivedBinaryType1, derivedBinaryType2);
 
-        final RestrictedBinaryType restrictedBinaryType1 = (RestrictedBinaryType)RestrictedTypes.newBinaryBuilder
-                (baseBinaryType1, SCHEMA_PATH).buildType();
-        final RestrictedBinaryType restrictedBinaryType2 = (RestrictedBinaryType)RestrictedTypes.newBinaryBuilder
-                (baseBinaryType2, SCHEMA_PATH).buildType();
+        final RestrictedBinaryType restrictedBinaryType1 = (RestrictedBinaryType)RestrictedTypes.newBinaryBuilder(
+                baseBinaryType1, SCHEMA_PATH).buildType();
+        final RestrictedBinaryType restrictedBinaryType2 = (RestrictedBinaryType)RestrictedTypes.newBinaryBuilder(
+                baseBinaryType2, SCHEMA_PATH).buildType();
         hashCodeEqualsToStringTest(restrictedBinaryType1, restrictedBinaryType2);
 
         final LengthRestrictedTypeBuilder<BinaryTypeDefinition> lengthRestrictedTypeBuilder = RestrictedTypes
@@ -82,10 +83,10 @@ public class TypeTest {
         final BaseBooleanType baseBooleanType2 = (BaseBooleanType)BaseTypes.booleanType();
         hashCodeEqualsToStringTest(baseBooleanType1, baseBooleanType2);
 
-        final DerivedBooleanType derivedBooleanType1 = (DerivedBooleanType)DerivedTypes.derivedTypeBuilder
-                (baseBooleanType1, SCHEMA_PATH).build();
-        final DerivedBooleanType derivedBooleanType2 = (DerivedBooleanType)DerivedTypes.derivedTypeBuilder
-                (baseBooleanType1, SCHEMA_PATH).build();
+        final DerivedBooleanType derivedBooleanType1 = (DerivedBooleanType)DerivedTypes.derivedTypeBuilder(
+                baseBooleanType1, SCHEMA_PATH).build();
+        final DerivedBooleanType derivedBooleanType2 = (DerivedBooleanType)DerivedTypes.derivedTypeBuilder(
+                baseBooleanType1, SCHEMA_PATH).build();
         hashCodeEqualsToStringTest(derivedBooleanType1, derivedBooleanType2);
 
         restrictedBuilderTest(RestrictedTypes.newBooleanBuilder(baseBooleanType1, SCHEMA_PATH), RestrictedTypes
@@ -104,15 +105,15 @@ public class TypeTest {
         final IdentityrefTypeDefinition identityrefTypeDefinition2 = identityrefTypeBuilder2.build();
         hashCodeEqualsToStringTest(identityrefTypeDefinition1, identityrefTypeDefinition2);
 
-        final DerivedIdentityrefType derivedIdentityrefType1 = (DerivedIdentityrefType)DerivedTypes.derivedTypeBuilder
-                (identityrefTypeDefinition1, SCHEMA_PATH).build();
-        final DerivedIdentityrefType derivedIdentityrefType2 = (DerivedIdentityrefType)DerivedTypes.derivedTypeBuilder
-                (identityrefTypeDefinition2, SCHEMA_PATH).build();
+        final DerivedIdentityrefType derivedIdentityrefType1 = (DerivedIdentityrefType)DerivedTypes.derivedTypeBuilder(
+                identityrefTypeDefinition1, SCHEMA_PATH).build();
+        final DerivedIdentityrefType derivedIdentityrefType2 = (DerivedIdentityrefType)DerivedTypes.derivedTypeBuilder(
+                identityrefTypeDefinition2, SCHEMA_PATH).build();
         hashCodeEqualsToStringTest(derivedIdentityrefType1, derivedIdentityrefType2);
         concreteBuilderTest(identityrefTypeDefinition1, derivedIdentityrefType1);
 
-        restrictedBuilderTest(RestrictedTypes.newIdentityrefBuilder(derivedIdentityrefType1, SCHEMA_PATH), RestrictedTypes
-                .newIdentityrefBuilder(derivedIdentityrefType2, SCHEMA_PATH));
+        restrictedBuilderTest(RestrictedTypes.newIdentityrefBuilder(derivedIdentityrefType1, SCHEMA_PATH),
+                RestrictedTypes.newIdentityrefBuilder(derivedIdentityrefType2, SCHEMA_PATH));
     }
 
     @Test
@@ -146,10 +147,10 @@ public class TypeTest {
         final BaseEmptyType baseEmptyType2 = (BaseEmptyType)BaseTypes.emptyType();
         hashCodeEqualsToStringTest(baseEmptyType1, baseEmptyType2);
 
-        final DerivedEmptyType derivedEmptyType1 = (DerivedEmptyType)DerivedTypes.derivedTypeBuilder
-                (baseEmptyType1, SCHEMA_PATH).build();
-        final DerivedEmptyType derivedEmptyType2 = (DerivedEmptyType)DerivedTypes.derivedTypeBuilder
-                (baseEmptyType2, SCHEMA_PATH).build();
+        final DerivedEmptyType derivedEmptyType1 = (DerivedEmptyType)DerivedTypes.derivedTypeBuilder(
+                baseEmptyType1, SCHEMA_PATH).build();
+        final DerivedEmptyType derivedEmptyType2 = (DerivedEmptyType)DerivedTypes.derivedTypeBuilder(
+                baseEmptyType2, SCHEMA_PATH).build();
         hashCodeEqualsToStringTest(derivedEmptyType1, derivedEmptyType2);
 
         restrictedBuilderTest(RestrictedTypes.newEmptyBuilder(baseEmptyType1, SCHEMA_PATH),
@@ -198,10 +199,10 @@ public class TypeTest {
         testInstance(BaseInt32Type.INSTANCE, integerTypeDefinition32);
         testInstance(BaseInt64Type.INSTANCE, integerTypeDefinition64);
 
-        final RestrictedIntegerType restrictedIntegerType1 = (RestrictedIntegerType)RestrictedTypes.newIntegerBuilder
-                (integerTypeDefinition8, SCHEMA_PATH).buildType();
-        final RestrictedIntegerType restrictedIntegerType2 = (RestrictedIntegerType)RestrictedTypes.newIntegerBuilder
-                (BaseInt8Type.INSTANCE, SCHEMA_PATH).buildType();
+        final RestrictedIntegerType restrictedIntegerType1 = (RestrictedIntegerType)RestrictedTypes.newIntegerBuilder(
+                integerTypeDefinition8, SCHEMA_PATH).buildType();
+        final RestrictedIntegerType restrictedIntegerType2 = (RestrictedIntegerType)RestrictedTypes.newIntegerBuilder(
+                BaseInt8Type.INSTANCE, SCHEMA_PATH).buildType();
         hashCodeEqualsToStringTest(restrictedIntegerType1, restrictedIntegerType2);
 
         final UnsignedIntegerTypeDefinition integerTypeDefinitionu8 = BaseTypes.uint8Type();
@@ -299,10 +300,10 @@ public class TypeTest {
 
     @Test
     public void enumerationTypeTest() {
-        final BaseEnumerationType baseEnumerationType1 = (BaseEnumerationType)BaseTypes.enumerationTypeBuilder
-                (SCHEMA_PATH).build();
-        final BaseEnumerationType baseEnumerationType2 = (BaseEnumerationType)BaseTypes.enumerationTypeBuilder
-                (SCHEMA_PATH).build();
+        final BaseEnumerationType baseEnumerationType1 = (BaseEnumerationType)BaseTypes.enumerationTypeBuilder(
+                SCHEMA_PATH).build();
+        final BaseEnumerationType baseEnumerationType2 = (BaseEnumerationType)BaseTypes.enumerationTypeBuilder(
+                SCHEMA_PATH).build();
         hashCodeEqualsToStringTest(baseEnumerationType1, baseEnumerationType2);
         assertEquals(baseEnumerationType1.getValues(), baseEnumerationType2.getValues());
 
@@ -369,16 +370,16 @@ public class TypeTest {
 
     @Test
     public void abstractTypeDefinitionQnameTest() {
-        final AbstractTypeDefinition<?> abstractTypeDefinition = (AbstractTypeDefinition<?>)BaseTypes.decimalTypeBuilder
-                (SCHEMA_PATH).setFractionDigits(1).buildType();
+        final AbstractTypeDefinition<?> abstractTypeDefinition = (AbstractTypeDefinition<?>)
+            BaseTypes.decimalTypeBuilder(SCHEMA_PATH).setFractionDigits(1).buildType();
         assertEquals(abstractTypeDefinition.getQName(), Q_NAME);
     }
 
     @Test
     public void abstractDerivedTypeTest() {
         final BaseBinaryType baseBinaryType1 = BaseBinaryType.INSTANCE;
-        final AbstractDerivedType<?> abstractDerivedType = (AbstractDerivedType<?>) DerivedTypes.derivedTypeBuilder(baseBinaryType1,
-                SCHEMA_PATH).build();
+        final AbstractDerivedType<?> abstractDerivedType = (AbstractDerivedType<?>)
+            DerivedTypes.derivedTypeBuilder(baseBinaryType1, SCHEMA_PATH).build();
         assertEquals(abstractDerivedType.getDescription(), null);
         assertEquals(abstractDerivedType.getReference(), null);
         assertEquals(abstractDerivedType.getStatus().toString(), "CURRENT");
@@ -394,9 +395,10 @@ public class TypeTest {
 
     @Test
     public void concreteTypeBuilderBuildTest() {
-        final BaseEnumerationType baseEnumerationType1 = (BaseEnumerationType)BaseTypes.enumerationTypeBuilder
-                (SCHEMA_PATH).build();
-        final ConcreteTypeBuilder<?> concreteTypeBuilder = ConcreteTypes.concreteTypeBuilder(baseEnumerationType1, SCHEMA_PATH);
+        final BaseEnumerationType baseEnumerationType1 = (BaseEnumerationType)
+            BaseTypes.enumerationTypeBuilder(SCHEMA_PATH).build();
+        final ConcreteTypeBuilder<?> concreteTypeBuilder = ConcreteTypes.concreteTypeBuilder(
+                baseEnumerationType1, SCHEMA_PATH);
         final TypeDefinition<?> typeDefinition = concreteTypeBuilder.build();
         assertNotNull(typeDefinition);
     }
@@ -434,7 +436,7 @@ public class TypeTest {
         final UnresolvedNumber min = UnresolvedNumber.min();
         final UnresolvedNumber max = UnresolvedNumber.max();
         final LengthConstraint lengthConstraint = BaseConstraints.newLengthConstraint(min, max, absent, absent);
-        final RangeConstraint rangeConstraint= BaseConstraints.newRangeConstraint(min, max, absent, absent);
+        final RangeConstraint rangeConstraint = BaseConstraints.newRangeConstraint(min, max, absent, absent);
 
         final EnumPair enumPair = EnumPairBuilder.create("enum1", 1).setDescription("description")
                 .setReference("reference").setUnknownSchemaNodes(mock(UnknownSchemaNode.class)).build();
@@ -451,7 +453,7 @@ public class TypeTest {
                 BIT_A, "error msg", "other important messages");
         assertEquals(invalidBitDefinitionException.getOffendingBit(), BIT_A);
 
-        final InvalidEnumDefinitionException invalidEnumDefinitionException= new InvalidEnumDefinitionException(
+        final InvalidEnumDefinitionException invalidEnumDefinitionException = new InvalidEnumDefinitionException(
                 enumPair, "error msg", "other important messages");
         assertEquals(invalidEnumDefinitionException.getOffendingEnum(), enumPair);
     }
@@ -473,11 +475,11 @@ public class TypeTest {
 
     @Test(expected = InvalidEnumDefinitionException.class)
     public void invalidEnumDefinitionExceptionTest() {
-        final UnknownSchemaNode UNKNOWN_SCHEMA_NODE= mock(UnknownSchemaNode.class);
+        final UnknownSchemaNode unknown = mock(UnknownSchemaNode.class);
         final EnumPair enumPair1 = EnumPairBuilder.create("enum1", 1).setDescription("description")
-                .setReference("reference").setUnknownSchemaNodes(UNKNOWN_SCHEMA_NODE).build();
+                .setReference("reference").setUnknownSchemaNodes(unknown).build();
         final EnumPair enumPair2 = EnumPairBuilder.create("enum", 1).setDescription("description")
-                .setReference("reference").setUnknownSchemaNodes(UNKNOWN_SCHEMA_NODE).build();
+                .setReference("reference").setUnknownSchemaNodes(unknown).build();
         final EnumerationTypeBuilder enumerationTypeBuilder = BaseTypes.enumerationTypeBuilder(SCHEMA_PATH);
         enumerationTypeBuilder.addEnum(enumPair1);
         enumerationTypeBuilder.addEnum(enumPair2);

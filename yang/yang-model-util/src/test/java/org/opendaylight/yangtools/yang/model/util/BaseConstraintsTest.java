@@ -7,24 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import static org.junit.Assert.assertEquals;
+
 import com.google.common.base.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
-import static org.junit.Assert.assertEquals;
-
 public class BaseConstraintsTest {
 
     @Test
     public void canCreateConstraints() {
-        Number min = 5;
-        Number max = 99;
-        String description = "Any description";
-        String reference = "any_ref";
-        String reg_exp = "x|z";
-        Optional<String> desc = Optional.of(description);
-        Optional<String> ref = Optional.of(reference);
+        final Number min = 5;
+        final Number max = 99;
+        final String description = "Any description";
+        final String reference = "any_ref";
 
         LengthConstraint lengthCons = BaseConstraints.newLengthConstraint(min, max, desc, ref);
 
@@ -33,6 +30,9 @@ public class BaseConstraintsTest {
         assertEquals("LengthConstraints Get description", description, lengthCons.getDescription());
         assertEquals("LengthConstraints Get reference", reference, lengthCons.getReference());
 
+        final String reg_exp = "x|z";
+        final Optional<String> desc = Optional.of(description);
+        final Optional<String> ref = Optional.of(reference);
         PatternConstraint patternCons = BaseConstraints.newPatternConstraint(reg_exp, desc, ref);
 
         assertEquals("PatternConstraints Get regex", reg_exp, patternCons.getRegularExpression());

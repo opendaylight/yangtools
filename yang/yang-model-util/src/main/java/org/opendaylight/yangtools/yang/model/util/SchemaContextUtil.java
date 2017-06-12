@@ -66,7 +66,7 @@ public final class SchemaContextUtil {
      * the end of the SchemaPath. If the DataSchemaNode is not present in the
      * Schema Context the method will return <code>null</code>. <br>
      * In case that Schema Context or Schema Path are not specified correctly
-     * (i.e. contains <code>null</code> values) the method will return
+     * (i.e. contains <code>null</code> values) the method will throw
      * IllegalArgumentException.
      *
      * @param context
@@ -75,8 +75,7 @@ public final class SchemaContextUtil {
      *            Schema Path to search for
      * @return SchemaNode from the end of the Schema Path or <code>null</code>
      *         if the Node is not present.
-     *
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException if context or schemaPath is not correct.
      */
     public static SchemaNode findDataSchemaNode(final SchemaContext context, final SchemaPath schemaPath) {
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
@@ -119,7 +118,6 @@ public final class SchemaContextUtil {
      * @return Returns Data Schema Node for specified Schema Context for given
      *         Non-conditional Revision Aware XPath, or <code>null</code> if the
      *         DataSchemaNode is not present in Schema Context.
-     * @throws IllegalArgumentException
      */
     public static SchemaNode findDataSchemaNode(final SchemaContext context, final Module module,
             final RevisionAwareXPath nonCondXPath) {
@@ -177,8 +175,6 @@ public final class SchemaContextUtil {
      * @return DataSchemaNode if is present in specified Schema Context for
      *         given relative Revision Aware XPath, otherwise will return
      *         <code>null</code>.
-     *
-     * @throws IllegalArgumentException
      */
     public static SchemaNode findDataSchemaNodeForRelativeXPath(final SchemaContext context, final Module module,
             final SchemaNode actualSchemaNode, final RevisionAwareXPath relativeXPath) {
@@ -214,8 +210,6 @@ public final class SchemaContextUtil {
      *            Schema Node
      * @return Yang Module for specified Schema Context and Schema Node, if Schema Node is NOT present, the method will
      *         return <code>null</code>
-     *
-     * @throws IllegalArgumentException
      */
     public static Module findParentModule(final SchemaContext context, final SchemaNode schemaNode) {
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL!");
@@ -243,20 +237,21 @@ public final class SchemaContextUtil {
     }
 
     /**
-     * Returns NotificationDefinition from Schema Context
+     * Returns NotificationDefinition from Schema Context.
      *
      * @param schema SchemaContext in which lookup should be performed.
      * @param path Schema Path of notification
      * @return Notification schema or null, if notification is not present in schema context.
      */
     @Beta
-    @Nullable public static NotificationDefinition getNotificationSchema(@Nonnull final SchemaContext schema,
+    @Nullable
+    public static NotificationDefinition getNotificationSchema(@Nonnull final SchemaContext schema,
             @Nonnull final SchemaPath path) {
         Preconditions.checkNotNull(schema, "Schema context must not be null.");
         Preconditions.checkNotNull(path, "Schema path must not be null.");
         for (final NotificationDefinition potential : schema.getNotifications()) {
             if (path.equals(potential.getPath())) {
-               return potential;
+                return potential;
             }
         }
         return null;
@@ -270,7 +265,8 @@ public final class SchemaContextUtil {
      * @return Notification schema or null, if notification is not present in schema context.
      */
     @Beta
-    @Nullable public static ContainerSchemaNode getRpcDataSchema(@Nonnull final SchemaContext schema,
+    @Nullable
+    public static ContainerSchemaNode getRpcDataSchema(@Nonnull final SchemaContext schema,
             @Nonnull final SchemaPath path) {
         Preconditions.checkNotNull(schema, "Schema context must not be null.");
         Preconditions.checkNotNull(path, "Schema path must not be null.");
@@ -476,10 +472,12 @@ public final class SchemaContextUtil {
      *            XPath String
      * @return return a list of QName
      *
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException if any arguments are null
+     *
      */
     private static List<QName> xpathToQNamePath(final SchemaContext context, final Module parentModule,
             final String xpath) {
+        // FIXME: 2.0.0: this should throw NPE, not IAE
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
         Preconditions.checkArgument(parentModule != null, "Parent Module reference cannot be NULL");
         Preconditions.checkArgument(xpath != null, "XPath string reference cannot be NULL");
@@ -511,11 +509,11 @@ public final class SchemaContextUtil {
      * @param prefixedPathPart
      *            Prefixed Path Part string
      * @return QName from prefixed Path Part String.
-     *
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException if any arguments are null
      */
     private static QName stringPathPartToQName(final SchemaContext context, final Module parentModule,
             final String prefixedPathPart) {
+        // FIXME: 2.0.0: this should throw NPE, not IAE
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
         Preconditions.checkArgument(parentModule != null, "Parent Module reference cannot be NULL");
         Preconditions.checkArgument(prefixedPathPart != null, "Prefixed Path Part cannot be NULL!");
@@ -556,11 +554,11 @@ public final class SchemaContextUtil {
      *            Module Prefix
      * @return Module for given prefix in specified Schema Context if is
      *         present, otherwise returns <code>null</code>
-     *
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException if any arguments are null
      */
     private static Module resolveModuleForPrefix(final SchemaContext context, final Module module,
             final String prefix) {
+        // FIXME: 2.0.0: this should throw NPE, not IAE
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
         Preconditions.checkArgument(module != null, "Module reference cannot be NULL");
         Preconditions.checkArgument(prefix != null, "Prefix string cannot be NULL");
@@ -588,11 +586,11 @@ public final class SchemaContextUtil {
      * @param actualSchemaNode
      *            actual schema node
      * @return list of QName
-     *
-     * @throws IllegalArgumentException
+     * @throws IllegalArgumentException if any arguments are null
      */
     private static Iterable<QName> resolveRelativeXPath(final SchemaContext context, final Module module,
             final RevisionAwareXPath relativeXPath, final SchemaNode actualSchemaNode) {
+        // FIXME: 2.0.0: this should throw NPE, not IAE
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
         Preconditions.checkArgument(module != null, "Module reference cannot be NULL");
         Preconditions.checkArgument(relativeXPath != null, "Non Conditional Revision Aware XPath cannot be NULL");
@@ -704,11 +702,8 @@ public final class SchemaContextUtil {
      * the case when leafref type isn't specified as type substatement of leaf or leaf-list but is defined in other
      * module as typedef which is then imported to referenced module.
      *
+     * <p>
      * Because {@code typeDefinition} is definied via typedef statement, only absolute path is meaningful.
-     *
-     * @param typeDefinition
-     * @param schemaContext
-     * @param qName
      */
     public static TypeDefinition<?> getBaseTypeForLeafRef(final LeafrefTypeDefinition typeDefinition,
             final SchemaContext schemaContext, final QName qName) {
@@ -739,7 +734,6 @@ public final class SchemaContextUtil {
      * @param pathStatement
      *            xPath to target node
      * @return string representation of xPath without conditions
-     *
      */
     @VisibleForTesting
     static String stripConditionsFromXPathString(final RevisionAwareXPath pathStatement) {

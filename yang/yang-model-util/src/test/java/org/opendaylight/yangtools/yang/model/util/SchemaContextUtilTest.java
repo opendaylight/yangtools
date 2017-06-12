@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import static org.junit.Assert.assertEquals;
+
 import java.util.Collections;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -21,8 +22,10 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
 public class SchemaContextUtilTest {
-    @Mock private SchemaContext mockSchemaContext;
-    @Mock private Module mockModule;
+    @Mock
+    private SchemaContext mockSchemaContext;
+    @Mock
+    private Module mockModule;
 
     @Test
     public void testFindDummyData() {

@@ -38,6 +38,7 @@ final class NumberUtil {
     };
 
     private static final Map<Class<? extends Number>, Function<Number, Number>> CONVERTERS;
+
     static {
         final ImmutableMap.Builder<Class<? extends Number>, Function<Number, Number>> b = ImmutableMap.builder();
         b.put(Byte.class, input -> {
@@ -48,14 +49,14 @@ final class NumberUtil {
             return Byte.valueOf(input.toString());
         });
         b.put(Short.class, input -> {
-                if (input instanceof Short) {
-                    return input;
-                }
-                if (input instanceof Byte) {
-                    return input.shortValue();
-                }
+            if (input instanceof Short) {
+                return input;
+            }
+            if (input instanceof Byte) {
+                return input.shortValue();
+            }
 
-                return Short.valueOf(input.toString());
+            return Short.valueOf(input.toString());
         });
         b.put(Integer.class, input -> {
             if (input instanceof Integer) {
@@ -81,8 +82,7 @@ final class NumberUtil {
             if (input instanceof BigDecimal) {
                 return input;
             }
-            if (input instanceof Byte || input instanceof Short ||
-                    input instanceof Integer || input instanceof Long) {
+            if (input instanceof Byte || input instanceof Short || input instanceof Integer || input instanceof Long) {
                 return BigDecimal.valueOf(input.longValue());
             }
 

@@ -12,6 +12,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.model.util.type.BaseTypes.binaryType;
+
 import java.util.Collections;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Status;

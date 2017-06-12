@@ -40,7 +40,7 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 public class InMemorySchemaSourceCacheTest {
 
     private static final Class<YangSchemaSourceRepresentation> representation = YangSchemaSourceRepresentation.class;
-    private static final long lifetime = 1000l;
+    private static final long lifetime = 1000L;
     private static final TimeUnit units = TimeUnit.MILLISECONDS;
 
     @Mock
