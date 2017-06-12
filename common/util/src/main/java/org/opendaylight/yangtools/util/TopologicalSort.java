@@ -5,11 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.util;
+package org.opendaylight.yangtools.util;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -17,13 +18,14 @@ import java.util.Set;
 /**
  * Utility class that provides topological sort.
  *
- * @deprecated Use {@link org.opendaylight.yangtools.util.TopologicalSort} instead.
+ * <p>
+ * Note this class is non-public to allow for API transition.
  */
-@Deprecated
+@Beta
 public final class TopologicalSort {
 
     /**
-     * It isn't desirable to create instance of this class
+     * It isn't desirable to create instance of this class.
      */
     private TopologicalSort() {
     }
@@ -32,28 +34,26 @@ public final class TopologicalSort {
      * Topological sort of dependent nodes in acyclic graphs.
      *
      * @param nodes graph nodes
-     * @return Sorted {@link List} of {@link Node}s. Order: Nodes with no
-     *         dependencies starting.
-     * @throws IllegalStateException
-     *             when cycle is present in the graph
+     * @return Sorted {@link List} of {@link Node}s. Order: Nodes with no dependencies starting.
+     * @throws IllegalStateException when cycle is present in the graph
      */
     public static List<Node> sort(final Set<Node> nodes) {
-        List<Node> sortedNodes = Lists.newArrayList();
+        List<Node> sortedNodes = new ArrayList<>(nodes.size());
 
         Set<Node> dependentNodes = getDependentNodes(nodes);
 
         while (!dependentNodes.isEmpty()) {
-            Node n = dependentNodes.iterator().next();
-            dependentNodes.remove(n);
+            Node node = dependentNodes.iterator().next();
+            dependentNodes.remove(node);
 
-            sortedNodes.add(n);
+            sortedNodes.add(node);
 
-            for (Edge e : n.getInEdges()) {
-                Node m = e.getFrom();
-                m.getOutEdges().remove(e);
+            for (Edge edge : node.getInEdges()) {
+                Node referent = edge.getFrom();
+                referent.getOutEdges().remove(edge);
 
-                if (m.getOutEdges().isEmpty()) {
-                    dependentNodes.add(m);
+                if (referent.getOutEdges().isEmpty()) {
+                    dependentNodes.add(referent);
                 }
             }
         }
@@ -64,10 +64,10 @@ public final class TopologicalSort {
     }
 
     private static Set<Node> getDependentNodes(final Set<Node> nodes) {
-        Set<Node> dependentNodes = Sets.newHashSet();
-        for (Node n : nodes) {
-            if (n.getOutEdges().isEmpty()) {
-                dependentNodes.add(n);
+        Set<Node> dependentNodes = new HashSet<>();
+        for (Node node : nodes) {
+            if (node.getOutEdges().isEmpty()) {
+                dependentNodes.add(node);
             }
         }
         return dependentNodes;
@@ -78,10 +78,10 @@ public final class TopologicalSort {
         boolean cycle = false;
         Node cycledNode = null;
 
-        for (Node n : nodes) {
-            if (!n.getOutEdges().isEmpty()) {
+        for (Node node : nodes) {
+            if (!node.getOutEdges().isEmpty()) {
                 cycle = true;
-                cycledNode = n;
+                cycledNode = node;
                 break;
             }
         }
@@ -89,8 +89,9 @@ public final class TopologicalSort {
     }
 
     /**
-     * Interface for nodes in graph that can be sorted topologically
+     * Interface for nodes in graph that can be sorted topologically.
      */
+    @Beta
     public interface Node {
         Set<Edge> getInEdges();
 
@@ -98,8 +99,9 @@ public final class TopologicalSort {
     }
 
     /**
-     * Interface for edges in graph that can be sorted topologically
+     * Interface for edges in graph that can be sorted topologically.
      */
+    @Beta
     public interface Edge {
         Node getFrom();
 
@@ -109,13 +111,14 @@ public final class TopologicalSort {
     /**
      * Basic Node implementation.
      */
+    @Beta
     public static class NodeImpl implements Node {
         private final Set<Edge> inEdges;
         private final Set<Edge> outEdges;
 
         public NodeImpl() {
-            inEdges = Sets.newHashSet();
-            outEdges = Sets.newHashSet();
+            inEdges = new HashSet<>();
+            outEdges = new HashSet<>();
         }
 
         @Override
@@ -129,15 +132,16 @@ public final class TopologicalSort {
         }
 
         public void addEdge(final Node to) {
-            Edge e = new EdgeImpl(this, to);
-            outEdges.add(e);
-            to.getInEdges().add(e);
+            Edge edge = new EdgeImpl(this, to);
+            outEdges.add(edge);
+            to.getInEdges().add(edge);
         }
     }
 
     /**
-     * Basic Edge implementation
+     * Basic Edge implementation.
      */
+    @Beta
     public static class EdgeImpl implements Edge {
         private final Node from;
         private final Node to;

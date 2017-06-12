@@ -9,6 +9,10 @@ package org.opendaylight.yangtools.yang.parser.util;
 
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.NodeImpl;
 
+/**
+ * @deprecated This class is not used anywhere and is scheduled for removal with TopologicalSort.
+ */
+@Deprecated
 public final class NodeWrappedType extends NodeImpl {
     /**
      * The payload which is saved inside Node
@@ -21,7 +25,7 @@ public final class NodeWrappedType extends NodeImpl {
      * @param wrappedType
      *            object with payload data
      */
-    public NodeWrappedType(Object wrappedType) {
+    public NodeWrappedType(final Object wrappedType) {
         this.wrappedType = wrappedType;
     }
 
@@ -35,7 +39,7 @@ public final class NodeWrappedType extends NodeImpl {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
