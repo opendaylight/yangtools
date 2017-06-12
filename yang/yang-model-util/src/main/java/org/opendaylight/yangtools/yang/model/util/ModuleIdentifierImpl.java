@@ -74,24 +74,24 @@ public final class ModuleIdentifierImpl implements ModuleIdentifier {
 
     @Override
     public String toString() {
-        return "ModuleIdentifierImpl{" +
-                "name='" + name + '\'' +
-                ", namespace=" + getNamespace() +
-                ", revision=" + qnameModule.getFormattedRevision() +
-                ", semantic version=" + semVer +
-                '}';
+        return "ModuleIdentifierImpl{"
+            + "name='" + name + '\''
+            + ", namespace=" + getNamespace()
+            + ", revision=" + qnameModule.getFormattedRevision()
+            + ", semantic version=" + semVer
+            + '}';
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (!(o instanceof ModuleIdentifier)) {
+        if (!(obj instanceof ModuleIdentifier)) {
             return false;
         }
 
-        ModuleIdentifier other = (ModuleIdentifier) o;
+        ModuleIdentifier other = (ModuleIdentifier) obj;
 
         if (!name.equals(other.getName())) {
             return false;

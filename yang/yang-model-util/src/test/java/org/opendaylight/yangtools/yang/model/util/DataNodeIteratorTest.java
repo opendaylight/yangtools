@@ -7,7 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+
 import com.google.common.collect.Sets;
+import java.util.Collections;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,21 +23,12 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-
-import java.util.Collections;
-import java.util.NoSuchElementException;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 
 public class DataNodeIteratorTest {
 
@@ -41,12 +40,12 @@ public class DataNodeIteratorTest {
         this.dataNodeIterator = new DataNodeIterator(dataNodeContainer);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void createDataNodeIteratorWithNullArgument() {
         new DataNodeIterator(null);
     }
 
-    @Test(expected=UnsupportedOperationException.class)
+    @Test(expected = UnsupportedOperationException.class)
     public void removeFromEmptyDataNodeContainer() {
         dataNodeIterator.remove();
     }
@@ -83,7 +82,8 @@ public class DataNodeIteratorTest {
         final Set<ChoiceCaseNode> cases = Sets.newHashSet(mockedCase1, mockedCase2);
         doReturn(cases).when(mockedChoice).getCases();
 
-        final Set<DataSchemaNode> childNodes = Sets.newHashSet(mockedAugmentingContainer, mockedContainer, mockedList, mockedChoice);
+        final Set<DataSchemaNode> childNodes = Sets.newHashSet(mockedAugmentingContainer, mockedContainer, mockedList,
+                mockedChoice);
         doReturn(childNodes).when(mockedModule).getChildNodes();
 
         final NotificationDefinition mockedNotification = mock(NotificationDefinition.class);

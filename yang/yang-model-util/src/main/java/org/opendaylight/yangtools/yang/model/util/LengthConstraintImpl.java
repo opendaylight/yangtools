@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
 /**
  * {@link Immutable} implementation of {@link LengthConstraint}.
- *
  * Length constraint based on supplied parameters with additional behaviour:
  *
  * <ul>
@@ -23,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
  * <code>length-out-of-specified-bounds</code>
  * <li>{@link LengthConstraint#getErrorMessage()} returns <code>The argument is
  * out of bounds &lt;<i>min</i>, <i>max</i> &gt;</code>
- * </ul
+ * </ul>
  */
 final class LengthConstraintImpl implements LengthConstraint, Immutable {
 
@@ -131,18 +130,12 @@ final class LengthConstraintImpl implements LengthConstraint, Immutable {
 
     @Override
     public String toString() {
-        return "LengthConstraintImpl [min=" +
-                min +
-                ", max=" +
-                max +
-                ", description=" +
-                description +
-                ", errorAppTag=" +
-                errorAppTag +
-                ", reference=" +
-                reference +
-                ", errorMessage=" +
-                errorMessage +
-                "]";
+        return "LengthConstraintImpl [min=" + min
+            + ", max=" + max
+            + ", description=" + description
+            + ", errorAppTag=" + errorAppTag
+            + ", reference=" + reference
+            + ", errorMessage=" + errorMessage
+            + "]";
     }
 }

@@ -28,10 +28,8 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * DataNodeIterator is iterator, which walks down whole YANG DataNodeContainer
  * and walks all instances of {@link DataSchemaNode} present in subtree.
  *
- * Iterator instance is eagerly created, walking happens on initialization.
- *
- * Iteration is not ordered.
- *
+ * <p>
+ * Iterator instance is eagerly created, walking happens on initialization. Iteration is not ordered.
  */
 public class DataNodeIterator implements Iterator<DataSchemaNode> {
 

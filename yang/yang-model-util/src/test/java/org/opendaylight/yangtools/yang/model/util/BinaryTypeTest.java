@@ -12,6 +12,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.model.util.type.BaseTypes.binaryType;
+
 import java.util.Collections;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -21,8 +22,8 @@ public class BinaryTypeTest {
 
     @Test
     public void canCreateBinaryType() {
-        BinaryTypeDefinition binType = binaryType();
-        BinaryTypeDefinition binType1 = binaryType();
+        final BinaryTypeDefinition binType = binaryType();
+        final BinaryTypeDefinition binType1 = binaryType();
 
         assertEquals(0, binType.getLengthConstraints().size());
         assertNull(binType.getDefaultValue());

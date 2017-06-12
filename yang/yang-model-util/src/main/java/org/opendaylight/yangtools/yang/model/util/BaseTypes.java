@@ -15,9 +15,7 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
- * Utility methods and constants to work with built-in YANG types
- *
- *
+ * Utility methods and constants to work with built-in YANG types.
  */
 public final class BaseTypes {
 
@@ -82,9 +80,10 @@ public final class BaseTypes {
      * Returns true if supplied type is representation of built-in YANG type as
      * per RFC 6020.
      *
+     * <p>
      * See package documentation for description of base types.
      *
-     * @param type
+     * @param type A type name
      * @return true if type is built-in YANG Types.
      */
     public static boolean isYangBuildInType(final String type) {
@@ -96,9 +95,10 @@ public final class BaseTypes {
      * Returns true if supplied type is representation of built-in YANG type as
      * per RFC 6020.
      *
+     * <p>
      * See package documentation for description of base types.
      *
-     * @param type
+     * @param type Type definition
      * @return true if type is built-in YANG Types.
      */
     public static boolean isYangBuildInType(final TypeDefinition<?> type) {

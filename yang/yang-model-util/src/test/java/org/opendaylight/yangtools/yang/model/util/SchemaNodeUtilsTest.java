@@ -7,18 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import com.google.common.base.Optional;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Mock;
-import org.junit.Before;
-import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
-import org.junit.Test;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
-import static org.hamcrest.CoreMatchers.instanceOf;
+
+import com.google.common.base.Optional;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 
 public class SchemaNodeUtilsTest {
 

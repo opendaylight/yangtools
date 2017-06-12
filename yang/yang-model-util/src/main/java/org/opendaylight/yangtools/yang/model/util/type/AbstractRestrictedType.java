@@ -18,7 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 abstract class AbstractRestrictedType<T extends TypeDefinition<T>> extends AbstractTypeDefinition<T> {
     private final T baseType;
 
-    AbstractRestrictedType(final T baseType, final SchemaPath path, final Collection<UnknownSchemaNode> unknownSchemaNodes) {
+    AbstractRestrictedType(final T baseType, final SchemaPath path,
+            final Collection<UnknownSchemaNode> unknownSchemaNodes) {
         super(path, unknownSchemaNodes);
         this.baseType = Preconditions.checkNotNull(baseType);
     }

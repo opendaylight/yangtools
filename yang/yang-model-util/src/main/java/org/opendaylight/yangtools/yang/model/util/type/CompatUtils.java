@@ -41,6 +41,7 @@ public final class CompatUtils {
      * declaration has not restricted the type further -- which is not something available via
      * {@link TypeDefinition#getBaseType()}.
      *
+     * <p>
      * Here are the possible scenarios:
      *
      * <pre>
@@ -80,6 +81,7 @@ public final class CompatUtils {
      * </pre>
      * The leaf type's schema path will not match the schema path of the leaf. We do NOT want to strip it.
      *
+     * <p>
      * The situation is different for types which do not have a default instantiation in YANG: leafref, enumeration,
      * identityref, decimal64, bits and union. If these types are defined within this leaf's statement, a base type
      * will be instantiated. If the leaf defines a default statement, this base type will be visible via getBaseType().
@@ -170,8 +172,8 @@ public final class CompatUtils {
         final List<PatternConstraint> patterns = type.getPatternConstraints();
         final List<LengthConstraint> lengths = type.getLengthConstraints();
 
-        if ((patterns.isEmpty() || patterns.equals(base.getPatternConstraints())) &&
-                (lengths.isEmpty() || lengths.equals(base.getLengthConstraints()))) {
+        if ((patterns.isEmpty() || patterns.equals(base.getPatternConstraints()))
+                && (lengths.isEmpty() || lengths.equals(base.getLengthConstraints()))) {
             return base;
         }
 

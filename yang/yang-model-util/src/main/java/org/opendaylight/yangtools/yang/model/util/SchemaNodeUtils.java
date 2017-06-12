@@ -43,22 +43,24 @@ public class SchemaNodeUtils {
     }
 
     /**
-     * Returns RPC input or output schema based on supplied QName
+     * Returns RPC input or output schema based on supplied QName.
      *
      * @param rpc RPC Definition
      * @param qname input or output QName with namespace same as RPC
      * @return input or output schema. Returns null if RPC does not have input/output specified.
      */
-    @Nullable public static ContainerSchemaNode getRpcDataSchema(@Nonnull final RpcDefinition rpc, @Nonnull final QName qname) {
+    @Nullable public static ContainerSchemaNode getRpcDataSchema(@Nonnull final RpcDefinition rpc,
+            @Nonnull final QName qname) {
         Preconditions.checkNotNull(rpc, "Rpc Schema must not be null");
         Preconditions.checkNotNull(qname,"QName must not be null");
         switch (qname.getLocalName()) {
-           case "input":
-               return rpc.getInput();
-           case "output":
-               return rpc.getOutput();
-           default:
-               throw new IllegalArgumentException("Supplied qname " + qname + " does not represent rpc input or output.");
-           }
-       }
+            case "input":
+                return rpc.getInput();
+            case "output":
+                return rpc.getOutput();
+            default:
+                throw new IllegalArgumentException("Supplied qname " + qname
+                        + " does not represent rpc input or output.");
+        }
+    }
 }

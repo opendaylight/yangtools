@@ -31,8 +31,8 @@ public abstract class DerivedTypeBuilder<T extends TypeDefinition<T>> extends Ty
     DerivedTypeBuilder(final T baseType, final SchemaPath path) {
         super(Preconditions.checkNotNull(baseType), path);
 
-        Preconditions.checkArgument(baseType instanceof AbstractBaseType ||
-            baseType instanceof AbstractDerivedType || baseType instanceof AbstractRestrictedType,
+        Preconditions.checkArgument(baseType instanceof AbstractBaseType
+                || baseType instanceof AbstractDerivedType || baseType instanceof AbstractRestrictedType,
             "Derived type can be built only from a base, derived, or restricted type, not %s", baseType);
 
         // http://tools.ietf.org/html/rfc6020#section-7.3.4

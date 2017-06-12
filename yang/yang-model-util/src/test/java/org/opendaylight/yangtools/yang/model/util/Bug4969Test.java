@@ -15,10 +15,10 @@ import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 public class Bug4969Test {
     @Test
     public void testRegex() {
-        RevisionAwareXPath xPath = new RevisionAwareXPathImpl(
-                "nd:network[nd:network-id=current()/../network-ref]/nd:node[nd:node-id=current()/../node-ref]/termination-point/tp-id",
-                true);
+        RevisionAwareXPath xpath = new RevisionAwareXPathImpl(
+                "nd:network[nd:network-id=current()/../network-ref]/nd:node[nd:node-id=current()/../node-ref]"
+                + "/termination-point/tp-id", true);
         assertEquals("nd:network/nd:node/termination-point/tp-id",
-                SchemaContextUtil.stripConditionsFromXPathString(xPath));
+                SchemaContextUtil.stripConditionsFromXPathString(xpath));
     }
 }

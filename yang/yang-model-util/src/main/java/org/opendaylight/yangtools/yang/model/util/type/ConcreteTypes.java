@@ -67,145 +67,158 @@ public final class ConcreteTypes {
         }
     }
 
-    private static ConcreteTypeBuilder<BinaryTypeDefinition> concreteBinaryBuilder(@Nonnull final BinaryTypeDefinition baseType, @Nonnull final SchemaPath path) {
+    private static ConcreteTypeBuilder<BinaryTypeDefinition> concreteBinaryBuilder(
+            @Nonnull final BinaryTypeDefinition baseType, @Nonnull final SchemaPath path) {
         return new ConcreteTypeBuilder<BinaryTypeDefinition>(baseType, path) {
             @Nonnull
             @Override
             public BinaryTypeDefinition buildType() {
-                return new DerivedBinaryType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedBinaryType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }
 
-    private static ConcreteTypeBuilder<BitsTypeDefinition> concreteBitsBuilder(final BitsTypeDefinition baseType, final SchemaPath path) {
+    private static ConcreteTypeBuilder<BitsTypeDefinition> concreteBitsBuilder(final BitsTypeDefinition baseType,
+            final SchemaPath path) {
         return new ConcreteTypeBuilder<BitsTypeDefinition>(baseType, path) {
             @Nonnull
             @Override
             public BitsTypeDefinition buildType() {
-                return new DerivedBitsType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedBitsType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }
 
-    private static ConcreteTypeBuilder<BooleanTypeDefinition> concreteBooleanBuilder(@Nonnull final BooleanTypeDefinition baseType, @Nonnull final SchemaPath path) {
+    private static ConcreteTypeBuilder<BooleanTypeDefinition> concreteBooleanBuilder(
+            @Nonnull final BooleanTypeDefinition baseType, @Nonnull final SchemaPath path) {
         return new ConcreteTypeBuilder<BooleanTypeDefinition>(baseType, path) {
             @Nonnull
             @Override
             public BooleanTypeDefinition buildType() {
-                return new DerivedBooleanType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedBooleanType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }
 
-    private static ConcreteTypeBuilder<DecimalTypeDefinition> concreteDecimalBuilder(final DecimalTypeDefinition baseType, final SchemaPath path) {
+    private static ConcreteTypeBuilder<DecimalTypeDefinition> concreteDecimalBuilder(
+            final DecimalTypeDefinition baseType, final SchemaPath path) {
         return new ConcreteTypeBuilder<DecimalTypeDefinition>(baseType, path) {
             @Nonnull
             @Override
             public DecimalTypeDefinition buildType() {
-                return new DerivedDecimalType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedDecimalType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }
 
-    private static ConcreteTypeBuilder<EmptyTypeDefinition> concreteEmptyBuilder(final EmptyTypeDefinition baseType, final SchemaPath path) {
+    private static ConcreteTypeBuilder<EmptyTypeDefinition> concreteEmptyBuilder(final EmptyTypeDefinition baseType,
+            final SchemaPath path) {
         return new ConcreteTypeBuilder<EmptyTypeDefinition>(baseType, path) {
             @Nonnull
             @Override
             public EmptyTypeDefinition buildType() {
-                return new DerivedEmptyType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedEmptyType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }
 
-    private static ConcreteTypeBuilder<EnumTypeDefinition> concreteEnumerationBuilder(final EnumTypeDefinition baseType, final SchemaPath path) {
+    private static ConcreteTypeBuilder<EnumTypeDefinition> concreteEnumerationBuilder(
+            final EnumTypeDefinition baseType, final SchemaPath path) {
         return new ConcreteTypeBuilder<EnumTypeDefinition>(baseType, path) {
             @Nonnull
             @Override
             public EnumTypeDefinition buildType() {
-                return new DerivedEnumerationType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedEnumerationType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }
 
-    private static ConcreteTypeBuilder<IdentityrefTypeDefinition> concreteIdentityrefBuilder(final IdentityrefTypeDefinition baseType, final SchemaPath path) {
+    private static ConcreteTypeBuilder<IdentityrefTypeDefinition> concreteIdentityrefBuilder(
+            final IdentityrefTypeDefinition baseType, final SchemaPath path) {
         return new ConcreteTypeBuilder<IdentityrefTypeDefinition>(baseType, path) {
             @Nonnull
             @Override
             public IdentityrefTypeDefinition buildType() {
-                return new DerivedIdentityrefType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedIdentityrefType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }
 
-    private static ConcreteTypeBuilder<InstanceIdentifierTypeDefinition> concreteInstanceIdentifierBuilder(final InstanceIdentifierTypeDefinition baseType, final SchemaPath path) {
+    private static ConcreteTypeBuilder<InstanceIdentifierTypeDefinition> concreteInstanceIdentifierBuilder(
+            final InstanceIdentifierTypeDefinition baseType, final SchemaPath path) {
         return new ConcreteTypeBuilder<InstanceIdentifierTypeDefinition>(baseType, path) {
             @Nonnull
             @Override
             public InstanceIdentifierTypeDefinition buildType() {
-                return new DerivedInstanceIdentifierType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes(), baseType.requireInstance());
+                return new DerivedInstanceIdentifierType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes(), baseType.requireInstance());
             }
         };
     }
 
-    private static ConcreteTypeBuilder<IntegerTypeDefinition> concreteIntegerBuilder(final IntegerTypeDefinition baseType, final SchemaPath path) {
+    private static ConcreteTypeBuilder<IntegerTypeDefinition> concreteIntegerBuilder(
+            final IntegerTypeDefinition baseType, final SchemaPath path) {
         return new ConcreteTypeBuilder<IntegerTypeDefinition>(baseType, path) {
             @Nonnull
             @Override
             public IntegerTypeDefinition buildType() {
-                return new DerivedIntegerType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedIntegerType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }
 
-    private static ConcreteTypeBuilder<LeafrefTypeDefinition> concreteLeafrefBuilder(final LeafrefTypeDefinition baseType, final SchemaPath path) {
+    private static ConcreteTypeBuilder<LeafrefTypeDefinition> concreteLeafrefBuilder(
+            final LeafrefTypeDefinition baseType, final SchemaPath path) {
         return new ConcreteTypeBuilder<LeafrefTypeDefinition>(baseType, path) {
             @Nonnull
             @Override
             public LeafrefTypeDefinition buildType() {
-                return new DerivedLeafrefType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedLeafrefType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }
 
-    private static ConcreteTypeBuilder<StringTypeDefinition> concreteStringBuilder(final StringTypeDefinition baseType, final SchemaPath path) {
+    private static ConcreteTypeBuilder<StringTypeDefinition> concreteStringBuilder(final StringTypeDefinition baseType,
+            final SchemaPath path) {
         return new ConcreteTypeBuilder<StringTypeDefinition>(baseType, path) {
             @Nonnull
             @Override
             public StringTypeDefinition buildType() {
-                return new DerivedStringType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedStringType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }
 
-    private static ConcreteTypeBuilder<UnionTypeDefinition> concreteUnionBuilder(final UnionTypeDefinition baseType, final SchemaPath path) {
+    private static ConcreteTypeBuilder<UnionTypeDefinition> concreteUnionBuilder(final UnionTypeDefinition baseType,
+            final SchemaPath path) {
         return new ConcreteTypeBuilder<UnionTypeDefinition>(baseType, path) {
             @Nonnull
             @Override
             public DerivedUnionType buildType() {
-                return new DerivedUnionType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedUnionType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }
 
-    private static ConcreteTypeBuilder<UnsignedIntegerTypeDefinition> concreteUnsignedBuilder(final UnsignedIntegerTypeDefinition baseType, final SchemaPath path) {
+    private static ConcreteTypeBuilder<UnsignedIntegerTypeDefinition> concreteUnsignedBuilder(
+            final UnsignedIntegerTypeDefinition baseType, final SchemaPath path) {
         return new ConcreteTypeBuilder<UnsignedIntegerTypeDefinition>(baseType, path) {
             @Nonnull
             @Override
             public UnsignedIntegerTypeDefinition buildType() {
-                return new DerivedUnsignedType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedUnsignedType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }

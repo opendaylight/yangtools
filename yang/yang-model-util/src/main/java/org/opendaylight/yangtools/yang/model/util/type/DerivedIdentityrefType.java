@@ -15,7 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
-final class DerivedIdentityrefType extends AbstractDerivedType<IdentityrefTypeDefinition> implements IdentityrefTypeDefinition {
+final class DerivedIdentityrefType extends AbstractDerivedType<IdentityrefTypeDefinition>
+        implements IdentityrefTypeDefinition {
     DerivedIdentityrefType(final IdentityrefTypeDefinition baseType, final SchemaPath path, final Object defaultValue,
         final String description, final String reference, final Status status, final String units,
         final Collection<UnknownSchemaNode> unknownSchemaNodes) {

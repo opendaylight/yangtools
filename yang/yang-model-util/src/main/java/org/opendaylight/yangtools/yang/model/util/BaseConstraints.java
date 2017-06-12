@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 /**
  * Utility class which provides factory methods to construct Constraints.
  *
+ * <p>
  * Provides static factory methods which constructs instances of
  * <ul>
  * <li>{@link LengthConstraint} - {@link #newLengthConstraint(Number, Number, Optional, Optional)}
@@ -31,12 +32,13 @@ public final class BaseConstraints {
     /**
      * Creates a {@link LengthConstraint}.
      *
+     * <p>
      * Creates an instance of Length constraint based on supplied parameters
      * with additional behaviour:
-     *
      * <ul>
      * <li>{@link LengthConstraint#getErrorAppTag()} returns <code>length-out-of-specified-bounds</code>
-     * <li>{@link LengthConstraint#getErrorMessage()} returns <code>The argument is out of bounds &lt;<i>min</i>, <i>max</i> &gt;</code>
+     * <li>{@link LengthConstraint#getErrorMessage()} returns <code>The argument is out of bounds
+     *     &lt;<i>min</i>, <i>max</i> &gt;</code>
      * </ul>
      *
      * @see LengthConstraint
@@ -47,20 +49,21 @@ public final class BaseConstraints {
      * @param reference Reference associated with constraint. {@link Optional#absent()} if reference is undefined.
      * @return Instance of {@link LengthConstraint}
      */
-    public static LengthConstraint newLengthConstraint(final Number min, final Number max, final Optional<String> description,
-            final Optional<String> reference) {
+    public static LengthConstraint newLengthConstraint(final Number min, final Number max,
+            final Optional<String> description, final Optional<String> reference) {
         return new LengthConstraintImpl(min, max, description, reference);
     }
 
     /**
      * Creates a {@link LengthConstraint}.
      *
+     * <p>
      * Creates an instance of Length constraint based on supplied parameters
      * with additional behaviour:
-     *
      * <ul>
      * <li>{@link LengthConstraint#getErrorAppTag()} returns <code>length-out-of-specified-bounds</code>
-     * <li>{@link LengthConstraint#getErrorMessage()} returns <code>The argument is out of bounds &lt;<i>min</i>, <i>max</i> &gt;</code>
+     * <li>{@link LengthConstraint#getErrorMessage()} returns <code>The argument is out of bounds
+     *     &lt;<i>min</i>, <i>max</i> &gt;</code>
      * </ul>
      *
      * @see LengthConstraint
@@ -82,14 +85,14 @@ public final class BaseConstraints {
     /**
      * Creates a {@link RangeConstraint}.
      *
+     * <p>
      * Creates an instance of Range constraint based on supplied parameters
      * with additional behaviour:
-     *
      * <ul>
      * <li>{@link RangeConstraint#getErrorAppTag()} returns <code>range-out-of-specified-bounds</code>
-     * <li>{@link RangeConstraint#getErrorMessage()} returns <code>The argument is out of bounds &lt;<i>min</i>, <i>max</i> &gt;</code>
+     * <li>{@link RangeConstraint#getErrorMessage()} returns <code>The argument is out of bounds
+     *     &lt;<i>min</i>, <i>max</i> &gt;</code>
      * </ul>
-     *
      *
      * @see RangeConstraint
      *
@@ -100,22 +103,22 @@ public final class BaseConstraints {
      * @param reference Reference associated with constraint. {@link Optional#absent()} if reference is undefined.
      * @return Instance of {@link RangeConstraint}
      */
-    public static <T extends Number> RangeConstraint newRangeConstraint(final T min, final T max, final Optional<String> description,
-            final Optional<String> reference) {
+    public static <T extends Number> RangeConstraint newRangeConstraint(final T min, final T max,
+            final Optional<String> description, final Optional<String> reference) {
         return new RangeConstraintImpl(min, max, description, reference);
     }
 
     /**
      * Creates a {@link RangeConstraint}.
      *
+     * <p>
      * Creates an instance of Range constraint based on supplied parameters
      * with additional behaviour:
-     *
      * <ul>
      * <li>{@link RangeConstraint#getErrorAppTag()} returns <code>range-out-of-specified-bounds</code>
-     * <li>{@link RangeConstraint#getErrorMessage()} returns <code>The argument is out of bounds &lt;<i>min</i>, <i>max</i> &gt;</code>
+     * <li>{@link RangeConstraint#getErrorMessage()} returns <code>The argument is out of bounds
+     *     &lt;<i>min</i>, <i>max</i> &gt;</code>
      * </ul>
-     *
      *
      * @see RangeConstraint
      *
@@ -137,9 +140,9 @@ public final class BaseConstraints {
     /**
      * Creates a {@link PatternConstraint}.
      *
+     * <p>
      * Creates an instance of Pattern constraint based on supplied parameters
      * with additional behaviour:
-     *
      * <ul>
      * <li>{@link PatternConstraint#getErrorAppTag()} returns
      * <code>invalid-regular-expression</code>
@@ -163,9 +166,9 @@ public final class BaseConstraints {
     /**
      * Creates a {@link PatternConstraint}.
      *
+     * <p>
      * Creates an instance of Pattern constraint based on supplied parameters
      * with additional behaviour:
-     *
      * <ul>
      * <li>{@link PatternConstraint#getErrorAppTag()} returns
      * <code>invalid-regular-expression</code>

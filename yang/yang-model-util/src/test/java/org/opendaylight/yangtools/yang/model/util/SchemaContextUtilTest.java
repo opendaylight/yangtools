@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import static org.junit.Assert.assertEquals;
+
 import java.util.Collections;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -21,30 +22,32 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
 public class SchemaContextUtilTest {
-    @Mock private SchemaContext mockSchemaContext;
-    @Mock private Module mockModule;
+    @Mock
+    private SchemaContext mockSchemaContext;
+    @Mock
+    private Module mockModule;
 
     @Test
     public void testFindDummyData() {
         MockitoAnnotations.initMocks(this);
 
-        QName qName = QName.create("TestQName");
-        SchemaPath schemaPath = SchemaPath.create(Collections.singletonList(qName), true);
+        QName qname = QName.create("TestQName");
+        SchemaPath schemaPath = SchemaPath.create(Collections.singletonList(qname), true);
         assertEquals("Should be null. Module TestQName not found", null,
                 SchemaContextUtil.findDataSchemaNode(mockSchemaContext, schemaPath));
 
-        RevisionAwareXPath xPath = new RevisionAwareXPathImpl("/bookstore/book/title", true);
+        RevisionAwareXPath xpath = new RevisionAwareXPathImpl("/bookstore/book/title", true);
         assertEquals("Should be null. Module bookstore not found", null,
-                SchemaContextUtil.findDataSchemaNode(mockSchemaContext, mockModule, xPath));
+                SchemaContextUtil.findDataSchemaNode(mockSchemaContext, mockModule, xpath));
 
         SchemaNode schemaNode = BaseTypes.int32Type();
-        RevisionAwareXPath xPathRelative = new RevisionAwareXPathImpl("../prefix", false);
+        RevisionAwareXPath xpathRelative = new RevisionAwareXPathImpl("../prefix", false);
         assertEquals("Should be null, Module prefix not found", null,
                 SchemaContextUtil.findDataSchemaNodeForRelativeXPath(
-                        mockSchemaContext, mockModule, schemaNode, xPathRelative));
+                        mockSchemaContext, mockModule, schemaNode, xpathRelative));
 
         assertEquals("Should be null. Module TestQName not found", null,
-                SchemaContextUtil.findNodeInSchemaContext(mockSchemaContext, Collections.singleton(qName)));
+                SchemaContextUtil.findNodeInSchemaContext(mockSchemaContext, Collections.singleton(qname)));
 
         assertEquals("Should be null.", null, SchemaContextUtil.findParentModule(mockSchemaContext, schemaNode));
     }

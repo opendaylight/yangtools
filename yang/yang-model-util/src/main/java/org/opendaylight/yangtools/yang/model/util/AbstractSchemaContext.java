@@ -53,16 +53,22 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     protected static final Supplier<TreeSet<Module>> MODULE_SET_SUPPLIER = () -> new TreeSet<>(REVISION_COMPARATOR);
 
     /**
+     * Returns the ModuleIdentifier-to-YANG source mapping.
+     *
      * @return yang sources where key is ModuleIdentifier
      */
     protected abstract Map<ModuleIdentifier, String> getIdentifiersToSources();
 
     /**
+     * Returns the namespace-to-module mapping.
+     *
      * @return Map of modules where key is namespace
      */
     protected abstract SetMultimap<URI, Module> getNamespaceToModules();
 
     /**
+     * Returns the module name-to-module mapping.
+     *
      * @return Map of modules where key is name of module
      */
     protected abstract SetMultimap<String, Module> getNameToModules();

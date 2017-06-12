@@ -14,7 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
-final class RestrictedIdentityrefType extends AbstractRestrictedType<IdentityrefTypeDefinition> implements IdentityrefTypeDefinition {
+final class RestrictedIdentityrefType extends AbstractRestrictedType<IdentityrefTypeDefinition>
+        implements IdentityrefTypeDefinition {
     RestrictedIdentityrefType(final IdentityrefTypeDefinition baseType, final SchemaPath path,
             final Collection<UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, unknownSchemaNodes);

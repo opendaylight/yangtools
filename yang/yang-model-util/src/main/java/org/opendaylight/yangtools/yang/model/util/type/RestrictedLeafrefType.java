@@ -13,7 +13,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
-final class RestrictedLeafrefType extends AbstractRestrictedType<LeafrefTypeDefinition> implements LeafrefTypeDefinition {
+final class RestrictedLeafrefType extends AbstractRestrictedType<LeafrefTypeDefinition>
+        implements LeafrefTypeDefinition {
 
     private final boolean requireInstance;
 

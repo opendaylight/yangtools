@@ -39,9 +39,9 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 @RunWith(MockitoJUnitRunner.class)
 public class InMemorySchemaSourceCacheTest {
 
-    private static final Class<YangSchemaSourceRepresentation> representation = YangSchemaSourceRepresentation.class;
-    private static final long lifetime = 1000l;
-    private static final TimeUnit units = TimeUnit.MILLISECONDS;
+    private static final Class<YangSchemaSourceRepresentation> REPRESENTATION = YangSchemaSourceRepresentation.class;
+    private static final long LIFETIME = 1000L;
+    private static final TimeUnit UNITS = TimeUnit.MILLISECONDS;
 
     @Mock
     private SchemaSourceRegistry registry;
@@ -56,31 +56,30 @@ public class InMemorySchemaSourceCacheTest {
 
     @Test
     public void inMemorySchemaSourceCacheTest1() {
-        final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache = InMemorySchemaSourceCache
-                .createSoftCache(this.registry, InMemorySchemaSourceCacheTest.representation);
+        final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache =
+            InMemorySchemaSourceCache.createSoftCache(this.registry, REPRESENTATION);
         Assert.assertNotNull(inMemorySchemaSourceCache);
         inMemorySchemaSourceCache.close();
     }
 
     @Test
     public void inMemorySchemaSourceCacheTest2() {
-        final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache = InMemorySchemaSourceCache
-                .createSoftCache(this.registry, InMemorySchemaSourceCacheTest.representation,
-                        InMemorySchemaSourceCacheTest.lifetime, InMemorySchemaSourceCacheTest.units);
+        final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache =
+            InMemorySchemaSourceCache.createSoftCache(this.registry, REPRESENTATION, LIFETIME, UNITS);
         Assert.assertNotNull(inMemorySchemaSourceCache);
         inMemorySchemaSourceCache.close();
     }
 
     @Test
     public void inMemorySchemaSourceCacheOfferAndGetSourcestest() throws Exception {
-        final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache = InMemorySchemaSourceCache
-                .createSoftCache(this.registry, InMemorySchemaSourceCacheTest.representation);
+        final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache =
+            InMemorySchemaSourceCache.createSoftCache(this.registry, REPRESENTATION);
         final String content = "content";
         final YangTextSchemaSource source = new TestingYangSource("test", "2012-12-12", content);
         inMemorySchemaSourceCache.offer(source);
         final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test", "2012-12-12");
-        final CheckedFuture<? extends YangSchemaSourceRepresentation, SchemaSourceException> checkedSource = inMemorySchemaSourceCache
-                .getSource(sourceIdentifier);
+        final CheckedFuture<? extends YangSchemaSourceRepresentation, SchemaSourceException> checkedSource =
+            inMemorySchemaSourceCache.getSource(sourceIdentifier);
         Assert.assertNotNull(checkedSource);
         final YangSchemaSourceRepresentation yangSchemaSourceRepresentation = checkedSource.get();
         Assert.assertNotNull(yangSchemaSourceRepresentation);
@@ -90,11 +89,11 @@ public class InMemorySchemaSourceCacheTest {
 
     @Test(expected = ExecutionException.class)
     public void inMemorySchemaSourceCacheNullGetSourcestest() throws Exception {
-        final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache = InMemorySchemaSourceCache
-                .createSoftCache(this.registry, InMemorySchemaSourceCacheTest.representation);
+        final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache =
+            InMemorySchemaSourceCache.createSoftCache(this.registry, REPRESENTATION);
         final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test", "2012-12-12");
-        final CheckedFuture<? extends YangSchemaSourceRepresentation, SchemaSourceException> checkedSource = inMemorySchemaSourceCache
-                .getSource(sourceIdentifier);
+        final CheckedFuture<? extends YangSchemaSourceRepresentation, SchemaSourceException> checkedSource =
+            inMemorySchemaSourceCache.getSource(sourceIdentifier);
         Assert.assertNotNull(checkedSource);
         checkedSource.get();
         inMemorySchemaSourceCache.close();
@@ -102,12 +101,10 @@ public class InMemorySchemaSourceCacheTest {
 
     @Test
     public void inMemorySchemaSourceCache3test() throws Exception {
-        final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache = InMemorySchemaSourceCache
-                .createSoftCache(this.registry, InMemorySchemaSourceCacheTest.representation);
-
-        final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache2 = InMemorySchemaSourceCache
-                .createSoftCache(this.registry, representation, InMemorySchemaSourceCacheTest.lifetime,
-                        InMemorySchemaSourceCacheTest.units);
+        final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache =
+            InMemorySchemaSourceCache.createSoftCache(this.registry, REPRESENTATION);
+        final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache2 =
+            InMemorySchemaSourceCache.createSoftCache(this.registry, REPRESENTATION, LIFETIME, UNITS);
 
         final String content = "content";
         final YangTextSchemaSource source = new TestingYangSource("test", "2012-12-12", content);
@@ -115,10 +112,10 @@ public class InMemorySchemaSourceCacheTest {
         inMemorySchemaSourceCache2.offer(source);
 
         final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test", "2012-12-12");
-        final CheckedFuture<? extends YangSchemaSourceRepresentation, SchemaSourceException> checkedSource = inMemorySchemaSourceCache
-                .getSource(sourceIdentifier);
-        final CheckedFuture<? extends SchemaSourceRepresentation, SchemaSourceException> checkedSource2 = inMemorySchemaSourceCache2
-                .getSource(sourceIdentifier);
+        final CheckedFuture<? extends YangSchemaSourceRepresentation, SchemaSourceException> checkedSource =
+            inMemorySchemaSourceCache.getSource(sourceIdentifier);
+        final CheckedFuture<? extends SchemaSourceRepresentation, SchemaSourceException> checkedSource2 =
+            inMemorySchemaSourceCache2.getSource(sourceIdentifier);
         Assert.assertNotNull(checkedSource);
         Assert.assertNotNull(checkedSource2);
 

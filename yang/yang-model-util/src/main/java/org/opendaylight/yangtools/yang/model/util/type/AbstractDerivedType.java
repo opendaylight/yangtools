@@ -25,7 +25,8 @@ abstract class AbstractDerivedType<T extends TypeDefinition<T>> extends Abstract
     private final String units;
 
     AbstractDerivedType(final T baseType, final SchemaPath path, final Object defaultValue, final String description,
-            final String reference, final Status status, final String units, final Collection<UnknownSchemaNode> unknownSchemNodes) {
+            final String reference, final Status status, final String units,
+            final Collection<UnknownSchemaNode> unknownSchemNodes) {
         super(path, unknownSchemNodes);
         this.baseType = Preconditions.checkNotNull(baseType);
         this.status = Preconditions.checkNotNull(status);
@@ -42,8 +43,6 @@ abstract class AbstractDerivedType<T extends TypeDefinition<T>> extends Abstract
 
     /**
      * Return the stored base type. Unlike {@link #getBaseType()}, this method returns the underlying restricted type.
-     *
-     * @return
      */
     final T baseType() {
         return baseType;

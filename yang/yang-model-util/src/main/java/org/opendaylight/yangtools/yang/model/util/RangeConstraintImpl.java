@@ -16,8 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 /**
  * {@link Immutable} implementation of {@link RangeConstraint}.
  *
+ * <p>
  * Range constraint based on supplied parameters with additional behavior:
- *
  * <ul>
  * <li>{@link RangeConstraint#getErrorAppTag()} returns
  * <code>range-out-of-specified-bounds</code>

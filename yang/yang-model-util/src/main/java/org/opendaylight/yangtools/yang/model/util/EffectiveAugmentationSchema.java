@@ -35,11 +35,12 @@ public final class EffectiveAugmentationSchema implements AugmentationSchema {
     private final Set<DataSchemaNode> realChildSchemas;
     private final Map<QName, DataSchemaNode> mappedChildSchemas;
 
-    public EffectiveAugmentationSchema(final AugmentationSchema augmentSchema, final Set<DataSchemaNode> realChildSchemas) {
+    public EffectiveAugmentationSchema(final AugmentationSchema augmentSchema,
+            final Set<DataSchemaNode> realChildSchemas) {
         this.delegate = Preconditions.checkNotNull(augmentSchema);
         this.realChildSchemas = ImmutableSet.copyOf(realChildSchemas);
 
-        final Map<QName, DataSchemaNode> m = new HashMap<>(realChildSchemas.size());;
+        final Map<QName, DataSchemaNode> m = new HashMap<>(realChildSchemas.size());
         for (DataSchemaNode realChildSchema : realChildSchemas) {
             m.put(realChildSchema.getQName(), realChildSchema);
         }
