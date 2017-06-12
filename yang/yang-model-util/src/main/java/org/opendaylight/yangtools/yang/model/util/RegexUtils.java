@@ -17,7 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utilities for converting YANG XSD regexes into Java-compatible regexes
+ * Utilities for converting YANG XSD regexes into Java-compatible regexes.
  */
 public final class RegexUtils {
     private static final Logger LOG = LoggerFactory.getLogger(RegexUtils.class);
@@ -240,7 +240,7 @@ public final class RegexUtils {
     }
 
     /**
-     * Converts XSD regex to Java-compatible regex
+     * Converts XSD regex to Java-compatible regex.
      *
      * @param xsdRegex XSD regex pattern as it is defined in a YANG source
      * @return Java-compatible regex
@@ -301,7 +301,7 @@ public final class RegexUtils {
             try {
                 Pattern.compile(rawPattern);
                 return rawPattern;
-            } catch(final PatternSyntaxException ex) {
+            } catch (final PatternSyntaxException ex) {
                 LOG.debug("Invalid regex pattern syntax in: {}", rawPattern, ex);
                 if (ex.getMessage().contains("Unknown character script name")) {
                     rawPattern = fixUnknownScripts(ex.getMessage(), rawPattern);

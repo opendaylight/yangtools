@@ -13,19 +13,20 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
-final class RestrictedIntegerType extends AbstractRangeRestrictedType<IntegerTypeDefinition> implements IntegerTypeDefinition {
+final class RestrictedIntegerType extends AbstractRangeRestrictedType<IntegerTypeDefinition>
+        implements IntegerTypeDefinition {
     RestrictedIntegerType(final IntegerTypeDefinition baseType, final SchemaPath path,
         final Collection<UnknownSchemaNode> unknownSchemaNodes, final Collection<RangeConstraint> rangeConstraints) {
         super(baseType, path, unknownSchemaNodes, rangeConstraints);
     }
 
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         return TypeDefinitions.hashCode(this);
     }
 
     @Override
-    public final boolean equals(final Object obj) {
+    public boolean equals(final Object obj) {
         return TypeDefinitions.equals(this, obj);
     }
 

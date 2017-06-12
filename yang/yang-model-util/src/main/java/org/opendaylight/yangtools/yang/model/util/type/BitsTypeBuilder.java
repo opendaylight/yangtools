@@ -43,8 +43,8 @@ public final class BitsTypeBuilder extends AbstractRestrictedTypeBuilder<BitsTyp
         for (Bit baseTypeBit : getBaseType().getBits()) {
             if (item.getName().equals(baseTypeBit.getName())) {
                 if (item.getPosition() != baseTypeBit.getPosition()) {
-                    throw new InvalidBitDefinitionException(item, "Position of bit '%s' must be the same as the " +
-                            "position of corresponding bit in the base bits type %s.", item.getName(),
+                    throw new InvalidBitDefinitionException(item, "Position of bit '%s' must be the same as the "
+                            + "position of corresponding bit in the base bits type %s.", item.getName(),
                             getBaseType().getQName());
                 }
                 isASubsetOfBaseBits = true;

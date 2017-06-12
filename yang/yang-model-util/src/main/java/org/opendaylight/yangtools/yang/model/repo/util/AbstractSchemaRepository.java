@@ -51,14 +51,16 @@ import org.slf4j.LoggerFactory;
 @Beta
 public abstract class AbstractSchemaRepository implements SchemaRepository, SchemaSourceRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractSchemaRepository.class);
-    private static final ExceptionMapper<SchemaSourceException> FETCH_MAPPER = ReflectiveExceptionMapper.create("Schema source fetch", SchemaSourceException.class);
+    private static final ExceptionMapper<SchemaSourceException> FETCH_MAPPER = ReflectiveExceptionMapper.create(
+            "Schema source fetch", SchemaSourceException.class);
 
     /*
      * Source identifier -> representation -> provider map. We usually are looking for
      * a specific representation of a source.
      */
     @GuardedBy("this")
-    private final Map<SourceIdentifier, ListMultimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>>> sources = new HashMap<>();
+    private final Map<SourceIdentifier, ListMultimap<Class<? extends SchemaSourceRepresentation>,
+            AbstractSchemaSourceRegistration<?>>> sources = new HashMap<>();
 
     /*
      * Schema source listeners.
@@ -66,34 +68,39 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
     @GuardedBy("this")
     private final Collection<SchemaListenerRegistration> listeners = new ArrayList<>();
 
-    private static <T extends SchemaSourceRepresentation> CheckedFuture<T, SchemaSourceException> fetchSource(final SourceIdentifier id, final Iterator<AbstractSchemaSourceRegistration<?>> it) {
+    private static <T extends SchemaSourceRepresentation> CheckedFuture<T, SchemaSourceException> fetchSource(
+            final SourceIdentifier id, final Iterator<AbstractSchemaSourceRegistration<?>> it) {
         final AbstractSchemaSourceRegistration<?> reg = it.next();
 
         @SuppressWarnings("unchecked")
-        final CheckedFuture<? extends T, SchemaSourceException> f = ((SchemaSourceProvider<T>)reg.getProvider()).getSource(id);
+        final CheckedFuture<? extends T, SchemaSourceException> f =
+            ((SchemaSourceProvider<T>)reg.getProvider()).getSource(id);
 
         return Futures.makeChecked(Futures.withFallback(f, new FutureFallback<T>() {
             @Override
-            public ListenableFuture<T> create(@Nonnull final Throwable t) throws SchemaSourceException {
-                LOG.debug("Failed to acquire source from {}", reg, t);
+            public ListenableFuture<T> create(@Nonnull final Throwable cause) throws SchemaSourceException {
+                LOG.debug("Failed to acquire source from {}", reg, cause);
 
                 if (it.hasNext()) {
                     return fetchSource(id, it);
                 }
 
-                throw new MissingSchemaSourceException("All available providers exhausted", id, t);
+                throw new MissingSchemaSourceException("All available providers exhausted", id, cause);
             }
         }), FETCH_MAPPER);
     }
 
     @Override
-    public <T extends SchemaSourceRepresentation> CheckedFuture<T, SchemaSourceException> getSchemaSource(@Nonnull final SourceIdentifier id, @Nonnull final Class<T> representation) {
+    public <T extends SchemaSourceRepresentation> CheckedFuture<T, SchemaSourceException> getSchemaSource(
+            @Nonnull final SourceIdentifier id, @Nonnull final Class<T> representation) {
         final ArrayList<AbstractSchemaSourceRegistration<?>> sortedSchemaSourceRegistrations;
 
         synchronized (this) {
-            final ListMultimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> srcs = sources.get(id);
+            final ListMultimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> srcs =
+                sources.get(id);
             if (srcs == null) {
-                return Futures.immediateFailedCheckedFuture(new MissingSchemaSourceException("No providers registered for source" + id, id));
+                return Futures.immediateFailedCheckedFuture(new MissingSchemaSourceException(
+                            "No providers registered for source" + id, id));
             }
 
             sortedSchemaSourceRegistrations = Lists.newArrayList(srcs.get(representation));
@@ -104,8 +111,8 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
 
         final Iterator<AbstractSchemaSourceRegistration<?>> regs = sortedSchemaSourceRegistrations.iterator();
         if (!regs.hasNext()) {
-            return Futures.immediateFailedCheckedFuture(
-                    new MissingSchemaSourceException("No providers for source " + id + " representation " + representation + " available", id));
+            return Futures.immediateFailedCheckedFuture(new MissingSchemaSourceException(
+                        "No providers for source " + id + " representation " + representation + " available", id));
         }
 
         CheckedFuture<T, SchemaSourceException> fetchSourceFuture = fetchSource(id, regs);
@@ -119,6 +126,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
             }
 
             @Override
+            @SuppressWarnings("checkstyle:parameterName")
             public void onFailure(@Nonnull final Throwable t) {
                 LOG.trace("Skipping notification for encountered source {}, fetching source failed", id, t);
             }
@@ -127,14 +135,16 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
         return fetchSourceFuture;
     }
 
-    private synchronized <T extends SchemaSourceRepresentation> void addSource(final PotentialSchemaSource<T> source, final AbstractSchemaSourceRegistration<T> reg) {
-        ListMultimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> m = sources.get(source.getSourceIdentifier());
-        if (m == null) {
-            m = ArrayListMultimap.create();
-            sources.put(source.getSourceIdentifier(), m);
+    private synchronized <T extends SchemaSourceRepresentation> void addSource(final PotentialSchemaSource<T> source,
+            final AbstractSchemaSourceRegistration<T> reg) {
+        ListMultimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> map =
+            sources.get(source.getSourceIdentifier());
+        if (map == null) {
+            map = ArrayListMultimap.create();
+            sources.put(source.getSourceIdentifier(), map);
         }
 
-        m.put(source.getRepresentation(), reg);
+        map.put(source.getRepresentation(), reg);
 
         final Collection<PotentialSchemaSource<?>> reps = Collections.singleton(source);
         for (SchemaListenerRegistration l : listeners) {
@@ -142,8 +152,10 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
         }
     }
 
-    private synchronized <T extends SchemaSourceRepresentation> void removeSource(final PotentialSchemaSource<?> source, final SchemaSourceRegistration<?> reg) {
-        final Multimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> m = sources.get(source.getSourceIdentifier());
+    private synchronized <T extends SchemaSourceRepresentation> void removeSource(final PotentialSchemaSource<?> source,
+            final SchemaSourceRegistration<?> reg) {
+        final Multimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> m =
+            sources.get(source.getSourceIdentifier());
         if (m != null) {
             m.remove(source.getRepresentation(), reg);
 
@@ -158,7 +170,8 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
     }
 
     @Override
-    public <T extends SchemaSourceRepresentation> SchemaSourceRegistration<T> registerSchemaSource(final SchemaSourceProvider<? super T> provider, final PotentialSchemaSource<T> source) {
+    public <T extends SchemaSourceRepresentation> SchemaSourceRegistration<T> registerSchemaSource(
+            final SchemaSourceProvider<? super T> provider, final PotentialSchemaSource<T> source) {
         final PotentialSchemaSource<T> src = source.cachedReference();
 
         final AbstractSchemaSourceRegistration<T> ret = new AbstractSchemaSourceRegistration<T>(provider, src) {
@@ -183,7 +196,8 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
 
         synchronized (this) {
             final Collection<PotentialSchemaSource<?>> col = new ArrayList<>();
-            for (Multimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> m : sources.values()) {
+            for (Multimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> m
+                    : sources.values()) {
                 for (AbstractSchemaSourceRegistration<?> r : m.values()) {
                     col.add(r.getInstance());
                 }

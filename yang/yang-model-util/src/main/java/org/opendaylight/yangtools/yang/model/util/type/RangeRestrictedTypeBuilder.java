@@ -58,10 +58,10 @@ public abstract class RangeRestrictedTypeBuilder<T extends TypeDefinition<T>> ex
             final Number min = c.getMin();
 
             if (max instanceof UnresolvedNumber || min instanceof UnresolvedNumber) {
-                final Number rMax = max instanceof UnresolvedNumber ?
-                        ((UnresolvedNumber)max).resolveRange(baseRangeConstraints) : max;
-                final Number rMin = min instanceof UnresolvedNumber ?
-                        ((UnresolvedNumber)min).resolveRange(baseRangeConstraints) : min;
+                final Number rMax = max instanceof UnresolvedNumber
+                    ?  ((UnresolvedNumber)max).resolveRange(baseRangeConstraints) : max;
+                final Number rMin = min instanceof UnresolvedNumber
+                    ?  ((UnresolvedNumber)min).resolveRange(baseRangeConstraints) : min;
 
                 builder.add(BaseConstraints.newRangeConstraint(rMin, rMax, Optional.fromNullable(c.getDescription()),
                     Optional.fromNullable(c.getReference()), c.getErrorAppTag(), c.getErrorMessage()));
@@ -85,7 +85,8 @@ public abstract class RangeRestrictedTypeBuilder<T extends TypeDefinition<T>> ex
         return ranges;
     }
 
-    private static List<RangeConstraint> typedRanges(final List<RangeConstraint> ranges, final Class<? extends Number> clazz) {
+    private static List<RangeConstraint> typedRanges(final List<RangeConstraint> ranges,
+            final Class<? extends Number> clazz) {
         final Function<Number, Number> function = NumberUtil.converterTo(clazz);
         Preconditions.checkArgument(function != null, "Unsupported range class %s", clazz);
 
@@ -93,7 +94,8 @@ public abstract class RangeRestrictedTypeBuilder<T extends TypeDefinition<T>> ex
 
         for (RangeConstraint c : ranges) {
             if (!clazz.isInstance(c.getMin()) || !clazz.isInstance(c.getMax())) {
-                final Number min, max;
+                final Number min;
+                final Number max;
 
                 try {
                     min = function.apply(c.getMin());
@@ -139,8 +141,8 @@ public abstract class RangeRestrictedTypeBuilder<T extends TypeDefinition<T>> ex
         // Now verify if new ranges are strict subset of base ranges
         for (RangeConstraint c : typedRanges) {
             if (!rangeCovered(baseRangeConstraints, c)) {
-                throw new InvalidRangeConstraintException(c, "Range constraint %s is not a subset of parent constraints %s",
-                    c, baseRangeConstraints);
+                throw new InvalidRangeConstraintException(c,
+                        "Range constraint %s is not a subset of parent constraints %s", c, baseRangeConstraints);
             }
         }
 

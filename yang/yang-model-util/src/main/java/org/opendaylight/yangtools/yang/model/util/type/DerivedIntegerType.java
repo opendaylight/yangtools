@@ -17,8 +17,9 @@ import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
 final class DerivedIntegerType extends AbstractDerivedType<IntegerTypeDefinition> implements IntegerTypeDefinition {
-    DerivedIntegerType(final IntegerTypeDefinition baseType, final SchemaPath path, final Object defaultValue, final String description,
-            final String reference, final Status status, final String units, final Collection<UnknownSchemaNode> unknownSchemaNodes) {
+    DerivedIntegerType(final IntegerTypeDefinition baseType, final SchemaPath path, final Object defaultValue,
+            final String description, final String reference, final Status status, final String units,
+            final Collection<UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 

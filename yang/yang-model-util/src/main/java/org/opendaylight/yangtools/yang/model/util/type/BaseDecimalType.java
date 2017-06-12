@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 
 final class BaseDecimalType extends AbstractRangedBaseType<DecimalTypeDefinition> implements DecimalTypeDefinition {
     private static final List<List<RangeConstraint>> IMPLICIT_RANGE_STATEMENTS;
+
     static {
         final Builder<List<RangeConstraint>> b = ImmutableList.builder();
         b.add(createRangeConstraint("-922337203685477580.8", "922337203685477580.7"));
@@ -55,8 +56,8 @@ final class BaseDecimalType extends AbstractRangedBaseType<DecimalTypeDefinition
 
     private final Integer fractionDigits;
 
-    BaseDecimalType(final SchemaPath path, final List<UnknownSchemaNode> unknownSchemaNodes, final Integer fractionDigits,
-        final List<RangeConstraint> rangeConstraints) {
+    BaseDecimalType(final SchemaPath path, final List<UnknownSchemaNode> unknownSchemaNodes,
+            final Integer fractionDigits, final List<RangeConstraint> rangeConstraints) {
         super(path, unknownSchemaNodes, rangeConstraints);
         this.fractionDigits = fractionDigits;
     }

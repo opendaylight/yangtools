@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import java.util.List;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -31,6 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
  * Restricted types are a refinement of the restrictions applied to a particular type. YANG defines restrictions only
  * on a subset of the base types, but conceptually any such definition can hold unknown nodes.
  *
+ * <p>
  * 1) Restrictable
  *    binary (length)
  *    int{8,16,32,64} (range)
@@ -39,6 +41,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
  *    decimal64 (range)
  *    instance-identifier (require-instance)
  *
+ * <p>
  * 2) Non-restrictable
  *    boolean
  *    bits
@@ -48,11 +51,13 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
  *    leafref
  *    union
  *
+ * <p>
  * This class holds methods which allow creation of restricted types using {@link TypeBuilder} and its subclasses. Each
  * restricted type is logically anchored at a {@link SchemaPath}, but can be substituted by its base type if it does
  * not contribute any additional restrictions. TypeBuilder instances take this into account, and result in the base type
  * being returned from the builder when the base type and restricted type are semantically equal.
  *
+ * <p>
  * Restricted types inherit the default value, description, reference, status and units from the base type, if that type
  * defines them.
  */
@@ -62,7 +67,8 @@ public final class RestrictedTypes {
         throw new UnsupportedOperationException();
     }
 
-    public static LengthRestrictedTypeBuilder<BinaryTypeDefinition> newBinaryBuilder(@Nonnull final BinaryTypeDefinition baseType, @Nonnull final SchemaPath path) {
+    public static LengthRestrictedTypeBuilder<BinaryTypeDefinition> newBinaryBuilder(
+            @Nonnull final BinaryTypeDefinition baseType, @Nonnull final SchemaPath path) {
         return new LengthRestrictedTypeBuilder<BinaryTypeDefinition>(baseType, path) {
             @Override
             BinaryTypeDefinition buildType(final List<LengthConstraint> lengthConstraints) {
@@ -72,8 +78,8 @@ public final class RestrictedTypes {
             @Override
             List<LengthConstraint> typeLengthConstraints() {
                 /**
-                 * Length constraint imposed on YANG binary type by our implementation. byte[].length is an integer, capping our
-                 * ability to support arbitrary binary data.
+                 * Length constraint imposed on YANG binary type by our implementation. byte[].length is an integer,
+                 * capping our ability to support arbitrary binary data.
                  */
                 return JavaLengthConstraints.INTEGER_SIZE_CONSTRAINTS;
             }
@@ -89,7 +95,8 @@ public final class RestrictedTypes {
         return new BitsTypeBuilder(baseType, path);
     }
 
-    public static TypeBuilder<BooleanTypeDefinition> newBooleanBuilder(@Nonnull final BooleanTypeDefinition baseType, @Nonnull final SchemaPath path) {
+    public static TypeBuilder<BooleanTypeDefinition> newBooleanBuilder(@Nonnull final BooleanTypeDefinition baseType,
+            @Nonnull final SchemaPath path) {
         return new AbstractRestrictedTypeBuilder<BooleanTypeDefinition>(baseType, path) {
             @Override
             BooleanTypeDefinition buildType() {
@@ -98,8 +105,9 @@ public final class RestrictedTypes {
         };
     }
 
-    public static RangeRestrictedTypeBuilder<DecimalTypeDefinition> newDecima64Builder(final DecimalTypeDefinition baseType, final SchemaPath path) {
-        return new RangeRestrictedTypeBuilder<DecimalTypeDefinition>(Preconditions.checkNotNull(baseType), path) {
+    public static RangeRestrictedTypeBuilder<DecimalTypeDefinition> newDecima64Builder(
+            final DecimalTypeDefinition baseType, final SchemaPath path) {
+        return new RangeRestrictedTypeBuilder<DecimalTypeDefinition>(checkNotNull(baseType), path) {
             @Override
             DecimalTypeDefinition buildType() {
                 return new RestrictedDecimalType(getBaseType(), getPath(), getUnknownSchemaNodes(),
@@ -108,7 +116,8 @@ public final class RestrictedTypes {
         };
     }
 
-    public static TypeBuilder<EmptyTypeDefinition> newEmptyBuilder(final EmptyTypeDefinition baseType, final SchemaPath path) {
+    public static TypeBuilder<EmptyTypeDefinition> newEmptyBuilder(final EmptyTypeDefinition baseType,
+            final SchemaPath path) {
         return new AbstractRestrictedTypeBuilder<EmptyTypeDefinition>(baseType, path) {
             @Override
             EmptyTypeDefinition buildType() {
@@ -117,11 +126,13 @@ public final class RestrictedTypes {
         };
     }
 
-    public static EnumerationTypeBuilder newEnumerationBuilder(final EnumTypeDefinition baseType, final SchemaPath path) {
+    public static EnumerationTypeBuilder newEnumerationBuilder(final EnumTypeDefinition baseType,
+            final SchemaPath path) {
         return new EnumerationTypeBuilder(baseType, path);
     }
 
-    public static TypeBuilder<IdentityrefTypeDefinition> newIdentityrefBuilder(final IdentityrefTypeDefinition baseType, final SchemaPath path) {
+    public static TypeBuilder<IdentityrefTypeDefinition> newIdentityrefBuilder(final IdentityrefTypeDefinition baseType,
+            final SchemaPath path) {
         return new AbstractRestrictedTypeBuilder<IdentityrefTypeDefinition>(baseType, path) {
             @Override
             IdentityrefTypeDefinition buildType() {
@@ -130,7 +141,8 @@ public final class RestrictedTypes {
         };
     }
 
-    public static InstanceIdentifierTypeBuilder newInstanceIdentifierBuilder(final InstanceIdentifierTypeDefinition baseType, final SchemaPath path) {
+    public static InstanceIdentifierTypeBuilder newInstanceIdentifierBuilder(
+            final InstanceIdentifierTypeDefinition baseType, final SchemaPath path) {
         return new InstanceIdentifierTypeBuilder(baseType, path);
     }
 
@@ -142,13 +154,15 @@ public final class RestrictedTypes {
                 if (getRequireInstance() == getBaseType().requireInstance()) {
                     return getBaseType();
                 }
-                return new RestrictedLeafrefType(getBaseType(), getPath(), getUnknownSchemaNodes(), getRequireInstance());
+                return new RestrictedLeafrefType(getBaseType(), getPath(), getUnknownSchemaNodes(),
+                        getRequireInstance());
             }
         };
     }
 
-    public static RangeRestrictedTypeBuilder<IntegerTypeDefinition> newIntegerBuilder(final IntegerTypeDefinition baseType, final SchemaPath path) {
-        return new RangeRestrictedTypeBuilder<IntegerTypeDefinition>(Preconditions.checkNotNull(baseType), path) {
+    public static RangeRestrictedTypeBuilder<IntegerTypeDefinition> newIntegerBuilder(
+            final IntegerTypeDefinition baseType, final SchemaPath path) {
+        return new RangeRestrictedTypeBuilder<IntegerTypeDefinition>(checkNotNull(baseType), path) {
             @Override
             IntegerTypeDefinition buildType() {
                 return new RestrictedIntegerType(getBaseType(), getPath(), getUnknownSchemaNodes(),
@@ -161,7 +175,8 @@ public final class RestrictedTypes {
         return new StringTypeBuilder(baseType, path);
     }
 
-    public static TypeBuilder<UnionTypeDefinition> newUnionBuilder(final UnionTypeDefinition baseType, final SchemaPath path) {
+    public static TypeBuilder<UnionTypeDefinition> newUnionBuilder(final UnionTypeDefinition baseType,
+            final SchemaPath path) {
         return new AbstractRestrictedTypeBuilder<UnionTypeDefinition>(baseType, path) {
             @Override
             UnionTypeDefinition buildType() {
@@ -170,8 +185,9 @@ public final class RestrictedTypes {
         };
     }
 
-    public static RangeRestrictedTypeBuilder<UnsignedIntegerTypeDefinition> newUnsignedBuilder(final UnsignedIntegerTypeDefinition baseType, final SchemaPath path) {
-        return new RangeRestrictedTypeBuilder<UnsignedIntegerTypeDefinition>(Preconditions.checkNotNull(baseType), path) {
+    public static RangeRestrictedTypeBuilder<UnsignedIntegerTypeDefinition> newUnsignedBuilder(
+            final UnsignedIntegerTypeDefinition baseType, final SchemaPath path) {
+        return new RangeRestrictedTypeBuilder<UnsignedIntegerTypeDefinition>(checkNotNull(baseType), path) {
             @Override
             UnsignedIntegerTypeDefinition buildType() {
                 return new RestrictedUnsignedType(getBaseType(), getPath(), getUnknownSchemaNodes(),

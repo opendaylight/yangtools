@@ -7,19 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.util;
 
-import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.CheckedFuture;
 import java.util.Arrays;
 import java.util.concurrent.Future;
+import javax.annotation.Nonnull;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
@@ -61,7 +60,8 @@ public class SchemaSourceTransformerTest {
     @Test
     public void schemaSourceTransformerGetSourceTest() throws Exception {
         final Provider p = new Provider();
-        final Registrator reg = new Registrator(p, SchemaSourceTransformerTest.SRC_CLASS, PotentialSchemaSource.Costs.IMMEDIATE);
+        final Registrator reg = new Registrator(p, SchemaSourceTransformerTest.SRC_CLASS,
+                PotentialSchemaSource.Costs.IMMEDIATE);
         final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("source");
         reg.register(sourceIdentifier);
         this.schema = new SchemaSourceTransformer<>(p,
@@ -109,7 +109,7 @@ public class SchemaSourceTransformerTest {
 
         final PotentialSchemaSource<T> src;
 
-        public Foo(final SourceIdentifier sourceIdentifier, final Class<T> representation, final Costs cost) {
+        Foo(final SourceIdentifier sourceIdentifier, final Class<T> representation, final Costs cost) {
             this.src = PotentialSchemaSource.create(sourceIdentifier, representation,
                     cost.getValue());
         }
@@ -122,7 +122,7 @@ public class SchemaSourceTransformerTest {
 
     private class Registrator extends AbstractSchemaSourceCache<YangSchemaSourceRepresentation> {
 
-        protected Registrator(final SchemaSourceRegistry consumer, final Class<YangSchemaSourceRepresentation> srcClass,
+        Registrator(final SchemaSourceRegistry consumer, final Class<YangSchemaSourceRepresentation> srcClass,
                 final Costs cost) {
             super(consumer, srcClass, cost);
         }

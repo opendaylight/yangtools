@@ -13,12 +13,14 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 
-final class DerivedInstanceIdentifierType extends AbstractDerivedType<InstanceIdentifierTypeDefinition> implements InstanceIdentifierTypeDefinition {
+final class DerivedInstanceIdentifierType extends AbstractDerivedType<InstanceIdentifierTypeDefinition>
+        implements InstanceIdentifierTypeDefinition {
     private final boolean requireInstance;
 
-    DerivedInstanceIdentifierType(final InstanceIdentifierTypeDefinition baseType, final SchemaPath path, final Object defaultValue,
-        final String description, final String reference, final Status status, final String units,
-        final Collection<UnknownSchemaNode> unknownSchemaNodes,  final boolean requireInstance) {
+    DerivedInstanceIdentifierType(final InstanceIdentifierTypeDefinition baseType, final SchemaPath path,
+            final Object defaultValue, final String description, final String reference, final Status status,
+            final String units, final Collection<UnknownSchemaNode> unknownSchemaNodes,
+            final boolean requireInstance) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
         this.requireInstance = requireInstance;
     }

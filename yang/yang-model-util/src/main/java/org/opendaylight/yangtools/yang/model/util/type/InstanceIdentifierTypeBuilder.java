@@ -11,9 +11,11 @@ import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 
-public final class InstanceIdentifierTypeBuilder extends RequireInstanceRestrictedTypeBuilder<InstanceIdentifierTypeDefinition> {
+public final class InstanceIdentifierTypeBuilder
+        extends RequireInstanceRestrictedTypeBuilder<InstanceIdentifierTypeDefinition> {
 
-    InstanceIdentifierTypeBuilder(final InstanceIdentifierTypeDefinition baseType, final SchemaPath path) {
+    InstanceIdentifierTypeBuilder(final InstanceIdentifierTypeDefinition baseType,
+            final SchemaPath path) {
         super(Preconditions.checkNotNull(baseType), path);
     }
 
@@ -23,6 +25,7 @@ public final class InstanceIdentifierTypeBuilder extends RequireInstanceRestrict
             return getBaseType();
         }
 
-        return new RestrictedInstanceIdentifierType(getBaseType(), getPath(), getUnknownSchemaNodes(), getRequireInstance());
+        return new RestrictedInstanceIdentifierType(getBaseType(), getPath(), getUnknownSchemaNodes(),
+                getRequireInstance());
     }
 }

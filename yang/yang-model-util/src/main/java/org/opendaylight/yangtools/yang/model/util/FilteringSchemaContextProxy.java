@@ -47,20 +47,19 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
     private final SetMultimap<String, Module> nameToModules;
 
     /**
-     * Filters SchemaContext for yang modules
+     * Filters SchemaContext for yang modules.
      *
      * @param delegate original SchemaContext
-     * @param rootModules modules (yang schemas) to be available and all their dependencies (modules importing rootModule and whole chain of their imports)
+     * @param rootModules modules (yang schemas) to be available and all their dependencies (modules importing
+     *                    rootModule and whole chain of their imports)
      * @param additionalModuleIds (additional) modules (yang schemas) to be available and whole chain of their imports
-     *
      */
-    public FilteringSchemaContextProxy(final SchemaContext delegate, final Collection<ModuleId> rootModules, final Set<ModuleId> additionalModuleIds) {
-
-        Preconditions.checkArgument(rootModules!=null,"Base modules cannot be null.");
-        Preconditions.checkArgument(additionalModuleIds!=null,"Additional modules cannot be null.");
+    public FilteringSchemaContextProxy(final SchemaContext delegate, final Collection<ModuleId> rootModules,
+            final Set<ModuleId> additionalModuleIds) {
+        Preconditions.checkNotNull(rootModules, "Base modules cannot be null.");
+        Preconditions.checkNotNull(additionalModuleIds, "Additional modules cannot be null.");
 
         final Builder<Module> filteredModulesBuilder = new Builder<>();
-
         final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(new TreeMap<>(), MODULE_SET_SUPPLIER);
         final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(new TreeMap<>(), MODULE_SET_SUPPLIER);
 
@@ -79,7 +78,8 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         processForAdditionalModules(delegate, additionalModuleIds, filteredModulesBuilder);
 
         filteredModulesBuilder.addAll(getImportedModules(
-                Maps.uniqueIndex(delegate.getModules(), ModuleId.MODULE_TO_MODULE_ID::apply), filteredModulesBuilder.build(), nameToModulesAll));
+                Maps.uniqueIndex(delegate.getModules(), ModuleId.MODULE_TO_MODULE_ID::apply),
+                filteredModulesBuilder.build(), nameToModulesAll));
 
         /**
          * Instead of doing this on each invocation of getModules(), pre-compute
@@ -119,25 +119,29 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
     }
 
     //dealing with imported module other than root and directly importing root
-    private static Collection<Module> getImportedModules(final Map<ModuleId, Module> allModules, final Set<Module> baseModules, final TreeMultimap<String, Module> nameToModulesAll) {
+    private static Collection<Module> getImportedModules(final Map<ModuleId, Module> allModules,
+            final Set<Module> baseModules, final TreeMultimap<String, Module> nameToModulesAll) {
 
         List<Module> relatedModules = Lists.newLinkedList();
 
         for (Module module : baseModules) {
             for (ModuleImport moduleImport : module.getImports()) {
 
-                Date revisionDate = moduleImport.getRevision() == null ?
-                        nameToModulesAll.get(moduleImport.getModuleName()).first().getRevision() : moduleImport.getRevision();
+                Date revisionDate = moduleImport.getRevision() == null
+                    ? nameToModulesAll.get(moduleImport.getModuleName()).first().getRevision()
+                    : moduleImport.getRevision();
 
                 ModuleId key = new ModuleId(moduleImport.getModuleName(),revisionDate);
                 Module importedModule = allModules.get(key);
 
-                Preconditions.checkArgument(importedModule != null,  "Invalid schema, cannot find imported module: %s from module: %s, %s, modules:%s", key, module.getQNameModule(), module.getName() );
+                Preconditions.checkArgument(importedModule != null,
+                        "Invalid schema, cannot find imported module: %s from module: %s, %s, modules:%s", key,
+                        module.getQNameModule(), module.getName());
                 relatedModules.add(importedModule);
 
                 //calling imports recursive
-                relatedModules.addAll(getImportedModules(allModules, Collections.singleton(importedModule), nameToModulesAll));
-
+                relatedModules.addAll(getImportedModules(allModules, Collections.singleton(importedModule),
+                            nameToModulesAll));
             }
         }
 
@@ -164,7 +168,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         return nameToModules;
     }
 
-    private static boolean selectAdditionalModules(final Module module, final Set<ModuleId> additionalModules){
+    private static boolean selectAdditionalModules(final Module module, final Set<ModuleId> additionalModules) {
         return additionalModules.contains(new ModuleId(module.getName(), module.getRevision()));
     }
 
@@ -209,7 +213,8 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         private final Date rev;
 
         public ModuleId(final String name, final Date rev) {
-            Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "No module dependency name given. Nothing to do.");
+            Preconditions.checkArgument(!Strings.isNullOrEmpty(name),
+                    "No module dependency name given. Nothing to do.");
             this.name = name;
             this.rev = Preconditions.checkNotNull(rev, "No revision date given. Nothing to do.");
         }
@@ -226,15 +231,15 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
             input.getRevision());
 
         @Override
-        public boolean equals(final Object o) {
-            if (this == o) {
+        public boolean equals(final Object obj) {
+            if (this == obj) {
                 return true;
             }
-            if (!(o instanceof ModuleId)) {
+            if (!(obj instanceof ModuleId)) {
                 return false;
             }
 
-            ModuleId moduleId = (ModuleId) o;
+            ModuleId moduleId = (ModuleId) obj;
             if (name != null ? !name.equals(moduleId.name) : moduleId.name != null) {
                 return false;
             }

@@ -27,22 +27,26 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 
 @Beta
-public class InMemorySchemaSourceCache<T extends SchemaSourceRepresentation> extends AbstractSchemaSourceCache<T> implements AutoCloseable {
+public class InMemorySchemaSourceCache<T extends SchemaSourceRepresentation> extends AbstractSchemaSourceCache<T>
+        implements AutoCloseable {
     private final List<FinalizablePhantomReference<T>> regs = Collections.synchronizedList(new ArrayList<>());
     private final FinalizableReferenceQueue queue = new FinalizableReferenceQueue();
     private final Cache<SourceIdentifier, T> cache;
 
-    protected InMemorySchemaSourceCache(final SchemaSourceRegistry consumer, final Class<T> representation, final CacheBuilder<Object, Object> builder) {
+    protected InMemorySchemaSourceCache(final SchemaSourceRegistry consumer, final Class<T> representation,
+            final CacheBuilder<Object, Object> builder) {
         super(consumer, representation, Costs.IMMEDIATE);
         cache = builder.build();
     }
 
-    public static <R extends SchemaSourceRepresentation> InMemorySchemaSourceCache<R> createSoftCache(final SchemaSourceRegistry consumer, final Class<R> representation) {
+    public static <R extends SchemaSourceRepresentation> InMemorySchemaSourceCache<R> createSoftCache(
+            final SchemaSourceRegistry consumer, final Class<R> representation) {
         return new InMemorySchemaSourceCache<>(consumer, representation, CacheBuilder.newBuilder().softValues());
     }
 
     public static <R extends SchemaSourceRepresentation> InMemorySchemaSourceCache<R> createSoftCache(
-            final SchemaSourceRegistry consumer, final Class<R> representation, final long lifetime, final TimeUnit units) {
+            final SchemaSourceRegistry consumer, final Class<R> representation, final long lifetime,
+            final TimeUnit units) {
         return new InMemorySchemaSourceCache<>(consumer, representation, CacheBuilder.newBuilder().softValues()
                 .expireAfterAccess(lifetime, units));
     }
@@ -54,7 +58,8 @@ public class InMemorySchemaSourceCache<T extends SchemaSourceRepresentation> ext
             return Futures.immediateCheckedFuture(present);
         }
 
-        return Futures.immediateFailedCheckedFuture(new MissingSchemaSourceException("Source not found", sourceIdentifier));
+        return Futures.immediateFailedCheckedFuture(new MissingSchemaSourceException("Source not found",
+                    sourceIdentifier));
     }
 
     @Override

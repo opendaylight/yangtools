@@ -65,6 +65,65 @@ final class TypeDefinitions {
             type.getDefaultValue(), type.getLengthConstraints());
     }
 
+    static int hashCode(final BitsTypeDefinition type) {
+        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
+            type.getDefaultValue(), type.getBits());
+    }
+
+
+    static int hashCode(final BooleanTypeDefinition type) {
+        return basicHashCode(type);
+    }
+
+    static int hashCode(final DecimalTypeDefinition type) {
+        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
+            type.getDefaultValue(), type.getFractionDigits(), type.getRangeConstraints());
+    }
+
+    static int hashCode(final EmptyTypeDefinition type) {
+        return basicHashCode(type);
+    }
+
+    static int hashCode(final EnumTypeDefinition type) {
+        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
+            type.getDefaultValue(), type.getValues());
+    }
+
+    static int hashCode(final IdentityrefTypeDefinition type) {
+        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
+            type.getDefaultValue(), type.getIdentity());
+    }
+
+    static int hashCode(final InstanceIdentifierTypeDefinition type) {
+        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
+            type.getDefaultValue(), type.requireInstance());
+    }
+
+    static int hashCode(final IntegerTypeDefinition type) {
+        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
+            type.getDefaultValue(), type.getRangeConstraints());
+    }
+
+    static int hashCode(final LeafrefTypeDefinition type) {
+        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
+            type.getDefaultValue(), type.getPathStatement());
+    }
+
+    static int hashCode(final StringTypeDefinition type) {
+        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
+            type.getDefaultValue(), type.getLengthConstraints(), type.getPatternConstraints());
+    }
+
+    static int hashCode(final UnionTypeDefinition type) {
+        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
+            type.getDefaultValue(), type.getTypes());
+    }
+
+    static int hashCode(final UnsignedIntegerTypeDefinition type) {
+        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
+            type.getDefaultValue(), type.getRangeConstraints());
+    }
+
     static boolean equals(final BinaryTypeDefinition type, final Object obj) {
         if (type == obj) {
             return true;
@@ -72,15 +131,6 @@ final class TypeDefinitions {
 
         final BinaryTypeDefinition other = castIfEquals(BinaryTypeDefinition.class, type, obj);
         return other != null && type.getLengthConstraints().equals(other.getLengthConstraints());
-    }
-
-    static String toString(final BinaryTypeDefinition type) {
-        return toStringHelper(type).add("length", type.getLengthConstraints()).toString();
-    }
-
-    static int hashCode(final BitsTypeDefinition type) {
-        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
-            type.getDefaultValue(), type.getBits());
     }
 
     static boolean equals(final BitsTypeDefinition type, final Object obj) {
@@ -92,25 +142,8 @@ final class TypeDefinitions {
         return other != null && type.getBits().equals(other.getBits());
     }
 
-    static String toString(final BitsTypeDefinition type) {
-        return toStringHelper(type).add("bits", type.getBits()).toString();
-    }
-
-    static int hashCode(final BooleanTypeDefinition type) {
-        return basicHashCode(type);
-    }
-
     static boolean equals(final BooleanTypeDefinition type, final Object obj) {
         return type == obj || castIfEquals(BooleanTypeDefinition.class, type, obj) != null;
-    }
-
-    static String toString(final BooleanTypeDefinition type) {
-        return toStringHelper(type).toString();
-    }
-
-    static int hashCode(final DecimalTypeDefinition type) {
-        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
-            type.getDefaultValue(), type.getFractionDigits(), type.getRangeConstraints());
     }
 
     static boolean equals(final DecimalTypeDefinition type, final Object obj) {
@@ -123,26 +156,8 @@ final class TypeDefinitions {
                 && type.getRangeConstraints().equals(other.getRangeConstraints());
     }
 
-    static String toString(final DecimalTypeDefinition type) {
-        return toStringHelper(type).add("fractionDigits", type.getFractionDigits())
-                .add("range", type.getRangeConstraints()).toString();
-    }
-
-    static int hashCode(final EmptyTypeDefinition type) {
-        return basicHashCode(type);
-    }
-
     static boolean equals(final EmptyTypeDefinition type, final Object obj) {
         return type == obj || castIfEquals(EmptyTypeDefinition.class, type, obj) != null;
-    }
-
-    static String toString(final EmptyTypeDefinition type) {
-        return toStringHelper(type).toString();
-    }
-
-    static int hashCode(final EnumTypeDefinition type) {
-        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
-            type.getDefaultValue(), type.getValues());
     }
 
     static boolean equals(final EnumTypeDefinition type, final Object obj) {
@@ -154,15 +169,6 @@ final class TypeDefinitions {
         return other != null && type.getValues().equals(other.getValues());
     }
 
-    static String toString(final EnumTypeDefinition type) {
-        return toStringHelper(type).add("values", type.getValues()).toString();
-    }
-
-    static int hashCode(final IdentityrefTypeDefinition type) {
-        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
-            type.getDefaultValue(), type.getIdentity());
-    }
-
     static boolean equals(final IdentityrefTypeDefinition type, final Object obj) {
         if (type == obj) {
             return true;
@@ -170,15 +176,6 @@ final class TypeDefinitions {
 
         final IdentityrefTypeDefinition other = castIfEquals(IdentityrefTypeDefinition.class, type, obj);
         return other != null && type.getIdentity().equals(other.getIdentity());
-    }
-
-    static String toString(final IdentityrefTypeDefinition type) {
-        return toStringHelper(type).add("identity", type.getIdentity()).toString();
-    }
-
-    static int hashCode(final InstanceIdentifierTypeDefinition type) {
-        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
-            type.getDefaultValue(), type.requireInstance());
     }
 
     static boolean equals(final InstanceIdentifierTypeDefinition type, final Object obj) {
@@ -190,15 +187,6 @@ final class TypeDefinitions {
         return other != null && type.requireInstance() == other.requireInstance();
     }
 
-    static String toString(final InstanceIdentifierTypeDefinition type) {
-        return toStringHelper(type).add("requireInstance", type.requireInstance()).toString();
-    }
-
-    static int hashCode(final IntegerTypeDefinition type) {
-        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
-            type.getDefaultValue(), type.getRangeConstraints());
-    }
-
     static boolean equals(final IntegerTypeDefinition type, final Object obj) {
         if (type == obj) {
             return true;
@@ -208,31 +196,13 @@ final class TypeDefinitions {
         return other != null && type.getRangeConstraints().equals(other.getRangeConstraints());
     }
 
-    static String toString(final IntegerTypeDefinition type) {
-        return toStringHelper(type).add("range", type.getRangeConstraints()).toString();
-    }
-
-    static int hashCode(final LeafrefTypeDefinition type) {
-        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
-            type.getDefaultValue(), type.getPathStatement());
-    }
-
     static boolean equals(final LeafrefTypeDefinition type, final Object obj) {
         if (type == obj) {
             return true;
         }
 
-        final LeafrefTypeDefinition other =castIfEquals(LeafrefTypeDefinition.class, type, obj);
+        final LeafrefTypeDefinition other = castIfEquals(LeafrefTypeDefinition.class, type, obj);
         return other != null && type.getPathStatement().equals(other.getPathStatement());
-    }
-
-    static String toString(final LeafrefTypeDefinition type) {
-        return toStringHelper(type).add("pathStatement", type.getPathStatement()).toString();
-    }
-
-    static int hashCode(final StringTypeDefinition type) {
-        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
-            type.getDefaultValue(), type.getLengthConstraints(), type.getPatternConstraints());
     }
 
     static boolean equals(final StringTypeDefinition type, final Object obj) {
@@ -245,16 +215,6 @@ final class TypeDefinitions {
                 && type.getPatternConstraints().equals(other.getPatternConstraints());
     }
 
-    static String toString(final StringTypeDefinition type) {
-        return toStringHelper(type).add("length", type.getLengthConstraints())
-                .add("patterns", type.getPatternConstraints()).toString();
-    }
-
-    static int hashCode(final UnionTypeDefinition type) {
-        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
-            type.getDefaultValue(), type.getTypes());
-    }
-
     static boolean equals(final UnionTypeDefinition type, final Object obj) {
         if (type == obj) {
             return true;
@@ -264,15 +224,6 @@ final class TypeDefinitions {
         return other != null && type.getTypes().equals(other.getTypes());
     }
 
-    static String toString(final UnionTypeDefinition type) {
-        return toStringHelper(type).add("types", type.getTypes()).toString();
-    }
-
-    static int hashCode(final UnsignedIntegerTypeDefinition type) {
-        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
-            type.getDefaultValue(), type.getRangeConstraints());
-    }
-
     static boolean equals(final UnsignedIntegerTypeDefinition type, final Object obj) {
         if (type == obj) {
             return true;
@@ -280,6 +231,56 @@ final class TypeDefinitions {
 
         final UnsignedIntegerTypeDefinition other = castIfEquals(UnsignedIntegerTypeDefinition.class, type, obj);
         return other != null && type.getRangeConstraints().equals(other.getRangeConstraints());
+    }
+
+    static String toString(final BinaryTypeDefinition type) {
+        return toStringHelper(type).add("length", type.getLengthConstraints()).toString();
+    }
+
+    static String toString(final BitsTypeDefinition type) {
+        return toStringHelper(type).add("bits", type.getBits()).toString();
+    }
+
+    static String toString(final BooleanTypeDefinition type) {
+        return toStringHelper(type).toString();
+    }
+
+    static String toString(final DecimalTypeDefinition type) {
+        return toStringHelper(type).add("fractionDigits", type.getFractionDigits())
+                .add("range", type.getRangeConstraints()).toString();
+    }
+
+    static String toString(final EmptyTypeDefinition type) {
+        return toStringHelper(type).toString();
+    }
+
+    static String toString(final EnumTypeDefinition type) {
+        return toStringHelper(type).add("values", type.getValues()).toString();
+    }
+
+    static String toString(final IdentityrefTypeDefinition type) {
+        return toStringHelper(type).add("identity", type.getIdentity()).toString();
+    }
+
+    static String toString(final InstanceIdentifierTypeDefinition type) {
+        return toStringHelper(type).add("requireInstance", type.requireInstance()).toString();
+    }
+
+    static String toString(final IntegerTypeDefinition type) {
+        return toStringHelper(type).add("range", type.getRangeConstraints()).toString();
+    }
+
+    static String toString(final LeafrefTypeDefinition type) {
+        return toStringHelper(type).add("pathStatement", type.getPathStatement()).toString();
+    }
+
+    static String toString(final StringTypeDefinition type) {
+        return toStringHelper(type).add("length", type.getLengthConstraints())
+                .add("patterns", type.getPatternConstraints()).toString();
+    }
+
+    static String toString(final UnionTypeDefinition type) {
+        return toStringHelper(type).add("types", type.getTypes()).toString();
     }
 
     static String toString(final UnsignedIntegerTypeDefinition type) {

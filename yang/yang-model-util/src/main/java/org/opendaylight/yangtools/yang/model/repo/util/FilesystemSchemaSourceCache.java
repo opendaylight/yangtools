@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.util;
 
-import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -46,21 +46,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Cache implementation that stores schemas in form of files under provided folder
+ * Cache implementation that stores schemas in form of files under provided folder.
  */
-public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentation> extends AbstractSchemaSourceCache<T> {
+public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentation>
+        extends AbstractSchemaSourceCache<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(FilesystemSchemaSourceCache.class);
 
     // Init storage adapters
-    private static final Map<Class<? extends SchemaSourceRepresentation>, StorageAdapter<? extends SchemaSourceRepresentation>> STORAGE_ADAPTERS =
-            Collections.singletonMap(
+    private static final Map<Class<? extends SchemaSourceRepresentation>,
+            StorageAdapter<? extends SchemaSourceRepresentation>> STORAGE_ADAPTERS = Collections.singletonMap(
                     YangTextSchemaSource.class, new YangTextSchemaStorageAdapter());
 
     private static final Pattern CACHED_FILE_PATTERN =
-            Pattern.compile(
-                    "(?<moduleName>[^@]+)" +
-                    "(@(?<revision>" + SourceIdentifier.REVISION_PATTERN + "))?");
+            Pattern.compile("(?<moduleName>[^@]+)" + "(@(?<revision>" + SourceIdentifier.REVISION_PATTERN + "))?");
 
     private final Class<T> representation;
     private final File storageDirectory;
@@ -74,7 +73,8 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
         checkSupportedRepresentation(representation);
 
         if (!storageDirectory.exists()) {
-            Preconditions.checkArgument(storageDirectory.mkdirs(), "Unable to create cache directory at %s", storageDirectory);
+            Preconditions.checkArgument(storageDirectory.mkdirs(), "Unable to create cache directory at %s",
+                    storageDirectory);
         }
         Preconditions.checkArgument(storageDirectory.exists());
         Preconditions.checkArgument(storageDirectory.isDirectory());
@@ -91,12 +91,13 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
             }
         }
 
-       throw new IllegalArgumentException(String.format(
-                "This cache does not support representation: %s, supported representations are: %s", representation, STORAGE_ADAPTERS.keySet()));
+        throw new IllegalArgumentException(String.format(
+                   "This cache does not support representation: %s, supported representations are: %s",
+                   representation, STORAGE_ADAPTERS.keySet()));
     }
 
     /**
-     * Restore cache state
+     * Restore cache state.
      */
     private void init() {
 
@@ -114,16 +115,19 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
     }
 
     @Override
-    public synchronized CheckedFuture<? extends T, SchemaSourceException> getSource(final SourceIdentifier sourceIdentifier) {
+    public synchronized CheckedFuture<? extends T, SchemaSourceException> getSource(
+            final SourceIdentifier sourceIdentifier) {
         final File file = sourceIdToFile(sourceIdentifier, storageDirectory);
         if (file.exists() && file.canRead()) {
             LOG.trace("Source {} found in cache as {}", sourceIdentifier, file);
-            final SchemaSourceRepresentation restored = STORAGE_ADAPTERS.get(representation).restore(sourceIdentifier, file);
+            final SchemaSourceRepresentation restored = STORAGE_ADAPTERS.get(representation).restore(sourceIdentifier,
+                    file);
             return Futures.immediateCheckedFuture(representation.cast(restored));
         }
 
         LOG.debug("Source {} not found in cache as {}", sourceIdentifier, file);
-        return Futures.immediateFailedCheckedFuture(new MissingSchemaSourceException("Source not found", sourceIdentifier));
+        return Futures.immediateFailedCheckedFuture(new MissingSchemaSourceException("Source not found",
+                    sourceIdentifier));
     }
 
     @Override
@@ -157,11 +161,12 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
 
     private static File findFileWithNewestRev(final SourceIdentifier identifier, final File storageDirectory) {
         File[] files = storageDirectory.listFiles(new FilenameFilter() {
-            final Pattern p = Pattern.compile(Pattern.quote(identifier.getName()) + "(\\.yang|@\\d\\d\\d\\d-\\d\\d-\\d\\d.yang)");
+            final Pattern pat = Pattern.compile(Pattern.quote(identifier.getName())
+                    + "(\\.yang|@\\d\\d\\d\\d-\\d\\d-\\d\\d.yang)");
 
             @Override
             public boolean accept(final File dir, final String name) {
-                return p.matcher(name).matches();
+                return pat.matcher(name).matches();
             }
         });
 
@@ -176,9 +181,9 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
         TreeMap<Date, File> map = new TreeMap<>();
         for (File sorted : files) {
             String fileName = sorted.getName();
-            Matcher m = SourceIdentifier.REVISION_PATTERN.matcher(fileName);
-            if (m.find()) {
-                String revStr = m.group();
+            Matcher match = SourceIdentifier.REVISION_PATTERN.matcher(fileName);
+            if (match.find()) {
+                String revStr = match.group();
                 /*
                  * FIXME: Consider using string for comparison.
                  * String is comparable, pattern check tested format
@@ -186,8 +191,8 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
                  */
                 DateFormat df = SimpleDateFormatUtil.getRevisionFormat();
                 try {
-                    Date d = df.parse(revStr);
-                    map.put(d, sorted);
+                    Date date = df.parse(revStr);
+                    map.put(date, sorted);
                 } catch (final ParseException e) {
                     LOG.info("Unable to parse date from yang file name {}", fileName);
                     map.put(new Date(0L), sorted);
@@ -206,7 +211,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
         STORAGE_ADAPTERS.get(representation).store(file, schemaRepresentation);
     }
 
-    private static abstract class StorageAdapter<T extends SchemaSourceRepresentation> {
+    private abstract static class StorageAdapter<T extends SchemaSourceRepresentation> {
 
         private final Class<T> supportedType;
 
@@ -216,10 +221,10 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
 
         void store(final File file, final SchemaSourceRepresentation schemaSourceRepresentation) {
             Preconditions.checkArgument(supportedType.isAssignableFrom(schemaSourceRepresentation.getClass()),
-                    "Cannot store schema source %s, this adapter only supports %s", schemaSourceRepresentation, supportedType);
+                    "Cannot store schema source %s, this adapter only supports %s", schemaSourceRepresentation,
+                    supportedType);
 
             storeAsType(file, supportedType.cast(schemaSourceRepresentation));
-
         }
 
         protected abstract void storeAsType(final File file, final T cast);
@@ -245,7 +250,8 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
             try (final InputStream castStream = cast.openStream()) {
                 Files.copy(castStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (final IOException e) {
-                throw new IllegalStateException("Cannot store schema source " + cast.getIdentifier() + " to " + file, e);
+                throw new IllegalStateException("Cannot store schema source " + cast.getIdentifier() + " to " + file,
+                        e);
             }
         }
 
@@ -254,7 +260,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
             return new YangTextSchemaSource(sourceIdentifier) {
 
                 @Override
-                protected MoreObjects.ToStringHelper addToStringAttributes(final MoreObjects.ToStringHelper toStringHelper) {
+                protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
                     return toStringHelper;
                 }
 
@@ -280,7 +286,8 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
                 LOG.trace("Restoring cached file {} as {}", file, si.get());
                 cachedSchemas.add(si.get());
             } else {
-                LOG.debug("Skipping cached file {}, cannot restore source identifier from filename: {}, does not match {}", file, fileName, CACHED_FILE_PATTERN);
+                LOG.debug("Skipping cached file {}, cannot restore source identifier from filename: {},"
+                        + " does not match {}", file, fileName, CACHED_FILE_PATTERN);
             }
             return fileVisitResult;
         }

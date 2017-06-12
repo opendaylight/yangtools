@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
  * YANG defines 'derived type' as a type created through a 'typedef' statement. These types are exposed in the
  * hierarchical namespace and can be looked up.
  *
+ * <p>
  * A derived type can redefine the default value, description, status and reference of a particular type definition.
  * It can only refine the units attribute, as that attribute is tied to the semantics of the value. The default value,
  * and units attributes are inherited from the super (base or restricted) type, others are left undefined if not
@@ -169,132 +170,145 @@ public final class DerivedTypes {
         return BaseTypes.isUint64(BaseTypes.baseTypeOf(type));
     }
 
-    private static DerivedTypeBuilder<BinaryTypeDefinition> derivedBinaryBuilder(@Nonnull final BinaryTypeDefinition baseType, @Nonnull final SchemaPath path) {
+    private static DerivedTypeBuilder<BinaryTypeDefinition> derivedBinaryBuilder(
+            @Nonnull final BinaryTypeDefinition baseType, @Nonnull final SchemaPath path) {
         return new DerivedTypeBuilder<BinaryTypeDefinition>(baseType, path) {
             @Override
             public BinaryTypeDefinition build() {
-                return new DerivedBinaryType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedBinaryType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }
 
-    private static DerivedTypeBuilder<BitsTypeDefinition> derivedBitsBuilder(final BitsTypeDefinition baseType, final SchemaPath path) {
+    private static DerivedTypeBuilder<BitsTypeDefinition> derivedBitsBuilder(final BitsTypeDefinition baseType,
+            final SchemaPath path) {
         return new DerivedTypeBuilder<BitsTypeDefinition>(baseType, path) {
             @Override
             public BitsTypeDefinition build() {
-                return new DerivedBitsType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedBitsType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }
 
-    private static DerivedTypeBuilder<BooleanTypeDefinition> derivedBooleanBuilder(@Nonnull final BooleanTypeDefinition baseType, @Nonnull final SchemaPath path) {
+    private static DerivedTypeBuilder<BooleanTypeDefinition> derivedBooleanBuilder(
+            @Nonnull final BooleanTypeDefinition baseType, @Nonnull final SchemaPath path) {
         return new DerivedTypeBuilder<BooleanTypeDefinition>(baseType, path) {
             @Override
             public BooleanTypeDefinition build() {
-                return new DerivedBooleanType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedBooleanType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }
 
-    private static DerivedTypeBuilder<DecimalTypeDefinition> derivedDecimalBuilder(final DecimalTypeDefinition baseType, final SchemaPath path) {
+    private static DerivedTypeBuilder<DecimalTypeDefinition> derivedDecimalBuilder(final DecimalTypeDefinition baseType,
+            final SchemaPath path) {
         return new DerivedTypeBuilder<DecimalTypeDefinition>(baseType, path) {
             @Override
             public DecimalTypeDefinition build() {
-                return new DerivedDecimalType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedDecimalType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }
 
-    private static DerivedTypeBuilder<EmptyTypeDefinition> derivedEmptyBuilder(final EmptyTypeDefinition baseType, final SchemaPath path) {
+    private static DerivedTypeBuilder<EmptyTypeDefinition> derivedEmptyBuilder(final EmptyTypeDefinition baseType,
+            final SchemaPath path) {
         return new DerivedTypeBuilder<EmptyTypeDefinition>(baseType, path) {
             @Override
             public EmptyTypeDefinition build() {
-                return new DerivedEmptyType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedEmptyType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }
 
-    private static DerivedTypeBuilder<EnumTypeDefinition> derivedEnumerationBuilder(final EnumTypeDefinition baseType, final SchemaPath path) {
+    private static DerivedTypeBuilder<EnumTypeDefinition> derivedEnumerationBuilder(final EnumTypeDefinition baseType,
+            final SchemaPath path) {
         return new DerivedTypeBuilder<EnumTypeDefinition>(baseType, path) {
             @Override
             public EnumTypeDefinition build() {
-                return new DerivedEnumerationType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedEnumerationType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }
 
-    private static DerivedTypeBuilder<IdentityrefTypeDefinition> derivedIdentityrefBuilder(final IdentityrefTypeDefinition baseType, final SchemaPath path) {
+    private static DerivedTypeBuilder<IdentityrefTypeDefinition> derivedIdentityrefBuilder(
+            final IdentityrefTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<IdentityrefTypeDefinition>(baseType, path) {
             @Override
             public IdentityrefTypeDefinition build() {
-                return new DerivedIdentityrefType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedIdentityrefType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }
 
-    private static DerivedTypeBuilder<InstanceIdentifierTypeDefinition> derivedInstanceIdentifierBuilder(final InstanceIdentifierTypeDefinition baseType, final SchemaPath path) {
+    private static DerivedTypeBuilder<InstanceIdentifierTypeDefinition> derivedInstanceIdentifierBuilder(
+            final InstanceIdentifierTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<InstanceIdentifierTypeDefinition>(baseType, path) {
             @Override
             public InstanceIdentifierTypeDefinition build() {
-                return new DerivedInstanceIdentifierType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes(), baseType.requireInstance());
+                return new DerivedInstanceIdentifierType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes(), baseType.requireInstance());
             }
         };
     }
 
-    private static DerivedTypeBuilder<IntegerTypeDefinition> derivedIntegerBuilder(final IntegerTypeDefinition baseType, final SchemaPath path) {
+    private static DerivedTypeBuilder<IntegerTypeDefinition> derivedIntegerBuilder(final IntegerTypeDefinition baseType,
+            final SchemaPath path) {
         return new DerivedTypeBuilder<IntegerTypeDefinition>(baseType, path) {
             @Override
             public IntegerTypeDefinition build() {
-                return new DerivedIntegerType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedIntegerType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }
 
-    private static DerivedTypeBuilder<LeafrefTypeDefinition> derivedLeafrefBuilder(final LeafrefTypeDefinition baseType, final SchemaPath path) {
+    private static DerivedTypeBuilder<LeafrefTypeDefinition> derivedLeafrefBuilder(final LeafrefTypeDefinition baseType,
+            final SchemaPath path) {
         return new DerivedTypeBuilder<LeafrefTypeDefinition>(baseType, path) {
             @Override
             public LeafrefTypeDefinition build() {
-                return new DerivedLeafrefType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedLeafrefType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }
 
-    private static DerivedTypeBuilder<StringTypeDefinition> derivedStringBuilder(final StringTypeDefinition baseType, final SchemaPath path) {
+    private static DerivedTypeBuilder<StringTypeDefinition> derivedStringBuilder(final StringTypeDefinition baseType,
+            final SchemaPath path) {
         return new DerivedTypeBuilder<StringTypeDefinition>(baseType, path) {
             @Override
             public StringTypeDefinition build() {
-                return new DerivedStringType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedStringType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }
 
-    private static DerivedTypeBuilder<UnionTypeDefinition> derivedUnionBuilder(final UnionTypeDefinition baseType, final SchemaPath path) {
+    private static DerivedTypeBuilder<UnionTypeDefinition> derivedUnionBuilder(final UnionTypeDefinition baseType,
+            final SchemaPath path) {
         return new DerivedTypeBuilder<UnionTypeDefinition>(baseType, path) {
             @Override
             public DerivedUnionType build() {
-                return new DerivedUnionType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedUnionType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }
 
-    private static DerivedTypeBuilder<UnsignedIntegerTypeDefinition> derivedUnsignedBuilder(final UnsignedIntegerTypeDefinition baseType, final SchemaPath path) {
+    private static DerivedTypeBuilder<UnsignedIntegerTypeDefinition> derivedUnsignedBuilder(
+            final UnsignedIntegerTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<UnsignedIntegerTypeDefinition>(baseType, path) {
             @Override
             public UnsignedIntegerTypeDefinition build() {
-                return new DerivedUnsignedType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
-                    getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedUnsignedType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }

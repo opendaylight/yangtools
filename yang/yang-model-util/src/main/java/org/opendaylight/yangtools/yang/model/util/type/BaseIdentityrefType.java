@@ -15,7 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
-final class BaseIdentityrefType extends AbstractBaseType<IdentityrefTypeDefinition> implements IdentityrefTypeDefinition {
+final class BaseIdentityrefType extends AbstractBaseType<IdentityrefTypeDefinition>
+        implements IdentityrefTypeDefinition {
     private final IdentitySchemaNode identity;
     private final Set<IdentitySchemaNode> identities;
 

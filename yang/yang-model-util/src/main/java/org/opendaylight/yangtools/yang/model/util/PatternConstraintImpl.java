@@ -16,16 +16,15 @@ import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
 /**
- * {@link Immutable} implementation of {@link PatternConstraint}
+ * {@link Immutable} implementation of {@link PatternConstraint}.
  *
+ * <p>
  * Creates an instance of Range constraint based on supplied parameters with
  * additional behaviour:
- *
  * <ul>
  * <li>{@link PatternConstraint#getErrorAppTag()} returns
  * <code>invalid-regular-expression</code>
  * </ul>
- *
  */
 final class PatternConstraintImpl implements PatternConstraint, Immutable {
 

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
@@ -35,11 +36,10 @@ public class BitImplTest {
         QName qnameA2 = QName.create(uriA2, new Date(7000000), "some nameA2");
         SchemaPath schemaPathA = SchemaPath.create(true, qnameA1, qnameA2);
 
-        QName qnameB1 = QName.create(uriB1, new Date(6000000), "some nameB1");
-        QName qnameB2 = QName.create(uriB2, new Date(7000000), "some nameB2");
-        SchemaPath schemaPathB = SchemaPath.create(true, qnameB1, qnameB2);
+        final QName qnameB1 = QName.create(uriB1, new Date(6000000), "some nameB1");
+        final QName qnameB2 = QName.create(uriB2, new Date(7000000), "some nameB2");
+        final SchemaPath schemaPathB = SchemaPath.create(true, qnameB1, qnameB2);
 
-        BitImpl biB;
         BitImpl biA = new BitImpl(schemaPathA, 55L, "description", "reference", Status.CURRENT, emptyList());
 
         assertEquals("biA should equals to itsefl", biA, biA);
@@ -48,7 +48,7 @@ public class BitImplTest {
 
          // // test schemaPath
         biA = new BitImpl(schemaPathA, 55L, "description", "reference", Status.CURRENT, emptyList());
-        biB = new BitImpl(schemaPathB, 55L, "description", "reference", Status.CURRENT, emptyList());
+        BitImpl biB = new BitImpl(schemaPathB, 55L, "description", "reference", Status.CURRENT, emptyList());
         assertFalse("biA shouldn't equal to biB", biA.equals(biB));
 
         biA = new BitImpl(schemaPathB, 55L, "description", "reference", Status.CURRENT, emptyList());
@@ -74,6 +74,7 @@ public class BitImplTest {
         assertEquals("Incorrect value for unknown nodes.", emptyList(), biA.getUnknownSchemaNodes());
 
         // test of toString method
-        assertEquals("toString method doesn't return correct value", "Bit[name=some nameA2, position=55]", biA.toString());
+        assertEquals("toString method doesn't return correct value", "Bit[name=some nameA2, position=55]",
+                biA.toString());
     }
 }

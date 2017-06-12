@@ -15,10 +15,12 @@ import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 
-public abstract class AbstractSchemaSourceRegistration<T extends SchemaSourceRepresentation> extends AbstractObjectRegistration<PotentialSchemaSource<T>> implements SchemaSourceRegistration<T> {
+public abstract class AbstractSchemaSourceRegistration<T extends SchemaSourceRepresentation>
+        extends AbstractObjectRegistration<PotentialSchemaSource<T>> implements SchemaSourceRegistration<T> {
     private final SchemaSourceProvider<?> provider;
 
-    protected AbstractSchemaSourceRegistration(final SchemaSourceProvider<?> provider, final PotentialSchemaSource<T> source) {
+    protected AbstractSchemaSourceRegistration(final SchemaSourceProvider<?> provider,
+            final PotentialSchemaSource<T> source) {
         super(source);
         this.provider = Preconditions.checkNotNull(provider);
     }

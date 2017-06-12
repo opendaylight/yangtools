@@ -43,8 +43,8 @@ public final class EnumerationTypeBuilder extends AbstractRestrictedTypeBuilder<
         for (EnumPair baseTypeEnumPair : getBaseType().getValues()) {
             if (item.getName().equals(baseTypeEnumPair.getName())) {
                 if (item.getValue() != baseTypeEnumPair.getValue()) {
-                    throw new InvalidEnumDefinitionException(item, "Value of enum '%s' must be the same as the value" +
-                            " of corresponding enum in the base enumeration type %s.", item.getName(),
+                    throw new InvalidEnumDefinitionException(item, "Value of enum '%s' must be the same as the value"
+                            + " of corresponding enum in the base enumeration type %s.", item.getName(),
                             getBaseType().getQName());
                 }
                 isASubsetOfBaseEnums = true;

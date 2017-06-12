@@ -39,6 +39,7 @@ public abstract class UnresolvedNumber extends Number implements Immutable {
             return MAX;
         }
     };
+
     private static final UnresolvedNumber MIN = new UnresolvedNumber() {
         private static final long serialVersionUID = 1L;
 
@@ -96,6 +97,7 @@ public abstract class UnresolvedNumber extends Number implements Immutable {
     }
 
     public abstract Number resolveLength(List<LengthConstraint> constraints);
+
     public abstract Number resolveRange(List<RangeConstraint> constraints);
 
     @Override

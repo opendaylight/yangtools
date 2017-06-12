@@ -31,9 +31,12 @@ public class LeafrefTest {
         final RevisionAwareXPathImpl revision = new RevisionAwareXPathImpl("/test:Cont1/test:List1", false);
         final RevisionAwareXPathImpl revision2 = new RevisionAwareXPathImpl("/test:Cont1/test:List2", false);
 
-        final LeafrefTypeDefinition leafref = BaseTypes.leafrefTypeBuilder(schemaPath).setPathStatement(revision).build();
-        final LeafrefTypeDefinition leafref2 = BaseTypes.leafrefTypeBuilder(schemaPath).setPathStatement(revision2).build();
-        final LeafrefTypeDefinition leafref3 = BaseTypes.leafrefTypeBuilder(schemaPath).setPathStatement(revision).build();
+        final LeafrefTypeDefinition leafref = BaseTypes.leafrefTypeBuilder(schemaPath).setPathStatement(revision)
+            .build();
+        final LeafrefTypeDefinition leafref2 = BaseTypes.leafrefTypeBuilder(schemaPath).setPathStatement(revision2)
+            .build();
+        final LeafrefTypeDefinition leafref3 = BaseTypes.leafrefTypeBuilder(schemaPath).setPathStatement(revision)
+            .build();
         final LeafrefTypeDefinition leafref4 = leafref;
 
         assertNotNull("Object 'leafref' shouldn't be null.", leafref);
@@ -45,10 +48,13 @@ public class LeafrefTest {
         assertNull(leafref.getDescription());
         assertNull(leafref.getReference());
         assertEquals("Status of 'leafref' is current.", Status.CURRENT, leafref.getStatus());
-        assertTrue("Object 'leafref' shouldn't have any unknown schema nodes.", leafref.getUnknownSchemaNodes().isEmpty());
-        assertEquals("Revision aware XPath of 'leafref' should be '/test:Cont1/test:List1'.", revision, leafref.getPathStatement());
+        assertTrue("Object 'leafref' shouldn't have any unknown schema nodes.",
+                leafref.getUnknownSchemaNodes().isEmpty());
+        assertEquals("Revision aware XPath of 'leafref' should be '/test:Cont1/test:List1'.", revision,
+                leafref.getPathStatement());
         assertNotNull("String representation of 'leafref' shouldn't be null.", leafref.toString());
-        assertNotEquals("Hash codes of two different object of type Leafref shouldn't be equal.", leafref.hashCode(), leafref2.hashCode());
+        assertNotEquals("Hash codes of two different object of type Leafref shouldn't be equal.", leafref.hashCode(),
+                leafref2.hashCode());
         assertTrue("Objects of type Leafref should be equal.", leafref.equals(leafref3));
         assertTrue("Objects of type Leafref should be equal.", leafref.equals(leafref4));
         assertFalse("Objects of type Leafref shouldn't be equal.", leafref.equals(leafref2));

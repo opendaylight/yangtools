@@ -21,7 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 import org.opendaylight.yangtools.yang.model.util.UnresolvedNumber;
 
-public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> extends AbstractRestrictedTypeBuilder<T> {
+public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>>
+        extends AbstractRestrictedTypeBuilder<T> {
     private List<LengthConstraint> lengthAlternatives;
 
     LengthRestrictedTypeBuilder(final T baseType, final SchemaPath path) {
@@ -57,10 +58,10 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> e
             final Number min = c.getMin();
 
             if (max instanceof UnresolvedNumber || min instanceof UnresolvedNumber) {
-                final Number rMax = max instanceof UnresolvedNumber ?
-                        ((UnresolvedNumber)max).resolveLength(baseLengthConstraints) : max;
-                final Number rMin = min instanceof UnresolvedNumber ?
-                        ((UnresolvedNumber)min).resolveLength(baseLengthConstraints) : min;
+                final Number rMax = max instanceof UnresolvedNumber
+                    ? ((UnresolvedNumber)max).resolveLength(baseLengthConstraints) : max;
+                final Number rMin = min instanceof UnresolvedNumber
+                    ? ((UnresolvedNumber)min).resolveLength(baseLengthConstraints) : min;
 
                 builder.add(BaseConstraints.newLengthConstraint(rMin, rMax, Optional.fromNullable(c.getDescription()),
                     Optional.fromNullable(c.getReference()), c.getErrorAppTag(), c.getErrorMessage()));
@@ -83,7 +84,8 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> e
         return lengths;
     }
 
-    private static List<LengthConstraint> typedLengths(final List<LengthConstraint> lengths, final Class<? extends Number> clazz) {
+    private static List<LengthConstraint> typedLengths(final List<LengthConstraint> lengths,
+            final Class<? extends Number> clazz) {
         final Function<Number, Number> function = NumberUtil.converterTo(clazz);
         Preconditions.checkArgument(function != null, "Unsupported range class %s", clazz);
 
@@ -91,7 +93,8 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> e
 
         for (LengthConstraint c : lengths) {
             if (!clazz.isInstance(c.getMin()) || !clazz.isInstance(c.getMax())) {
-                final Number min, max;
+                final Number min;
+                final Number max;
 
                 try {
                     min = function.apply(c.getMin());
@@ -121,21 +124,6 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> e
         return false;
     }
 
-    abstract T buildType(List<LengthConstraint> lengthConstraints);
-    abstract List<LengthConstraint> getLengthConstraints(T type);
-    abstract List<LengthConstraint> typeLengthConstraints();
-
-    private List<LengthConstraint> findLenghts() {
-        List<LengthConstraint> ret = ImmutableList.of();
-        T wlk = getBaseType();
-        while (wlk != null && ret.isEmpty()) {
-            ret = getLengthConstraints(wlk);
-            wlk = wlk.getBaseType();
-        }
-
-        return ret.isEmpty() ? typeLengthConstraints() : ret;
-    }
-
     @Override
     final T buildType() {
         final List<LengthConstraint> baseLengths = findLenghts();
@@ -154,11 +142,28 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> e
         // Now verify if new ranges are strict subset of base ranges
         for (LengthConstraint c : typedLengths) {
             if (!lengthCovered(baseLengths, c)) {
-                throw new InvalidLengthConstraintException(c, "Length constraint %s is not a subset of parent constraints %s",
-                c, baseLengths);
+                throw new InvalidLengthConstraintException(c,
+                        "Length constraint %s is not a subset of parent constraints %s", c, baseLengths);
             }
         }
 
         return buildType(typedLengths);
+    }
+
+    abstract T buildType(List<LengthConstraint> lengthConstraints);
+
+    abstract List<LengthConstraint> getLengthConstraints(T type);
+
+    abstract List<LengthConstraint> typeLengthConstraints();
+
+    private List<LengthConstraint> findLenghts() {
+        List<LengthConstraint> ret = ImmutableList.of();
+        T wlk = getBaseType();
+        while (wlk != null && ret.isEmpty()) {
+            ret = getLengthConstraints(wlk);
+            wlk = wlk.getBaseType();
+        }
+
+        return ret.isEmpty() ? typeLengthConstraints() : ret;
     }
 }

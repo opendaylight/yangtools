@@ -26,12 +26,14 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
  *
  * @param <T> Cached schema source type.
  */
-public abstract class AbstractSchemaSourceCache<T extends SchemaSourceRepresentation> implements SchemaSourceListener, SchemaSourceProvider<T> {
+public abstract class AbstractSchemaSourceCache<T extends SchemaSourceRepresentation>
+        implements SchemaSourceListener, SchemaSourceProvider<T> {
     private final SchemaSourceRegistry consumer;
     private final Class<T> representation;
     private final Costs cost;
 
-    protected AbstractSchemaSourceCache(final SchemaSourceRegistry consumer, final Class<T> representation, final Costs cost) {
+    protected AbstractSchemaSourceCache(final SchemaSourceRegistry consumer, final Class<T> representation,
+            final Costs cost) {
         this.consumer = Preconditions.checkNotNull(consumer);
         this.representation = Preconditions.checkNotNull(representation);
         this.cost = Preconditions.checkNotNull(cost);
@@ -58,7 +60,8 @@ public abstract class AbstractSchemaSourceCache<T extends SchemaSourceRepresenta
      *         from the cache.
      */
     protected final SchemaSourceRegistration<T> register(final SourceIdentifier sourceIdentifier) {
-        final PotentialSchemaSource<T> src = PotentialSchemaSource.create(sourceIdentifier, representation, cost.getValue());
+        final PotentialSchemaSource<T> src = PotentialSchemaSource.create(sourceIdentifier, representation,
+                cost.getValue());
         return consumer.registerSchemaSource(this, src);
     }
 

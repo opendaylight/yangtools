@@ -10,7 +10,8 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 
-abstract class AbstractIntegerBaseType extends AbstractRangedBaseType<IntegerTypeDefinition> implements IntegerTypeDefinition {
+abstract class AbstractIntegerBaseType extends AbstractRangedBaseType<IntegerTypeDefinition>
+        implements IntegerTypeDefinition {
     AbstractIntegerBaseType(final QName qname, final Number minValue, final Number maxValue) {
         super(qname, minValue, maxValue);
     }

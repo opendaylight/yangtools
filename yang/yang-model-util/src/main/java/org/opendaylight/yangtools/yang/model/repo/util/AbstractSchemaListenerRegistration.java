@@ -11,7 +11,8 @@ import org.opendaylight.yangtools.concepts.AbstractListenerRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaListenerRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceListener;
 
-public abstract class AbstractSchemaListenerRegistration extends AbstractListenerRegistration<SchemaSourceListener> implements SchemaListenerRegistration {
+public abstract class AbstractSchemaListenerRegistration extends AbstractListenerRegistration<SchemaSourceListener>
+        implements SchemaListenerRegistration {
     protected AbstractSchemaListenerRegistration(final SchemaSourceListener listener) {
         super(listener);
     }
