@@ -5,24 +5,22 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.util;
+package org.opendaylight.yangtools.util;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.common.collect.Sets;
-
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Node;
-import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.NodeImpl;
+import org.opendaylight.yangtools.util.TopologicalSort.Node;
+import org.opendaylight.yangtools.util.TopologicalSort.NodeImpl;
 
 public class TopologicalSortTest {
 
     @Test(expected = IllegalStateException.class)
-    public void test() throws Exception {
-        Set<Node> nodes = Sets.newHashSet();
+    public void test() {
+        Set<Node> nodes = new HashSet<>();
 
         NodeImpl node1 = new NodeImpl();
         nodes.add(node1);
@@ -41,7 +39,7 @@ public class TopologicalSortTest {
 
     @Test
     public void testValidSimple() throws Exception {
-        Set<Node> nodes = Sets.newHashSet();
+        Set<Node> nodes = new HashSet<>();
 
         Node node1 = new NodeImpl();
         nodes.add(node1);
@@ -64,5 +62,4 @@ public class TopologicalSortTest {
         assertEquals(node3, sorted.get(2));
         assertEquals(node1, sorted.get(3));
     }
-
 }
