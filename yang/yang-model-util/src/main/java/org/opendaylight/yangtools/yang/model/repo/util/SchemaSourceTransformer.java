@@ -35,7 +35,7 @@ public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D ext
     public interface Transformation<S extends SchemaSourceRepresentation, D extends SchemaSourceRepresentation>
             extends AsyncFunction<S, D> {
         @Override
-        CheckedFuture<D, SchemaSourceException> apply(@Nonnull final S input) throws Exception;
+        CheckedFuture<D, SchemaSourceException> apply(@Nonnull S input) throws Exception;
     }
 
     private final Map<PotentialSchemaSource<?>, RefcountedRegistration> sources = new HashMap<>();

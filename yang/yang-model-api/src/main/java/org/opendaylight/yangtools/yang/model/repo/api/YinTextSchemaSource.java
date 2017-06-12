@@ -78,7 +78,7 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
      * @param toStringHelper ToStringHelper onto the attributes can be added
      * @return ToStringHelper supplied as input argument.
      */
-    protected abstract ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper);
+    protected abstract ToStringHelper addToStringAttributes(ToStringHelper toStringHelper);
 
     /**
      * Create a new YinTextSchemaSource with a specific source identifier and backed

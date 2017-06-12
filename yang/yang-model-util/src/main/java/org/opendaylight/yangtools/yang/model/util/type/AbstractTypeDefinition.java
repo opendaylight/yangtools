@@ -52,5 +52,5 @@ abstract class AbstractTypeDefinition<T extends TypeDefinition<T>> implements Im
     public abstract int hashCode();
 
     @Override
-    public abstract boolean equals(final Object obj);
+    public abstract boolean equals(Object obj);
 }

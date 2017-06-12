@@ -24,7 +24,7 @@ abstract class AbstractNamespaceCodec {
      * @param namespace Namespace to map
      * @return Allocated unique prefix, or null if the prefix cannot be mapped.
      */
-    @Nullable protected abstract String prefixForNamespace(@Nonnull final URI namespace);
+    @Nullable protected abstract String prefixForNamespace(@Nonnull URI namespace);
 
     /**
      * Create a QName for a prefix and local name.
@@ -34,7 +34,7 @@ abstract class AbstractNamespaceCodec {
      * @return QName
      * @throws IllegalArgumentException if the prefix cannot be resolved
      */
-    @Nullable protected abstract QName createQName(@Nonnull final String prefix, @Nonnull final String localName);
+    @Nullable protected abstract QName createQName(@Nonnull String prefix, @Nonnull String localName);
 
     private static String getIdAndPrefixAsStr(final String pathPart) {
         int predicateStartIndex = pathPart.indexOf('[');

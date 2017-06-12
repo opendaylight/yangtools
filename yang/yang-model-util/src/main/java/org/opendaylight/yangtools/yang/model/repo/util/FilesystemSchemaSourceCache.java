@@ -227,7 +227,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
             storeAsType(file, supportedType.cast(schemaSourceRepresentation));
         }
 
-        protected abstract void storeAsType(final File file, final T cast);
+        protected abstract void storeAsType(File file, T cast);
 
         public T restore(final SourceIdentifier sourceIdentifier, final File cachedSource) {
             Preconditions.checkArgument(cachedSource.isFile());
@@ -236,7 +236,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
             return restoreAsType(sourceIdentifier, cachedSource);
         }
 
-        protected abstract T restoreAsType(final SourceIdentifier sourceIdentifier, final File cachedSource);
+        protected abstract T restoreAsType(SourceIdentifier sourceIdentifier, File cachedSource);
     }
 
     private static final class YangTextSchemaStorageAdapter extends StorageAdapter<YangTextSchemaSource> {
@@ -247,7 +247,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
 
         @Override
         protected void storeAsType(final File file, final YangTextSchemaSource cast) {
-            try (final InputStream castStream = cast.openStream()) {
+            try (InputStream castStream = cast.openStream()) {
                 Files.copy(castStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (final IOException e) {
                 throw new IllegalStateException("Cannot store schema source " + cast.getIdentifier() + " to " + file,

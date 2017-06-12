@@ -78,7 +78,7 @@ public interface SchemaContext extends ContainerSchemaNode {
      *         value is returned.
      *
      */
-    Module findModuleByName(final String name, final Date revision);
+    Module findModuleByName(String name, Date revision);
 
     /**
      * Returns module instance (from the context) with concrete namespace.

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collections;
@@ -75,7 +74,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
         return Collections.singleton(identifier.getNodeType());
     }
 
-    @Nullable public abstract DataSchemaContextNode<?> getChild(final PathArgument child);
+    @Nullable public abstract DataSchemaContextNode<?> getChild(PathArgument child);
 
     @Nullable public abstract DataSchemaContextNode<?> getChild(QName child);
 

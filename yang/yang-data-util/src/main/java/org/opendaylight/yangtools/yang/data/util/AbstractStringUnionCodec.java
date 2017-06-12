@@ -27,7 +27,7 @@ public abstract class AbstractStringUnionCodec implements Codec<String, Object> 
         this.typeDefinition = Preconditions.checkNotNull(typeDefinition);
     }
 
-    protected abstract Codec<String, Object> codecFor(final TypeDefinition<?> type);
+    protected abstract Codec<String, Object> codecFor(TypeDefinition<?> type);
 
     @Override
     @SuppressWarnings("checkstyle:illegalCatch")

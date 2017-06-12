@@ -35,6 +35,7 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
         }
 
         @Override
+        @SuppressWarnings("checkstyle:equalsHashCode")
         public int hashCode() {
             return 0;
         }
@@ -149,6 +150,7 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
     public abstract int hashCode();
 
     @Override
+    @SuppressWarnings("checkstyle:equalsHashCode")
     public final boolean equals(final Object obj) {
         if (obj == this) {
             return true;
@@ -189,6 +191,7 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
         }
 
         @Override
+        @SuppressWarnings("checkstyle:equalsHashCode")
         public int hashCode() {
             return getElement().hashCode();
         }

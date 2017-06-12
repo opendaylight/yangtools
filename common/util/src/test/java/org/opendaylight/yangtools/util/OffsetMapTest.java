@@ -755,7 +755,7 @@ public class OffsetMapTest {
         final Map<String, String> source = createMap();
 
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try (final ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(bos)) {
             oos.writeObject(source);
         }
 

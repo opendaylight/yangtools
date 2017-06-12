@@ -117,12 +117,12 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         return SchemalessXMLStreamNormalizedNodeStreamWriter.newInstance(writer);
     }
 
-    abstract void writeValue(final XMLStreamWriter xmlWriter, final QName qname,
-            @Nonnull final Object value, T context) throws IOException, XMLStreamException;
+    abstract void writeValue(XMLStreamWriter xmlWriter, QName qname, @Nonnull Object value, T context)
+            throws IOException, XMLStreamException;
 
-    abstract void startList(final NodeIdentifier name);
+    abstract void startList(NodeIdentifier name);
 
-    abstract void startListItem(final PathArgument name) throws IOException;
+    abstract void startListItem(PathArgument name) throws IOException;
 
     private void writeAttributes(@Nonnull final Map<QName, String> attributes) throws IOException {
         for (final Entry<QName, String> entry : attributes.entrySet()) {

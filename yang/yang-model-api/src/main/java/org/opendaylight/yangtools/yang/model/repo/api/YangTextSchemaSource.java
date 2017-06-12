@@ -138,5 +138,5 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @param toStringHelper ToStringHelper onto the attributes can be added
      * @return ToStringHelper supplied as input argument.
      */
-    protected abstract ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper);
+    protected abstract ToStringHelper addToStringAttributes(ToStringHelper toStringHelper);
 }

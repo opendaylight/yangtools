@@ -41,7 +41,7 @@ public abstract class AbstractNodeDataWithSchema {
      * @param writer Target writer
      * @throws IOException reported when thrown by the writer.
      */
-    public abstract void write(final NormalizedNodeStreamWriter writer) throws IOException;
+    public abstract void write(NormalizedNodeStreamWriter writer) throws IOException;
 
     protected final NodeIdentifier provideNodeIdentifier() {
         return NodeIdentifier.create(schema.getQName());

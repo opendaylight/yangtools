@@ -146,7 +146,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
      * @param toStringHelper ToStringHelper onto the attributes can be added
      * @return ToStringHelper supplied as input argument.
      */
-    protected abstract ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper);
+    protected abstract ToStringHelper addToStringAttributes(ToStringHelper toStringHelper);
 
     static DOMSource transformSource(final Source source) throws TransformerException {
         final DOMResult result = new DOMResult();

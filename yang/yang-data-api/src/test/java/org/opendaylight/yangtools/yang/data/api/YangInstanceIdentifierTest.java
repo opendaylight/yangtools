@@ -368,13 +368,13 @@ public class YangInstanceIdentifierTest {
     private static YangInstanceIdentifier serdes(final YangInstanceIdentifier id) throws IOException,
             ClassNotFoundException {
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try (final ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(bos)) {
             oos.writeObject(id);
         }
 
         final byte[] bytes = bos.toByteArray();
         final ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-        try (final ObjectInputStream ois = new ObjectInputStream(bis)) {
+        try (ObjectInputStream ois = new ObjectInputStream(bis)) {
             final YangInstanceIdentifier ret = (YangInstanceIdentifier) ois.readObject();
             assertEquals(0, ois.available());
             return ret;

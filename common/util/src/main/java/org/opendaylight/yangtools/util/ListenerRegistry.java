@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.util;
 
-
 import java.util.Collections;
 import java.util.EventListener;
 import java.util.Set;
@@ -15,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
 import org.opendaylight.yangtools.concepts.ListenerRegistration;
-
 
 public class ListenerRegistry<T extends EventListener> implements Iterable<ListenerRegistration<T>> {
 
