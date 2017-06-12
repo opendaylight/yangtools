@@ -194,6 +194,11 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
+        public Set<NotificationDefinition> getNotifications() {
+            return ImmutableSet.of(notification);
+        }
+
+        @Override
         public Set<AugmentationSchema> getAvailableAugmentations() {
             return notification.getAvailableAugmentations();
         }
