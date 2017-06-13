@@ -16,7 +16,7 @@ import java.util.Iterator;
 import javax.xml.namespace.NamespaceContext;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StmtContextUtils;
 
 /**
  * A {@link NamespaceContext} implementation based on the set of imports and local module namespace.

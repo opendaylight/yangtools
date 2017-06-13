@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StmtContextUtils;
 
 public final class AugmentEffectiveStatementImpl extends
         AbstractEffectiveDocumentedDataNodeContainer<SchemaNodeIdentifier, AugmentStatement> implements

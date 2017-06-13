@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.YangDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StmtContextUtils;
 
 /**
  * Effective statement representation of 'yang-data' extension defined in https://tools.ietf.org/html/rfc8040#section-8
