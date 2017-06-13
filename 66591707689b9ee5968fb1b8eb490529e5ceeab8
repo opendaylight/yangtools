@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1af78d9a_0a4b4e5a",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/TopologicalSort.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-06-13T08:09:50Z",
+      "side": 1,
+      "message": "Please fix this comment..",
+      "range": {
+        "startLine": 22,
+        "startChar": 22,
+        "endLine": 22,
+        "endChar": 32
+      },
+      "revId": "66591707689b9ee5968fb1b8eb490529e5ceeab8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
