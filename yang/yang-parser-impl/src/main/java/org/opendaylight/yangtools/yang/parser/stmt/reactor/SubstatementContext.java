@@ -46,6 +46,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespac
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -324,7 +325,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         if (parentIsInYangDataExtensionBody) {
             isInYangDataExtensionBody = parentIsInYangDataExtensionBody;
         } else {
-            isInYangDataExtensionBody = StmtContextUtils.hasYangDataExtensionParent(this);
+            isInYangDataExtensionBody = Utils.hasYangDataExtensionParent(this);
         }
 
         wasCheckedIfInYangDataExtensionBody = true;

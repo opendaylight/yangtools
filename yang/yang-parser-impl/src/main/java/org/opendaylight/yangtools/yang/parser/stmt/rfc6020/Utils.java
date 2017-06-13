@@ -302,4 +302,30 @@ public final class Utils {
     public static boolean belongsToTheSameModule(final QName targetStmtQName, final QName sourceStmtQName) {
         return targetStmtQName.getModule().equals(sourceStmtQName.getModule());
     }
+
+    public static boolean isInExtensionBody(final StmtContext<?, ?, ?> stmtCtx) {
+        StmtContext<?, ?, ?> current = stmtCtx;
+        while (current.getParentContext().getParentContext() != null) {
+            current = current.getParentContext();
+            if (StmtContextUtils.producesDeclared(current, UnknownStatementImpl.class)) {
+                return true;
+            }
+        }
+    
+        return false;
+    }
+
+    /**
+     * Checks if the statement context has a 'yang-data' extension node as its parent.
+     *
+     * @param stmtCtx statement context to be checked
+     * @return true if the parent node is a 'yang-data' node, otherwise false
+     */
+    public static boolean hasYangDataExtensionParent(final StmtContext<?, ?, ?> stmtCtx) {
+        return StmtContextUtils.producesDeclared(stmtCtx.getParentContext(), YangDataStatementImpl.class);
+    }
+
+    public static boolean isUnknownStatement(final StmtContext<?, ?, ?> stmtCtx) {
+        return StmtContextUtils.producesDeclared(stmtCtx, UnknownStatementImpl.class);
+    }
 }

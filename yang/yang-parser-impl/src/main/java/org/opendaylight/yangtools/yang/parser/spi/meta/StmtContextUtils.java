@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
@@ -45,8 +46,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangDataStatementImpl;
 
 public final class StmtContextUtils {
     public static final Splitter LIST_KEY_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
@@ -204,32 +203,6 @@ public final class StmtContextUtils {
     public static boolean producesDeclared(final StmtContext<?, ?, ?> ctx,
             final Class<? extends DeclaredStatement<?>> type) {
         return type.isAssignableFrom(ctx.getPublicDefinition().getDeclaredRepresentationClass());
-    }
-
-    public static boolean isInExtensionBody(final StmtContext<?, ?, ?> stmtCtx) {
-        StmtContext<?, ?, ?> current = stmtCtx;
-        while (current.getParentContext().getParentContext() != null) {
-            current = current.getParentContext();
-            if (producesDeclared(current, UnknownStatementImpl.class)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Checks if the statement context has a 'yang-data' extension node as its parent.
-     *
-     * @param stmtCtx statement context to be checked
-     * @return true if the parent node is a 'yang-data' node, otherwise false
-     */
-    public static boolean hasYangDataExtensionParent(final StmtContext<?, ?, ?> stmtCtx) {
-        return producesDeclared(stmtCtx.getParentContext(), YangDataStatementImpl.class);
-    }
-
-    public static boolean isUnknownStatement(final StmtContext<?, ?, ?> stmtCtx) {
-        return producesDeclared(stmtCtx, UnknownStatementImpl.class);
     }
 
     public static Collection<SchemaNodeIdentifier> replaceModuleQNameForKey(
@@ -507,9 +480,8 @@ public final class StmtContextUtils {
             localName = namesParts[1];
             qNameModule = StmtContextUtils.getModuleQNameByPrefix(ctx, prefix);
             // in case of unknown statement argument, we're not going to parse it
-            if (qNameModule == null
-                    && ctx.getPublicDefinition().getDeclaredRepresentationClass()
-                    .isAssignableFrom(UnknownStatementImpl.class)) {
+            if (qNameModule == null && UnknownStatement.class
+                    .isAssignableFrom(ctx.getPublicDefinition().getDeclaredRepresentationClass())) {
                 localName = value;
                 qNameModule = StmtContextUtils.getRootModuleQName(ctx);
             }
@@ -604,7 +576,6 @@ public final class StmtContextUtils {
     }
 
     public static boolean isUnknownNode(final StmtContext<?, ?, ?> stmtCtx) {
-        return stmtCtx != null && stmtCtx.getPublicDefinition().getDeclaredRepresentationClass()
-                .isAssignableFrom(UnknownStatementImpl.class);
+        return stmtCtx != null && UnknownStatement.class.isAssignableFrom(stmtCtx.getPublicDefinition().getDeclaredRepresentationClass());
     }
 }
