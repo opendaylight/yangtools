@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
-import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
@@ -39,6 +38,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StmtOrderingNamespace;
@@ -175,7 +175,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                     if (YangStmtMapping.USES == augmentNode.getParentContext().getPublicDefinition()) {
                         final StatementContextBase<?, ?, ?> targetNode = Utils.findNode(getSearchRoot(augmentNode),
                                 augmentNode.getStatementArgument());
-                        if (StmtContextUtils.isUnknownNode(targetNode)) {
+                        if (StmtContextUtils.isUnknownStatement(targetNode)) {
                             augmentNode.setIsSupportedToBuildEffective(false);
                             LOG.warn(
                                     "Uses-augment to unknown node {}. Augmentation has not been performed. At line: {}",

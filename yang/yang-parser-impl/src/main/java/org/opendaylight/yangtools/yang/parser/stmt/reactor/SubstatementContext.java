@@ -224,7 +224,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         Verify.verify(maybeParentPath.isPresent(), "Parent %s does not have a SchemaPath", parent);
         final SchemaPath parentPath = maybeParentPath.get();
 
-        if (StmtContextUtils.isUnknownNode(this)) {
+        if (StmtContextUtils.isUnknownStatement(this)) {
             return parentPath.createChild(getPublicDefinition().getStatementName());
         }
         if (argument instanceof QName) {
