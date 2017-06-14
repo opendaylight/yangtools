@@ -48,6 +48,30 @@
     },
     {
       "key": {
+        "uuid": "1af78d9a_128d387c",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-06-14T16:50:18Z",
+      "side": 1,
+      "message": "Part of the solution may be introducing an \u0027UnrecognizedStatement extends UnknownStatement\u003cString\u003e\u0027 or similar at the parser.spi level and have that interface with ModelDefinedStatement somehow (that part is still messy).",
+      "parentUuid": "1af78d9a_571df272",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 72
+      },
+      "revId": "d696027e6a81c80a0ead6d4594813d2a60c575e6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1af78d9a_37066621",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/SubstatementValidator.java",
         "patchSetId": 12
