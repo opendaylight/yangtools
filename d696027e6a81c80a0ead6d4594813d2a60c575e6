@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1af78d9a_37582656",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/YangDataStatement.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-06-14T16:36:15Z",
+      "side": 1,
+      "message": "I don\u0027t think this will really scale, as it creates an architectural hotspot -- how do we expose these through SchemaContext without having to invent ever-newer methods?\n\nIn principle we have UnknownStatement\u003cS\u003e, which really stands for \u0027this is something outside of the base specification\u0027, which I think YangDataStatement should extend (and thus YangDataStatements are automatically available via getUnknownNodes()).\n\nWe also have parser-internal UnknownStatementImpl, which really stands for \u0027this is something the parser reactor as configured does not understand\u0027.\n\nSee the other comment for why this is important.",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 19,
+        "endChar": 68
+      },
+      "revId": "d696027e6a81c80a0ead6d4594813d2a60c575e6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1af78d9a_571df272",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-06-14T16:36:15Z",
+      "side": 1,
+      "message": "Continuing the comment, this is where it becomes important.\n\nThe equivalent of what YangDataStatement does should be achievable via a pure third-party extension, without making changes across the stack.\n\nI do not have an immediate answer for what to exactly do here -- we need to figure out why we are forced to even known of YangDataStatement here and what other options we have in addressing the concerns without polluting this class with that extension.\n\nUntil we do, we must not pollute model.api.stmt and it is preferable to have this class tangled to YangDataStatementImpl.",
+      "range": {
+        "startLine": 41,
+        "startChar": 0,
+        "endLine": 41,
+        "endChar": 72
+      },
+      "revId": "d696027e6a81c80a0ead6d4594813d2a60c575e6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
