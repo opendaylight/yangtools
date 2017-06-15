@@ -3,12 +3,9 @@
     <yang-version value="1.1"></yang-version>
     <namespace uri="anydata"></namespace>
     <prefix value="ad"></prefix>
-    <revision date="1970-01-01"></revision>
     <extension name="my-ext">
         <argument name="my-arg">
-            <yin-element value="false"></yin-element>
         </argument>
-        <status value="current"></status>
     </extension>
     <anydata name="my-anydata">
         <when condition="1!=0"></when>

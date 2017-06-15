@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  * Common interface for action and rpc statements.
  */
 @Beta
-public interface OperationGroup extends DocumentationGroup.WithStatus {
+public interface OperationGroup extends DocumentationGroup.WithStatus, ConditionalFeature {
 
     QName getName();
 

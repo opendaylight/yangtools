@@ -3,20 +3,15 @@
     <yang-version value="1.1"></yang-version>
     <namespace uri="default"></namespace>
     <prefix value="def"></prefix>
-    <revision date="1970-01-01"></revision>
     <leaf-list name="my-leaflist-1">
         <type name="string"></type>
-        <config value="true"></config>
         <default value="def-val-1"></default>
         <default value="def-val-2"></default>
         <default value="def-val-3"></default>
-        <ordered-by value="system"></ordered-by>
-        <status value="current"></status>
+        <ordered-by value="user"></ordered-by>
     </leaf-list>
     <leaf-list name="my-leaflist-2">
         <type name="string"></type>
-        <config value="true"></config>
-        <ordered-by value="system"></ordered-by>
-        <status value="current"></status>
+        <status value="deprecated"></status>
     </leaf-list>
 </module>
