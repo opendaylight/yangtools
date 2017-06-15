@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.leafref;
 
 import java.io.IOException;
 import java.io.InputStream;
-import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefPathParser.Path_argContext;
@@ -43,7 +43,7 @@ final class LeafRefPathParserImpl {
 
 
     private Path_argContext parseLeafRefPathSource(final InputStream stream) throws IOException, LeafRefYangSyntaxErrorException {
-        final LeafRefPathLexer lexer = new LeafRefPathLexer(new ANTLRInputStream(stream));
+        final LeafRefPathLexer lexer = new LeafRefPathLexer(CharStreams.fromStream(stream));
         final CommonTokenStream tokens = new CommonTokenStream(lexer);
         final LeafRefPathParser parser = new LeafRefPathParser(tokens);
         parser.removeErrorListeners();

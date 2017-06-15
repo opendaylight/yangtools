@@ -12,7 +12,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.io.InputStream;
-import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -146,7 +146,7 @@ public final class YangStatementStreamSource implements Identifiable<SourceIdent
     @Deprecated
     public static StatementContext parseYangSource(final InputStream stream) throws IOException,
             YangSyntaxErrorException {
-        final YangStatementLexer lexer = new YangStatementLexer(new ANTLRInputStream(stream));
+        final YangStatementLexer lexer = new YangStatementLexer(CharStreams.fromStream(stream));
         final CommonTokenStream tokens = new CommonTokenStream(lexer);
         final YangStatementParser parser = new YangStatementParser(tokens);
         //disconnect from console error output

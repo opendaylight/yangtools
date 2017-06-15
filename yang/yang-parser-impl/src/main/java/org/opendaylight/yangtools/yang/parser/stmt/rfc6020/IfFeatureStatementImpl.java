@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import com.google.common.base.Preconditions;
 import java.util.Set;
 import java.util.function.Predicate;
-import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.opendaylight.yangtools.antlrv4.code.gen.IfFeatureExpressionLexer;
 import org.opendaylight.yangtools.antlrv4.code.gen.IfFeatureExpressionParser;
@@ -79,7 +79,7 @@ public class IfFeatureStatementImpl extends AbstractDeclaredStatement<Predicate<
         }
 
         private static Predicate<Set<QName>> parseIfFeatureExpression(final StmtContext<?, ?, ?> ctx, final String value) {
-            final IfFeatureExpressionLexer lexer = new IfFeatureExpressionLexer(new ANTLRInputStream(value));
+            final IfFeatureExpressionLexer lexer = new IfFeatureExpressionLexer(CharStreams.fromString(value));
             final CommonTokenStream tokens = new CommonTokenStream(lexer);
             final IfFeatureExpressionParser parser = new IfFeatureExpressionParser(tokens);
 
