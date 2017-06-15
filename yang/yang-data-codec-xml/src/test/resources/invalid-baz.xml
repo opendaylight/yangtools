@@ -1,40 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root xmlns="baz-namespace">
-    <outer-container>
-        <my-container-1>
-            <my-keyed-list>
-                <my-key-leaf>listkeyvalue1</my-key-leaf>
-                <my-leaf-in-list-1>listleafvalue1</my-leaf-in-list-1>
-                <my-leaf-in-list-2>listleafvalue2</my-leaf-in-list-2>
-            </my-keyed-list>
+<outer-container xmlns="baz-namespace">
+    <my-container-1>
+        <my-keyed-list>
+            <my-key-leaf>listkeyvalue1</my-key-leaf>
+            <my-leaf-in-list-1>listleafvalue1</my-leaf-in-list-1>
+            <my-leaf-in-list-2>listleafvalue2</my-leaf-in-list-2>
+        </my-keyed-list>
 
-            <my-keyed-list>
-                <my-key-leaf>listkeyvalue2</my-key-leaf>
-                <my-leaf-in-list-1>listleafvalue12</my-leaf-in-list-1>
-                <my-leaf-in-list-2>listleafvalue22</my-leaf-in-list-2>
-            </my-keyed-list>
+        <my-keyed-list>
+            <my-key-leaf>listkeyvalue2</my-key-leaf>
+            <my-leaf-in-list-1>listleafvalue12</my-leaf-in-list-1>
+            <my-leaf-in-list-2>listleafvalue22</my-leaf-in-list-2>
+        </my-keyed-list>
 
-            <my-leaf-1>value1<my-leaf-1>
+        <my-leaf-1>value1<my-leaf-1>
 
-            <my-leaf-list>lflvalue1</my-leaf-list>
-            <my-leaf-list>lflvalue2</my-leaf-list>
-        </my-container-1>
+        <my-leaf-list>lflvalue1</my-leaf-list>
+        <my-leaf-list>lflvalue2</my-leaf-list>
+    </my-container-1>
 
-        <my-container-2>
-            <inner-container>
-                <my-leaf-2>value2</my-leaf-2>
-            </inner-container>
-            <my-leaf-3>value3</my-leaf-3>
-            <my-leaf-in-case-2>case2value</my-leaf-in-case-2>
-        </my-container-2>
+    <my-container-2>
+        <inner-container>
+            <my-leaf-2>value2</my-leaf-2>
+        </inner-container>
+        <my-leaf-3>value3</my-leaf-3>
+        <my-leaf-in-case-2>case2value</my-leaf-in-case-2>
+    </my-container-2>
 
-        <my-container-3>
-            <my-doubly-keyed-list>
-                <my-first-key-leaf>listkeyvalue1</my-first-key-leaf>
-                <my-second-key-leaf>listkeyvalue2</my-second-key-leaf>
-                <my-leaf-in-list-3>listleafvalue3</my-leaf-in-list-3>
-            </my-doubly-keyed-list>
-        </my-container-3>
-    </outer-container>
-</root>
+    <my-container-3>
+        <my-doubly-keyed-list>
+            <my-first-key-leaf>listkeyvalue1</my-first-key-leaf>
+            <my-second-key-leaf>listkeyvalue2</my-second-key-leaf>
+            <my-leaf-in-list-3>listleafvalue3</my-leaf-in-list-3>
+        </my-doubly-keyed-list>
+    </my-container-3>
+</outer-container>

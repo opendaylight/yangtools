@@ -11,9 +11,9 @@ import java.io.IOException;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 
-final class YangModeledAnyXmlNodeDataWithSchema extends CompositeNodeDataWithSchema {
+public final class YangModeledAnyXmlNodeDataWithSchema extends CompositeNodeDataWithSchema {
 
-    YangModeledAnyXmlNodeDataWithSchema(final YangModeledAnyXmlSchemaNode yangModeledAnyXml) {
+    public YangModeledAnyXmlNodeDataWithSchema(final YangModeledAnyXmlSchemaNode yangModeledAnyXml) {
         super(yangModeledAnyXml);
     }
 
