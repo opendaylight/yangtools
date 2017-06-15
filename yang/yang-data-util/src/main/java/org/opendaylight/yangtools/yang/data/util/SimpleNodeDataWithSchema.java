@@ -9,6 +9,13 @@ package org.opendaylight.yangtools.yang.data.util;
 
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
+/**
+ * Utility class used for tracking parser state as needed by a StAX-like parser.
+ * This class is to be used only by respective XML and JSON parsers in yang-data-codec-xml and yang-data-codec-gson.
+ *
+ * <p>
+ * Represents a simple node with value (anyxml, leaf, leaf-list entry).
+ */
 public abstract class SimpleNodeDataWithSchema extends AbstractNodeDataWithSchema {
 
     private Object value;
