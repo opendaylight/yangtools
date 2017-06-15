@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1af78d9a_9cd01a55",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/ParserStreamUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-06-15T08:05:53Z",
+      "side": 1,
+      "message": "According to RFC7950 (https://tools.ietf.org/html/rfc7950#section-6.2.1 bullet 7) notifications share namespace with data, hence we really should have DataNodeContainer\u0027s getDataChildByName() as a shared method.\n\nThat way we can use direct lookups and not special-case the access.",
+      "range": {
+        "startLine": 44,
+        "startChar": 0,
+        "endLine": 58,
+        "endChar": 9
+      },
+      "revId": "834e9ae3683ea233d21c065010a91ebef002f97a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
