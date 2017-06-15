@@ -3,18 +3,12 @@
     <yang-version value="1.1"></yang-version>
     <namespace uri="action"></namespace>
     <prefix value="ac"></prefix>
-    <revision date="1970-01-01"></revision>
     <extension name="my-ext">
-        <argument name="my-arg">
-            <yin-element value="false"></yin-element>
-        </argument>
-        <status value="current"></status>
+        <argument name="my-arg"></argument>
     </extension>
     <container name="root">
-        <presence value="false"></presence>
-        <config value="true"></config>
-        <status value="current"></status>
         <action name="a">
+            <if-feature name="my-feature-1 or my-feature-2"></if-feature>
             <status value="deprecated"></status>
             <description>
                 <text>decs</text>
@@ -24,29 +18,15 @@
             </reference>
             <typedef name="my-type">
                 <type name="string"></type>
-                <status value="current"></status>
             </typedef>
             <grouping name="my-grp">
-                <status value="current"></status>
-                <container name="con-in-grp">
-                    <presence value="false"></presence>
-                    <config value="true"></config>
-                    <status value="current"></status>
-                </container>
+                <container name="con-in-grp"></container>
             </grouping>
             <input>
-                <container name="i">
-                    <presence value="false"></presence>
-                    <config value="true"></config>
-                    <status value="current"></status>
-                </container>
+                <container name="i"></container>
             </input>
             <output>
-                <container name="o">
-                    <presence value="false"></presence>
-                    <config value="true"></config>
-                    <status value="current"></status>
-                </container>
+                <container name="o"></container>
             </output>
             <ac:my-ext ac:my-arg="arg-val"></ac:my-ext>
         </action>

@@ -5,7 +5,14 @@ module modifier-yang1 {
 
     leaf my-leaf {
         type string {
-            pattern ".*";
+            length 0..2 {
+                error-message "Error message length";
+                error-app-tag "length-out";
+            }
+            pattern ".*" {
+                error-message "Error message pattern";
+                error-app-tag "regex-err";
+            }
         }
     }
 }
