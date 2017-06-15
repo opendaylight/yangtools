@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 /**
  * Utility abstract class for tracking parser state, as needed by StAX-like parser.
+ * This class is to be used only by respective XML and JSON parsers in yang-data-codec-xml and yang-data-codec-gson.
  */
 @Beta
 public abstract class AbstractNodeDataWithSchema {
