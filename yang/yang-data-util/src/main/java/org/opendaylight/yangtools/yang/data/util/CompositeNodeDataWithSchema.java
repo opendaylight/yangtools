@@ -34,7 +34,11 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 
 /**
- * A node which is composed of multiple simpler nodes.
+ * Utility class used for tracking parser state as needed by a StAX-like parser.
+ * This class is to be used only by respective XML and JSON parsers in yang-data-codec-xml and yang-data-codec-gson.
+ *
+ * <p>
+ * Represents a node which is composed of multiple simpler nodes.
  */
 public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
 

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<root xmlns="bar">
+<my-anyxml-data xmlns="bar">
     <my-container-1>
         <my-leaf-1>value1</my-leaf-1>
     </my-container-1>
     <my-container-2>
         <my-leaf-2>value2</my-leaf-2>
     </my-container-2>
-</root>
+</my-anyxml-data>

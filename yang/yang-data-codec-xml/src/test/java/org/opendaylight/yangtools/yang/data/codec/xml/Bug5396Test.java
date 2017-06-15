@@ -31,6 +31,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -65,6 +67,10 @@ public class Bug5396Test {
 
     private void testInputXML(final String xmlPath, final String expectedValue) throws Exception {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream(xmlPath);
+        final Module fooModule = schemaContext.getModules().iterator().next();
+        final ContainerSchemaNode rootCont = (ContainerSchemaNode) fooModule.getDataChildByName(
+                QName.create(fooModule.getQNameModule(), "root"));
+        assertNotNull(rootCont);
 
         final XMLInputFactory factory = XMLInputFactory.newInstance();
         final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
@@ -73,7 +79,7 @@ public class Bug5396Test {
 
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, rootCont);
         xmlParser.parse(reader);
 
         assertNotNull(result.getResult());

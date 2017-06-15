@@ -1,8 +1,6 @@
-<root xmlns="urn:opendaylight:params:xml:ns:yang:controller:test">
-    <container>
-        <case11-choice-case-container>
-            <case11-choice-case-leaf>leaf-value</case11-choice-case-leaf>
-        </case11-choice-case-container>
-    </container>
-</root>
+<container xmlns="urn:opendaylight:params:xml:ns:yang:controller:test">
+    <case11-choice-case-container>
+        <case11-choice-case-leaf>leaf-value</case11-choice-case-leaf>
+    </case11-choice-case-container>
+</container>
 

@@ -1,14 +1,11 @@
-<root xmlns="urn:opendaylight:params:xml:ns:yang:controller:test">
-    <container>
-        <c22Leaf>2</c22Leaf>
+<container xmlns="urn:opendaylight:params:xml:ns:yang:controller:test">
+    <c22Leaf>2</c22Leaf>
 
-        <c34LeafS>3</c34LeafS>
+    <c34LeafS>3</c34LeafS>
 
-        <augLeaf>augment</augLeaf>
+    <augLeaf>augment</augLeaf>
 
-        <c1Leaf>1</c1Leaf>
-        <c1Leaf_AnotherAugment>1</c1Leaf_AnotherAugment>
-        <deepLeafc2>1</deepLeafc2>
-    </container>
-</root>
-
+    <c1Leaf>1</c1Leaf>
+    <c1Leaf_AnotherAugment>1</c1Leaf_AnotherAugment>
+    <deepLeafc2>1</deepLeafc2>
+</container>
