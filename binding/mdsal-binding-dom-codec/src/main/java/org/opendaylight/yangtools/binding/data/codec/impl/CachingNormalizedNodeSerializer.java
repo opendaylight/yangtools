@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import com.google.common.base.Throwables;
 import java.io.IOException;
 import org.opendaylight.yangtools.yang.binding.BindingSerializer;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
@@ -118,7 +117,7 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
             subtreeRoot.eventStreamSerializer().serialize(data, writer);
             return writer.build();
         } catch (final IOException e) {
-            throw Throwables.propagate(e);
+            throw new RuntimeException(e);
         }
     }
 }

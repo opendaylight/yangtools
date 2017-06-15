@@ -39,17 +39,14 @@ final class EncapsulatedValueCodec extends ReflectionBasedCodec implements Schem
     }
 
     static Callable<EncapsulatedValueCodec> loader(final Class<?> typeClz) {
-        return new Callable<EncapsulatedValueCodec>() {
-            @Override
-            public EncapsulatedValueCodec call() throws IllegalAccessException, NoSuchMethodException, SecurityException {
-                final Method m = typeClz.getMethod("getValue");
-                final MethodHandle getter = LOOKUP.unreflect(m).asType(OBJ_METHOD);
-                final Class<?> valueType = m.getReturnType();
+        return () -> {
+            final Method m = typeClz.getMethod("getValue");
+            final MethodHandle getter = LOOKUP.unreflect(m).asType(OBJ_METHOD);
+            final Class<?> valueType = m.getReturnType();
 
-                final MethodHandle constructor = LOOKUP.findConstructor(typeClz,
-                    MethodType.methodType(void.class, valueType)).asType(OBJ_METHOD);
-                return new EncapsulatedValueCodec(typeClz, constructor, getter, valueType);
-            }
+            final MethodHandle constructor = LOOKUP.findConstructor(typeClz,
+                MethodType.methodType(void.class, valueType)).asType(OBJ_METHOD);
+            return new EncapsulatedValueCodec(typeClz, constructor, getter, valueType);
         };
     }
 
@@ -68,7 +65,8 @@ final class EncapsulatedValueCodec extends ReflectionBasedCodec implements Schem
         try {
             return constructor.invokeExact(input);
         } catch (Throwable e) {
-            throw Throwables.propagate(e);
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -77,7 +75,8 @@ final class EncapsulatedValueCodec extends ReflectionBasedCodec implements Schem
         try {
             return getter.invokeExact(input);
         } catch (Throwable e) {
-            throw Throwables.propagate(e);
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
         }
     }
 }

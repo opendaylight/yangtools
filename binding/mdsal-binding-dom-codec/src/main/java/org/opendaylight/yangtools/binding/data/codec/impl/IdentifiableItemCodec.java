@@ -15,7 +15,6 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,7 +98,8 @@ final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates,
         try {
             identifier = (Identifier<?>) ctorInvoker.invokeExact(ctor, bindingValues);
         } catch (Throwable e) {
-            throw Throwables.propagate(e);
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
         }
 
         @SuppressWarnings({ "rawtypes", "unchecked" })

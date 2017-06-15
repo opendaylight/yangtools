@@ -287,7 +287,7 @@ abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeCon
          */
         @SuppressWarnings("rawtypes")
         final Class<?> augTarget = BindingReflections.findAugmentationTarget((Class) childClass);
-        if ((getBindingClass().equals(augTarget))) {
+        if (getBindingClass().equals(augTarget)) {
             for (final DataContainerCodecPrototype<?> realChild : byStreamAugmented.values()) {
                 if (Augmentation.class.isAssignableFrom(realChild.getBindingClass())
                         && BindingReflections.isSubstitutionFor(childClass, realChild.getBindingClass())) {
@@ -333,7 +333,8 @@ abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeCon
         try {
             return (D) proxyConstructor.invokeExact((InvocationHandler)new LazyDataObject<>(this, node));
         } catch (final Throwable e) {
-            throw Throwables.propagate(e);
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
         }
     }
 

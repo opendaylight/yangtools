@@ -37,7 +37,8 @@ final class ValueContext {
         try {
             value = getter.invokeExact(obj);
         } catch (Throwable e) {
-            throw Throwables.propagate(e);
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
         }
 
         Preconditions.checkArgument(value != null,
