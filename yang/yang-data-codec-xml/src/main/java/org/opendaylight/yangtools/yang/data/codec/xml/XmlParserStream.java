@@ -28,10 +28,12 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.ContainerNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafListEntryNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafNodeDataWithSchema;
@@ -40,8 +42,12 @@ import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.RpcAsContainer;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.YangModeledAnyXmlNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -54,7 +60,9 @@ import org.xml.sax.SAXException;
 /**
  * This class provides functionality for parsing an XML source containing YANG-modeled data. It disallows multiple
  * instances of the same element except for leaf-list and list entries. It also expects that the YANG-modeled data in
- * the XML source are wrapped in a root element.
+ * the XML source have one parent node that corresponds to the SchemaNode parameter in the factory methods
+ * {@link #create(NormalizedNodeStreamWriter, SchemaContext, SchemaNode)}
+ * and {@link #create(NormalizedNodeStreamWriter, XmlCodecFactory, SchemaNode)}.
  */
 @Beta
 @NotThreadSafe
@@ -129,10 +137,35 @@ public final class XmlParserStream implements Closeable, Flushable {
     public XmlParserStream parse(final XMLStreamReader reader) throws XMLStreamException, URISyntaxException,
             IOException, ParserConfigurationException, SAXException {
         if (reader.hasNext()) {
-            final CompositeNodeDataWithSchema compositeNodeDataWithSchema = new CompositeNodeDataWithSchema(parentNode);
             reader.nextTag();
-            read(reader, compositeNodeDataWithSchema, reader.getLocalName());
-            compositeNodeDataWithSchema.write(writer);
+            final QName parentNodeQName = parentNode.getQName();
+            Preconditions.checkState(reader.getLocalName().equals(parentNodeQName.getLocalName())
+                    && reader.getNamespaceURI().equals(parentNodeQName.getNamespace().toString()),
+                    "Schema for node with name %s and namespace %s doesn't exist.", reader.getLocalName(),
+                    reader.getNamespaceURI());
+            final AbstractNodeDataWithSchema nodeDataWithSchema;
+            if (parentNode instanceof ContainerSchemaNode) {
+                nodeDataWithSchema = new ContainerNodeDataWithSchema(parentNode);
+            } else if (parentNode instanceof ListSchemaNode) {
+                // list should not be used as the root element because its XML representation does not have a wrapper
+                // element for individual list entries and thus the XML document could end up with several root elements
+                // which is not allowed. Despite this fact, we still support it as the netconf/restconf projects have
+                // already been processing YANG-modeled XML data with a single list entry root element.
+                nodeDataWithSchema = new ListNodeDataWithSchema(parentNode);
+            } else if (parentNode instanceof YangModeledAnyXmlSchemaNode) {
+                nodeDataWithSchema = new YangModeledAnyXmlNodeDataWithSchema((YangModeledAnyXmlSchemaNode) parentNode);
+            } else if (parentNode instanceof AnyXmlSchemaNode) {
+                nodeDataWithSchema = new AnyXmlNodeDataWithSchema(parentNode);
+            } else if (parentNode instanceof LeafSchemaNode) {
+                nodeDataWithSchema = new LeafNodeDataWithSchema(parentNode);
+            } else {
+                throw new UnsupportedOperationException(String.format(
+                        "%s cannot represent XML root element. Root element can be represented only by "
+                              + "DataSchemaNodes that exist in a single instance in their XML form.", parentNodeQName));
+            }
+
+            read(reader, nodeDataWithSchema);
+            nodeDataWithSchema.write(writer);
         }
 
         return this;
@@ -163,7 +196,7 @@ public final class XmlParserStream implements Closeable, Flushable {
         return sb.toString();
     }
 
-    private void read(final XMLStreamReader in, final AbstractNodeDataWithSchema parent, final String rootElement)
+    private void read(final XMLStreamReader in, final AbstractNodeDataWithSchema parent)
             throws XMLStreamException, URISyntaxException, ParserConfigurationException, SAXException, IOException {
         if (!in.hasNext()) {
             return;
@@ -171,14 +204,23 @@ public final class XmlParserStream implements Closeable, Flushable {
 
         if (parent instanceof LeafNodeDataWithSchema || parent instanceof LeafListEntryNodeDataWithSchema) {
             setValue(parent, in.getElementText().trim(), in.getNamespaceContext());
-            in.nextTag();
+            if (isNextEndDocument(in)) {
+                return;
+            }
+
+            if (!isAtElement(in)) {
+                in.nextTag();
+            }
             return;
         }
 
         if (parent instanceof LeafListNodeDataWithSchema || parent instanceof ListNodeDataWithSchema) {
             String xmlElementName = in.getLocalName();
             while (xmlElementName.equals(parent.getSchema().getQName().getLocalName())) {
-                read(in, newEntryNode(parent), rootElement);
+                read(in, newEntryNode(parent));
+                if (in.getEventType() == XMLStreamConstants.END_DOCUMENT) {
+                    break;
+                }
                 xmlElementName = in.getLocalName();
             }
 
@@ -187,7 +229,14 @@ public final class XmlParserStream implements Closeable, Flushable {
 
         if (parent instanceof AnyXmlNodeDataWithSchema) {
             setValue(parent, readAnyXmlValue(in), in.getNamespaceContext());
-            in.nextTag();
+            if (isNextEndDocument(in)) {
+                return;
+            }
+
+            if (!isAtElement(in)) {
+                in.nextTag();
+            }
+
             return;
         }
 
@@ -196,16 +245,19 @@ public final class XmlParserStream implements Closeable, Flushable {
                 final Set<String> namesakes = new HashSet<>();
                 while (in.hasNext()) {
                     final String xmlElementName = in.getLocalName();
-                    if (rootElement.equals(xmlElementName)) {
-                        break;
-                    }
 
                     DataSchemaNode parentSchema = parent.getSchema();
 
                     final String parentSchemaName = parentSchema.getQName().getLocalName();
                     if (parentSchemaName.equals(xmlElementName)
                             && in.getEventType() == XMLStreamConstants.END_ELEMENT) {
-                        in.nextTag();
+                        if (isNextEndDocument(in)) {
+                            break;
+                        }
+
+                        if (!isAtElement(in)) {
+                            in.nextTag();
+                        }
                         break;
                     }
 
@@ -229,15 +281,30 @@ public final class XmlParserStream implements Closeable, Flushable {
                             "Schema for node with name %s and namespace %s doesn't exist.",
                             xmlElementName, xmlElementNamespace);
 
-                    read(in, ((CompositeNodeDataWithSchema) parent).addChild(childDataSchemaNodes), rootElement);
+                    read(in, ((CompositeNodeDataWithSchema) parent).addChild(childDataSchemaNodes));
                 }
                 break;
             case XMLStreamConstants.END_ELEMENT:
-                in.nextTag();
+                if (isNextEndDocument(in)) {
+                    break;
+                }
+
+                if (!isAtElement(in)) {
+                    in.nextTag();
+                }
                 break;
             default:
                 break;
         }
+    }
+
+    private static boolean isNextEndDocument(final XMLStreamReader in) throws XMLStreamException {
+        return in.next() == XMLStreamConstants.END_DOCUMENT;
+    }
+
+    private static boolean isAtElement(final XMLStreamReader in) {
+        return in.getEventType() == XMLStreamConstants.START_ELEMENT
+                || in.getEventType() == XMLStreamConstants.END_ELEMENT;
     }
 
     private void setValue(final AbstractNodeDataWithSchema parent, final String value, final NamespaceContext nsContext)

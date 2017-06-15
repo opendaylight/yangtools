@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root xmlns="baz-ns">
-    <top-cont>
-        <keyed-list>
-            <empty-key-leaf/>
-            <regular-leaf>150</regular-leaf>
-        </keyed-list>
+<top-cont xmlns="baz-ns">
+    <keyed-list>
+        <empty-key-leaf/>
+        <regular-leaf>150</regular-leaf>
+    </keyed-list>
 
-        <iid-leaf xmlns:baz="baz-ns">/baz:top-cont/baz:keyed-list[baz:empty-key-leaf='']/baz:regular-leaf</iid-leaf>
-    </top-cont>
-</root>
+    <iid-leaf xmlns:baz="baz-ns">/baz:top-cont/baz:keyed-list[baz:empty-key-leaf='']/baz:regular-leaf</iid-leaf>
+</top-cont>

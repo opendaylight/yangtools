@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<top-level-container xmlns="foo">
+    <inner-container-1></inner-container-1><inner-container-2></inner-container-2>
+</top-level-container>
