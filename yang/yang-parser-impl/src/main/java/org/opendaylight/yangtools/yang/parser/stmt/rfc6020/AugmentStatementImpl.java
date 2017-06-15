@@ -23,9 +23,14 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
@@ -409,5 +414,35 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
     @Override
     public final Collection<? extends NotificationStatement> getNotifications() {
         return allDeclared(NotificationStatement.class);
+    }
+
+    @Override
+    public ReferenceStatement getReference() {
+        return firstDeclared(ReferenceStatement.class);
+    }
+
+    @Override
+    public DescriptionStatement getDescription() {
+        return firstDeclared(DescriptionStatement.class);
+    }
+
+    @Override
+    public StatusStatement getStatus() {
+        return firstDeclared(StatusStatement.class);
+    }
+
+    @Override
+    public WhenStatement getWhenStatement() {
+        return firstDeclared(WhenStatement.class);
+    }
+
+    @Override
+    public Collection<? extends CaseStatement> getCases() {
+        return allDeclared(CaseStatement.class);
+    }
+
+    @Override
+    public Collection<? extends IfFeatureStatement> getIfFeatures() {
+        return allDeclared(IfFeatureStatement.class);
     }
 }

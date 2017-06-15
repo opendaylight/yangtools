@@ -151,4 +151,83 @@ interface YangModuleWriter {
 
     void startUniqueNode(UniqueConstraint uniqueConstraint);
 
+    void startRevisionNode(String rawArgument);
+
+    void startRevisionDateNode(String rawArgument);
+
+    void startExtensionNode(String rawArgument);
+
+    void startBaseNode(String rawArgument);
+
+    void startFeatureNode(String rawArgument);
+
+    void startYinElementNode(String rawArgument);
+
+    void startIdentityNode(String rawArgument);
+
+    void startTypedefNode(String rawArgument);
+
+    void startRpcNode(String rawArgument);
+
+    void startTypeNode(String rawArgument);
+
+    void startContainerNode(String rawArgument);
+
+    void startPresenceNode(String rawArgument);
+
+    void startStatusNode(String rawArgument);
+
+    void startConfigNode(String rawArgument);
+
+    void startLeafNode(String rawArgument);
+
+    void startWhenNode(String rawArgument);
+
+    void startLeafListNode(String rawArgument);
+
+    void startMustNode(String rawArgument);
+
+    void startMinElementsNode(String rawArgument);
+
+    void startMaxElementsNode(String rawArgument);
+
+    void startListNode(String rawArgument);
+
+    void startKeyNode(String rawArgument);
+
+    void startUniqueNode(String rawArgument);
+
+    void startActionNode(String rawArgument);
+
+    void startChoiceNode(String rawArgument);
+
+    void startMandatoryNode(String rawArgument);
+
+    void startAnyxmlNode(String rawArgument);
+
+    void startCaseNode(String rawArgument);
+
+    void startAnydataNode(String rawArgument);
+
+    void startGroupingNode(String rawArgument);
+
+    void startUsesNode(String rawArgument);
+
+    void startRefineNode(String rawArgument);
+
+    void startAugmentNode(String rawArgument);
+
+    void startNotificationNode(String rawArgument);
+
+    void startValueNode(String rawArgument);
+
+    void startModifierNode(String rawArgument);
+
+    void startFractionDigitsNode(String rawArgument);
+
+    void startPathNode(String rawArgument);
+
+    void startRequireInstanceNode(String rawArgument);
+
+    void startPositionNode(String rawArgument);
 }
