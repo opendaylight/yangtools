@@ -80,7 +80,7 @@ public final class YinExportUtils {
         final URI moduleNs = module.getNamespace();
         final Map<String, URI> prefixToNs = prefixToNamespace(ctx,module);
         final StatementTextWriter yinWriter = SingleModuleYinStatementWriter.create(xmlStreamWriter, moduleNs, prefixToNs);
-        SchemaContextEmitter.writeToStatementWriter(module, ctx,yinWriter);
+        SchemaContextEmitter.writeToStatementWriter(module, ctx, yinWriter);
     }
 
     private static Map<String, URI> prefixToNamespace(final SchemaContext ctx, final Module module) {
