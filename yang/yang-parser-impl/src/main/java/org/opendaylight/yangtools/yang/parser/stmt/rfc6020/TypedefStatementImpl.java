@@ -12,6 +12,7 @@ import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
@@ -122,4 +123,8 @@ public class TypedefStatementImpl extends AbstractDeclaredStatement<QName> imple
         return argument();
     }
 
+    @Override
+    public DefaultStatement getDefault() {
+        return firstDeclared(DefaultStatement.class);
+    }
 }
