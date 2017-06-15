@@ -29,6 +29,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -38,6 +39,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWrit
 import org.opendaylight.yangtools.yang.data.codec.xml.XmlParserStream;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -53,6 +56,10 @@ public class YangModeledAnyXmlSupportTest {
     public static void init() throws IOException, URISyntaxException, ReactorException, SAXException,
             XMLStreamException, ParserConfigurationException {
         schemaContext = YangParserTestUtils.parseYangSources("/yang-modeled-anyxml/yang");
+        final Module bazModule = schemaContext.findModuleByName("baz", null);
+        final ContainerSchemaNode bazCont = (ContainerSchemaNode) bazModule.getDataChildByName(
+                QName.create(bazModule.getQNameModule(), "baz"));
+        assertNotNull(bazCont);
 
         final InputStream resourceAsStream = YangModeledAnyXmlSupportTest.class.getResourceAsStream(
                 "/yang-modeled-anyxml/xml/baz.xml");
@@ -64,7 +71,7 @@ public class YangModeledAnyXmlSupportTest {
 
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, bazCont);
         xmlParser.parse(reader);
 
         assertNotNull(result.getResult());
