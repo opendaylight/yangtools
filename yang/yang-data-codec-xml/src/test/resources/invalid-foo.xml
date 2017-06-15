@@ -1,23 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root xmlns="foo-namespace">
-    <parent-container>
-        <leaf-container>
-            <int32-leaf>1500</int32-leaf>
-            <decimal64-leaf>150.45</decimal64-leaf>
-            <decimal64-leaf>240.35</decimal64-leaf>
-            <string-leaf>hello world</string-leaf>
-            <leafref-leaf>hello world</leafref-leaf>
-            <empty-leaf/>
-            <boolean-leaf>true</boolean-leaf>
-            <enum-leaf>five</enum-leaf>
-        </leaf-container>
-        <anyxml-container>
-            <my-anyxml>
-                <my-element>
-                    <my-sub-element>sub-element value</my-sub-element>
-                </my-element>
-            </my-anyxml>
-        </anyxml-container>
-    </parent-container>
-</root>
+<parent-container xmlns="foo-namespace">
+    <leaf-container>
+        <int32-leaf>1500</int32-leaf>
+        <decimal64-leaf>150.45</decimal64-leaf>
+        <decimal64-leaf>240.35</decimal64-leaf>
+        <string-leaf>hello world</string-leaf>
+        <leafref-leaf>hello world</leafref-leaf>
+        <empty-leaf/>
+        <boolean-leaf>true</boolean-leaf>
+        <enum-leaf>five</enum-leaf>
+    </leaf-container>
+    <anyxml-container>
+        <my-anyxml>
+            <my-element>
+                <my-sub-element>sub-element value</my-sub-element>
+            </my-element>
+        </my-anyxml>
+    </anyxml-container>
+</parent-container>
