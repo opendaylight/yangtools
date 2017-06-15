@@ -12,13 +12,13 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>features-parent</artifactId>
-        <version>1.7.4-SNAPSHOT</version>
+        <version>1.7.4-Boron-SR4</version>
         <relativePath/>
     </parent>
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>features-yangtools</artifactId>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>1.0.4-Boron-SR4</version>
     <packaging>jar</packaging>
 
     <dependencyManagement>

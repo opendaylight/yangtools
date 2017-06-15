@@ -13,7 +13,7 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>yangtools-parent</artifactId>
-        <version>1.0.4-SNAPSHOT</version>
+        <version>1.0.4-Boron-SR4</version>
         <relativePath>../common/parent</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -21,8 +21,8 @@
     <artifactId>benchmarks</artifactId>
 
     <properties>
-        <yangtools.version>1.0.4-SNAPSHOT</yangtools.version>
-        <yang.maven.plugin.version>1.0.4-SNAPSHOT</yang.maven.plugin.version>
+        <yangtools.version>1.0.4-Boron-SR4</yangtools.version>
+        <yang.maven.plugin.version>1.0.4-Boron-SR4</yang.maven.plugin.version>
         <java.source.version>1.7</java.source.version>
         <java.target.version>1.7</java.target.version>
         <jmh.version>0.9.7</jmh.version>

@@ -12,14 +12,14 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>bundle-parent</artifactId>
-        <version>1.7.4-SNAPSHOT</version>
+        <version>1.7.4-Boron-SR4</version>
         <relativePath/>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yang-data-api</artifactId>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>1.0.4-Boron-SR4</version>
     <packaging>bundle</packaging>
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
@@ -29,7 +29,7 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yangtools-artifacts</artifactId>
-                <version>1.0.4-SNAPSHOT</version>
+                <version>1.0.4-Boron-SR4</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
