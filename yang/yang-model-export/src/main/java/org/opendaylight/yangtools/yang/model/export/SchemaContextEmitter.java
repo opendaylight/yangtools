@@ -12,7 +12,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.primitives.UnsignedInteger;
-import java.net.URI;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
@@ -38,15 +37,11 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
-import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
-import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
@@ -55,14 +50,31 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
@@ -116,6 +128,18 @@ class SchemaContextEmitter {
     }
 
     void emitModule(final Module input) {
+        final DeclaredStatement<?> declaredRootStmt = input.getDeclared();
+        if (declaredRootStmt instanceof ModuleStatement) {
+            emitModule((ModuleStatement) declaredRootStmt);
+        } else if (declaredRootStmt instanceof SubmoduleStatement) {
+            emitSubmodule((SubmoduleStatement) declaredRootStmt);
+        } else {
+            throw new UnsupportedOperationException(
+                    String.format("Yin export: unsupported declared statement %s", declaredRootStmt));
+        }
+    }
+
+    private void emitModule(final ModuleStatement input) {
         writer.startModuleNode(input.getName());
         emitModuleHeader(input);
         emitLinkageNodes(input);
@@ -125,14 +149,14 @@ class SchemaContextEmitter {
         writer.endNode();
     }
 
-    private void emitModuleHeader(final Module input) {
+    private void emitModuleHeader(final ModuleStatement input) {
         emitYangVersionNode(input.getYangVersion());
         emitNamespace(input.getNamespace());
         emitPrefixNode(input.getPrefix());
     }
 
     @SuppressWarnings("unused")
-    private void emitSubmodule(final String input) {
+    private void emitSubmodule(final SubmoduleStatement declaredRootStmt) {
         /*
          * FIXME: BUG-2444:  Implement submodule export
          *
@@ -152,40 +176,39 @@ class SchemaContextEmitter {
          */
     }
 
-    private void emitMetaNodes(final Module input) {
+    private void emitMetaNodes(final ModuleStatement input) {
         emitOrganizationNode(input.getOrganization());
         emitContact(input.getContact());
         emitDescriptionNode(input.getDescription());
         emitReferenceNode(input.getReference());
     }
 
-    private void emitLinkageNodes(final Module input) {
-        for (final ModuleImport importNode : input.getImports()) {
+    private void emitLinkageNodes(final ModuleStatement input) {
+        for (final ImportStatement importNode : input.getImports()) {
             emitImport(importNode);
         }
-        /*
-         * FIXME: BUG-2444:  Emit include statements
-         */
+        for (final IncludeStatement importNode : input.getIncludes()) {
+            emitInclude(importNode);
+        }
     }
 
-    private void emitRevisionNodes(final Module input) {
+    private void emitRevisionNodes(final ModuleStatement input) {
         /*
          * FIXME: BUG-2444:  emit revisions properly, when parsed model will provide enough
          * information
          */
-        emitRevision(input.getRevision());
-
+        emitRevisions(input.getRevisions());
     }
 
-    private void emitBodyNodes(final Module input) {
+    private void emitBodyNodes(final ModuleStatement input) {
 
-        for (final ExtensionDefinition extension : input.getExtensionSchemaNodes()) {
+        for (final org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement extension : input.getExtensions()) {
             emitExtension(extension);
         }
-        for (final FeatureDefinition definition : input.getFeatures()) {
+        for (final FeatureStatement definition : input.getFeatures()) {
             emitFeature(definition);
         }
-        for (final IdentitySchemaNode identity : input.getIdentities()) {
+        for (final IdentityStatement identity : input.getIdentities()) {
             emitIdentity(identity);
         }
         for (final Deviation deviation : input.getDeviations()) {
@@ -244,22 +267,23 @@ class SchemaContextEmitter {
         }
     }
 
-    private void emitYangVersionNode(final String input) {
-        writer.startYangVersionNode(input);
-        writer.endNode();
+    private void emitYangVersionNode(final YangVersionStatement yangVersionStatement) {
+        if (yangVersionStatement != null) {
+            writer.startYangVersionNode(yangVersionStatement.rawArgument());
+            writer.endNode();
+        }
     }
 
-    private void emitImport(final ModuleImport importNode) {
-        writer.startImportNode(importNode.getModuleName());
+    private void emitImport(final ImportStatement importNode) {
+        writer.startImportNode(importNode.getModule());
         emitDescriptionNode(importNode.getDescription());
         emitReferenceNode(importNode.getReference());
         emitPrefixNode(importNode.getPrefix());
-        emitRevisionDateNode(importNode.getRevision());
+        emitRevisionDateNode(importNode.getRevisionDate());
         writer.endNode();
     }
 
-    @SuppressWarnings("unused")
-    private void emitInclude(final String input) {
+    private void emitInclude(final IncludeStatement input) {
         /*
          * FIXME: BUG-2444:  Implement proper export of include statements
          * startIncludeNode(IdentifierHelper.getIdentifier(String :input));
@@ -269,14 +293,15 @@ class SchemaContextEmitter {
          */
     }
 
-    private void emitNamespace(final URI uri) {
-        writer.startNamespaceNode(uri);
+    private void emitNamespace(final NamespaceStatement namespaceStatement) {
+        Preconditions.checkNotNull(namespaceStatement, "Namespace must not be null");
+        writer.startNamespaceNode(namespaceStatement.getUri());
         writer.endNode();
-
     }
 
-    private void emitPrefixNode(final String input) {
-        writer.startPrefixNode(input);
+    private void emitPrefixNode(final PrefixStatement prefixStatement) {
+        Preconditions.checkNotNull(prefixStatement, "Prefix must not be null");
+        writer.startPrefixNode(prefixStatement.rawArgument());
         writer.endNode();
 
     }
@@ -299,30 +324,30 @@ class SchemaContextEmitter {
 
     }
 
-    private void emitOrganizationNode(final String input) {
-        if (!Strings.isNullOrEmpty(input)) {
-            writer.startOrganizationNode(input);
+    private void emitOrganizationNode(final OrganizationStatement organizationStatement) {
+        if (organizationStatement != null) {
+            writer.startOrganizationNode(organizationStatement.rawArgument());
             writer.endNode();
         }
     }
 
-    private void emitContact(final String input) {
-        if (!Strings.isNullOrEmpty(input)) {
-            writer.startContactNode(input);
+    private void emitContact(final ContactStatement contactStatement) {
+        if (contactStatement != null) {
+            writer.startContactNode(contactStatement.rawArgument());
             writer.endNode();
         }
     }
 
-    private void emitDescriptionNode(@Nullable final String input) {
-        if (!Strings.isNullOrEmpty(input)) {
-            writer.startDescriptionNode(input);
+    private void emitDescriptionNode(@Nullable final DescriptionStatement descriptionStatement) {
+        if (descriptionStatement != null) {
+            writer.startDescriptionNode(descriptionStatement.rawArgument());
             writer.endNode();
         }
     }
 
-    private void emitReferenceNode(@Nullable final String input) {
-        if (!Strings.isNullOrEmpty(input)) {
-            writer.startReferenceNode(input);
+    private void emitReferenceNode(@Nullable final ReferenceStatement referenceStatement) {
+        if (referenceStatement != null) {
+            writer.startReferenceNode(referenceStatement.rawArgument());
             writer.endNode();
         }
     }
@@ -334,14 +359,19 @@ class SchemaContextEmitter {
         }
     }
 
-    private void emitRevision(final Date date) {
-        writer.startRevisionNode(date);
+    private void emitRevisions(final Collection<? extends RevisionStatement> revisions) {
+        for (final RevisionStatement revisionStatement : revisions) {
+            emitRevision(revisionStatement);
+        }
+    }
+
+    private void emitRevision(final RevisionStatement revision) {
+        writer.startRevisionNode(revision.argument());
 
         //
         // FIXME: BUG-2444: FIXME: BUG-2444: BUG-2417: descriptionNode //FIXME: BUG-2444: Optional
         // FIXME: BUG-2444: FIXME: BUG-2444: BUG-2417: referenceNode //FIXME: BUG-2444: Optional
         writer.endNode();
-
     }
 
     private void emitRevisionDateNode(@Nullable final Date date) {
@@ -351,9 +381,9 @@ class SchemaContextEmitter {
         }
     }
 
-    private void emitExtension(final ExtensionDefinition extension) {
-        writer.startExtensionNode(extension.getQName());
-        emitArgument(extension.getArgument(),extension.isYinElement());
+    private void emitExtension(final org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement extension) {
+        writer.startExtensionNode(extension.argument());
+        emitArgument(extension.getArgument());
         emitStatusNode(extension.getStatus());
         emitDescriptionNode(extension.getDescription());
         emitReferenceNode(extension.getReference());
@@ -362,10 +392,10 @@ class SchemaContextEmitter {
 
     }
 
-    private void emitArgument(final @Nullable String input, final boolean yinElement) {
+    private void emitArgument(final ArgumentStatement input) {
         if (input != null) {
-            writer.startArgumentNode(input);
-            emitYinElement(yinElement);
+            writer.startArgumentNode(input.rawArgument());
+            emitYinElement(input);
             writer.endNode();
         }
 
@@ -377,18 +407,18 @@ class SchemaContextEmitter {
 
     }
 
-    private void emitIdentity(final IdentitySchemaNode identity) {
-        writer.startIdentityNode(identity.getQName());
-        emitBaseIdentities(identity.getBaseIdentities());
+    private void emitIdentity(final IdentityStatement identity) {
+        writer.startIdentityNode(identity.argument());
+        emitBaseIdentities(identity.getBases());
         emitStatusNode(identity.getStatus());
         emitDescriptionNode(identity.getDescription());
         emitReferenceNode(identity.getReference());
         writer.endNode();
     }
 
-    private void emitBaseIdentities(final Set<IdentitySchemaNode> identities) {
-        for (final IdentitySchemaNode identitySchemaNode : identities) {
-            emitBase(identitySchemaNode.getQName());
+    private void emitBaseIdentities(final Collection<? extends BaseStatement> collection) {
+        for (final BaseStatement baseStmt : collection) {
+            emitBase(baseStmt.argument());
         }
     }
 
@@ -397,13 +427,13 @@ class SchemaContextEmitter {
         writer.endNode();
     }
 
-    private void emitFeature(final FeatureDefinition definition) {
-        writer.startFeatureNode(definition.getQName());
+    private void emitFeature(final FeatureStatement feature) {
+        writer.startFeatureNode(feature.argument());
 
         // FIXME: BUG-2444: FIXME: BUG-2444:  Expose ifFeature *(ifFeatureNode )
-        emitStatusNode(definition.getStatus());
-        emitDescriptionNode(definition.getDescription());
-        emitReferenceNode(definition.getReference());
+        emitStatusNode(feature.getStatus());
+        emitDescriptionNode(feature.getDescription());
+        emitReferenceNode(feature.getReference());
         writer.endNode();
 
     }
@@ -693,9 +723,9 @@ class SchemaContextEmitter {
         }
     }
 
-    private void emitStatusNode(@Nullable final Status status) {
-        if (status != null) {
-            writer.startStatusNode(status);
+    private void emitStatusNode(@Nullable final StatusStatement statusStatement) {
+        if (statusStatement != null) {
+            writer.startStatusNode(statusStatement.argument());
             writer.endNode();
         }
     }
