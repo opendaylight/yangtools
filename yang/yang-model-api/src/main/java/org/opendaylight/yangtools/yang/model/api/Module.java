@@ -13,7 +13,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.concepts.SemVer;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 /**
  * This interface contains the methods for getting the data from the YANG
@@ -223,11 +222,4 @@ public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIden
      */
     @Deprecated
     @Nullable String getSource();
-
-    /**
-     * Returns declared statement of this Module.
-     *
-     * @return declared statement of this Module
-     */
-    DeclaredStatement<?> getDeclared();
 }
