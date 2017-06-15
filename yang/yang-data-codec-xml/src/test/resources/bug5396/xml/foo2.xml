@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<foo xmlns="foo">
-    <root>
-        <my-leaf>dp0s3f9</my-leaf>
-    </root>
-</foo>
+<root xmlns="foo">
+    <my-leaf>dp0s3f9</my-leaf>
+</root>

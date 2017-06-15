@@ -284,7 +284,7 @@ public class NormalizedNodeXmlTranslationTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schema, schema);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schema, containerNode);
         xmlParser.parse(reader);
 
         final NormalizedNode<?, ?> built = result.getResult();
@@ -317,7 +317,7 @@ public class NormalizedNodeXmlTranslationTest {
         XMLUnit.setIgnoreAttributeOrder(true);
         XMLUnit.setNormalize(true);
 
-        final String expectedXml = toString(doc.getDocumentElement().getElementsByTagName("container").item(0));
+        final String expectedXml = toString(doc.getDocumentElement());
         final String serializedXml = toString(domResult.getNode());
 
         final Diff diff = new Diff(expectedXml, serializedXml);

@@ -33,11 +33,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.YangModeledAnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeSchemaAwareBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -90,22 +90,21 @@ public class YangModeledAnyXMLDeserializationTest {
 
         final XMLInputFactory factory = XMLInputFactory.newInstance();
         final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
-
-        final ImmutableContainerNodeBuilder result =
-            (ImmutableContainerNodeBuilder) ImmutableContainerNodeSchemaAwareBuilder.create(
-                    yangModeledAnyXML.getSchemaOfAnyXmlData());
+        final NormalizedNodeResult result = new NormalizedNodeResult();
 
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, yangModeledAnyXML);
         xmlParser.parse(reader);
 
-        final NormalizedNode<?, ?> output = result.build();
+        final NormalizedNode<?, ?> output = result.getResult();
+        assertTrue(output instanceof YangModeledAnyXmlNode);
+        final YangModeledAnyXmlNode yangModeledAnyXmlNode = (YangModeledAnyXmlNode) output;
 
-        Collection<DataContainerChild<? extends PathArgument, ?>> value = ((ContainerNode) output).getValue();
+        Collection<DataContainerChild<? extends PathArgument, ?>> value = yangModeledAnyXmlNode.getValue();
         assertEquals(2, value.size());
 
-        Optional<DataContainerChild<? extends PathArgument, ?>> child = ((ContainerNode) output)
+        Optional<DataContainerChild<? extends PathArgument, ?>> child = yangModeledAnyXmlNode
                 .getChild(new NodeIdentifier(myContainer1));
         assertTrue(child.orNull() instanceof ContainerNode);
         ContainerNode myContainerNode1 = (ContainerNode) child.get();
@@ -123,24 +122,22 @@ public class YangModeledAnyXMLDeserializationTest {
     public void testRealSchemaContextFromFoo() throws Exception {
         final InputStream resourceAsStream = YangModeledAnyXMLDeserializationTest.class.getResourceAsStream(
                 "/anyxml-support/xml/foo.xml");
+        final Module foo = schemaContext.findModuleByName("foo", null);
+        final YangModeledAnyXmlSchemaNode myAnyXmlData = (YangModeledAnyXmlSchemaNode) foo.getDataChildByName(
+                QName.create(foo.getQNameModule(), "my-anyxml-data"));
 
         final XMLInputFactory factory = XMLInputFactory.newInstance();
         final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
-
-        final ImmutableContainerNodeBuilder result =
-            (ImmutableContainerNodeBuilder) ImmutableContainerNodeSchemaAwareBuilder.create(schemaContext);
+        final NormalizedNodeResult result = new NormalizedNodeResult();
 
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, myAnyXmlData);
         xmlParser.parse(reader);
 
-        final NormalizedNode<?, ?> output = result.build();
-
-        Optional<DataContainerChild<? extends PathArgument, ?>> child = ((ContainerNode) output).getChild(
-                new NodeIdentifier(myAnyXMLDataFoo));
-        assertTrue(child.orNull() instanceof YangModeledAnyXmlNode);
-        YangModeledAnyXmlNode yangModeledAnyXmlNode = (YangModeledAnyXmlNode) child.get();
+        final NormalizedNode<?, ?> output = result.getResult();
+        assertTrue(output instanceof YangModeledAnyXmlNode);
+        final YangModeledAnyXmlNode yangModeledAnyXmlNode = (YangModeledAnyXmlNode) output;
 
         DataSchemaNode schemaOfAnyXmlData = yangModeledAnyXmlNode.getSchemaOfAnyXmlData();
         DataSchemaNode expectedSchemaOfAnyXmlData = schemaContext.getDataChildByName(myContainer2);
