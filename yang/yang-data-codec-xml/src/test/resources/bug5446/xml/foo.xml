@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<foo xmlns="foo">
-    <root>
-        <ip-address>fwAAAQ==</ip-address>
-    </root>
-</foo>
+<root xmlns="foo">
+    <ip-address>fwAAAQ==</ip-address>
+</root>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<top-level-list xmlns="foo">
+    <key-leaf>key-value</key-leaf>
+    <ordinary-leaf>leaf-value</ordinary-leaf>
+    <cont-in-list></cont-in-list>
+    <inner-list>
+        <inner-key-leaf>inner-key-value</inner-key-leaf>
+        <inner-ordinary-leaf>inner-leaf-value</inner-ordinary-leaf>
+    </inner-list>
+</top-level-list>

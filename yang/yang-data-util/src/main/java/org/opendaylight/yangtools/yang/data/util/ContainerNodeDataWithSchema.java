@@ -11,9 +11,15 @@ import java.io.IOException;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-class ContainerNodeDataWithSchema extends CompositeNodeDataWithSchema {
+/**
+ * Utility class used for tracking parser state as needed by a StAX-like parser.
+ * This class is to be used only by respective XML and JSON parsers in yang-data-codec-xml and yang-data-codec-gson.
+ *
+ * Represents a YANG container node.
+ */
+public class ContainerNodeDataWithSchema extends CompositeNodeDataWithSchema {
 
-    ContainerNodeDataWithSchema(final DataSchemaNode schema) {
+    public ContainerNodeDataWithSchema(final DataSchemaNode schema) {
         super(schema);
     }
 

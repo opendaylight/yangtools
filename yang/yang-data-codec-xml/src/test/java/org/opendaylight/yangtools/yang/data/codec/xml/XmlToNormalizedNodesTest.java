@@ -13,19 +13,19 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Sets;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -45,43 +45,54 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.xml.sax.SAXException;
 
 public class XmlToNormalizedNodesTest {
 
-    private QNameModule bazModule;
+    private static SchemaContext schemaContext;
+    private static ContainerSchemaNode outerContainerSchema;
+    private static ContainerSchemaNode parentContainerSchema;
 
-    private QName outerContainer;
+    private static QNameModule fooModule;
+    private static QName parentContainer;
 
-    private QName myContainer1;
-    private QName myKeyedList;
-    private QName myKeyLeaf;
-    private QName myLeafInList1;
-    private QName myLeafInList2;
-    private QName myLeaf1;
-    private QName myLeafList;
+    private static QNameModule bazModule;
+    private static QName outerContainer;
 
-    private QName myContainer2;
-    private QName innerContainer;
-    private QName myLeaf2;
-    private QName myLeaf3;
-    private QName myChoice;
-    private QName myLeafInCase2;
+    private static QName myContainer1;
+    private static QName myKeyedList;
+    private static QName myKeyLeaf;
+    private static QName myLeafInList1;
+    private static QName myLeafInList2;
+    private static QName myLeaf1;
+    private static QName myLeafList;
 
-    private QName myContainer3;
-    private QName myDoublyKeyedList;
-    private QName myFirstKeyLeaf;
-    private QName mySecondKeyLeaf;
-    private QName myLeafInList3;
+    private static QName myContainer2;
+    private static QName innerContainer;
+    private static QName myLeaf2;
+    private static QName myLeaf3;
+    private static QName myChoice;
+    private static QName myLeafInCase2;
 
-    @Before
-    public void setup() throws URISyntaxException, ParseException {
+    private static QName myContainer3;
+    private static QName myDoublyKeyedList;
+    private static QName myFirstKeyLeaf;
+    private static QName mySecondKeyLeaf;
+    private static QName myLeafInList3;
+
+    @BeforeClass
+    public static void setup() throws Exception {
+        fooModule = QNameModule.create(new URI("foo-namespace"), SimpleDateFormatUtil.getRevisionFormat().parse(
+                "1970-01-01"));
+        parentContainer = QName.create(fooModule, "parent-container");
+
         bazModule = QNameModule.create(new URI("baz-namespace"), SimpleDateFormatUtil.getRevisionFormat().parse(
                     "1970-01-01"));
-
         outerContainer = QName.create(bazModule, "outer-container");
 
         myContainer1 = QName.create(bazModule, "my-container-1");
@@ -104,13 +115,17 @@ public class XmlToNormalizedNodesTest {
         myFirstKeyLeaf = QName.create(bazModule, "my-first-key-leaf");
         mySecondKeyLeaf = QName.create(bazModule, "my-second-key-leaf");
         myLeafInList3 = QName.create(bazModule, "my-leaf-in-list-3");
+
+        schemaContext = YangParserTestUtils.parseYangSources("/");
+        parentContainerSchema = (ContainerSchemaNode) SchemaContextUtil.findNodeInSchemaContext(schemaContext,
+                ImmutableList.of(parentContainer));
+        outerContainerSchema = (ContainerSchemaNode) SchemaContextUtil.findNodeInSchemaContext(schemaContext,
+                ImmutableList.of(outerContainer));
     }
 
     @Test
     public void testComplexXmlParsing() throws IOException, URISyntaxException, ReactorException, XMLStreamException,
             ParserConfigurationException, SAXException {
-        SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/baz.yang");
-
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/baz.xml");
 
         final XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -119,7 +134,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, outerContainerSchema);
         xmlParser.parse(reader);
 
         xmlParser.flush();
@@ -137,8 +152,6 @@ public class XmlToNormalizedNodesTest {
     @Test
     public void testSimpleXmlParsing() throws IOException, URISyntaxException, ReactorException, XMLStreamException,
             ParserConfigurationException, SAXException {
-        SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/foo.yang");
-
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/foo.xml");
 
         final XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -147,7 +160,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, parentContainerSchema);
         xmlParser.parse(reader);
 
         final NormalizedNode<?, ?> transformedInput = result.getResult();
@@ -157,8 +170,6 @@ public class XmlToNormalizedNodesTest {
     @Test
     public void shouldFailOnDuplicateLeaf() throws ReactorException, XMLStreamException, IOException,
             ParserConfigurationException, SAXException, URISyntaxException {
-        SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/foo.yang");
-
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-foo.xml");
 
         final XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -167,7 +178,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, parentContainerSchema);
         try {
             xmlParser.parse(reader);
             fail("IllegalStateException should have been thrown because of duplicate leaf.");
@@ -180,8 +191,6 @@ public class XmlToNormalizedNodesTest {
     @Test
     public void shouldFailOnDuplicateAnyXml() throws ReactorException, XMLStreamException, IOException,
             ParserConfigurationException, SAXException, URISyntaxException {
-        SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/foo.yang");
-
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-foo-2.xml");
 
         final XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -190,7 +199,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, parentContainerSchema);
         try {
             xmlParser.parse(reader);
             fail("IllegalStateException should have been thrown because of duplicate anyxml");
@@ -202,8 +211,6 @@ public class XmlToNormalizedNodesTest {
     @Test
     public void shouldFailOnDuplicateContainer() throws ReactorException, XMLStreamException, IOException,
             ParserConfigurationException, SAXException, URISyntaxException {
-        SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/foo.yang");
-
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-foo-3.xml");
 
         final XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -212,7 +219,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, parentContainerSchema);
         try {
             xmlParser.parse(reader);
             fail("IllegalStateException should have been thrown because of duplicate container");
@@ -224,8 +231,6 @@ public class XmlToNormalizedNodesTest {
     @Test
     public void shouldFailOnUnterminatedLeafElement() throws ReactorException, XMLStreamException, IOException,
             ParserConfigurationException, SAXException, URISyntaxException {
-        SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/baz.yang");
-
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz.xml");
 
         final XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -234,7 +239,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, outerContainerSchema);
         try {
             xmlParser.parse(reader);
             fail("XMLStreamException should have been thrown because of unterminated leaf element.");
@@ -247,8 +252,6 @@ public class XmlToNormalizedNodesTest {
     @Test
     public void shouldFailOnUnterminatedLeafElement2() throws ReactorException, XMLStreamException, IOException,
             ParserConfigurationException, SAXException, URISyntaxException {
-        SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/baz.yang");
-
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz-2.xml");
 
         final XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -257,7 +260,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, outerContainerSchema);
         try {
             xmlParser.parse(reader);
             fail("XMLStreamException should have been thrown because of unterminated leaf element.");
@@ -270,8 +273,6 @@ public class XmlToNormalizedNodesTest {
     @Test
     public void shouldFailOnUnterminatedContainerElement() throws ReactorException, XMLStreamException, IOException,
             ParserConfigurationException, SAXException, URISyntaxException {
-        SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/baz.yang");
-
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz-4.xml");
 
         final XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -280,7 +281,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, outerContainerSchema);
         try {
             xmlParser.parse(reader);
             fail("XMLStreamException should have been thrown because of unterminated container element.");
@@ -303,7 +304,7 @@ public class XmlToNormalizedNodesTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, outerContainerSchema);
         try {
             xmlParser.parse(reader);
             fail("IllegalStateException should have been thrown because of an unexisting container element.");

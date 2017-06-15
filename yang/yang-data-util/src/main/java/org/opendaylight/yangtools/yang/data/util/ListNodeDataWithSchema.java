@@ -12,6 +12,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
+/**
+ * Utility class used for tracking parser state as needed by a StAX-like parser.
+ * This class is to be used only by respective XML and JSON parsers in yang-data-codec-xml and yang-data-codec-gson.
+ *
+ * Represents a YANG list node.
+ */
 public class ListNodeDataWithSchema extends CompositeNodeDataWithSchema {
 
     public ListNodeDataWithSchema(final DataSchemaNode schema) {

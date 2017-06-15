@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<root xmlns="zab-ns">
-    <top-cont>
-        <keyed-list>
-            <identityref-key-leaf>derived-id</identityref-key-leaf>
-            <regular-leaf>150</regular-leaf>
-        </keyed-list>
+<top-cont xmlns="zab-ns">
+    <keyed-list>
+        <identityref-key-leaf>derived-id</identityref-key-leaf>
+        <regular-leaf>150</regular-leaf>
+    </keyed-list>
 
-        <iid-leaf xmlns:zab="zab-ns">
-            /zab:top-cont/zab:keyed-list[zab:identityref-key-leaf='derived-id']/zab:regular-leaf</iid-leaf>
-    </top-cont>
-</root>
+    <iid-leaf xmlns:zab="zab-ns">
+        /zab:top-cont/zab:keyed-list[zab:identityref-key-leaf='derived-id']/zab:regular-leaf</iid-leaf>
+</top-cont>
