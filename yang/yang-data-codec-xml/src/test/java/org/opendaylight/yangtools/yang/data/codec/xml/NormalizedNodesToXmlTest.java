@@ -142,7 +142,7 @@ public class NormalizedNodesToXmlTest {
         XMLUnit.setIgnoreWhitespace(true);
         XMLUnit.setNormalize(true);
 
-        final String expectedXml = toString(doc.getDocumentElement().getElementsByTagName("outer-container").item(0));
+        final String expectedXml = toString(doc.getDocumentElement());
         final String serializedXml = toString(domResult.getNode());
         final Diff diff = new Diff(expectedXml, serializedXml);
 

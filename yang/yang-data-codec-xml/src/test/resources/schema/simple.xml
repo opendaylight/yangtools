@@ -1,74 +1,72 @@
-<root>
-    <container xmlns="urn:opendaylight:params:xml:ns:yang:controller:test">
-        <boolean>true</boolean>
-        <innerContainer>
-            <uint16>44</uint16>
-        </innerContainer>
-        <leafList>a</leafList>
-        <leafList>b</leafList>
+<container xmlns="urn:opendaylight:params:xml:ns:yang:controller:test">
+    <boolean>true</boolean>
+    <innerContainer>
+        <uint16>44</uint16>
+    </innerContainer>
+    <leafList>a</leafList>
+    <leafList>b</leafList>
 
-        <list>
-            <uint32InList>1</uint32InList>
-            <containerInList name="inContainer">
-                <uint32>32</uint32>
-                <uint16>16</uint16>
-                <identityr xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:test">prefix:b</identityr>
-                <anyX xmlns="urn:opendaylight:params:xml:ns:yang:controller:test">direct Value</anyX>
-                <uint16-ref>16</uint16-ref>
-                <instance-id xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:test">/prefix:container/prefix:list[prefix:uint32InList="1"]</instance-id>
-            </containerInList>
-            <stringAugmentedToList>augmentInList</stringAugmentedToList>
-            <stringAugmentedToListInCase1>augmentInListCase1</stringAugmentedToListInCase1>
-        </list>
-        <list>
-            <uint32InList>2</uint32InList>
-            <containerInList>
-                <uint32>32</uint32>
-                <uint16>16</uint16>
-                <identityr>b</identityr>
-                <anyX>
-                    <container xmlns="randomNamespace" xmlns:pref="prefixed:namespace">
-                        <pref:boolean>true</pref:boolean>
-                        <innerContainer xmlns:p="prefixed:namespace">
-                            <uint16 xmlns:pref2="prefixed:namespace">pref2:44</uint16>
-                        </innerContainer>
-                    </container>
-                    <container2 xmlns="randomNamespace2"/>
-                </anyX>
-            </containerInList>
-            <stringAugmentedToListInCase2>augmentInListCase2</stringAugmentedToListInCase2>
-        </list>
-        <list>
-            <uint32InList>4</uint32InList>
-            <containerInList>
-                <anyX>
-                    <netconf-state xmlns="urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring">
-                        <schemas>
-                            <schema>
-                                <identifier>module</identifier>
-                                <version>2012-12-12</version>
-                                <format xmlns:x="urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring">x:yang</format>
-                            </schema>
-                        </schemas>
-                    </netconf-state>
-                </anyX>
-            </containerInList>
-        </list>
-        <list>
-            <uint32InList>3</uint32InList>
-        </list>
+    <list>
+        <uint32InList>1</uint32InList>
+        <containerInList name="inContainer">
+            <uint32>32</uint32>
+            <uint16>16</uint16>
+            <identityr xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:test">prefix:b</identityr>
+            <anyX xmlns="urn:opendaylight:params:xml:ns:yang:controller:test">direct Value</anyX>
+            <uint16-ref>16</uint16-ref>
+            <instance-id xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:test">/prefix:container/prefix:list[prefix:uint32InList="1"]</instance-id>
+        </containerInList>
+        <stringAugmentedToList>augmentInList</stringAugmentedToList>
+        <stringAugmentedToListInCase1>augmentInListCase1</stringAugmentedToListInCase1>
+    </list>
+    <list>
+        <uint32InList>2</uint32InList>
+        <containerInList>
+            <uint32>32</uint32>
+            <uint16>16</uint16>
+            <identityr>b</identityr>
+            <anyX>
+                <container xmlns="randomNamespace" xmlns:pref="prefixed:namespace">
+                    <pref:boolean>true</pref:boolean>
+                    <innerContainer xmlns:p="prefixed:namespace">
+                        <uint16 xmlns:pref2="prefixed:namespace">pref2:44</uint16>
+                    </innerContainer>
+                </container>
+                <container2 xmlns="randomNamespace2"/>
+            </anyX>
+        </containerInList>
+        <stringAugmentedToListInCase2>augmentInListCase2</stringAugmentedToListInCase2>
+    </list>
+    <list>
+        <uint32InList>4</uint32InList>
+        <containerInList>
+            <anyX>
+                <netconf-state xmlns="urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring">
+                    <schemas>
+                        <schema>
+                            <identifier>module</identifier>
+                            <version>2012-12-12</version>
+                            <format xmlns:x="urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring">x:yang</format>
+                        </schema>
+                    </schemas>
+                </netconf-state>
+            </anyX>
+        </containerInList>
+    </list>
+    <list>
+        <uint32InList>3</uint32InList>
+    </list>
 
-        <augmentString1>choice1Case1</augmentString1>
-        <augmentInt1>41</augmentInt1>
-        <stringInAugmentedCaseInAugmentedChoiceFromAugment>deep</stringInAugmentedCaseInAugmentedChoiceFromAugment>
+    <augmentString1>choice1Case1</augmentString1>
+    <augmentInt1>41</augmentInt1>
+    <stringInAugmentedCaseInAugmentedChoiceFromAugment>deep</stringInAugmentedCaseInAugmentedChoiceFromAugment>
 
-        <augmentContainer>
-            <augmentStringInaugmentContainer>choice2Case1</augmentStringInaugmentContainer>
-        </augmentContainer>
+    <augmentContainer>
+        <augmentStringInaugmentContainer>choice2Case1</augmentStringInaugmentContainer>
+    </augmentContainer>
 
-        <augmentUint32>999</augmentUint32>
-
+    <augmentUint32>999</augmentUint32>
 
 
-    </container>
-</root>
+
+</container>
