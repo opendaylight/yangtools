@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<root xmlns="baz">
-    <baz>
-        <my-container-1>
-            <my-leaf-1>value1</my-leaf-1>
-        </my-container-1>
-        <my-container-2>
-            <inner-container>
-                <my-leaf-2>value2</my-leaf-2>
-            </inner-container>
-            <my-leaf-3>value3</my-leaf-3>
-        </my-container-2>
+<baz xmlns="baz">
+    <my-container-1>
+        <my-leaf-1>value1</my-leaf-1>
+    </my-container-1>
+    <my-container-2>
+        <inner-container>
+            <my-leaf-2>value2</my-leaf-2>
+        </inner-container>
+        <my-leaf-3>value3</my-leaf-3>
+    </my-container-2>
 
-        <my-anyxml-data>
-            <inner-container>
-                <my-leaf-2>any-xml-leaf-2-value</my-leaf-2>
-            </inner-container>
-            <my-leaf-3>any-xml-leaf-3-value</my-leaf-3>
-        </my-anyxml-data>
-    </baz>
-</root>
+    <my-anyxml-data>
+        <inner-container>
+            <my-leaf-2>any-xml-leaf-2-value</my-leaf-2>
+        </inner-container>
+        <my-leaf-3>any-xml-leaf-3-value</my-leaf-3>
+    </my-anyxml-data>
+</baz>

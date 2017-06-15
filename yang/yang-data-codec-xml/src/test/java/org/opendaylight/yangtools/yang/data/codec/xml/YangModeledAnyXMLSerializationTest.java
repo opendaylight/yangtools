@@ -45,6 +45,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeS
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -76,6 +77,10 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
     public void testSerializationOfBaz() throws Exception {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream(
                 "/anyxml-support/serialization/baz.xml");
+        final Module bazModule = schemaContext.findModuleByName("baz", null);
+        final ContainerSchemaNode bazCont = (ContainerSchemaNode) bazModule.getDataChildByName(
+                QName.create(bazModule.getQNameModule(), "baz"));
+        assertNotNull(bazCont);
 
         final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
         final XMLStreamReader reader = inputFactory.createXMLStreamReader(resourceAsStream);
@@ -84,7 +89,7 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
 
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, bazCont);
         xmlParser.parse(reader);
 
         final NormalizedNode<?, ?> transformedInput = result.getResult();
@@ -128,7 +133,7 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
         XMLUnit.setIgnoreAttributeOrder(true);
         XMLUnit.setNormalize(true);
 
-        String expectedXml = toString(doc.getDocumentElement().getElementsByTagName("baz").item(0));
+        String expectedXml = toString(doc.getDocumentElement());
         String serializedXml = toString(domResult.getNode());
 
         assertXMLEqual(expectedXml, serializedXml);

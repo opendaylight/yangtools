@@ -1,44 +1,42 @@
-<root>
-    <container xmlns="urn:opendaylight:params:xml:ns:yang:controller:test">
-        <augmentString1>choice1Case1</augmentString1>
-        <augmentInt1>41</augmentInt1>
-        <stringInAugmentedCaseInAugmentedChoice2>deep</stringInAugmentedCaseInAugmentedChoice2>
+<container xmlns="urn:opendaylight:params:xml:ns:yang:controller:test">
+    <augmentString1>choice1Case1</augmentString1>
+    <augmentInt1>41</augmentInt1>
+    <stringInAugmentedCaseInAugmentedChoice2>deep</stringInAugmentedCaseInAugmentedChoice2>
 
-        <augmentedList>
-            <augmentStringInaugmentList>aug1</augmentStringInaugmentList>
-        </augmentedList>
+    <augmentedList>
+        <augmentStringInaugmentList>aug1</augmentStringInaugmentList>
+    </augmentedList>
 
-        <augmentedList>
-            <augmentStringInaugmentList>aug2</augmentStringInaugmentList>
-            <augmentedContainerInAugmentedListInAugmentedCase>
-                <leafInAugmentedContainerInAugmentedListInAugmentedCase>
-                    66
-                </leafInAugmentedContainerInAugmentedListInAugmentedCase>
-            </augmentedContainerInAugmentedListInAugmentedCase>
+    <augmentedList>
+        <augmentStringInaugmentList>aug2</augmentStringInaugmentList>
+        <augmentedContainerInAugmentedListInAugmentedCase>
+            <leafInAugmentedContainerInAugmentedListInAugmentedCase>
+                66
+            </leafInAugmentedContainerInAugmentedListInAugmentedCase>
+        </augmentedContainerInAugmentedListInAugmentedCase>
 
-            <augmentedListInAugmentedListInAugmentedCase>
-                <leafInAugmentedListInAugmentedListInAugmentedCase>
-                    661
-                </leafInAugmentedListInAugmentedListInAugmentedCase>
-                <leafInAugmentedListInAugmentedListInAugmentedCase>
-                    662
-                </leafInAugmentedListInAugmentedListInAugmentedCase>
-            </augmentedListInAugmentedListInAugmentedCase>
+        <augmentedListInAugmentedListInAugmentedCase>
+            <leafInAugmentedListInAugmentedListInAugmentedCase>
+                661
+            </leafInAugmentedListInAugmentedListInAugmentedCase>
+            <leafInAugmentedListInAugmentedListInAugmentedCase>
+                662
+            </leafInAugmentedListInAugmentedListInAugmentedCase>
+        </augmentedListInAugmentedListInAugmentedCase>
 
-            <augmentedListInAugmentedListInAugmentedCase>
-                <leafInAugmentedListInAugmentedListInAugmentedCase>
-                    6621
-                </leafInAugmentedListInAugmentedListInAugmentedCase>
-            </augmentedListInAugmentedListInAugmentedCase>
-        </augmentedList>
+        <augmentedListInAugmentedListInAugmentedCase>
+            <leafInAugmentedListInAugmentedListInAugmentedCase>
+                6621
+            </leafInAugmentedListInAugmentedListInAugmentedCase>
+        </augmentedListInAugmentedListInAugmentedCase>
+    </augmentedList>
 
-        <augmentedList>
-            <augmentStringInaugmentList>aug3</augmentStringInaugmentList>
-            <augmentedContainerInAugmentedListInAugmentedCase/>
+    <augmentedList>
+        <augmentStringInaugmentList>aug3</augmentStringInaugmentList>
+        <augmentedContainerInAugmentedListInAugmentedCase/>
 
-            <augmentedListInAugmentedListInAugmentedCase/>
-        </augmentedList>
+        <augmentedListInAugmentedListInAugmentedCase/>
+    </augmentedList>
 
-    </container>
-</root>
+</container>
 

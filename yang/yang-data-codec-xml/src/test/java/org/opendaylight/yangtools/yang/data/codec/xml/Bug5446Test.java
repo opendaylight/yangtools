@@ -97,7 +97,7 @@ public class Bug5446Test extends XMLTestCase {
         XMLUnit.setIgnoreAttributeOrder(true);
         XMLUnit.setNormalize(true);
 
-        String expectedXMLString = toString(doc.getDocumentElement().getElementsByTagName("root").item(0));
+        String expectedXMLString = toString(doc.getDocumentElement());
         String serializationResultXMLString = toString(serializationResult.getNode());
 
         assertXMLEqual(expectedXMLString, serializationResultXMLString);
