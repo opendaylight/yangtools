@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<top-level-container xmlns="foo">
+    <unknown-container-a>
+        <unknown-container-b>
+            <unknown-container-c1>
+                <unknown-leaf-a>value-a</unknown-leaf-a>
+                <unknown-leaf-b>value-b</unknown-leaf-b>
+            </unknown-container-c1>
+            <unknown-container-c2>
+            </unknown-container-c2>
+        </unknown-container-b>
+    </unknown-container-a>
+    <unknown-leaf>value</unknown-leaf>
+    <inner-container>
+        <unknown-empty-node></unknown-empty-node>
+    </inner-container>
+</top-level-container>
