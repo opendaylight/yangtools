@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1af78d9a_246f44c7",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/ContainerNodeDataWithSchema.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-06-19T15:07:56Z",
+      "side": 1,
+      "message": "public class without documentation. Why do we need to make it public?",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 13
+      },
+      "revId": "61c617a14649cd0f61e447d73a44aedd8e37770f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
