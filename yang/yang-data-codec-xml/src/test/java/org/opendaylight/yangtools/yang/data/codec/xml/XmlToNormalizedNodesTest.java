@@ -292,10 +292,8 @@ public class XmlToNormalizedNodesTest {
     }
 
     @Test
-    public void shouldFailOnUnexistingContainerElement() throws ReactorException, XMLStreamException, IOException,
+    public void shouldFailOnUnknownChildNode() throws ReactorException, XMLStreamException, IOException,
             ParserConfigurationException, SAXException, URISyntaxException {
-        SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/baz.yang");
-
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz-3.xml");
 
         final XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -307,7 +305,7 @@ public class XmlToNormalizedNodesTest {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, outerContainerSchema);
         try {
             xmlParser.parse(reader);
-            fail("IllegalStateException should have been thrown because of an unexisting container element.");
+            fail("IllegalStateException should have been thrown because of an unknown child node.");
         } catch (IllegalStateException ex) {
             assertTrue(ex.getMessage().contains("Schema for node with name my-container-1 and namespace baz-namespace"
                         + " doesn't exist."));
