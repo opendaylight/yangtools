@@ -70,29 +70,48 @@ public final class XmlParserStream implements Closeable, Flushable {
     private final NormalizedNodeStreamWriter writer;
     private final XmlCodecFactory codecs;
     private final DataSchemaNode parentNode;
+    private final boolean strictParsing;
 
     private XmlParserStream(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
-            final DataSchemaNode parentNode) {
+            final DataSchemaNode parentNode, final boolean strictParsing) {
         this.writer = Preconditions.checkNotNull(writer);
         this.codecs = Preconditions.checkNotNull(codecs);
         this.parentNode = parentNode;
+        this.strictParsing = strictParsing;
     }
 
     /**
-     * Construct a new {@link XmlParserStream}.
+     * Construct a new {@link XmlParserStream} with strict parsing mode switched on.
      *
-     * @param writer Output write
+     * @param writer Output writer
      * @param codecs Shared codecs
      * @param parentNode Parent root node
      * @return A new stream instance
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
             final SchemaNode parentNode) {
+        return create(writer, codecs, parentNode, true);
+    }
+
+    /**
+     * Construct a new {@link XmlParserStream}.
+     *
+     * @param writer Output writer
+     * @param codecs Shared codecs
+     * @param parentNode Parent root node
+     * @param strictParsing parsing mode
+     *            if set to true, the parser will throw an exception if it encounters unknown child nodes
+     *            (nodes, that are not defined in the provided SchemaContext) in containers and lists
+     *            if set to false, the parser will skip unknown child nodes
+     * @return A new stream instance
+     */
+    public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
+            final SchemaNode parentNode, final boolean strictParsing) {
         if (parentNode instanceof RpcDefinition) {
-            return new XmlParserStream(writer, codecs, new RpcAsContainer((RpcDefinition) parentNode));
+            return new XmlParserStream(writer, codecs, new RpcAsContainer((RpcDefinition) parentNode), strictParsing);
         }
         Preconditions.checkArgument(parentNode instanceof DataSchemaNode, "Instance of DataSchemaNode class awaited.");
-        return new XmlParserStream(writer, codecs, (DataSchemaNode) parentNode);
+        return new XmlParserStream(writer, codecs, (DataSchemaNode) parentNode, strictParsing);
     }
 
     /**
@@ -112,7 +131,17 @@ public final class XmlParserStream implements Closeable, Flushable {
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
             final SchemaNode parentNode) {
-        return create(writer, XmlCodecFactory.create(schemaContext), parentNode);
+        return create(writer, schemaContext, parentNode, true);
+    }
+
+    /**
+     * Utility method for use when caching {@link XmlCodecFactory} is not feasible. Users with high performance
+     * requirements should use {@link #create(NormalizedNodeStreamWriter, XmlCodecFactory, SchemaNode)} instead and
+     * maintain a {@link XmlCodecFactory} to match the current {@link SchemaContext}.
+     */
+    public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
+            final SchemaNode parentNode, final boolean strictParsing) {
+        return create(writer, XmlCodecFactory.create(schemaContext), parentNode, strictParsing);
     }
 
     /**
@@ -277,9 +306,16 @@ public final class XmlParserStream implements Closeable, Flushable {
                             ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, xmlElementName,
                                     new URI(xmlElementNamespace));
 
-                    Preconditions.checkState(!childDataSchemaNodes.isEmpty(),
-                            "Schema for node with name %s and namespace %s doesn't exist.",
-                            xmlElementName, xmlElementNamespace);
+                    if (childDataSchemaNodes.isEmpty()) {
+                        if (strictParsing) {
+                            throw new IllegalStateException(String.format(
+                                "Schema for node with name %s and namespace %s doesn't exist.",
+                                xmlElementName, xmlElementNamespace));
+                        } else {
+                            skipUnknownNode(in);
+                            continue;
+                        }
+                    }
 
                     read(in, ((CompositeNodeDataWithSchema) parent).addChild(childDataSchemaNodes));
                 }
@@ -305,6 +341,34 @@ public final class XmlParserStream implements Closeable, Flushable {
     private static boolean isAtElement(final XMLStreamReader in) {
         return in.getEventType() == XMLStreamConstants.START_ELEMENT
                 || in.getEventType() == XMLStreamConstants.END_ELEMENT;
+    }
+
+    private static void skipUnknownNode(final XMLStreamReader in) throws XMLStreamException {
+        // in case when the unknown node and at least one of its descendant nodes have the same name
+        // we cannot properly reach the end just by checking if the current node is an end element and has the same name
+        // as the root unknown element. therefore we ignore the names completely and just track the level of nesting
+        int levelOfNesting = 0;
+        while (in.hasNext()) {
+            // in case there are text characters in an element, we cannot skip them by calling nextTag()
+            // therefore we skip them by calling next(), and then proceed to next element
+            in.next();
+            if (!isAtElement(in)) {
+                in.nextTag();
+            }
+            if (in.isStartElement()) {
+                levelOfNesting++;
+            }
+
+            if (in.isEndElement()) {
+                if (levelOfNesting == 0) {
+                    break;
+                }
+
+                levelOfNesting--;
+            }
+        }
+
+        in.nextTag();
     }
 
     private void setValue(final AbstractNodeDataWithSchema parent, final String value, final NamespaceContext nsContext)
