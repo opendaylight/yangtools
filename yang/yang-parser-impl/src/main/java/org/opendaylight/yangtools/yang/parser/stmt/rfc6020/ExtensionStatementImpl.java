@@ -63,7 +63,12 @@ public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> imp
         public void onStatementDefinitionDeclared(final StmtContext.Mutable<QName, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> stmt) {
             super.onStatementDefinitionDeclared(stmt);
 
-            stmt.addContext(ExtensionNamespace.class, stmt.getStatementArgument(), stmt);
+            QName stmtName = stmt.getStatementArgument();
+            if (SupportedExtensionsMapping.OPENCONFIG_VERSION.getStatementName().isEqualWithoutRevision(stmtName)) {
+                stmtName = stmtName.withoutRevision();
+            }
+
+            stmt.addContext(ExtensionNamespace.class, stmtName, stmt);
 
             final StmtContext<QName, ?, ?> argument = StmtContextUtils.findFirstDeclaredSubstatement(stmt,
                 ArgumentStatement.class);
