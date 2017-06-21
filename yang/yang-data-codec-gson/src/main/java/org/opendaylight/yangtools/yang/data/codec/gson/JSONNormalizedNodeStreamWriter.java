@@ -12,7 +12,6 @@ import static org.w3c.dom.Node.ELEMENT_NODE;
 import static org.w3c.dom.Node.TEXT_NODE;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Throwables;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
@@ -226,10 +225,9 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
             throws IOException {
         try {
             ((JSONCodec<Object>) codec).writeValue(writer, value);
-        } catch (IOException e) {
+        } catch (IOException | RuntimeException e) {
             throw e;
         } catch (Exception e) {
-            Throwables.propagateIfPossible(e);
             throw new RuntimeException(e);
         }
     }

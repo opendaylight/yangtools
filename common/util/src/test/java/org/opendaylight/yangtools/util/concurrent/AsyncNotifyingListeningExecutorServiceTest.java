@@ -22,6 +22,7 @@ import static org.opendaylight.yangtools.util.concurrent.CommonTestUtils.SUBMIT_
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import java.util.ArrayList;
 import java.util.List;
@@ -153,7 +154,7 @@ public class AsyncNotifyingListeningExecutorServiceTest {
                 // Shouldn't happen
                 fail("Unexpected failure " + t);
             }
-        });
+        }, MoreExecutors.directExecutor());
     }
 
     @Test

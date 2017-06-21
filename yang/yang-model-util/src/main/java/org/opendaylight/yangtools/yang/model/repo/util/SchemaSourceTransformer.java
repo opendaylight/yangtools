@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.MoreExecutors;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nonnull;
@@ -57,7 +58,7 @@ public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D ext
     @Override
     public CheckedFuture<D, SchemaSourceException> getSource(final SourceIdentifier sourceIdentifier) {
         final CheckedFuture<S, SchemaSourceException> f = provider.getSchemaSource(sourceIdentifier, srcClass);
-        return Futures.makeChecked(Futures.transform(f, function), MAPPER);
+        return Futures.makeChecked(Futures.transformAsync(f, function, MoreExecutors.directExecutor()), MAPPER);
     }
 
     @Override

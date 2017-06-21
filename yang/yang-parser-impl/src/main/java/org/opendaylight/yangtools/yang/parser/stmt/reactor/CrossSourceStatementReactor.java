@@ -162,13 +162,6 @@ public final class CrossSourceStatementReactor {
         return buildAction;
     }
 
-    private static <T> T warnOnNull(final T obj) {
-        if (obj == null) {
-            LOG.info("Set of supported features has not been provided, so all features are supported by default.");
-        }
-        return obj;
-    }
-
     public static class Builder implements org.opendaylight.yangtools.concepts.Builder<CrossSourceStatementReactor> {
         private final Map<ValidationBundleType, Collection<?>> validationBundles =
                 new EnumMap<>(ValidationBundleType.class);

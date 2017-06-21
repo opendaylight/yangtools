@@ -14,9 +14,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.FutureFallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -68,26 +68,21 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
     @GuardedBy("this")
     private final Collection<SchemaListenerRegistration> listeners = new ArrayList<>();
 
-    private static <T extends SchemaSourceRepresentation> CheckedFuture<T, SchemaSourceException> fetchSource(
+    @SuppressWarnings("unchecked")
+    private static <T extends SchemaSourceRepresentation> ListenableFuture<T> fetchSource(
             final SourceIdentifier id, final Iterator<AbstractSchemaSourceRegistration<?>> it) {
         final AbstractSchemaSourceRegistration<?> reg = it.next();
 
-        @SuppressWarnings("unchecked")
-        final CheckedFuture<? extends T, SchemaSourceException> f =
-            ((SchemaSourceProvider<T>)reg.getProvider()).getSource(id);
-
-        return Futures.makeChecked(Futures.withFallback(f, new FutureFallback<T>() {
-            @Override
-            public ListenableFuture<T> create(@Nonnull final Throwable cause) throws SchemaSourceException {
-                LOG.debug("Failed to acquire source from {}", reg, cause);
+        return Futures.catchingAsync(((SchemaSourceProvider<T>)reg.getProvider()).getSource(id), Throwable.class,
+            input -> {
+                LOG.debug("Failed to acquire source from {}", reg, input);
 
                 if (it.hasNext()) {
                     return fetchSource(id, it);
                 }
 
-                throw new MissingSchemaSourceException("All available providers exhausted", id, cause);
-            }
-        }), FETCH_MAPPER);
+                throw new MissingSchemaSourceException("All available providers exhausted", id, input);
+            }, MoreExecutors.directExecutor());
     }
 
     @Override
@@ -115,7 +110,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
                         "No providers for source " + id + " representation " + representation + " available", id));
         }
 
-        CheckedFuture<T, SchemaSourceException> fetchSourceFuture = fetchSource(id, regs);
+        final ListenableFuture<T> fetchSourceFuture = fetchSource(id, regs);
         // Add callback to notify cache listeners about encountered schema
         Futures.addCallback(fetchSourceFuture, new FutureCallback<T>() {
             @Override
@@ -130,9 +125,9 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
             public void onFailure(@Nonnull final Throwable t) {
                 LOG.trace("Skipping notification for encountered source {}, fetching source failed", id, t);
             }
-        });
+        }, MoreExecutors.directExecutor());
 
-        return fetchSourceFuture;
+        return Futures.makeChecked(fetchSourceFuture, FETCH_MAPPER);
     }
 
     private synchronized <T extends SchemaSourceRepresentation> void addSource(final PotentialSchemaSource<T> source,

@@ -20,6 +20,7 @@ import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.MoreExecutors;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -102,10 +103,12 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         // Detect mismatch between requested Source IDs and IDs that are extracted from parsed source
         // Also remove duplicates if present
         // We are relying on preserved order of uniqueSourceIdentifiers as well as sf
-        sf = Futures.transform(sf, new SourceIdMismatchDetector(uniqueSourceIdentifiers));
+        sf = Futures.transform(sf, new SourceIdMismatchDetector(uniqueSourceIdentifiers),
+            MoreExecutors.directExecutor());
 
         // Assemble sources into a schema context
-        final ListenableFuture<SchemaContext> cf = Futures.transform(sf, assembleSources);
+        final ListenableFuture<SchemaContext> cf = Futures.transformAsync(sf, assembleSources,
+            MoreExecutors.directExecutor());
 
         // Populate cache when successful
         Futures.addCallback(cf, new FutureCallback<SchemaContext>() {
@@ -118,7 +121,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
             public void onFailure(@Nonnull final Throwable t) {
                 LOG.debug("Failed to assemble sources", t);
             }
-        });
+        }, MoreExecutors.directExecutor());
 
         return Futures.makeChecked(cf, MAPPER);
     }
