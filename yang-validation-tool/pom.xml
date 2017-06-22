@@ -13,20 +13,20 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>odlparent</artifactId>
-        <version>1.7.4-SNAPSHOT</version>
+        <version>1.7.5-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yang-validation-tool</artifactId>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>1.0.5-SNAPSHOT</version>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yangtools-artifacts</artifactId>
-                <version>1.0.4-SNAPSHOT</version>
+                <version>1.0.5-SNAPSHOT</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>

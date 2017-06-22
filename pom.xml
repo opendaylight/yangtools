@@ -13,14 +13,14 @@
     <parent>
       <groupId>org.opendaylight.odlparent</groupId>
       <artifactId>odlparent-lite</artifactId>
-      <version>1.7.4-SNAPSHOT</version>
+      <version>1.7.5-SNAPSHOT</version>
       <relativePath/>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yangtools-aggregator</artifactId>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>1.0.5-SNAPSHOT</version>
     <name>yangtools</name> <!-- Used by Sonar to set project name -->
     <packaging>pom</packaging>
 

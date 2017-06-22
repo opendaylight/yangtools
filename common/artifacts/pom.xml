@@ -13,18 +13,18 @@
     <parent>
       <groupId>org.opendaylight.odlparent</groupId>
       <artifactId>odlparent-lite</artifactId>
-      <version>1.7.4-SNAPSHOT</version>
+      <version>1.7.5-SNAPSHOT</version>
       <relativePath/>
     </parent>
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yangtools-artifacts</artifactId>
-    <version>1.0.4-SNAPSHOT</version>
+    <version>1.0.5-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
         <!-- Model versions -->
-        <ietf.topology.version>2013.10.21.9.4-SNAPSHOT</ietf.topology.version>
+        <ietf.topology.version>2013.10.21.9.5-SNAPSHOT</ietf.topology.version>
     </properties>
 
     <dependencyManagement>

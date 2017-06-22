@@ -12,12 +12,12 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>bundle-parent</artifactId>
-        <version>1.7.4-SNAPSHOT</version>
+        <version>1.7.5-SNAPSHOT</version>
         <relativePath/>
     </parent>
   <groupId>org.opendaylight.yangtools</groupId>
   <artifactId>checkstyle-logging</artifactId>
-  <version>1.0.4-SNAPSHOT</version>
+  <version>1.0.5-SNAPSHOT</version>
   <packaging>bundle</packaging>
 
   <dependencies>
