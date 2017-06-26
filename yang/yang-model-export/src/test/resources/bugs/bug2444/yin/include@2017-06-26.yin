@@ -1,0 +1,56 @@
+<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:inc="include"
+    xmlns:dev-tgt="deviation-target" name="include">
+    <yang-version value="1.1"></yang-version>
+    <namespace uri="include"></namespace>
+    <prefix value="inc"></prefix>
+    <import module="deviation-target">
+        <description>
+            <text>import desc</text>
+        </description>
+        <reference>
+            <text>import ref</text>
+        </reference>
+        <prefix value="dev-tgt"></prefix>
+        <revision-date date="2017-01-20"></revision-date>
+    </import>
+    <include module="submodule">
+        <description>
+            <text>include desc</text>
+        </description>
+        <reference>
+            <text>include ref</text>
+        </reference>
+        <revision-date date="1970-01-01"></revision-date>
+    </include>
+    <description>
+        <text>module desc</text>
+    </description>
+    <reference>
+        <text>module ref</text>
+    </reference>
+    <revision date="2017-06-26">
+        <description>
+            <text>2017-06-26 revision desc</text>
+        </description>
+        <reference>
+            <text>2017-06-26 revision ref</text>
+        </reference>
+    </revision>
+    <revision date="2016-06-26">
+        <description>
+            <text>2016-06-26 revision desc</text>
+        </description>
+        <reference>
+            <text>2016-06-26 revision ref</text>
+        </reference>
+    </revision>
+    <revision date="2015-06-26">
+        <description>
+            <text>2015-06-26 revision desc</text>
+        </description>
+        <reference>
+            <text>2015-06-26 revision ref</text>
+        </reference>
+    </revision>
+    <container name="root"></container>
+</module>

@@ -1,0 +1,58 @@
+<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:tgt="deviation-target"
+    name="deviation-target">
+    <yang-version value="1.1"></yang-version>
+    <namespace uri="deviation-target"></namespace>
+    <prefix value="tgt"></prefix>
+    <revision date="2017-01-20"></revision>
+    <leaf-list name="my-leaf-list">
+        <type name="int32"></type>
+        <default value="50"></default>
+    </leaf-list>
+    <list name="my-list">
+        <key value="key-leaf"></key>
+        <leaf name="key-leaf">
+            <type name="string"></type>
+        </leaf>
+        <leaf name="my-leaf-a">
+            <type name="string"></type>
+        </leaf>
+        <leaf name="my-leaf-b">
+            <type name="string"></type>
+        </leaf>
+        <leaf name="my-leaf-c">
+            <type name="string"></type>
+        </leaf>
+        <leaf name="my-leaf-d">
+            <type name="string"></type>
+        </leaf>
+    </list>
+    <choice name="my-choice">
+        <case name="c1">
+            <leaf name="c1-leaf">
+                <type name="string"></type>
+                <default value="heaven"></default>
+            </leaf>
+        </case>
+        <case name="c2">
+            <leaf name="c2-leaf">
+                <type name="string"></type>
+                <default value="hell"></default>
+            </leaf>
+        </case>
+        <container name="shortcase"></container>
+    </choice>
+    <anyxml name="my-anyxml"></anyxml>
+    <rpc name="my-rpc">
+        <input>
+            <leaf name="my-rpc-input-leaf">
+                <type name="string"></type>
+            </leaf>
+        </input>
+        <output>
+            <leaf name="my-rpc-output-leaf">
+                <type name="string"></type>
+            </leaf>
+        </output>
+    </rpc>
+    <notification name="my-notification"></notification>
+</module>
