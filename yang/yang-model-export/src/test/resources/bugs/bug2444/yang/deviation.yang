@@ -1,0 +1,69 @@
+module deviation {
+    namespace "deviation";
+    prefix "dev";
+    yang-version 1.1;
+
+    import deviation-target {
+        prefix dev-tgt;
+        revision-date 2017-01-20;
+    }
+
+    revision 2017-01-20;
+
+    deviation "/dev-tgt:my-leaf-list" {
+        deviate add {
+            config false;
+            min-elements 5;
+            max-elements 10;
+            default 100;
+            default 200;
+            units "hours";
+        }
+    }
+
+    deviation "/dev-tgt:my-list" {
+        deviate add {
+            unique "my-leaf-a my-leaf-b";
+            unique "my-leaf-c my-leaf-d";
+        }
+    }
+
+    deviation "/dev-tgt:my-choice" {
+        deviate add {
+            default c2;
+        }
+    }
+
+    deviation "/dev-tgt:my-rpc/dev-tgt:input" {
+        deviate add {
+            must "day or night";
+            must "black and white";
+        }
+    }
+
+    deviation "/dev-tgt:my-rpc/dev-tgt:output" {
+        deviate add {
+            must "day or night";
+            must "black and white";
+        }
+    }
+
+    deviation "/dev-tgt:my-notification" {
+        deviate add {
+            must "day or night";
+            must "black and white";
+        }
+    }
+
+    deviation "/dev-tgt:my-anyxml" {
+        deviate add {
+            mandatory true;
+            dev:custom-property "arg";
+            dev:custom-property "another arg";
+        }
+    }
+
+    extension custom-property {
+        argument name;
+    }
+}
