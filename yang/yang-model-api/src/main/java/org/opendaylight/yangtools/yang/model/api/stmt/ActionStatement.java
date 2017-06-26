@@ -22,6 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  * detailed action information.  The argument is the name of the action.
  */
 @Beta
-public interface ActionStatement extends DeclaredStatement<QName>, OperationGroup, ConditionalFeature {
+public interface ActionStatement extends DeclaredStatement<QName>, OperationGroup {
 
 }
