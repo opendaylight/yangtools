@@ -1,0 +1,7 @@
+<submodule name="submodule" xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+    xmlns:incl="include">
+    <belongs-to module="include">
+        <prefix value="incl" />
+    </belongs-to>
+    <container name="sub-con" />
+</submodule>
