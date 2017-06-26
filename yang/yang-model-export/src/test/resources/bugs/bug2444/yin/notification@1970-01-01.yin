@@ -1,60 +1,30 @@
-<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:n="notification"
-    name="notification">
-    <yang-version value="1.1"></yang-version>
-    <namespace uri="notification"></namespace>
-    <prefix value="n"></prefix>
-    <revision date="1970-01-01"></revision>
-    <grouping name="grp">
-        <status value="current"></status>
-        <notification name="n5">
-            <status value="current"></status>
-        </notification>
-    </grouping>
-    <container name="r">
-        <presence value="false"></presence>
-        <config value="true"></config>
-        <status value="current"></status>
-        <notification name="n2">
-            <status value="current"></status>
-        </notification>
-        <notification name="n4">
-            <status value="current"></status>
-        </notification>
-        <notification name="n5">
-            <status value="current"></status>
-        </notification>
-    </container>
-    <list name="l">
-        <key value="id"></key>
-        <config value="true"></config>
-        <ordered-by value="system"></ordered-by>
-        <status value="current"></status>
-        <leaf name="id">
-            <type name="int16"></type>
-            <config value="true"></config>
-            <mandatory value="false"></mandatory>
-            <status value="current"></status>
-        </leaf>
-        <notification name="n3">
-            <status value="current"></status>
-        </notification>
-    </list>
-    <augment target-node="/r">
-        <status value="current"></status>
-        <uses name="grp"></uses>
-        <notification name="n5">
-            <status value="current"></status>
-        </notification>
-        <notification name="n4">
-            <status value="current"></status>
-        </notification>
-    </augment>
+<module name="notification" xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+    xmlns:n="notification">
+    <namespace uri="notification" />
+    <prefix value="n" />
+    <yang-version value="1.1" />
     <notification name="n1">
-        <status value="current"></status>
+        <status value="deprecated" />
         <container name="c">
-            <presence value="false"></presence>
-            <config value="true"></config>
-            <status value="current"></status>
+            <config value="true" />
+            <status value="current" />
         </container>
     </notification>
+    <container name="r">
+        <notification name="n2" />
+    </container>
+    <list name="l">
+        <key value="id" />
+        <leaf name="id">
+            <type name="int16" />
+        </leaf>
+        <notification name="n3" />
+    </list>
+    <augment target-node="/r">
+        <uses name="grp" />
+        <notification name="n4" />
+    </augment>
+    <grouping name="grp">
+        <notification name="n5" />
+    </grouping>
 </module>
