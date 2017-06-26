@@ -17,15 +17,15 @@ import org.opendaylight.yangtools.yang.common.QName;
  * Common interface for action and rpc statements.
  */
 @Beta
-public interface OperationGroup extends DocumentationGroup.WithStatus {
+public interface OperationGroup extends DocumentationGroup.WithStatus, ConditionalFeature {
 
-    QName getName();
+    @Nonnull QName getName();
 
     @Nonnull Collection<? extends TypedefStatement> getTypedefs();
 
     @Nonnull Collection<? extends GroupingStatement> getGroupings();
 
-    InputStatement getInput();
+    @Nonnull InputStatement getInput();
 
-    OutputStatement getOutput();
+    @Nonnull OutputStatement getOutput();
 }
