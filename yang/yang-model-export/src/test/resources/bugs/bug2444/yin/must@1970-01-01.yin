@@ -3,13 +3,9 @@
     <yang-version value="1.1"></yang-version>
     <namespace uri="must"></namespace>
     <prefix value="mu"></prefix>
-    <revision date="1970-01-01"></revision>
     <container name="root">
-        <presence value="false"></presence>
-        <config value="true"></config>
-        <status value="current"></status>
+        <presence value="This is a presence container."></presence>
         <action name="a">
-            <status value="current"></status>
             <input>
                 <must condition="1!=0"></must>
             </input>
@@ -19,7 +15,6 @@
         </action>
     </container>
     <rpc name="r">
-        <status value="current"></status>
         <input>
             <must condition="1!=0"></must>
         </input>
@@ -29,6 +24,5 @@
     </rpc>
     <notification name="n">
         <must condition="1!=0"></must>
-        <status value="current"></status>
     </notification>
 </module>

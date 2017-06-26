@@ -17,6 +17,7 @@ module must {
     }
 
     container root {
+        presence "This is a presence container.";
         action a {
             input {
                 must "1!=0";
