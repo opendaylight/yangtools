@@ -1,53 +1,28 @@
-<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:u="unique"
-    name="unique">
-    <yang-version value="1"></yang-version>
-    <namespace uri="unique"></namespace>
-    <prefix value="u"></prefix>
-    <revision date="1970-01-01"></revision>
+<module name="unique" xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+    xmlns:u="unique">
+    <namespace uri="unique" />
+    <prefix value="u" />
     <list name="l">
-        <key value="id"></key>
-        <unique tag="c1/c2/my-leaf-2"></unique>
-        <unique tag="my-container/my-leaf-3"></unique>
-        <config value="true"></config>
-        <ordered-by value="system"></ordered-by>
-        <status value="current"></status>
+        <key value="id" />
         <leaf name="id">
-            <type name="string"></type>
-            <config value="true"></config>
-            <mandatory value="false"></mandatory>
-            <status value="current"></status>
+            <type name="string" />
         </leaf>
+        <ordered-by value="user" />
+        <unique tag="c1/c2/my-leaf-2" />
+        <unique tag="my-container/my-leaf-3" />
         <leaf name="my-leaf-1">
-            <type name="string"></type>
-            <config value="true"></config>
-            <mandatory value="false"></mandatory>
-            <status value="current"></status>
+            <type name="string" />
         </leaf>
         <container name="c1">
-            <presence value="false"></presence>
-            <config value="true"></config>
-            <status value="current"></status>
             <container name="c2">
-                <presence value="false"></presence>
-                <config value="true"></config>
-                <status value="current"></status>
                 <leaf name="my-leaf-2">
-                    <type name="string"></type>
-                    <config value="true"></config>
-                    <mandatory value="false"></mandatory>
-                    <status value="current"></status>
+                    <type name="string" />
                 </leaf>
             </container>
         </container>
         <container name="my-container">
-            <presence value="false"></presence>
-            <config value="true"></config>
-            <status value="current"></status>
             <leaf name="my-leaf-3">
-                <type name="string"></type>
-                <config value="true"></config>
-                <mandatory value="false"></mandatory>
-                <status value="current"></status>
+                <type name="string" />
             </leaf>
         </container>
     </list>

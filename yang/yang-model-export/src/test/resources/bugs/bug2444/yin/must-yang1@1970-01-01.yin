@@ -1,15 +1,11 @@
-<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:muy1="must-yang1"
-    name="must-yang1">
-    <yang-version value="1"></yang-version>
-    <namespace uri="must-yang1"></namespace>
-    <prefix value="muy1"></prefix>
-    <revision date="1970-01-01"></revision>
+<module name="must-yang1" xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+    xmlns:muy1="must-yang1">
+    <namespace uri="must-yang1" />
+    <prefix value="muy1" />
+    <yang-version value="1" />
+    <notification name="n" />
     <rpc name="r">
-        <status value="current"></status>
-        <input></input>
-        <output></output>
+        <input />
+        <output />
     </rpc>
-    <notification name="n">
-        <status value="current"></status>
-    </notification>
 </module>

@@ -1,0 +1,60 @@
+<module name="deviation" xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+    xmlns:dev="deviation" xmlns:dev-tgt="deviation-target">
+    <namespace uri="deviation" />
+    <prefix value="dev" />
+    <yang-version value="1.1" />
+    <import module="deviation-target">
+        <prefix value="dev-tgt" />
+        <revision-date date="2017-01-20" />
+    </import>
+    <revision date="2017-01-20" />
+    <deviation target-node="/dev-tgt:my-leaf-list">
+        <deviate value="add">
+            <config value="false" />
+            <min-elements value="5" />
+            <max-elements value="10" />
+            <default value="100" />
+            <default value="200" />
+            <units name="hours" />
+        </deviate>
+    </deviation>
+    <deviation target-node="/dev-tgt:my-list">
+        <deviate value="add">
+            <unique tag="my-leaf-a my-leaf-b" />
+            <unique tag="my-leaf-c my-leaf-d" />
+        </deviate>
+    </deviation>
+    <deviation target-node="/dev-tgt:my-choice">
+        <deviate value="add">
+            <default value="c2" />
+        </deviate>
+    </deviation>
+    <deviation target-node="/dev-tgt:my-rpc/dev-tgt:input">
+        <deviate value="add">
+            <must condition="day or night" />
+            <must condition="black and white" />
+        </deviate>
+    </deviation>
+    <deviation target-node="/dev-tgt:my-rpc/dev-tgt:output">
+        <deviate value="add">
+            <must condition="day or night" />
+            <must condition="black and white" />
+        </deviate>
+    </deviation>
+    <deviation target-node="/dev-tgt:my-notification">
+        <deviate value="add">
+            <must condition="day or night" />
+            <must condition="black and white" />
+        </deviate>
+    </deviation>
+    <deviation target-node="/dev-tgt:my-anyxml">
+        <deviate value="add">
+            <mandatory value="true" />
+            <dev:custom-property dev:name="arg" />
+            <dev:custom-property dev:name="another arg" />
+        </deviate>
+    </deviation>
+    <extension name="custom-property">
+        <argument name="name" />
+    </extension>
+</module>

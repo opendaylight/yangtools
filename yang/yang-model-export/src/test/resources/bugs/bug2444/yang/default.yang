@@ -8,9 +8,11 @@ module default {
         default "def-val-1";
         default "def-val-2";
         default "def-val-3";
+        ordered-by user;
     }
 
     leaf-list my-leaflist-2 {
         type string;
+        status "deprecated";
     }
 }
