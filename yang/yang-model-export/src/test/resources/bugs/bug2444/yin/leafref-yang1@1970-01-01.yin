@@ -1,21 +1,17 @@
-<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:lr="leafref-yang1"
-    name="leafref-yang1">
-    <yang-version value="1"></yang-version>
-    <namespace uri="leafref-yang1"></namespace>
-    <prefix value="lr"></prefix>
-    <revision date="1970-01-01"></revision>
+<module name="leafref-yang1" xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+    xmlns:lr="leafref-yang1">
+    <namespace uri="leafref-yang1" />
+    <prefix value="lr" />
+    <yang-version value="1" />
     <leaf name="my-leafref-3">
         <type name="leafref">
-            <path value="/target"></path>
+            <path value="/target" />
         </type>
-        <config value="true"></config>
-        <mandatory value="false"></mandatory>
-        <status value="current"></status>
+        <status value="current" />
+        <mandatory value="true" />
+        <config value="false" />
     </leaf>
     <leaf name="target">
-        <type name="string"></type>
-        <config value="true"></config>
-        <mandatory value="false"></mandatory>
-        <status value="current"></status>
+        <type name="string" />
     </leaf>
 </module>
