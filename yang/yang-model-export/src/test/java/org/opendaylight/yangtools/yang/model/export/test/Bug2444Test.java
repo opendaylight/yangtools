@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.yang.model.export.test;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import org.custommonkey.xmlunit.Diff;
@@ -35,12 +35,8 @@ public class Bug2444Test {
         final SchemaContext schema = YangParserTestUtils.parseYangSources("/bugs/bug2444/yang");
         assertNotNull(schema);
 
-        final File outDir = new File("target/bug2444-export");
-        outDir.mkdirs();
-
-        for (final Module module : schema.getModules()) {
-            exportModule(schema, module, outDir);
-
+        final ImmutableSet<Module> modulesAndSubmodules = getAllModulesAndSubmodules(schema);
+        for (final Module module : modulesAndSubmodules) {
             final OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
             try {
@@ -59,6 +55,15 @@ public class Bug2444Test {
         }
     }
 
+    private ImmutableSet<Module> getAllModulesAndSubmodules(final SchemaContext schema) {
+        final Builder<Module> builder = ImmutableSet.builder();
+        builder.addAll(schema.getModules());
+        for (final Module module : schema.getModules()) {
+            builder.addAll(module.getSubmodules());
+        }
+        return builder.build();
+    }
+
     private static void assertXMLEquals(final Document expectedXMLDoc, final String output)
             throws SAXException, IOException {
         final String expected = YinExportTestUtils.toString(expectedXMLDoc.getDocumentElement());
@@ -70,14 +75,5 @@ public class Bug2444Test {
         final Diff diff = new Diff(expected, output);
         diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
         XMLAssert.assertXMLEqual(diff, true);
-    }
-
-    private static File exportModule(final SchemaContext schemaContext, final Module module, final File outDir)
-            throws Exception {
-        final File outFile = new File(outDir, YinExportUtils.wellFormedYinName(module.getName(), module.getRevision()));
-        try (OutputStream output = new FileOutputStream(outFile)) {
-            YinExportUtils.writeModuleToOutputStream(schemaContext, module, output);
-        }
-        return outFile;
     }
 }
