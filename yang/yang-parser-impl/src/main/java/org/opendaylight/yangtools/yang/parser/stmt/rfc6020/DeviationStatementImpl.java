@@ -7,11 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import java.util.Collection;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -77,5 +82,23 @@ public class DeviationStatementImpl extends AbstractDeclaredStatement<SchemaNode
     @Nonnull @Override
     public SchemaNodeIdentifier getTargetNode() {
         return argument();
+    }
+
+    @Nullable
+    @Override
+    public DescriptionStatement getDescription() {
+        return firstDeclared(DescriptionStatement.class);
+    }
+
+    @Nullable
+    @Override
+    public ReferenceStatement getReference() {
+        return firstDeclared(ReferenceStatement.class);
+    }
+
+    @Nonnull
+    @Override
+    public Collection<? extends DeviateStatement> getDeviateStatements() {
+        return allDeclared(DeviateStatement.class);
     }
 }
