@@ -1,10 +1,9 @@
-<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:foo-prefix="foo-namespace" name="foo">
-    <yang-version value="1"></yang-version>
+<module xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+    xmlns:foo-prefix="foo-namespace" name="foo">
     <namespace uri="foo-namespace"></namespace>
     <prefix value="foo-prefix"></prefix>
     <revision date="2016-08-05"></revision>
     <extension name="test-extension">
-        <status value="current"></status>
     </extension>
     <feature name="test-feature">
         <status value="current"></status>
@@ -26,124 +25,74 @@
         </reference>
     </identity>
     <identity name="test-base-identity">
-        <status value="current"></status>
     </identity>
     <typedef name="test-uint32-typedef">
         <type name="uint32">
             <range value="50..100">
-                <error-message>
-                    <value>The argument is out of bounds &lt;50, 100&gt;</value>
-                </error-message>
-                <error-app-tag value="range-out-of-specified-bounds"></error-app-tag>
             </range>
         </type>
         <units name="seconds"></units>
-        <status value="current"></status>
     </typedef>
     <typedef name="test-int32-typedef">
         <type name="int32">
             <range value="50..100">
-                <error-message>
-                    <value>The argument is out of bounds &lt;50, 100&gt;</value>
-                </error-message>
-                <error-app-tag value="range-out-of-specified-bounds"></error-app-tag>
             </range>
         </type>
-        <status value="current"></status>
     </typedef>
     <typedef name="test-leafref-typedef">
         <type name="leafref">
             <path value="../leafref-target-leaf"></path>
         </type>
-        <status value="current"></status>
     </typedef>
     <typedef name="test-iid-typedef">
         <type name="instance-identifier">
             <require-instance value="false"></require-instance>
         </type>
-        <status value="current"></status>
     </typedef>
     <grouping name="test-grouping-1">
-        <status value="current"></status>
         <leaf name="test-leaf-1">
             <type name="string"></type>
             <default value="def-val"></default>
-            <config value="true"></config>
-            <mandatory value="false"></mandatory>
-            <status value="current"></status>
         </leaf>
         <leaf-list name="test-leaf-list">
             <type name="string"></type>
             <config value="false"></config>
             <ordered-by value="user"></ordered-by>
-            <status value="current"></status>
         </leaf-list>
         <list name="test-list">
             <key value="key-leaf-1 key-leaf-2"></key>
-            <config value="true"></config>
             <min-elements value="5"></min-elements>
-            <ordered-by value="system"></ordered-by>
-            <status value="current"></status>
             <leaf name="key-leaf-1">
                 <type name="string"></type>
-                <config value="true"></config>
-                <mandatory value="false"></mandatory>
-                <status value="current"></status>
             </leaf>
             <leaf name="key-leaf-2">
                 <type name="string"></type>
-                <config value="true"></config>
-                <mandatory value="false"></mandatory>
-                <status value="current"></status>
             </leaf>
         </list>
         <container name="test-container-2">
-            <presence value="false"></presence>
             <config value="false"></config>
-            <status value="current"></status>
         </container>
     </grouping>
     <grouping name="test-grouping-2">
-        <status value="current"></status>
         <anyxml name="test-anyxml-2">
             <config value="false"></config>
-            <mandatory value="false"></mandatory>
-            <status value="current"></status>
         </anyxml>
         <choice name="test-choice-2">
             <config value="false"></config>
-            <mandatory value="false"></mandatory>
-            <status value="current"></status>
             <case name="first">
-                <status value="current"></status>
                 <leaf name="first-case-leaf">
                     <type name="string">
-                        <length value="10|15">
-                            <error-message>
-                                <value>The argument is out of bounds &lt;10, 10&gt;</value>
-                            </error-message>
-                            <error-app-tag value="length-out-of-specified-bounds"></error-app-tag>
+                        <length value="10..10 | 15">
                         </length>
                     </type>
-                    <config value="false"></config>
-                    <mandatory value="false"></mandatory>
-                    <status value="current"></status>
                 </leaf>
             </case>
             <case name="second">
-                <status value="current"></status>
                 <leaf name="second-case-leaf">
                     <type name="int32">
-                        <range value="10|15">
-                            <error-message>
-                                <value>The argument is out of bounds &lt;10, 10&gt;</value>
-                            </error-message>
-                            <error-app-tag value="range-out-of-specified-bounds"></error-app-tag>
+                        <range value="10..10 | 15">
                         </range>
                     </type>
-                    <config value="false"></config>
-                    <mandatory value="false"></mandatory>
-                    <status value="current"></status>
                 </leaf>
             </case>
         </choice>
@@ -151,58 +100,26 @@
     <anyxml name="test-anyxml">
         <when condition="foo != 'bar'"></when>
         <must condition="bar != 'foo'"></must>
-        <config value="true"></config>
-        <mandatory value="false"></mandatory>
-        <status value="current"></status>
         <foo-prefix:test-extension></foo-prefix:test-extension>
     </anyxml>
     <leaf name="leafref-target-leaf">
         <type name="string"></type>
-        <config value="true"></config>
-        <mandatory value="false"></mandatory>
-        <status value="current"></status>
     </leaf>
     <container name="test-container-1">
         <must condition="bar != 'foo'"></must>
-        <presence value="false"></presence>
-        <config value="true"></config>
-        <status value="current"></status>
     </container>
     <container name="test-container-3">
-        <presence value="false"></presence>
-        <config value="true"></config>
-        <status value="current"></status>
         <choice name="test-choice">
-            <config value="true"></config>
-            <mandatory value="false"></mandatory>
-            <status value="current"></status>
             <case name="a">
-                <status value="current"></status>
                 <leaf name="case-a-leaf">
                     <type name="int32"></type>
-                    <config value="true"></config>
-                    <mandatory value="false"></mandatory>
-                    <status value="current"></status>
                 </leaf>
             </case>
             <case name="b">
-                <status value="current"></status>
                 <leaf name="case-b-leaf">
                     <type name="decimal64">
                         <fraction-digits value="3"></fraction-digits>
-                        <range value="-9223372036854775.808..9223372036854775.807">
-                            <error-message>
-                                <value>The argument is out of bounds &lt;-9223372036854775.808, 9223372036854775.807&gt;</value>
-                            </error-message>
-                            <error-app-tag value="range-out-of-specified-bounds"></error-app-tag>
-                            <reference>
-                                <text>https://tools.ietf.org/html/rfc6020#section-9.3.4</text>
-                            </reference>
-                        </range>
                     </type>
-                    <config value="true"></config>
-                    <mandatory value="false"></mandatory>
-                    <status value="current"></status>
                 </leaf>
             </case>
         </choice>
@@ -210,43 +127,28 @@
             <type name="bits">
                 <bit name="one">
                     <position value="1"></position>
-                    <status value="current"></status>
                 </bit>
                 <bit name="two">
                     <position value="2"></position>
-                    <status value="current"></status>
                 </bit>
             </type>
-            <config value="true"></config>
-            <mandatory value="false"></mandatory>
-            <status value="current"></status>
         </leaf>
         <leaf name="identityref-leaf">
             <type name="identityref">
                 <base name="test-base-identity"></base>
             </type>
-            <config value="true"></config>
-            <mandatory value="false"></mandatory>
-            <status value="current"></status>
         </leaf>
     </container>
     <augment target-node="/test-container-3/test-choice">
-        <status value="current"></status>
         <case name="c">
-            <status value="current"></status>
             <leaf name="case-c-leaf">
                 <type name="string"></type>
-                <config value="true"></config>
-                <mandatory value="false"></mandatory>
-                <status value="current"></status>
             </leaf>
         </case>
     </augment>
     <augment target-node="/test-container-1">
-        <status value="current"></status>
         <uses name="test-grouping-1">
             <refine target-node="test-list">
-                <config value="true"></config>
                 <min-elements value="5"></min-elements>
             </refine>
             <refine target-node="test-leaf-list">
@@ -254,62 +156,41 @@
             </refine>
             <refine target-node="test-leaf-1">
                 <default value="def-val"></default>
-                <config value="true"></config>
-                <mandatory value="false"></mandatory>
             </refine>
             <refine target-node="test-container-2">
-                <presence value="false"></presence>
                 <config value="false"></config>
             </refine>
             <augment target-node="test-container-2">
-                <status value="current"></status>
                 <leaf name="test-leaf-2">
                     <type name="string"></type>
-                    <config value="true"></config>
-                    <mandatory value="false"></mandatory>
-                    <status value="current"></status>
                 </leaf>
             </augment>
         </uses>
     </augment>
     <rpc name="test-rpc">
-        <status value="current"></status>
         <grouping name="rpc-grouping">
-            <status value="current"></status>
             <leaf name="rpc-grouping-leaf">
                 <type name="string"></type>
-                <config value="true"></config>
-                <mandatory value="false"></mandatory>
-                <status value="current"></status>
             </leaf>
         </grouping>
         <input>
             <leaf name="input-leaf">
                 <type name="string"></type>
-                <config value="true"></config>
-                <mandatory value="false"></mandatory>
-                <status value="current"></status>
             </leaf>
         </input>
         <output>
             <leaf name="output-leaf">
                 <type name="string"></type>
-                <config value="true"></config>
-                <mandatory value="false"></mandatory>
-                <status value="current"></status>
             </leaf>
         </output>
     </rpc>
     <notification name="test-notification">
-        <status value="current"></status>
         <uses name="test-grouping-2">
             <refine target-node="test-choice-2">
                 <config value="false"></config>
-                <mandatory value="false"></mandatory>
             </refine>
             <refine target-node="test-anyxml-2">
                 <config value="false"></config>
-                <mandatory value="false"></mandatory>
             </refine>
         </uses>
     </notification>
