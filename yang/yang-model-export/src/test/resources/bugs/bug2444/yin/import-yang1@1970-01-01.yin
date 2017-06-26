@@ -1,11 +1,11 @@
-<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:iy1="import-yang1"
-    xmlns:ac="action" name="import-yang1">
-    <yang-version value="1"></yang-version>
-    <namespace uri="import-yang1"></namespace>
-    <prefix value="iy1"></prefix>
+<module name="import-yang1" xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+    xmlns:iy1="import-yang1">
+    <namespace uri="import-yang1" />
+    <prefix value="iy1" />
+    <yang-version value="1" />
     <import module="action">
-        <prefix value="ac"></prefix>
-        <revision-date date="1970-01-01"></revision-date>
+        <prefix value="ac" />
+        <revision-date date="1970-01-01" />
     </import>
-    <revision date="1970-01-01"></revision>
+    <revision date="1970-01-01" />
 </module>

@@ -1,34 +1,28 @@
-<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:mu="must"
-    name="must">
-    <yang-version value="1.1"></yang-version>
-    <namespace uri="must"></namespace>
-    <prefix value="mu"></prefix>
-    <revision date="1970-01-01"></revision>
+<module name="must" xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+    xmlns:mu="must">
+    <namespace uri="must" />
+    <prefix value="mu" />
+    <yang-version value="1.1" />
+    <notification name="n">
+        <must condition="1!=0" />
+    </notification>
+    <rpc name="r">
+        <input>
+            <must condition="1!=0" />
+        </input>
+        <output>
+            <must condition="1!=0" />
+        </output>
+    </rpc>
     <container name="root">
-        <presence value="false"></presence>
-        <config value="true"></config>
-        <status value="current"></status>
+        <presence value="This is a presence container." />
         <action name="a">
-            <status value="current"></status>
             <input>
-                <must condition="1!=0"></must>
+                <must condition="1!=0" />
             </input>
             <output>
-                <must condition="1!=0"></must>
+                <must condition="1!=0" />
             </output>
         </action>
     </container>
-    <rpc name="r">
-        <status value="current"></status>
-        <input>
-            <must condition="1!=0"></must>
-        </input>
-        <output>
-            <must condition="1!=0"></must>
-        </output>
-    </rpc>
-    <notification name="n">
-        <must condition="1!=0"></must>
-        <status value="current"></status>
-    </notification>
 </module>
