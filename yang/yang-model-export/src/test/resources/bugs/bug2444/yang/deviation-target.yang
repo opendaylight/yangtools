@@ -1,0 +1,76 @@
+module deviation-target {
+    namespace deviation-target;
+    prefix tgt;
+    yang-version 1.1;
+
+    revision 2017-01-20;
+
+    leaf-list my-leaf-list {
+        type int32;
+        default 50;
+    }
+
+    list my-list {
+        key key-leaf;
+
+        leaf key-leaf {
+            type string;
+        }
+
+        leaf my-leaf-a {
+            type string;
+        }
+
+        leaf my-leaf-b {
+            type string;
+        }
+
+        leaf my-leaf-c {
+            type string;
+        }
+
+        leaf my-leaf-d {
+            type string;
+        }
+    }
+
+    choice my-choice {
+        case c1 {
+            leaf c1-leaf {
+                type string;
+                default "heaven";
+            }
+        }
+
+        case c2 {
+            leaf c2-leaf {
+                type string;
+                default "hell";
+            }
+        }
+        container shortcase {
+        }
+    }
+
+    rpc my-rpc {
+        input {
+            leaf my-rpc-input-leaf {
+                type string;
+            }
+        }
+
+        output {
+            leaf my-rpc-output-leaf {
+                type string;
+            }
+        }
+    }
+
+    notification my-notification {
+
+    }
+
+    anyxml my-anyxml {
+
+    }
+}
