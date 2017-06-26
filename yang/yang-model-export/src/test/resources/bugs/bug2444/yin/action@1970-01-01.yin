@@ -1,21 +1,12 @@
-<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:ac="action"
-    name="action">
-    <yang-version value="1.1"></yang-version>
-    <namespace uri="action"></namespace>
-    <prefix value="ac"></prefix>
-    <revision date="1970-01-01"></revision>
-    <extension name="my-ext">
-        <argument name="my-arg">
-            <yin-element value="false"></yin-element>
-        </argument>
-        <status value="current"></status>
-    </extension>
+<module name="action" xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+    xmlns:ac="action">
+    <namespace uri="action" />
+    <prefix value="ac" />
+    <yang-version value="1.1" />
     <container name="root">
-        <presence value="false"></presence>
-        <config value="true"></config>
-        <status value="current"></status>
         <action name="a">
-            <status value="deprecated"></status>
+            <if-feature name="my-feature-1 or my-feature-2" />
+            <status value="deprecated" />
             <description>
                 <text>decs</text>
             </description>
@@ -23,32 +14,21 @@
                 <text>ref</text>
             </reference>
             <typedef name="my-type">
-                <type name="string"></type>
-                <status value="current"></status>
+                <type name="string" />
             </typedef>
             <grouping name="my-grp">
-                <status value="current"></status>
-                <container name="con-in-grp">
-                    <presence value="false"></presence>
-                    <config value="true"></config>
-                    <status value="current"></status>
-                </container>
+                <container name="con-in-grp" />
             </grouping>
             <input>
-                <container name="i">
-                    <presence value="false"></presence>
-                    <config value="true"></config>
-                    <status value="current"></status>
-                </container>
+                <container name="i" />
             </input>
             <output>
-                <container name="o">
-                    <presence value="false"></presence>
-                    <config value="true"></config>
-                    <status value="current"></status>
-                </container>
+                <container name="o" />
             </output>
-            <ac:my-ext ac:my-arg="arg-val"></ac:my-ext>
+            <ac:my-ext ac:my-arg="arg-val" />
         </action>
     </container>
+    <extension name="my-ext">
+        <argument name="my-arg" />
+    </extension>
 </module>

@@ -1,22 +1,17 @@
-<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:def="default"
-    name="default">
-    <yang-version value="1.1"></yang-version>
-    <namespace uri="default"></namespace>
-    <prefix value="def"></prefix>
-    <revision date="1970-01-01"></revision>
+<module name="default" xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+    xmlns:def="default">
+    <namespace uri="default" />
+    <prefix value="def" />
+    <yang-version value="1.1" />
     <leaf-list name="my-leaflist-1">
-        <type name="string"></type>
-        <config value="true"></config>
-        <default value="def-val-1"></default>
-        <default value="def-val-2"></default>
-        <default value="def-val-3"></default>
-        <ordered-by value="system"></ordered-by>
-        <status value="current"></status>
+        <type name="string" />
+        <default value="def-val-1" />
+        <default value="def-val-2" />
+        <default value="def-val-3" />
+        <ordered-by value="user" />
     </leaf-list>
     <leaf-list name="my-leaflist-2">
-        <type name="string"></type>
-        <config value="true"></config>
-        <ordered-by value="system"></ordered-by>
-        <status value="current"></status>
+        <type name="string" />
+        <status value="deprecated" />
     </leaf-list>
 </module>
