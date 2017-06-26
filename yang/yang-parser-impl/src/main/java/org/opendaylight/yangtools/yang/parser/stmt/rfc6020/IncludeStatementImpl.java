@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
@@ -127,12 +126,6 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
     @Override
     public String getModule() {
         return argument();
-    }
-
-    @Nonnull
-    @Override
-    public PrefixStatement getPrefix() {
-        return firstDeclared(PrefixStatement.class);
     }
 
     @Override
