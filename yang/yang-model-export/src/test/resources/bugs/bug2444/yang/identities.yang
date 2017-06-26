@@ -5,7 +5,9 @@ module identities {
 
     identity id-a;
     identity id-b;
-    identity id-c;
+    identity id-c {
+        status "deprecated";
+    }
 
     identity derived-id {
         base id-a;
@@ -19,11 +21,13 @@ module identities {
             base id-b;
             base id-c;
         }
+        mandatory true;
     }
 
     leaf idref-leaf-2 {
         type identityref {
             base derived-id;
         }
+        config true;
     }
 }
