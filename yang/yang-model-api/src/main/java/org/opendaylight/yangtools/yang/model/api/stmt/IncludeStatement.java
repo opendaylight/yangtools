@@ -15,8 +15,6 @@ public interface IncludeStatement extends DeclaredStatement<String>, Documentati
 
     @Nonnull String getModule();
 
-    @Nonnull PrefixStatement getPrefix();
-
     @Nullable RevisionDateStatement getRevisionDate();
 }
 
