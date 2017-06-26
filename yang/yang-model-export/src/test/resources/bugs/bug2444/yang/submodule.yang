@@ -1,0 +1,8 @@
+submodule submodule {
+    belongs-to include {
+        prefix incl;
+    }
+
+    container sub-con {
+    }
+}

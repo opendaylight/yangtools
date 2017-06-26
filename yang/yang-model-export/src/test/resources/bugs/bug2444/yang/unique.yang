@@ -7,7 +7,7 @@ module unique {
         leaf id {
             type string;
         }
-
+        ordered-by user;
         unique "c1/c2/my-leaf-2";
         unique "my-container/my-leaf-3";
         leaf my-leaf-1 {

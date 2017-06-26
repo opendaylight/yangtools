@@ -1,28 +1,22 @@
-<module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:my1="modifier-yang1"
-    name="modifier-yang1">
-    <yang-version value="1"></yang-version>
-    <namespace uri="modifier-yang1"></namespace>
-    <prefix value="my1"></prefix>
-    <revision date="1970-01-01"></revision>
+<module name="modifier-yang1" xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+    xmlns:my1="modifier-yang1">
+    <namespace uri="modifier-yang1" />
+    <prefix value="my1" />
+    <yang-version value="1" />
     <leaf name="my-leaf">
         <type name="string">
-            <length value="0..2147483647">
+            <length value="0..2">
                 <error-message>
-                    <value>The argument is out of bounds &lt;0,
-                        2147483647&gt;</value>
+                    <value>Error message length</value>
                 </error-message>
-                <error-app-tag value="length-out-of-specified-bounds"></error-app-tag>
+                <error-app-tag value="length-out" />
             </length>
             <pattern value=".*">
                 <error-message>
-                    <value>Supplied value does not match the regular
-                        expression ^.*$.</value>
+                    <value>Error message pattern</value>
                 </error-message>
-                <error-app-tag value="invalid-regular-expression"></error-app-tag>
+                <error-app-tag value="regex-err" />
             </pattern>
         </type>
-        <config value="true"></config>
-        <mandatory value="false"></mandatory>
-        <status value="current"></status>
     </leaf>
 </module>
