@@ -11,21 +11,22 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.annotations.Beta;
 import java.util.Collection;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  * Common interface for action and rpc statements.
  */
 @Beta
-public interface OperationGroup extends DocumentationGroup.WithStatus {
+public interface OperationGroup extends DocumentationGroup.WithStatus, ConditionalFeature {
 
-    QName getName();
+    @Nonnull QName getName();
 
     @Nonnull Collection<? extends TypedefStatement> getTypedefs();
 
     @Nonnull Collection<? extends GroupingStatement> getGroupings();
 
-    InputStatement getInput();
+    @Nullable InputStatement getInput();
 
-    OutputStatement getOutput();
+    @Nullable OutputStatement getOutput();
 }

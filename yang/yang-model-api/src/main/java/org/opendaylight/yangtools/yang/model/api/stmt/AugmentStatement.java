@@ -7,11 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import java.util.Collection;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface AugmentStatement extends DeclaredStatement<SchemaNodeIdentifier>, DataDefinitionContainer,
-        NotificationStatementContainer, ActionStatementContainer {
+public interface AugmentStatement
+        extends DeclaredStatement<SchemaNodeIdentifier>, DataDefinitionContainer, NotificationStatementContainer,
+        ActionStatementContainer, DocumentationGroup.WithStatus, ConditionalDataDefinition, ConditionalFeature {
 
-    @Nonnull SchemaNodeIdentifier getTargetNode();
+    @Nonnull
+    SchemaNodeIdentifier getTargetNode();
+
+    @Nonnull
+    Collection<? extends CaseStatement> getCases();
 }
