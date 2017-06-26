@@ -446,4 +446,280 @@ final class SchemaToStatementWriterAdaptor implements YangModuleWriter {
         }
         writer.writeArgument(uniqueStr.toString());
     }
+
+    @Override
+    public void startRevisionNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.REVISION);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startRevisionDateNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.REVISION_DATE);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startExtensionNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.EXTENSION);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startBaseNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.BASE);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startFeatureNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.FEATURE);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startYinElementNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.YIN_ELEMENT);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startIdentityNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.IDENTITY);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startTypedefNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.TYPEDEF);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startRpcNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.RPC);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startTypeNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.TYPE);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startContainerNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.CONTAINER);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startPresenceNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.PRESENCE);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startStatusNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.STATUS);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startConfigNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.CONFIG);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startLeafNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.LEAF);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startWhenNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.WHEN);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startLeafListNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.LEAF_LIST);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startMustNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.MUST);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startMinElementsNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.MIN_ELEMENTS);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startMaxElementsNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.MAX_ELEMENTS);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startListNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.LIST);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startKeyNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.KEY);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startUniqueNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.UNIQUE);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startActionNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.ACTION);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startChoiceNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.CHOICE);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startMandatoryNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.MANDATORY);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startAnyxmlNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.ANYXML);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startCaseNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.CASE);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startAnydataNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.ANYDATA);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startGroupingNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.GROUPING);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startUsesNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.USES);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startRefineNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.REFINE);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startAugmentNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.AUGMENT);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startNotificationNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.NOTIFICATION);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startValueNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.VALUE);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startModifierNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.MODIFIER);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startFractionDigitsNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.FRACTION_DIGITS);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startPathNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.PATH);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startRequireInstanceNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.REQUIRE_INSTANCE);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startPositionNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.POSITION);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startBelongsToNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.BELONGS_TO);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startIfFeatureNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.IF_FEATURE);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startSubmoduleNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.SUBMODULE);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startIncludeNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.INCLUDE);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startDeviationNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.DEVIATION);
+        writer.writeArgument(rawArgument);
+    }
+
+    @Override
+    public void startDeviateNode(final String rawArgument) {
+        writer.startStatement(YangStmtMapping.DEVIATE);
+        writer.writeArgument(rawArgument);
+    }
 }
