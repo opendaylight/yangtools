@@ -96,7 +96,8 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
                 .put(TypeUtils.LEAF_REF, new LeafrefSpecificationImpl.Definition())
                 .put(TypeUtils.BITS, new BitsSpecificationImpl.Definition())
                 .put(TypeUtils.IDENTITY_REF, new IdentityRefSpecificationImpl.Definition())
-                .put(TypeUtils.INSTANCE_IDENTIFIER, new InstanceIdentifierSpecificationImpl.Definition()).build();
+                .put(TypeUtils.INSTANCE_IDENTIFIER, new InstanceIdentifierSpecificationImpl.Definition())
+                .build();
 
         public Definition() {
             super(YangStmtMapping.TYPE);
