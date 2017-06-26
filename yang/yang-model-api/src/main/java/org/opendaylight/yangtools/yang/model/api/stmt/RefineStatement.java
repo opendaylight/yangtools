@@ -12,28 +12,28 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface RefineStatement extends DeclaredStatement<SchemaNodeIdentifier>, DocumentationGroup,
-       ConditionalFeature {
+public interface RefineStatement
+        extends DeclaredStatement<SchemaNodeIdentifier>, DocumentationGroup, ConditionalFeature {
     String getTargetNode();
 
-    interface RefineContainerStatement extends RefineStatement {
+    @Nonnull
+    Collection<? extends MustStatement> getMusts();
 
-        @Nonnull Collection<? extends MustStatement> getMusts();
+    @Nonnull
+    Collection<? extends DefaultStatement> getDefaults();
 
-        @Nullable ConfigStatement getConfig();
+    @Nullable
+    ConfigStatement getConfig();
 
-        @Nullable PresenceStatement getPresence();
-    }
+    @Nullable
+    PresenceStatement getPresence();
 
-    interface RefineLeafStatement extends RefineStatement {
+    @Nullable
+    MandatoryStatement getMandatory();
 
-        @Nonnull Collection<? extends MustStatement> getMusts();
+    @Nullable
+    MinElementsStatement getMinElements();
 
-        @Nullable DefaultStatement getDefault();
-
-        @Nullable ConfigStatement getConfig();
-
-        @Nullable PresenceStatement getPresence();
-    }
+    @Nullable
+    MaxElementsStatement getMaxElements();
 }
-
