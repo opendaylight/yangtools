@@ -51,6 +51,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> extends
         AbstractEffectiveDocumentedNode<String, D> implements Module, MutableStatement {
@@ -84,8 +85,18 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
 
         this.name = argument();
 
-        final PrefixEffectiveStatementImpl prefixStmt = firstEffective(PrefixEffectiveStatementImpl.class);
-        this.prefix = (prefixStmt == null) ? null : prefixStmt.argument();
+        EffectiveStatementBase<?, ?> parentOfPrefix = this;
+        if (ctx.getPublicDefinition() == YangStmtMapping.SUBMODULE) {
+            parentOfPrefix = firstEffective(BelongsToEffectiveStatementImpl.class);
+            SourceException.throwIfNull(parentOfPrefix, ctx.getStatementSourceReference(),
+                    "Unable to find belongs-to statement in submodule %s.", ctx.getStatementArgument());
+        }
+
+        final PrefixEffectiveStatementImpl prefixStmt = parentOfPrefix
+                .firstEffective(PrefixEffectiveStatementImpl.class);
+        SourceException.throwIfNull(prefixStmt, ctx.getStatementSourceReference(),
+                "Unable to resolve prefix for module or submodule %s.", ctx.getStatementArgument());
+        this.prefix = prefixStmt.argument();
 
         final YangVersionEffectiveStatementImpl yangVersionStmt = firstEffective(YangVersionEffectiveStatementImpl.class);
         this.yangVersion = (yangVersionStmt == null) ? YangVersion.VERSION_1 : yangVersionStmt.argument();
