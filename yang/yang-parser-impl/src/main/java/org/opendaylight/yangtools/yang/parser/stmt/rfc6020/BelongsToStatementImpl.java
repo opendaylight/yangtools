@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.BelongsEffectiveToStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.BelongsToEffectiveStatementImpl;
 
 public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
         implements BelongsToStatement {
@@ -63,7 +63,7 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
         @Override
         public EffectiveStatement<String, BelongsToStatement> createEffective(
                 final StmtContext<String, BelongsToStatement, EffectiveStatement<String, BelongsToStatement>> ctx) {
-            return new BelongsEffectiveToStatementImpl(ctx);
+            return new BelongsToEffectiveStatementImpl(ctx);
         }
 
         @Override
