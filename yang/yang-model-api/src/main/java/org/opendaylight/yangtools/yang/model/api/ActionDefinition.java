@@ -20,6 +20,5 @@ import com.google.common.annotations.Beta;
  * detailed action information.  The argument is the name of the action.
  */
 @Beta
-public interface ActionDefinition extends OperationDefinition {
-
+public interface ActionDefinition extends OperationDefinition, CopyableNode {
 }
