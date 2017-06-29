@@ -21,6 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AbstractEffectiveSchemaNode;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStmtUtils;
@@ -33,6 +35,8 @@ public class ActionEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ac
     private final ContainerSchemaNode output;
     private final Set<TypeDefinition<?>> typeDefinitions;
     private final Set<GroupingDefinition> groupings;
+    private final boolean augmenting;
+    private final boolean addedByUses;
 
     public ActionEffectiveStatementImpl(
             final StmtContext<QName, ActionStatement, EffectiveStatement<QName, ActionStatement>> ctx) {
@@ -41,16 +45,16 @@ public class ActionEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ac
         this.output = firstEffective(OutputEffectiveStatementImpl.class);
 
         // initSubstatements
-        Set<GroupingDefinition> groupingsInit = new HashSet<>();
-        Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
+        final Set<GroupingDefinition> groupingsInit = new HashSet<>();
+        final Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
+        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof GroupingDefinition) {
-                GroupingDefinition groupingDefinition = (GroupingDefinition) effectiveStatement;
+                final GroupingDefinition groupingDefinition = (GroupingDefinition) effectiveStatement;
                 groupingsInit.add(groupingDefinition);
             }
             if (effectiveStatement instanceof TypeDefEffectiveStatementImpl) {
-                TypeDefEffectiveStatementImpl typeDef = (TypeDefEffectiveStatementImpl) effectiveStatement;
-                TypeDefinition<?> type = typeDef.getTypeDefinition();
+                final TypeDefEffectiveStatementImpl typeDef = (TypeDefEffectiveStatementImpl) effectiveStatement;
+                final TypeDefinition<?> type = typeDef.getTypeDefinition();
                 if (!mutableTypeDefinitions.contains(type)) {
                     mutableTypeDefinitions.add(type);
                 } else {
@@ -60,6 +64,15 @@ public class ActionEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ac
         }
         this.groupings = ImmutableSet.copyOf(groupingsInit);
         this.typeDefinitions = ImmutableSet.copyOf(mutableTypeDefinitions);
+
+        // initCopyType
+        final CopyHistory copyTypesFromOriginal = ctx.getCopyHistory();
+        if (copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES_AUGMENTATION)) {
+            this.addedByUses = this.augmenting = true;
+        } else {
+            this.augmenting = copyTypesFromOriginal.contains(CopyType.ADDED_BY_AUGMENTATION);
+            this.addedByUses = copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES);
+        }
     }
 
     @Override
@@ -80,6 +93,16 @@ public class ActionEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ac
     @Override
     public Set<GroupingDefinition> getGroupings() {
         return groupings;
+    }
+
+    @Override
+    public boolean isAugmenting() {
+        return augmenting;
+    }
+
+    @Override
+    public boolean isAddedByUses() {
+        return addedByUses;
     }
 
     @Override

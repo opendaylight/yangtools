@@ -23,6 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
+import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class NotificationEffectiveStatementImpl extends
@@ -32,6 +34,8 @@ public class NotificationEffectiveStatementImpl extends
     private final ConstraintDefinition constraints;
     private final Set<AugmentationSchema> augmentations;
     private final List<UnknownSchemaNode> unknownNodes;
+    private final boolean augmenting;
+    private final boolean addedByUses;
 
     public NotificationEffectiveStatementImpl(
             final StmtContext<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> ctx) {
@@ -42,20 +46,29 @@ public class NotificationEffectiveStatementImpl extends
         this.constraints = EffectiveConstraintDefinitionImpl.forParent(this);
 
         // initSubstatementCollections
-        List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
-        Set<AugmentationSchema> augmentationsInit = new LinkedHashSet<>();
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
+        final List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
+        final Set<AugmentationSchema> augmentationsInit = new LinkedHashSet<>();
+        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
-                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
+                final UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
                 unknownNodesInit.add(unknownNode);
             }
             if (effectiveStatement instanceof AugmentationSchema) {
-                AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
+                final AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
                 augmentationsInit.add(augmentationSchema);
             }
         }
         this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
+
+        // initCopyType
+        final CopyHistory copyTypesFromOriginal = ctx.getCopyHistory();
+        if (copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES_AUGMENTATION)) {
+            this.addedByUses = this.augmenting = true;
+        } else {
+            this.augmenting = copyTypesFromOriginal.contains(CopyType.ADDED_BY_AUGMENTATION);
+            this.addedByUses = copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES);
+        }
     }
 
     @Nonnull
@@ -84,6 +97,16 @@ public class NotificationEffectiveStatementImpl extends
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;
+    }
+
+    @Override
+    public boolean isAugmenting() {
+        return augmenting;
+    }
+
+    @Override
+    public boolean isAddedByUses() {
+        return addedByUses;
     }
 
     @Override
