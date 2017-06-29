@@ -24,25 +24,7 @@ package org.opendaylight.yangtools.yang.model.api;
  * @see AnyXmlSchemaNode
  * @see AnyDataSchemaNode
  */
-public interface DataSchemaNode extends SchemaNode {
-    /**
-     * Returns <code>true</code> if the data node was added by augmentation,
-     * otherwise returns <code>false</code>.
-     *
-     * @return <code>true</code> if the data node was added by augmentation,
-     *         otherwise returns <code>false</code>
-     */
-    boolean isAugmenting();
-
-    /**
-     * Returns <code>true</code> if the data node was added by uses statement,
-     * otherwise returns <code>false</code>.
-     *
-     * @return <code>true</code> if the data node was added by uses statement,
-     *         otherwise returns <code>false</code>
-     */
-    boolean isAddedByUses();
-
+public interface DataSchemaNode extends SchemaNode, CopyableNode {
     /**
      * Returns <code>true</code> if the data represents configuration data,
      * otherwise returns <code>false</code>.

@@ -13,7 +13,7 @@ import javax.annotation.Nullable;
  * Interface describing YANG 'notification' statement. The notification
  * statement is used to define a NETCONF notification.
  */
-public interface NotificationDefinition extends SchemaNode, DataNodeContainer, AugmentationTarget {
+public interface NotificationDefinition extends SchemaNode, DataNodeContainer, AugmentationTarget, CopyableNode {
 
     /**
      * All implementations should override this method.
