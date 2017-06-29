@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "da2a55be_fc45e8b3",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/AugmentStatement.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-06-29T12:46:21Z",
+      "side": 1,
+      "message": "Yes, it is. However, I think nobody is using this currently.. Would you like to create weather item or do not perform these changes or .. ?",
+      "parentUuid": "da2a55be_fc8cc881",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 22,
+        "endChar": 51
+      },
+      "revId": "6231d01a554ff9b35d6a396140ba315698dee2d9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da2a55be_9cf30c0a",
         "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/DeviationStatement.java",
         "patchSetId": 3
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "da2a55be_fcf8484b",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/DeviationStatement.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-06-29T12:46:21Z",
+      "side": 1,
+      "message": "Yes, they are in declaredSubstatements collection just like all other declared substatements. However despite this, each declared statement have separate method to access corresponding type of substatements according to Rfc7950  (e.g. EnumSpecification or any other). Following this practice I have add this method here, because there are reference-stmt, description-stmt and deviate-stmt under deviation-stmt. Would you prefer do not add this method here ?",
+      "parentUuid": "da2a55be_9cf30c0a",
+      "range": {
+        "startLine": 18,
+        "startChar": 4,
+        "endLine": 18,
+        "endChar": 75
+      },
+      "revId": "6231d01a554ff9b35d6a396140ba315698dee2d9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da2a55be_bcd9b085",
         "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/OperationGroup.java",
         "patchSetId": 3
@@ -59,6 +107,30 @@
       "writtenOn": "2017-06-29T11:33:49Z",
       "side": 1,
       "message": "This is declared world: these can in fact be null (i.e. they have not been declared in the model).",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 30,
+        "endChar": 41
+      },
+      "revId": "6231d01a554ff9b35d6a396140ba315698dee2d9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da2a55be_5c9514e3",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/OperationGroup.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-06-29T12:46:21Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da2a55be_bcd9b085",
       "range": {
         "startLine": 28,
         "startChar": 0,
