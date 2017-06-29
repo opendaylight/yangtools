@@ -1810,9 +1810,6 @@ abstract class SchemaContextEmitter {
 
         private void emitContainer(final ContainerSchemaNode child) {
             super.writer.startContainerNode(child.getQName());
-
-            //
-
             emitConstraints(child.getConstraints());
             // FIXME: BUG-2444: whenNode //:Optional
             // FIXME: BUG-2444: *(ifFeatureNode )
@@ -2229,8 +2226,10 @@ abstract class SchemaContextEmitter {
         }
 
         private void emitAction(final ActionDefinition action) {
-            // :FIXME add addedByUses & addedByAugmentation in API and perform
-            // check here..
+            if (!super.emitInstantiated && (action.isAddedByUses() || action.isAugmenting())) {
+                // We skip instantiated nodes.
+                return;
+            }
             super.writer.startActionNode(action.getQName());
             emitOperationBody(action);
             super.writer.endNode();
@@ -2269,8 +2268,10 @@ abstract class SchemaContextEmitter {
         }
 
         private void emitNotificationNode(final NotificationDefinition notification) {
-            // :FIXME add addedByUses & addedByAugmentation in API and perform
-            // check here..
+            if (!super.emitInstantiated && (notification.isAddedByUses() || notification.isAugmenting())) {
+                // We skip instantiated nodes.
+                return;
+            }
 
             super.writer.startNotificationNode(notification.getQName());
             // FIXME: BUG-2444: *(ifFeatureNode )
