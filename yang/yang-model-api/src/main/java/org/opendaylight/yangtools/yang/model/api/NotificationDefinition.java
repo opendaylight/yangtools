@@ -27,4 +27,40 @@ public interface NotificationDefinition extends SchemaNode, DataNodeContainer, A
     @Nullable default ConstraintDefinition getConstraints() {
         return null;
     }
+
+    /**
+     * Returns <code>true</code> if the notification was added by augmentation,
+     * otherwise returns <code>false</code>.
+     *
+     * Note: All implementations should override this method.
+     * The default definition of this method is used only in YANG 1.0 (RFC6020) implementation of
+     * NotificationDefinition which does not support notification placed in grouping or augment.
+     * YANG notification statement has been changed in YANG 1.1 (RFC7950) and now it is allowed
+     * to use notification also in grouping or augment statements.
+     *
+     * @return <code>true</code> if the notification was added by augmentation,
+     *         otherwise returns <code>false</code>
+     */
+     // FIXME: version 2.0.0: make this method non-default
+    default boolean isAugmenting() {
+        return false;
+    }
+
+    /**
+     * Returns <code>true</code> if the notification was added by uses statement,
+     * otherwise returns <code>false</code>.
+     *
+     * Note: All implementations should override this method.
+     * The default definition of this method is used only in YANG 1.0 (RFC6020) implementation of
+     * NotificationDefinition which does not support notification placed in grouping or augment.
+     * YANG notification statement has been changed in YANG 1.1 (RFC7950) and now it is allowed
+     * to use notification also in grouping or augment statements.
+     *
+     * @return <code>true</code> if the notification was added by uses statement,
+     *         otherwise returns <code>false</code>
+     */
+     // FIXME: version 2.0.0: make this method non-default
+    default boolean isAddedByUses() {
+        return false;
+    }
 }
