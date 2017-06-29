@@ -55,7 +55,7 @@ public class Bug2444Test {
         }
     }
 
-    private ImmutableSet<Module> getAllModulesAndSubmodules(final SchemaContext schema) {
+    private static ImmutableSet<Module> getAllModulesAndSubmodules(final SchemaContext schema) {
         final Builder<Module> builder = ImmutableSet.builder();
         builder.addAll(schema.getModules());
         for (final Module module : schema.getModules()) {
