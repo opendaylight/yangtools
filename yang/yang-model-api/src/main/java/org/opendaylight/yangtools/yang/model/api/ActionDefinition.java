@@ -21,5 +21,21 @@ import com.google.common.annotations.Beta;
  */
 @Beta
 public interface ActionDefinition extends OperationDefinition {
+    /**
+     * Returns <code>true</code> if the action was added by augmentation,
+     * otherwise returns <code>false</code>.
+     *
+     * @return <code>true</code> if the action was added by augmentation,
+     *         otherwise returns <code>false</code>
+     */
+    boolean isAugmenting();
 
+    /**
+     * Returns <code>true</code> if the action was added by uses statement,
+     * otherwise returns <code>false</code>.
+     *
+     * @return <code>true</code> if the action was added by uses statement,
+     *         otherwise returns <code>false</code>
+     */
+    boolean isAddedByUses();
 }
