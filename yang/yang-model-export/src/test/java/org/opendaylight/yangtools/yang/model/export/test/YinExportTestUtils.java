@@ -29,7 +29,7 @@ public class YinExportTestUtils {
         throw new UnsupportedOperationException("Utility class");
     }
 
-    static Document loadDocument(final String xmlPath) throws IOException, SAXException {
+    public static Document loadDocument(final String xmlPath) throws IOException, SAXException {
         final InputStream resourceAsStream = SchemaContextEmitterTest.class.getResourceAsStream(xmlPath);
         final Document currentConfigElement = readXmlToDocument(resourceAsStream);
         Preconditions.checkNotNull(currentConfigElement);
@@ -42,7 +42,7 @@ public class YinExportTestUtils {
         return doc;
     }
 
-    static String toString(final Node xml) {
+    public static String toString(final Node xml) {
         try {
             final Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
