@@ -32,11 +32,14 @@ import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,6 +102,11 @@ public final class SchemaTracker {
 
             if (schema == null && parent instanceof NotificationDefinition) {
                 schema = ((NotificationDefinition) parent);
+            }
+
+            if(schema == null && (((EffectiveStatement)parent).getDeclared() instanceof OutputStatement
+                                 || ((EffectiveStatement)parent).getDeclared() instanceof InputStatement)) {
+                schema = (ContainerSchemaNode)parent;
             }
         } else if (parent instanceof ChoiceSchemaNode) {
             schema = findChildInCases((ChoiceSchemaNode) parent, qname);
