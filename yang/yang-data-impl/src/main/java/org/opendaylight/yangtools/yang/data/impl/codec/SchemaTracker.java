@@ -100,6 +100,10 @@ public final class SchemaTracker {
             if (schema == null && parent instanceof NotificationDefinition) {
                 schema = ((NotificationDefinition) parent);
             }
+
+            if(schema == null && (qname.getLocalName().equals("input") || qname.getLocalName().equals("output"))) {
+                schema = (ContainerSchemaNode)parent;
+            }
         } else if (parent instanceof ChoiceSchemaNode) {
             schema = findChildInCases((ChoiceSchemaNode) parent, qname);
         } else {
