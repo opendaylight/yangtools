@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -99,6 +100,12 @@ public final class SchemaTracker {
 
             if (schema == null && parent instanceof NotificationDefinition) {
                 schema = ((NotificationDefinition) parent);
+            }
+
+            if(schema == null && parent instanceof RpcDefinition
+                    && Objects.equals(qname.getNamespace(), ((RpcDefinition) parent).getQName().getNamespace())
+                    && (qname.getLocalName().equals("input") || qname.getLocalName().equals("output"))) {
+                schema = (ContainerSchemaNode)parent;
             }
         } else if (parent instanceof ChoiceSchemaNode) {
             schema = findChildInCases((ChoiceSchemaNode) parent, qname);
