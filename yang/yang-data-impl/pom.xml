@@ -157,7 +157,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>yang-parser-impl</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
