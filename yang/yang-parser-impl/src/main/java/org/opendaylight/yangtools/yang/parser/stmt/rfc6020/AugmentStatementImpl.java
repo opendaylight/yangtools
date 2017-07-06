@@ -174,7 +174,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                     if (YangStmtMapping.USES == augmentNode.getParentContext().getPublicDefinition()) {
                         final StatementContextBase<?, ?, ?> targetNode = Utils.findNode(getSearchRoot(augmentNode),
                                 augmentNode.getStatementArgument());
-                        if (StmtContextUtils.isUnknownNode(targetNode)) {
+                        if (targetNode != null && StmtContextUtils.isUnknownStatement(targetNode)) {
                             augmentNode.setIsSupportedToBuildEffective(false);
                             LOG.warn(
                                     "Uses-augment to unknown node {}. Augmentation has not been performed. At line: {}",
