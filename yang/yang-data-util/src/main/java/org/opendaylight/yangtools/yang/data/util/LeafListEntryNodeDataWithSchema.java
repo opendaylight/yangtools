@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.util;
 
 import java.io.IOException;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamAttributeWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
@@ -26,6 +27,12 @@ public class LeafListEntryNodeDataWithSchema extends SimpleNodeDataWithSchema {
     @Override
     public void write(final NormalizedNodeStreamWriter writer) throws IOException {
         writer.nextDataSchemaNode(getSchema());
-        writer.leafSetEntryNode(getSchema().getQName(), getValue());
+
+        if (writer instanceof NormalizedNodeStreamAttributeWriter && getAttributes() != null) {
+            ((NormalizedNodeStreamAttributeWriter) writer).leafSetEntryNode(getSchema().getQName(), getValue(),
+                    getAttributes());
+        } else {
+            writer.leafSetEntryNode(getSchema().getQName(), getValue());
+        }
     }
 }

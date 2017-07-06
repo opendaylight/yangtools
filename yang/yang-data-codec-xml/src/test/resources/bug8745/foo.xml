@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cont-with-attributes xmlns="foo" xmlns:a="attribute-ns" a:operation="delete">
+    <leaf-with-attributes xmlns:a="attribute-ns" a:operation="create">lf-val</leaf-with-attributes>
+    <leaf-list-with-attributes xmlns:a="attribute-ns" a:operation="replace">lfl-val</leaf-list-with-attributes>
+    <list-with-attributes xmlns:a="attribute-ns" a:operation="merge">
+        <list-key>key-val</list-key>
+    </list-with-attributes>
+</cont-with-attributes>
