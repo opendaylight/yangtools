@@ -62,15 +62,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     boolean isConfiguration();
 
-    /**
-     * Checks whether this statement is placed within a 'yang-data' extension statement.
-     * Some YANG statements are constrained when used within a 'yang-data' statement.
-     * See the following link for more information - https://tools.ietf.org/html/rfc8040#section-8
-     *
-     * @return true if it is placed within a 'yang-data' extension statement, otherwise false
-     */
-    boolean isInYangDataExtensionBody();
-
     boolean isEnabledSemanticVersioning();
 
     @Nonnull

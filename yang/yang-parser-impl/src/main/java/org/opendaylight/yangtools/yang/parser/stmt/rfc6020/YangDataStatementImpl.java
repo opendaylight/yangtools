@@ -15,8 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.YangDataEffectiveStatementImpl;
 
 /**
@@ -74,6 +74,16 @@ public class YangDataStatementImpl extends AbstractDeclaredStatement<String> imp
             if (ctx.getParentContext().getParentContext() != null) {
                 ctx.setIsSupportedToBuildEffective(false);
             }
+        }
+
+        @Override
+        public boolean isIgnoringIfFeatures() {
+            return true;
+        }
+
+        @Override
+        public boolean isIgnoringConfig() {
+            return true;
         }
     }
 

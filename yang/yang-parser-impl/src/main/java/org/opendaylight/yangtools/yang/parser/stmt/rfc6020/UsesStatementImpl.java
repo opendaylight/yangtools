@@ -88,10 +88,6 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
             }
             super.onFullDefinitionDeclared(usesNode);
 
-            if (StmtContextUtils.isInExtensionBody(usesNode)) {
-                return;
-            }
-
             final ModelActionBuilder usesAction = usesNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
             final QName groupingName = usesNode.getStatementArgument();
 
