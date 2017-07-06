@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.util.OptionalBoolean;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -64,10 +65,22 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
      * This field maintains a resolution cache, so once we have returned a result, we will keep on returning the same
      * result without performing any lookups.
      */
-    private boolean haveConfiguration;
-    private boolean configuration;
-    private boolean wasCheckedIfInYangDataExtensionBody;
-    private boolean isInYangDataExtensionBody;
+    // BooleanField value
+    private byte configuration;
+
+    /**
+     * This field maintains a resolution cache for ignore config, so once we have returned a result, we will
+     * keep on returning the same result without performing any lookups.
+     */
+    // BooleanField value
+    private byte ignoreConfig;
+
+    /**
+     * This field maintains a resolution cache for ignore if-feature, so once we have returned a result, we will
+     * keep on returning the same result without performing any lookups.
+     */
+    // BooleanField value
+    private byte ignoreIfFeature;
 
     private volatile SchemaPath schemaPath;
 
@@ -224,7 +237,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         Verify.verify(maybeParentPath.isPresent(), "Parent %s does not have a SchemaPath", parent);
         final SchemaPath parentPath = maybeParentPath.get();
 
-        if (StmtContextUtils.isUnknownNode(this)) {
+        if (StmtContextUtils.isUnknownStatement(this)) {
             return parentPath.createChild(getPublicDefinition().getStatementName());
         }
         if (argument instanceof QName) {
@@ -281,15 +294,12 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
     @Override
     public boolean isConfiguration() {
-        // if this statement is within a 'yang-data' extension body, config substatements are ignored as if
-        // they were not declared. As 'yang-data' is always a top-level node, all configs that are within it are
-        // automatically true
-        if (isInYangDataExtensionBody()) {
+        if (isIgnoringConfig()) {
             return true;
         }
 
-        if (haveConfiguration) {
-            return configuration;
+        if (OptionalBoolean.isPresent(configuration)) {
+            return OptionalBoolean.get(configuration);
         }
 
         final StmtContext<Boolean, ?, ?> configStatement = StmtContextUtils.findFirstSubstatement(this,
@@ -309,26 +319,8 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         }
 
         // Resolved, make sure we cache this return
-        configuration = isConfig;
-        haveConfiguration = true;
+        configuration = OptionalBoolean.of(isConfig);
         return isConfig;
-    }
-
-    @Override
-    public boolean isInYangDataExtensionBody() {
-        if (wasCheckedIfInYangDataExtensionBody) {
-            return isInYangDataExtensionBody;
-        }
-
-        final boolean parentIsInYangDataExtensionBody = parent.isInYangDataExtensionBody();
-        if (parentIsInYangDataExtensionBody) {
-            isInYangDataExtensionBody = parentIsInYangDataExtensionBody;
-        } else {
-            isInYangDataExtensionBody = StmtContextUtils.hasYangDataExtensionParent(this);
-        }
-
-        wasCheckedIfInYangDataExtensionBody = true;
-        return isInYangDataExtensionBody;
     }
 
     @Override
@@ -359,5 +351,29 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     @Override
     public void setRootIdentifier(final ModuleIdentifier identifier) {
         getRoot().setRootIdentifier(identifier);
+    }
+
+    @Override
+    protected boolean isIgnoringIfFeatures() {
+        if (OptionalBoolean.isPresent(ignoreIfFeature)) {
+            return OptionalBoolean.get(ignoreIfFeature);
+        }
+
+        final boolean ret = definition().isIgnoringIfFeatures() || parent.isIgnoringIfFeatures();
+        ignoreIfFeature = OptionalBoolean.of(ret);
+
+        return ret;
+    }
+
+    @Override
+    protected boolean isIgnoringConfig() {
+        if (OptionalBoolean.isPresent(ignoreConfig)) {
+            return OptionalBoolean.get(ignoreConfig);
+        }
+
+        final boolean ret = definition().isIgnoringConfig() || parent.isIgnoringConfig();
+        ignoreConfig = OptionalBoolean.of(ret);
+
+        return ret;
     }
 }
