@@ -1,0 +1,22 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    container cont-with-attributes {
+        leaf leaf-with-attributes {
+            type string;
+        }
+
+        leaf-list leaf-list-with-attributes {
+            type string;
+        }
+
+        list list-with-attributes {
+            key list-key;
+
+            leaf list-key {
+                type string;
+            }
+        }
+    }
+}
