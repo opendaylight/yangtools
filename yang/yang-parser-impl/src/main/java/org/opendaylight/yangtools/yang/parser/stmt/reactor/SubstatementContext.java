@@ -224,7 +224,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         Verify.verify(maybeParentPath.isPresent(), "Parent %s does not have a SchemaPath", parent);
         final SchemaPath parentPath = maybeParentPath.get();
 
-        if (StmtContextUtils.isUnknownNode(this)) {
+        if (StmtContextUtils.isUnknownStatement(this)) {
             return parentPath.createChild(getPublicDefinition().getStatementName());
         }
         if (argument instanceof QName) {
@@ -284,7 +284,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         // if this statement is within a 'yang-data' extension body, config substatements are ignored as if
         // they were not declared. As 'yang-data' is always a top-level node, all configs that are within it are
         // automatically true
-        if (isInYangDataExtensionBody()) {
+        if (definition().isIgnoringConfig()) {
             return true;
         }
 
@@ -315,23 +315,6 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     }
 
     @Override
-    public boolean isInYangDataExtensionBody() {
-        if (wasCheckedIfInYangDataExtensionBody) {
-            return isInYangDataExtensionBody;
-        }
-
-        final boolean parentIsInYangDataExtensionBody = parent.isInYangDataExtensionBody();
-        if (parentIsInYangDataExtensionBody) {
-            isInYangDataExtensionBody = parentIsInYangDataExtensionBody;
-        } else {
-            isInYangDataExtensionBody = StmtContextUtils.hasYangDataExtensionParent(this);
-        }
-
-        wasCheckedIfInYangDataExtensionBody = true;
-        return isInYangDataExtensionBody;
-    }
-
-    @Override
     public boolean isEnabledSemanticVersioning() {
         return parent.isEnabledSemanticVersioning();
     }
@@ -359,5 +342,10 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     @Override
     public void setRootIdentifier(final ModuleIdentifier identifier) {
         getRoot().setRootIdentifier(identifier);
+    }
+
+    @Override
+    protected boolean isIgnoringIfFeatures() {
+        return definition().isIgnoringIfFeatures() || parent.isIgnoringIfFeatures();
     }
 }
