@@ -9,6 +9,9 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -30,6 +33,8 @@ public enum SupportedExtensionsMapping implements StatementDefinition {
     YANG_DATA("urn:ietf:params:xml:ns:yang:ietf-restconf", "2017-01-26", YangDataStatementImpl.class,
             YangDataEffectiveStatementImpl.class, "yang-data", "name", true);
 
+    public static final Set<Class<? extends DeclaredStatement<?>>> SUPPORTED_EXTENSION_STMTS = Stream.of(values())
+            .map(e -> e.getDeclaredRepresentationClass()).collect(Collectors.toSet());
     private final Class<? extends DeclaredStatement<?>> type;
     private final Class<? extends EffectiveStatement<?, ?>> effectiveType;
     private final QName name;
