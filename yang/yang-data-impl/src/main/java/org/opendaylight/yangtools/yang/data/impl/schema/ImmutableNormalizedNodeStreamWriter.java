@@ -119,8 +119,12 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         return new ImmutableNormalizedNodeStreamWriter(result);
     }
 
+    protected Deque<NormalizedNodeContainerBuilder> getBuilders() {
+        return builders;
+    }
+
     @SuppressWarnings("rawtypes")
-    private NormalizedNodeContainerBuilder getCurrent() {
+    protected NormalizedNodeContainerBuilder getCurrent() {
         return builders.peek();
     }
 
@@ -303,7 +307,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @SuppressWarnings("rawtypes")
-    private static final class NormalizedNodeResultBuilder implements NormalizedNodeContainerBuilder {
+    protected static final class NormalizedNodeResultBuilder implements NormalizedNodeContainerBuilder {
 
         private final NormalizedNodeResult result;
 

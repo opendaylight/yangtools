@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.util;
 
 import java.io.IOException;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamAttributeWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 
@@ -27,7 +28,14 @@ public final class YangModeledAnyXmlNodeDataWithSchema extends CompositeNodeData
     @Override
     public void write(final NormalizedNodeStreamWriter writer) throws IOException {
         writer.nextDataSchemaNode(getSchema());
-        writer.startYangModeledAnyXmlNode(provideNodeIdentifier(), childSizeHint());
+
+        if (writer instanceof NormalizedNodeStreamAttributeWriter) {
+            ((NormalizedNodeStreamAttributeWriter) writer).startYangModeledAnyXmlNode(provideNodeIdentifier(),
+                    childSizeHint(), getAttributes());
+        } else {
+            writer.startYangModeledAnyXmlNode(provideNodeIdentifier(), childSizeHint());
+        }
+
         super.write(writer);
         writer.endNode();
     }
