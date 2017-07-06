@@ -10,7 +10,9 @@ package org.opendaylight.yangtools.yang.data.util;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Objects;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -22,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 @Beta
 public abstract class AbstractNodeDataWithSchema {
     private final DataSchemaNode schema;
+    private Map<QName, String> attributes;
 
     public AbstractNodeDataWithSchema(final DataSchemaNode schema) {
         this.schema = Preconditions.checkNotNull(schema);
@@ -34,6 +37,24 @@ public abstract class AbstractNodeDataWithSchema {
      */
     public final DataSchemaNode getSchema() {
         return schema;
+    }
+
+    /**
+     * Set the associated attributes.
+     *
+     * @param attributes parsed attributes
+     */
+    public final void setAttributes(final Map<QName, String> attributes) {
+        this.attributes = attributes;
+    }
+
+    /**
+     * Return the associated attributes.
+     *
+     * @return associated attributes
+     */
+    public final Map<QName, String> getAttributes() {
+        return attributes;
     }
 
     /**

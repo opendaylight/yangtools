@@ -15,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamAttributeWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -74,9 +75,16 @@ public class ListEntryNodeDataWithSchema extends CompositeNodeDataWithSchema {
         }
 
         writer.nextDataSchemaNode(getSchema());
-        writer.startMapEntryNode(
-            new NodeIdentifierWithPredicates(getSchema().getQName(), predicates),
-            childSizeHint());
+
+        if (writer instanceof NormalizedNodeStreamAttributeWriter) {
+            ((NormalizedNodeStreamAttributeWriter) writer).startMapEntryNode(
+                    new NodeIdentifierWithPredicates(getSchema().getQName(), predicates), childSizeHint(),
+                    getAttributes());
+        } else {
+            writer.startMapEntryNode(new NodeIdentifierWithPredicates(getSchema().getQName(), predicates),
+                    childSizeHint());
+        }
+
         super.write(writer);
         writer.endNode();
     }
