@@ -147,6 +147,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public boolean isSupportedByFeatures() {
+        if (isIgnoringIfFeatures()) {
+            return true;
+        }
         if (OptionalBoolean.isPresent(supportedByFeatures)) {
             return OptionalBoolean.get(supportedByFeatures);
         }
@@ -161,6 +164,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return ret;
 
     }
+
+    protected abstract boolean isIgnoringIfFeatures();
+
+    protected abstract boolean isIgnoringConfig();
 
     @Override
     public boolean isSupportedToBuildEffective() {
