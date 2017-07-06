@@ -119,7 +119,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                     currentContext.putModelDefinedStatementDefinition(name, def);
                 }
             }
-        } else if (current != null && StmtContextUtils.isUnknownStatement(current)) {
+        } else if (current != null && StmtContextUtils.isUnrecognizedStatement(current)) {
             /*
              * This code wraps statements encountered inside an extension so
              * they do not get confused with regular statements.

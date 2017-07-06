@@ -36,7 +36,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -145,6 +144,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public boolean isSupportedByFeatures() {
+        if(isIgnoringIfFeatures()) {
+            return true;
+        }
+
         if (supportedByFeatures == null) {
             final Set<QName> supportedFeatures = getFromNamespace(SupportedFeaturesNamespace.class,
                 SupportedFeatures.SUPPORTED_FEATURES);
@@ -155,6 +158,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
         return supportedByFeatures.booleanValue();
     }
+
+    protected abstract boolean isIgnoringIfFeatures();
+
+    protected abstract boolean isIgnoringConfig();
 
     @Override
     public boolean isSupportedToBuildEffective() {
