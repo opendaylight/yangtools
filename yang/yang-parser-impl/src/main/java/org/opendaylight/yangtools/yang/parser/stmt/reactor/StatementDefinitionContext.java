@@ -154,4 +154,8 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
         }
         return ret;
     }
+
+    boolean isIgnoringIfFeatures() {
+        return support.isIgnoringIfFeatures();
+    }
 }

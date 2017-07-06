@@ -263,4 +263,9 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     ModuleIdentifier getRootIdentifier() {
         return identifier;
     }
+
+    @Override
+    protected boolean isIgnoringIfFeatures() {
+        return false;
+    }
 }

@@ -34,8 +34,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementDefinitionCo
  * @param <E>
  *            Effective Statement representation
  */
-public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> extends
-        StatementDefinition, StatementFactory<A, D, E> {
+public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+        extends StatementDefinition, StatementFactory<A, D, E> {
 
     /**
      * Returns public statement definition, which will be present in built
@@ -60,15 +60,18 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      * @param value
      *            String representation of value, as was present in text source.
      * @return Parsed value
-     * @throws SourceException when an inconsistency is detected.
+     * @throws SourceException
+     *             when an inconsistency is detected.
      */
     A parseArgumentValue(StmtContext<?, ?, ?> ctx, String value);
 
     /**
-     * Invoked when a statement supported by this instance is added to build context. This allows implementations
-     * of this interface to start tracking the statement and perform any modifications to the build context hierarchy,
-     * accessible via {@link StmtContext#getParentContext()}. One such use is populating the parent's namespaces to
-     * allow it to locate this child statement.
+     * Invoked when a statement supported by this instance is added to build
+     * context. This allows implementations of this interface to start tracking
+     * the statement and perform any modifications to the build context
+     * hierarchy, accessible via {@link StmtContext#getParentContext()}. One
+     * such use is populating the parent's namespaces to allow it to locate this
+     * child statement.
      *
      * @param stmt
      *            Context of added statement. No substatements are available.
@@ -123,7 +126,8 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      *
      * @param stmt
      *            Context of added statement.
-     * @throws SourceException when an inconsistency is detected.
+     * @throws SourceException
+     *             when an inconsistency is detected.
      */
     void onLinkageDeclared(StmtContext.Mutable<A, D, E> stmt);
 
@@ -139,7 +143,8 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      * @param stmt
      *            Context of added statement. Argument and statement parent is
      *            accessible.
-     * @throws SourceException when an inconsistency is detected.
+     * @throws SourceException
+     *             when an inconsistency is detected.
      */
     void onStatementDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt);
 
@@ -159,7 +164,8 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      * @param stmt
      *            Context of added statement. Argument and statement parent is
      *            accessible.
-     * @throws SourceException when an inconsistency is detected.
+     * @throws SourceException
+     *             when an inconsistency is detected.
      */
     void onFullDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt);
 
@@ -181,9 +187,11 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     StatementSupport<?, ?, ?> getSupportSpecificForArgument(String argument);
 
     /**
-     * Given a raw string representation of an argument, try to use a shared representation
+     * Given a raw string representation of an argument, try to use a shared
+     * representation
      *
-     * @param rawArgument Argument string
+     * @param rawArgument
+     *            Argument string
      * @return A potentially-shard instance
      */
     default String internArgument(final String rawArgument) {
@@ -203,5 +211,17 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
             final StatementDefinitionContext<?, ?, ?> yangStmtDef) {
         return Optional.empty();
     }
-}
 
+    /**
+     * Returns true if this statement support and all its substatements ignore
+     * if-feature statements (e.g. yang-data extension defined in
+     * https://tools.ietf.org/html/rfc8040#section-8). Default implementation
+     * returns false.
+     *
+     * @return true if this statement support ignores if-feature statements,
+     *         otherwise false.
+     */
+    default boolean isIgnoringIfFeatures() {
+        return false;
+    }
+}
