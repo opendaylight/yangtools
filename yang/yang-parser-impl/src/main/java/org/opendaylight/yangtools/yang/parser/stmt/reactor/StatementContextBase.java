@@ -145,6 +145,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public boolean isSupportedByFeatures() {
+        if(isIgnoringIfFeatures()) {
+            return true;
+        }
+
         if (supportedByFeatures == null) {
             final Set<QName> supportedFeatures = getFromNamespace(SupportedFeaturesNamespace.class,
                 SupportedFeatures.SUPPORTED_FEATURES);
@@ -155,6 +159,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
         return supportedByFeatures.booleanValue();
     }
+
+    protected abstract boolean isIgnoringIfFeatures();
+
+    protected abstract boolean isIgnoringConfig();
 
     @Override
     public boolean isSupportedToBuildEffective() {
