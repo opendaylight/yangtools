@@ -17,9 +17,12 @@ import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import javax.annotation.concurrent.NotThreadSafe;
+import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.Location;
@@ -200,6 +203,29 @@ public final class XmlParserStream implements Closeable, Flushable {
         return this;
     }
 
+    private static Map<QName, String> getElementAttributes(final XMLStreamReader in) {
+        Preconditions.checkState(in.isStartElement(), "Attributes can be extracted only from START_ELEMENT.");
+        final Map<QName, String> attributes = new HashMap<>();
+
+        for (int attrIndex = 0; attrIndex < in.getAttributeCount(); attrIndex++) {
+            String attributeNS = in.getAttributeNamespace(attrIndex);
+
+            if (attributeNS == null) {
+                attributeNS = "";
+            }
+
+            // Skip namespace definitions
+            if (XMLConstants.XMLNS_ATTRIBUTE_NS_URI.equals(attributeNS)) {
+                continue;
+            }
+
+            final QName qName = new QName(URI.create(attributeNS), in.getAttributeLocalName(attrIndex));
+            attributes.put(qName, in.getAttributeValue(attrIndex));
+        }
+
+        return attributes;
+    }
+
     private static String readAnyXmlValue(final XMLStreamReader in) throws XMLStreamException {
         final StringBuilder sb = new StringBuilder();
         final String anyXmlElementName = in.getLocalName();
@@ -232,6 +258,7 @@ public final class XmlParserStream implements Closeable, Flushable {
         }
 
         if (parent instanceof LeafNodeDataWithSchema || parent instanceof LeafListEntryNodeDataWithSchema) {
+            setAttributes(parent, getElementAttributes(in));
             setValue(parent, in.getElementText().trim(), in.getNamespaceContext());
             if (isNextEndDocument(in)) {
                 return;
@@ -241,6 +268,10 @@ public final class XmlParserStream implements Closeable, Flushable {
                 in.nextTag();
             }
             return;
+        }
+
+        if (parent instanceof ListEntryNodeDataWithSchema || parent instanceof ContainerNodeDataWithSchema) {
+            setAttributes(parent, getElementAttributes(in));
         }
 
         if (parent instanceof LeafListNodeDataWithSchema || parent instanceof ListNodeDataWithSchema) {
@@ -267,6 +298,10 @@ public final class XmlParserStream implements Closeable, Flushable {
             }
 
             return;
+        }
+
+        if (parent instanceof YangModeledAnyXmlSchemaNode) {
+            setAttributes(parent, getElementAttributes(in));
         }
 
         switch (in.nextTag()) {
@@ -369,6 +404,12 @@ public final class XmlParserStream implements Closeable, Flushable {
         }
 
         in.nextTag();
+    }
+
+    private static void setAttributes(final AbstractNodeDataWithSchema parent, final Map<QName, String> attributes) {
+        Preconditions.checkState(parent.getAttributes() == null, "Node '%s' has already set its attributes to %s.",
+                parent.getSchema().getQName(), parent.getAttributes());
+        parent.setAttributes(attributes);
     }
 
     private void setValue(final AbstractNodeDataWithSchema parent, final String value, final NamespaceContext nsContext)
