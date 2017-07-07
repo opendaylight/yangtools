@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "da2a55be_245e2b46",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-07-07T09:38:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da2a55be_d187130e",
+      "range": {
+        "startLine": 221,
+        "startChar": 4,
+        "endLine": 221,
+        "endChar": 10
+      },
+      "revId": "a2ffab3754a2d70d8352c397d080e435ed29d792",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da2a55be_b18fff22",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
         "patchSetId": 18
@@ -36,6 +60,30 @@
       "writtenOn": "2017-07-06T23:41:26Z",
       "side": 1,
       "message": "I don\u0027t think we should tolerate nulls. Just document this method as @throws NullPointerException.",
+      "range": {
+        "startLine": 222,
+        "startChar": 15,
+        "endLine": 222,
+        "endChar": 33
+      },
+      "revId": "a2ffab3754a2d70d8352c397d080e435ed29d792",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da2a55be_045b2755",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-07-07T09:38:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da2a55be_b18fff22",
       "range": {
         "startLine": 222,
         "startChar": 15,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "da2a55be_64582357",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-07-07T09:38:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da2a55be_91947b38",
+      "range": {
+        "startLine": 226,
+        "startChar": 4,
+        "endLine": 227,
+        "endChar": 33
+      },
+      "revId": "a2ffab3754a2d70d8352c397d080e435ed29d792",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da2a55be_f199776f",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/RootStatementContext.java",
         "patchSetId": 18
@@ -82,6 +154,30 @@
       "writtenOn": "2017-07-06T23:41:26Z",
       "side": 1,
       "message": "this looks like a separate patch...",
+      "range": {
+        "startLine": 262,
+        "startChar": 0,
+        "endLine": 270,
+        "endChar": 5
+      },
+      "revId": "a2ffab3754a2d70d8352c397d080e435ed29d792",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da2a55be_e709b52d",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/RootStatementContext.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 270,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-07-07T09:38:12Z",
+      "side": 1,
+      "message": "It is a bit difficult to split these changes, because they are tied together due to YangDataStatementImpl, however if it is necessary I think I can do that, please let me know...",
+      "parentUuid": "da2a55be_f199776f",
       "range": {
         "startLine": 262,
         "startChar": 0,
@@ -117,6 +213,30 @@
     },
     {
       "key": {
+        "uuid": "da2a55be_44551f1c",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/StatementContextBase.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-07-07T09:38:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da2a55be_d19ef355",
+      "range": {
+        "startLine": 148,
+        "startChar": 10,
+        "endLine": 148,
+        "endChar": 11
+      },
+      "revId": "a2ffab3754a2d70d8352c397d080e435ed29d792",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da2a55be_91bbdbc3",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/StatementDefinitionContext.java",
         "patchSetId": 18
@@ -140,6 +260,30 @@
     },
     {
       "key": {
+        "uuid": "da2a55be_a4317b0d",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/StatementDefinitionContext.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-07-07T09:38:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da2a55be_91bbdbc3",
+      "range": {
+        "startLine": 158,
+        "startChar": 0,
+        "endLine": 162,
+        "endChar": 39
+      },
+      "revId": "a2ffab3754a2d70d8352c397d080e435ed29d792",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da2a55be_71ad8788",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SubstatementContext.java",
         "patchSetId": 18
@@ -151,6 +295,30 @@
       "writtenOn": "2017-07-06T23:41:26Z",
       "side": 1,
       "message": "which of these is more common? if it is parent, then we should cache this (like we do for isConfiguration())",
+      "range": {
+        "startLine": 344,
+        "startChar": 15,
+        "endLine": 344,
+        "endChar": 84
+      },
+      "revId": "a2ffab3754a2d70d8352c397d080e435ed29d792",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da2a55be_e43b73e9",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SubstatementContext.java",
+        "patchSetId": 18
+      },
+      "lineNbr": 344,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-07-07T09:38:12Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "da2a55be_71ad8788",
       "range": {
         "startLine": 344,
         "startChar": 15,
