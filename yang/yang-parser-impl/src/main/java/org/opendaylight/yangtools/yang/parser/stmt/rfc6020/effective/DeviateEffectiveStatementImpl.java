@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
+import org.opendaylight.yangtools.util.BooleanField;
 import org.opendaylight.yangtools.yang.model.api.DeviateDefinition;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
@@ -26,9 +27,7 @@ public final class DeviateEffectiveStatementImpl
         extends DeclaredEffectiveStatementBase<DeviateKind, DeviateStatement> implements DeviateDefinition {
 
     private final DeviateKind deviateType;
-    private final Boolean deviatedConfig;
     private final String deviatedDefault;
-    private final Boolean deviatedMandatory;
     private final Integer deviatedMaxElements;
     private final Integer deviatedMinElements;
     private final Set<MustDefinition> deviatedMustDefinitions;
@@ -36,6 +35,8 @@ public final class DeviateEffectiveStatementImpl
     private final Collection<UniqueConstraint> deviatedUniqueConstraints;
     private final String deviatedUnits;
 
+    private final byte deviatedConfig;
+    private final byte deviatedMandatory;
 
     public DeviateEffectiveStatementImpl(final StmtContext<DeviateKind, DeviateStatement, ?> ctx) {
         super(ctx);
@@ -43,11 +44,11 @@ public final class DeviateEffectiveStatementImpl
         this.deviateType = argument();
 
         final ConfigEffectiveStatement configStmt = firstEffective(ConfigEffectiveStatement.class);
-        this.deviatedConfig = configStmt == null ? null : configStmt.argument();
+        this.deviatedConfig = BooleanField.ofNullable(configStmt == null ? null : configStmt.argument());
         final DefaultEffectiveStatementImpl defaultStmt = firstEffective(DefaultEffectiveStatementImpl.class);
         this.deviatedDefault = defaultStmt == null ? null : defaultStmt.argument();
         final MandatoryEffectiveStatement mandatoryStmt = firstEffective(MandatoryEffectiveStatement.class);
-        this.deviatedMandatory = mandatoryStmt == null ? null : mandatoryStmt.argument();
+        this.deviatedMandatory = BooleanField.ofNullable(mandatoryStmt == null ? null : mandatoryStmt.argument());
         final MaxElementsEffectiveStatementImpl maxElementsStmt = firstEffective(MaxElementsEffectiveStatementImpl.class);
         this.deviatedMaxElements = maxElementsStmt == null ? null : Integer.valueOf(maxElementsStmt.argument());
         final MinElementsEffectiveStatementImpl minElementsStmt = firstEffective(MinElementsEffectiveStatementImpl.class);
@@ -68,7 +69,7 @@ public final class DeviateEffectiveStatementImpl
 
     @Override
     public Boolean getDeviatedConfig() {
-        return deviatedConfig;
+        return BooleanField.toNullable(deviatedConfig);
     }
 
     @Override
@@ -78,7 +79,7 @@ public final class DeviateEffectiveStatementImpl
 
     @Override
     public Boolean getDeviatedMandatory() {
-        return deviatedMandatory;
+        return BooleanField.toNullable(deviatedMandatory);
     }
 
     @Override
@@ -124,9 +125,9 @@ public final class DeviateEffectiveStatementImpl
         }
         DeviateEffectiveStatementImpl other = (DeviateEffectiveStatementImpl) obj;
         return Objects.equals(deviateType, other.deviateType) &&
-                Objects.equals(deviatedConfig, other.deviatedConfig) &&
+                deviatedConfig == other.deviatedConfig &&
                 Objects.equals(deviatedDefault, other.deviatedDefault) &&
-                Objects.equals(deviatedMandatory, other.deviatedMandatory) &&
+                deviatedMandatory == other.deviatedMandatory &&
                 Objects.equals(deviatedMaxElements, other.deviatedMaxElements) &&
                 Objects.equals(deviatedMinElements, other.deviatedMinElements) &&
                 Objects.equals(deviatedMustDefinitions, other.deviatedMustDefinitions) &&

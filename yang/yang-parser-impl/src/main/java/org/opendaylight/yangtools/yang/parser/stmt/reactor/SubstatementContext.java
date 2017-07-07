@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.util.BooleanField;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -64,10 +65,8 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
      * This field maintains a resolution cache, so once we have returned a result, we will keep on returning the same
      * result without performing any lookups.
      */
-    private boolean haveConfiguration;
-    private boolean configuration;
-    private boolean wasCheckedIfInYangDataExtensionBody;
-    private boolean isInYangDataExtensionBody;
+    private byte configuration;
+    private byte isInYangDataExtensionBody;
 
     private volatile SchemaPath schemaPath;
 
@@ -288,8 +287,8 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
             return true;
         }
 
-        if (haveConfiguration) {
-            return configuration;
+        if (BooleanField.isPresent(configuration)) {
+            return BooleanField.get(configuration);
         }
 
         final StmtContext<Boolean, ?, ?> configStatement = StmtContextUtils.findFirstSubstatement(this,
@@ -309,26 +308,24 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         }
 
         // Resolved, make sure we cache this return
-        configuration = isConfig;
-        haveConfiguration = true;
+        configuration = BooleanField.of(isConfig);
         return isConfig;
     }
 
     @Override
     public boolean isInYangDataExtensionBody() {
-        if (wasCheckedIfInYangDataExtensionBody) {
-            return isInYangDataExtensionBody;
+        if (BooleanField.isPresent(isInYangDataExtensionBody)) {
+            return BooleanField.get(isInYangDataExtensionBody);
         }
 
-        final boolean parentIsInYangDataExtensionBody = parent.isInYangDataExtensionBody();
-        if (parentIsInYangDataExtensionBody) {
-            isInYangDataExtensionBody = parentIsInYangDataExtensionBody;
-        } else {
-            isInYangDataExtensionBody = StmtContextUtils.hasYangDataExtensionParent(this);
+        if (parent.isInYangDataExtensionBody()) {
+            isInYangDataExtensionBody = BooleanField.of(true);
+            return true;
         }
 
-        wasCheckedIfInYangDataExtensionBody = true;
-        return isInYangDataExtensionBody;
+        final boolean ret = StmtContextUtils.hasYangDataExtensionParent(this);
+        isInYangDataExtensionBody = BooleanField.of(ret);
+        return ret;
     }
 
     @Override
