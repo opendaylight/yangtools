@@ -137,8 +137,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     Optional<StmtContext<?, ?, ?>> getOriginalCtx();
 
-    int getOrder();
-
     ModelProcessingPhase getCompletedPhase();
 
     /**
@@ -230,8 +228,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         void setRootIdentifier(ModuleIdentifier identifier);
 
         void setIsSupportedToBuildEffective(boolean isSupportedToBuild);
-
-        void setOrder(int order);
 
         // FIXME: this seems to be unused, but looks useful.
         void setCompletedPhase(ModelProcessingPhase completedPhase);
