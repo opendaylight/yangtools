@@ -163,7 +163,6 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                         currentOrder++;
                     }
 
-                    augmentSourceCtx.setOrder(currentOrder);
                     augmentSourceCtx.addToNs(StmtOrderingNamespace.class, YangStmtMapping.AUGMENT, currentOrder);
                 }
 
