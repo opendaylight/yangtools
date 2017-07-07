@@ -40,7 +40,6 @@ public final class AugmentEffectiveStatementImpl extends
     private final SchemaPath targetPath;
     private final URI namespace;
     private final Date revision;
-    private final int order;
     private final Set<ActionDefinition> actions;
     private final Set<NotificationDefinition> notifications;
     private final List<UnknownSchemaNode> unknownNodes;
@@ -57,7 +56,6 @@ public final class AugmentEffectiveStatementImpl extends
         this.namespace = rootModuleQName.getNamespace();
         this.revision = rootModuleQName.getRevision();
 
-        this.order = ctx.getOrder();
         this.copyOf = (AugmentationSchema) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
 
         final WhenEffectiveStatementImpl whenStmt = firstEffective(WhenEffectiveStatementImpl.class);
@@ -178,9 +176,7 @@ public final class AugmentEffectiveStatementImpl extends
                 return 1;
             }
         }
-        if (otherIt.hasNext()) {
-            return -1;
-        }
-        return this.order - o.order;
+
+        return otherIt.hasNext() ? -1 : 0;
     }
 }
