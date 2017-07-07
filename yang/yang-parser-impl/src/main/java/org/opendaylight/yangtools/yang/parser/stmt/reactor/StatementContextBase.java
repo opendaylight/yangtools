@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.util.BooleanField;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -91,12 +92,14 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private Collection<StmtContext<?, ?, ?>> effectOfStatement = ImmutableList.of();
     private StatementMap substatements = StatementMap.empty();
 
-    private Boolean supportedByFeatures = null;
     private boolean isSupportedToBuildEffective = true;
     private ModelProcessingPhase completedPhase = null;
     private D declaredInstance;
     private E effectiveInstance;
     private int order = 0;
+
+    // BooleanFields value
+    private byte supportedByFeatures;
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
             final String rawArgument) {
@@ -145,15 +148,19 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public boolean isSupportedByFeatures() {
-        if (supportedByFeatures == null) {
-            final Set<QName> supportedFeatures = getFromNamespace(SupportedFeaturesNamespace.class,
-                SupportedFeatures.SUPPORTED_FEATURES);
-            // If the set of supported features has not been provided, all features are supported by default.
-            supportedByFeatures = supportedFeatures == null ? Boolean.TRUE
-                    : StmtContextUtils.checkFeatureSupport(this, supportedFeatures);
+        if (BooleanField.isPresent(supportedByFeatures)) {
+            return BooleanField.get(supportedByFeatures);
         }
 
-        return supportedByFeatures.booleanValue();
+        // If the set of supported features has not been provided, all features are supported by default.
+        final Set<QName> supportedFeatures = getFromNamespace(SupportedFeaturesNamespace.class,
+            SupportedFeatures.SUPPORTED_FEATURES);
+        final boolean ret = supportedFeatures == null ? true
+            : StmtContextUtils.checkFeatureSupport(this, supportedFeatures);
+
+        supportedByFeatures = BooleanField.of(ret);
+        return ret;
+
     }
 
     @Override
