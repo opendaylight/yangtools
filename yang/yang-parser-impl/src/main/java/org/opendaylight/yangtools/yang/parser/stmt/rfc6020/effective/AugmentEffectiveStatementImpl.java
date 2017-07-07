@@ -7,19 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -36,11 +32,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 public final class AugmentEffectiveStatementImpl extends
         AbstractEffectiveDocumentedDataNodeContainer<SchemaNodeIdentifier, AugmentStatement> implements
-        AugmentationSchema, NamespaceRevisionAware, Comparable<AugmentEffectiveStatementImpl> {
+        AugmentationSchema, NamespaceRevisionAware {
     private final SchemaPath targetPath;
     private final URI namespace;
     private final Date revision;
-    private final int order;
     private final Set<ActionDefinition> actions;
     private final Set<NotificationDefinition> notifications;
     private final List<UnknownSchemaNode> unknownNodes;
@@ -57,7 +52,6 @@ public final class AugmentEffectiveStatementImpl extends
         this.namespace = rootModuleQName.getNamespace();
         this.revision = rootModuleQName.getRevision();
 
-        this.order = ctx.getOrder();
         this.copyOf = (AugmentationSchema) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
 
         final WhenEffectiveStatementImpl whenStmt = firstEffective(WhenEffectiveStatementImpl.class);
@@ -161,26 +155,5 @@ public final class AugmentEffectiveStatementImpl extends
     public String toString() {
         return AugmentEffectiveStatementImpl.class.getSimpleName() + "[" + "targetPath=" + targetPath + ", when="
                 + whenCondition + "]";
-    }
-
-    @Override
-    public int compareTo(@Nonnull final AugmentEffectiveStatementImpl o) {
-        checkNotNull(o);
-        final Iterator<QName> thisIt = this.targetPath.getPathFromRoot().iterator();
-        final Iterator<QName> otherIt = o.getTargetPath().getPathFromRoot().iterator();
-        while (thisIt.hasNext()) {
-            if (otherIt.hasNext()) {
-                final int comp = thisIt.next().compareTo(otherIt.next());
-                if (comp != 0) {
-                    return comp;
-                }
-            } else {
-                return 1;
-            }
-        }
-        if (otherIt.hasNext()) {
-            return -1;
-        }
-        return this.order - o.order;
     }
 }
