@@ -96,7 +96,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private ModelProcessingPhase completedPhase = null;
     private D declaredInstance;
     private E effectiveInstance;
-    private int order = 0;
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
             final String rawArgument) {
@@ -174,16 +173,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     @Override
     public Optional<StmtContext<?, ?, ?>> getOriginalCtx() {
         return Optional.ofNullable(originalCtx);
-    }
-
-    @Override
-    public void setOrder(final int order) {
-        this.order = order;
-    }
-
-    @Override
-    public int getOrder() {
-        return order;
     }
 
     @Override
