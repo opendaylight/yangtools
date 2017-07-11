@@ -14,13 +14,13 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>single-feature-parent</artifactId>
-        <version>1.8.1-SNAPSHOT</version>
+        <version>1.8.1-Carbon</version>
         <relativePath/>
     </parent>
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>odl-yangtools-yang-parser</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.1.1-Carbon</version>
     <packaging>feature</packaging>
 
     <name>OpenDaylight :: Yangtools :: YANG Parser</name>

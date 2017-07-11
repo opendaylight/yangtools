@@ -4,18 +4,18 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>bundle-parent</artifactId>
-        <version>1.8.1-SNAPSHOT</version>
+        <version>1.8.1-Carbon</version>
         <relativePath />
     </parent>
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yang-system-test</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.1.1-Carbon</version>
     <name>${project.artifactId}</name>
     <description>YANG system test</description>
 
     <properties>
-        <yang.codegen.version>0.10.1-SNAPSHOT</yang.codegen.version>
+        <yang.codegen.version>0.10.1-Carbon</yang.codegen.version>
     </properties>
 
     <dependencies>
