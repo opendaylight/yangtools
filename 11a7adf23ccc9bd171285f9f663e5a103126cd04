@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da2a55be_b92cfdac",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/stmt/UnrecognizedStatement.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-07-11T00:53:18Z",
+      "side": 1,
+      "message": "Further explanation:\n\nUnrecognizedStatement is an instance of a statement defined via an \u0027extension\u0027 statement, for which the parser did not have semantic support (in which case the statement would result in a corresponding semantic subclass of UnknownStatement).",
+      "range": {
+        "startLine": 13,
+        "startChar": 55,
+        "endLine": 13,
+        "endChar": 56
+      },
+      "revId": "11a7adf23ccc9bd171285f9f663e5a103126cd04",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da2a55be_1919c988",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StatementSupport.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-07-11T00:53:18Z",
+      "side": 1,
+      "message": "plese do not format to 80 lines -- code is 120 lines, same holds for javadocs.",
+      "range": {
+        "startLine": 69,
+        "startChar": 0,
+        "endLine": 74,
+        "endChar": 23
+      },
+      "revId": "11a7adf23ccc9bd171285f9f663e5a103126cd04",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da2a55be_f91dd574",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StatementSupport.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 239,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-07-11T00:53:18Z",
+      "side": 1,
+      "message": "mark these as @Beta",
+      "range": {
+        "startLine": 224,
+        "startChar": 0,
+        "endLine": 239,
+        "endChar": 5
+      },
+      "revId": "11a7adf23ccc9bd171285f9f663e5a103126cd04",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da2a55be_59134166",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/StatementContextBase.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-07-11T00:53:18Z",
+      "side": 1,
+      "message": "I am not sure ... would it be better just to override isSupportedByFeatures()?",
+      "range": {
+        "startLine": 168,
+        "startChar": 0,
+        "endLine": 168,
+        "endChar": 54
+      },
+      "revId": "11a7adf23ccc9bd171285f9f663e5a103126cd04",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da2a55be_39180d81",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SubstatementContext.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-07-11T00:53:18Z",
+      "side": 1,
+      "message": "This makes it 6 bytes vs. 3 with OptionalBoolean. Please convert to using that so as not to grow the object (which is very sensitive, as we have a lot of instances of this class)",
+      "range": {
+        "startLine": 67,
+        "startChar": 0,
+        "endLine": 84,
+        "endChar": 36
+      },
+      "revId": "11a7adf23ccc9bd171285f9f663e5a103126cd04",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
