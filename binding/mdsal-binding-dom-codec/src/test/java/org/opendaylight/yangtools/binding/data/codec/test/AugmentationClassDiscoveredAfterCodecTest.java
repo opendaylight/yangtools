@@ -132,5 +132,5 @@ public class AugmentationClassDiscoveredAfterCodecTest {
             }
             return delegate.loadClass(fullyQualifiedName);
         }
-    };
+    }
 }

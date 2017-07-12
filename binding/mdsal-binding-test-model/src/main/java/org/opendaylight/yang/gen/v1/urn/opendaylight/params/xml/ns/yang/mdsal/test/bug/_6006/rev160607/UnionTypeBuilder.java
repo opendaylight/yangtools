@@ -1,9 +1,5 @@
 package org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.bug._6006.rev160607;
 
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.bug._6006.rev160607.IdentBase;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.bug._6006.rev160607.IdentOne;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.bug._6006.rev160607.IdentTwo;
-
 /**
  * The purpose of generated class in src/main/java for Union types is to create new instances of unions from a string representation.
  * In some cases it is very difficult to automate it since there can be unions such as (uint32 - uint16), or (string - uint32).
@@ -15,7 +11,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
  */
 public class UnionTypeBuilder {
 
-    public static UnionType getDefaultInstance(java.lang.String defaultValue) {
+    public static UnionType getDefaultInstance(final java.lang.String defaultValue) {
         if (defaultValue.equals("IdentOne")) {
             return new UnionType(IdentOne.class);
         }
@@ -25,8 +21,8 @@ public class UnionTypeBuilder {
 
         try {
             return new UnionType(Short.valueOf(defaultValue));
-        } catch(NumberFormatException e) {
-            /* do nothing */;
+        } catch (NumberFormatException e) {
+            /* do nothing */
         }
 
         throw new IllegalArgumentException("Unknown UnionType string " + defaultValue);

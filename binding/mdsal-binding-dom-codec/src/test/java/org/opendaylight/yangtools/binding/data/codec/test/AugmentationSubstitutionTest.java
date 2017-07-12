@@ -81,7 +81,7 @@ public class AugmentationSubstitutionTest extends AbstractBindingRuntimeTest {
         assertEquals(manuallyConstructed, copiedFromDeserialized);
     }
 
-    private RpcComplexUsesAugment createComplexData() {
+    private static RpcComplexUsesAugment createComplexData() {
         return new RpcComplexUsesAugmentBuilder()
         .setContainerWithUses(new ContainerWithUsesBuilder()
             .setLeafFromGrouping("foo")

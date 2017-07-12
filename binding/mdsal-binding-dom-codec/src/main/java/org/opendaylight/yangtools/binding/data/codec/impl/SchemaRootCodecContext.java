@@ -249,7 +249,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         } catch (final UncheckedExecutionException e) {
             final Throwable cause = e.getCause();
             if (cause != null) {
-                Throwables.propagateIfPossible(cause);
+                Throwables.throwIfUnchecked(cause);
             }
             throw e;
         }

@@ -70,7 +70,7 @@ public class EmptyLeafTest extends AbstractBindingRuntimeTest {
         assertTrue(((EmptyLeaf) list).isEmptyType());
     }
 
-    private RpcComplexUsesAugment createComplexData() {
+    private static RpcComplexUsesAugment createComplexData() {
         return new RpcComplexUsesAugmentBuilder()
         .setContainerWithUses(new ContainerWithUsesBuilder()
             .setLeafFromGrouping("foo")

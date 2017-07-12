@@ -18,10 +18,10 @@ public class NonCachingCodecTest {
 
     @Test
     public void basicTest() throws Exception {
-        final BindingNormalizedNodeCodec codec = mock(BindingNormalizedNodeCodec.class);
+        final BindingNormalizedNodeCodec<?> codec = mock(BindingNormalizedNodeCodec.class);
         doReturn(null).when(codec).serialize(null);
         doReturn(null).when(codec).deserialize(null);
-        final NonCachingCodec nonCachingCodec = new NonCachingCodec<>(codec);
+        final NonCachingCodec<?> nonCachingCodec = new NonCachingCodec<>(codec);
         nonCachingCodec.serialize(null);
         verify(codec).serialize(null);
         nonCachingCodec.deserialize(null);

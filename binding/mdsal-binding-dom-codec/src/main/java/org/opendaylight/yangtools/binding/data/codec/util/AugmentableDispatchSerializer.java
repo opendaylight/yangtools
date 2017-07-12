@@ -53,7 +53,7 @@ public class AugmentableDispatchSerializer implements DataObjectSerializerImplem
         }
     }
 
-    private Map<Class<? extends Augmentation<?>>, Augmentation<?>> getFromProxy(final DataObject obj) {
+    private static Map<Class<? extends Augmentation<?>>, Augmentation<?>> getFromProxy(final DataObject obj) {
         final InvocationHandler proxy = Proxy.getInvocationHandler(obj);
         if (proxy instanceof AugmentationReader) {
             return ((AugmentationReader) proxy).getAugmentations(obj);
@@ -62,8 +62,8 @@ public class AugmentableDispatchSerializer implements DataObjectSerializerImplem
     }
 
     @SuppressWarnings("rawtypes")
-    private void emitAugmentation(final Class type, final Augmentation<?> value, final BindingStreamEventWriter stream,
-            final DataObjectSerializerRegistry registry) throws IOException {
+    private static void emitAugmentation(final Class type, final Augmentation<?> value,
+            final BindingStreamEventWriter stream, final DataObjectSerializerRegistry registry) throws IOException {
         /*
          * Binding Specification allowed to insert augmentation with null for
          * value, which effectively could be used to remove augmentation

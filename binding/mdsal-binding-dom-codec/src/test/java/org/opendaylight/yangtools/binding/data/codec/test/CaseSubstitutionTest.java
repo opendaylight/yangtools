@@ -68,7 +68,7 @@ public class CaseSubstitutionTest extends AbstractBindingRuntimeTest {
         assertEquals(domTreeEntry, domRpcEntry);
     }
 
-    private RpcComplexUsesAugment createComplexData() {
+    private static RpcComplexUsesAugment createComplexData() {
         return new RpcComplexUsesAugmentBuilder()
         .setContainerWithUses(new ContainerWithUsesBuilder()
             .setLeafFromGrouping("foo")
