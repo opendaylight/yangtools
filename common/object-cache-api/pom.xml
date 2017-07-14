@@ -13,21 +13,21 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>bundle-parent</artifactId>
-        <version>1.8.1-SNAPSHOT</version>
+        <version>1.8.2-SNAPSHOT</version>
         <relativePath/>
     </parent>
     <packaging>bundle</packaging>
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>object-cache-api</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.1.2-SNAPSHOT</version>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yangtools-artifacts</artifactId>
-                <version>1.1.1-SNAPSHOT</version>
+                <version>1.1.2-SNAPSHOT</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
