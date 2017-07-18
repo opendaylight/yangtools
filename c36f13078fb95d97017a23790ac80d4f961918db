@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da2a55be_c2727a7b",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlParserStream.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-07-18T13:31:49Z",
+      "side": 1,
+      "message": "LinkedHashMap to retain order",
+      "range": {
+        "startLine": 199,
+        "startChar": 45,
+        "endLine": 199,
+        "endChar": 62
+      },
+      "revId": "c36f13078fb95d97017a23790ac80d4f961918db",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da2a55be_a26dc69b",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlParserStream.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 217,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-07-18T13:31:49Z",
+      "side": 1,
+      "message": "ImmutableMap.copyOf(), as we are retaining these",
+      "range": {
+        "startLine": 217,
+        "startChar": 14,
+        "endLine": 217,
+        "endChar": 26
+      },
+      "revId": "c36f13078fb95d97017a23790ac80d4f961918db",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da2a55be_026db298",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlParserStream.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 406,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-07-18T13:31:49Z",
+      "side": 1,
+      "message": "this guard should be in AbstractNodeDataWithSchema",
+      "range": {
+        "startLine": 405,
+        "startChar": 7,
+        "endLine": 406,
+        "endChar": 71
+      },
+      "revId": "c36f13078fb95d97017a23790ac80d4f961918db",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da2a55be_e267beb5",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/ContainerNodeDataWithSchema.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-07-18T13:31:49Z",
+      "side": 1,
+      "message": "this should also check for present attributes...",
+      "range": {
+        "startLine": 32,
+        "startChar": 0,
+        "endLine": 37,
+        "endChar": 9
+      },
+      "revId": "c36f13078fb95d97017a23790ac80d4f961918db",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
