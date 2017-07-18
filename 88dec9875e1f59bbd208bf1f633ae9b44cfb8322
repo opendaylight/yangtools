@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da2a55be_c2c43a94",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlParserStream.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-07-18T13:25:35Z",
+      "side": 1,
+      "message": "simple concat is sufficient",
+      "range": {
+        "startLine": 153,
+        "startChar": 70,
+        "endLine": 153,
+        "endChar": 104
+      },
+      "revId": "88dec9875e1f59bbd208bf1f633ae9b44cfb8322",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da2a55be_62ce2eb6",
+        "filename": "yang/yang-data-codec-xml/src/main/java/org/opendaylight/yangtools/yang/data/codec/xml/XmlParserStream.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-07-18T13:25:35Z",
+      "side": 1,
+      "message": "IllegalStateException",
+      "range": {
+        "startLine": 153,
+        "startChar": 26,
+        "endLine": 153,
+        "endChar": 55
+      },
+      "revId": "88dec9875e1f59bbd208bf1f633ae9b44cfb8322",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
