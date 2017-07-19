@@ -52,12 +52,6 @@
             <classifier>features</classifier>
         </dependency>
         <dependency>
-            <groupId>org.opendaylight.odlparent</groupId>
-            <artifactId>odl4-triemap-0.2</artifactId>
-            <type>xml</type>
-            <classifier>features</classifier>
-        </dependency>
-        <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>util</artifactId>
         </dependency>
