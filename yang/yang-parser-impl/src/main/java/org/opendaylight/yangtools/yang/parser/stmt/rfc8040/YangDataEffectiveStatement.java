@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
+package org.opendaylight.yangtools.yang.parser.stmt.rfc8040;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
@@ -20,19 +20,21 @@ import org.opendaylight.yangtools.yang.model.api.YangDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ContainerEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementBase;
 
 /**
  * Effective statement representation of 'yang-data' extension defined in https://tools.ietf.org/html/rfc8040#section-8
  */
 @Beta
-public final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase<String>
+public final class YangDataEffectiveStatement extends UnknownEffectiveStatementBase<String>
         implements YangDataSchemaNode {
 
     private final SchemaPath path;
     private final QName maybeQNameArgument;
     private final ContainerSchemaNode containerSchemaNode;
 
-    public YangDataEffectiveStatementImpl(final StmtContext<String, UnknownStatement<String>, ?> ctx) {
+    YangDataEffectiveStatement(final StmtContext<String, UnknownStatement<String>, ?> ctx) {
         super(ctx);
 
         QName maybeQNameArgumentInit;
@@ -71,16 +73,16 @@ public final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatem
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
 
-        if (!(obj instanceof YangDataEffectiveStatementImpl)) {
+        if (!(obj instanceof YangDataEffectiveStatement)) {
             return false;
         }
 
-        final YangDataEffectiveStatementImpl other = (YangDataEffectiveStatementImpl) obj;
+        final YangDataEffectiveStatement other = (YangDataEffectiveStatement) obj;
         return Objects.equals(maybeQNameArgument, other.maybeQNameArgument) && Objects.equals(path, other.path);
     }
 

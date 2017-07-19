@@ -86,6 +86,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.RefineStatementRfc795
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.RpcStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.SubmoduleStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.TypeStatementRfc7950Support;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc8040.YangDataStatementSupport;
 
 public final class YangInferencePipeline {
     public static final Set<YangVersion> SUPPORTED_VERSIONS = Sets.immutableEnumSet(VERSION_1, VERSION_1_1);
@@ -238,7 +239,7 @@ public final class YangInferencePipeline {
             .addSupport(new ValueStatementImpl.Definition())
             .addSupport(new AnyxmlSchemaLocationStatementImpl.AnyxmlSchemaLocationSupport())
             .addSupport(treeScoped(AnyxmlSchemaLocationNamespace.class))
-            .addSupport(new YangDataStatementImpl.YangDataSupport())
+            .addSupport(YangDataStatementSupport.getInstance())
             .addSupport(global(StmtOrderingNamespace.class))
             .build();
 
