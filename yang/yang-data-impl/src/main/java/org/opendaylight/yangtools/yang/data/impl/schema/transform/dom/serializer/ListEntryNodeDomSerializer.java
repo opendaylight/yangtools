@@ -18,12 +18,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- *
  * Common class for list entry node serialization (MapEntry, UnkeyedListEntry nodes)
  *
  * @param <N>
  *            concrete entry node type
  */
+@Deprecated
 abstract class ListEntryNodeDomSerializer<N extends DataContainerNode<?>> extends
         ListEntryNodeBaseSerializer<Element, N> {
     private final NodeSerializerDispatcher<Element> dispatcher;
@@ -35,7 +35,7 @@ abstract class ListEntryNodeDomSerializer<N extends DataContainerNode<?>> extend
     }
 
     @Override
-    public Iterable<Element> serialize(ListSchemaNode schema, N node) {
+    public Iterable<Element> serialize(final ListSchemaNode schema, final N node) {
         Element itemEl = XmlDocumentUtils.createElementFor(doc, node);
 
         for (Element element : super.serialize(schema, node)) {

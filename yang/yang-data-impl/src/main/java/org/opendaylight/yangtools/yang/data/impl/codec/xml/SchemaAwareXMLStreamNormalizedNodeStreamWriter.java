@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
+@Deprecated
 final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNormalizedNodeStreamWriter<SchemaNode> {
     private final SchemaTracker tracker;
     private final XmlStreamUtils streamUtils;
@@ -84,7 +85,8 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     }
 
     @Override
-    public void leafNode(NodeIdentifier name, Object value, Map<QName, String> attributes) throws IOException {
+    public void leafNode(final NodeIdentifier name, final Object value, final Map<QName, String> attributes)
+            throws IOException {
         final LeafSchemaNode schema = tracker.leafNode(name);
         writeElement(schema.getQName(), value, attributes, schema);
     }

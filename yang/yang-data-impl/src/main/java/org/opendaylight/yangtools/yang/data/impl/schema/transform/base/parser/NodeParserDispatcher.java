@@ -25,7 +25,9 @@ import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
  * Dispatches the parsing process of elements according to schema and returns the parsed Node.
  *
  * @param <E> type of elements parsed
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public interface NodeParserDispatcher<E> {
 
     DataContainerChild<?, ?> dispatchChildElement(Object schema, List<E> childNodes);

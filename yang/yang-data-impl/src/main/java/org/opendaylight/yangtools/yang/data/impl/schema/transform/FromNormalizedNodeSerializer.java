@@ -20,7 +20,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  *            type of NormalizedNode to be serialized
  * @param <S>
  *            schema belonging to the type N of NormalizedNode
+ *
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public interface FromNormalizedNodeSerializer<E, N extends NormalizedNode<?, ?>, S> {
 
     /**

@@ -44,7 +44,10 @@ import org.w3c.dom.Element;
  * SchemaContext and encodes values appropriately according to the yang schema. The other is
  * schema-less and merely outputs values using toString. The latter is intended for debugging
  * where doesn't have a SchemaContext available and isn't meant for production use.
+ *
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements NormalizedNodeStreamAttributeWriter {
     private static final Logger LOG = LoggerFactory.getLogger(XMLStreamNormalizedNodeStreamWriter.class);
     private static final String COM_SUN_TRANSFORMER = "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";

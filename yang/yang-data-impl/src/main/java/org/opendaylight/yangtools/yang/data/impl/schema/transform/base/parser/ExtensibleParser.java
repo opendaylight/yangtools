@@ -23,7 +23,9 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNo
  * @param <E> type of element to be parsed into NormalizedNode
  * @param <N> type of NormalizedNode to be the result of parsing
  * @param <S> schema belonging to the type N of NormalizedNode
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public interface ExtensibleParser<P extends YangInstanceIdentifier.PathArgument, E, N extends NormalizedNode<P, ?>, S>
         extends ToNormalizedNodeParser<E, N, S> {
 

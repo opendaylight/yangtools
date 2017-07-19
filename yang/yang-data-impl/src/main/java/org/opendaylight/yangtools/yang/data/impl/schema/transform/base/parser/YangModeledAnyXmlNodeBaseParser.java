@@ -24,12 +24,14 @@ import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
  *
  * @param <E>
  *            type of elements to be parsed
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public abstract class YangModeledAnyXmlNodeBaseParser<E> implements
         ToNormalizedNodeParser<E, YangModeledAnyXmlNode, YangModeledAnyXmlSchemaNode> {
 
     @Override
-    public final YangModeledAnyXmlNode parse(Iterable<E> elements, YangModeledAnyXmlSchemaNode schema) {
+    public final YangModeledAnyXmlNode parse(final Iterable<E> elements, final YangModeledAnyXmlSchemaNode schema) {
         final int size = Iterables.size(elements);
         Preconditions.checkArgument(size == 1, "Elements mapped to yang modeled any-xml node illegal count: %s", size);
 

@@ -36,7 +36,9 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  *
  * @param <E>
  *            type of serialized elements
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public interface NodeSerializerDispatcher<E> {
 
     Iterable<E> dispatchChildElement(Object childSchema,

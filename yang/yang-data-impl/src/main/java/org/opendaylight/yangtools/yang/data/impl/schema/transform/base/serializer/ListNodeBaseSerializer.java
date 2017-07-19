@@ -25,7 +25,9 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  *            containing node type
  * @param <O>
  *            entry node type which is inside containing (N) type
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public abstract class ListNodeBaseSerializer<E, N extends DataContainerChild<NodeIdentifier, Collection<O>>, O extends DataContainerNode<?>>
         implements FromNormalizedNodeSerializer<E, N, ListSchemaNode> {
 

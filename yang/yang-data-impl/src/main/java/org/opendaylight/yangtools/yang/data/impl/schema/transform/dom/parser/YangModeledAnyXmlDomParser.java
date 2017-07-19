@@ -26,6 +26,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+/**
+ * @deprecated Use yang-data-codec-xml instead.
+ */
+@Deprecated
 public class YangModeledAnyXmlDomParser extends YangModeledAnyXmlNodeBaseParser<Element> {
 
     private final NodeParserDispatcher<Element> dispatcher;

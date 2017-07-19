@@ -24,7 +24,9 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * Abstract(base) parser for AugmentationNode, parses elements of type E.
  *
  * @param <E> type of elements to be parsed
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public abstract class AugmentationNodeBaseParser<E> extends
         BaseDispatcherParser<E, YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode, AugmentationSchema> {
 
