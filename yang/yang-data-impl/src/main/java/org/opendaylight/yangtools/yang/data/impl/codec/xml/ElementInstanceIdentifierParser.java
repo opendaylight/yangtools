@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.w3c.dom.Element;
 
+@Deprecated
 final class ElementInstanceIdentifierParser extends AbstractStringInstanceIdentifierCodec {
     private final SchemaContext schema;
     private final Element element;

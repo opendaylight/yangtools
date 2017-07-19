@@ -24,7 +24,9 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  *
  * @param <E>
  *            type of elements to be parsed
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public abstract class ListEntryNodeBaseParser<P extends YangInstanceIdentifier.PathArgument, E, N extends DataContainerNode<P>> extends
         BaseDispatcherParser<E, P, N, ListSchemaNode> {
 

@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.w3c.dom.Element;
 
+@Deprecated
 final class ElementIdentityrefParser extends AbstractStringIdentityrefCodec {
     private final SchemaContext schema;
     private final Element element;

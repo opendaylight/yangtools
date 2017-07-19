@@ -22,7 +22,9 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  *
  * @param <E>
  *            type of elements to be parsed
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public abstract class ListNodeBaseParser<E, N extends NormalizedNode<?, ?>, O extends NormalizedNode<YangInstanceIdentifier.NodeIdentifier, ?>, S extends ListSchemaNode>
         implements ExtensibleParser<YangInstanceIdentifier.NodeIdentifier, E, O, S> {
 
@@ -37,7 +39,7 @@ public abstract class ListNodeBaseParser<E, N extends NormalizedNode<?, ?>, O ex
     }
 
     @Override
-    public O parse(Iterable<E> childNodes, S schema) {
+    public O parse(final Iterable<E> childNodes, final S schema) {
         CollectionNodeBuilder<N, O> listBuilder = provideBuilder(schema);
 
         buildingStrategy.prepareAttributes(Collections.emptyMap(), listBuilder);

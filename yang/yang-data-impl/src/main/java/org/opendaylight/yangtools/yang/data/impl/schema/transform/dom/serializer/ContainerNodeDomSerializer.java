@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.serializer;
 
+import com.google.common.base.Preconditions;
 import java.util.Collections;
-
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer.ContainerNodeBaseSerializer;
@@ -17,10 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.google.common.base.Preconditions;
-
-final class ContainerNodeDomSerializer extends
-        ContainerNodeBaseSerializer<Element> {
+@Deprecated
+final class ContainerNodeDomSerializer extends ContainerNodeBaseSerializer<Element> {
 
     private final NodeSerializerDispatcher<Element> dispatcher;
     private final Document doc;
@@ -31,7 +29,7 @@ final class ContainerNodeDomSerializer extends
     }
 
     @Override
-    public Iterable<Element> serialize(ContainerSchemaNode schema, ContainerNode containerNode) {
+    public Iterable<Element> serialize(final ContainerSchemaNode schema, final ContainerNode containerNode) {
         Element itemEl = XmlDocumentUtils.createElementFor(doc, containerNode);
 
         for (Element element : super.serialize(schema, containerNode)) {

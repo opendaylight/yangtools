@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.serializer;
 
+import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer.ChoiceNodeBaseSerializer;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer.NodeSerializerDispatcher;
 import org.w3c.dom.Element;
 
-import com.google.common.base.Preconditions;
-
+@Deprecated
 final class ChoiceNodeDomSerializer extends ChoiceNodeBaseSerializer<Element> {
     private final NodeSerializerDispatcher<Element> dispatcher;
 

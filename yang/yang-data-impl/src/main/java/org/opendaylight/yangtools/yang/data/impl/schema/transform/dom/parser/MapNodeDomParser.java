@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.Ma
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.w3c.dom.Element;
 
+@Deprecated
 final class MapNodeDomParser extends MapNodeBaseParser<Element> {
 
     private final MapEntryNodeDomParser mapEntryParser;
@@ -23,7 +24,7 @@ final class MapNodeDomParser extends MapNodeBaseParser<Element> {
         this.mapEntryParser = mapEntryParser;
     }
 
-    MapNodeDomParser(MapEntryNodeDomParser mapEntryParser, final BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, MapNode> strategy) {
+    MapNodeDomParser(final MapEntryNodeDomParser mapEntryParser, final BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, MapNode> strategy) {
         super(strategy);
         this.mapEntryParser = mapEntryParser;
     }

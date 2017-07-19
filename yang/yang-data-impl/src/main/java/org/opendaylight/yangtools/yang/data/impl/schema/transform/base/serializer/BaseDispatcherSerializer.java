@@ -23,7 +23,9 @@ import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
 /**
  * Abstract(base) Serializer for DataContainerNodes e.g. ContainerNode, AugmentationNode.
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public abstract class BaseDispatcherSerializer<E, N extends DataContainerNode<?>, S> implements
         FromNormalizedNodeSerializer<E, N, S> {
 
@@ -65,7 +67,7 @@ public abstract class BaseDispatcherSerializer<E, N extends DataContainerNode<?>
     protected abstract NodeSerializerDispatcher<E> getNodeDispatcher();
 
     @Override
-    public Iterable<E> serialize(S schema, N node) {
+    public Iterable<E> serialize(final S schema, final N node) {
         List<Iterable<E>> choiceChildren = Lists.newArrayList();
 
         for (DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> choiceChild : node.getValue()) {

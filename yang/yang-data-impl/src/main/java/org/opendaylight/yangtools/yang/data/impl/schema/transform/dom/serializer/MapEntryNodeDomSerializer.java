@@ -12,6 +12,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serialize
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+@Deprecated
 final class MapEntryNodeDomSerializer extends ListEntryNodeDomSerializer<MapEntryNode> {
     MapEntryNodeDomSerializer(final Document doc, final NodeSerializerDispatcher<Element> dispatcher) {
         super(doc, dispatcher);

@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.No
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
 import org.w3c.dom.Element;
 
+@Deprecated
 final class ChoiceNodeDomParser extends ChoiceNodeBaseParser<Element> {
 
     private final NodeParserDispatcher<Element> dispatcher;

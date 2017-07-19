@@ -19,7 +19,9 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  *
  * @param <E>
  *            type of elements to be parsed
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public abstract class MapNodeBaseParser<E> extends ListNodeBaseParser<E, MapEntryNode, MapNode, ListSchemaNode> {
 
     public MapNodeBaseParser() {
@@ -29,7 +31,8 @@ public abstract class MapNodeBaseParser<E> extends ListNodeBaseParser<E, MapEntr
         super(buildingStrategy);
     }
 
-    protected CollectionNodeBuilder<MapEntryNode, MapNode> provideBuilder(ListSchemaNode schema) {
+    @Override
+    protected CollectionNodeBuilder<MapEntryNode, MapNode> provideBuilder(final ListSchemaNode schema) {
         return Builders.mapBuilder(schema);
     }
 

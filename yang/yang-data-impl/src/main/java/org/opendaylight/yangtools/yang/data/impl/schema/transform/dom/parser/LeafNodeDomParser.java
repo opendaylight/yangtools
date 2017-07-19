@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.w3c.dom.Element;
 
+@Deprecated
 final class LeafNodeDomParser extends LeafNodeBaseParser<Element> {
     private final XmlCodecProvider codecProvider;
     private final SchemaContext ctx;

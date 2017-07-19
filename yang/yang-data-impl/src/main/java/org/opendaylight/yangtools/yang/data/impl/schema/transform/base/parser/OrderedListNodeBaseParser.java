@@ -19,7 +19,9 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  *
  * @param <E>
  *            type of elements to be parsed
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public abstract class OrderedListNodeBaseParser<E> extends
         ListNodeBaseParser<E, MapEntryNode, OrderedMapNode, ListSchemaNode> {
 
@@ -31,7 +33,7 @@ public abstract class OrderedListNodeBaseParser<E> extends
     }
 
     @Override
-    protected CollectionNodeBuilder<MapEntryNode, OrderedMapNode> provideBuilder(ListSchemaNode schema) {
+    protected CollectionNodeBuilder<MapEntryNode, OrderedMapNode> provideBuilder(final ListSchemaNode schema) {
         return Builders.orderedMapBuilder(schema);
     }
 

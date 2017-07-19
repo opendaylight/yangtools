@@ -15,6 +15,10 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.An
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.w3c.dom.Element;
 
+/**
+ * @deprecated Use yang-data-codec-xml instead.
+ */
+@Deprecated
 public class AnyXmlDomParser extends AnyXmlNodeBaseParser<Element> {
 
     @Override

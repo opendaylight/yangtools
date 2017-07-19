@@ -25,7 +25,9 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * Abstract(base) parser for ContainerNodes, parses elements of type E.
  *
  * @param <E> type of elements to be parsed
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public abstract class ContainerNodeBaseParser<E> extends
         BaseDispatcherParser<E, YangInstanceIdentifier.NodeIdentifier, ContainerNode, ContainerSchemaNode> {
 

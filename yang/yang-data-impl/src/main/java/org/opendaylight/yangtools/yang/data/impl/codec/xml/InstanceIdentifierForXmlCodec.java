@@ -14,6 +14,10 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.w3c.dom.Element;
 
+/**
+ * @deprecated Use yang-data-codec-xml instead.
+ */
+@Deprecated
 public final class InstanceIdentifierForXmlCodec {
     private InstanceIdentifierForXmlCodec() {
         throw new UnsupportedOperationException("Utility class");

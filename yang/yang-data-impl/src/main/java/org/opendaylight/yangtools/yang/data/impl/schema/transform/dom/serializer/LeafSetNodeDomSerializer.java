@@ -13,10 +13,11 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serialize
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.w3c.dom.Element;
 
+@Deprecated
 final class LeafSetNodeDomSerializer extends LeafSetNodeBaseSerializer<Element> {
     private final FromNormalizedNodeSerializer<Element, LeafSetEntryNode<?>, LeafListSchemaNode> leafSetEntryNodeSerializer;
 
-    LeafSetNodeDomSerializer(LeafSetEntryNodeDomSerializer leafSetEntryNodeSerializer) {
+    LeafSetNodeDomSerializer(final LeafSetEntryNodeDomSerializer leafSetEntryNodeSerializer) {
         this.leafSetEntryNodeSerializer = leafSetEntryNodeSerializer;
     }
 

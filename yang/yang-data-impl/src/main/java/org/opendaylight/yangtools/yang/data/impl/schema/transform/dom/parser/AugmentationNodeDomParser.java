@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.No
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
 import org.w3c.dom.Element;
 
+@Deprecated
 final class AugmentationNodeDomParser extends AugmentationNodeBaseParser<Element> {
 
     private final NodeParserDispatcher<Element> dispatcher;
@@ -40,7 +41,7 @@ final class AugmentationNodeDomParser extends AugmentationNodeBaseParser<Element
     }
 
     @Override
-    protected LinkedListMultimap<QName, Element> mapChildElements(Iterable<Element> elements) {
+    protected LinkedListMultimap<QName, Element> mapChildElements(final Iterable<Element> elements) {
         return DomUtils.mapChildElements(elements);
     }
 
