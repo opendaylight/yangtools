@@ -21,12 +21,14 @@ import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
  * Abstract(base) parser for LeafNodes, parses elements of type E.
  *
  * @param <E> type of elements to be parsed
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public abstract class AnyXmlNodeBaseParser<E> implements
         ToNormalizedNodeParser<E, AnyXmlNode, AnyXmlSchemaNode> {
 
     @Override
-    public final AnyXmlNode parse(Iterable<E> elements, AnyXmlSchemaNode schema) {
+    public final AnyXmlNode parse(final Iterable<E> elements, final AnyXmlSchemaNode schema) {
         final int size = Iterables.size(elements);
         Preconditions.checkArgument(size == 1, "Elements mapped to any-xml node illegal count: %s", size);
 

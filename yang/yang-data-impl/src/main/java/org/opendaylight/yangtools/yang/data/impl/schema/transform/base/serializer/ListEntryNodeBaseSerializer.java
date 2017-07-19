@@ -23,24 +23,26 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  *
  * @param <E>
  *            type of serialized elements
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public abstract class ListEntryNodeBaseSerializer<E, N extends DataContainerNode<?>> extends
         BaseDispatcherSerializer<E, N, ListSchemaNode> {
 
     @Override
-    protected final DataSchemaNode getSchemaForChild(ListSchemaNode schema,
-            DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> childNode) {
+    protected final DataSchemaNode getSchemaForChild(final ListSchemaNode schema,
+            final DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> childNode) {
         return SchemaUtils.findSchemaForChild(schema, childNode.getNodeType());
     }
 
     @Override
-    protected final AugmentationSchema getAugmentedCase(ListSchemaNode schema, AugmentationNode augmentationNode) {
+    protected final AugmentationSchema getAugmentedCase(final ListSchemaNode schema, final AugmentationNode augmentationNode) {
         return SchemaUtils.findSchemaForAugment(schema, augmentationNode.getIdentifier().getPossibleChildNames());
     }
 
     @Override
-    protected final Set<DataSchemaNode> getRealSchemasForAugment(ListSchemaNode schema,
-            AugmentationSchema augmentationSchema) {
+    protected final Set<DataSchemaNode> getRealSchemasForAugment(final ListSchemaNode schema,
+            final AugmentationSchema augmentationSchema) {
         return SchemaUtils.getRealSchemasForAugment((AugmentationTarget) schema, augmentationSchema);
     }
 

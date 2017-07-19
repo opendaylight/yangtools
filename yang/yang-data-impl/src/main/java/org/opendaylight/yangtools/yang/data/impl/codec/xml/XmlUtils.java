@@ -14,7 +14,10 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 /**
  * Common XML-related utility methods, which are not specific to a particular
  * JAXP API.
+ *
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public final class XmlUtils {
     public static final XmlCodecProvider DEFAULT_XML_CODEC_PROVIDER =
             TypeDefinitionAwareCodec::from;

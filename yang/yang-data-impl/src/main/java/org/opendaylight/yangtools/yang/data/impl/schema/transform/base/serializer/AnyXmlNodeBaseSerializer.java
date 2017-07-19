@@ -16,12 +16,14 @@ import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
  * Abstract(base) serializer for AnyXmlNodes, serializes elements of type E.
  *
  * @param <E> type of serialized elements
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public abstract class AnyXmlNodeBaseSerializer<E> implements
         FromNormalizedNodeSerializer<E, AnyXmlNode, AnyXmlSchemaNode> {
 
     @Override
-    public final Iterable<E> serialize(AnyXmlSchemaNode schema, AnyXmlNode node) {
+    public final Iterable<E> serialize(final AnyXmlSchemaNode schema, final AnyXmlNode node) {
         return Collections.singletonList(serializeAnyXml(node));
     }
 

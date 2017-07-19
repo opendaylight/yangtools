@@ -15,12 +15,12 @@ import org.opendaylight.yangtools.yang.data.util.AbstractStringInstanceIdentifie
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
+@Deprecated
 final class RandomPrefixInstanceIdentifierSerializer extends AbstractStringInstanceIdentifierCodec {
     private final RandomPrefix prefixes = new RandomPrefix();
     private final DataSchemaContextTree schemaTree;
 
-
-    RandomPrefixInstanceIdentifierSerializer(SchemaContext ctx) {
+    RandomPrefixInstanceIdentifierSerializer(final SchemaContext ctx) {
         schemaTree = DataSchemaContextTree.from(ctx);
     }
 
@@ -43,5 +43,4 @@ final class RandomPrefixInstanceIdentifierSerializer extends AbstractStringInsta
     protected DataSchemaContextTree getDataContextTree() {
         return schemaTree;
     }
-
 }

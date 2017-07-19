@@ -24,7 +24,9 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * Abstract(base) serializer for ChoiceNodes, serializes elements of type E.
  *
  * @param <E> type of serialized elements
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public abstract class ChoiceNodeBaseSerializer<E> extends BaseDispatcherSerializer<E, ChoiceNode, ChoiceSchemaNode> {
 
     @Override

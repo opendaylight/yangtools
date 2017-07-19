@@ -41,6 +41,10 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 import org.w3c.dom.Element;
 
+/**
+ * @deprecated Use yang-data-codec-xml instead.
+ */
+@Deprecated
 public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeParserFactory<Element> {
 
     private final AugmentationNodeDomParser augmentationNodeParser;

@@ -34,7 +34,9 @@ import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
  *
  * @param <E>
  *            type of element to be parsed into NormalizedNode
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public interface ToNormalizedNodeParserFactory<E> {
     ToNormalizedNodeParser<E, AugmentationNode, AugmentationSchema> getAugmentationNodeParser();
     ToNormalizedNodeParser<E, ChoiceNode, ChoiceSchemaNode> getChoiceNodeParser();

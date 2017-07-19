@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.No
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
 import org.w3c.dom.Element;
 
+@Deprecated
 abstract class ListEntryNodeDomParser<P extends YangInstanceIdentifier.PathArgument, N extends DataContainerNode<P>> extends ListEntryNodeBaseParser<P, Element, N> {
 
     private final NodeParserDispatcher<Element> dispatcher;
@@ -32,7 +33,7 @@ abstract class ListEntryNodeDomParser<P extends YangInstanceIdentifier.PathArgum
     }
 
     @Override
-    protected LinkedListMultimap<QName, Element> mapChildElements(Iterable<Element> elements) {
+    protected LinkedListMultimap<QName, Element> mapChildElements(final Iterable<Element> elements) {
         return DomUtils.mapChildElementsForSingletonNode(elements.iterator().next());
     }
 
@@ -42,7 +43,7 @@ abstract class ListEntryNodeDomParser<P extends YangInstanceIdentifier.PathArgum
     }
 
     @Override
-    protected Map<QName, String> getAttributes(Element element) {
+    protected Map<QName, String> getAttributes(final Element element) {
         return DomUtils.toAttributes(element.getAttributes());
     }
 }

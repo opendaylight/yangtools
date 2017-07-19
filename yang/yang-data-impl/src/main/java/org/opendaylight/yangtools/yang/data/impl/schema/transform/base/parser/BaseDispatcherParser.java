@@ -30,7 +30,9 @@ import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
 /**
  * Abstract(base) Parser for DataContainerNodes e.g. ContainerNode, AugmentationNode.
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public abstract class BaseDispatcherParser<E, P extends YangInstanceIdentifier.PathArgument, N extends DataContainerNode<P>, S>
         implements ExtensibleParser<P, E, N, S> {
 

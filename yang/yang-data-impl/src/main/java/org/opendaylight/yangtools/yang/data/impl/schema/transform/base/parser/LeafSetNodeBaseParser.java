@@ -19,15 +19,17 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
  * Abstract(base) parser for LeafSetNodes, parses elements of type E.
  *
  * @param <E> type of elements to be parsed
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public abstract class LeafSetNodeBaseParser<E> implements
         ToNormalizedNodeParser<E, LeafSetNode<?>, LeafListSchemaNode> {
 
     @Override
-    public final LeafSetNode<?> parse(Iterable<E> childNodes, LeafListSchemaNode schema) {
+    public final LeafSetNode<?> parse(final Iterable<E> childNodes, final LeafListSchemaNode schema) {
 
         ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafListBuilder =
-          (schema.isUserOrdered() ? Builders.orderedLeafSetBuilder(schema) : Builders.leafSetBuilder(schema));
+          schema.isUserOrdered() ? Builders.orderedLeafSetBuilder(schema) : Builders.leafSetBuilder(schema);
         for (E childNode : childNodes) {
             LeafSetEntryNode<?> builtChild = getLeafSetEntryNodeParser().parse(
                     Collections.singletonList(childNode), schema);

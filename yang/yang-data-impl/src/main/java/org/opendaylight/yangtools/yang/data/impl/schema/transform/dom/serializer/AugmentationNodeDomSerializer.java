@@ -7,18 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.serializer;
 
+import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer.AugmentationNodeBaseSerializer;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer.NodeSerializerDispatcher;
 import org.w3c.dom.Element;
 
-import com.google.common.base.Preconditions;
-
+@Deprecated
 final class AugmentationNodeDomSerializer extends
         AugmentationNodeBaseSerializer<Element> {
 
     private final NodeSerializerDispatcher<Element> dispatcher;
 
-    AugmentationNodeDomSerializer(NodeSerializerDispatcher<Element> dispatcher) {
+    AugmentationNodeDomSerializer(final NodeSerializerDispatcher<Element> dispatcher) {
         this.dispatcher = Preconditions.checkNotNull(dispatcher);
     }
 

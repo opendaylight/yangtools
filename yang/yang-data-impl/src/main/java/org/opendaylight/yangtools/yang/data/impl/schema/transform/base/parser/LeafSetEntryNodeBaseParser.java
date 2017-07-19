@@ -22,7 +22,9 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
  * Abstract(base) parser for LeafSetEntryNodes, parses elements of type E.
  *
  * @param <E> type of elements to be parsed
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public abstract class LeafSetEntryNodeBaseParser<E> implements ExtensibleParser<NodeWithValue, E, LeafSetEntryNode<?>, LeafListSchemaNode> {
 
     private final BuildingStrategy<NodeWithValue, LeafSetEntryNode<?>> buildingStrategy;

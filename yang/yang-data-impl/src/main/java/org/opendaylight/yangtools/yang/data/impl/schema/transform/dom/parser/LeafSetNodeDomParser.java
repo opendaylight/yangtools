@@ -13,11 +13,12 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.Le
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.w3c.dom.Element;
 
+@Deprecated
 final class LeafSetNodeDomParser extends LeafSetNodeBaseParser<Element> {
 
     private final LeafSetEntryNodeDomParser leafSetEntryNodeBaseParser;
 
-    LeafSetNodeDomParser(LeafSetEntryNodeDomParser leafSetEntryNodeBaseParser) {
+    LeafSetNodeDomParser(final LeafSetEntryNodeDomParser leafSetEntryNodeBaseParser) {
         this.leafSetEntryNodeBaseParser = leafSetEntryNodeBaseParser;
     }
 

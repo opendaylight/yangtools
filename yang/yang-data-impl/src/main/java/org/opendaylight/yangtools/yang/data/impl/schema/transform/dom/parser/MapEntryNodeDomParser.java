@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.No
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.w3c.dom.Element;
 
+@Deprecated
 final class MapEntryNodeDomParser extends ListEntryNodeDomParser<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> {
 
     private final boolean strictParsing;

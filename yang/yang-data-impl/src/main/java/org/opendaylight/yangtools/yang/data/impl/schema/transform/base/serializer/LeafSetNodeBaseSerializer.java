@@ -18,7 +18,9 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
  * Abstract(base) serializer for LeafSetNodes, serializes elements of type E.
  *
  * @param <E> type of serialized elements
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public abstract class LeafSetNodeBaseSerializer<E> implements
         FromNormalizedNodeSerializer<E, LeafSetNode<?>, LeafListSchemaNode> {
 

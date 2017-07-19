@@ -37,7 +37,10 @@ import org.slf4j.LoggerFactory;
 /**
  * Utility class for bridging JAXP Stream and YANG Data APIs. Note that the definition of this class
  * by no means final and subject to change as more functionality is centralized here.
+ *
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 @Beta
 public final class XmlStreamUtils {
     private static final Logger LOG = LoggerFactory.getLogger(XmlStreamUtils.class);

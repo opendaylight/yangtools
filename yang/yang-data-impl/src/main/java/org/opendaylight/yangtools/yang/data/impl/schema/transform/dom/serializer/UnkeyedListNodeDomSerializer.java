@@ -14,11 +14,12 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serialize
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.w3c.dom.Element;
 
+@Deprecated
 final class UnkeyedListNodeDomSerializer extends ListNodeBaseSerializer<Element, UnkeyedListNode, UnkeyedListEntryNode> {
 
     private final FromNormalizedNodeSerializer<Element, UnkeyedListEntryNode, ListSchemaNode> unkeyedListEntrySerializer;
 
-    UnkeyedListNodeDomSerializer(UnkeyedListEntryNodeDomSerializer unkeyedListEntrySerializer) {
+    UnkeyedListNodeDomSerializer(final UnkeyedListEntryNodeDomSerializer unkeyedListEntrySerializer) {
         this.unkeyedListEntrySerializer = unkeyedListEntrySerializer;
     }
 

@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer;
 
 import java.util.Collections;
-
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.FromNormalizedNodeSerializer;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -17,12 +16,14 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
  * Abstract(base) serializer for LeafSetEntryNodes, serializes elements of type E.
  *
  * @param <E> type of serialized elements
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public abstract class LeafSetEntryNodeBaseSerializer<E> implements
         FromNormalizedNodeSerializer<E, LeafSetEntryNode<?>, LeafListSchemaNode> {
 
     @Override
-    public final Iterable<E> serialize(LeafListSchemaNode schema, LeafSetEntryNode<?> node) {
+    public final Iterable<E> serialize(final LeafListSchemaNode schema, final LeafSetEntryNode<?> node) {
         return Collections.singletonList(serializeLeaf(schema, node));
     }
 

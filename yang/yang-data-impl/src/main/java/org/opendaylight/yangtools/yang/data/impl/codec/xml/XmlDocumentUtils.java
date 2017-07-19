@@ -25,6 +25,10 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+/**
+ * @deprecated Use yang-data-codec-xml instead.
+ */
+@Deprecated
 public final class XmlDocumentUtils {
     public static final QName OPERATION_ATTRIBUTE_QNAME = QName.create(SchemaContext.NAME, "operation");
 

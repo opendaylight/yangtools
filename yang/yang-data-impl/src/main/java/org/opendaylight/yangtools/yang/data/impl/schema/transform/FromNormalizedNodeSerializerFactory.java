@@ -30,7 +30,10 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  *
  * @param <E>
  *            type of resulting/serialized element from NormalizedNode
+ *
+ * @deprecated Use yang-data-codec-xml instead.
  */
+@Deprecated
 public interface FromNormalizedNodeSerializerFactory<E> {
     FromNormalizedNodeSerializer<E, AugmentationNode, AugmentationSchema> getAugmentationNodeSerializer();
     FromNormalizedNodeSerializer<E, ChoiceNode, ChoiceSchemaNode> getChoiceNodeSerializer();

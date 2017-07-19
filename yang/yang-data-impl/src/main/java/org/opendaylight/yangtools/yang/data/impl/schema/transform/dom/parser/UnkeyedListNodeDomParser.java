@@ -15,11 +15,12 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.Un
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.w3c.dom.Element;
 
+@Deprecated
 final class UnkeyedListNodeDomParser extends UnkeyedListNodeBaseParser<Element> {
 
     private final UnkeyedListEntryNodeDomParser unkeyedListEntryNodeParser;
 
-    UnkeyedListNodeDomParser(UnkeyedListEntryNodeDomParser unkeyedListEntryNodeParser) {
+    UnkeyedListNodeDomParser(final UnkeyedListEntryNodeDomParser unkeyedListEntryNodeParser) {
         this.unkeyedListEntryNodeParser = unkeyedListEntryNodeParser;
     }
 

@@ -14,11 +14,12 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serialize
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.w3c.dom.Element;
 
+@Deprecated
 final class MapNodeDomSerializer extends ListNodeBaseSerializer<Element, MapNode, MapEntryNode> {
 
     private final FromNormalizedNodeSerializer<Element, MapEntryNode, ListSchemaNode> mapEntrySerializer;
 
-    MapNodeDomSerializer(MapEntryNodeDomSerializer mapEntrySerializer) {
+    MapNodeDomSerializer(final MapEntryNodeDomSerializer mapEntrySerializer) {
         this.mapEntrySerializer = mapEntrySerializer;
     }
 
