@@ -15,6 +15,7 @@ import com.google.common.annotations.Beta;
  * This statement must appear as a top-level statement, otherwise it is ignored and does not appear in the final
  * schema context. It must contain exactly one top-level container node (directly or indirectly via a uses statement).
  */
+// FIXME: 2.0.0: this interface should live in a separate RFC8040 API artifact.
 @Beta
 public interface YangDataSchemaNode extends UnknownSchemaNode {
 

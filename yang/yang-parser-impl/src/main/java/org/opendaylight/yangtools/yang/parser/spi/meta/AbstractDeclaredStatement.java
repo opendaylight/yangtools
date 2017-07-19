@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 /**
  * Utility abstract base class for implementing declared statements.
  *
- *
  * @param <A> Argument type.
  */
 public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<A> {
