@@ -190,6 +190,30 @@
     },
     {
       "key": {
+        "uuid": "da2a55be_28e1b5d0",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/StatementContextBase.java",
+        "patchSetId": 20
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-07-19T08:16:50Z",
+      "side": 1,
+      "message": "let me check it out in more depth",
+      "parentUuid": "da2a55be_88838103",
+      "range": {
+        "startLine": 168,
+        "startChar": 0,
+        "endLine": 168,
+        "endChar": 54
+      },
+      "revId": "11a7adf23ccc9bd171285f9f663e5a103126cd04",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "da2a55be_39180d81",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SubstatementContext.java",
         "patchSetId": 20
