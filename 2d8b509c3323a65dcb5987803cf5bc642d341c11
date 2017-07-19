@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da2a55be_c80c5945",
+        "filename": "yang/yang-data-impl/pom.xml",
+        "patchSetId": 6
+      },
+      "lineNbr": 159,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-07-19T09:28:45Z",
+      "side": 1,
+      "message": "I believe that yang-data-impl should not be dependent on yang-parser-impl.",
+      "range": {
+        "startLine": 159,
+        "startChar": 12,
+        "endLine": 159,
+        "endChar": 53
+      },
+      "revId": "2d8b509c3323a65dcb5987803cf5bc642d341c11",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da2a55be_88138165",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/SchemaTracker.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-07-19T09:28:45Z",
+      "side": 1,
+      "message": "please don\u0027t use implementation details of yang parser here..",
+      "range": {
+        "startLine": 107,
+        "startChar": 36,
+        "endLine": 107,
+        "endChar": 66
+      },
+      "revId": "2d8b509c3323a65dcb5987803cf5bc642d341c11",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
