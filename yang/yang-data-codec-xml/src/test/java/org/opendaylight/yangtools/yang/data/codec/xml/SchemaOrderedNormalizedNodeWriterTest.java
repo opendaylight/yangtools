@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.schema;
+package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import java.io.FileNotFoundException;
 import java.io.StringWriter;
@@ -26,7 +26,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.data.impl.codec.xml.XMLStreamNormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.impl.schema.SchemaOrderedNormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -83,47 +85,56 @@ public class SchemaOrderedNormalizedNodeWriterTest {
 
         SchemaContext schemaContext = getSchemaContext("/bug1848/foo.yang");
         NormalizedNodeStreamWriter writer = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter, schemaContext);
-        SchemaOrderedNormalizedNodeWriter nnw = new SchemaOrderedNormalizedNodeWriter(writer, schemaContext, SchemaPath.ROOT);
 
-        List<MapEntryNode> rule1Names = new ArrayList<>();
-        rule1Names.add(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE), createQName(FOO_NAMESPACE, NAME_NODE), "rule1"));
-        rule1Names.add(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE), createQName(FOO_NAMESPACE, NAME_NODE), "rule2"));
+        try (SchemaOrderedNormalizedNodeWriter nnw = new SchemaOrderedNormalizedNodeWriter(writer, schemaContext,
+            SchemaPath.ROOT)) {
 
-        List<MapEntryNode> rule2Names = new ArrayList<>();
-        rule1Names.add(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE), createQName(FOO_NAMESPACE, NAME_NODE), "rule3"));
-        rule1Names.add(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE), createQName(FOO_NAMESPACE, NAME_NODE), "rule4"));
+            List<MapEntryNode> rule1Names = new ArrayList<>();
+            rule1Names.add(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE),
+                createQName(FOO_NAMESPACE, NAME_NODE), "rule1"));
+            rule1Names.add(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE),
+                createQName(FOO_NAMESPACE, NAME_NODE), "rule2"));
 
-        DataContainerChild<?, ?> rules1 = Builders.orderedMapBuilder()
-                .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, RULE_NODE))
-                .withValue(rule1Names)
-                .build();
-        DataContainerChild<?, ?> rules2 = Builders.orderedMapBuilder()
-                .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, RULE_NODE))
-                .withValue(rule2Names)
-                .build();
+            List<MapEntryNode> rule2Names = new ArrayList<>();
+            rule1Names.add(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE),
+                createQName(FOO_NAMESPACE, NAME_NODE), "rule3"));
+            rule1Names.add(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE),
+                createQName(FOO_NAMESPACE, NAME_NODE), "rule4"));
 
-        List<MapEntryNode> policyNodes = new ArrayList<>();
+            DataContainerChild<?, ?> rules1 = Builders.orderedMapBuilder()
+                    .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, RULE_NODE))
+                    .withValue(rule1Names)
+                    .build();
+            DataContainerChild<?, ?> rules2 = Builders.orderedMapBuilder()
+                    .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, RULE_NODE))
+                    .withValue(rule2Names)
+                    .build();
+
+            List<MapEntryNode> policyNodes = new ArrayList<>();
 
 
-        final MapEntryNode pn1 = ImmutableNodes
-                .mapEntryBuilder(createQName(FOO_NAMESPACE, POLICY_NODE), createQName(FOO_NAMESPACE, NAME_NODE), "policy1")
-                .withChild(rules1)
-                .build();
-        final MapEntryNode pn2 = ImmutableNodes
-                .mapEntryBuilder(createQName(FOO_NAMESPACE, POLICY_NODE), createQName(FOO_NAMESPACE, NAME_NODE), "policy2")
-                .withChild(rules2)
-                .build();
-        policyNodes.add(pn1);
-        policyNodes.add(pn2);
+            final MapEntryNode pn1 = ImmutableNodes
+                    .mapEntryBuilder(createQName(FOO_NAMESPACE, POLICY_NODE),
+                        createQName(FOO_NAMESPACE, NAME_NODE), "policy1")
+                    .withChild(rules1)
+                    .build();
+            final MapEntryNode pn2 = ImmutableNodes
+                    .mapEntryBuilder(createQName(FOO_NAMESPACE, POLICY_NODE),
+                        createQName(FOO_NAMESPACE, NAME_NODE), "policy2")
+                    .withChild(rules2)
+                    .build();
+            policyNodes.add(pn1);
+            policyNodes.add(pn2);
 
-        DataContainerChild<?, ?> policy = Builders.orderedMapBuilder()
-                .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, POLICY_NODE))
-                .withValue(policyNodes)
-                .build();
-        NormalizedNode<?, ?> root = Builders.containerBuilder()
-                .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, "root"))
-                .withChild(policy).build();
-        nnw.write(root);
+            DataContainerChild<?, ?> policy = Builders.orderedMapBuilder()
+                    .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, POLICY_NODE))
+                    .withValue(policyNodes)
+                    .build();
+            NormalizedNode<?, ?> root = Builders.containerBuilder()
+                    .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, "root"))
+                    .withChild(policy).build();
+            nnw.write(root);
+        }
 
         XMLAssert.assertXMLIdentical(new Diff(EXPECTED_1, stringWriter.toString()), true);
     }
@@ -135,20 +146,21 @@ public class SchemaOrderedNormalizedNodeWriterTest {
         SchemaContext schemaContext = getSchemaContext("/bug1848/order.yang");
         NormalizedNodeStreamWriter writer = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter, schemaContext);
 
-        NormalizedNodeWriter nnw = new SchemaOrderedNormalizedNodeWriter(writer, schemaContext, SchemaPath.ROOT);
+        try (NormalizedNodeWriter nnw = new SchemaOrderedNormalizedNodeWriter(writer, schemaContext, SchemaPath.ROOT)) {
 
-        DataContainerChild<?, ?> cont = Builders.containerBuilder()
-                .withNodeIdentifier(getNodeIdentifier(ORDER_NAMESPACE, "cont"))
-                .withChild(ImmutableNodes.leafNode(createQName(ORDER_NAMESPACE, "content"), "content1"))
-                .build();
+            DataContainerChild<?, ?> cont = Builders.containerBuilder()
+                    .withNodeIdentifier(getNodeIdentifier(ORDER_NAMESPACE, "cont"))
+                    .withChild(ImmutableNodes.leafNode(createQName(ORDER_NAMESPACE, "content"), "content1"))
+                    .build();
 
-        NormalizedNode<?, ?> root = Builders.containerBuilder()
-                .withNodeIdentifier(getNodeIdentifier(ORDER_NAMESPACE, "root"))
-                .withChild(cont)
-                .withChild(ImmutableNodes.leafNode(createQName(ORDER_NAMESPACE, "id"), "id1"))
-                .build();
+            NormalizedNode<?, ?> root = Builders.containerBuilder()
+                    .withNodeIdentifier(getNodeIdentifier(ORDER_NAMESPACE, "root"))
+                    .withChild(cont)
+                    .withChild(ImmutableNodes.leafNode(createQName(ORDER_NAMESPACE, "id"), "id1"))
+                    .build();
 
-        nnw.write(root);
+            nnw.write(root);
+        }
 
         XMLAssert.assertXMLIdentical(new Diff(EXPECTED_2, stringWriter.toString()), true);
     }
