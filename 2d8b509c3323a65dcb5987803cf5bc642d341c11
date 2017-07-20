@@ -45,6 +45,30 @@
       "revId": "2d8b509c3323a65dcb5987803cf5bc642d341c11",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da2a55be_2156ebd2",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/SchemaTracker.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-07-20T23:24:16Z",
+      "side": 1,
+      "message": "Should be an interface, and at any rate it is a blind cast. This should work without the declared model, too...",
+      "parentUuid": "da2a55be_88138165",
+      "range": {
+        "startLine": 107,
+        "startChar": 36,
+        "endLine": 107,
+        "endChar": 66
+      },
+      "revId": "2d8b509c3323a65dcb5987803cf5bc642d341c11",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
