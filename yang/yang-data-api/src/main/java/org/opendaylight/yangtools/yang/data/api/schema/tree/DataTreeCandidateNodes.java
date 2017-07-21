@@ -14,12 +14,22 @@ import java.util.Iterator;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 @Beta
 public final class DataTreeCandidateNodes {
     private DataTreeCandidateNodes() {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Return an empty {@link DataTreeCandidateNode} identified by specified {@link PathArgument}.
+     * @param identifier Node identifier
+     * @return An empty DataTreeCandidateNode
+     */
+    public static DataTreeCandidateNode empty(final PathArgument identifier) {
+        return new EmptyDataTreeCandidateNode(identifier);
     }
 
     public static DataTreeCandidateNode fromNormalizedNode(final NormalizedNode<?, ?> node) {
