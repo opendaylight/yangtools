@@ -14,6 +14,7 @@ import java.util.Iterator;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 @Beta
@@ -22,14 +23,24 @@ public final class DataTreeCandidateNodes {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Return an empty {@link DataTreeCandidateNode} identified by specified {@link PathArgument}.
+     * @param identifier Node identifier
+     * @return An empty DataTreeCandidateNode
+     */
+    public static DataTreeCandidateNode empty(final PathArgument identifier) {
+        return new EmptyDataTreeCandidateNode(identifier);
+    }
+
     public static DataTreeCandidateNode fromNormalizedNode(final NormalizedNode<?, ?> node) {
         return new NormalizedNodeDataTreeCandidateNode(node);
     }
 
     /**
      * Applies the {@code node} to the {@code cursor}, note that if the top node of (@code node} is RootNode
-     * you need to use {@link #applyRootedNodeToCursor(DataTreeModificationCursor, YangInstanceIdentifier, DataTreeCandidateNode) applyRootedNodeToCursor}
-     * method that works with rooted node candidates
+     * you need to use {@link #applyRootedNodeToCursor(DataTreeModificationCursor, YangInstanceIdentifier,
+     * DataTreeCandidateNode) applyRootedNodeToCursor} method that works with rooted node candidates.
+     *
      * @param cursor cursor from the modification we want to apply the {@code node} to
      * @param node candidate tree to apply
      */
@@ -58,12 +69,14 @@ public final class DataTreeCandidateNodes {
 
     /**
      * Applies the {@code node} that is rooted(doesn't have an identifier) in tree A to tree B's {@code cursor}
-     * at location specified by {@code rootPath}
+     * at location specified by {@code rootPath}.
+     *
      * @param cursor cursor from the modification we want to apply the {@code node} to
      * @param rootPath path in the {@code cursor}'s tree we want to apply to candidate to
      * @param node candidate tree to apply
      */
-    public static void applyRootedNodeToCursor(final DataTreeModificationCursor cursor, final YangInstanceIdentifier rootPath, final DataTreeCandidateNode node) {
+    public static void applyRootedNodeToCursor(final DataTreeModificationCursor cursor,
+            final YangInstanceIdentifier rootPath, final DataTreeCandidateNode node) {
         switch (node.getModificationType()) {
             case DELETE:
                 cursor.delete(rootPath.getLastPathArgument());
