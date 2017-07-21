@@ -1,0 +1,60 @@
+module bug8449 {
+    yang-version 1;
+    namespace "bug8449";
+    prefix "tst";
+
+    revision "2017-16-05" {
+    }
+
+    typedef name1-ref {
+        type leafref {
+            path "/tst:top/tst:name1";
+        }
+    }
+
+    typedef name2-ref {
+        type leafref {
+            path "/tst:top/tst:name2";
+        }
+    }
+
+    typedef int32-ref {
+        type leafref {
+            path "/tst:top-int/tst:leaf-int32";
+        }
+    }
+
+    container top-int {
+        leaf leaf-int32 {
+            type uint32;
+        }
+    }
+
+    container top {
+        leaf name1 {
+            type string;
+        }
+        leaf name2 {
+            type string;
+        }
+    }
+
+    container cont-int32 {
+        leaf ref-union-int32 {
+            type union {
+                type int32-ref;
+            }
+        }
+    }
+
+    container cont {
+        leaf ref {
+            type union {
+                type name1-ref;
+                type name2-ref;
+            }
+            mandatory true;
+        }
+    }
+}
+
