@@ -228,8 +228,8 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
             return Optional.of(this);
         }
 
-        final Iterator<?> lit = getPathArguments().iterator();
-        final Iterator<?> oit = ancestor.getPathArguments().iterator();
+        final Iterator<PathArgument> lit = getPathArguments().iterator();
+        final Iterator<PathArgument> oit = ancestor.getPathArguments().iterator();
         int common = 0;
 
         while (oit.hasNext()) {
@@ -258,8 +258,8 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         Preconditions.checkArgument(other != null, "other should not be null");
-        final Iterator<?> lit = getPathArguments().iterator();
-        final Iterator<?> oit = other.getPathArguments().iterator();
+        final Iterator<PathArgument> lit = getPathArguments().iterator();
+        final Iterator<PathArgument> oit = other.getPathArguments().iterator();
 
         while (lit.hasNext()) {
             if (!oit.hasNext()) {
@@ -737,7 +737,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      */
     public interface InstanceIdentifierBuilder extends Builder<YangInstanceIdentifier> {
         /**
-         * Adds a {@link PathArgument} to to path arguments of resulting instance identifier.
+         * Adds a {@link PathArgument} to path arguments of resulting instance identifier.
          *
          * @param arg A {@link PathArgument} to be added
          * @return this builder
@@ -771,6 +771,28 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * @return this builder
          */
         InstanceIdentifierBuilder nodeWithKey(QName nodeType, QName key, Object value);
+
+        /**
+         * Adds a collection of {@link PathArgument}s to path arguments of resulting instance identifier.
+         *
+         * @param args {@link PathArgument}s to be added
+         * @return this builder
+         * @throws NullPointerException if any of the arguments is null
+         */
+        @Beta
+        InstanceIdentifierBuilder append(Collection<? extends PathArgument> args);
+
+        /**
+         * Adds a collection of {@link PathArgument}s to path arguments of resulting instance identifier.
+         *
+         * @param args {@link PathArgument}s to be added
+         * @return this builder
+         * @throws NullPointerException if any of the arguments is null
+         */
+        @Beta
+        default InstanceIdentifierBuilder append(final PathArgument... args) {
+            return append(Arrays.asList(args));
+        }
 
         /**
          * Builds an {@link YangInstanceIdentifier} with path arguments from this builder.

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.api;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
@@ -47,6 +48,13 @@ final class YangInstanceIdentifierBuilder implements InstanceIdentifierBuilder {
     @Override
     public InstanceIdentifierBuilder node(final QName nodeType) {
         return addArgument(new NodeIdentifier(nodeType));
+    }
+
+    @Override
+    public InstanceIdentifierBuilder append(final Collection<? extends PathArgument> args) {
+        path.addAll(args);
+        args.forEach(hash::addArgument);
+        return this;
     }
 
     @Override
