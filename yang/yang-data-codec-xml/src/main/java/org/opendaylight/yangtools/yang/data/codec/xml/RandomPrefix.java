@@ -63,8 +63,10 @@ class RandomPrefix {
             return false;
         }
 
+        // It seems JDK8 is violating the API contract of NamespaceContext by returning null for unbound prefixes,
+        // rather than specified NULL_NS_URI. Work this around by checking explicitly for null.
         final String str = context.getNamespaceURI(prefix);
-        return !XMLConstants.NULL_NS_URI.equals(str);
+        return str != null && !XMLConstants.NULL_NS_URI.equals(str);
     }
 
     @VisibleForTesting

@@ -1,0 +1,14 @@
+module bar {
+    namespace bar-ns;
+    prefix bar;
+
+    import foo {
+        prefix foo;
+    }
+
+    augment "/foo:top-cont/foo:keyed-list" {
+        leaf iid-leaf {
+            type instance-identifier;
+        }
+    }
+}
