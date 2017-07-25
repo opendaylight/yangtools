@@ -1,0 +1,14 @@
+module foo {
+    namespace foo-ns;
+    prefix foo;
+
+    container top-cont {
+        list keyed-list {
+            key key-leaf;
+
+            leaf key-leaf {
+                type int32;
+            }
+        }
+    }
+}
