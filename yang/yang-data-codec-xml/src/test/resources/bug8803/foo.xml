@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<root>
+    <top-cont xmlns="foo-ns">
+        <keyed-list>
+            <key-leaf>150</key-leaf>
+            <iid-leaf xmlns="bar-ns" xmlns:baz="baz-ns">
+                /baz:top-cont/baz:keyed-list[baz:key-leaf='50']</iid-leaf>
+        </keyed-list>
+    </top-cont>
+</root>
