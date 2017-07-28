@@ -1,0 +1,23 @@
+module rab {
+    namespace rab-ns;
+    prefix rab;
+
+    import baz {
+        prefix baz;
+    }
+
+    augment "/baz:top-cont" {
+        list keyed-list {
+            key key-leaf;
+
+            leaf key-leaf {
+                type int32;
+            }
+        }
+    }
+
+    identity base-id;
+    identity id-foo {
+        base base-id;
+    }
+}

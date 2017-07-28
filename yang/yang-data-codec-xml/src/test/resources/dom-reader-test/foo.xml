@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<top-cont xmlns="foo-ns">
+    <keyed-list>
+        <key-leaf>150</key-leaf>
+        <iid-leaf xmlns="bar-ns" xmlns:baz="baz-ns" xmlns:rab="rab-ns">
+            /baz:top-cont/rab:keyed-list[rab:key-leaf='50']</iid-leaf>
+        <ordinary-leaf>50</ordinary-leaf>
+        <idref-leaf xmlns:rab="rab-ns">rab:id-foo</idref-leaf>
+        <aug-anyxml xmlns="zab-ns">
+            <node-a>
+                <node-b>anyxml-value</node-b>
+            </node-a>
+        </aug-anyxml>
+    </keyed-list>
+</top-cont>
