@@ -1,0 +1,16 @@
+module zab {
+    namespace zab-ns;
+    prefix zab;
+
+    import foo {
+        prefix foo;
+    }
+
+    augment "/foo:top-cont/foo:keyed-list/" {
+        /*leaf ordinary-leaf {
+            type int32;
+        }*/
+
+        anyxml aug-anyxml;
+    }
+}
