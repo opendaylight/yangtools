@@ -1,0 +1,28 @@
+module foo {
+    namespace foo-ns;
+    prefix foo;
+
+    import rab {
+        prefix rab;
+    }
+
+    container top-cont {
+        list keyed-list {
+            key key-leaf;
+
+            leaf key-leaf {
+                type int32;
+            }
+
+            leaf idref-leaf {
+                type identityref {
+                    base rab:base-id;
+                }
+            }
+
+            leaf ordinary-leaf {
+                type int32;
+            }
+        }
+    }
+}
