@@ -38,6 +38,7 @@ final class SerializationProxy implements Externalizable {
     private TrieMap<Object, Object> map;
     private boolean readOnly;
 
+    @SuppressWarnings("checkStyle:redundantModifier")
     public SerializationProxy() {
         // For Externalizable
     }
