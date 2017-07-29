@@ -29,7 +29,7 @@ final class LNode<K, V> extends MainNode<K, V> {
         this(LNodeEntries.map(k1, v1, k2, v2), 2);
     }
 
-    LNode<K, V> insertChild( final K key, final V value) {
+    LNode<K, V> insertChild(final K key, final V value) {
         return new LNode<>(entries.insert(key, value), size + 1);
     }
 

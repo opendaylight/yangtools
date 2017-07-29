@@ -82,7 +82,7 @@ public final class MutableTrieMap<K, V> extends TrieMap<K, V> {
     }
 
     @SuppressFBWarnings(value = "NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE",
-            justification = "API contract allows null value, but we are not")
+            justification = "API contract allows null value, but we do not")
     @Override
     public boolean remove(final Object key, final Object value) {
         @SuppressWarnings("unchecked")
@@ -107,30 +107,25 @@ public final class MutableTrieMap<K, V> extends TrieMap<K, V> {
         return immutableSnapshot().size();
     }
 
+    private INode<K, V> snapshot() {
+        INode<K, V> r;
+        MainNode<K, V> expmain;
+        do {
+            r = RDCSS_READ_ROOT();
+            expmain = r.gcasRead(this);
+        } while (!RDCSS_ROOT(r, expmain, r.copyToGen(new Gen(), this)));
+
+        return r;
+    }
+
     @Override
     public ImmutableTrieMap<K, V> immutableSnapshot() {
-        while (true) {
-            final INode<K, V> r = RDCSS_READ_ROOT();
-            final MainNode<K, V> expmain = r.gcasRead(this);
-            if (RDCSS_ROOT(r, expmain, r.copyToGen(new Gen(), this))) {
-                return new ImmutableTrieMap<>(r, equiv());
-            }
-
-            // Tail recursion: return readOnlySnapshot();
-        }
+        return new ImmutableTrieMap<>(snapshot(), equiv());
     }
 
     @Override
     public MutableTrieMap<K, V> mutableSnapshot() {
-        while (true) {
-            final INode<K, V> r = RDCSS_READ_ROOT();
-            final MainNode<K, V> expmain = r.gcasRead(this);
-            if (RDCSS_ROOT(r, expmain, r.copyToGen(new Gen(), this))) {
-                return new MutableTrieMap<>(equiv(), r.copyToGen(new Gen(), this));
-            }
-
-            // Tail recursion: return snapshot();
-        }
+        return new MutableTrieMap<>(equiv(), snapshot().copyToGen(new Gen(), this));
     }
 
     @Override
@@ -156,6 +151,7 @@ public final class MutableTrieMap<K, V> extends TrieMap<K, V> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     INode<K, V> RDCSS_READ_ROOT(final boolean abort) {
         final Object r = /* READ */ root;
         if (r instanceof INode) {
@@ -217,6 +213,7 @@ public final class MutableTrieMap<K, V> extends TrieMap<K, V> {
         return false;
     }
 
+    @SuppressWarnings("unchecked")
     private INode<K, V> RDCSS_Complete(final boolean abort) {
         while (true) {
             final Object r = /* READ */ root;
@@ -225,7 +222,6 @@ public final class MutableTrieMap<K, V> extends TrieMap<K, V> {
             }
 
             checkState(r instanceof RDCSS_Descriptor, "Unhandled root %s", r);
-            @SuppressWarnings("unchecked")
             final RDCSS_Descriptor<K, V> desc = (RDCSS_Descriptor<K, V>) r;
             final INode<K, V> ov = desc.old;
             final MainNode<K, V> exp = desc.expectedmain;
