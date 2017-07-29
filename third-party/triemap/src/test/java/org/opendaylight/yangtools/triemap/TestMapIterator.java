@@ -121,6 +121,6 @@ public class TestMapIterator {
 
     @Test(expected = NoSuchElementException.class)
     public void testEmptyReadOnlySnapshotIterator() {
-        failAdvance( TrieMap.create().immutableSnapshot().iterator());
+        failAdvance(TrieMap.create().immutableSnapshot().iterator());
     }
 }

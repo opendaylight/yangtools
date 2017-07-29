@@ -56,7 +56,8 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
 
     /**
      * Returns a snapshot of this TrieMap. This operation is lock-free and
-     * linearizable.
+     * linearizable. Modification operations on this Map and the returned one
+     * are isolated from each other.
      *
      * <p>
      * The snapshot is lazily updated - the first time some branch in the
@@ -64,6 +65,8 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
      * that the work of rebuilding both the snapshot and this TrieMap is
      * distributed across all the threads doing updates or accesses subsequent
      * to the snapshot creation.
+     *
+     * @return A read-write TrieMap containing the contents of this map.
      */
     public abstract TrieMap<K, V> mutableSnapshot();
 
@@ -76,11 +79,13 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
      * TrieMap are accessed, it is rewritten. The work of creating the snapshot
      * is thus distributed across subsequent updates and accesses on this
      * TrieMap by all threads. Note that the snapshot itself is never rewritten
-     * unlike when calling the `snapshot` method, but the obtained snapshot
+     * unlike when calling {@link #mutableSnapshot()}, but the obtained snapshot
      * cannot be modified.
      *
      * <p>
      * This method is used by other methods such as `size` and `iterator`.
+     *
+     * @return A read-only TrieMap containing the contents of this map.
      */
     public abstract ImmutableTrieMap<K, V> immutableSnapshot();
 
