@@ -59,7 +59,11 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
         final DataTree ret = create(treeConfig, initialSchemaContext, false);
 
         final DataTreeModification mod = ret.takeSnapshot().newModification();
-        mod.write(YangInstanceIdentifier.empty(), initialRoot);
+        if (DataTreeFactory.absentRoot().equals(initialRoot)) {
+            mod.delete(YangInstanceIdentifier.empty());
+        } else {
+            mod.write(YangInstanceIdentifier.empty(), initialRoot);
+        }
         mod.ready();
 
         ret.validate(mod);

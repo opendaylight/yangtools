@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
+import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -47,7 +48,8 @@ public interface DataTreeFactory {
     DataTree create(DataTreeConfiguration treeConfig, SchemaContext initialSchemaContext);
 
     /**
-     * Create a new data tree based on specified configuration, with the specified node.
+     * Create a new data tree based on specified configuration, with the specified node. Use {@link #absentRoot()}
+     * if the node is not present, but may materialize later.
      *
      * @param treeConfig
      *          Tree configuration.
@@ -58,4 +60,16 @@ public interface DataTreeFactory {
      */
     DataTree create(DataTreeConfiguration treeConfig, SchemaContext initialSchemaContext,
             NormalizedNodeContainer<?, ?, ?> initialRoot) throws DataValidationFailedException;
+
+    /**
+     * Return an singleton marker for absent root. Returned instance should only be used in conjunction with
+     * {@link #create(DataTreeConfiguration, SchemaContext, NormalizedNodeContainer)} to instantiate a DataTree which
+     * is logically absent.
+     *
+     * @return A singleton absent root marker.
+     */
+    @Beta
+    static NormalizedNodeContainer<?, ?, ?> absentRoot() {
+        return AbsentRoot.instance();
+    }
 }
