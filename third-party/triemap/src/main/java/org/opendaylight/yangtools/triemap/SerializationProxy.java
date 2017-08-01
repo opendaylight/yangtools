@@ -16,7 +16,7 @@
 package org.opendaylight.yangtools.triemap;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Verify;
 import java.io.Externalizable;
@@ -45,7 +45,7 @@ final class SerializationProxy implements Externalizable {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     SerializationProxy(final ImmutableTrieMap<?, ?> map, final boolean readOnly) {
-        this.map = (TrieMap) checkNotNull(map);
+        this.map = (TrieMap) requireNonNull(map);
         this.readOnly = readOnly;
     }
 

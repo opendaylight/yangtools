@@ -15,7 +15,7 @@
  */
 package org.opendaylight.yangtools.triemap;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.triemap.LookupResult.RESTART;
 
 import com.google.common.annotations.Beta;
@@ -96,7 +96,7 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
 
     @Override
     public final boolean containsValue(final Object value) {
-        return super.containsValue(checkNotNull(value));
+        return super.containsValue(requireNonNull(value));
     }
 
     @Override
@@ -114,7 +114,7 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
     @Override
     public final V get(final Object key) {
         @SuppressWarnings("unchecked")
-        final K k = (K) checkNotNull(key);
+        final K k = (K) requireNonNull(key);
         return lookuphc(k, computeHash(k));
     }
 
