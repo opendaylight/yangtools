@@ -15,8 +15,8 @@
  */
 package org.opendaylight.yangtools.triemap;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.triemap.PresencePredicate.ABSENT;
 import static org.opendaylight.yangtools.triemap.PresencePredicate.PRESENT;
 
@@ -50,7 +50,7 @@ public final class MutableTrieMap<K, V> extends TrieMap<K, V> {
 
     MutableTrieMap(final Equivalence<? super K> equiv, final INode<K, V> root) {
         super(equiv);
-        this.root = checkNotNull(root);
+        this.root = requireNonNull(root);
     }
 
     @Override
@@ -63,20 +63,20 @@ public final class MutableTrieMap<K, V> extends TrieMap<K, V> {
 
     @Override
     public V put(final K key, final V value) {
-        final K k = checkNotNull(key);
-        return toNullable(insertifhc(k, computeHash(k), checkNotNull(value), null));
+        final K k = requireNonNull(key);
+        return toNullable(insertifhc(k, computeHash(k), requireNonNull(value), null));
     }
 
     @Override
     public V putIfAbsent(final K key, final V value) {
-        final K k = checkNotNull(key);
-        return toNullable(insertifhc(k, computeHash(k), checkNotNull(value), ABSENT));
+        final K k = requireNonNull(key);
+        return toNullable(insertifhc(k, computeHash(k), requireNonNull(value), ABSENT));
     }
 
     @Override
     public V remove(final Object key) {
         @SuppressWarnings("unchecked")
-        final K k = (K) checkNotNull(key);
+        final K k = (K) requireNonNull(key);
         return toNullable(removehc(k, null, computeHash(k)));
     }
 
@@ -85,20 +85,20 @@ public final class MutableTrieMap<K, V> extends TrieMap<K, V> {
     @Override
     public boolean remove(final Object key, final Object value) {
         @SuppressWarnings("unchecked")
-        final K k = (K) checkNotNull(key);
-        return removehc(k, checkNotNull(value), computeHash(k)).isPresent();
+        final K k = (K) requireNonNull(key);
+        return removehc(k, requireNonNull(value), computeHash(k)).isPresent();
     }
 
     @Override
     public boolean replace(final K key, final V oldValue, final V newValue) {
-        final K k = checkNotNull(key);
-        return insertifhc(k, computeHash(k), checkNotNull(newValue), checkNotNull(oldValue)).isPresent();
+        final K k = requireNonNull(key);
+        return insertifhc(k, computeHash(k), requireNonNull(newValue), requireNonNull(oldValue)).isPresent();
     }
 
     @Override
     public V replace(final K key, final V value) {
-        final K k = checkNotNull(key);
-        return toNullable(insertifhc(k, computeHash(k), checkNotNull(value), PRESENT));
+        final K k = requireNonNull(key);
+        return toNullable(insertifhc(k, computeHash(k), requireNonNull(value), PRESENT));
     }
 
     @Override
@@ -160,8 +160,8 @@ public final class MutableTrieMap<K, V> extends TrieMap<K, V> {
     }
 
     void add(final K key, final V value) {
-        final K k = checkNotNull(key);
-        inserthc(k, computeHash(k), checkNotNull(value));
+        final K k = requireNonNull(key);
+        inserthc(k, computeHash(k), requireNonNull(value));
     }
 
     private static <K,V> INode<K, V> newRootNode() {

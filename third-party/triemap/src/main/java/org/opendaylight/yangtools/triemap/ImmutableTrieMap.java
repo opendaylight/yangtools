@@ -15,7 +15,7 @@
  */
 package org.opendaylight.yangtools.triemap;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -40,7 +40,7 @@ public final class ImmutableTrieMap<K, V> extends TrieMap<K, V> {
 
     ImmutableTrieMap(final INode<K, V> root, final Equivalence<? super K> equiv) {
         super(equiv);
-        this.root = checkNotNull(root);
+        this.root = requireNonNull(root);
     }
 
     @Override

@@ -15,7 +15,7 @@
  */
 package org.opendaylight.yangtools.triemap;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import java.util.AbstractSet;
 import java.util.Map.Entry;
@@ -32,7 +32,7 @@ abstract class AbstractEntrySet<K, V> extends AbstractSet<Entry<K, V>> {
     private final TrieMap<K, V> map;
 
     AbstractEntrySet(final TrieMap<K, V> map) {
-        this.map = checkNotNull(map);
+        this.map = requireNonNull(map);
     }
 
     final TrieMap<K, V> map() {
