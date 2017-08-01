@@ -17,6 +17,15 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 public class ConflictingModificationAppliedException extends DataValidationFailedException {
     private static final long serialVersionUID = 1L;
 
+    public ConflictingModificationAppliedException(final String messagePattern, final YangInstanceIdentifier path,
+            final Throwable cause) {
+        super(messagePattern, path, cause);
+    }
+
+    public ConflictingModificationAppliedException(final String messagePattern, final YangInstanceIdentifier path) {
+        super(messagePattern, path);
+    }
+
     public ConflictingModificationAppliedException(final YangInstanceIdentifier path, final String message,
             final Throwable cause) {
         super(path, message, cause);
