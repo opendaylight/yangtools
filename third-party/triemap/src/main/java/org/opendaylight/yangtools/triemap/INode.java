@@ -161,7 +161,7 @@ final class INode<K, V> extends BasicNode {
                         return false;
                     } else if (cnAtPos instanceof SNode) {
                         final SNode<K, V> sn = (SNode<K, V>) cnAtPos;
-                        if (sn.hc == hc && ct.equal(sn.k, k)) {
+                        if (sn.hc == hc && ct.equal(sn.key, k)) {
                             return GCAS(cn, cn.updatedAt(pos, new SNode<>(k, v, hc), gen), ct);
                         }
 
@@ -253,9 +253,9 @@ final class INode<K, V> extends BasicNode {
                     } else if (cnAtPos instanceof SNode) {
                         final SNode<K, V> sn = (SNode<K, V>) cnAtPos;
                         if (cond == null) {
-                            if (sn.hc == hc && ct.equal(sn.k, k)) {
+                            if (sn.hc == hc && ct.equal(sn.key, k)) {
                                 if (GCAS(cn, cn.updatedAt(pos, new SNode<>(k, v, hc), gen), ct)) {
-                                    return Optional.of(sn.v);
+                                    return Optional.of(sn.value);
                                 }
 
                                 return null;
@@ -263,24 +263,24 @@ final class INode<K, V> extends BasicNode {
 
                             return insertDual(ct, cn, pos, sn, k, v, hc, lev);
                         } else if (cond == ABSENT) {
-                            if (sn.hc == hc && ct.equal(sn.k, k)) {
-                                return Optional.of(sn.v);
+                            if (sn.hc == hc && ct.equal(sn.key, k)) {
+                                return Optional.of(sn.value);
                             }
 
                             return insertDual(ct, cn, pos, sn, k, v, hc, lev);
                         } else if (cond == PRESENT) {
-                            if (sn.hc == hc && ct.equal(sn.k, k)) {
+                            if (sn.hc == hc && ct.equal(sn.key, k)) {
                                 if (GCAS(cn, cn.updatedAt(pos, new SNode<>(k, v, hc), gen), ct)) {
-                                    return Optional.of(sn.v);
+                                    return Optional.of(sn.value);
                                 }
                                 return null;
                             }
 
                             return Optional.empty();
                         } else {
-                            if (sn.hc == hc && ct.equal(sn.k, k) && cond.equals(sn.v)) {
+                            if (sn.hc == hc && ct.equal(sn.key, k) && cond.equals(sn.value)) {
                                 if (GCAS(cn, cn.updatedAt(pos, new SNode<>(k, v, hc), gen), ct)) {
-                                    return Optional.of(sn.v);
+                                    return Optional.of(sn.value);
                                 }
 
                                 return null;
@@ -394,8 +394,8 @@ final class INode<K, V> extends BasicNode {
                 } else if (sub instanceof SNode) {
                     // 2) singleton node
                     final SNode<K, V> sn = (SNode<K, V>) sub;
-                    if (sn.hc == hc && ct.equal(sn.k, k)) {
-                        return sn.v;
+                    if (sn.hc == hc && ct.equal(sn.key, k)) {
+                        return sn.value;
                     }
 
                     return null;
@@ -418,8 +418,8 @@ final class INode<K, V> extends BasicNode {
     private Object cleanReadOnly(final TNode<K, V> tn, final int lev, final INode<K, V> parent,
             final TrieMap<K, V> ct, final K k, final int hc) {
         if (ct.isReadOnly()) {
-            if (tn.hc == hc && ct.equal(tn.k, k)) {
-                return tn.v;
+            if (tn.hc == hc && ct.equal(tn.key, k)) {
+                return tn.value;
             }
 
             return null;
@@ -475,10 +475,10 @@ final class INode<K, V> extends BasicNode {
                 }
             } else if (sub instanceof SNode) {
                 final SNode<K, V> sn = (SNode<K, V>) sub;
-                if (sn.hc == hc && ct.equal(sn.k, k) && (cond == null || cond.equals(sn.v))) {
+                if (sn.hc == hc && ct.equal(sn.key, k) && (cond == null || cond.equals(sn.value))) {
                     final MainNode<K, V> ncn = cn.removedAt(pos, flag, gen).toContracted(lev);
                     if (GCAS(cn, ncn, ct)) {
-                        res = Optional.of(sn.v);
+                        res = Optional.of(sn.value);
                     } else {
                         res = null;
                     }

@@ -45,16 +45,19 @@ final class ImmutableKeySet<K> extends AbstractKeySet<K> {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean remove(final Object o) {
         throw unsupported();
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean retainAll(final Collection<?> c) {
         throw unsupported();
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean removeAll(final Collection<?> c) {
         throw unsupported();
     }

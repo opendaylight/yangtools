@@ -32,6 +32,7 @@ final class MutableEntrySet<K, V> extends AbstractEntrySet<K, V> {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean add(final Entry<K, V> e) {
         final K k = e.getKey();
         checkArgument(k != null);
@@ -53,6 +54,7 @@ final class MutableEntrySet<K, V> extends AbstractEntrySet<K, V> {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean remove(final Object o) {
         if (!(o instanceof Entry)) {
             return false;

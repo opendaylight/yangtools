@@ -18,26 +18,26 @@ package org.opendaylight.yangtools.triemap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 final class SNode<K, V> extends BasicNode implements EntryNode<K, V> {
-    final K k;
-    final V v;
+    final K key;
+    final V value;
     final int hc;
 
     SNode(final K key, final V value, final int hc) {
-        this.k = key;
-        this.v = value;
+        this.key = key;
+        this.value = value;
         this.hc = hc;
     }
 
     SNode<K, V> copy() {
-        return new SNode<>(k, v, hc);
+        return new SNode<>(key, value, hc);
     }
 
     TNode<K, V> copyTombed() {
-        return new TNode<>(k, v, hc);
+        return new TNode<>(key, value, hc);
     }
 
     SNode<K, V> copyUntombed() {
-        return new SNode<>(k, v, hc);
+        return new SNode<>(key, value, hc);
     }
 
     @Override
@@ -48,27 +48,27 @@ final class SNode<K, V> extends BasicNode implements EntryNode<K, V> {
 
     @Override
     public K getKey() {
-        return k;
+        return key;
     }
 
     @Override
     public V getValue() {
-        return v;
+        return value;
     }
 
     @Override
     public int hashCode() {
-        return EntryUtil.hash(k, v);
+        return EntryUtil.hash(key, value);
     }
 
     @SuppressFBWarnings(value = "EQ_UNUSUAL",  justification = "Equality handled by utility methods")
     @Override
-    public boolean equals(final Object o) {
-        return EntryUtil.equal(o, k, v);
+    public boolean equals(final Object obj) {
+        return EntryUtil.equal(obj, key, value);
     }
 
     @Override
     public String toString() {
-        return EntryUtil.string(k, v);
+        return EntryUtil.string(key, value);
     }
 }
