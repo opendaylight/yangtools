@@ -56,6 +56,7 @@ final class MutableKeySet<K> extends AbstractKeySet<K> {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public boolean remove(final Object o) {
         return map().remove(o) != null;
     }

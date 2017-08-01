@@ -40,6 +40,7 @@ abstract class AbstractEntrySet<K, V> extends AbstractSet<Entry<K, V>> {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public final boolean contains(final Object o) {
         if (!(o instanceof Entry)) {
             return false;
