@@ -50,7 +50,7 @@ final class CNode<K, V> extends MainNode<K, V> {
     private static <K, V> MainNode<K,V> dual(final SNode<K, V> x, final int xhc, final SNode<K, V> y, final int yhc,
             final int lev, final Gen gen) {
         if (lev >= HASH_BITS) {
-            return new LNode<>(x.k, x.v, y.k, y.v);
+            return new LNode<>(x.key, x.value, y.key, y.value);
         }
 
         final int xidx = (xhc >>> lev) & 0x1f;

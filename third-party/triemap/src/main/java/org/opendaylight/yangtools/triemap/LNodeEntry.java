@@ -58,8 +58,8 @@ abstract class LNodeEntry<K, V> implements Entry<K, V> {
 
     @SuppressFBWarnings(value = "EQ_UNUSUAL",  justification = "Equality handled by utility methods")
     @Override
-    public final boolean equals(final Object o) {
-        return EntryUtil.equal(o, key, value);
+    public final boolean equals(final Object obj) {
+        return EntryUtil.equal(obj, key, value);
     }
 
     @Override

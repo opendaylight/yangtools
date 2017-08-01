@@ -30,12 +30,12 @@ final class EntryUtil {
     /**
      * Utility implementing {@link Entry#equals(Object)}.
      */
-    static boolean equal(final Object o, final Object key, final Object value) {
-        if (!(o instanceof Entry)) {
+    static boolean equal(final Object obj, final Object key, final Object value) {
+        if (!(obj instanceof Entry)) {
             return false;
         }
 
-        final Entry<?,?> e = (Entry<?,?>)o;
+        final Entry<?,?> e = (Entry<?,?>)obj;
         return key.equals(e.getKey()) && value.equals(e.getValue());
     }
 

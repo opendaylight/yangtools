@@ -74,6 +74,7 @@ public final class ImmutableTrieMap<K, V> extends TrieMap<K, V> {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public void putAll(final Map<? extends K, ? extends V> m) {
         throw unsupported();
     }

@@ -111,8 +111,8 @@ final class MutableIterator<K, V> extends AbstractIterator<K, V> {
 
         @SuppressFBWarnings(value = "EQ_UNUSUAL",  justification = "Equality handled by utility methods")
         @Override
-        public boolean equals(final Object o) {
-            return EntryUtil.equal(o, getKey(), getValue());
+        public boolean equals(final Object obj) {
+            return EntryUtil.equal(obj, getKey(), getValue());
         }
 
         @Override
