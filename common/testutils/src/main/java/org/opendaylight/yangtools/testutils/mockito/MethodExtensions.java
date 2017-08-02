@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.testutils.mockito;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.lang.reflect.Type;
+import java.util.regex.Pattern;
+import javax.annotation.RegEx;
 
 /**
  * Nicer shorter toString() for {@link Method} than it's default.
@@ -19,22 +21,27 @@ import java.lang.reflect.Type;
  * @author Michael Vorburger
  */
 public final class MethodExtensions {
+    @RegEx
+    private static final String PARAM_PATTERN_STR = "\\[\\]$";
+    private static final Pattern PARAM_PATTERN = Pattern.compile(PARAM_PATTERN_STR);
 
     private MethodExtensions() {
     }
 
-    public static String toString(Method method) {
-        StringBuilder sb = new StringBuilder();
+    public static String toString(final Method method) {
+        final StringBuilder sb = new StringBuilder();
         sb.append(method.getName());
 
         // copy/paste from java.lang.reflect.Executable.sharedToGenericString(int, boolean)
         sb.append('(');
-        Type[] params = method.getGenericParameterTypes();
-        Parameter[] parameters = method.getParameters(); // NEW
+        final Type[] params = method.getGenericParameterTypes();
+        // NEW
+        final Parameter[] parameters = method.getParameters();
         for (int j = 0; j < params.length; j++) {
             String param = params[j].getTypeName();
-            if (method.isVarArgs() && j == params.length - 1) { // replace T[] with T...
-                param = param.replaceFirst("\\[\\]$", "...");
+            if (method.isVarArgs() && j == params.length - 1) {
+                // replace T[] with T...
+                param = PARAM_PATTERN.matcher(param).replaceFirst("...");
             }
             sb.append(param);
             // NEW
@@ -43,8 +50,9 @@ public final class MethodExtensions {
                 sb.append(parameters[j].getName());
             }
             // NEW END
-            if (j < (params.length - 1)) {
-                sb.append(", "); // NEW ", " instead of ','
+            if (j < params.length - 1) {
+                // NEW ", " instead of ','
+                sb.append(", ");
             }
         }
         sb.append(')');

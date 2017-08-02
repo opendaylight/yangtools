@@ -115,18 +115,21 @@ import org.mockito.stubbing.Answer;
 @Beta
 public class CallsRealOrExceptionAnswer implements Answer<Object>, Serializable {
     private static final long serialVersionUID = -3730024662402964588L;
+    static final CallsRealOrExceptionAnswer INSTANCE = new CallsRealOrExceptionAnswer();
 
-    /**
-     * Use {@link MoreAnswers} to obtain an instance.
-     */
-    CallsRealOrExceptionAnswer() {
+    private CallsRealOrExceptionAnswer() {
+
     }
 
     @Override
-    public Object answer(InvocationOnMock invocation) throws Throwable {
+    public Object answer(final InvocationOnMock invocation) throws Throwable {
         if (Modifier.isAbstract(invocation.getMethod().getModifiers())) {
             throw new UnstubbedMethodException(invocation.getMethod(), invocation.getMock());
         }
         return invocation.callRealMethod();
+    }
+
+    Object readResolve() {
+        return INSTANCE;
     }
 }
