@@ -38,16 +38,18 @@ import org.mockito.stubbing.Answer;
 @Beta
 public class ThrowsMethodExceptionAnswer implements Answer<Object>, Serializable {
     private static final long serialVersionUID = -7316574192253912318L;
+    static final ThrowsMethodExceptionAnswer INSTANCE = new ThrowsMethodExceptionAnswer();
 
-    /**
-     * Use {@link MoreAnswers} to obtain an instance.
-     */
-    ThrowsMethodExceptionAnswer() {
+    private ThrowsMethodExceptionAnswer() {
+
     }
 
     @Override
-    public Void answer(InvocationOnMock invocation) throws Throwable {
+    public Void answer(final InvocationOnMock invocation) throws Throwable {
         throw new UnstubbedMethodException(invocation.getMethod());
     }
 
+    Object readResolve() {
+        return INSTANCE;
+    }
 }

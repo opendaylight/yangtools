@@ -10,11 +10,11 @@ package org.opendaylight.yangtools.testutils.mockito.tests;
 import static com.google.common.truth.Truth.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 import static org.opendaylight.yangtools.testutils.mockito.MoreAnswers.realOrException;
 
 import java.io.File;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.opendaylight.yangtools.testutils.mockito.UnstubbedMethodException;
 
 /**
@@ -40,14 +40,14 @@ public class MikitoTest {
 
     @Test
     public void usingMikitoToCallStubbedMethod() {
-        SomeService service = Mockito.mock(MockSomeService.class, realOrException());
+        SomeService service = mock(MockSomeService.class, realOrException());
         assertEquals(123, service.foobar(new File("hello.txt")));
         assertEquals(0, service.foobar(new File("belo.txt")));
     }
 
     @Test
     public void usingMikitoToCallUnstubbedMethodAndExpectException() {
-        MockSomeService service = Mockito.mock(MockSomeService.class, realOrException());
+        MockSomeService service = mock(MockSomeService.class, realOrException());
         try {
             service.foo();
             fail();
@@ -58,13 +58,8 @@ public class MikitoTest {
 
     abstract static class MockSomeService implements SomeService {
         @Override
-        public int foobar(File file) {
-            if (file.getName().equals("hello.txt")) {
-                return 123;
-            } else {
-                return 0;
-            }
+        public int foobar(final File file) {
+            return "hello.txt".equals(file.getName()) ? 123 : 0;
         }
     }
-
 }
