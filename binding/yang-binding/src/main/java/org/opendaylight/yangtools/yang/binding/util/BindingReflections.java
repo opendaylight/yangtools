@@ -55,9 +55,9 @@ public class BindingReflections {
     private static final Pattern ROOT_PACKAGE_PATTERN = Pattern.compile(ROOT_PACKAGE_PATTERN_STRING);
     private static final Logger LOG = LoggerFactory.getLogger(BindingReflections.class);
 
-    private static final LoadingCache<Class<?>, Optional<QName>> CLASS_TO_QNAME = CacheBuilder.newBuilder() //
-            .weakKeys() //
-            .expireAfterAccess(EXPIRATION_TIME, TimeUnit.SECONDS) //
+    private static final LoadingCache<Class<?>, Optional<QName>> CLASS_TO_QNAME = CacheBuilder.newBuilder()
+            .weakKeys()
+            .expireAfterAccess(EXPIRATION_TIME, TimeUnit.SECONDS)
             .build(new ClassToQNameLoader());
 
     private BindingReflections() {
@@ -389,9 +389,9 @@ public class BindingReflections {
      * @return true if class represents RPC Input or RPC Output class.
      */
     public static boolean isRpcType(final Class<? extends DataObject> targetType) {
-        return DataContainer.class.isAssignableFrom(targetType) //
-                && !ChildOf.class.isAssignableFrom(targetType) //
-                && !Notification.class.isAssignableFrom(targetType) //
+        return DataContainer.class.isAssignableFrom(targetType)
+                && !ChildOf.class.isAssignableFrom(targetType)
+                && !Notification.class.isAssignableFrom(targetType)
                 && (targetType.getName().endsWith("Input") || targetType.getName().endsWith("Output"));
     }
 
