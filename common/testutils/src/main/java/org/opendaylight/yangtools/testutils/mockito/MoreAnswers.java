@@ -21,13 +21,6 @@ import org.mockito.stubbing.Answer;
  */
 @SuppressWarnings("unchecked")
 public final class MoreAnswers {
-
-    private static final CallsRealOrExceptionAnswer REAL_OR_EXCEPTION
-        = new CallsRealOrExceptionAnswer();
-
-    private static final ThrowsMethodExceptionAnswer EXCEPTION
-        = new ThrowsMethodExceptionAnswer();
-
     private MoreAnswers() {
     }
 
@@ -37,7 +30,7 @@ public final class MoreAnswers {
      * @see CallsRealOrExceptionAnswer
      */
     public static <T> Answer<T> realOrException() {
-        return (Answer<T>) REAL_OR_EXCEPTION;
+        return (Answer<T>) CallsRealOrExceptionAnswer.INSTANCE;
     }
 
     /**
@@ -46,7 +39,6 @@ public final class MoreAnswers {
      * @see ThrowsMethodExceptionAnswer
      */
     public static <T> Answer<T> exception() {
-        return (Answer<T>) EXCEPTION;
+        return (Answer<T>) ThrowsMethodExceptionAnswer.INSTANCE;
     }
-
 }

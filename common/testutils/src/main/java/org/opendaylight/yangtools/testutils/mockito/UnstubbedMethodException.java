@@ -18,11 +18,11 @@ import org.mockito.internal.util.MockUtil;
 public class UnstubbedMethodException extends UnsupportedOperationException {
     private static final long serialVersionUID = 1L;
 
-    public UnstubbedMethodException(Method method) {
+    public UnstubbedMethodException(final Method method) {
         super(MethodExtensions.toString(method) + " is not stubbed in mock of " + method.getDeclaringClass().getName());
     }
 
-    public UnstubbedMethodException(Method method, Object mockAbstractFakeObject) {
+    public UnstubbedMethodException(final Method method, final Object mockAbstractFakeObject) {
         super(MethodExtensions.toString(method) + " is not implemented in "
                 + new MockUtil().getMockName(mockAbstractFakeObject).toString());
     }
