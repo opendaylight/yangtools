@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba1f61a0_3df139ce",
+        "filename": "yang/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/RpcInputOutputTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-08-03T09:36:39Z",
+      "side": 1,
+      "message": "wrong import ordering, all imports should be ordered alphabetically. Also remove unused imports.",
+      "range": {
+        "startLine": 28,
+        "startChar": 0,
+        "endLine": 35,
+        "endChar": 35
+      },
+      "revId": "e9fe543d2111c43723fb68de4da53e6848ffc428",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_7dba91e2",
+        "filename": "yang/yang-data-codec-gson/src/test/resources/rpc/yang/invoke-rpc-module.yang",
+        "patchSetId": 10
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-08-03T09:36:39Z",
+      "side": 1,
+      "message": "trailing whitespace",
+      "range": {
+        "startLine": 5,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 2
+      },
+      "revId": "e9fe543d2111c43723fb68de4da53e6848ffc428",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_bdb409f3",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/SchemaTracker.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-08-03T09:36:39Z",
+      "side": 1,
+      "message": "this is an unchecked cast. What exactly is the conditions being checked for here?",
+      "range": {
+        "startLine": 107,
+        "startChar": 36,
+        "endLine": 107,
+        "endChar": 54
+      },
+      "revId": "e9fe543d2111c43723fb68de4da53e6848ffc428",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
