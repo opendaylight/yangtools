@@ -20,9 +20,6 @@
  * <ul>
  * <li> implementation of statement context which provides the information necessary for creation of declared and
  * effective statements</li>
- * <li> custom statement parser builder
- * {@link org.opendaylight.yangtools.yang.parser.stmt.reactor.CustomStatementParserBuilder} which provides methods and
- *  implementation useful for building of custom statement parser</li>
  * <li> entry point to the parsing process provided by the cross source statement reactor
  * {@link org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor}</li>
  * </ul>

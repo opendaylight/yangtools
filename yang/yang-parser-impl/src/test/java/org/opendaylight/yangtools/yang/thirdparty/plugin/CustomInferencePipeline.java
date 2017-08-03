@@ -11,7 +11,7 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour
 
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CustomStatementParserBuilder;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ext.CustomStatementParserBuilder;
 
 public final class CustomInferencePipeline {
     public static final CrossSourceStatementReactor CUSTOM_REACTOR = new CustomStatementParserBuilder()
