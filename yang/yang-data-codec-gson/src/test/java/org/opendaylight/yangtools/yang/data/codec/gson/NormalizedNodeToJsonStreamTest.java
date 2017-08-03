@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.childArray;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.childPrimitive;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.resolveCont1;
+
 import com.google.common.collect.Sets;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -349,7 +350,7 @@ public class NormalizedNodeToJsonStreamTest {
             final NormalizedNode<?, ?> inputStructure) throws IOException {
 
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.
-                createExclusiveWriter(JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, null,
+                createExclusiveWriter(JSONCodecFactory.getShared(schemaContext), SchemaPath.ROOT, null,
                     JsonWriterFactory.createJsonWriter(writer, 2));
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
         nodeWriter.write(inputStructure);

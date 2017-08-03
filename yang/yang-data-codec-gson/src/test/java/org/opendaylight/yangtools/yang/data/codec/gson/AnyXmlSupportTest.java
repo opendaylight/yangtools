@@ -87,7 +87,7 @@ public class AnyXmlSupportTest {
         // serialization
         final Writer writer = new StringWriter();
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.
-                createExclusiveWriter(JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, null,
+                createExclusiveWriter(JSONCodecFactory.getShared(schemaContext), SchemaPath.ROOT, null,
                         JsonWriterFactory.createJsonWriter(writer, 2));
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
         nodeWriter.write(transformedInput);
@@ -129,7 +129,7 @@ public class AnyXmlSupportTest {
         // serialization
         final Writer writer = new StringWriter();
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.
-                createExclusiveWriter(JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, null,
+                createExclusiveWriter(JSONCodecFactory.getShared(schemaContext), SchemaPath.ROOT, null,
                         JsonWriterFactory.createJsonWriter(writer, 2));
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
         nodeWriter.write(transformedInput);

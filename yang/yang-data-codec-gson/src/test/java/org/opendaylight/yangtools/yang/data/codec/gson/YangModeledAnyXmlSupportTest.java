@@ -110,7 +110,7 @@ public class YangModeledAnyXmlSupportTest {
             final NormalizedNode<?, ?> inputStructure) throws IOException {
 
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
-                JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, null,
+                JSONCodecFactory.getShared(schemaContext), SchemaPath.ROOT, null,
                 JsonWriterFactory.createJsonWriter(writer, 2));
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
         nodeWriter.write(inputStructure);
