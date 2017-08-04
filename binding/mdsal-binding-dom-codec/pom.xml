@@ -97,6 +97,7 @@
                             org.opendaylight.yangtools.binding.data.codec.*,
                             org.opendaylight.yangtools.binding.data.codec.gen.impl.*,
                             org.opendaylight.yangtools.binding.data.codec.impl.*,
+                            ;-split-package:=error
                         </Export-Package>
                     </instructions>
                 </configuration>
