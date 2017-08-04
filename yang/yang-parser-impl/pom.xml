@@ -127,6 +127,7 @@
                     <instructions>
                         <Export-Package>
                             org.opendaylight.yangtools.yang.parser.*
+                            ;-split-package:=error
                         </Export-Package>
                     </instructions>
                 </configuration>
