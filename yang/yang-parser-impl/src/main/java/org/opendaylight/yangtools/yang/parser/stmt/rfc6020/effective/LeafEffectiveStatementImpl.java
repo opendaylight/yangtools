@@ -57,15 +57,10 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
             }
         }
 
-        try {
-            SourceException.throwIf(TypeUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeStmt, dflt),
-                    ctx.getStatementSourceReference(),
-                    "Leaf '%s' has default value '%s' marked with an if-feature statement.",
-                    ctx.getStatementArgument(), dflt);
-        } catch (final IllegalStateException e) {
-            throw new SourceException(ctx.getStatementSourceReference(), e,
-                    "Unable to find a default value for leaf '%s'", ctx.getStatementArgument());
-        }
+        SourceException.throwIf(TypeUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeStmt, dflt),
+                ctx.getStatementSourceReference(),
+                "Leaf '%s' has default value '%s' marked with an if-feature statement.", ctx.getStatementArgument(),
+                dflt);
 
         defaultStr = dflt;
         unitsStr = units;

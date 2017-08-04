@@ -12,7 +12,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import com.google.common.collect.ImmutableSet;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
@@ -84,13 +83,11 @@ public class Bug6901Test {
     @Test
     public void unsupportedFeatureTest() throws Exception {
         try {
-            StmtTestUtils.parseYangSource("/rfc7950/bug6901/invalid-foo-enum.yang", ImmutableSet.of());
+            StmtTestUtils.parseYangSource("/rfc7950/bug6901/invalid-foo-enum.yang");
             fail("Test should fail due to invalid Yang 1.1");
         } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e.getCause().getMessage()
-                    .startsWith("Unable to find a default value for leaf '(foo?revision=1970-01-01)enum-leaf'"));
-            assertTrue(e.getCause().getCause().getMessage()
-                    .startsWith("Unable to find following default values [two]"));
+            assertTrue(
+                    e.getCause().getMessage().contains("has default value 'two' marked with an if-feature statement"));
         }
     }
 
