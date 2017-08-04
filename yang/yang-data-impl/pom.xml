@@ -69,9 +69,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>
-                            org.opendaylight.yangtools.yang.data.impl.*
-                        </Export-Package>
+                        <Export-Package>{local-packages};-split-package:=error</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>
