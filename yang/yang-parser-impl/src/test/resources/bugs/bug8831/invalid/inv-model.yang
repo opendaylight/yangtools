@@ -1,0 +1,29 @@
+module inv-model {
+    yang-version 1.1;
+    namespace "http://www.inv-model.com";
+    prefix ex;
+
+    revision 2017-07-10;
+
+    feature my-feature {
+        description "my feature";
+    }
+
+    typedef enum-last {
+        type union {
+            type uint16;
+            type enumeration {
+                enum "any" {
+                    if-feature my-feature;
+                }
+            }
+        }
+    }
+
+    container top {
+        leaf enum-last-leaf {
+            type enum-last;
+            default "any";
+        }
+    }
+}

@@ -1,0 +1,36 @@
+module example-model {
+    yang-version 1.1;
+    namespace "http://www.example.com";
+    prefix ex;
+
+    revision 2017-07-10;
+
+    typedef enum-first {
+        type union {
+            type enumeration {
+                enum "any";
+            }
+            type uint16;
+        }
+    }
+
+    typedef enum-last {
+        type union {
+            type uint16;
+            type enumeration {
+                enum "any";
+            }
+        }
+    }
+
+    container top {
+        leaf enum-first-leaf {
+            type enum-first;
+            default "any";
+        }
+        leaf enum-last-leaf {
+            type enum-last;
+            default "any";
+        }
+    }
+}

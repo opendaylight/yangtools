@@ -66,16 +66,11 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
         }
 
         defaultValues = defaultValuesBuilder.build();
-        try {
-            SourceException.throwIf(
-                    TypeUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeStmt, defaultValues),
-                    ctx.getStatementSourceReference(),
-                    "Leaf-list '%s' has one of its default values '%s' marked with an if-feature statement.",
-                    ctx.getStatementArgument(), defaultValues);
-        } catch (final IllegalStateException e) {
-            throw new SourceException(ctx.getStatementSourceReference(), e,
-                    "Unable to find a default value for leaf-list '%s'", ctx.getStatementArgument());
-        }
+        SourceException.throwIf(
+                TypeUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeStmt, defaultValues),
+                ctx.getStatementSourceReference(),
+                "Leaf-list '%s' has one of its default values '%s' marked with an if-feature statement.",
+                ctx.getStatementArgument(), defaultValues);
 
         type = builder.build();
         userOrdered = isUserOrdered;
