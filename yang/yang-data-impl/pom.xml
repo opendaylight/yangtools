@@ -70,7 +70,8 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
-                            org.opendaylight.yangtools.yang.data.impl.*
+                            org.opendaylight.yangtools.yang.data.impl.*,
+                            ;-split-package:=error
                         </Export-Package>
                     </instructions>
                 </configuration>

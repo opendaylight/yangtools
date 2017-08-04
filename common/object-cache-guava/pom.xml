@@ -60,6 +60,7 @@
                     <instructions>
                         <Export-Package>
                             org.opendaylight.yangtools.objcache.impl
+                            ;-split-package:=first
                         </Export-Package>
                         <Private-Package>
                             org.opendaylight.yangtools.objcache.guava
