@@ -266,9 +266,6 @@ public final class TypeUtils {
      *
      * @return true if any of specified default values is marked with an
      *         if-feature, otherwise false
-     *
-     * @throws IllegalStateException
-     *             if any of specified default values has not been found
      */
     public static boolean hasDefaultValueMarkedWithIfFeature(final YangVersion yangVersion,
             final TypeEffectiveStatement<?> typeStmt, final Set<String> defaultValues) {
@@ -290,9 +287,6 @@ public final class TypeUtils {
      *
      * @return true if specified default value is marked with an if-feature,
      *         otherwise false
-     *
-     * @throws IllegalStateException
-     *             if specified default value has not been found
      */
     public static boolean hasDefaultValueMarkedWithIfFeature(final YangVersion yangVersion,
             final TypeEffectiveStatement<?> typeStmt, final String defaultValue) {
@@ -315,7 +309,9 @@ public final class TypeUtils {
 
     private static boolean isAnyDefaultValueMarkedWithIfFeature(final TypeEffectiveStatement<?> typeStmt,
             final Set<String> defaultValues) {
-        for (final EffectiveStatement<?, ?> effectiveSubstatement : typeStmt.effectiveSubstatements()) {
+        final Iterator<? extends EffectiveStatement<?, ?>> iter = typeStmt.effectiveSubstatements().iterator();
+        while (iter.hasNext() && !defaultValues.isEmpty()) {
+            final EffectiveStatement<?, ?> effectiveSubstatement = iter.next();
             if (YangStmtMapping.BIT.equals(effectiveSubstatement.statementDefinition())) {
                 final QName bitQName = (QName) effectiveSubstatement.argument();
                 if (defaultValues.remove(bitQName.getLocalName()) && containsIfFeature(effectiveSubstatement)) {
@@ -325,13 +321,12 @@ public final class TypeUtils {
                     && defaultValues.remove(effectiveSubstatement.argument())
                     && containsIfFeature(effectiveSubstatement)) {
                 return true;
-            } else if (effectiveSubstatement instanceof TypeEffectiveStatement) {
-                return isAnyDefaultValueMarkedWithIfFeature((TypeEffectiveStatement<?>) effectiveSubstatement,
-                        defaultValues);
+            } else if (effectiveSubstatement instanceof TypeEffectiveStatement && isAnyDefaultValueMarkedWithIfFeature(
+                    (TypeEffectiveStatement<?>) effectiveSubstatement, defaultValues)) {
+                return true;
             }
         }
 
-        Preconditions.checkState(defaultValues.isEmpty(), "Unable to find following default values %s", defaultValues);
         return false;
     }
 

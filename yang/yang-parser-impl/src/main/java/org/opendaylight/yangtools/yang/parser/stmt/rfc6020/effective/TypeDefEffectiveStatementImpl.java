@@ -64,16 +64,11 @@ public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchema
             }
         }
 
-        try {
-            SourceException
-                    .throwIf(TypeUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeEffectiveStmt,
-                            defaultValue), ctx.getStatementSourceReference(),
-                            "Typedef '%s' has default value '%s' marked with an if-feature statement.", ctx
-                                    .getStatementArgument(), defaultValue);
-        } catch (final IllegalStateException e) {
-            throw new SourceException(ctx.getStatementSourceReference(), e,
-                    "Unable to find a default value for typedef '%s'", ctx.getStatementArgument());
-        }
+        SourceException.throwIf(
+                TypeUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeEffectiveStmt, defaultValue),
+                ctx.getStatementSourceReference(),
+                "Typedef '%s' has default value '%s' marked with an if-feature statement.", ctx.getStatementArgument(),
+                defaultValue);
 
         typeDefinition = builder.build();
     }
