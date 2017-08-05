@@ -26,13 +26,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.ValueNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
@@ -89,7 +89,7 @@ public class LeafRefValidatation {
     private void validateNode(final DataTreeCandidateNode node, final LeafRefContext referencedByCtx,
         final LeafRefContext referencingCtx, final YangInstanceIdentifier current) {
 
-        if ((node.getModificationType() == ModificationType.WRITE) && node.getDataAfter().isPresent()) {
+        if (node.getModificationType() == ModificationType.WRITE && node.getDataAfter().isPresent()) {
             final Optional<NormalizedNode<?, ?>> dataAfter = node.getDataAfter();
             final NormalizedNode<?, ?> normalizedNode = dataAfter.get();
             validateNodeData(normalizedNode, referencedByCtx, referencingCtx,
@@ -402,15 +402,12 @@ public class LeafRefValidatation {
             return;
         }
         final NormalizedNode<?, ?> node = optDataNode.get();
-
-        if (node instanceof LeafNode || node instanceof LeafSetEntryNode) {
+        if (node instanceof ValueNode) {
             values.add(node.getValue());
             return;
-        } else if (node instanceof LeafSetNode<?>) {
-            final LeafSetNode<?> leafSetNode = (LeafSetNode<?>) node;
-            final Iterable<? extends NormalizedNode<?, ?>> entries = leafSetNode
-                    .getValue();
-            for (final NormalizedNode<?, ?> entry : entries) {
+        }
+        if (node instanceof LeafSetNode<?>) {
+            for (final NormalizedNode<?, ?> entry : ((LeafSetNode<?>) node).getValue()) {
                 values.add(entry.getValue());
             }
             return;
