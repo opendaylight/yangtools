@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
 
@@ -107,21 +106,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     Collection<? extends StmtContext<?, ?, ?>> getEffectOfStatement();
 
-    /**
-     * @return copy of this considering {@link CopyType} (augment, uses)
-     *
-     * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
-     */
-    Mutable<A, D, E> createCopy(StatementContextBase<?, ?, ?> newParent, CopyType typeOfCopy);
-
-    /**
-     * @return copy of this considering {@link CopyType} (augment, uses)
-     *
-     * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
-     */
-    Mutable<A, D, E> createCopy(QNameModule newQNameModule, StatementContextBase<?, ?, ?> newParent,
-            CopyType typeOfCopy);
-
     CopyHistory getCopyHistory();
 
     boolean isSupportedByFeatures();
@@ -149,6 +133,38 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         @Nonnull
         @Override
         Mutable<?, ?, ?> getRoot();
+
+        /**
+         * Create a child sub-statement, which is a child of this statement, inheriting all attributes from specified
+         * child and recording copy type. Resulting object may only be added as a child of this statement.
+         *
+         * @param stmt Statement to be used as a template
+         * @param type Type of copy to record in history
+         * @return copy of statement considering {@link CopyType} (augment, uses)
+         *
+         * @throws NullPointerException if any of the arguments are null
+         * @throws IllegalArgumentException if stmt cannot be copied into this statement, for example because it comes
+         *                                  from an alien implementation.
+         * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
+         */
+        <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
+                StmtContext<X, Y, Z> stmt, CopyType type);
+
+        /**
+         * Create a child sub-statement, which is a child of this statement, inheriting all attributes from specified
+         * child and recording copy type. Resulting object may only be added as a child of this statement.
+         *
+         * @param stmt Statement to be used as a template
+         * @param type Type of copy to record in history
+         * @return copy of statement considering {@link CopyType} (augment, uses)
+         *
+         * @throws NullPointerException if any of the arguments are null
+         * @throws IllegalArgumentException if stmt cannot be copied into this statement, for example because it comes
+         *                                  from an alien implementation.
+         * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
+         */
+        <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
+                StmtContext<X, Y, Z> stmt, CopyType type, QNameModule newQNameModule);
 
         @Nonnull
         Collection<? extends Mutable<?, ?, ?>> mutableDeclaredSubstatements();
