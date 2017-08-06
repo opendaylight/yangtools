@@ -247,8 +247,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
             if (needToCopyByAugment(original)) {
                 validateNodeCanBeCopiedByAugment(original, target, typeOfCopy, skipCheckOfMandatoryNodes);
 
-                final Mutable<?, ?, ?> copy = original.createCopy(target, typeOfCopy);
-                buffer.add(copy);
+                buffer.add(target.childCopyOf(original, typeOfCopy));
             } else if (isReusedByAugment(original)) {
                 buffer.add(original);
             }
