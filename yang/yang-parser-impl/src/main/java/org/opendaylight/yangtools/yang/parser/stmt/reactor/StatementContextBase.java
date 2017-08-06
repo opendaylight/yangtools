@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.util.OptionalBoolean;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -621,6 +622,25 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     public <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(final Class<N> namespace,
             final KT key,final StmtContext<?, ?, ?> stmt) {
         addContextToNamespace(namespace, key, stmt);
+    }
+
+    @Override
+    public final <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
+            final StmtContext<X, Y, Z> stmt, final CopyType type) {
+        return copyAsChild(stmt, type, null);
+    }
+
+    @Override
+    public <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
+            final StmtContext<X, Y, Z> stmt, final CopyType type, final QNameModule newQNameModule) {
+        return copyAsChild(stmt, type, Preconditions.checkNotNull(newQNameModule));
+    }
+
+    final <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> copyAsChild(
+            final StmtContext<X, Y, Z> stmt, final CopyType type, final QNameModule newQNameModule) {
+        Preconditions.checkArgument(stmt instanceof SubstatementContext, "Unsupported statement %s", stmt);
+        final SubstatementContext<X, Y, Z> original = (SubstatementContext<X, Y, Z>)stmt;
+        return original.createCopy(newQNameModule, this, type);
     }
 
     @Override
