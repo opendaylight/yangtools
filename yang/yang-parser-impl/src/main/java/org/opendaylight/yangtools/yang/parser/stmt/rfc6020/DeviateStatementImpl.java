@@ -211,23 +211,19 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
 
         private static void addStatement(final Mutable<?, ?, ?> stmtCtxToBeAdded,
                 final StatementContextBase<?, ?, ?> targetCtx) {
-            if (StmtContextUtils.isUnknownStatement(stmtCtxToBeAdded)) {
-                targetCtx.addEffectiveSubstatement(targetCtx.childCopyOf(stmtCtxToBeAdded, CopyType.ORIGINAL));
-                return;
-            }
+            if (!StmtContextUtils.isUnknownStatement(stmtCtxToBeAdded)) {
+                final StatementDefinition stmtToBeAdded = stmtCtxToBeAdded.getPublicDefinition();
+                if (SINGLETON_STATEMENTS.contains(stmtToBeAdded) || YangStmtMapping.DEFAULT.equals(stmtToBeAdded)
+                        && YangStmtMapping.LEAF.equals(targetCtx.getPublicDefinition())) {
+                    final Iterable<StmtContext<?, ?, ?>> targetCtxSubstatements = Iterables.concat(
+                            targetCtx.declaredSubstatements(), targetCtx.effectiveSubstatements());
 
-            final StatementDefinition stmtToBeAdded = stmtCtxToBeAdded.getPublicDefinition();
-
-            if (SINGLETON_STATEMENTS.contains(stmtToBeAdded) || YangStmtMapping.DEFAULT.equals(stmtToBeAdded)
-                    && YangStmtMapping.LEAF.equals(targetCtx.getPublicDefinition())) {
-                final Iterable<StmtContext<?, ?, ?>> targetCtxSubstatements = Iterables.concat(
-                        targetCtx.declaredSubstatements(), targetCtx.effectiveSubstatements());
-
-                for (final StmtContext<?, ?, ?> targetCtxSubstatement : targetCtxSubstatements) {
-                    InferenceException.throwIf(stmtToBeAdded.equals(targetCtxSubstatement.getPublicDefinition()),
-                            stmtCtxToBeAdded.getStatementSourceReference(), "Deviation cannot add substatement %s " +
-                            "to target node %s because it is already defined in target and can appear only once.",
-                            stmtToBeAdded.getStatementName(), targetCtx.getStatementArgument());
+                    for (final StmtContext<?, ?, ?> targetCtxSubstatement : targetCtxSubstatements) {
+                        InferenceException.throwIf(stmtToBeAdded.equals(targetCtxSubstatement.getPublicDefinition()),
+                            stmtCtxToBeAdded.getStatementSourceReference(), "Deviation cannot add substatement %s "
+                        + "to target node %s because it is already defined in target and can appear only once.",
+                        stmtToBeAdded.getStatementName(), targetCtx.getStatementArgument());
+                    }
                 }
             }
 
