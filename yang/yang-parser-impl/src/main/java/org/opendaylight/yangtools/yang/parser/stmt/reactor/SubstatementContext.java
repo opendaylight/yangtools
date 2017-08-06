@@ -91,27 +91,11 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         this.argument = def.parseArgumentValue(this, rawStatementArgument());
     }
 
-    @SuppressWarnings("unchecked")
-    private SubstatementContext(final SubstatementContext<A, D, E> original, final QNameModule newQNameModule,
-            final StatementContextBase<?, ?, ?> newParent, final CopyType copyType) {
+    SubstatementContext(final StatementContextBase<A, D, E> original, final StatementContextBase<?, ?, ?> parent,
+            final A argument, final CopyType copyType) {
         super(original, copyType);
-        this.parent = Preconditions.checkNotNull(newParent);
-
-        if (newQNameModule != null) {
-            final A originalArg = original.argument;
-            if (originalArg instanceof QName) {
-                final QName originalQName = (QName) originalArg;
-                this.argument = (A) getFromNamespace(QNameCacheNamespace.class,
-                        QName.create(newQNameModule, originalQName.getLocalName()));
-            } else if (StmtContextUtils.producesDeclared(original, KeyStatement.class)) {
-                this.argument = (A) StmtContextUtils.replaceModuleQNameForKey(
-                        (StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?>) original, newQNameModule);
-            } else {
-                this.argument = original.argument;
-            }
-        } else {
-            this.argument = original.argument;
-        }
+        this.parent = Preconditions.checkNotNull(parent);
+        this.argument = argument;
     }
 
     @Override
@@ -145,19 +129,29 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         return argument;
     }
 
-    @Override
-    public StatementContextBase<A, D, E> createCopy(final StatementContextBase<?, ?, ?> newParent,
-            final CopyType typeOfCopy) {
-        return createCopy(null, newParent, typeOfCopy);
-    }
-
-    @Override
-    public StatementContextBase<A, D, E> createCopy(final QNameModule newQNameModule,
+    @SuppressWarnings("unchecked")
+    StatementContextBase<A, D, E> createCopy(final QNameModule newQNameModule,
             final StatementContextBase<?, ?, ?> newParent, final CopyType typeOfCopy) {
         Preconditions.checkState(getCompletedPhase() == ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Attempted to copy statement %s which has completed phase %s", this, getCompletedPhase());
 
-        final SubstatementContext<A, D, E> copy = new SubstatementContext<>(this, newQNameModule, newParent, typeOfCopy);
+        // FIXME: this should live in StatementSupport or similar
+        final A argumentCopy;
+        if (newQNameModule != null) {
+            if (argument instanceof QName) {
+                argumentCopy = (A) getFromNamespace(QNameCacheNamespace.class,
+                        QName.create(newQNameModule, ((QName) argument).getLocalName()));
+            } else if (StmtContextUtils.producesDeclared(this, KeyStatement.class)) {
+                argumentCopy = (A) StmtContextUtils.replaceModuleQNameForKey(
+                        (StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?>) this, newQNameModule);
+            } else {
+                argumentCopy = argument;
+            }
+        } else {
+            argumentCopy = argument;
+        }
+
+        final SubstatementContext<A, D, E> copy = new SubstatementContext<>(this, newParent, argumentCopy, typeOfCopy);
 
         definition().onStatementAdded(copy);
 
@@ -187,7 +181,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     private void copySubstatement(final Mutable<?, ?, ?> stmtContext, final QNameModule newQNameModule,
             final CopyType typeOfCopy, final Collection<Mutable<?, ?, ?>> buffer) {
         if (needToCopyByUses(stmtContext)) {
-            final Mutable<?, ?, ?> copy = stmtContext.createCopy(newQNameModule, this, typeOfCopy);
+            final Mutable<?, ?, ?> copy = childCopyOf(stmtContext, typeOfCopy, newQNameModule);
             LOG.debug("Copying substatement {} for {} as", stmtContext, this, copy);
             buffer.add(copy);
         } else if (isReusedByUses(stmtContext)) {
