@@ -145,14 +145,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         return argument;
     }
 
-    @Override
-    public StatementContextBase<A, D, E> createCopy(final StatementContextBase<?, ?, ?> newParent,
-            final CopyType typeOfCopy) {
-        return createCopy(null, newParent, typeOfCopy);
-    }
-
-    @Override
-    public StatementContextBase<A, D, E> createCopy(final QNameModule newQNameModule,
+    StatementContextBase<A, D, E> createCopy(final QNameModule newQNameModule,
             final StatementContextBase<?, ?, ?> newParent, final CopyType typeOfCopy) {
         Preconditions.checkState(getCompletedPhase() == ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Attempted to copy statement %s which has completed phase %s", this, getCompletedPhase());
@@ -187,7 +180,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     private void copySubstatement(final Mutable<?, ?, ?> stmtContext, final QNameModule newQNameModule,
             final CopyType typeOfCopy, final Collection<Mutable<?, ?, ?>> buffer) {
         if (needToCopyByUses(stmtContext)) {
-            final Mutable<?, ?, ?> copy = stmtContext.createCopy(newQNameModule, this, typeOfCopy);
+            final Mutable<?, ?, ?> copy = copyAsChild(stmtContext, typeOfCopy, newQNameModule);
             LOG.debug("Copying substatement {} for {} as", stmtContext, this, copy);
             buffer.add(copy);
         } else if (isReusedByUses(stmtContext)) {
