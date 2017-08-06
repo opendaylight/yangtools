@@ -18,14 +18,12 @@ import java.util.Map;
 import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
@@ -111,18 +109,6 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     @Override
     public A getStatementArgument() {
         return argument;
-    }
-
-    @Override
-    public StatementContextBase<A, D, E> createCopy(final StatementContextBase<?, ?, ?> newParent,
-            final CopyType typeOfCopy) {
-        throw new UnsupportedOperationException("Root context cannot be copied");
-    }
-
-    @Override
-    public StatementContextBase<A, D, E> createCopy(final QNameModule newQNameModule,
-            final StatementContextBase<?, ?, ?> newParent, final CopyType typeOfCopy) {
-        throw new UnsupportedOperationException("Root context cannot be copied");
     }
 
     @Nonnull
