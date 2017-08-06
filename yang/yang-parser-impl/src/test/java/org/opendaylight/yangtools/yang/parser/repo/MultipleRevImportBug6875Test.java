@@ -16,6 +16,7 @@ import static org.junit.Assert.fail;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.CheckedFuture;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -56,11 +57,11 @@ public class MultipleRevImportBug6875Test {
         final SchemaContextFactory fact = sharedSchemaRepository
                 .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
 
-        final CheckedFuture<SchemaContext, SchemaResolutionException> schemaContextFuture = fact
-                .createSchemaContext(Lists.newArrayList(foo.getId(), bar1.getId(), bar2.getId(), bar3.getId()));
+        final ListenableFuture<SchemaContext> schemaContextFuture = fact
+                .createSchemaContext(ImmutableList.of(foo.getId(), bar1.getId(), bar2.getId(), bar3.getId()));
         assertTrue(schemaContextFuture.isDone());
 
-        final SchemaContext context = schemaContextFuture.checkedGet();
+        final SchemaContext context = schemaContextFuture.get();
         assertEquals(context.getModules().size(), 4);
 
         assertTrue(findNode(context, ImmutableList.of(foo("root"), foo("my-container-1"))) instanceof ContainerSchemaNode);

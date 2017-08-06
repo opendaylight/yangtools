@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.parser.repo;
 
 import static org.junit.Assert.assertNotNull;
 
-import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Arrays;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +18,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -57,9 +56,9 @@ public class SharedSchemaContextFactoryTest {
     @Test
     public void testCreateSchemaContextWithDuplicateRequiredSources() throws Exception {
         final SharedSchemaContextFactory sharedSchemaContextFactory = new SharedSchemaContextFactory(repository, filter);
-        final CheckedFuture<SchemaContext, SchemaResolutionException> schemaContext =
+        final ListenableFuture<SchemaContext> schemaContext =
                 sharedSchemaContextFactory.createSchemaContext(Arrays.asList(s1, s1, s2));
-        assertNotNull(schemaContext.checkedGet());
+        assertNotNull(schemaContext.get());
     }
 
     @Test
@@ -81,8 +80,8 @@ public class SharedSchemaContextFactoryTest {
                 sIdWithoutRevision, ASTSchemaSource.class, PotentialSchemaSource.Costs.IMMEDIATE.getValue()));
 
         final SharedSchemaContextFactory sharedSchemaContextFactory = new SharedSchemaContextFactory(repository, filter);
-        final CheckedFuture<SchemaContext, SchemaResolutionException> schemaContext =
+        final ListenableFuture<SchemaContext> schemaContext =
                 sharedSchemaContextFactory.createSchemaContext(Arrays.asList(sIdWithoutRevision, provider.getId()));
-        assertNotNull(schemaContext.checkedGet());
+        assertNotNull(schemaContext.get());
     }
 }
