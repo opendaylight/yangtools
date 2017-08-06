@@ -212,7 +212,7 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
         private static void addStatement(final Mutable<?, ?, ?> stmtCtxToBeAdded,
                 final StatementContextBase<?, ?, ?> targetCtx) {
             if (StmtContextUtils.isUnknownStatement(stmtCtxToBeAdded)) {
-                targetCtx.addEffectiveSubstatement(stmtCtxToBeAdded.createCopy(targetCtx, CopyType.ORIGINAL));
+                targetCtx.addEffectiveSubstatement(targetCtx.childCopyOf(stmtCtxToBeAdded, CopyType.ORIGINAL));
                 return;
             }
 
@@ -231,7 +231,7 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
                 }
             }
 
-            targetCtx.addEffectiveSubstatement(stmtCtxToBeAdded.createCopy(targetCtx, CopyType.ORIGINAL));
+            targetCtx.addEffectiveSubstatement(targetCtx.childCopyOf(stmtCtxToBeAdded, CopyType.ORIGINAL));
         }
 
         private static void performDeviateReplace(final StatementContextBase<?, ?, ?> deviateStmtCtx,
@@ -257,7 +257,7 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
             for (final StmtContext<?, ?, ?> targetCtxSubstatement : targetCtx.effectiveSubstatements()) {
                 if (stmtToBeReplaced.equals(targetCtxSubstatement.getPublicDefinition())) {
                     targetCtx.removeStatementFromEffectiveSubstatements(stmtToBeReplaced);
-                    targetCtx.addEffectiveSubstatement(stmtCtxToBeReplaced.createCopy(targetCtx, CopyType.ORIGINAL));
+                    targetCtx.addEffectiveSubstatement(targetCtx.childCopyOf(stmtCtxToBeReplaced, CopyType.ORIGINAL));
                     return;
                 }
             }
@@ -265,7 +265,7 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
             for (final Mutable<?, ?, ?> targetCtxSubstatement : targetCtx.mutableDeclaredSubstatements()) {
                 if (stmtToBeReplaced.equals(targetCtxSubstatement.getPublicDefinition())) {
                     targetCtxSubstatement.setIsSupportedToBuildEffective(false);
-                    targetCtx.addEffectiveSubstatement(stmtCtxToBeReplaced.createCopy(targetCtx, CopyType.ORIGINAL));
+                    targetCtx.addEffectiveSubstatement(targetCtx.childCopyOf(stmtCtxToBeReplaced, CopyType.ORIGINAL));
                     return;
                 }
             }
