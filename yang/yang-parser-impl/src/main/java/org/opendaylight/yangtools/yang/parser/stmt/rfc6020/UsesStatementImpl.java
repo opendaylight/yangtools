@@ -220,7 +220,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
             final StatementContextBase<?, ?, ?> targetCtx, final QNameModule targetModule,
             final Collection<Mutable<?, ?, ?>> buffer) {
         if (needToCopyByUses(original)) {
-            final Mutable<?, ?, ?> copy = original.createCopy(targetModule, targetCtx, CopyType.ADDED_BY_USES);
+            final Mutable<?, ?, ?> copy = targetCtx.childCopyOf(original, CopyType.ADDED_BY_USES, targetModule);
             buffer.add(copy);
         } else if (isReusedByUsesOnTop(original)) {
             buffer.add(original);
