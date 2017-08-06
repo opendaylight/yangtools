@@ -12,12 +12,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.CheckedFuture;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -47,16 +47,16 @@ public class OpenconfigVerSharedSchemaRepositoryTest {
         final SchemaContextFactory fact = sharedSchemaRepository
                 .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
 
-        final CheckedFuture<SchemaContext, SchemaResolutionException> inetAndTopologySchemaContextFuture = fact
-                .createSchemaContext(Lists.newArrayList(bar.getId(), foo.getId(), semVer.getId()),
+        final ListenableFuture<SchemaContext> inetAndTopologySchemaContextFuture =
+                fact.createSchemaContext(ImmutableList.of(bar.getId(), foo.getId(), semVer.getId()),
                     StatementParserMode.SEMVER_MODE);
         assertTrue(inetAndTopologySchemaContextFuture.isDone());
-        assertSchemaContext(inetAndTopologySchemaContextFuture.checkedGet(), 3);
+        assertSchemaContext(inetAndTopologySchemaContextFuture.get(), 3);
 
-        final CheckedFuture<SchemaContext, SchemaResolutionException> barSchemaContextFuture = fact
+        final ListenableFuture<SchemaContext> barSchemaContextFuture = fact
                 .createSchemaContext(Lists.newArrayList(bar.getId(), semVer.getId()), StatementParserMode.SEMVER_MODE);
         assertTrue(barSchemaContextFuture.isDone());
-        assertSchemaContext(barSchemaContextFuture.checkedGet(), 2);
+        assertSchemaContext(barSchemaContextFuture.get(), 2);
     }
 
     @Test
@@ -79,15 +79,15 @@ public class OpenconfigVerSharedSchemaRepositoryTest {
         final SchemaContextFactory fact = sharedSchemaRepository
                 .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
 
-        final CheckedFuture<SchemaContext, SchemaResolutionException> inetAndTopologySchemaContextFuture = fact
-                .createSchemaContext(Lists.newArrayList(bar.getId(), foo.getId(), semVer.getId()));
+        final ListenableFuture<SchemaContext> inetAndTopologySchemaContextFuture =
+                fact.createSchemaContext(Lists.newArrayList(bar.getId(), foo.getId(), semVer.getId()));
         assertTrue(inetAndTopologySchemaContextFuture.isDone());
-        assertSchemaContext(inetAndTopologySchemaContextFuture.checkedGet(), 3);
+        assertSchemaContext(inetAndTopologySchemaContextFuture.get(), 3);
 
-        final CheckedFuture<SchemaContext, SchemaResolutionException> barSchemaContextFuture = fact
-                .createSchemaContext(Lists.newArrayList(bar.getId(), semVer.getId()));
+        final ListenableFuture<SchemaContext> barSchemaContextFuture =
+                fact.createSchemaContext(Lists.newArrayList(bar.getId(), semVer.getId()));
         assertTrue(barSchemaContextFuture.isDone());
-        assertSchemaContext(barSchemaContextFuture.checkedGet(), 2);
+        assertSchemaContext(barSchemaContextFuture.get(), 2);
     }
 
     private static void assertSchemaContext(final SchemaContext schemaContext, final int moduleSize) {

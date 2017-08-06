@@ -13,9 +13,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.CheckedFuture;
+import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.util.ASTSchemaSource;
@@ -47,12 +46,12 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         final SchemaContextFactory fact = sharedSchemaRepository
                 .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
 
-        final CheckedFuture<SchemaContext, SchemaResolutionException> testSchemaContextFuture =
-                fact.createSchemaContext(Lists.newArrayList(foobar.getId()), supportedFeatures);
+        final ListenableFuture<SchemaContext> testSchemaContextFuture =
+                fact.createSchemaContext(ImmutableList.of(foobar.getId()), supportedFeatures);
         assertTrue(testSchemaContextFuture.isDone());
-        assertSchemaContext(testSchemaContextFuture.checkedGet(), 1);
+        assertSchemaContext(testSchemaContextFuture.get(), 1);
 
-        final Module module = testSchemaContextFuture.checkedGet().findModuleByName("foobar", null);
+        final Module module = testSchemaContextFuture.get().findModuleByName("foobar", null);
         assertNotNull(module);
         assertEquals(2, module.getChildNodes().size());
 
@@ -88,12 +87,12 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         final SchemaContextFactory fact = sharedSchemaRepository
                 .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
 
-        final CheckedFuture<SchemaContext, SchemaResolutionException> testSchemaContextFuture = fact
-                .createSchemaContext(Lists.newArrayList(foobar.getId()));
+        final ListenableFuture<SchemaContext> testSchemaContextFuture =
+                fact.createSchemaContext(ImmutableList.of(foobar.getId()));
         assertTrue(testSchemaContextFuture.isDone());
-        assertSchemaContext(testSchemaContextFuture.checkedGet(), 1);
+        assertSchemaContext(testSchemaContextFuture.get(), 1);
 
-        final Module module = testSchemaContextFuture.checkedGet().findModuleByName("foobar", null);
+        final Module module = testSchemaContextFuture.get().findModuleByName("foobar", null);
         assertNotNull(module);
         assertEquals(3, module.getChildNodes().size());
 
@@ -134,12 +133,12 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         final SchemaContextFactory fact = sharedSchemaRepository
                 .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
 
-        final CheckedFuture<SchemaContext, SchemaResolutionException> testSchemaContextFuture = fact
-                .createSchemaContext(Lists.newArrayList(foobar.getId()), supportedFeatures);
+        final ListenableFuture<SchemaContext> testSchemaContextFuture =
+                fact.createSchemaContext(ImmutableList.of(foobar.getId()), supportedFeatures);
         assertTrue(testSchemaContextFuture.isDone());
-        assertSchemaContext(testSchemaContextFuture.checkedGet(), 1);
+        assertSchemaContext(testSchemaContextFuture.get(), 1);
 
-        final Module module = testSchemaContextFuture.checkedGet().findModuleByName("foobar", null);
+        final Module module = testSchemaContextFuture.get().findModuleByName("foobar", null);
         assertNotNull(module);
         assertEquals(1, module.getChildNodes().size());
 
