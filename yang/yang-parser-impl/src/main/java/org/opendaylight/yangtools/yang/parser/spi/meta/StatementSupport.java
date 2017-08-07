@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import com.google.common.annotations.Beta;
 import java.util.Optional;
 import javax.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -52,7 +53,6 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     StatementDefinition getPublicView();
 
     /**
-     *
      * Parses textual representation of argument in object representation.
      *
      * @param ctx
@@ -65,6 +65,20 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      *             when an inconsistency is detected.
      */
     A parseArgumentValue(StmtContext<?, ?, ?> ctx, String value);
+
+    /**
+     * Adapts the argument value to match a new module.
+     *
+     * @param ctx
+     *            Context, which may be used to access source-specific
+     *            namespaces required for parsing.
+     * @param targetModule
+     *            Target module, may not be null.
+     * @return Adapted argument value. The default implementation returns original value stored in context.
+     */
+    default A adaptArgumentValue(final StmtContext<A, D, E> ctx, final QNameModule targetModule) {
+        return ctx.getStatementArgument();
+    }
 
     /**
      * Invoked when a statement supported by this instance is added to build context. This allows implementations

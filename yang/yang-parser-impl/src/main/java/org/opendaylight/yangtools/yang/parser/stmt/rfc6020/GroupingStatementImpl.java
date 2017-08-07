@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -53,8 +53,7 @@ public class GroupingStatementImpl extends AbstractDeclaredStatement<QName>
     }
 
     public static class Definition
-            extends
-            AbstractStatementSupport<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> {
+            extends AbstractQNameStatementSupport<GroupingStatement, EffectiveStatement<QName, GroupingStatement>> {
 
         public Definition() {
             super(YangStmtMapping.GROUPING);
