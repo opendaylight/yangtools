@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedIdentitiesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -41,7 +41,7 @@ public class BaseStatementImpl extends AbstractDeclaredStatement<QName> implemen
     }
 
     public static class Definition
-            extends AbstractStatementSupport<QName, BaseStatement, EffectiveStatement<QName, BaseStatement>> {
+            extends AbstractQNameStatementSupport<BaseStatement, EffectiveStatement<QName, BaseStatement>> {
 
         public Definition() {
             super(YangStmtMapping.BASE);

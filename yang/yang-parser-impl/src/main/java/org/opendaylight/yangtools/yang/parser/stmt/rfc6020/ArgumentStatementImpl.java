@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -34,7 +34,7 @@ public class ArgumentStatementImpl extends AbstractDeclaredStatement<QName>
 
     public static class Definition
             extends
-            AbstractStatementSupport<QName, ArgumentStatement, EffectiveStatement<QName, ArgumentStatement>> {
+            AbstractQNameStatementSupport<ArgumentStatement, EffectiveStatement<QName, ArgumentStatement>> {
 
         public Definition() {
             super(YangStmtMapping.ARGUMENT);

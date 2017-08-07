@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -39,7 +39,7 @@ public class BitStatementImpl extends AbstractDeclaredStatement<QName> implement
     }
 
     public static class Definition extends
-            AbstractStatementSupport<QName, BitStatement, EffectiveStatement<QName, BitStatement>> {
+            AbstractQNameStatementSupport<BitStatement, EffectiveStatement<QName, BitStatement>> {
 
         public Definition() {
             super(YangStmtMapping.BIT);
