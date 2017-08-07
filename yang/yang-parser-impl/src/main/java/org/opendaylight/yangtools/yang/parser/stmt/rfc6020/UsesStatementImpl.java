@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -69,7 +69,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
     }
 
     public static class Definition extends
-            AbstractStatementSupport<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> {
+            AbstractQNameStatementSupport<UsesStatement, EffectiveStatement<QName, UsesStatement>> {
 
         public Definition() {
             super(YangStmtMapping.USES);

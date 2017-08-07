@@ -11,8 +11,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Date;
@@ -248,29 +246,6 @@ public final class StmtContextUtils {
     public static boolean isUnrecognizedStatement(final StmtContext<?, ?, ?> stmtCtx) {
         return UnrecognizedStatement.class
                 .isAssignableFrom(stmtCtx.getPublicDefinition().getDeclaredRepresentationClass());
-    }
-
-    public static Collection<SchemaNodeIdentifier> replaceModuleQNameForKey(
-            final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?> keyStmtCtx,
-            final QNameModule newQNameModule) {
-
-        final Builder<SchemaNodeIdentifier> builder = ImmutableSet.builder();
-        boolean replaced = false;
-        for (final SchemaNodeIdentifier arg : keyStmtCtx.getStatementArgument()) {
-            final QName qname = arg.getLastComponent();
-            if (!newQNameModule.equals(qname)) {
-                final QName newQname = keyStmtCtx.getFromNamespace(QNameCacheNamespace.class,
-                        QName.create(newQNameModule, qname.getLocalName()));
-                builder.add(SchemaNodeIdentifier.create(false, newQname));
-                replaced = true;
-            } else {
-                builder.add(arg);
-            }
-        }
-
-        // This makes sure we reuse the collection when a grouping is
-        // instantiated in the same module
-        return replaced ? builder.build() : keyStmtCtx.getStatementArgument();
     }
 
     public static boolean checkFeatureSupport(final StmtContext<?, ?, ?> stmtContext,

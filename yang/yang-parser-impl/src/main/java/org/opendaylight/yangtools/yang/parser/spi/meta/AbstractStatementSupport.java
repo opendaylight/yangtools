@@ -20,10 +20,9 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementDefinitionContext;
 
 /**
+ * Class providing necessary support for processing a YANG statement.
  *
- * Class providing necessary support for processing YANG statement.
- *
- * This class is intended to be subclassed by developers, which want to
+ * This class is intended to be subclassed by developers, who want to
  * introduce support of statement to parser.
  *
  * @param <A>

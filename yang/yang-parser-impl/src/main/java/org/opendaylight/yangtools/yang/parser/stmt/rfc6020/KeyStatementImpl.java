@@ -10,12 +10,15 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import java.util.Collection;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -55,6 +58,30 @@ public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<Schem
             SourceException.throwIf(ret.size() != tokens, ctx.getStatementSourceReference(),
                     "Key argument '%s' contains duplicates", value);
             return ret;
+        }
+
+        @Override
+        public Collection<SchemaNodeIdentifier> adaptArgumentValue(
+                final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement,
+                    EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement>> ctx,
+                final QNameModule targetModule) {
+            final Builder<SchemaNodeIdentifier> builder = ImmutableSet.builder();
+            boolean replaced = false;
+            for (final SchemaNodeIdentifier arg : ctx.getStatementArgument()) {
+                final QName qname = arg.getLastComponent();
+                if (!targetModule.equals(qname)) {
+                    final QName newQname = ctx.getFromNamespace(QNameCacheNamespace.class,
+                            QName.create(targetModule, qname.getLocalName()));
+                    builder.add(SchemaNodeIdentifier.create(false, newQname));
+                    replaced = true;
+                } else {
+                    builder.add(arg);
+                }
+            }
+
+            // This makes sure we reuse the collection when a grouping is
+            // instantiated in the same module
+            return replaced ? builder.build() : ctx.getStatementArgument();
         }
 
         @Override
