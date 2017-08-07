@@ -233,6 +233,10 @@ public final class CrossSourceStatementReactor {
          *            yang sources which should be added into library sources
          */
         public void addLibSources(final StatementStreamSource... libSources) {
+            addLibSources(Arrays.asList(libSources));
+        }
+
+        public void addLibSources(final Collection<StatementStreamSource> libSources) {
             for (final StatementStreamSource libSource : libSources) {
                 context.addLibSource(libSource);
             }
