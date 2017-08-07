@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -41,7 +41,8 @@ public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
         super(context);
     }
 
-    public static class Definition extends AbstractStatementSupport<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> {
+    public static class Definition
+            extends AbstractQNameStatementSupport<IdentityStatement, EffectiveStatement<QName, IdentityStatement>> {
 
         public Definition() {
             super(YangStmtMapping.IDENTITY);
