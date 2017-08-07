@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
@@ -40,7 +39,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
-import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
@@ -129,28 +127,13 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         return argument;
     }
 
-    @SuppressWarnings("unchecked")
     StatementContextBase<A, D, E> createCopy(final QNameModule newQNameModule,
             final StatementContextBase<?, ?, ?> newParent, final CopyType typeOfCopy) {
         Preconditions.checkState(getCompletedPhase() == ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Attempted to copy statement %s which has completed phase %s", this, getCompletedPhase());
 
-        // FIXME: this should live in StatementSupport or similar
-        final A argumentCopy;
-        if (newQNameModule != null) {
-            if (argument instanceof QName) {
-                argumentCopy = (A) getFromNamespace(QNameCacheNamespace.class,
-                        QName.create(newQNameModule, ((QName) argument).getLocalName()));
-            } else if (StmtContextUtils.producesDeclared(this, KeyStatement.class)) {
-                argumentCopy = (A) StmtContextUtils.replaceModuleQNameForKey(
-                        (StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?>) this, newQNameModule);
-            } else {
-                argumentCopy = argument;
-            }
-        } else {
-            argumentCopy = argument;
-        }
-
+        final A argumentCopy = newQNameModule == null ? argument
+                : definition().adaptArgumentValue(this, newQNameModule);
         final SubstatementContext<A, D, E> copy = new SubstatementContext<>(this, newParent, argumentCopy, typeOfCopy);
 
         definition().onStatementAdded(copy);
