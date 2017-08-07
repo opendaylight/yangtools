@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -62,7 +62,7 @@ public class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
     }
 
     public static class Definition extends
-            AbstractStatementSupport<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> {
+            AbstractQNameStatementSupport<ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> {
         private static final StatementSupport<?, ?, ?> IMPLICIT_CASE = new CaseStatementImpl.Definition();
 
         public Definition() {
@@ -80,7 +80,7 @@ public class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
                 final StatementDefinitionContext<?, ?, ?> def, final StatementSourceReference ref, final String argument) {
 
             if (YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(def.getPublicView())) {
-                return Optional.of(createImplicitCase((StatementContextBase<?, ?, ?>) stmt, offset, ref, argument));
+                return Optional.of(createImplicitCase(stmt, offset, ref, argument));
             }
             return Optional.empty();
         }

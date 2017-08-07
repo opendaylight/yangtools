@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -53,7 +53,7 @@ public class RpcStatementImpl extends AbstractDeclaredStatement<QName>
     }
 
     public static class Definition
-            extends AbstractStatementSupport<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> {
+            extends AbstractQNameStatementSupport<RpcStatement, EffectiveStatement<QName, RpcStatement>> {
         // TODO: share instances
         private static final StatementSupport<?, ?, ?> IMPLICIT_INPUT = new InputStatementImpl.Definition();
         private static final StatementSupport<?, ?, ?> IMPLICIT_OUTPUT = new OutputStatementImpl.Definition();
