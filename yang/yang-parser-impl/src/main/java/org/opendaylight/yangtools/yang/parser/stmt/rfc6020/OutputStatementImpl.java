@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -44,7 +44,7 @@ public class OutputStatementImpl extends AbstractDeclaredStatement<QName> implem
     }
 
     public static class Definition extends
-            AbstractStatementSupport<QName, OutputStatement, EffectiveStatement<QName, OutputStatement>> {
+            AbstractQNameStatementSupport<OutputStatement, EffectiveStatement<QName, OutputStatement>> {
 
         public Definition() {
             super(YangStmtMapping.OUTPUT);

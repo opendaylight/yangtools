@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -55,7 +55,7 @@ public class NotificationStatementImpl extends AbstractDeclaredStatement<QName>
 
     public static class Definition
             extends
-            AbstractStatementSupport<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> {
+            AbstractQNameStatementSupport<NotificationStatement, EffectiveStatement<QName, NotificationStatement>> {
 
         public Definition() {
             super(YangStmtMapping.NOTIFICATION);
