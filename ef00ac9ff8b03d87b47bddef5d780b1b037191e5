@@ -46,6 +46,30 @@
       "revId": "ef00ac9ff8b03d87b47bddef5d780b1b037191e5",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_c7047c80",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/UsesStatementImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-08-07T22:16:01Z",
+      "side": 1,
+      "message": "btw same goes for private I read somewhere this is going to change in Java 9 or 10 (I don\u0027t remember the details and cannot find them) and will follow the equivalent of what your mental model of \u0027private\u0027 means :)\n\nso I tend to eliminate those bridge methods when I see them in a stack trace -- just to eliminate the bytecode. We can talk about it over a cup of coffee :)",
+      "parentUuid": "ba1f61a0_47d1acfa",
+      "range": {
+        "startLine": 197,
+        "startChar": 4,
+        "endLine": 197,
+        "endChar": 38
+      },
+      "revId": "ef00ac9ff8b03d87b47bddef5d780b1b037191e5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
