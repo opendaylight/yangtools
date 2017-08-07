@@ -22,6 +22,30 @@
       "revId": "ef00ac9ff8b03d87b47bddef5d780b1b037191e5",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_47d1acfa",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/UsesStatementImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-08-07T22:08:31Z",
+      "side": 1,
+      "message": "Good question :) while the call site is in this same source file, it is not the same class (it is a lambda or anonymous class). That means that strictly speaking (on the bytecode level) this method is accessed from a class in the same package.\n\nIn order to make the call work with this method being private, the compiler will create a synthetic bridge method (called $access$0 or similar), which is part of UsesStatementImpl, and has package-private access. The only thing that method does is invoke the real method.\n\nRelaxing method visibility here means it can be accessed directly from the lambda, eliminating the need for the bridge method -- hence less bytecode. Google \u0027java synthetic method\u0027 for details...",
+      "parentUuid": "ba1f61a0_c44d9a74",
+      "range": {
+        "startLine": 197,
+        "startChar": 4,
+        "endLine": 197,
+        "endChar": 38
+      },
+      "revId": "ef00ac9ff8b03d87b47bddef5d780b1b037191e5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
