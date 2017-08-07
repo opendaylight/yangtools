@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -41,7 +42,11 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
     }
 
     public A parseArgumentValue(final StmtContext<A, D, E> context, final String value) {
-        return support.parseArgumentValue(context,value);
+        return support.parseArgumentValue(context, value);
+    }
+
+    public A adaptArgumentValue(final StmtContext<A, D, E> context, final QNameModule targetModule) {
+        return support.adaptArgumentValue(context, targetModule);
     }
 
     public void checkNamespaceAllowed(final Class<? extends IdentifierNamespace<?,?>> namespace) {
