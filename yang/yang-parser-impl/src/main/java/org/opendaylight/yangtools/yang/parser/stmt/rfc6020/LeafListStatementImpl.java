@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -59,8 +59,7 @@ public class LeafListStatementImpl extends AbstractDeclaredStatement<QName>
     }
 
     public static class Definition
-            extends
-            AbstractStatementSupport<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> {
+            extends AbstractQNameStatementSupport<LeafListStatement, EffectiveStatement<QName, LeafListStatement>> {
 
         public Definition() {
             super(YangStmtMapping.LEAF_LIST);
