@@ -13,6 +13,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import java.util.ArrayList;
@@ -24,9 +25,11 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.util.OptionalBoolean;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -627,9 +630,77 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     @Override
     public <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
             final StmtContext<X, Y, Z> stmt, final CopyType type, final QNameModule targetModule) {
+        Preconditions.checkState(stmt.getCompletedPhase() == ModelProcessingPhase.EFFECTIVE_MODEL,
+                "Attempted to copy statement %s which has completed phase %s", stmt, stmt.getCompletedPhase());
+
         Preconditions.checkArgument(stmt instanceof SubstatementContext, "Unsupported statement %s", stmt);
+
         final SubstatementContext<X, Y, Z> original = (SubstatementContext<X, Y, Z>)stmt;
-        return original.createCopy(targetModule, this, type);
+        final SubstatementContext<X, Y, Z> copy = new SubstatementContext<>(original, this, type, targetModule);
+
+        original.definition().onStatementAdded(copy);
+        original.copyTo(copy, type, targetModule);
+
+        return copy;
+    }
+
+    final void copyTo(final StatementContextBase<?, ?, ?> target, final CopyType typeOfCopy,
+            @Nullable final QNameModule targetModule) {
+        final Collection<Mutable<?, ?, ?>> buffer = new ArrayList<>(substatements.size() + effective.size());
+
+        for (final Mutable<?, ?, ?> stmtContext : substatements.values()) {
+            if (stmtContext.isSupportedByFeatures()) {
+                copySubstatement(stmtContext, target, typeOfCopy, targetModule, buffer);
+            }
+        }
+
+        for (final Mutable<?, ?, ?> stmtContext : effective) {
+            copySubstatement(stmtContext, target, typeOfCopy, targetModule, buffer);
+        }
+
+        target.addEffectiveSubstatements(buffer);
+    }
+
+    private void copySubstatement(final Mutable<?, ?, ?> stmtContext,  final Mutable<?, ?, ?> target,
+            final CopyType typeOfCopy, final QNameModule newQNameModule, final Collection<Mutable<?, ?, ?>> buffer) {
+        if (needToCopyByUses(stmtContext)) {
+            final Mutable<?, ?, ?> copy = target.childCopyOf(stmtContext, typeOfCopy, newQNameModule);
+            LOG.debug("Copying substatement {} for {} as", stmtContext, this, copy);
+            buffer.add(copy);
+        } else if (isReusedByUses(stmtContext)) {
+            LOG.debug("Reusing substatement {} for {}", stmtContext, this);
+            buffer.add(stmtContext);
+        } else {
+            LOG.debug("Skipping statement {}", stmtContext);
+        }
+    }
+
+    // FIXME: revise this, as it seems to be wrong
+    private static final Set<YangStmtMapping> NOCOPY_FROM_GROUPING_SET = ImmutableSet.of(
+        YangStmtMapping.DESCRIPTION,
+        YangStmtMapping.REFERENCE,
+        YangStmtMapping.STATUS);
+    private static final Set<YangStmtMapping> REUSED_DEF_SET = ImmutableSet.of(
+        YangStmtMapping.TYPE,
+        YangStmtMapping.TYPEDEF,
+        YangStmtMapping.USES);
+
+    private static boolean needToCopyByUses(final StmtContext<?, ?, ?> stmtContext) {
+        final StatementDefinition def = stmtContext.getPublicDefinition();
+        if (REUSED_DEF_SET.contains(def)) {
+            LOG.debug("Will reuse {} statement {}", def, stmtContext);
+            return false;
+        }
+        if (NOCOPY_FROM_GROUPING_SET.contains(def)) {
+            return !YangStmtMapping.GROUPING.equals(stmtContext.getParentContext().getPublicDefinition());
+        }
+
+        LOG.debug("Will copy {} statement {}", def, stmtContext);
+        return true;
+    }
+
+    private static boolean isReusedByUses(final StmtContext<?, ?, ?> stmtContext) {
+        return REUSED_DEF_SET.contains(stmtContext.getPublicDefinition());
     }
 
     @Override
