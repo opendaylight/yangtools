@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.base.Optional;
-import java.util.Collection;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -29,15 +28,10 @@ public final class CaseEffectiveStatementImpl extends AbstractEffectiveSimpleDat
         this.original = (ChoiceCaseNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
 
         if (ctx.isConfiguration()) {
-            configuration = isAtLeastOneChildConfiguration(ctx.declaredSubstatements())
-                    || isAtLeastOneChildConfiguration(ctx.effectiveSubstatements());
+            configuration = ctx.allSubstatementsStream().anyMatch(StmtContext::isConfiguration);
         } else {
             configuration = false;
         }
-    }
-
-    private static boolean isAtLeastOneChildConfiguration(final Collection<? extends StmtContext<?, ?, ?>> children) {
-        return children.stream().anyMatch(StmtContext::isConfiguration);
     }
 
     @Override
