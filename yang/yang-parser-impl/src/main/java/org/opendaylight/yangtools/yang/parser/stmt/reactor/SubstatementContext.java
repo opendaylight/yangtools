@@ -9,11 +9,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
-import com.google.common.collect.ImmutableSet;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.util.OptionalBoolean;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -21,10 +18,8 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
@@ -34,7 +29,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
@@ -45,13 +39,9 @@ import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespac
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> extends
         StatementContextBase<A, D, E> {
-    private static final Logger LOG = LoggerFactory.getLogger(SubstatementContext.class);
-
     private final StatementContextBase<?, ?, ?> parent;
     private final A argument;
 
@@ -90,10 +80,11 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     }
 
     SubstatementContext(final StatementContextBase<A, D, E> original, final StatementContextBase<?, ?, ?> parent,
-            final A argument, final CopyType copyType) {
+            final CopyType copyType, final QNameModule targetModule) {
         super(original, copyType);
         this.parent = Preconditions.checkNotNull(parent);
-        this.argument = argument;
+        this.argument = targetModule == null ? original.getStatementArgument()
+                : original.definition().adaptArgumentValue(original, targetModule);
     }
 
     @Override
@@ -125,82 +116,6 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     @Override
     public A getStatementArgument() {
         return argument;
-    }
-
-    StatementContextBase<A, D, E> createCopy(final QNameModule newQNameModule,
-            final StatementContextBase<?, ?, ?> newParent, final CopyType typeOfCopy) {
-        Preconditions.checkState(getCompletedPhase() == ModelProcessingPhase.EFFECTIVE_MODEL,
-                "Attempted to copy statement %s which has completed phase %s", this, getCompletedPhase());
-
-        final A argumentCopy = newQNameModule == null ? argument
-                : definition().adaptArgumentValue(this, newQNameModule);
-        final SubstatementContext<A, D, E> copy = new SubstatementContext<>(this, newParent, argumentCopy, typeOfCopy);
-
-        definition().onStatementAdded(copy);
-
-        copy.copyStatements(this, newQNameModule, typeOfCopy);
-        return copy;
-    }
-
-    private void copyStatements(final SubstatementContext<A, D, E> original, final QNameModule newQNameModule,
-            final CopyType typeOfCopy) {
-        final Collection<? extends Mutable<?, ?, ?>> declared = original.mutableDeclaredSubstatements();
-        final Collection<? extends Mutable<?, ?, ?>> effective = original.mutableEffectiveSubstatements();
-        final Collection<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
-
-        for (final Mutable<?, ?, ?> stmtContext : declared) {
-            if (stmtContext.isSupportedByFeatures()) {
-                copySubstatement(stmtContext, newQNameModule, typeOfCopy, buffer);
-            }
-        }
-
-        for (final Mutable<?, ?, ?> stmtContext : effective) {
-            copySubstatement(stmtContext, newQNameModule, typeOfCopy, buffer);
-        }
-
-        addEffectiveSubstatements(buffer);
-    }
-
-    private void copySubstatement(final Mutable<?, ?, ?> stmtContext, final QNameModule newQNameModule,
-            final CopyType typeOfCopy, final Collection<Mutable<?, ?, ?>> buffer) {
-        if (needToCopyByUses(stmtContext)) {
-            final Mutable<?, ?, ?> copy = childCopyOf(stmtContext, typeOfCopy, newQNameModule);
-            LOG.debug("Copying substatement {} for {} as", stmtContext, this, copy);
-            buffer.add(copy);
-        } else if (isReusedByUses(stmtContext)) {
-            LOG.debug("Reusing substatement {} for {}", stmtContext, this);
-            buffer.add(stmtContext);
-        } else {
-            LOG.debug("Skipping statement {}", stmtContext);
-        }
-    }
-
-    // FIXME: revise this, as it seems to be wrong
-    private static final Set<YangStmtMapping> NOCOPY_FROM_GROUPING_SET = ImmutableSet.of(
-        YangStmtMapping.DESCRIPTION,
-        YangStmtMapping.REFERENCE,
-        YangStmtMapping.STATUS);
-    private static final Set<YangStmtMapping> REUSED_DEF_SET = ImmutableSet.of(
-        YangStmtMapping.TYPE,
-        YangStmtMapping.TYPEDEF,
-        YangStmtMapping.USES);
-
-    private static boolean needToCopyByUses(final StmtContext<?, ?, ?> stmtContext) {
-        final StatementDefinition def = stmtContext.getPublicDefinition();
-        if (REUSED_DEF_SET.contains(def)) {
-            LOG.debug("Will reuse {} statement {}", def, stmtContext);
-            return false;
-        }
-        if (NOCOPY_FROM_GROUPING_SET.contains(def)) {
-            return !YangStmtMapping.GROUPING.equals(stmtContext.getParentContext().getPublicDefinition());
-        }
-
-        LOG.debug("Will copy {} statement {}", def, stmtContext);
-        return true;
-    }
-
-    private static boolean isReusedByUses(final StmtContext<?, ?, ?> stmtContext) {
-        return REUSED_DEF_SET.contains(stmtContext.getPublicDefinition());
     }
 
     private boolean isSupportedAsShorthandCase() {
@@ -263,7 +178,6 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
                     schemaPath = local;
                 }
             }
-
         }
 
         return Optional.ofNullable(local);
