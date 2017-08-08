@@ -260,7 +260,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
 
     public static void resolveUsesNode(
             final Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode,
-            final StatementContextBase<?, ?, ?> targetNodeStmtCtx) {
+            final StmtContext<?, ?, ?> targetNodeStmtCtx) {
         for (final Mutable<?, ?, ?> subStmtCtx : usesNode.mutableDeclaredSubstatements()) {
             if (StmtContextUtils.producesDeclared(subStmtCtx, RefineStatement.class)
                     && areFeaturesSupported(subStmtCtx)) {
@@ -269,15 +269,14 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
         }
     }
 
-    private static boolean areFeaturesSupported(final Mutable<?, ?, ?> subStmtCtx) {
+    private static boolean areFeaturesSupported(final StmtContext<?, ?, ?> subStmtCtx) {
         /*
          * In case of Yang 1.1, checks whether features are supported.
          */
         return !YangVersion.VERSION_1_1.equals(subStmtCtx.getRootVersion()) || subStmtCtx.isSupportedByFeatures();
     }
 
-    private static void performRefine(final Mutable<?, ?, ?> subStmtCtx,
-            final StatementContextBase<?, ?, ?> usesParentCtx) {
+    private static void performRefine(final Mutable<?, ?, ?> subStmtCtx, final StmtContext<?, ?, ?> usesParentCtx) {
 
         final Object refineArgument = subStmtCtx.getStatementArgument();
         InferenceException.throwIf(!(refineArgument instanceof SchemaNodeIdentifier),
@@ -292,10 +291,10 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
             "Refine target node %s not found.", refineTargetNodeIdentifier);
 
         if (StmtContextUtils.isUnknownStatement(refineTargetNodeCtx)) {
-            LOG.debug(
-                    "Refine node '{}' in uses '{}' has target node unknown statement '{}'. Refine has been skipped. At line: {}",
-                    subStmtCtx.getStatementArgument(), subStmtCtx.getParentContext().getStatementArgument(),
-                    refineTargetNodeCtx.getStatementArgument(), subStmtCtx.getStatementSourceReference());
+            LOG.debug("Refine node '{}' in uses '{}' has target node unknown statement '{}'. "
+                + "Refine has been skipped. At line: {}", subStmtCtx.getStatementArgument(),
+                subStmtCtx.getParentContext().getStatementArgument(),
+                refineTargetNodeCtx.getStatementArgument(), subStmtCtx.getStatementSourceReference());
             subStmtCtx.addAsEffectOfStatement(refineTargetNodeCtx);
             return;
         }

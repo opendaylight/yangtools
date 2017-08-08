@@ -11,7 +11,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
@@ -72,8 +71,7 @@ public final class StmtContextUtils {
 
     public static <A, D extends DeclaredStatement<A>> A firstSubstatementAttributeOf(
             final StmtContext<?, ?, ?> ctx, final Class<D> declaredType) {
-        final A firstAttribute = firstAttributeOf(ctx.effectiveSubstatements(), declaredType);
-        return firstAttribute != null ? firstAttribute : firstAttributeOf(ctx.declaredSubstatements(), declaredType);
+        return firstAttributeOf(ctx.allSubstatements(), declaredType);
     }
 
     @SuppressWarnings("unchecked")
@@ -466,8 +464,7 @@ public final class StmtContextUtils {
     }
 
     private static void disallowIfFeatureAndWhenOnListKeys(final StmtContext<?, ?, ?> leafStmtCtx) {
-        Iterables.concat(leafStmtCtx.declaredSubstatements(), leafStmtCtx.effectiveSubstatements()).forEach(
-                leafSubstmtCtx -> {
+        leafStmtCtx.allSubstatements().forEach(leafSubstmtCtx -> {
             final StatementDefinition statementDef = leafSubstmtCtx.getPublicDefinition();
             SourceException.throwIf(YangStmtMapping.IF_FEATURE.equals(statementDef)
                     || YangStmtMapping.WHEN.equals(statementDef), leafStmtCtx.getStatementSourceReference(),
