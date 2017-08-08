@@ -40,6 +40,11 @@ abstract class StatementMap {
         Collection<StatementContextBase<?, ?, ?>> values() {
             return ImmutableList.of();
         }
+
+        @Override
+        int size() {
+            return 0;
+        }
     }
 
     private static final class Regular extends StatementMap {
@@ -82,6 +87,23 @@ abstract class StatementMap {
         Collection<StatementContextBase<?, ?, ?>> values() {
             return new RegularAsCollection<>(elements);
         }
+
+        @Override
+        int size() {
+            return countElements(elements);
+       }
+    }
+
+    static int countElements(final Object[] elements) {
+        // Optimized for non-sparse case
+        int nulls = 0;
+        for (Object e : elements) {
+            if (e == null) {
+                nulls++;
+            }
+        }
+
+        return elements.length - nulls;
     }
 
     private static final class RegularAsCollection<T> extends AbstractCollection<T> {
@@ -127,18 +149,9 @@ abstract class StatementMap {
 
         @Override
         public int size() {
-            // Optimized for non-sparse case
-            int nulls = 0;
-            for (T e : elements) {
-                if (e == null) {
-                    nulls++;
-                }
-            }
-
-            return elements.length - nulls;
+            return countElements(elements);
         }
     }
-
 
     private static final class Singleton extends StatementMap {
         private final StatementContextBase<?, ?, ?> object;
@@ -161,6 +174,11 @@ abstract class StatementMap {
         @Override
         Collection<StatementContextBase<?, ?, ?>> values() {
             return ImmutableList.of(object);
+        }
+
+        @Override
+        int size() {
+            return 1;
         }
     }
 
@@ -196,4 +214,6 @@ abstract class StatementMap {
      * @return Read-only view of available statements.
      */
     abstract @Nonnull Collection<StatementContextBase<?, ?, ?>> values();
+
+    abstract int size();
 }
