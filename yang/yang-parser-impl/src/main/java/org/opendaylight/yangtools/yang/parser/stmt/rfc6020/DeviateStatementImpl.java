@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -215,10 +214,7 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
                 final StatementDefinition stmtToBeAdded = stmtCtxToBeAdded.getPublicDefinition();
                 if (SINGLETON_STATEMENTS.contains(stmtToBeAdded) || YangStmtMapping.DEFAULT.equals(stmtToBeAdded)
                         && YangStmtMapping.LEAF.equals(targetCtx.getPublicDefinition())) {
-                    final Iterable<StmtContext<?, ?, ?>> targetCtxSubstatements = Iterables.concat(
-                            targetCtx.declaredSubstatements(), targetCtx.effectiveSubstatements());
-
-                    for (final StmtContext<?, ?, ?> targetCtxSubstatement : targetCtxSubstatements) {
+                    for (final StmtContext<?, ?, ?> targetCtxSubstatement : targetCtx.allSubstatements()) {
                         InferenceException.throwIf(stmtToBeAdded.equals(targetCtxSubstatement.getPublicDefinition()),
                             stmtCtxToBeAdded.getStatementSourceReference(), "Deviation cannot add substatement %s "
                         + "to target node %s because it is already defined in target and can appear only once.",
