@@ -268,4 +268,9 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     protected boolean isIgnoringConfig() {
         return false;
     }
+
+    @Override
+    protected boolean isParentSupportedByFeatures() {
+        return true;
+    }
 }
