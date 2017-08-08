@@ -376,4 +376,9 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
         return ret;
     }
+
+    @Override
+    protected boolean isParentSupportedByFeatures() {
+        return parent.isSupportedByFeatures();
+    }
 }

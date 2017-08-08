@@ -1,0 +1,25 @@
+module foo {
+    namespace foo;
+    prefix f;
+
+    feature my-feature;
+
+    container target {
+    }
+
+    augment "/target" {
+        if-feature my-feature;
+        uses my-grp {
+            refine "my-con" {
+                description
+                                "New description";
+            }
+        }
+    }
+
+    grouping my-grp {
+        container my-con {
+            if-feature my-feature;
+        }
+    }
+}
