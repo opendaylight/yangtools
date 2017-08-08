@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Streams;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -91,6 +94,14 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      */
     @Nonnull
     Collection<? extends StmtContext<?, ?, ?>> effectiveSubstatements();
+
+    default Iterable<? extends StmtContext<?, ?, ?>> allSubstatements() {
+        return Iterables.concat(declaredSubstatements(), effectiveSubstatements());
+    }
+
+    default Stream<? extends StmtContext<?, ?, ?>> allSubstatementsStream() {
+        return Streams.concat(declaredSubstatements().stream(), effectiveSubstatements().stream());
+    }
 
     /**
      * Builds {@link DeclaredStatement} for statement context.
