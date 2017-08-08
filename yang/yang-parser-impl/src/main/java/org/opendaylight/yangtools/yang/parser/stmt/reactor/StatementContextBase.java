@@ -147,23 +147,41 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public boolean isSupportedByFeatures() {
-        if (isIgnoringIfFeatures()) {
-            return true;
-        }
         if (OptionalBoolean.isPresent(supportedByFeatures)) {
             return OptionalBoolean.get(supportedByFeatures);
         }
 
+        if (isIgnoringIfFeatures()) {
+            supportedByFeatures = OptionalBoolean.of(true);
+            return true;
+        }
+
+        final boolean isParentSupported = isParentSupportedByFeatures();
+        /*
+         * If parent is not supported, then this context is also not supported.
+         * So we do not need to check if-features statements of this context and
+         * we can return false immediately.
+         */
+        if (!isParentSupported) {
+            supportedByFeatures = OptionalBoolean.of(false);
+            return false;
+        }
+
+        /*
+         * If parent is supported, we need to check if-features statements of
+         * this context.
+         */
         // If the set of supported features has not been provided, all features are supported by default.
         final Set<QName> supportedFeatures = getFromNamespace(SupportedFeaturesNamespace.class,
-            SupportedFeatures.SUPPORTED_FEATURES);
+                SupportedFeatures.SUPPORTED_FEATURES);
         final boolean ret = supportedFeatures == null ? true
-            : StmtContextUtils.checkFeatureSupport(this, supportedFeatures);
+                : StmtContextUtils.checkFeatureSupport(this, supportedFeatures);
 
         supportedByFeatures = OptionalBoolean.of(ret);
         return ret;
-
     }
+
+    protected abstract boolean isParentSupportedByFeatures();
 
     protected abstract boolean isIgnoringIfFeatures();
 
