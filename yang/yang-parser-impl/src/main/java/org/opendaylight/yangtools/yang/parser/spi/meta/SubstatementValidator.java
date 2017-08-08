@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import java.util.HashMap;
 import java.util.Map;
@@ -117,7 +116,7 @@ public final class SubstatementValidator {
             MissingSubstatementException {
 
         final Map<StatementDefinition, Counter> stmtCounts = new HashMap<>();
-        for (StmtContext<?, ?, ?> stmtCtx : Iterables.concat(ctx.declaredSubstatements(), ctx.effectiveSubstatements())) {
+        for (StmtContext<?, ?, ?> stmtCtx : ctx.allSubstatements()) {
             stmtCounts.computeIfAbsent(stmtCtx.getPublicDefinition(), key -> new Counter()).increment();
         }
 
