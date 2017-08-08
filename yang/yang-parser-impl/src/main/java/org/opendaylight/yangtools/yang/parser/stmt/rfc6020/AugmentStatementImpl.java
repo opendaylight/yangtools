@@ -8,11 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import com.google.common.base.Verify;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -266,11 +264,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                 checkForMandatoryNodes(sourceCtx);
             }
 
-            final List<Mutable<?, ?, ?>> targetSubStatements = ImmutableList.<Mutable<?, ?, ?>>builder()
-                    .addAll(targetCtx.mutableDeclaredSubstatements()).addAll(targetCtx.mutableEffectiveSubstatements())
-                    .build();
-
-            for (final Mutable<?, ?, ?> subStatement : targetSubStatements) {
+            for (final StmtContext<?, ?, ?> subStatement : targetCtx.allSubstatements()) {
                 final boolean sourceIsDataNode = DataDefinitionStatement.class.isAssignableFrom(sourceCtx
                         .getPublicDefinition().getDeclaredRepresentationClass());
                 final boolean targetIsDataNode = DataDefinitionStatement.class.isAssignableFrom(subStatement
@@ -293,8 +287,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                  * b) added to augment body also via uses of a grouping and
                  * such sub-statements are stored in effective sub-statements collection.
                  */
-                sourceCtx.declaredSubstatements().forEach(Definition::checkForMandatoryNodes);
-                sourceCtx.effectiveSubstatements().forEach(Definition::checkForMandatoryNodes);
+                sourceCtx.allSubstatementsStream().forEach(Definition::checkForMandatoryNodes);
             }
 
             InferenceException.throwIf(StmtContextUtils.isMandatoryNode(sourceCtx),
