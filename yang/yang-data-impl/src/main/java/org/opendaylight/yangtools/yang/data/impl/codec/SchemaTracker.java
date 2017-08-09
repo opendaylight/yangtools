@@ -92,19 +92,19 @@ public final class SchemaTracker {
         final QName qname = name.getNodeType();
         if (parent instanceof DataNodeContainer) {
             schema = ((DataNodeContainer)parent).getDataChildByName(qname);
-            if (schema == null) {
-                if (parent instanceof GroupingDefinition) {
-                    schema = (GroupingDefinition) parent;
-                } else if (parent instanceof NotificationDefinition) {
-                    schema = (NotificationDefinition) parent;
-                }
+
+            if (schema == null && parent instanceof GroupingDefinition) {
+                schema = ((GroupingDefinition) parent);
+            }
+
+            if (schema == null && parent instanceof NotificationDefinition) {
+                schema = ((NotificationDefinition) parent);
             }
         } else if (parent instanceof ChoiceSchemaNode) {
             schema = findChildInCases((ChoiceSchemaNode) parent, qname);
         } else {
             throw new IllegalStateException("Unsupported schema type "+ parent.getClass() +" on stack.");
         }
-
         Preconditions.checkArgument(schema != null, "Could not find schema for node %s in %s", qname, parent);
         return schema;
     }
