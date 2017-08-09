@@ -12,6 +12,6 @@
         <enum-leaf>five</enum-leaf>
     </leaf-container>
     <anyxml-container>
-        <my-anyxml><my-element><my-sub-element>sub-element value</my-sub-element></my-element></my-anyxml>
+        <my-anyxml><my-element><my-sub-element>&lt; &amp; sub-element value</my-sub-element></my-element></my-anyxml>
     </anyxml-container>
 </parent-container>

@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.xml.XmlEscapers;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
@@ -260,7 +261,7 @@ public final class XmlParserStream implements Closeable, Flushable {
                 }
 
             } else if (eventType == XMLStreamConstants.CHARACTERS) {
-                sb.append(in.getText());
+                sb.append(XmlEscapers.xmlContentEscaper().escape(in.getText()));
             }
         }
 
