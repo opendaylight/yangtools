@@ -21,12 +21,14 @@ public abstract class AbstractImmutableNormalizedValueNode<K extends PathArgumen
 
     protected AbstractImmutableNormalizedValueNode(final K nodeIdentifier, @Nullable final V value) {
         super(nodeIdentifier);
+
+        /*
+         * Null value is allowed for empty type definition so it should be debug,
+         * but still we are logging it in case we need to debug missing values.
+         */
+        // FIXME: one we do not map YANG 'void' to java.lang.Void we should be enforcing non-null here
         if (value == null) {
-            /*
-             * Null value is allowed for empty type definition so it should be debug,
-             * but still we are logging it in case we need to debug missing values.
-             */
-            LOG.debug("The value of node {} is null",nodeIdentifier.getNodeType());
+            LOG.debug("The value of node {} is null", nodeIdentifier.getNodeType());
         }
         this.value = value;
     }
@@ -34,6 +36,15 @@ public abstract class AbstractImmutableNormalizedValueNode<K extends PathArgumen
     @Nullable
     @Override
     public final V getValue() {
+        return wrapValue(value);
+    }
+
+    @Nullable
+    protected final V value() {
+        return value;
+    }
+
+    protected V wrapValue(final V value) {
         return value;
     }
 }

@@ -43,7 +43,8 @@ public abstract class AbstractImmutableNormalizedValueAttrNode<K extends PathArg
 
     @Override
     protected int valueHashCode() {
-        final int result = getValue() != null ? getValue().hashCode() : 1;
+        final V local = value();
+        final int result = local != null ? local.hashCode() : 1;
         // FIXME: are attributes part of hashCode/equals?
         return result;
     }
@@ -53,12 +54,11 @@ public abstract class AbstractImmutableNormalizedValueAttrNode<K extends PathArg
         // We can not call directly getValue.equals because of Empty Type
         // Definition leaves which allways have NULL value
 
-        if (!Objects.deepEquals(getValue(), other.getValue())) {
+        if (!Objects.deepEquals(value(), other.getValue())) {
             return false;
         }
 
         // FIXME: are attributes part of hashCode/equals?
         return true;
     }
-
 }

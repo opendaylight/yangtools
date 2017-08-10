@@ -21,14 +21,33 @@ public class ImmutableLeafNodeBuilder<T> extends AbstractImmutableNormalizedNode
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public LeafNode<T> build() {
-        return new ImmutableLeafNode<>(getNodeIdentifier(), getValue(), getAttributes());
+        final T value = getValue();
+        if (value instanceof byte[]) {
+            return (LeafNode<T>) new ImmutableBinaryLeafNode(getNodeIdentifier(), (byte[]) value, getAttributes());
+        }
+
+        return new ImmutableLeafNode<>(getNodeIdentifier(), value, getAttributes());
     }
 
-    private static final class ImmutableLeafNode<T> extends AbstractImmutableNormalizedValueAttrNode<NodeIdentifier, T> implements LeafNode<T> {
-
+    private static final class ImmutableLeafNode<T>
+            extends AbstractImmutableNormalizedValueAttrNode<NodeIdentifier, T> implements LeafNode<T> {
         ImmutableLeafNode(final NodeIdentifier nodeIdentifier, final T value, final Map<QName, String> attributes) {
             super(nodeIdentifier, value, attributes);
+        }
+    }
+
+    private static final class ImmutableBinaryLeafNode
+            extends AbstractImmutableNormalizedValueAttrNode<NodeIdentifier, byte[]> implements LeafNode<byte[]> {
+        ImmutableBinaryLeafNode(final NodeIdentifier nodeIdentifier, final byte[] value,
+            final Map<QName, String> attributes) {
+            super(nodeIdentifier, value, attributes);
+        }
+
+        @Override
+        protected byte[] wrapValue(final byte[] value) {
+            return value.clone();
         }
     }
 }
