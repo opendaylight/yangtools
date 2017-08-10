@@ -22,6 +22,30 @@
       "revId": "250981cb3957a9f3f6665fec44c325bfb0e7d725",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_4a0d2190",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/StatementContextBase.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-08-10T12:00:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba1f61a0_6193f5fa",
+      "range": {
+        "startLine": 159,
+        "startChar": 0,
+        "endLine": 160,
+        "endChar": 23
+      },
+      "revId": "250981cb3957a9f3f6665fec44c325bfb0e7d725",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
