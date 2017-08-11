@@ -43,4 +43,4 @@ STRING: ((~( '\r' | '\n' | '\t' | ' ' | ';' | '{' | '"' | '\'' | '}' | '/' | '+'
 
 mode BLOCK_COMMENT_MODE;
 END_BLOCK_COMMENT : '*/' -> popMode, skip;
-BLOCK_COMMENT :  . -> more, skip;
+BLOCK_COMMENT :  . -> skip;
