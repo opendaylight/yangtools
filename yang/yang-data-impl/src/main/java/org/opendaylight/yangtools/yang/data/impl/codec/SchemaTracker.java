@@ -12,13 +12,14 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import java.io.IOException;
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -52,9 +53,18 @@ public final class SchemaTracker {
     private final DataNodeContainer root;
 
     private SchemaTracker(final SchemaContext context, final SchemaPath path) {
-        SchemaNode current = SchemaUtils.findParentSchemaOnPath(context, path);
-        Preconditions.checkArgument(current instanceof DataNodeContainer,"Schema path must point to container or list or an rpc input/output. Supplied path %s pointed to: %s",path,current);
-        root = (DataNodeContainer) current;
+        final Collection<SchemaNode> schemaNodes = SchemaUtils.findParentSchemaNodesOnPath(context, path);
+        Preconditions.checkArgument(!schemaNodes.isEmpty(), "Unable to find schema node for supplied schema path: %s",
+                path);
+        if (schemaNodes.size() > 1) {
+            LOG.warn("More possible schema nodes {} for supplied schema path {}", schemaNodes, path);
+        }
+        final Optional<SchemaNode> current = schemaNodes.stream().filter(node -> node instanceof DataNodeContainer)
+                .findFirst();
+        Preconditions.checkArgument(current.isPresent(),
+                "Schema path must point to container or list or an rpc input/output. Supplied path %s pointed to: %s",
+                path, current);
+        root = (DataNodeContainer) current.get();
     }
 
     /**
@@ -174,7 +184,7 @@ public final class SchemaTracker {
             return (LeafListSchemaNode) parent;
         }
 
-        final SchemaNode child = SchemaUtils.findChildSchemaByQName((SchemaNode) parent, qname);
+        final SchemaNode child = SchemaUtils.findDataChildSchemaByQName((SchemaNode) parent, qname);
         Preconditions.checkArgument(child instanceof LeafListSchemaNode,
             "Node %s is neither a leaf-list nor currently in a leaf-list", child.getPath());
         return (LeafListSchemaNode) child;
