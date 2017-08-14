@@ -1,0 +1,37 @@
+module rpc-test {
+    namespace my-namespace;
+    prefix p;
+
+    feature my-name;
+
+    identity my-name;
+
+    extension my-name;
+
+    typedef my-name {
+        type string;
+    }
+
+    grouping my-name {
+        leaf my-name {
+            type my-name;
+        }
+    }
+
+    rpc my-name {
+        input {
+            container my-name {
+                leaf my-name {
+                    type my-name;
+                }
+            }
+        }
+        output {
+            container my-name {
+                leaf my-name {
+                    type my-name;
+                }
+            }
+        }
+    }
+}
