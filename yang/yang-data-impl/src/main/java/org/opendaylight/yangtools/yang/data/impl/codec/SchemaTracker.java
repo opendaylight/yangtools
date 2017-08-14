@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -52,7 +51,7 @@ public final class SchemaTracker {
     private final DataNodeContainer root;
 
     private SchemaTracker(final SchemaContext context, final SchemaPath path) {
-        SchemaNode current = SchemaUtils.findParentSchemaOnPath(context, path);
+        final SchemaNode current = SchemaUtils.findParentSchemaOnPath(context, path);
         Preconditions.checkArgument(current instanceof DataNodeContainer,"Schema path must point to container or list or an rpc input/output. Supplied path %s pointed to: %s",path,current);
         root = (DataNodeContainer) current;
     }
@@ -174,7 +173,7 @@ public final class SchemaTracker {
             return (LeafListSchemaNode) parent;
         }
 
-        final SchemaNode child = SchemaUtils.findChildSchemaByQName((SchemaNode) parent, qname);
+        final SchemaNode child = SchemaUtils.findDataChildSchemaByQName((SchemaNode) parent, qname);
         Preconditions.checkArgument(child instanceof LeafListSchemaNode,
             "Node %s is neither a leaf-list nor currently in a leaf-list", child.getPath());
         return (LeafListSchemaNode) child;
