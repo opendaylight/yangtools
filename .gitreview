@@ -2,4 +2,4 @@
 host=git.opendaylight.org
 port=29418
 project=yangtools.git
-defaultbranch=stable/nitrogen
+defaultbranch=v1.2.x
