@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.opendaylight.mdsal</groupId>
     <artifactId>yang-binding</artifactId>
-    <version>0.11.0-SNAPSHOT</version>
+    <version>0.12.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>${project.artifactId}</name>
     <description>Java binding for YANG</description>
@@ -29,7 +29,7 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yangtools-artifacts</artifactId>
-                <version>1.2.0-SNAPSHOT</version>
+                <version>2.0.0-SNAPSHOT</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
