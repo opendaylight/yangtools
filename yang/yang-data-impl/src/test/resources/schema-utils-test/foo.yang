@@ -1,0 +1,39 @@
+module foo {
+    namespace my-namespace;
+    prefix p;
+    yang-version 1.1;
+
+    feature my-name;
+
+    identity my-name;
+
+    extension my-name;
+
+    typedef my-name {
+        type string;
+    }
+
+    grouping my-name {
+    }
+
+    grouping my-name-2 {
+    }
+
+    notification my-name {
+        grouping my-name {
+        }
+        container my-name {
+        }
+    }
+
+    container my-name-2 {
+        grouping my-name {
+        }
+        notification my-name {
+        }
+        grouping my-name-2 {
+        }
+        action my-name-2 {
+        }
+    }
+}
