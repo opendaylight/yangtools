@@ -1,0 +1,90 @@
+module name-conflicts {
+    namespace "my-namespace";
+    prefix nc;
+
+    grouping my-name {
+        grouping my-name {
+            grouping my-name {
+            }
+            container my-name {
+            }
+        }
+        container my-name {
+            grouping my-name {
+            }
+            container my-name {
+            }
+        }
+    }
+
+    container my-name {
+        grouping my-name {
+            grouping my-name {
+            }
+            container my-name {
+            }
+        }
+        container my-name {
+            grouping my-name {
+            }
+            container my-name {
+            }
+        }
+    }
+
+    grouping my-name-2 {
+        grouping my-name-2 {
+            grouping my-name-2 {
+            }
+            container my-name-2 {
+            }
+        }
+        container my-name-2 {
+            grouping my-name-2 {
+            }
+            container my-name-2 {
+            }
+        }
+    }
+
+    container my-name-2 {
+        grouping my-name-2 {
+            grouping my-name-2 {
+            }
+            container target {
+            }
+        }
+        container my-name-2 {
+            grouping my-name-2 {
+            }
+            container my-name-2 {
+            }
+        }
+    }
+
+    rpc my-name-3 {
+        input {
+            container con-1 {
+                leaf l {
+                    type string;
+                }
+            }
+        }
+        output {
+            container con-2 {
+                leaf l {
+                    type string;
+                }
+            }
+        }
+    }
+
+    grouping my-name-3 {
+        container input {
+            container con-3 {
+                container l {
+                }
+            }
+        }
+    }
+}

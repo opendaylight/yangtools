@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import java.io.IOException;
 import java.util.Collection;
@@ -26,13 +27,15 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is an iterator over a {@link NormalizedNode}. Unlike {@link NormalizedNodeWriter},
  * this iterates over elements in order as they are defined in .yang file.
  */
 public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
-
+    private static final Logger LOG = LoggerFactory.getLogger(SchemaOrderedNormalizedNodeWriter.class);
     private final SchemaContext schemaContext;
     private final SchemaNode root;
     private final NormalizedNodeStreamWriter writer;
@@ -41,15 +44,26 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
 
     /**
      * Create a new writer backed by a {@link NormalizedNodeStreamWriter}.
-     * @param writer Back-end writer
-     * @param schemaContext Schema context
-     * @param path path
+     *
+     * @param writer
+     *            Back-end writer
+     * @param schemaContext
+     *            Schema context
+     * @param path
+     *            path
      */
-    public SchemaOrderedNormalizedNodeWriter(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext, final SchemaPath path) {
+    public SchemaOrderedNormalizedNodeWriter(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
+            final SchemaPath path) {
         super(writer);
         this.writer = writer;
         this.schemaContext = schemaContext;
-        this.root = SchemaUtils.findParentSchemaOnPath(schemaContext, path);
+        final Collection<SchemaNode> schemaNodes = SchemaUtils.findParentSchemaNodesOnPath(schemaContext, path);
+        Preconditions.checkArgument(!schemaNodes.isEmpty(), "Unable to find schema node for supplied schema path: %s",
+                path);
+        if (schemaNodes.size() > 1) {
+            LOG.warn("More possible schema nodes {} for supplied schema path {}", schemaNodes, path);
+        }
+        this.root = schemaNodes.iterator().next();
     }
 
     @Override
@@ -102,19 +116,20 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
     }
 
     private void write(final List<NormalizedNode<?, ?>> nodes, final SchemaNode dataSchemaNode) throws IOException {
-        for (NormalizedNode<?, ?> node : nodes) {
+        for (final NormalizedNode<?, ?> node : nodes) {
             write(node, dataSchemaNode);
         }
     }
 
+    @Override
     protected boolean writeChildren(final Iterable<? extends NormalizedNode<?, ?>> children) throws IOException {
         return writeChildren(children, currentSchemaNode, true);
     }
 
-    private boolean writeChildren(final Iterable<? extends NormalizedNode<?, ?>> children, final SchemaNode parentSchemaNode, boolean endParent) throws IOException {
+    private boolean writeChildren(final Iterable<? extends NormalizedNode<?, ?>> children, final SchemaNode parentSchemaNode, final boolean endParent) throws IOException {
         //Augmentations cannot be gotten with node.getChild so create our own structure with augmentations resolved
-        ArrayListMultimap<QName, NormalizedNode<?, ?>> qNameToNodes = ArrayListMultimap.create();
-        for (NormalizedNode<?, ?> child : children) {
+        final ArrayListMultimap<QName, NormalizedNode<?, ?>> qNameToNodes = ArrayListMultimap.create();
+        for (final NormalizedNode<?, ?> child : children) {
             if (child instanceof AugmentationNode) {
                 qNameToNodes.putAll(resolveAugmentations(child));
             } else {
@@ -126,20 +141,20 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
             if (parentSchemaNode instanceof ListSchemaNode && qNameToNodes.containsKey(parentSchemaNode.getQName())) {
                 write(qNameToNodes.get(parentSchemaNode.getQName()), parentSchemaNode);
             } else {
-                for (DataSchemaNode schemaNode : ((DataNodeContainer) parentSchemaNode).getChildNodes()) {
+                for (final DataSchemaNode schemaNode : ((DataNodeContainer) parentSchemaNode).getChildNodes()) {
                     write(qNameToNodes.get(schemaNode.getQName()), schemaNode);
                 }
             }
         } else if (parentSchemaNode instanceof ChoiceSchemaNode) {
-            for (ChoiceCaseNode ccNode : ((ChoiceSchemaNode) parentSchemaNode).getCases()) {
-                for (DataSchemaNode dsn : ccNode.getChildNodes()) {
+            for (final ChoiceCaseNode ccNode : ((ChoiceSchemaNode) parentSchemaNode).getCases()) {
+                for (final DataSchemaNode dsn : ccNode.getChildNodes()) {
                     if (qNameToNodes.containsKey(dsn.getQName())) {
                         write(qNameToNodes.get(dsn.getQName()), dsn);
                     }
                 }
             }
         } else {
-            for (NormalizedNode<?, ?> child : children) {
+            for (final NormalizedNode<?, ?> child : children) {
                 writeLeaf(child);
             }
         }
@@ -159,7 +174,7 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
 
     private ArrayListMultimap<QName, NormalizedNode<?, ?>> resolveAugmentations(final NormalizedNode<?, ?> child) {
         final ArrayListMultimap<QName, NormalizedNode<?, ?>> resolvedAugs = ArrayListMultimap.create();
-        for (NormalizedNode<?, ?> node : ((AugmentationNode) child).getValue()) {
+        for (final NormalizedNode<?, ?> node : ((AugmentationNode) child).getValue()) {
             if (node instanceof AugmentationNode) {
                 resolvedAugs.putAll(resolveAugmentations(node));
             } else {
