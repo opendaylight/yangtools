@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "ba1f61a0_b09a4061",
+        "filename": "common/artifacts/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 143,
+      "author": {
+        "id": 2759
+      },
+      "writtenOn": "2017-08-14T15:33:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba1f61a0_3077703c",
+      "range": {
+        "startLine": 143,
+        "startChar": 25,
+        "endLine": 143,
+        "endChar": 30
+      },
+      "revId": "404992a6693779d136a3ce5a3eebcfaf57a4b89b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba1f61a0_10722c49",
         "filename": "third-party/triemap/pom.xml",
         "patchSetId": 1
@@ -42,6 +66,47 @@
         "endLine": 30,
         "endChar": 16
       },
+      "revId": "404992a6693779d136a3ce5a3eebcfaf57a4b89b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_909d7c5c",
+        "filename": "third-party/triemap/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 2759
+      },
+      "writtenOn": "2017-08-14T15:33:31Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba1f61a0_10722c49",
+      "range": {
+        "startLine": 30,
+        "startChar": 13,
+        "endLine": 30,
+        "endChar": 16
+      },
+      "revId": "404992a6693779d136a3ce5a3eebcfaf57a4b89b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_70b728d9",
+        "filename": "yang/yang-system-test/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 2759
+      },
+      "writtenOn": "2017-08-14T15:33:31Z",
+      "side": 1,
+      "message": "This should be 1.0.0-SNAPSHOT",
       "revId": "404992a6693779d136a3ce5a3eebcfaf57a4b89b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
