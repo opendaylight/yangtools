@@ -14,10 +14,6 @@
     <name>${project.artifactId}</name>
     <description>YANG system test</description>
 
-    <properties>
-        <yang.codegen.version>1.0.0-SNAPSHOT</yang.codegen.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
