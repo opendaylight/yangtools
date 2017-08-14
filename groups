@@ -1,8 +1,9 @@
-# UUID                                  	Group Name
+# UUID                                                             	Group Name
 #
-2373512464abcee3eaf50f265c4a4e428dab634e	Administrators
-c0a294ab525dd773e2ab0d839cc7b9a0b9268c7f	Non-interactive yangtools users
-c9025ab9ddc1e3171919e085449f22c54f8f7b54	GitHub Replication
-global:Anonymous-Users                  	Anonymous Users
-global:Registered-Users                 	Registered Users
+0005e400a3f992732c5d824c6aec342f676f722a                           	Release Engineering Team
+2373512464abcee3eaf50f265c4a4e428dab634e                           	Administrators
+c0a294ab525dd773e2ab0d839cc7b9a0b9268c7f                           	Non-interactive yangtools users
+c9025ab9ddc1e3171919e085449f22c54f8f7b54                           	GitHub Replication
+global:Anonymous-Users                                             	Anonymous Users
+global:Registered-Users                                            	Registered Users
 ldap:cn=gerrit-yangtools-commiters,ou=Groups,dc=opendaylight,dc=org	ldap/gerrit-yangtools-commiters
