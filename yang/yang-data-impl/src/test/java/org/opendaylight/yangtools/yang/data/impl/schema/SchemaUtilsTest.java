@@ -1,0 +1,40 @@
+/*
+ * Copyright (c) 2017 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang.data.impl.schema;
+
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
+
+public class SchemaUtilsTest {
+    private static String NS = "my-namespace";
+    private static String REV = "1970-01-01";
+
+    @Test
+    public void test() throws Exception {
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/schema-utils-test/foo.yang");
+        assertTrue(SchemaUtils.findDataParentSchemaOnPath(schemaContext,
+                SchemaPath.create(true, qN("my-name"), qN("my-name"))) instanceof ContainerSchemaNode);
+        assertTrue(SchemaUtils.findDataParentSchemaOnPath(schemaContext,
+                SchemaPath.create(true, qN("my-name-2"), qN("my-name"))) instanceof NotificationDefinition);
+        assertTrue(SchemaUtils.findDataParentSchemaOnPath(schemaContext,
+                SchemaPath.create(true, qN("my-name-2"), qN("my-name-2"))) instanceof ActionDefinition);
+    }
+
+    private QName qN(final String localName) {
+        return QName.create(NS, REV, localName);
+    }
+
+}
