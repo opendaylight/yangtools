@@ -278,11 +278,11 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     protected void checkTouchApplicable(final YangInstanceIdentifier path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         if (!modification.getOriginal().isPresent() && !current.isPresent()) {
-            throw new ModifiedNodeDoesNotExistException(path, String.format("Node %s does not exist. Cannot apply modification to its children.", path));
+            throw new ModifiedNodeDoesNotExistException("Node {} does not exist. Cannot apply modification to its children.", path);
         }
 
         if (!current.isPresent()) {
-            throw new ConflictingModificationAppliedException(path, "Node was deleted by other transaction.");
+            throw new ConflictingModificationAppliedException("Node {} was deleted by other transaction.", path);
         }
 
         checkChildPreconditions(path, modification, current.get(), version);
