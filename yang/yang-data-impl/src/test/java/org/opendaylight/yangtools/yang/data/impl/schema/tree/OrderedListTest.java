@@ -242,7 +242,8 @@ public class OrderedListTest {
             inMemoryDataTree.commit(inMemoryDataTree.prepare(treeModification2));
         } catch (ConflictingModificationAppliedException ex) {
             LOG.debug("ConflictingModificationAppliedException was thrown as expected: {}", ex);
-            assertTrue(ex.getMessage().contains("Node was replaced by other transaction"));
+            assertTrue(ex.getMessage().equals("Node /(ordered-list-modification-test?revision=1970-01-01)parent-container"
+                    + " was replaced by other transaction."));
         }
 
         DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
