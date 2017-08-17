@@ -16,8 +16,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class LengthGenerator {
+    private static final Logger LOG = LoggerFactory.getLogger(LengthGenerator.class);
+
     private LengthGenerator() {
         throw new UnsupportedOperationException();
     }
@@ -30,20 +34,26 @@ final class LengthGenerator {
         final Collection<String> ret = new ArrayList<>(constraints.size());
 
         for (LengthConstraint l : constraints) {
-            final StringBuilder sb = new StringBuilder("length >");
-
             // We have to deal with restrictions being out of integer's range
-            if (l.getMin().longValue() <= Integer.MAX_VALUE) {
-                sb.append('=');
-            }
-            sb.append(' ').append(l.getMin().intValue());
+            final long min = l.getMin().longValue();
+            final long max = l.getMax().longValue();
 
-            final int max = l.getMax().intValue();
-            if (max < Integer.MAX_VALUE) {
-                sb.append(" && length <= ").append(max);
-            }
+            if (min > 0 || max < Integer.MAX_VALUE) {
+                final StringBuilder sb = new StringBuilder("length >");
+                if (min <= Integer.MAX_VALUE) {
+                    sb.append('=');
+                }
+                sb.append(' ').append(min);
 
-            ret.add(sb.toString());
+                if (max < Integer.MAX_VALUE) {
+                    sb.append(" && length <= ").append(max);
+                }
+
+                ret.add(sb.toString());
+            } else {
+                // This range is implicitly capped by String/byte[] length returns
+                LOG.debug("Constraint {} implied by int type value domain, skipping", l);
+            }
         }
 
         return ret;
@@ -59,7 +69,8 @@ final class LengthGenerator {
         return ranges.toString();
     }
 
-    private static String generateArrayLengthChecker(final String member, final Collection<LengthConstraint> constraints) {
+    private static String generateArrayLengthChecker(final String member,
+            final Collection<LengthConstraint> constraints) {
         final StringBuilder sb = new StringBuilder();
         final Collection<String> expressions = createExpressions(constraints);
 
@@ -83,7 +94,8 @@ final class LengthGenerator {
         return sb.toString();
     }
 
-    private static String generateStringLengthChecker(final String member, final Collection<LengthConstraint> constraints) {
+    private static String generateStringLengthChecker(final String member,
+            final Collection<LengthConstraint> constraints) {
         final StringBuilder sb = new StringBuilder();
         final Collection<String> expressions = createExpressions(constraints);
 
@@ -107,12 +119,10 @@ final class LengthGenerator {
         return sb.toString();
     }
 
-    static String generateLengthChecker(final String member, final Type type, final Collection<LengthConstraint> constraints) {
-        if (TypeUtils.getBaseYangType(type).getName().contains("[")) {
-            return generateArrayLengthChecker(member, constraints);
-        } else {
-            return generateStringLengthChecker(member, constraints);
-        }
+    static String generateLengthChecker(final String member, final Type type,
+            final Collection<LengthConstraint> constraints) {
+        return TypeUtils.getBaseYangType(type).getName().indexOf('[') != -1
+                ? generateArrayLengthChecker(member, constraints) : generateStringLengthChecker(member, constraints);
     }
 
     static String generateLengthCheckerCall(@Nullable final String member, @Nonnull final String valueReference) {
