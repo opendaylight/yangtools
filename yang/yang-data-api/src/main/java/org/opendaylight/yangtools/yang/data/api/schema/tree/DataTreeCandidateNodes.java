@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import java.util.Collection;
 import java.util.Iterator;
 import javax.annotation.Nonnull;
@@ -122,7 +123,7 @@ public final class DataTreeCandidateNodes {
         private final Iterator<DataTreeCandidateNode> iterator;
 
         AbstractNodeIterator(final Iterator<DataTreeCandidateNode> iterator) {
-            this.iterator = Preconditions.checkNotNull(iterator);
+            this.iterator = requireNonNull(iterator);
         }
 
         AbstractNodeIterator next(final DataTreeModificationCursor cursor) {

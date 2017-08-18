@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -26,9 +28,9 @@ final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements Curs
 
     InMemoryDataTreeSnapshot(final SchemaContext schemaContext, final TreeNode rootNode,
             final RootModificationApplyOperation applyOper) {
-        this.schemaContext = Preconditions.checkNotNull(schemaContext);
-        this.rootNode = Preconditions.checkNotNull(rootNode);
-        this.applyOper = Preconditions.checkNotNull(applyOper);
+        this.schemaContext = requireNonNull(schemaContext);
+        this.rootNode = requireNonNull(rootNode);
+        this.applyOper = requireNonNull(applyOper);
     }
 
     TreeNode getRootNode() {
@@ -57,7 +59,7 @@ final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements Curs
         }
 
         final NormalizedNode<?, ?> root = maybeRoot.get();
-        Preconditions.checkArgument(root instanceof NormalizedNodeContainer, "Child %s is not a container", path);
+        checkArgument(root instanceof NormalizedNodeContainer, "Child %s is not a container", path);
         return openCursor(new InMemoryDataTreeSnapshotCursor(this, path, (NormalizedNodeContainer<?, ?, ?>)root));
     }
 

@@ -13,7 +13,6 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
 import java.util.ArrayList;
@@ -362,7 +361,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     @SuppressWarnings("checkstyle:illegalCatch")
     private void completePhaseActions() throws ReactorException {
         Preconditions.checkState(currentPhase != null);
-        final List<SourceSpecificContext> sourcesToProgress = Lists.newArrayList(sources);
+        final List<SourceSpecificContext> sourcesToProgress = new ArrayList<>(sources);
         if (!libSources.isEmpty()) {
             Preconditions.checkState(currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
                     "Yang library sources should be empty after ModelProcessingPhase.SOURCE_PRE_LINKAGE, "

@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
@@ -27,7 +29,7 @@ public abstract class AbstractNodeDataWithSchema {
     private Map<QName, String> attributes;
 
     public AbstractNodeDataWithSchema(final DataSchemaNode schema) {
-        this.schema = Preconditions.checkNotNull(schema);
+        this.schema = requireNonNull(schema);
     }
 
     /**
@@ -45,8 +47,8 @@ public abstract class AbstractNodeDataWithSchema {
      * @param attributes parsed attributes
      */
     public final void setAttributes(final Map<QName, String> attributes) {
-        Preconditions.checkState(this.attributes == null, "Node '%s' has already set its attributes to %s.",
-                getSchema().getQName(), this.attributes);
+        checkState(this.attributes == null, "Node '%s' has already set its attributes to %s.", getSchema().getQName(),
+                this.attributes);
         this.attributes = attributes;
     }
 

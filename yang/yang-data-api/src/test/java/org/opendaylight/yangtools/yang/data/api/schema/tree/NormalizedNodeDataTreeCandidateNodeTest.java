@@ -16,10 +16,10 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -45,7 +45,7 @@ public class NormalizedNodeDataTreeCandidateNodeTest {
 
         assertEquals(ModificationType.WRITE, normalizedNodeDataTreeCandidateNode.getModificationType());
         assertEquals(Optional.of(mockedNormalizedNode), normalizedNodeDataTreeCandidateNode.getDataAfter());
-        assertEquals(Optional.absent(), normalizedNodeDataTreeCandidateNode.getDataBefore());
+        assertEquals(Optional.empty(), normalizedNodeDataTreeCandidateNode.getDataBefore());
 
         final NormalizedNodeContainer mockedNormalizedNodeContainer = mock(NormalizedNodeContainer.class);
         final NormalizedNodeDataTreeCandidateNode normalizedNodeDataTreeCandidateNode2 = new
@@ -58,7 +58,7 @@ public class NormalizedNodeDataTreeCandidateNodeTest {
         final Collection<DataTreeCandidateNode> childNodes2 = normalizedNodeDataTreeCandidateNode2.getChildNodes();
         assertEquals(3, childNodes2.size());
 
-        doReturn(Optional.absent()).when(mockedNormalizedNodeContainer).getChild(any(PathArgument.class));
+        doReturn(Optional.empty()).when(mockedNormalizedNodeContainer).getChild(any(PathArgument.class));
         assertNull(normalizedNodeDataTreeCandidateNode2.getModifiedChild(mockedPathArgument));
 
         doReturn(Optional.of(mockedChildNormNode1)).when(mockedNormalizedNodeContainer).getChild(

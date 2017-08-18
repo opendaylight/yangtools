@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.util.codec;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Verify;
+import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
@@ -51,8 +52,8 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
     private final SchemaContext schemaContext;
 
     protected AbstractCodecFactory(final SchemaContext schemaContext, final CodecCache<T> cache) {
-        this.schemaContext = Preconditions.checkNotNull(schemaContext);
-        this.cache = Preconditions.checkNotNull(cache);
+        this.schemaContext = requireNonNull(schemaContext);
+        this.cache = requireNonNull(cache);
     }
 
     public final SchemaContext getSchemaContext() {
@@ -162,13 +163,13 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
             return null;
         }
 
-        return cache.getSimple(type, Verify.verifyNotNull(ret));
+        return cache.getSimple(type, verifyNotNull(ret));
     }
 
     private static boolean isSimpleUnion(final UnionTypeDefinition union) {
         for (TypeDefinition<?> t : union.getTypes()) {
             if (t instanceof IdentityrefTypeDefinition || t instanceof LeafrefTypeDefinition
-                    || (t instanceof UnionTypeDefinition && !isSimpleUnion((UnionTypeDefinition) t))) {
+                    || t instanceof UnionTypeDefinition && !isSimpleUnion((UnionTypeDefinition) t)) {
                 LOG.debug("Type {} has non-simple subtype", t);
                 return false;
             }
@@ -184,7 +185,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
         } else if (type instanceof LeafrefTypeDefinition) {
             final TypeDefinition<?> target = SchemaContextUtil.getBaseTypeForLeafRef((LeafrefTypeDefinition) type,
                 schemaContext, schema);
-            Verify.verifyNotNull(target, "Unable to find base type for leafref node %s type %s.", schema.getPath(),
+            verifyNotNull(target, "Unable to find base type for leafref node %s type %s.", schema.getPath(),
                     target);
 
             final T ret = getSimpleCodecFor(target);
@@ -203,8 +204,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
         for (TypeDefinition<?> type : types) {
             T codec = cache.lookupSimple(type);
             if (codec == null) {
-                codec = Verify.verifyNotNull(getSimpleCodecFor(type), "Type %s did not resolve to a simple codec",
-                    type);
+                codec = verifyNotNull(getSimpleCodecFor(type), "Type %s did not resolve to a simple codec", type);
             }
 
             codecs.add(codec);
@@ -226,7 +226,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
                 }
             }
 
-            codecs.add(Verify.verifyNotNull(codec, "Schema %s subtype %s has no codec", schema, type));
+            codecs.add(verifyNotNull(codec, "Schema %s subtype %s has no codec", schema, type));
         }
 
         return unionCodec(union, codecs);

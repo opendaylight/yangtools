@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import com.google.common.base.Optional;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * AugmentationSchema represents augment definition. The "augment" statement

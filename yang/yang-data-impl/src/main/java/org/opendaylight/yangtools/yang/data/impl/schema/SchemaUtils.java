@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -22,6 +21,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -77,7 +77,7 @@ public final class SchemaUtils {
                 }
             }
         }
-        return Optional.fromNullable(schema);
+        return Optional.ofNullable(schema);
     }
 
     /**
@@ -139,7 +139,7 @@ public final class SchemaUtils {
     }
 
     public static AugmentationSchema findSchemaForAugment(final ChoiceSchemaNode schema, final Set<QName> qnames) {
-        Optional<AugmentationSchema> schemaForAugment = Optional.absent();
+        Optional<AugmentationSchema> schemaForAugment = Optional.empty();
 
         for (final ChoiceCaseNode choiceCaseNode : schema.getCases()) {
             schemaForAugment = findAugment(choiceCaseNode, qnames);
@@ -163,7 +163,7 @@ public final class SchemaUtils {
             }
         }
 
-        return Optional.absent();
+        return Optional.empty();
     }
 
     /**
@@ -354,7 +354,7 @@ public final class SchemaUtils {
             }
         }
 
-        return Optional.absent();
+        return Optional.empty();
     }
 
     public static boolean belongsToCaseAugment(final ChoiceCaseNode caseNode,
@@ -464,13 +464,13 @@ public final class SchemaUtils {
         if (node instanceof DataNodeContainer) {
             child = ((DataNodeContainer) node).getDataChildByName(qname);
             if (child == null && node instanceof SchemaContext) {
-                child = tryFindRpc((SchemaContext) node, qname).orNull();
+                child = tryFindRpc((SchemaContext) node, qname).orElse(null);
             }
             if (child == null && node instanceof NotificationNodeContainer) {
-                child = tryFindNotification((NotificationNodeContainer) node, qname).orNull();
+                child = tryFindNotification((NotificationNodeContainer) node, qname).orElse(null);
             }
             if (child == null && node instanceof ActionNodeContainer) {
-                child = tryFindAction((ActionNodeContainer) node, qname).orNull();
+                child = tryFindAction((ActionNodeContainer) node, qname).orElse(null);
             }
         } else if (node instanceof ChoiceSchemaNode) {
             child = ((ChoiceSchemaNode) node).getCaseNodeByName(qname);
@@ -516,7 +516,7 @@ public final class SchemaUtils {
     public static SchemaNode findChildSchemaByQName(final SchemaNode node, final QName qname) {
         SchemaNode child = findDataChildSchemaByQName(node, qname);
         if (child == null && node instanceof DataNodeContainer) {
-            child = tryFindGroupings((DataNodeContainer) node, qname).orNull();
+            child = tryFindGroupings((DataNodeContainer) node, qname).orElse(null);
         }
 
         return child;
@@ -580,32 +580,28 @@ public final class SchemaUtils {
             childNodes.add(dataNode);
         }
         if (node instanceof DataNodeContainer) {
-            final SchemaNode groupingNode = tryFindGroupings((DataNodeContainer) node, qname).orNull();
-            if (groupingNode != null) {
-                childNodes.add(groupingNode);
-            }
+            tryFindGroupings((DataNodeContainer) node, qname).ifPresent(childNodes::add);
         }
         return childNodes.isEmpty() ? Collections.emptyList() : ImmutableList.copyOf(childNodes);
     }
 
     private static Optional<SchemaNode> tryFindGroupings(final DataNodeContainer dataNodeContainer, final QName qname) {
         return Optional
-                .fromNullable(Iterables.find(dataNodeContainer.getGroupings(), new SchemaNodePredicate(qname), null));
+                .ofNullable(Iterables.find(dataNodeContainer.getGroupings(), new SchemaNodePredicate(qname), null));
     }
 
     private static Optional<SchemaNode> tryFindRpc(final SchemaContext ctx, final QName qname) {
-        return Optional.fromNullable(Iterables.find(ctx.getOperations(), new SchemaNodePredicate(qname), null));
+        return Optional.ofNullable(Iterables.find(ctx.getOperations(), new SchemaNodePredicate(qname), null));
     }
 
     private static Optional<SchemaNode> tryFindNotification(final NotificationNodeContainer notificationContanier,
             final QName qname) {
-        return Optional.fromNullable(
+        return Optional.ofNullable(
                 Iterables.find(notificationContanier.getNotifications(), new SchemaNodePredicate(qname), null));
     }
 
     private static Optional<SchemaNode> tryFindAction(final ActionNodeContainer actionContanier, final QName qname) {
-        return Optional.fromNullable(Iterables.find(actionContanier.getActions(), new SchemaNodePredicate(qname),
-            null));
+        return Optional.ofNullable(Iterables.find(actionContanier.getActions(), new SchemaNodePredicate(qname), null));
     }
 
     private static final class SchemaNodePredicate implements Predicate<SchemaNode> {

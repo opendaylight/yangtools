@@ -8,14 +8,15 @@
 
 package org.opendaylight.yangtools.util.concurrent;
 
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.util.concurrent.AbstractCheckedFuture;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
 import javax.annotation.Nonnull;
 
 /**
@@ -39,7 +40,7 @@ public final class MappingCheckedFuture<V, X extends Exception> extends Abstract
 
     private MappingCheckedFuture(final ListenableFuture<V> delegate, final Function<Exception, X> mapper) {
         super(delegate);
-        this.mapper = Preconditions.checkNotNull(mapper);
+        this.mapper = requireNonNull(mapper);
     }
 
     /**
