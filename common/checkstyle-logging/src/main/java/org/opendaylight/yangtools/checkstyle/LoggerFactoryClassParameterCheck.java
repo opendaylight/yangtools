@@ -8,10 +8,10 @@
 
 package org.opendaylight.yangtools.checkstyle;
 
-import com.google.common.base.Optional;
 import com.puppycrawl.tools.checkstyle.api.AbstractCheck;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
+import java.util.Optional;
 
 public class LoggerFactoryClassParameterCheck extends AbstractCheck {
 
@@ -24,7 +24,7 @@ public class LoggerFactoryClassParameterCheck extends AbstractCheck {
     }
 
     @Override
-    public void visitToken(DetailAST ast) {
+    public void visitToken(final DetailAST ast) {
         final String methodName = CheckLoggingUtil.getMethodName(ast);
         if (methodName.equals(METHOD_NAME)) {
             final String className = CheckLoggingUtil.getClassName(ast);
@@ -40,7 +40,7 @@ public class LoggerFactoryClassParameterCheck extends AbstractCheck {
         }
     }
 
-    protected Optional<String> getFirstArgument(DetailAST ast) {
+    protected Optional<String> getFirstArgument(final DetailAST ast) {
         final DetailAST findFirstToken = ast.findFirstToken(TokenTypes.ELIST);
         if (findFirstToken != null) {
             DetailAST childToken = findFirstToken.getFirstChild();
@@ -54,7 +54,7 @@ public class LoggerFactoryClassParameterCheck extends AbstractCheck {
                 }
             }
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
 }

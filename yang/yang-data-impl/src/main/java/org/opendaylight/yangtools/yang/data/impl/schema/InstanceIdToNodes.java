@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 import javax.xml.transform.dom.DOMSource;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -134,7 +134,6 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
             if (deepestChild.isPresent()) {
                 final NormalizedNode<?, ?> child = deepestChild.get();
                 Preconditions.checkState(child instanceof AnyXmlNode);
-
                 final NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> anyXmlBuilder =
                         Builders.anyXmlBuilder().withNodeIdentifier(getIdentifier()).withValue(
                             ((AnyXmlNode) child).getValue());
@@ -159,7 +158,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
         if (potential == null) {
             potential = findChoice(Iterables.filter(parent.getChildNodes(), ChoiceSchemaNode.class), child);
         }
-        return Optional.fromNullable(potential);
+        return Optional.ofNullable(potential);
     }
 
     static InstanceIdToNodes<?> fromSchemaAndQNameChecked(final DataNodeContainer schema, final QName child) {

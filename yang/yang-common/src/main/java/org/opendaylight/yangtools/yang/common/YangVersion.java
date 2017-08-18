@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import java.util.Arrays;
 import java.util.Map;
@@ -38,8 +39,8 @@ public enum YangVersion {
     private String reference;
 
     YangVersion(final String str, final String reference) {
-        this.str = Preconditions.checkNotNull(str);
-        this.reference = Preconditions.checkNotNull(reference);
+        this.str = requireNonNull(str);
+        this.reference = requireNonNull(reference);
     }
 
     /**
@@ -50,7 +51,7 @@ public enum YangVersion {
      * @throws NullPointerException if the string is null
      */
     public static Optional<YangVersion> parse(@Nonnull final String str) {
-        return Optional.ofNullable(YANG_VERSION_MAP.get(Preconditions.checkNotNull(str)));
+        return Optional.ofNullable(YANG_VERSION_MAP.get(requireNonNull(str)));
     }
 
     /**

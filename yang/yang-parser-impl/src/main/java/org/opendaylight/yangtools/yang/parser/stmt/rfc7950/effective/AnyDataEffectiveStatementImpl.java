@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc7950.effective;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Optional;
 import java.util.Objects;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -42,7 +42,7 @@ public final class AnyDataEffectiveStatementImpl extends AbstractEffectiveDataSc
 
     @Override
     public Optional<AnyDataSchemaNode> getOriginal() {
-        return Optional.fromNullable(original);
+        return Optional.ofNullable(original);
     }
 
     @Override

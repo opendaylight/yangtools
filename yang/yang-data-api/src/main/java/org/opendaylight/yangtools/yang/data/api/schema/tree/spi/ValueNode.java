@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.slf4j.Logger;
@@ -29,7 +29,7 @@ final class ValueNode extends AbstractTreeNode {
     @Override
     public Optional<TreeNode> getChild(final PathArgument childId) {
         LOG.warn("Attempted to access child {} of value-node {}", childId, this);
-        return Optional.absent();
+        return Optional.empty();
     }
 
     @Override

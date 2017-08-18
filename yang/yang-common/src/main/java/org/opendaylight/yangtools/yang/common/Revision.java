@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
@@ -37,12 +38,12 @@ public abstract class Revision implements Comparable<Revision>, Serializable {
         private String str;
 
         ForDate(final Date date) {
-            this.date = Preconditions.checkNotNull(date);
+            this.date = requireNonNull(date);
         }
 
         ForDate(final Date date, final String str) {
-            this.date = Preconditions.checkNotNull(date);
-            this.str = Preconditions.checkNotNull(str);
+            this.date = requireNonNull(date);
+            this.str = requireNonNull(str);
         }
 
         @Override
@@ -78,7 +79,7 @@ public abstract class Revision implements Comparable<Revision>, Serializable {
         }
 
         Proxy(final String str) {
-            this.str = Preconditions.checkNotNull(str);
+            this.str = requireNonNull(str);
         }
 
         @Override
