@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.jaxen;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import org.jaxen.DefaultNavigator;
@@ -49,7 +50,7 @@ final class NormalizedNodeNavigator extends DefaultNavigator implements NamedAcc
     private final JaxenDocument document;
 
     NormalizedNodeNavigator(final ConverterNamespaceContext context, final JaxenDocument document) {
-        this.namespaceContext = Preconditions.checkNotNull(context);
+        this.namespaceContext = requireNonNull(context);
         this.document = document;
     }
 
@@ -327,7 +328,7 @@ final class NormalizedNodeNavigator extends DefaultNavigator implements NamedAcc
         private NormalizedNodeContext next;
 
         NormalizedNodeContextIterator(final NormalizedNodeContext initial) {
-            this.next = Preconditions.checkNotNull(initial);
+            this.next = requireNonNull(initial);
         }
 
         @Override

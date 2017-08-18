@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.jaxen;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Converter;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import java.util.Optional;
 import org.jaxen.ContextSupport;
 import org.jaxen.SimpleVariableContext;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -41,7 +42,7 @@ final class NormalizedNodeContextSupport extends ContextSupport {
         NormalizedNodeContext result = root;
         for (PathArgument arg : path.getPathArguments()) {
             final Optional<NormalizedNode<?, ?>> node = NormalizedNodes.getDirectChild(result.getNode(), arg);
-            Preconditions.checkArgument(node.isPresent(), "Node %s has no child %s", result.getNode(), arg);
+            checkArgument(node.isPresent(), "Node %s has no child %s", result.getNode(), arg);
             result = new NormalizedNodeContext(this, node.get(), result);
         }
 

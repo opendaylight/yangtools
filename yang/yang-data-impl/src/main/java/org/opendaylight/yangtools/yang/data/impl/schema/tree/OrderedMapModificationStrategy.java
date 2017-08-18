@@ -10,8 +10,9 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import com.google.common.base.Optional;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import java.util.Optional;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
@@ -47,11 +48,8 @@ final class OrderedMapModificationStrategy extends AbstractNodeContainerModifica
     }
 
     @Override
-    public Optional<ModificationApplyOperation> getChild(final YangInstanceIdentifier.PathArgument identifier) {
-        if (identifier instanceof YangInstanceIdentifier.NodeIdentifierWithPredicates) {
-            return entryStrategy;
-        }
-        return Optional.absent();
+    public Optional<ModificationApplyOperation> getChild(final PathArgument identifier) {
+        return identifier instanceof NodeIdentifierWithPredicates ? entryStrategy : Optional.empty();
     }
 
     @Override

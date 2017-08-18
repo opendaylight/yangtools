@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import java.util.Map.Entry;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -83,7 +83,7 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
         @Override
         protected NormalizedNodeAttrBuilder<NodeWithValue, Object, LeafSetEntryNode<Object>> getBuilder(
                 final PathArgument node) {
-            Preconditions.checkArgument(node instanceof NodeWithValue);
+            checkArgument(node instanceof NodeWithValue);
             return Builders.leafSetEntryBuilder().withNodeIdentifier((NodeWithValue<?>) node)
                     .withValue(((NodeWithValue<?>) node).getValue());
         }

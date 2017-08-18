@@ -8,8 +8,6 @@
 
 package org.opendaylight.yangtools.yang.model.util;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Supplier;
 import com.google.common.collect.SetMultimap;
 import java.net.URI;
 import java.util.ArrayList;
@@ -20,6 +18,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.annotation.Nonnull;
@@ -40,7 +39,6 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
-
 public abstract class AbstractSchemaContext implements SchemaContext {
     protected static final Comparator<Module> REVISION_COMPARATOR = (o1, o2) -> {
         if (o2.getRevision() == null) {
@@ -50,7 +48,9 @@ public abstract class AbstractSchemaContext implements SchemaContext {
         return o2.getRevision().compareTo(o1.getRevision());
     };
 
-    protected static final Supplier<TreeSet<Module>> MODULE_SET_SUPPLIER = () -> new TreeSet<>(REVISION_COMPARATOR);
+    protected static final TreeSet<Module> createModuleSet() {
+        return new TreeSet<>(REVISION_COMPARATOR);
+    }
 
     /**
      * Returns the ModuleIdentifier-to-YANG source mapping.
@@ -245,8 +245,6 @@ public abstract class AbstractSchemaContext implements SchemaContext {
 
     @Override
     public Optional<String> getModuleSource(final ModuleIdentifier moduleIdentifier) {
-        String maybeSource = getIdentifiersToSources().get(moduleIdentifier);
-        return Optional.fromNullable(maybeSource);
+        return Optional.ofNullable(getIdentifiersToSources().get(moduleIdentifier));
     }
-
 }

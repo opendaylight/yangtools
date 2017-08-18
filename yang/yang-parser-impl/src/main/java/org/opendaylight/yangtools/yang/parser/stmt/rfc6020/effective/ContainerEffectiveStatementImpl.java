@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
@@ -49,7 +49,7 @@ public final class ContainerEffectiveStatementImpl extends AbstractEffectiveCont
 
     @Override
     public Optional<ContainerSchemaNode> getOriginal() {
-        return Optional.fromNullable(original);
+        return Optional.ofNullable(original);
     }
 
     @Override

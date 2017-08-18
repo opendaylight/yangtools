@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.util;
 
 import static org.junit.Assert.assertEquals;
@@ -14,8 +13,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.common.collect.UnmodifiableIterator;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -35,13 +34,9 @@ public class UnmodifiableCollectionTest {
         final Collection<Integer> testUnmodifiableCollection = UnmodifiableCollection.create(immutableTestList);
         assertNotNull(testUnmodifiableCollection);
 
-        final List<Integer> testList = Lists.newArrayList();
-        testList.add(1);
-        testList.add(2);
-        testList.add(3);
-        testList.add(4);
-        testList.add(5);
-
+        // Note: this cannot be ImmutableList, because UnmodifiableCollection does recognize it and returns it as is,
+        //       without converting it to an UnmodifiableCollection -- which is not what we want.
+        final List<Integer> testList = Arrays.asList(1, 2, 3, 4, 5);
         final Collection<Integer> testUnmodifiableCollection2 = UnmodifiableCollection.create(testList);
 
         final Iterator<Integer> iterator = testUnmodifiableCollection2.iterator();
