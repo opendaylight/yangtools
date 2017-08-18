@@ -32,7 +32,7 @@ public class BitsTypeTest {
         MockitoAnnotations.initMocks(this);
         doReturn("test").when(bit).getName();
 
-        QName qname = QName.create("TestQName");
+        QName qname = QName.create("namespace", "localname");
         SchemaPath schemaPath = SchemaPath.create(Collections.singletonList(qname), true);
 
         BitsTypeDefinition bitsType = BaseTypes.bitsTypeBuilder(schemaPath).addBit(bit).build();
