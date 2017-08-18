@@ -17,32 +17,25 @@ import java.util.Date;
 import org.junit.Test;
 
 public class QNameTest {
-    private final String namespace = "urn:foo";
-    private final String revision = "2013-12-24";
-    private final String localName = "bar";
-    private final URI ns = URI.create(namespace);
+    private static final String NAMESPACE = "urn:foo";
+    private static final String REVISION = "2013-12-24";
+    private static final String LOCALNAME = "bar";
+    private static final URI NS = URI.create(NAMESPACE);
 
     @Test
     public void testStringSerialization() throws Exception {
         {
-            QName qname = QName.create(namespace, revision, localName);
-            assertEquals(QName.QNAME_LEFT_PARENTHESIS + namespace + QName.QNAME_REVISION_DELIMITER
-                    + revision + QName.QNAME_RIGHT_PARENTHESIS + localName, qname.toString());
+            QName qname = QName.create(NAMESPACE, REVISION, LOCALNAME);
+            assertEquals(QName.QNAME_LEFT_PARENTHESIS + NAMESPACE + QName.QNAME_REVISION_DELIMITER
+                    + REVISION + QName.QNAME_RIGHT_PARENTHESIS + LOCALNAME, qname.toString());
             QName copied = QName.create(qname.toString());
             assertEquals(qname, copied);
         }
         // no revision
         {
-            QName qname = new QName(ns, localName);
-            assertEquals(QName.QNAME_LEFT_PARENTHESIS + namespace + QName.QNAME_RIGHT_PARENTHESIS
-                    + localName, qname.toString());
-            QName copied = QName.create(qname.toString());
-            assertEquals(qname, copied);
-        }
-        // no namespace nor revision
-        {
-            QName qname = new QName(null, localName);
-            assertEquals(localName, qname.toString());
+            QName qname = new QName(NS, LOCALNAME);
+            assertEquals(QName.QNAME_LEFT_PARENTHESIS + NAMESPACE + QName.QNAME_RIGHT_PARENTHESIS
+                    + LOCALNAME, qname.toString());
             QName copied = QName.create(qname.toString());
             assertEquals(qname, copied);
         }
@@ -63,33 +56,11 @@ public class QNameTest {
         final String A = "a";
         final String B = "b";
 
-        QName qa = QName.create(A);
-        QName qb = QName.create(A);
-        assertTrue(qa.compareTo(qb) == 0);
-        assertTrue(qb.compareTo(qa) == 0);
-
-        // compare with localName
-        qa = QName.create(A);
-        qb = QName.create(B);
-        assertTrue(qa.compareTo(qb) < 0);
-        assertTrue(qb.compareTo(qa) > 0);
-
         // compare with namespace
-        qa = QName.create(A, revision, A);
-        qb = QName.create(B, revision, A);
+        QName qa = QName.create(A, REVISION, A);
+        QName qb = QName.create(B, REVISION, A);
         assertTrue(qa.compareTo(qb) < 0);
         assertTrue(qb.compareTo(qa) > 0);
-
-        // compare with 1 null namespace
-        qa = QName.create(null, QName.parseRevision(revision), A);
-        qb = QName.create(URI.create(A), QName.parseRevision(revision), A);
-        assertTrue(qa.compareTo(qb) < 0);
-        assertTrue(qb.compareTo(qa) > 0);
-
-        // compare with both null namespace
-        qb = QName.create(null, QName.parseRevision(revision), A);
-        assertTrue(qa.compareTo(qb) == 0);
-        assertTrue(qb.compareTo(qa) == 0);
 
         // compare with revision
         qa = QName.create(A, "2013-12-24", A);
@@ -99,7 +70,7 @@ public class QNameTest {
 
         // compare with 1 null revision
         qa = QName.create(URI.create(A), null, A);
-        qb = QName.create(URI.create(A), QName.parseRevision(revision), A);
+        qb = QName.create(URI.create(A), QName.parseRevision(REVISION), A);
         assertTrue(qa.compareTo(qb) < 0);
         assertTrue(qb.compareTo(qa) > 0);
 
@@ -111,9 +82,9 @@ public class QNameTest {
 
     @Test
     public void testQName() {
-        final QName qname = QName.create(namespace, revision, localName);
-        final QName qname1 = QName.create(namespace, localName);
-        final QName qname2 = QName.create(qname1, localName);
+        final QName qname = QName.create(NAMESPACE, REVISION, LOCALNAME);
+        final QName qname1 = QName.create(NAMESPACE, LOCALNAME);
+        final QName qname2 = QName.create(qname1, LOCALNAME);
         assertEquals(qname1, qname.withoutRevision());
         assertEquals(qname1, qname2);
         assertTrue(qname.isEqualWithoutRevision(qname1));
@@ -124,14 +95,14 @@ public class QNameTest {
 
     @Test
     public void testQNameModule() {
-        final QNameModule qnameModule = QNameModule.create(ns, new Date());
+        final QNameModule qnameModule = QNameModule.create(NS, new Date());
         assertNotNull(qnameModule.toString());
         assertNotNull(qnameModule.getRevisionNamespace());
     }
 
     private static void assertLocalNameFails(final String localName) {
         try {
-            new QName(null, localName);
+            new QName(NS, localName);
             fail("Local name should fail:" + localName);
         } catch (IllegalArgumentException e) {
             // Expected
