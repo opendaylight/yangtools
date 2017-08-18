@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.Collection;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -102,7 +102,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             return NormalizedNodes.findNode(key, data, path);
         }
 
-        return Optional.absent();
+        return Optional.empty();
     }
 
     private Optional<TreeNode> resolveSnapshot(final YangInstanceIdentifier path, final ModifiedNode modification) {

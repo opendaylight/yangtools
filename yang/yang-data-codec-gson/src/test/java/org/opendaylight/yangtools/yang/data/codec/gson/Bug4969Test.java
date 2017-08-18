@@ -10,12 +10,13 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import com.google.common.base.Optional;
+
 import com.google.gson.stream.JsonReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -53,14 +54,14 @@ public class Bug4969Test {
 
         assertTrue(transformedInput instanceof ContainerNode);
         ContainerNode root = (ContainerNode) transformedInput;
-        Optional<DataContainerChild<? extends PathArgument, ?>> ref1 = root.getChild(NodeIdentifier.create((QName
-                .create("foo", "2016-01-22", "ref1"))));
-        Optional<DataContainerChild<? extends PathArgument, ?>> ref2 = root.getChild(NodeIdentifier.create((QName
-                .create("foo", "2016-01-22", "ref2"))));
-        Optional<DataContainerChild<? extends PathArgument, ?>> ref3 = root.getChild(NodeIdentifier.create((QName
-                .create("foo", "2016-01-22", "ref3"))));
-        Optional<DataContainerChild<? extends PathArgument, ?>> ref4 = root.getChild(NodeIdentifier.create((QName
-                .create("foo", "2016-01-22", "ref4"))));
+        Optional<DataContainerChild<? extends PathArgument, ?>> ref1 = root.getChild(NodeIdentifier.create(QName
+                .create("foo", "2016-01-22", "ref1")));
+        Optional<DataContainerChild<? extends PathArgument, ?>> ref2 = root.getChild(NodeIdentifier.create(QName
+                .create("foo", "2016-01-22", "ref2")));
+        Optional<DataContainerChild<? extends PathArgument, ?>> ref3 = root.getChild(NodeIdentifier.create(QName
+                .create("foo", "2016-01-22", "ref3")));
+        Optional<DataContainerChild<? extends PathArgument, ?>> ref4 = root.getChild(NodeIdentifier.create(QName
+                .create("foo", "2016-01-22", "ref4")));
 
         assertTrue(ref1.isPresent());
         assertTrue(ref2.isPresent());

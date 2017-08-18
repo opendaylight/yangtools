@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -98,7 +98,7 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
 
     @Override
     public Optional<ChoiceSchemaNode> getOriginal() {
-        return Optional.fromNullable(original);
+        return Optional.ofNullable(original);
     }
 
     @Override

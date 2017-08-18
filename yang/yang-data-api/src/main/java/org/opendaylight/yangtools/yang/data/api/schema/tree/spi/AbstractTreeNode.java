@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
@@ -21,8 +22,8 @@ abstract class AbstractTreeNode implements TreeNode {
     private final Version version;
 
     protected AbstractTreeNode(final NormalizedNode<?, ?> data, final Version version) {
-        this.data = Preconditions.checkNotNull(data);
-        this.version = Preconditions.checkNotNull(version);
+        this.data = requireNonNull(data);
+        this.version = requireNonNull(version);
     }
 
     @Override

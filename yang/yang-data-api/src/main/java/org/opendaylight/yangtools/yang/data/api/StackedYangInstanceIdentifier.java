@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Verify;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import java.io.IOException;
@@ -44,8 +46,8 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
     StackedYangInstanceIdentifier(final YangInstanceIdentifier parent, final PathArgument pathArgument,
             final int hash) {
         super(hash);
-        this.parent = Preconditions.checkNotNull(parent);
-        this.pathArgument = Preconditions.checkNotNull(pathArgument);
+        this.parent = requireNonNull(parent);
+        this.pathArgument = requireNonNull(pathArgument);
     }
 
     @Override
@@ -65,7 +67,7 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
     @Nonnull
     @Override
     public YangInstanceIdentifier getAncestor(final int depth) {
-        Preconditions.checkArgument(depth >= 0, "Steps cannot be negative");
+        checkArgument(depth >= 0, "Steps cannot be negative");
 
         // Calculate how far up our FixedYangInstanceIdentifier ancestor is
         int stackedDepth = 1;
@@ -83,7 +85,7 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
 
         // Calculate our depth and check argument
         final int ourDepth = stackedDepth + fixedDepth;
-        Preconditions.checkArgument(depth <= ourDepth, "Depth %s exceeds maximum depth %s", depth, ourDepth);
+        checkArgument(depth <= ourDepth, "Depth %s exceeds maximum depth %s", depth, ourDepth);
 
         // Requested depth is covered by the stack, traverse up for specified number of steps
         final int toWalk = ourDepth - depth;
@@ -107,7 +109,7 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
             final List<PathArgument> stack = new ArrayList<>();
             YangInstanceIdentifier current = this;
             do {
-                Verify.verify(current instanceof StackedYangInstanceIdentifier);
+                verify(current instanceof StackedYangInstanceIdentifier);
                 final StackedYangInstanceIdentifier stacked = (StackedYangInstanceIdentifier) current;
                 stack.add(stacked.getLastPathArgument());
                 current = stacked.getParent();

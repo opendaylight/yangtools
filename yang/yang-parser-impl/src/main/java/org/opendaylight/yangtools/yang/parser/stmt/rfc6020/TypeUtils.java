@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -22,6 +21,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -158,8 +158,8 @@ public final class TypeUtils {
     public static List<RangeConstraint> parseRangeListFromString(final StmtContext<?, ?, ?> ctx,
                                                                  final String rangeArgument) {
 
-        final Optional<String> description = Optional.absent();
-        final Optional<String> reference = Optional.absent();
+        final Optional<String> description = Optional.empty();
+        final Optional<String> reference = Optional.empty();
 
         final List<RangeConstraint> rangeConstraints = new ArrayList<>();
 
@@ -195,8 +195,8 @@ public final class TypeUtils {
 
     public static List<LengthConstraint> parseLengthListFromString(final StmtContext<?, ?, ?> ctx,
             final String lengthArgument) {
-        final Optional<String> description = Optional.absent();
-        final Optional<String> reference = Optional.absent();
+        final Optional<String> description = Optional.empty();
+        final Optional<String> reference = Optional.empty();
 
         final List<LengthConstraint> lengthConstraints = new ArrayList<>();
 

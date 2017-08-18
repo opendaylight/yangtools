@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.Verify;
 import java.util.Map;
 import org.opendaylight.yangtools.util.MapAdaptor;
@@ -30,7 +31,7 @@ abstract class AbstractMutableContainerNode implements MutableTreeNode {
         this.data = parent.getData();
         this.version = parent.getVersion();
         this.subtreeVersion = parent.getSubtreeVersion();
-        this.children = Preconditions.checkNotNull(children);
+        this.children = requireNonNull(children);
     }
 
     protected final Version getVersion() {
@@ -48,7 +49,7 @@ abstract class AbstractMutableContainerNode implements MutableTreeNode {
 
     @Override
     public final void setSubtreeVersion(final Version subtreeVersion) {
-        this.subtreeVersion = Preconditions.checkNotNull(subtreeVersion);
+        this.subtreeVersion = requireNonNull(subtreeVersion);
     }
 
     @Override
@@ -63,7 +64,7 @@ abstract class AbstractMutableContainerNode implements MutableTreeNode {
 
     @Override
     public final void setData(final NormalizedNode<?, ?> data) {
-        this.data = Preconditions.checkNotNull(data);
+        this.data = requireNonNull(data);
     }
 
     @Override

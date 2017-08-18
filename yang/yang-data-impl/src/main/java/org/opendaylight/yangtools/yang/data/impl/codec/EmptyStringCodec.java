@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.EmptyCodec;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 
@@ -18,7 +18,7 @@ final class EmptyStringCodec extends TypeDefinitionAwareCodec<Void, EmptyTypeDef
     static final EmptyStringCodec INSTANCE = new EmptyStringCodec();
 
     private EmptyStringCodec() {
-        super(Optional.absent(), Void.class);
+        super(Optional.empty(), Void.class);
     }
 
     @Override

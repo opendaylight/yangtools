@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.Objects;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
 public class RangeConstraintEffectiveImpl implements RangeConstraint {
@@ -26,7 +26,7 @@ public class RangeConstraintEffectiveImpl implements RangeConstraint {
 
     public RangeConstraintEffectiveImpl(final Number min, final Number max, final Optional<String> description,
             final Optional<String> reference) {
-        this(min, max, description.orNull(), reference.orNull(), "range-out-of-specified-bounds",
+        this(min, max, description.orElse(null), reference.orElse(null), "range-out-of-specified-bounds",
                 "The argument is out of bounds <" + min + ", " + max + ">");
     }
 

@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.Strings;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -76,7 +78,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     final XMLStreamWriter writer;
 
     XMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer) {
-        this.writer = Preconditions.checkNotNull(writer);
+        this.writer = requireNonNull(writer);
         this.prefixes = new RandomPrefix(writer.getNamespaceContext());
     }
 
@@ -194,11 +196,11 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
 
     void anyxmlNode(final QName qname, final Object value) throws IOException {
         if (value != null) {
-            Preconditions.checkArgument(value instanceof DOMSource, "AnyXML value must be DOMSource, not %s", value);
+            checkArgument(value instanceof DOMSource, "AnyXML value must be DOMSource, not %s", value);
             final DOMSource domSource = (DOMSource) value;
-            Preconditions.checkNotNull(domSource.getNode());
-            Preconditions.checkArgument(domSource.getNode().getNodeName().equals(qname.getLocalName()));
-            Preconditions.checkArgument(domSource.getNode().getNamespaceURI().equals(qname.getNamespace().toString()));
+            requireNonNull(domSource.getNode());
+            checkArgument(domSource.getNode().getNodeName().equals(qname.getLocalName()));
+            checkArgument(domSource.getNode().getNamespaceURI().equals(qname.getNamespace().toString()));
             try {
                 // TODO can the transformer be a constant ? is it thread safe ?
                 final Transformer transformer = TRANSFORMER_FACTORY.newTransformer();

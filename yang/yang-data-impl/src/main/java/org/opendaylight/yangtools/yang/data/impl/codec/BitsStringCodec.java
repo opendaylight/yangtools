@@ -9,13 +9,13 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.data.api.codec.BitsCodec;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -35,7 +35,7 @@ public final class BitsStringCodec extends TypeDefinitionAwareCodec<Set<String>,
 
     @SuppressWarnings("unchecked")
     private BitsStringCodec(final Optional<BitsTypeDefinition> typeDef) {
-        super(typeDef, (Class<Set<String>>) ((Class<?>) Set.class));
+        super(typeDef, (Class<Set<String>>) (Class<?>) Set.class);
         if (typeDef.isPresent()) {
             validBits = ImmutableSet.copyOf(Collections2.transform(typeDef.get().getBits(), Bit::getName));
         } else {

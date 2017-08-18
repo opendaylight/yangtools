@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.repo.util;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -30,6 +29,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -297,9 +297,9 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
             if (matcher.matches()) {
                 final String moduleName = matcher.group("moduleName");
                 final String revision = matcher.group("revision");
-                return Optional.of(RevisionSourceIdentifier.create(moduleName, Optional.fromNullable(revision)));
+                return Optional.of(RevisionSourceIdentifier.create(moduleName, Optional.ofNullable(revision)));
             }
-            return Optional.absent();
+            return Optional.empty();
         }
 
         @Override
