@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection.Builder;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import java.util.Optional;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -72,7 +72,7 @@ abstract class MandatoryLeafEnforcer implements Immutable {
                 } else {
                     final ConstraintDefinition constraints = child.getConstraints();
                     final Integer minElements = constraints.getMinElements();
-                    if (constraints.isMandatory() || (minElements != null && minElements.intValue() > 0)) {
+                    if (constraints.isMandatory() || minElements != null && minElements.intValue() > 0) {
                         final YangInstanceIdentifier childId = id.node(NodeIdentifier.create(child.getQName()));
                         LOG.debug("Adding mandatory child {}", childId);
                         builder.add(childId.toOptimized());

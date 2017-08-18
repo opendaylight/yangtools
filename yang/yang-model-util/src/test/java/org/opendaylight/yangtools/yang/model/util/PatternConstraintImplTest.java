@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.junit.Test;
 
 public class PatternConstraintImplTest {

@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import java.util.Objects;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.BooleanCodec;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 
@@ -35,8 +36,7 @@ public final class BooleanStringCodec extends TypeDefinitionAwareCodec<Boolean, 
         if (stringRepresentation == null) {
             return null;
         }
-        Preconditions.checkArgument("true".equalsIgnoreCase(stringRepresentation)
-            || "false".equalsIgnoreCase(stringRepresentation),
+        checkArgument("true".equalsIgnoreCase(stringRepresentation) || "false".equalsIgnoreCase(stringRepresentation),
             "Invalid value '%s' for boolean type. Allowed values are true and false", stringRepresentation);
         return Boolean.valueOf(stringRepresentation);
     }

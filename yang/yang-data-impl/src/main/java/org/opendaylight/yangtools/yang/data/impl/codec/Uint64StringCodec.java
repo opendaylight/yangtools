@@ -8,9 +8,9 @@
 
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import com.google.common.base.Optional;
 import java.math.BigInteger;
 import java.util.Objects;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint64Codec;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
@@ -18,7 +18,7 @@ final class Uint64StringCodec extends AbstractIntegerStringCodec<BigInteger, Uns
         Uint64Codec<String> {
 
     Uint64StringCodec(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
-        super(typeDef, extractRange(typeDef.orNull()), BigInteger.class);
+        super(typeDef, extractRange(typeDef.orElse(null)), BigInteger.class);
     }
 
     @Override

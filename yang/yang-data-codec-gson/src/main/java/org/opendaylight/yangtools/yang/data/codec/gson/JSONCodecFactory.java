@@ -8,12 +8,12 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Optional;
 import com.google.common.base.Stopwatch;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.util.List;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BinaryStringCodec;
@@ -158,7 +158,7 @@ public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
      * @throws NullPointerException if context is null
      */
     public static Optional<JSONCodecFactory> getPrecomputedIfAvailable(final SchemaContext context) {
-        return Optional.fromNullable(PRECOMPUTED.getIfPresent(context));
+        return Optional.ofNullable(PRECOMPUTED.getIfPresent(context));
     }
 
     /**

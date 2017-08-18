@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.api;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * YANG Schema revision source identifier.
@@ -60,7 +61,7 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
      *            Revision of source in format YYYY-mm-dd
      */
     RevisionSourceIdentifier(final String name, final String formattedRevision) {
-        super(Preconditions.checkNotNull(name), Preconditions.checkNotNull(formattedRevision));
+        super(requireNonNull(name), requireNonNull(formattedRevision));
     }
 
     /**

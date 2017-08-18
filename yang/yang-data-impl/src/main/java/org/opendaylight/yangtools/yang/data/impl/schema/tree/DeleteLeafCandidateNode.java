@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import java.util.Optional;
 import javax.annotation.Nonnull;
-import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 
@@ -26,7 +26,7 @@ final class DeleteLeafCandidateNode extends AbstractLeafCandidateNode {
     @Override
     @Nonnull
     public Optional<NormalizedNode<?, ?>> getDataAfter() {
-        return Optional.absent();
+        return Optional.empty();
     }
 
     @Override

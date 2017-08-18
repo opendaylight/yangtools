@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -535,7 +535,7 @@ public class LeafRefValidatation {
                 return currentNode;
             }
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     private static Iterable<QNameWithPredicate> nextLevel(final Iterable<QNameWithPredicate> path) {

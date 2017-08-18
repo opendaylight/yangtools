@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -78,7 +78,7 @@ public final class AugmentEffectiveStatementImpl extends
 
     @Override
     public Optional<AugmentationSchema> getOriginalDefinition() {
-        return Optional.fromNullable(this.copyOf);
+        return Optional.ofNullable(this.copyOf);
     }
 
     @Override

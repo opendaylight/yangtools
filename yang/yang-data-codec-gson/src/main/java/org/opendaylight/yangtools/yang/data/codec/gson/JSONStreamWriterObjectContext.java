@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -20,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  */
 class JSONStreamWriterObjectContext extends JSONStreamWriterQNameContext {
     protected JSONStreamWriterObjectContext(final JSONStreamWriterContext parent, final PathArgument arg, final boolean mandatory) {
-        super(Preconditions.checkNotNull(parent), arg.getNodeType(), mandatory);
+        super(requireNonNull(parent), arg.getNodeType(), mandatory);
     }
 
     @Override

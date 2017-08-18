@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.util;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ForwardingMap;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,7 +44,7 @@ final class ReadWriteTrieMap<K, V> extends ForwardingMap<K, V> {
     }
 
     ReadWriteTrieMap(final MutableTrieMap<K, V> delegate, final int size) {
-        this.delegate = Preconditions.checkNotNull(delegate);
+        this.delegate = requireNonNull(delegate);
         this.size = size;
     }
 

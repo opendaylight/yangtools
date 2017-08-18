@@ -8,8 +8,9 @@
 
 package org.opendaylight.yangtools.util.concurrent;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
@@ -47,8 +48,8 @@ public abstract class ExceptionMapper<X extends Exception> implements Function<E
      * @param exceptionType the exception type to which to translate.
      */
     public ExceptionMapper(final String opName, final Class<X> exceptionType) {
-        this.exceptionType = Preconditions.checkNotNull(exceptionType);
-        this.opName = Preconditions.checkNotNull(opName);
+        this.exceptionType = requireNonNull(exceptionType);
+        this.opName = requireNonNull(opName);
     }
 
     /**

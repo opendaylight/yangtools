@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -38,8 +39,8 @@ final class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
     private final boolean augmenting;
 
     CaseShorthandImpl(final DataSchemaNode caseShorthandNode) {
-        this.caseShorthandNode = Preconditions.checkNotNull(caseShorthandNode);
-        this.path = Preconditions.checkNotNull(caseShorthandNode.getPath().getParent());
+        this.caseShorthandNode = requireNonNull(caseShorthandNode);
+        this.path = requireNonNull(caseShorthandNode.getPath().getParent());
         this.original = getOriginalIfPresent(caseShorthandNode);
 
         // We need to cache this, as it will be reset
@@ -132,7 +133,7 @@ final class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
 
     @Override
     public Optional<? extends SchemaNode> getOriginal() {
-        return Optional.fromNullable(original);
+        return Optional.ofNullable(original);
     }
 
     @Override

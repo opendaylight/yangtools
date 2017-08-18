@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.util;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
 
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -34,9 +34,9 @@ public abstract class AbstractSchemaSourceCache<T extends SchemaSourceRepresenta
 
     protected AbstractSchemaSourceCache(final SchemaSourceRegistry consumer, final Class<T> representation,
             final Costs cost) {
-        this.consumer = Preconditions.checkNotNull(consumer);
-        this.representation = Preconditions.checkNotNull(representation);
-        this.cost = Preconditions.checkNotNull(cost);
+        this.consumer = requireNonNull(consumer);
+        this.representation = requireNonNull(representation);
+        this.cost = requireNonNull(cost);
     }
 
     /**

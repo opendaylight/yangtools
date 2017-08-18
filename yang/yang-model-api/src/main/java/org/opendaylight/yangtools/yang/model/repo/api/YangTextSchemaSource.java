@@ -8,18 +8,18 @@
 package org.opendaylight.yangtools.yang.model.repo.api;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map.Entry;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangNames;
@@ -33,7 +33,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
     private final SourceIdentifier identifier;
 
     protected YangTextSchemaSource(final SourceIdentifier identifier) {
-        this.identifier = Preconditions.checkNotNull(identifier);
+        this.identifier = requireNonNull(identifier);
     }
 
     public static SourceIdentifier identifierFromFilename(final String name) {
@@ -42,7 +42,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
 
         final String baseName = name.substring(0, name.length() - YangConstants.RFC6020_YANG_FILE_EXTENSION.length());
         final Entry<String, String> parsed = YangNames.parseFilename(baseName);
-        return RevisionSourceIdentifier.create(parsed.getKey(), Optional.fromNullable(parsed.getValue()));
+        return RevisionSourceIdentifier.create(parsed.getKey(), Optional.ofNullable(parsed.getValue()));
     }
 
     /**
@@ -81,7 +81,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @throws NullPointerException if file is null
      */
     public static YangTextSchemaSource forFile(final File file) {
-        Preconditions.checkArgument(file.isFile(), "Supplied file %s is not a file");
+        checkArgument(file.isFile(), "Supplied file %s is not a file");
         return new YangTextFileSchemaSource(identifierFromFilename(file.getName()), file);
     }
 

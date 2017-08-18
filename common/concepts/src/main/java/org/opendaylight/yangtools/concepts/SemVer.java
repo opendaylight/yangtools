@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.concepts;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import java.io.Serializable;
 import java.util.Objects;
 import javax.annotation.Nonnull;
@@ -24,11 +25,11 @@ public final class SemVer implements Comparable<SemVer>, Serializable {
     private final int patch;
 
     private SemVer(final int major, final int minor, final int patch) {
-        Preconditions.checkArgument(major >= 0);
+        checkArgument(major >= 0);
         this.major = major;
-        Preconditions.checkArgument(minor >= 0);
+        checkArgument(minor >= 0);
         this.minor = minor;
-        Preconditions.checkArgument(patch >= 0);
+        checkArgument(patch >= 0);
         this.patch = patch;
     }
 

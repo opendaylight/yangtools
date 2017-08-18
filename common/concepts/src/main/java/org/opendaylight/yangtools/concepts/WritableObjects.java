@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.concepts;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -56,7 +57,7 @@ public final class WritableObjects {
      * @throws NullPointerException if output is null
      */
     public static void writeLong(final DataOutput out, final long value, final int flags) throws IOException {
-        Preconditions.checkArgument((flags & 0xFFFFFF0F) == 0, "Invalid flags %s", flags);
+        checkArgument((flags & 0xFFFFFF0F) == 0, "Invalid flags %s", flags);
         final int bytes = valueBytes(value);
         out.writeByte(bytes | flags);
         writeValue(out, value, bytes);

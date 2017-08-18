@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 
 /**
  * Schema Node which may be derived from other schema node

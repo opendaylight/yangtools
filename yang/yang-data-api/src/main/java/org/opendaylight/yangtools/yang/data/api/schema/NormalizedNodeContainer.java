@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import com.google.common.base.Optional;
 import java.util.Collection;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
@@ -49,7 +49,7 @@ public interface NormalizedNodeContainer<I extends PathArgument, K extends PathA
      * @param child
      *            Path argument identifying child node
      * @return Optional with child node if child exists.
-     *         {@link Optional#absent()} if child does not exists.
+     *         {@link Optional#empty()} if child does not exists.
      */
     Optional<V> getChild(K child);
 }

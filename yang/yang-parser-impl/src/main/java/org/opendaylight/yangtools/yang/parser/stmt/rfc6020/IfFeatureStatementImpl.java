@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Set;
 import java.util.function.Predicate;
 import org.antlr.v4.runtime.CharStreams;
@@ -53,12 +54,12 @@ public class IfFeatureStatementImpl extends AbstractDeclaredStatement<Predicate<
 
         @Override
         public Predicate<Set<QName>> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-            if(YangVersion.VERSION_1_1.equals(ctx.getRootVersion())) {
+            if (YangVersion.VERSION_1_1.equals(ctx.getRootVersion())) {
                 return parseIfFeatureExpression(ctx, value);
-            } else {
-                final QName qName = StmtContextUtils.qnameFromArgument(ctx, value);
-                return setQNames -> setQNames.contains(qName);
             }
+
+            final QName qName = StmtContextUtils.qnameFromArgument(ctx, value);
+            return setQNames -> setQNames.contains(qName);
         }
 
         @Override
@@ -90,7 +91,7 @@ public class IfFeatureStatementImpl extends AbstractDeclaredStatement<Predicate<
             private final StmtContext<?, ?, ?> stmtCtx;
 
             public IfFeaturePredicateVisitor(final StmtContext<?, ?, ?> ctx) {
-                this.stmtCtx = Preconditions.checkNotNull(ctx);
+                this.stmtCtx = requireNonNull(ctx);
             }
 
             @Override

@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,16 +34,13 @@ public class QNameToStatementDefinitionMap implements QNameToStatementDefinition
 
     public void put(final QName qname, final StatementSupport<?, ?, ?> stDef) {
         // HashMap does not guard against nulls
-        Preconditions.checkNotNull(qname);
-        Preconditions.checkNotNull(stDef);
-
-        qnameToSupport.put(qname, stDef);
+        qnameToSupport.put(requireNonNull(qname), requireNonNull(stDef));
         putNoRev(qname, stDef);
     }
 
     public void putAll(final Map<QName, StatementSupport<?, ?, ?>> qnameToStmt) {
         qnameToSupport.putAll(qnameToStmt);
-        qnameToStmt.forEach((this::putNoRev));
+        qnameToStmt.forEach(this::putNoRev);
     }
 
     public StatementSupport<?, ?, ?> putIfAbsent(final QName qname, final StatementSupport<?, ?, ?> support) {
@@ -76,7 +74,8 @@ public class QNameToStatementDefinitionMap implements QNameToStatementDefinition
 
     @Nullable
     @Override
-    public StatementDefinition getByNamespaceAndLocalName(@Nonnull final URI namespace, @Nonnull final String localName) {
+    public StatementDefinition getByNamespaceAndLocalName(@Nonnull final URI namespace,
+            @Nonnull final String localName) {
         return noRevQNameToSupport.get(QName.create(namespace, null, localName));
     }
 
