@@ -127,11 +127,15 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
         }
 
         @Override
-        public NormalizedNode<?, ?> create(final YangInstanceIdentifier instanceId, final Optional<NormalizedNode<?, ?>> deepestChild, final Optional<Entry<QName,ModifyAction>> operation) {
+        public NormalizedNode<?, ?> create(final YangInstanceIdentifier instanceId,
+                final Optional<NormalizedNode<?, ?>> deepestChild,
+                final Optional<Entry<QName,ModifyAction>> operation) {
             if (deepestChild.isPresent()) {
-                Preconditions.checkState(deepestChild instanceof AnyXmlNode);
+                final NormalizedNode<?, ?> child = deepestChild.get();
+                Preconditions.checkState(child instanceof AnyXmlNode);
+
                 final NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> anyXmlBuilder =
-                        Builders.anyXmlBuilder().withNodeIdentifier(getIdentifier()).withValue(((AnyXmlNode) deepestChild).getValue());
+                        Builders.anyXmlBuilder().withNodeIdentifier(getIdentifier()).withValue(((AnyXmlNode) child).getValue());
                 addModifyOpIfPresent(operation, anyXmlBuilder);
                 return anyXmlBuilder.build();
             }
@@ -164,7 +168,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
 
         final DataSchemaNode result = potential.get();
         // We try to look up if this node was added by augmentation
-        if ((schema instanceof DataSchemaNode) && result.isAugmenting()) {
+        if (schema instanceof DataSchemaNode && result.isAugmenting()) {
             return fromAugmentation(schema, (AugmentationTarget) schema, result);
         }
         return fromDataSchemaNode(result);
