@@ -10,10 +10,8 @@ package org.opendaylight.yangtools.yang.model.util;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.annotations.Beta;
-import java.net.URI;
 import java.util.Date;
 import java.util.Optional;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 
 /**
@@ -26,26 +24,21 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 @Deprecated
 @Beta
 public final class ModuleIdentifierImpl implements ModuleIdentifier {
-    private final QNameModule qnameModule;
+    private final Date revision;
     private final String name;
 
-    private ModuleIdentifierImpl(final String name, final Optional<URI> namespace, final Optional<Date> revision) {
+    private ModuleIdentifierImpl(final String name, final Optional<Date> revision) {
         this.name = checkNotNull(name);
-        this.qnameModule = QNameModule.create(namespace.orElse(null), revision.orElse(null));
+        this.revision = revision.orElse(null);
     }
 
     public static ModuleIdentifier create(final String name, final Optional<Date> revision) {
-        return new ModuleIdentifierImpl(name, Optional.empty(), revision);
-    }
-
-    public static ModuleIdentifier create(final String name, final Optional<URI> namespace,
-            final Optional<Date> revision) {
-        return new ModuleIdentifierImpl(name, namespace, revision);
+        return new ModuleIdentifierImpl(name, revision);
     }
 
     @Override
     public Optional<Date> getRevision() {
-        return Optional.ofNullable(qnameModule.getRevision());
+        return Optional.ofNullable(revision);
     }
 
     @Override
@@ -57,7 +50,7 @@ public final class ModuleIdentifierImpl implements ModuleIdentifier {
     public String toString() {
         return "ModuleIdentifierImpl{"
             + "name='" + name + '\''
-            + ", revision=" + qnameModule.getFormattedRevision()
+            + ", revision=" + revision
             + '}';
     }
 

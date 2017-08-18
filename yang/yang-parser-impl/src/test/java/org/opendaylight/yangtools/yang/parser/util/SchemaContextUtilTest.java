@@ -55,8 +55,9 @@ public class SchemaContextUtilTest {
     public void testFindDummyData() {
         MockitoAnnotations.initMocks(this);
         doReturn(Optional.empty()).when(mockSchemaContext).findModule(any(QNameModule.class));
+        doReturn(URI.create("dummy")).when(mockModule).getNamespace();
 
-        final QName qName = QName.create("TestQName");
+        final QName qName = QName.create("dummy", "TestQName");
         final SchemaPath schemaPath = SchemaPath.create(Collections.singletonList(qName), true);
         assertEquals("Should be null. Module TestQName not found", null,
                 SchemaContextUtil.findDataSchemaNode(mockSchemaContext, schemaPath));
