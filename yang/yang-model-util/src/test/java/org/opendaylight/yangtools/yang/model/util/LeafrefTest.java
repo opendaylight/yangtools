@@ -27,7 +27,8 @@ public class LeafrefTest {
 
     @Test
     public void testMethodsOfLeafrefTest() {
-        final SchemaPath schemaPath = SchemaPath.create(false, QName.create("Cont1"), QName.create("List1"));
+        final SchemaPath schemaPath = SchemaPath.create(false, QName.create("test", "Cont1"),
+            QName.create("test", "List1"));
         final RevisionAwareXPathImpl revision = new RevisionAwareXPathImpl("/test:Cont1/test:List1", false);
         final RevisionAwareXPathImpl revision2 = new RevisionAwareXPathImpl("/test:Cont1/test:List2", false);
 
@@ -43,7 +44,7 @@ public class LeafrefTest {
         assertNull("Base type of 'leafref' should be null.", leafref.getBaseType());
         assertNull("Units of 'leafref' should be empty.", leafref.getUnits());
         assertNull("Leafref does not have a default value", leafref.getDefaultValue());
-        assertEquals(QName.create("List1"), leafref.getQName());
+        assertEquals(QName.create("test", "List1"), leafref.getQName());
         assertEquals("SchemaPath of 'leafref' is '/Cont1/List1'.", schemaPath, leafref.getPath());
         assertNull(leafref.getDescription());
         assertNull(leafref.getReference());
@@ -64,7 +65,8 @@ public class LeafrefTest {
 
     @Test
     public void testRequireInstanceSubstatement() {
-        final SchemaPath schemaPath = SchemaPath.create(true, QName.create("my-cont"), QName.create("my-leafref"));
+        final SchemaPath schemaPath = SchemaPath.create(true, QName.create("test", "my-cont"),
+            QName.create("test", "my-leafref"));
         final RevisionAwareXPathImpl path = new RevisionAwareXPathImpl("../my-leaf", false);
 
         LeafrefTypeBuilder leafrefTypeBuilder = BaseTypes.leafrefTypeBuilder(schemaPath).setPathStatement(path);
@@ -85,8 +87,9 @@ public class LeafrefTest {
             leafrefTypeBuilder.setRequireInstance(false);
             fail("An IllegalArgumentException should have been thrown.");
         } catch (IllegalArgumentException ex) {
-            assertEquals("Cannot switch off require-instance in type AbsoluteSchemaPath{path=[my-cont, my-leafref]}",
-                    ex.getMessage());
+            assertEquals(
+                "Cannot switch off require-instance in type AbsoluteSchemaPath{path=[(test)my-cont, (test)my-leafref]}",
+                ex.getMessage());
         }
 
     }
