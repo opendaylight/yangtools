@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
@@ -69,7 +69,7 @@ final class OperationWithModification {
                 snapshot = applyOperation.getChild(child).get().apply(childNode, childNode.getOriginal(), version);
             }
 
-            return snapshot.transform(TreeNode::getData);
+            return snapshot.map(TreeNode::getData);
         }
 
         Optional<TreeNode> snapshot = modification.getSnapshot();
@@ -78,10 +78,10 @@ final class OperationWithModification {
         }
 
         if (snapshot.isPresent()) {
-            return snapshot.get().getChild(child).transform(TreeNode::getData);
+            return snapshot.get().getChild(child).map(TreeNode::getData);
         }
 
-        return Optional.absent();
+        return Optional.empty();
     }
 
     public ModifiedNode getModification() {

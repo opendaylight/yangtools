@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
+import static com.google.common.base.Verify.verify;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.base.Verify;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.function.Predicate;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
@@ -34,7 +34,7 @@ public final class StoreTreeNodes {
      *          Store tree node type.
      * @param tree Data Tree
      * @param path Path to the node
-     * @return Optional with node if the node is present in tree, {@link Optional#absent()} otherwise.
+     * @return Optional with node if the node is present in tree, {@link Optional#empty()} otherwise.
      */
     public static <T extends StoreTreeNode<T>> Optional<T> findNode(final T tree, final YangInstanceIdentifier path) {
         Optional<T> current = Optional.of(tree);
@@ -72,7 +72,7 @@ public final class StoreTreeNodes {
      */
     public static <T extends StoreTreeNode<T>> Entry<YangInstanceIdentifier, T> findClosest(final T tree,
             final YangInstanceIdentifier path) {
-        return findClosestsOrFirstMatch(tree, path, Predicates.alwaysFalse());
+        return findClosestsOrFirstMatch(tree, path, input -> false);
     }
 
     public static <T extends StoreTreeNode<T>> Entry<YangInstanceIdentifier, T> findClosestsOrFirstMatch(final T tree,
@@ -82,7 +82,7 @@ public final class StoreTreeNodes {
 
         int nesting = 0;
         Iterator<PathArgument> pathIter = path.getPathArguments().iterator();
-        while (current.isPresent() && pathIter.hasNext() && !predicate.apply(current.get())) {
+        while (current.isPresent() && pathIter.hasNext() && !predicate.test(current.get())) {
             parent = current;
             current = current.get().getChild(pathIter.next());
             nesting++;
@@ -98,7 +98,7 @@ public final class StoreTreeNodes {
          * for current.isPresent() failed, which it cannot, as current is always
          * present. At any rate we verify state just to be on the safe side.
          */
-        Verify.verify(nesting > 0);
+        verify(nesting > 0);
         return new SimpleImmutableEntry<>(path.getAncestor(nesting - 1), parent.get());
     }
 
@@ -107,6 +107,6 @@ public final class StoreTreeNodes {
         if (parent.isPresent()) {
             return parent.get().getChild(child);
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 }

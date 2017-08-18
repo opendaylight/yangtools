@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT16_QNAME;
 import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT32_QNAME;
 import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT64_QNAME;
@@ -18,12 +19,11 @@ import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT8_QNAME;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Range;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
@@ -177,7 +177,7 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
     }
 
     private static int provideBase(final String integer) {
-        Preconditions.checkArgument(integer != null, "String representing integer number cannot be NULL");
+        checkArgument(integer != null, "String representing integer number cannot be NULL");
 
         if (integer.length() == 1 && integer.charAt(0) == '0') {
             return 10;
@@ -193,9 +193,7 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
     }
 
     private static String normalizeHexadecimal(final String hexInt) {
-        Preconditions.checkArgument(hexInt != null,
-                "String representing integer number in Hexadecimal format cannot be NULL!");
-
+        checkArgument(hexInt != null, "String representing integer number in Hexadecimal format cannot be NULL!");
         return X_MATCHER.removeFrom(hexInt);
     }
 }

@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.data.util;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
@@ -73,6 +73,6 @@ public final class LeafInterner {
             }
         }
 
-        return Preconditions::checkNotNull;
+        return Objects::requireNonNull;
     }
 }

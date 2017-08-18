@@ -8,14 +8,14 @@
 
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import com.google.common.base.Optional;
 import java.util.Objects;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.Int16Codec;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 
 final class Int16StringCodec extends AbstractIntegerStringCodec<Short, IntegerTypeDefinition> implements Int16Codec<String> {
     Int16StringCodec(final Optional<IntegerTypeDefinition> typeDef) {
-        super(typeDef, extractRange(typeDef.orNull()), Short.class);
+        super(typeDef, extractRange(typeDef.orElse(null)), Short.class);
     }
 
     @Override

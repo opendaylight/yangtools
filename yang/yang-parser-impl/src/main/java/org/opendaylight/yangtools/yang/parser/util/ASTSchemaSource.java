@@ -89,9 +89,9 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
     private static SemVerSourceIdentifier getSemVerSourceId(final YangModelDependencyInfo depInfo) {
         return depInfo.getFormattedRevision() == null
                 ? SemVerSourceIdentifier.create(depInfo.getName(),
-                    depInfo.getSemanticVersion().or(DEFAULT_SEMANTIC_VERSION))
+                    depInfo.getSemanticVersion().orElse(DEFAULT_SEMANTIC_VERSION))
                         : SemVerSourceIdentifier.create(depInfo.getName(), depInfo.getFormattedRevision(),
-                            depInfo.getSemanticVersion().or(DEFAULT_SEMANTIC_VERSION));
+                            depInfo.getSemanticVersion().orElse(DEFAULT_SEMANTIC_VERSION));
     }
 
     /**

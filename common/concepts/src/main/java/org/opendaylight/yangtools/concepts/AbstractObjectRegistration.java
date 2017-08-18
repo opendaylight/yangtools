@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import javax.annotation.Nonnull;
 
 /**
@@ -20,7 +21,7 @@ public abstract class AbstractObjectRegistration<T> extends AbstractRegistration
     private final T instance;
 
     protected AbstractObjectRegistration(final @Nonnull T instance) {
-        this.instance = Preconditions.checkNotNull(instance);
+        this.instance = requireNonNull(instance);
     }
 
     @Override

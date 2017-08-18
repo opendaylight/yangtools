@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.jaxen;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.Converter;
-import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 import javax.xml.xpath.XPathExpressionException;
 import org.jaxen.JaxenException;
@@ -22,11 +23,10 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 final class JaxenSchemaContext implements XPathSchemaContext {
     // Will be needed for compileExpression()
-    @SuppressWarnings("unused")
     private final SchemaContext context;
 
     JaxenSchemaContext(final SchemaContext context) {
-        this.context = Preconditions.checkNotNull(context);
+        this.context = requireNonNull(context);
     }
 
     @Nonnull

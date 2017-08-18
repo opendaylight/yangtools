@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.api;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YIN_MODULE;
 import static org.opendaylight.yangtools.yang.model.api.YangStmtMapping.MODULE;
 import static org.opendaylight.yangtools.yang.model.api.YangStmtMapping.REVISION;
@@ -14,8 +16,7 @@ import static org.opendaylight.yangtools.yang.model.api.YangStmtMapping.SUBMODUL
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
@@ -61,16 +62,16 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
         }
 
         final QName qname = QName.create(rootNs, root.getLocalName());
-        Preconditions.checkArgument(RFC6020_YIN_MODULE.equals(qname.getModule()),
+        checkArgument(RFC6020_YIN_MODULE.equals(qname.getModule()),
             "Root node namepsace %s does not match %s", rootNs, YangConstants.RFC6020_YIN_NAMESPACE);
-        Preconditions.checkArgument(MODULE.getStatementName().equals(qname)
+        checkArgument(MODULE.getStatementName().equals(qname)
             || SUBMODULE.getStatementName().equals(qname), "Root element %s is not a module nor a submodule", qname);
 
-        Preconditions.checkArgument(root instanceof Element, "Root node %s is not an element", root);
+        checkArgument(root instanceof Element, "Root node %s is not an element", root);
         final Element element = (Element)root;
 
         final Attr nameAttr = element.getAttributeNode(MODULE.getArgumentName().getLocalName());
-        Preconditions.checkArgument(nameAttr != null, "No %s name argument found in %s", element.getLocalName());
+        checkArgument(nameAttr != null, "No %s name argument found in %s", element.getLocalName());
 
         final NodeList revisions = element.getElementsByTagNameNS(REVISION_STMT.getNamespace().toString(),
             REVISION_STMT.getLocalName());
@@ -81,7 +82,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
 
         final Element revisionStmt = (Element) revisions.item(0);
         final Attr dateAttr = revisionStmt.getAttributeNode(REVISION.getArgumentName().getLocalName());
-        Preconditions.checkArgument(dateAttr != null, "No revision statement argument found in %s", revisionStmt);
+        checkArgument(dateAttr != null, "No revision statement argument found in %s", revisionStmt);
 
         final SourceIdentifier parsedId = RevisionSourceIdentifier.create(nameAttr.getValue(),
             Optional.of(dateAttr.getValue()));
@@ -173,8 +174,8 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
         private final DOMSource source;
 
         Simple(@Nonnull final SourceIdentifier identifier, @Nonnull final DOMSource source) {
-            this.identifier = Preconditions.checkNotNull(identifier);
-            this.source = Preconditions.checkNotNull(source);
+            this.identifier = requireNonNull(identifier);
+            this.source = requireNonNull(source);
         }
 
         @Nonnull
@@ -199,7 +200,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
         private volatile DOMSource source;
 
         Transforming(final YinXmlSchemaSource xmlSchemaSource) {
-            this.xmlSchemaSource = Preconditions.checkNotNull(xmlSchemaSource);
+            this.xmlSchemaSource = requireNonNull(xmlSchemaSource);
         }
 
         @Nonnull

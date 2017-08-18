@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.jaxen;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.Converter;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.xml.xpath.XPathExpressionException;
 import org.jaxen.BaseXPath;
@@ -40,9 +42,9 @@ final class JaxenXPath implements XPathExpression {
 
     private JaxenXPath(final Converter<String, QNameModule> converter, final SchemaPath schemaPath,
             final BaseXPath xpath) {
-        this.converter = Preconditions.checkNotNull(converter);
-        this.schemaPath = Preconditions.checkNotNull(schemaPath);
-        this.xpath = Preconditions.checkNotNull(xpath);
+        this.converter = requireNonNull(converter);
+        this.schemaPath = requireNonNull(schemaPath);
+        this.xpath = requireNonNull(xpath);
     }
 
     static JaxenXPath create(final Converter<String, QNameModule> converter, final SchemaPath schemaPath,
@@ -69,7 +71,7 @@ final class JaxenXPath implements XPathExpression {
     @Override
     public Optional<? extends XPathResult<?>> evaluate(@Nonnull final XPathDocument document,
             @Nonnull final YangInstanceIdentifier path) throws XPathExpressionException {
-        Preconditions.checkArgument(document instanceof JaxenDocument);
+        checkArgument(document instanceof JaxenDocument);
 
         final NormalizedNodeContextSupport contextSupport = NormalizedNodeContextSupport.create(
             (JaxenDocument)document, converter);
@@ -93,7 +95,7 @@ final class JaxenXPath implements XPathExpression {
                 return Lists.transform((List<NormalizedNodeContext>) result, NormalizedNodeContext::getNode);
             });
         } else {
-            return Optional.absent();
+            return Optional.empty();
         }
     }
 

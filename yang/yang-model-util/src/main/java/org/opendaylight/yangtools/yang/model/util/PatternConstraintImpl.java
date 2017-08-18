@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.Objects;
+import java.util.Optional;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
@@ -37,18 +37,18 @@ final class PatternConstraintImpl implements PatternConstraint, Immutable {
     private final ModifierKind modifier;
 
     PatternConstraintImpl(final String regex, final Optional<String> description, final Optional<String> reference) {
-        this(regex, description, reference, null, null, Optional.absent());
+        this(regex, description, reference, null, null, Optional.empty());
     }
 
     PatternConstraintImpl(final String regex, final Optional<String> description, final Optional<String> reference,
             final String errorAppTag, final String errorMessage, final Optional<ModifierKind> modifier) {
         this.regex = Preconditions.checkNotNull(regex, "regex must not be null.");
-        this.description = description.orNull();
-        this.reference = reference.orNull();
+        this.description = description.orElse(null);
+        this.reference = reference.orElse(null);
         this.errorAppTag = errorAppTag != null ? errorAppTag : "invalid-regular-expression";
         this.errorMessage = errorMessage != null ? errorMessage : String.format(
                 "Supplied value does not match the regular expression %s.", regex);
-        this.modifier = modifier.orNull();
+        this.modifier = modifier.orElse(null);
     }
 
     @Override
