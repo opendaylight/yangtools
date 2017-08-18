@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 /**
@@ -19,8 +20,8 @@ final class DefaultDataTreeCandidate implements DataTreeCandidate {
     private final DataTreeCandidateNode rootNode;
 
     DefaultDataTreeCandidate(final YangInstanceIdentifier rootPath, final DataTreeCandidateNode rootNode) {
-        this.rootPath = Preconditions.checkNotNull(rootPath);
-        this.rootNode = Preconditions.checkNotNull(rootNode);
+        this.rootPath = requireNonNull(rootPath);
+        this.rootNode = requireNonNull(rootNode);
     }
 
     @Override

@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -22,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.TimeUnit;
@@ -58,7 +58,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     private final Collection<SourceIdentifier> requiredSources = new ConcurrentLinkedDeque<>();
     private final Multimap<SourceIdentifier, YangTextSchemaSource> texts = ArrayListMultimap.create();
     private final AtomicReference<Optional<SchemaContext>> currentSchemaContext =
-            new AtomicReference<>(Optional.absent());
+            new AtomicReference<>(Optional.empty());
     private final InMemorySchemaSourceCache<ASTSchemaSource> cache;
     private final SchemaListenerRegistration transReg;
     private final SchemaSourceRegistry registry;

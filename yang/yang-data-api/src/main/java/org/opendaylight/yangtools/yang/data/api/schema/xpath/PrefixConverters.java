@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.xpath;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Converter;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableBiMap.Builder;
 import com.google.common.collect.Maps;
@@ -40,7 +42,7 @@ public final class PrefixConverters {
      */
     public static @Nonnull Converter<String, QNameModule> create(final SchemaContext ctx, final Module module) {
         // Always check for null ctx
-        Preconditions.checkNotNull(ctx, "Schema context may not be null");
+        requireNonNull(ctx, "Schema context may not be null");
 
         // Use immutable map builder for detection of duplicates (which should never occur)
         final Builder<String, QNameModule> b = ImmutableBiMap.builder();
@@ -48,7 +50,7 @@ public final class PrefixConverters {
 
         for (ModuleImport i : module.getImports()) {
             final Module mod = ctx.findModuleByName(i.getModuleName(), i.getRevision());
-            Preconditions.checkArgument(mod != null, "Unsatisfied import of %s by module %s", i, module);
+            checkArgument(mod != null, "Unsatisfied import of %s by module %s", i, module);
 
             b.put(i.getPrefix(), mod.getQNameModule());
         }

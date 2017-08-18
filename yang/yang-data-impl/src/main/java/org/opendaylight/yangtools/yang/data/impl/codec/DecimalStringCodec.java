@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.DecimalCodec;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 
@@ -37,7 +38,7 @@ public final class DecimalStringCodec extends TypeDefinitionAwareCodec<BigDecima
 
     @Override
     public BigDecimal deserialize(final String stringRepresentation) {
-        Preconditions.checkArgument( stringRepresentation != null , "Input cannot be null" );
+        checkArgument(stringRepresentation != null, "Input cannot be null");
         // FIXME: run value validation
         return new BigDecimal(stringRepresentation);
     }

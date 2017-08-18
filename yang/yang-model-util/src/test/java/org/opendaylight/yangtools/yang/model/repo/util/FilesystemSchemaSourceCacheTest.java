@@ -20,7 +20,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Optional;
 import com.google.common.collect.Collections2;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.CheckedFuture;
@@ -33,6 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -229,7 +229,7 @@ public class FilesystemSchemaSourceCacheTest {
         private final String content;
 
         protected TestingYangSource(final String name, final String revision, final String content) {
-            super(RevisionSourceIdentifier.create(name, Optional.fromNullable(revision)));
+            super(RevisionSourceIdentifier.create(name, Optional.ofNullable(revision)));
             this.content = content;
         }
 

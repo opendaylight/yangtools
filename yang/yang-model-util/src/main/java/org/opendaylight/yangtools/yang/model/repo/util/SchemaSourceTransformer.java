@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.util;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
@@ -48,11 +49,11 @@ public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D ext
 
     public SchemaSourceTransformer(final SchemaRepository provider, final Class<S> srcClass,
             final SchemaSourceRegistry consumer, final Class<D> dstClass, final AsyncFunction<S, D> function) {
-        this.provider = Preconditions.checkNotNull(provider);
-        this.consumer = Preconditions.checkNotNull(consumer);
-        this.function = Preconditions.checkNotNull(function);
-        this.srcClass = Preconditions.checkNotNull(srcClass);
-        this.dstClass = Preconditions.checkNotNull(dstClass);
+        this.provider = requireNonNull(provider);
+        this.consumer = requireNonNull(consumer);
+        this.function = requireNonNull(function);
+        this.srcClass = requireNonNull(srcClass);
+        this.dstClass = requireNonNull(dstClass);
     }
 
     @Override

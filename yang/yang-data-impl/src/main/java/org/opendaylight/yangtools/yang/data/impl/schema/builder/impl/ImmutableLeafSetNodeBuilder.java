@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.util.UnmodifiableCollection;
@@ -124,7 +124,7 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
 
         @Override
         public Optional<LeafSetEntryNode<T>> getChild(final NodeWithValue child) {
-            return Optional.fromNullable(children.get(child));
+            return Optional.ofNullable(children.get(child));
         }
 
         @Override

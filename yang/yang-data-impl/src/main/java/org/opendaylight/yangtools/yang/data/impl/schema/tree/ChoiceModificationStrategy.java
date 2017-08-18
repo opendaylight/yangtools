@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.base.Verify;
@@ -21,7 +20,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -76,7 +75,7 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
 
     @Override
     public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
-        return Optional.fromNullable(childNodes.get(child));
+        return Optional.ofNullable(childNodes.get(child));
     }
 
     @Override
@@ -112,7 +111,7 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
                     final Optional<NormalizedNode<?, ?>> maybeChild = NormalizedNodes.getDirectChild(normalizedNode, id);
                     Preconditions.checkArgument(!maybeChild.isPresent(),
                         "Child %s (from case %s) implies non-presence of child %s (from case %s), which is %s",
-                        firstChild.getIdentifier(), enforcer, id, other, maybeChild.orNull());
+                        firstChild.getIdentifier(), enforcer, id, other, maybeChild.orElse(null));
                 }
             }
 

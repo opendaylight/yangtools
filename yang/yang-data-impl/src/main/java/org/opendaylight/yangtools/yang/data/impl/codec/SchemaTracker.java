@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -55,14 +56,13 @@ public final class SchemaTracker {
 
     private SchemaTracker(final SchemaContext context, final SchemaPath path) {
         final Collection<SchemaNode> schemaNodes = SchemaUtils.findParentSchemaNodesOnPath(context, path);
-        Preconditions.checkArgument(!schemaNodes.isEmpty(), "Unable to find schema node for supplied schema path: %s",
-                path);
+        checkArgument(!schemaNodes.isEmpty(), "Unable to find schema node for supplied schema path: %s", path);
         if (schemaNodes.size() > 1) {
             LOG.warn("More possible schema nodes {} for supplied schema path {}", schemaNodes, path);
         }
         final Optional<SchemaNode> current = schemaNodes.stream().filter(node -> node instanceof DataNodeContainer)
                 .findFirst();
-        Preconditions.checkArgument(current.isPresent(),
+        checkArgument(current.isPresent(),
                 "Schema path must point to container or list or an rpc input/output. Supplied path %s pointed to: %s",
                 path, current);
         root = (DataNodeContainer) current.get();
@@ -116,7 +116,7 @@ public final class SchemaTracker {
             throw new IllegalStateException("Unsupported schema type "+ parent.getClass() +" on stack.");
         }
 
-        Preconditions.checkArgument(schema != null, "Could not find schema for node %s in %s", qname, parent);
+        checkArgument(schema != null, "Could not find schema for node %s in %s", qname, parent);
         return schema;
     }
 
@@ -146,27 +146,27 @@ public final class SchemaTracker {
 
     public void startList(final PathArgument name) {
         final SchemaNode schema = getSchema(name);
-        Preconditions.checkArgument(schema instanceof ListSchemaNode, "Node %s is not a list", schema.getPath());
+        checkArgument(schema instanceof ListSchemaNode, "Node %s is not a list", schema.getPath());
         schemaStack.push(schema);
     }
 
     public void startListItem(final PathArgument name) throws IOException {
         final Object schema = getParent();
-        Preconditions.checkArgument(schema instanceof ListSchemaNode, "List item is not appropriate");
+        checkArgument(schema instanceof ListSchemaNode, "List item is not appropriate");
         schemaStack.push(schema);
     }
 
     public LeafSchemaNode leafNode(final NodeIdentifier name) throws IOException {
         final SchemaNode schema = getSchema(name);
 
-        Preconditions.checkArgument(schema instanceof LeafSchemaNode, "Node %s is not a leaf", schema.getPath());
+        checkArgument(schema instanceof LeafSchemaNode, "Node %s is not a leaf", schema.getPath());
         return (LeafSchemaNode) schema;
     }
 
     public LeafListSchemaNode startLeafSet(final NodeIdentifier name) {
         final SchemaNode schema = getSchema(name);
 
-        Preconditions.checkArgument(schema instanceof LeafListSchemaNode, "Node %s is not a leaf-list", schema.getPath());
+        checkArgument(schema instanceof LeafListSchemaNode, "Node %s is not a leaf-list", schema.getPath());
         schemaStack.push(schema);
         return (LeafListSchemaNode)schema;
     }
@@ -175,7 +175,7 @@ public final class SchemaTracker {
     public LeafListSchemaNode leafSetEntryNode() {
         final Object parent = getParent();
 
-        Preconditions.checkArgument(parent instanceof LeafListSchemaNode, "Not currently in a leaf-list");
+        checkArgument(parent instanceof LeafListSchemaNode, "Not currently in a leaf-list");
         return (LeafListSchemaNode) parent;
     }
 
@@ -186,7 +186,7 @@ public final class SchemaTracker {
         }
 
         final SchemaNode child = SchemaUtils.findDataChildSchemaByQName((SchemaNode) parent, qname);
-        Preconditions.checkArgument(child instanceof LeafListSchemaNode,
+        checkArgument(child instanceof LeafListSchemaNode,
             "Node %s is neither a leaf-list nor currently in a leaf-list", child.getPath());
         return (LeafListSchemaNode) child;
     }
@@ -195,7 +195,7 @@ public final class SchemaTracker {
         LOG.debug("Enter choice {}", name);
         final SchemaNode schema = getSchema(name);
 
-        Preconditions.checkArgument(schema instanceof ChoiceSchemaNode, "Node %s is not a choice", schema.getPath());
+        checkArgument(schema instanceof ChoiceSchemaNode, "Node %s is not a choice", schema.getPath());
         schemaStack.push(schema);
         return (ChoiceSchemaNode)schema;
     }
@@ -207,7 +207,7 @@ public final class SchemaTracker {
         boolean isAllowed = schema instanceof ContainerSchemaNode;
         isAllowed |= schema instanceof NotificationDefinition;
 
-        Preconditions.checkArgument(isAllowed, "Node %s is not a container nor a notification", schema.getPath());
+        checkArgument(isAllowed, "Node %s is not a container nor a notification", schema.getPath());
         schemaStack.push(schema);
 
         return schema;
@@ -217,8 +217,8 @@ public final class SchemaTracker {
         LOG.debug("Enter yang modeled anyXml {}", name);
         final SchemaNode schema = getSchema(name);
 
-        Preconditions.checkArgument(schema instanceof YangModeledAnyXmlSchemaNode,
-                "Node %s is not an yang modeled anyXml.", schema.getPath());
+        checkArgument(schema instanceof YangModeledAnyXmlSchemaNode, "Node %s is not an yang modeled anyXml.",
+            schema.getPath());
 
         schemaStack.push(((YangModeledAnyXmlSchemaNode) schema).getSchemaOfAnyXmlData());
 
@@ -229,13 +229,14 @@ public final class SchemaTracker {
         LOG.debug("Enter augmentation {}", identifier);
         Object parent = getParent();
 
-        Preconditions.checkArgument(parent instanceof AugmentationTarget, "Augmentation not allowed under %s", parent);
+        checkArgument(parent instanceof AugmentationTarget, "Augmentation not allowed under %s", parent);
         if (parent instanceof ChoiceSchemaNode) {
             final QName name = Iterables.get(identifier.getPossibleChildNames(), 0);
             parent = findCaseByChild((ChoiceSchemaNode) parent, name);
         }
-        Preconditions.checkArgument(parent instanceof DataNodeContainer, "Augmentation allowed only in DataNodeContainer",parent);
-        final AugmentationSchema schema = SchemaUtils.findSchemaForAugment((AugmentationTarget) parent, identifier.getPossibleChildNames());
+        checkArgument(parent instanceof DataNodeContainer, "Augmentation allowed only in DataNodeContainer", parent);
+        final AugmentationSchema schema = SchemaUtils.findSchemaForAugment((AugmentationTarget) parent,
+            identifier.getPossibleChildNames());
         final HashSet<DataSchemaNode> realChildSchemas = new HashSet<>();
         for (final DataSchemaNode child : schema.getChildNodes()) {
             realChildSchemas.add(((DataNodeContainer) parent).getDataChildByName(child.getQName()));
@@ -247,8 +248,7 @@ public final class SchemaTracker {
 
     public AnyXmlSchemaNode anyxmlNode(final NodeIdentifier name) {
         final SchemaNode schema = getSchema(name);
-
-        Preconditions.checkArgument(schema instanceof AnyXmlSchemaNode, "Node %s is not anyxml", schema.getPath());
+        checkArgument(schema instanceof AnyXmlSchemaNode, "Node %s is not anyxml", schema.getPath());
         return (AnyXmlSchemaNode)schema;
     }
 

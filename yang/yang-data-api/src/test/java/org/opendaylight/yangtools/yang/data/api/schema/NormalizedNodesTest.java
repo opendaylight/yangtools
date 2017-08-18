@@ -14,9 +14,9 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -33,10 +33,10 @@ public class NormalizedNodesTest {
         final PathArgument mockedPathArgument = mock(PathArgument.class);
 
         final LeafNode<?> mockedLeafNode = mock(LeafNode.class);
-        assertEquals(Optional.absent(), NormalizedNodes.getDirectChild(mockedLeafNode, mockedPathArgument));
+        assertEquals(Optional.empty(), NormalizedNodes.getDirectChild(mockedLeafNode, mockedPathArgument));
 
         final LeafSetEntryNode<?> mockedLeafSetEntryNode = mock(LeafSetEntryNode.class);
-        assertEquals(Optional.absent(), NormalizedNodes.getDirectChild(mockedLeafSetEntryNode, mockedPathArgument));
+        assertEquals(Optional.empty(), NormalizedNodes.getDirectChild(mockedLeafSetEntryNode, mockedPathArgument));
 
         final DataContainerNode<?> mockedDataContainerNode = mock(DataContainerNode.class);
         final ContainerNode mockedContainerNode = mock(ContainerNode.class);
@@ -53,7 +53,7 @@ public class NormalizedNodesTest {
         doReturn(Optional.of(mockedMapEntryNode)).when(mockedMapNode).getChild(any(NodeIdentifierWithPredicates.class));
         assertEquals(mockedMapEntryNode, NormalizedNodes.getDirectChild(mockedMapNode, nodeIdentifierWithPredicates)
                 .get());
-        assertEquals(Optional.absent(), NormalizedNodes.getDirectChild(mockedMapNode, mockedPathArgument));
+        assertEquals(Optional.empty(), NormalizedNodes.getDirectChild(mockedMapNode, mockedPathArgument));
 
         final LeafSetNode<?> mockedLeafSetNode = mock(LeafSetNode.class);
         final QName leafListQName = QName.create("test-ns", "test-leaf-list");
@@ -81,7 +81,7 @@ public class NormalizedNodesTest {
                 new NodeIdentifier(node2Qname), new NodeIdentifier(node3QName), new NodeIdentifier(node4Qname));
 
         assertEquals(mockedLeafNode, NormalizedNodes.findNode(rootPath, mockedDataContainerNode, childPath).get());
-        assertEquals(Optional.absent(), NormalizedNodes.findNode(childPath, mockedDataContainerNode, rootPath));
+        assertEquals(Optional.empty(), NormalizedNodes.findNode(childPath, mockedDataContainerNode, rootPath));
 
         final Optional<YangInstanceIdentifier> relativePath = childPath.relativeTo(rootPath);
         final PathArgument[] pathArguments = relativePath.get().getPathArguments().toArray(new PathArgument[2]);

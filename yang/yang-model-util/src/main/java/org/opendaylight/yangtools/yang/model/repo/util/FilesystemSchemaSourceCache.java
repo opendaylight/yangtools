@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.util;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.CheckedFuture;
@@ -30,6 +31,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -68,18 +70,17 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
             final SchemaSourceRegistry consumer, final Class<T> representation, final File storageDirectory) {
         super(consumer, representation, Costs.LOCAL_IO);
         this.representation = representation;
-        this.storageDirectory = Preconditions.checkNotNull(storageDirectory);
+        this.storageDirectory = requireNonNull(storageDirectory);
 
         checkSupportedRepresentation(representation);
 
         if (!storageDirectory.exists()) {
-            Preconditions.checkArgument(storageDirectory.mkdirs(), "Unable to create cache directory at %s",
-                    storageDirectory);
+            checkArgument(storageDirectory.mkdirs(), "Unable to create cache directory at %s", storageDirectory);
         }
-        Preconditions.checkArgument(storageDirectory.exists());
-        Preconditions.checkArgument(storageDirectory.isDirectory());
-        Preconditions.checkArgument(storageDirectory.canWrite());
-        Preconditions.checkArgument(storageDirectory.canRead());
+        checkArgument(storageDirectory.exists());
+        checkArgument(storageDirectory.isDirectory());
+        checkArgument(storageDirectory.canWrite());
+        checkArgument(storageDirectory.canRead());
 
         init();
     }
@@ -220,7 +221,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
         }
 
         void store(final File file, final SchemaSourceRepresentation schemaSourceRepresentation) {
-            Preconditions.checkArgument(supportedType.isAssignableFrom(schemaSourceRepresentation.getClass()),
+            checkArgument(supportedType.isAssignableFrom(schemaSourceRepresentation.getClass()),
                     "Cannot store schema source %s, this adapter only supports %s", schemaSourceRepresentation,
                     supportedType);
 
@@ -230,9 +231,9 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
         protected abstract void storeAsType(File file, T cast);
 
         public T restore(final SourceIdentifier sourceIdentifier, final File cachedSource) {
-            Preconditions.checkArgument(cachedSource.isFile());
-            Preconditions.checkArgument(cachedSource.exists());
-            Preconditions.checkArgument(cachedSource.canRead());
+            checkArgument(cachedSource.isFile());
+            checkArgument(cachedSource.exists());
+            checkArgument(cachedSource.canRead());
             return restoreAsType(sourceIdentifier, cachedSource);
         }
 
@@ -297,9 +298,9 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
             if (matcher.matches()) {
                 final String moduleName = matcher.group("moduleName");
                 final String revision = matcher.group("revision");
-                return Optional.of(RevisionSourceIdentifier.create(moduleName, Optional.fromNullable(revision)));
+                return Optional.of(RevisionSourceIdentifier.create(moduleName, Optional.ofNullable(revision)));
             }
-            return Optional.absent();
+            return Optional.empty();
         }
 
         @Override

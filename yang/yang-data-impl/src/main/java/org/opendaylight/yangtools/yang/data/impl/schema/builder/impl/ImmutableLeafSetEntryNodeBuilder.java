@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.Map;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -30,7 +31,7 @@ public class ImmutableLeafSetEntryNodeBuilder<T> extends AbstractImmutableNormal
 
         ImmutableLeafSetEntryNode(final NodeWithValue nodeIdentifier, final T value, final Map<QName, String> attributes) {
             super(nodeIdentifier, value, attributes);
-            Preconditions.checkArgument(Objects.deepEquals(nodeIdentifier.getValue(), value),
+            checkArgument(Objects.deepEquals(nodeIdentifier.getValue(), value),
                     "Node identifier contains different value: %s than value itself: %s", nodeIdentifier, value);
         }
     }

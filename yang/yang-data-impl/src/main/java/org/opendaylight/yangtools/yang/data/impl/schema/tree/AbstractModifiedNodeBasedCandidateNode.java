@@ -6,12 +6,14 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Verify;
+
+import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -30,7 +32,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
             final TreeNode newMeta) {
         this.newMeta = newMeta;
         this.oldMeta = oldMeta;
-        this.mod = Preconditions.checkNotNull(mod);
+        this.mod = requireNonNull(mod);
     }
 
     protected final ModifiedNode getMod() {
@@ -46,7 +48,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     }
 
     private static TreeNode childMeta(final TreeNode parent, final PathArgument id) {
-        return parent == null ? null : parent.getChild(id).orNull();
+        return parent == null ? null : parent.getChild(id).orElse(null);
     }
 
     private static boolean canHaveChildren(@Nullable final TreeNode oldMeta, @Nullable final TreeNode newMeta) {
@@ -61,7 +63,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
 
     @SuppressWarnings("unchecked")
     private static NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> getContainer(@Nullable final TreeNode meta) {
-        return (meta == null ? null : (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>)meta.getData());
+        return meta == null ? null : (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>)meta.getData();
     }
 
     private ChildNode childNode(final ModifiedNode childMod) {
@@ -102,11 +104,11 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     @Override
     @Nonnull
     public ModificationType getModificationType() {
-        return Verify.verifyNotNull(mod.getModificationType(), "Node %s does not have resolved modification type", mod);
+        return verifyNotNull(mod.getModificationType(), "Node %s does not have resolved modification type", mod);
     }
 
     private static Optional<NormalizedNode<?, ?>> optionalData(final TreeNode meta) {
-        return meta == null ? Optional.absent() : Optional.of(meta.getData());
+        return meta == null ? Optional.empty() : Optional.of(meta.getData());
     }
 
     @Override

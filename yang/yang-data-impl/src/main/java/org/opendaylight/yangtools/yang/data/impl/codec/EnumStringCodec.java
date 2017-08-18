@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.EnumCodec;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
@@ -54,8 +55,7 @@ public final class EnumStringCodec extends TypeDefinitionAwareCodec<String, Enum
         // Lookup the serialized string in the values. Returned string is the interned instance, which we want
         // to use as the result.
         final String result = values.get(s);
-        Preconditions.checkArgument(result != null, "Invalid value '%s' for enum type. Allowed values are: %s",
-                s, values.keySet());
+        checkArgument(result != null, "Invalid value '%s' for enum type. Allowed values are: %s", s, values.keySet());
         return result;
     }
 
