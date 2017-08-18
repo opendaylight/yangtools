@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.Optional;
 import org.junit.Test;
@@ -26,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
 public class SchemaContextUtilTest {
+    private static final URI NAMESPACE = URI.create("abc");
     @Mock
     private SchemaContext mockSchemaContext;
     @Mock
@@ -36,12 +38,16 @@ public class SchemaContextUtilTest {
         MockitoAnnotations.initMocks(this);
         doReturn(Optional.empty()).when(mockSchemaContext).findModule(any(QNameModule.class));
 
-        QName qname = QName.create("TestQName");
+        doReturn("test").when(mockModule).getPrefix();
+        doReturn(NAMESPACE).when(mockModule).getNamespace();
+        doReturn(QNameModule.create(NAMESPACE, null)).when(mockModule).getQNameModule();
+
+        QName qname = QName.create("namespace", "localname");
         SchemaPath schemaPath = SchemaPath.create(Collections.singletonList(qname), true);
         assertEquals("Should be null. Module TestQName not found", null,
                 SchemaContextUtil.findDataSchemaNode(mockSchemaContext, schemaPath));
 
-        RevisionAwareXPath xpath = new RevisionAwareXPathImpl("/bookstore/book/title", true);
+        RevisionAwareXPath xpath = new RevisionAwareXPathImpl("/test:bookstore/test:book/test:title", true);
         assertEquals("Should be null. Module bookstore not found", null,
                 SchemaContextUtil.findDataSchemaNode(mockSchemaContext, mockModule, xpath));
 
