@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -43,7 +45,7 @@ public abstract class SchemaPath implements Immutable {
 
         @Override
         protected SchemaPath createInstance(final SchemaPath parent, final QName qname) {
-            return new AbsoluteSchemaPath(parent, Preconditions.checkNotNull(qname));
+            return new AbsoluteSchemaPath(parent, requireNonNull(qname));
         }
     }
 
@@ -62,7 +64,7 @@ public abstract class SchemaPath implements Immutable {
 
         @Override
         protected SchemaPath createInstance(final SchemaPath parent, final QName qname) {
-            return new RelativeSchemaPath(parent, Preconditions.checkNotNull(qname));
+            return new RelativeSchemaPath(parent, requireNonNull(qname));
         }
     }
 
@@ -208,7 +210,7 @@ public abstract class SchemaPath implements Immutable {
      * @return A new child path
      */
     public SchemaPath createChild(final SchemaPath relative) {
-        Preconditions.checkArgument(!relative.isAbsolute(), "Child creation requires relative path");
+        checkArgument(!relative.isAbsolute(), "Child creation requires relative path");
 
         SchemaPath parentPath = this;
         for (QName qname : relative.getPathFromRoot()) {

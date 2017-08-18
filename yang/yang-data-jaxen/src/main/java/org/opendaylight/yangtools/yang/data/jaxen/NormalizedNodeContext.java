@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.jaxen;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,7 +29,7 @@ final class NormalizedNodeContext extends Context implements Function<Normalized
     NormalizedNodeContext(@Nonnull final ContextSupport contextSupport, @Nonnull final NormalizedNode<?, ?> node,
         @Nullable final NormalizedNodeContext parent) {
         super(contextSupport);
-        this.node = Preconditions.checkNotNull(node);
+        this.node = requireNonNull(node);
         this.parent = parent;
 
         setNodeSet(ImmutableList.of(this));

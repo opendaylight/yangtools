@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.getRevisionFormat;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
@@ -91,9 +92,8 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     private static String checkLocalName(final String localName) {
-        Preconditions.checkArgument(localName != null, "Parameter 'localName' may not be null.");
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(localName),
-                "Parameter 'localName' must be a non-empty string.");
+        checkArgument(localName != null, "Parameter 'localName' may not be null.");
+        checkArgument(!Strings.isNullOrEmpty(localName), "Parameter 'localName' must be a non-empty string.");
 
         for (final char c : ILLEGAL_CHARACTERS) {
             if (localName.indexOf(c) != -1) {
@@ -135,7 +135,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @return Instance of QName
      */
     public static QName create(final QNameModule qnameModule, final String localName) {
-        return new QName(Preconditions.checkNotNull(qnameModule, "module may not be null"), localName);
+        return new QName(requireNonNull(qnameModule, "module may not be null"), localName);
     }
 
     /**

@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -23,12 +23,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
  * the {@link NormalizedNode} passed to it at creation time were freshly written.
  */
 final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode {
-    /**
-     * Convenience function for functional transformation of {@link NormalizedNode} into
-     * a {@link DataTreeCandidateNode}.
-     */
-    private static final Function<NormalizedNode<?, ?>, DataTreeCandidateNode> FACTORY_FUNCTION =
-        input -> input == null ? null : new NormalizedNodeDataTreeCandidateNode(input);
     private final NormalizedNode<?, ?> data;
 
     /**
@@ -37,7 +31,7 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
      * @param data Backing {@link NormalizedNode} data.
      */
     NormalizedNodeDataTreeCandidateNode(@Nonnull final NormalizedNode<?, ?> data) {
-        this.data = Preconditions.checkNotNull(data);
+        this.data = requireNonNull(data);
     }
 
     @Nonnull
@@ -50,7 +44,8 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
     @Override
     public Collection<DataTreeCandidateNode> getChildNodes() {
         if (data instanceof NormalizedNodeContainer) {
-            return Collections2.transform(((NormalizedNodeContainer<?, ?, ?>) data).getValue(), FACTORY_FUNCTION);
+            return Collections2.transform(((NormalizedNodeContainer<?, ?, ?>) data).getValue(),
+                input -> input == null ? null : new NormalizedNodeDataTreeCandidateNode(input));
         }
         return ImmutableList.of();
     }
@@ -60,7 +55,7 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
         if (data instanceof NormalizedNodeContainer) {
             @SuppressWarnings({ "rawtypes", "unchecked" })
             final Optional<? extends NormalizedNode<?, ?>> child = ((NormalizedNodeContainer)data).getChild(identifier);
-            return FACTORY_FUNCTION.apply(child.orNull());
+            return child.map(input -> new NormalizedNodeDataTreeCandidateNode(input)).orElse(null);
         }
         return null;
     }
@@ -80,6 +75,6 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
     @Nonnull
     @Override
     public Optional<NormalizedNode<?, ?>> getDataBefore() {
-        return Optional.absent();
+        return Optional.empty();
     }
 }

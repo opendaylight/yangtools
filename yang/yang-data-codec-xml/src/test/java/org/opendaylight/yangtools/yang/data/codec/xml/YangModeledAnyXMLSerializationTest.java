@@ -8,12 +8,13 @@
 
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
+import java.util.Optional;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
@@ -101,7 +102,7 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
 
         Optional<DataContainerChild<? extends PathArgument, ?>> bazContainerChild = bazContainer.getChild(
                 new NodeIdentifier(myAnyXMLDataBaz));
-        assertTrue(bazContainerChild.orNull() instanceof YangModeledAnyXmlNode);
+        assertTrue(bazContainerChild.orElse(null) instanceof YangModeledAnyXmlNode);
         YangModeledAnyXmlNode yangModeledAnyXmlNode = (YangModeledAnyXmlNode) bazContainerChild.get();
 
         DataSchemaNode schemaOfAnyXmlData = yangModeledAnyXmlNode.getSchemaOfAnyXmlData();
@@ -141,9 +142,7 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
 
     private static Document loadDocument(final String xmlPath) throws IOException, SAXException {
         final InputStream resourceAsStream = YangModeledAnyXMLSerializationTest.class.getResourceAsStream(xmlPath);
-        final Document currentConfigElement = readXmlToDocument(resourceAsStream);
-        Preconditions.checkNotNull(currentConfigElement);
-        return currentConfigElement;
+        return requireNonNull(readXmlToDocument(resourceAsStream));
     }
 
     private static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {

@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.util.UnmodifiableCollection;
@@ -121,7 +121,7 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
 
         @Override
         public Optional<MapEntryNode> getChild(final YangInstanceIdentifier.NodeIdentifierWithPredicates child) {
-            return Optional.fromNullable(children.get(child));
+            return Optional.ofNullable(children.get(child));
         }
 
         @Override

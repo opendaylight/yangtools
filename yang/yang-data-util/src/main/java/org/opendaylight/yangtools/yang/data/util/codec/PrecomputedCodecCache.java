@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.util.codec;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import java.util.Map;
 import javax.annotation.concurrent.ThreadSafe;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -31,14 +33,14 @@ public final class PrecomputedCodecCache<T> extends CodecCache<T> {
     private final Map<TypedSchemaNode, T> complexCodecs;
 
     PrecomputedCodecCache(final Map<TypeDefinition<?>, T> simpleCodecs, final Map<TypedSchemaNode, T> complexCodecs) {
-        this.simpleCodecs = Preconditions.checkNotNull(simpleCodecs);
-        this.complexCodecs = Preconditions.checkNotNull(complexCodecs);
+        this.simpleCodecs = requireNonNull(simpleCodecs);
+        this.complexCodecs = requireNonNull(complexCodecs);
     }
 
     @Override
     T lookupComplex(final TypedSchemaNode schema) {
         final T ret = complexCodecs.get(schema);
-        Preconditions.checkArgument(ret != null, "No codec available for schema %s", schema);
+        checkArgument(ret != null, "No codec available for schema %s", schema);
         return ret;
     }
 
