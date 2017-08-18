@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.util;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
@@ -47,7 +48,7 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
     private final Collection<E> delegate;
 
     private UnmodifiableCollection(final Collection<E> delegate) {
-        this.delegate = Preconditions.checkNotNull(delegate);
+        this.delegate = requireNonNull(delegate);
     }
 
     /**

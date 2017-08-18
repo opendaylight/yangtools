@@ -20,7 +20,7 @@ public abstract class AbstractLogMessageCheck extends AbstractCheck {
     }
 
     @Override
-    public void visitToken(DetailAST ast) {
+    public void visitToken(final DetailAST ast) {
         String methodName = CheckLoggingUtil.getMethodName(ast);
         if (CheckLoggingUtil.isLogMethod(methodName)) {
             Optional<String> optLogMessage = getLogMessage(ast);
@@ -28,7 +28,7 @@ public abstract class AbstractLogMessageCheck extends AbstractCheck {
         }
     }
 
-    private Optional<String> getLogMessage(DetailAST ast) {
+    private static Optional<String> getLogMessage(DetailAST ast) {
         ast = ast.findFirstToken(TokenTypes.ELIST);
         if (ast != null) {
             ast = ast.getFirstChild();

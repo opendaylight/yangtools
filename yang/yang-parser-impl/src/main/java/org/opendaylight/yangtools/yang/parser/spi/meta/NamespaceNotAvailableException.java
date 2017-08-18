@@ -7,23 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
 
 /**
- *
  * Thrown when identifier namespace is not available (supported)
  * in specific model processing phase.
- *
  */
 public class NamespaceNotAvailableException extends RuntimeException {
 
     private static final long serialVersionUID = 1L;
 
-    public NamespaceNotAvailableException(String message) {
-        super(Preconditions.checkNotNull(message));
+    public NamespaceNotAvailableException(final String message) {
+        super(requireNonNull(message));
     }
 
-    public NamespaceNotAvailableException(String message, Throwable cause) {
-        super(Preconditions.checkNotNull(message), cause);
+    public NamespaceNotAvailableException(final String message, final Throwable cause) {
+        super(requireNonNull(message), cause);
     }
 }

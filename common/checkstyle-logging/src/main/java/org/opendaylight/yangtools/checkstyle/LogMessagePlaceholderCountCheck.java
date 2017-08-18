@@ -18,7 +18,7 @@ public class LogMessagePlaceholderCountCheck extends AbstractLogMessageCheck {
     private static final String EXCEPTION_TYPE = "Exception";
 
     @Override
-    protected void visitLogMessage(DetailAST ast, String logMessage) {
+    protected void visitLogMessage(final DetailAST ast, final String logMessage) {
         int placeholdersCount = placeholdersCount(logMessage);
         int argumentsCount = ast.findFirstToken(TokenTypes.ELIST).getChildCount(TokenTypes.EXPR) - 1;
         final String lastArg = ast.findFirstToken(TokenTypes.ELIST).getLastChild().getFirstChild().getText();
@@ -30,11 +30,11 @@ public class LogMessagePlaceholderCountCheck extends AbstractLogMessageCheck {
         }
     }
 
-    private int placeholdersCount(final String message) {
+    private static int placeholdersCount(final String message) {
         return (message.length() - message.replace(PLACEHOLDER, "").length()) / PLACEHOLDER.length();
     }
 
-    private boolean hasCatchBlockParentWithArgument(final String argumentName, final DetailAST ast) {
+    private static boolean hasCatchBlockParentWithArgument(final String argumentName, final DetailAST ast) {
         DetailAST parent = ast.getParent();
         while (parent != null && parent.getType() != TokenTypes.LITERAL_CATCH) {
             parent = parent.getParent();
@@ -47,7 +47,7 @@ public class LogMessagePlaceholderCountCheck extends AbstractLogMessageCheck {
         return false;
     }
 
-    private boolean hasMethodDefinitionWithExceptionArgument(final String argumentName, final DetailAST ast) {
+    private static boolean hasMethodDefinitionWithExceptionArgument(final String argumentName, final DetailAST ast) {
         DetailAST parent = ast.getParent();
         while (parent != null && parent.getType() != TokenTypes.METHOD_DEF) {
             parent = parent.getParent();
@@ -68,7 +68,7 @@ public class LogMessagePlaceholderCountCheck extends AbstractLogMessageCheck {
         return false;
     }
 
-    private boolean isExceptionType(final DetailAST parameterDef) {
+    private static boolean isExceptionType(final DetailAST parameterDef) {
         if (parameterDef != null) {
             final DetailAST type = parameterDef.findFirstToken(TokenTypes.TYPE);
             if (type != null && type.findFirstToken(TokenTypes.IDENT) != null) {

@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -33,8 +35,8 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
         DataSchemaContextNode<?> current = getDataContextTree().getRoot();
         for (PathArgument arg : data.getPathArguments()) {
             current = current.getChild(arg);
-            Preconditions.checkArgument(current != null,
-                    "Invalid input %s: schema for argument %s (after %s) not found", data, arg, sb);
+            checkArgument(current != null, "Invalid input %s: schema for argument %s (after %s) not found", data, arg,
+                    sb);
 
             if (current.isMixin()) {
                 /*
@@ -93,9 +95,8 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
 
     @Override
     public final YangInstanceIdentifier deserialize(final String data) {
-        Preconditions.checkNotNull(data, "Data may not be null");
-        XpathStringParsingPathArgumentBuilder builder = new XpathStringParsingPathArgumentBuilder(this, data);
+        XpathStringParsingPathArgumentBuilder builder = new XpathStringParsingPathArgumentBuilder(this,
+            requireNonNull(data));
         return YangInstanceIdentifier.create(builder.build());
     }
-
 }

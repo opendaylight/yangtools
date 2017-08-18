@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.util.concurrent;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -63,7 +64,7 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
         super(0, maximumPoolSize, IDLE_TIMEOUT_IN_SEC, TimeUnit.SECONDS,
                new ExecutorQueue(maximumQueueSize));
 
-        this.threadPrefix = Preconditions.checkNotNull(threadPrefix);
+        this.threadPrefix = requireNonNull(threadPrefix);
         this.maximumQueueSize = maximumQueueSize;
 
         setThreadFactory(new ThreadFactoryBuilder().setDaemon(true)
@@ -78,8 +79,7 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
 
     @Override
     public void setRejectedExecutionHandler(final RejectedExecutionHandler handler) {
-        Preconditions.checkNotNull(handler);
-        rejectedTaskHandler.setDelegateRejectedExecutionHandler(handler);
+        rejectedTaskHandler.setDelegateRejectedExecutionHandler(requireNonNull(handler));
     }
 
     @Override

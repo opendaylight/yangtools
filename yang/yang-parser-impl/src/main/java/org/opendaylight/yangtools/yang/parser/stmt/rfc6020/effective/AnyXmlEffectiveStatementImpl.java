@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.base.Optional;
 import java.util.Objects;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
@@ -29,7 +29,7 @@ public class AnyXmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNod
 
     @Override
     public Optional<AnyXmlSchemaNode> getOriginal() {
-        return Optional.fromNullable(original);
+        return Optional.ofNullable(original);
     }
 
     @Override

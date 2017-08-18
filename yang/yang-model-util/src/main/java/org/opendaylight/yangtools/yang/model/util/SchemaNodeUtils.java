@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -26,20 +27,20 @@ public class SchemaNodeUtils {
     public static Optional<SchemaNode> getOriginalIfPossible(final SchemaNode node) {
         if (node instanceof DerivableSchemaNode) {
             @SuppressWarnings("unchecked")
-            final Optional<SchemaNode> ret  = (Optional<SchemaNode>) (((DerivableSchemaNode) node).getOriginal());
+            final Optional<SchemaNode> ret  = (Optional<SchemaNode>) ((DerivableSchemaNode) node).getOriginal();
             return ret;
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     public static SchemaNode getRootOriginalIfPossible(final SchemaNode data) {
-        Optional<SchemaNode> previous = Optional.absent();
+        Optional<SchemaNode> previous = Optional.empty();
         Optional<SchemaNode> next = getOriginalIfPossible(data);
         while (next.isPresent()) {
             previous = next;
             next = getOriginalIfPossible(next.get());
         }
-        return previous.orNull();
+        return previous.orElse(null);
     }
 
     /**
@@ -51,8 +52,8 @@ public class SchemaNodeUtils {
      */
     @Nullable public static ContainerSchemaNode getRpcDataSchema(@Nonnull final RpcDefinition rpc,
             @Nonnull final QName qname) {
-        Preconditions.checkNotNull(rpc, "Rpc Schema must not be null");
-        Preconditions.checkNotNull(qname,"QName must not be null");
+        requireNonNull(rpc, "Rpc Schema must not be null");
+        requireNonNull(qname, "QName must not be null");
         switch (qname.getLocalName()) {
             case "input":
                 return rpc.getInput();

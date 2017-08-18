@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema.xpath;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Optional;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.xml.xpath.XPathExpressionException;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 public interface XPathExpression {
     /**
      * Evaluate this expression at the specified path in a document. If evaluation succeeds, it will return an
-     * {@link XPathResult}. If it fails to match anything, it will return {@link Optional#absent()}. Implementations
+     * {@link XPathResult}. If it fails to match anything, it will return {@link Optional#empty()}. Implementations
      * of this method are expected to perform complete evaluation such that accessing data via the resulting
      * {@link XPathResult} will not incur large overhead.
      *

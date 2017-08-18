@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
 
 import java.net.URI;
-
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 
@@ -21,9 +20,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 abstract class JSONStreamWriterQNameContext extends JSONStreamWriterContext {
     private final QName qname;
 
-    protected JSONStreamWriterQNameContext(final JSONStreamWriterContext parent, final QName qname, final boolean mandatory) {
+    JSONStreamWriterQNameContext(final JSONStreamWriterContext parent, final QName qname, final boolean mandatory) {
         super(parent, mandatory);
-        this.qname = Preconditions.checkNotNull(qname);
+        this.qname = requireNonNull(qname);
     }
 
     /**

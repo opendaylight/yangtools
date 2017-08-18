@@ -12,18 +12,18 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import java.io.File;
 import java.net.URI;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -41,7 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class OrderedListTest {
-    private Logger LOG = LoggerFactory.getLogger(OrderedListTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OrderedListTest.class);
 
     private TipProducingDataTree inMemoryDataTree;
     private SchemaContext context;
@@ -281,27 +281,27 @@ public class OrderedListTest {
         assertFalse(readNode.isPresent());
     }
 
-    private MapEntryNode createParentOrderedListEntry(String keyValue, String leafValue) {
+    private MapEntryNode createParentOrderedListEntry(final String keyValue, final String leafValue) {
         return Builders.mapEntryBuilder().withNodeIdentifier(new NodeIdentifierWithPredicates(parentOrderedList,
                 parentKeyLeaf, keyValue))
                 .withChild(Builders.leafBuilder().withNodeIdentifier(NodeIdentifier.create(parentOrdinaryLeaf)).withValue
                         (leafValue).build()).build();
     }
 
-    private MapEntryNode createChildOrderedListEntry(String keyValue, String leafValue) {
+    private MapEntryNode createChildOrderedListEntry(final String keyValue, final String leafValue) {
         return Builders.mapEntryBuilder().withNodeIdentifier(new NodeIdentifierWithPredicates(childOrderedList,
                 childKeyLeaf, keyValue))
                 .withChild(Builders.leafBuilder().withNodeIdentifier(NodeIdentifier.create(childOrdinaryLeaf)).withValue
                         (leafValue).build()).build();
     }
 
-    private NodeIdentifierWithPredicates createParentOrderedListEntryPath(String keyValue) {
+    private NodeIdentifierWithPredicates createParentOrderedListEntryPath(final String keyValue) {
         ImmutableMap.Builder<QName, Object> builder = ImmutableMap.builder();
         ImmutableMap<QName, Object> keys = builder.put(parentKeyLeaf, keyValue).build();
         return new NodeIdentifierWithPredicates(parentOrderedList, keys);
     }
 
-    private NodeIdentifierWithPredicates createChildOrderedListEntryPath(String keyValue) {
+    private NodeIdentifierWithPredicates createChildOrderedListEntryPath(final String keyValue) {
         ImmutableMap.Builder<QName, Object> builder = ImmutableMap.builder();
         ImmutableMap<QName, Object> keys = builder.put(childKeyLeaf, keyValue).build();
         return new NodeIdentifierWithPredicates(childOrderedList, keys);

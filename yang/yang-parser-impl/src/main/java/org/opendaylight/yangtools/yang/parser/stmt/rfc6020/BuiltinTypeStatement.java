@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -47,7 +48,7 @@ final class BuiltinTypeStatement implements TypeStatement {
     private final String argument;
 
     private BuiltinTypeStatement(final String argument) {
-        this.argument = Preconditions.checkNotNull(argument);
+        this.argument = requireNonNull(argument);
     }
 
     static TypeStatement maybeReplace(final TypeStatementImpl orig) {

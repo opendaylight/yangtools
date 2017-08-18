@@ -14,8 +14,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
-import com.google.common.base.Optional;
 import java.util.ArrayList;
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -47,7 +47,7 @@ public class TypeTest {
     private static final RevisionAwareXPath REVISION_AWARE_XPATH = new RevisionAwareXPathImpl("/test", true);
     private static final Bit BIT_A = BitBuilder.create(SCHEMA_PATH, 55L).setDescription("description")
             .setReference("reference").build();
-    private static final Optional<String> ABSENT = Optional.absent();
+    private static final Optional<String> ABSENT = Optional.empty();
 
     @Test
     public void binaryTypeTest() {
@@ -435,11 +435,10 @@ public class TypeTest {
 
     @Test
     public void exceptionTest() {
-        final Optional<String> absent = Optional.absent();
         final UnresolvedNumber min = UnresolvedNumber.min();
         final UnresolvedNumber max = UnresolvedNumber.max();
-        final LengthConstraint lengthConstraint = BaseConstraints.newLengthConstraint(min, max, absent, absent);
-        final RangeConstraint rangeConstraint = BaseConstraints.newRangeConstraint(min, max, absent, absent);
+        final LengthConstraint lengthConstraint = BaseConstraints.newLengthConstraint(min, max, ABSENT, ABSENT);
+        final RangeConstraint rangeConstraint = BaseConstraints.newRangeConstraint(min, max, ABSENT, ABSENT);
 
         final EnumPair enumPair = EnumPairBuilder.create("enum1", 1).setDescription("description")
                 .setReference("reference").setUnknownSchemaNodes(mock(UnknownSchemaNode.class)).build();

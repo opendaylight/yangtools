@@ -8,7 +8,8 @@
 
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.Sets;
 import java.io.IOException;
 import java.io.InputStream;
@@ -299,9 +300,7 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
     private static Document loadDocument(final String xmlPath) throws IOException, SAXException {
         final InputStream resourceAsStream = SchemalessXMLStreamNormalizedNodeStreamWriterTest.class
             .getResourceAsStream(xmlPath);
-        final Document currentConfigElement = readXmlToDocument(resourceAsStream);
-        Preconditions.checkNotNull(currentConfigElement);
-        return currentConfigElement;
+        return requireNonNull(readXmlToDocument(resourceAsStream));
     }
 
     private static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {

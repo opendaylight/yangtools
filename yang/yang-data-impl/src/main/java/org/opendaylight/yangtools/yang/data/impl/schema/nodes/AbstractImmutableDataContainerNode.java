@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
-import com.google.common.base.Optional;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -30,7 +30,7 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
 
     @Override
     public final Optional<DataContainerChild<? extends PathArgument, ?>> getChild(final PathArgument child) {
-        return Optional.fromNullable(children.get(child));
+        return Optional.ofNullable(children.get(child));
     }
 
     @Override

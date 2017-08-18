@@ -7,8 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Verify;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
@@ -56,7 +59,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     RootStatementContext(final SourceSpecificContext sourceContext, final StatementDefinitionContext<A, D, E> def,
         final StatementSourceReference ref, final String rawArgument) {
         super(def, ref, rawArgument);
-        this.sourceContext = Preconditions.checkNotNull(sourceContext);
+        this.sourceContext = requireNonNull(sourceContext);
         this.argument = def.parseArgumentValue(this, rawStatementArgument());
     }
 
@@ -134,7 +137,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
             if (includedContexts.isEmpty()) {
                 includedContexts = new ArrayList<>(1);
             }
-            Verify.verify(value instanceof RootStatementContext);
+            verify(value instanceof RootStatementContext);
             includedContexts.add((RootStatementContext<?, ?, ?>) value);
         }
         return super.putToLocalStorage(type, key, value);
@@ -209,11 +212,11 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
 
     @Override
     public void setRootVersion(final YangVersion version) {
-        Preconditions.checkArgument(sourceContext.getSupportedVersions().contains(version),
+        checkArgument(sourceContext.getSupportedVersions().contains(version),
                 "Unsupported yang version %s in %s", version, getStatementSourceReference());
-        Preconditions.checkState(this.version == null, "Version of root %s has been already set to %s", argument,
+        checkState(this.version == null, "Version of root %s has been already set to %s", argument,
                 this.version);
-        this.version = Preconditions.checkNotNull(version);
+        this.version = requireNonNull(version);
     }
 
     @Override
@@ -223,7 +226,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
 
     @Override
     public void addRequiredModule(final ModuleIdentifier dependency) {
-        Preconditions.checkState(sourceContext.getInProgressPhase() == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
+        checkState(sourceContext.getInProgressPhase() == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
                 "Add required module is allowed only in ModelProcessingPhase.SOURCE_PRE_LINKAGE phase");
         if (requiredModules.isEmpty()) {
             requiredModules = new HashSet<>();
@@ -237,8 +240,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
 
     @Override
     public void setRootIdentifier(final ModuleIdentifier identifier) {
-        Preconditions.checkNotNull(identifier);
-        this.identifier = identifier;
+        this.identifier = requireNonNull(identifier);
     }
 
     ModuleIdentifier getRootIdentifier() {

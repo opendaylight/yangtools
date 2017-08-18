@@ -8,8 +8,11 @@
 
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.xml.XmlEscapers;
 import java.io.Closeable;
@@ -78,8 +81,8 @@ public final class XmlParserStream implements Closeable, Flushable {
 
     private XmlParserStream(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
             final DataSchemaNode parentNode, final boolean strictParsing) {
-        this.writer = Preconditions.checkNotNull(writer);
-        this.codecs = Preconditions.checkNotNull(codecs);
+        this.writer = requireNonNull(writer);
+        this.codecs = requireNonNull(codecs);
         this.parentNode = parentNode;
         this.strictParsing = strictParsing;
     }
@@ -114,7 +117,7 @@ public final class XmlParserStream implements Closeable, Flushable {
         if (parentNode instanceof RpcDefinition) {
             return new XmlParserStream(writer, codecs, new RpcAsContainer((RpcDefinition) parentNode), strictParsing);
         }
-        Preconditions.checkArgument(parentNode instanceof DataSchemaNode, "Instance of DataSchemaNode class awaited.");
+        checkArgument(parentNode instanceof DataSchemaNode, "Instance of DataSchemaNode class awaited.");
         return new XmlParserStream(writer, codecs, (DataSchemaNode) parentNode, strictParsing);
     }
 
@@ -221,7 +224,7 @@ public final class XmlParserStream implements Closeable, Flushable {
     }
 
     private static Map<QName, String> getElementAttributes(final XMLStreamReader in) {
-        Preconditions.checkState(in.isStartElement(), "Attributes can be extracted only from START_ELEMENT.");
+        checkState(in.isStartElement(), "Attributes can be extracted only from START_ELEMENT.");
         final Map<QName, String> attributes = new LinkedHashMap<>();
 
         for (int attrIndex = 0; attrIndex < in.getAttributeCount(); attrIndex++) {
@@ -363,9 +366,8 @@ public final class XmlParserStream implements Closeable, Flushable {
                                     new URI(xmlElementNamespace));
 
                     if (childDataSchemaNodes.isEmpty()) {
-                        Preconditions.checkState(!strictParsing,
-                                "Schema for node with name %s and namespace %s doesn't exist.", xmlElementName,
-                                xmlElementNamespace);
+                        checkState(!strictParsing, "Schema for node with name %s and namespace %s doesn't exist.",
+                            xmlElementName, xmlElementNamespace);
                         skipUnknownNode(in);
                         continue;
                     }
@@ -426,10 +428,10 @@ public final class XmlParserStream implements Closeable, Flushable {
 
     private void setValue(final AbstractNodeDataWithSchema parent, final String value, final NamespaceContext nsContext)
             throws ParserConfigurationException, SAXException, IOException {
-        Preconditions.checkArgument(parent instanceof SimpleNodeDataWithSchema, "Node %s is not a simple type",
+        checkArgument(parent instanceof SimpleNodeDataWithSchema, "Node %s is not a simple type",
                 parent.getSchema().getQName());
         final SimpleNodeDataWithSchema parentSimpleNode = (SimpleNodeDataWithSchema) parent;
-        Preconditions.checkArgument(parentSimpleNode.getValue() == null, "Node '%s' has already set its value to '%s'",
+        checkArgument(parentSimpleNode.getValue() == null, "Node '%s' has already set its value to '%s'",
                 parentSimpleNode.getSchema().getQName(), parentSimpleNode.getValue());
 
         parentSimpleNode.setValue(translateValueByType(value, parentSimpleNode.getSchema(), nsContext));
@@ -449,7 +451,7 @@ public final class XmlParserStream implements Closeable, Flushable {
             return new DOMSource(doc.getDocumentElement());
         }
 
-        Preconditions.checkArgument(node instanceof TypedSchemaNode);
+        checkArgument(node instanceof TypedSchemaNode);
         return codecs.codecFor((TypedSchemaNode) node).parseValue(namespaceCtx, value);
     }
 

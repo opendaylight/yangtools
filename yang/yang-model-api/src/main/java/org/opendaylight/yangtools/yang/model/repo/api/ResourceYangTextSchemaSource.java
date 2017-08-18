@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.api;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -23,7 +24,7 @@ final class ResourceYangTextSchemaSource extends YangTextSchemaSource implements
 
     ResourceYangTextSchemaSource(final SourceIdentifier identifier, final URL url) {
         super(identifier);
-        this.url = Preconditions.checkNotNull(url);
+        this.url = requireNonNull(url);
     }
 
     @Override

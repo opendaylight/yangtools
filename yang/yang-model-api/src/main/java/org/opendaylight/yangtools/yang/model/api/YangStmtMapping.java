@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -166,7 +167,7 @@ public enum YangStmtMapping implements StatementDefinition {
     private final boolean yinElement;
 
     YangStmtMapping(final Class<? extends DeclaredStatement<?>> clz, final String nameStr) {
-        type = Preconditions.checkNotNull(clz);
+        type = requireNonNull(clz);
         //FIXME: fill up effective type correctly
         effectiveType = null;
         name = yinQName(nameStr);
@@ -175,7 +176,7 @@ public enum YangStmtMapping implements StatementDefinition {
     }
 
     YangStmtMapping(final Class<? extends DeclaredStatement<?>> clz, final String nameStr, final String argumentStr) {
-        type = Preconditions.checkNotNull(clz);
+        type = requireNonNull(clz);
         //FIXME: fill up effective type correctly
         effectiveType = null;
         name = yinQName(nameStr);
@@ -185,7 +186,7 @@ public enum YangStmtMapping implements StatementDefinition {
 
     YangStmtMapping(final Class<? extends DeclaredStatement<?>> clz, final String nameStr, final String argumentStr,
             final boolean yinElement) {
-        type = Preconditions.checkNotNull(clz);
+        type = requireNonNull(clz);
         //FIXME: fill up effective type correctly
         effectiveType = null;
         name = yinQName(nameStr);

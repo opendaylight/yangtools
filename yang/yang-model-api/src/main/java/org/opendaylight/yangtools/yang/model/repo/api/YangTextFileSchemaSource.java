@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.api;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Preconditions;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +27,7 @@ final class YangTextFileSchemaSource extends YangTextSchemaSource implements Del
 
     YangTextFileSchemaSource(final SourceIdentifier identifier, final File file) {
         super(identifier);
-        this.file = Preconditions.checkNotNull(file);
+        this.file = requireNonNull(file);
     }
 
     @Override

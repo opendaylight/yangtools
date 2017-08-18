@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,8 +40,8 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     private final StatementDefinition type;
 
     protected AbstractStatementSupport(final StatementDefinition publicDefinition) {
-        Preconditions.checkArgument(publicDefinition != this);
-        this.type = Preconditions.checkNotNull(publicDefinition);
+        this.type = requireNonNull(publicDefinition);
+        checkArgument(publicDefinition != this);
     }
 
     @Nonnull

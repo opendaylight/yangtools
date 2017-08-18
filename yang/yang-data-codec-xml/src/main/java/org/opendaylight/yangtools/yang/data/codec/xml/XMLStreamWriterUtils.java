@@ -8,8 +8,9 @@
 
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
 import java.util.Map.Entry;
 import javax.annotation.Nonnull;
 import javax.xml.stream.XMLStreamException;
@@ -67,7 +68,7 @@ abstract class XMLStreamWriterUtils {
             return;
         }
 
-        Preconditions.checkArgument(schemaNode instanceof TypedSchemaNode,
+        checkArgument(schemaNode instanceof TypedSchemaNode,
             "Unable to write value for node %s, only nodes of type: leaf and leaf-list can be written at this point",
             schemaNode.getQName());
 
