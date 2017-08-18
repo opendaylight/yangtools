@@ -1,0 +1,10 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    import bar-2 { prefix bar; }
+
+    include sub-foo;
+
+    revision 2017-07-07;
+}
