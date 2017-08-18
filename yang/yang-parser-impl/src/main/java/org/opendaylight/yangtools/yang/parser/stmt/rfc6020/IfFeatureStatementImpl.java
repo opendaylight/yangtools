@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Set;
 import java.util.function.Predicate;
 import org.antlr.v4.runtime.CharStreams;
@@ -90,7 +91,7 @@ public class IfFeatureStatementImpl extends AbstractDeclaredStatement<Predicate<
             private final StmtContext<?, ?, ?> stmtCtx;
 
             IfFeaturePredicateVisitor(final StmtContext<?, ?, ?> ctx) {
-                this.stmtCtx = Preconditions.checkNotNull(ctx);
+                this.stmtCtx = requireNonNull(ctx);
             }
 
             @Override
