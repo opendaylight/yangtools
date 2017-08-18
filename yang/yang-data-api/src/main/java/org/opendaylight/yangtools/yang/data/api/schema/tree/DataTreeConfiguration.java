@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -52,8 +53,8 @@ public class DataTreeConfiguration implements Immutable {
 
     DataTreeConfiguration(final TreeType treeType, final YangInstanceIdentifier rootPath, final boolean uniqueIndexes,
             final boolean mandatoryNodesValidation) {
-        this.treeType = Preconditions.checkNotNull(treeType);
-        this.rootPath = Preconditions.checkNotNull(rootPath);
+        this.treeType = requireNonNull(treeType);
+        this.rootPath = requireNonNull(rootPath);
         this.uniqueIndexes = uniqueIndexes;
         this.mandatoryNodesValidation = mandatoryNodesValidation;
     }
@@ -82,8 +83,7 @@ public class DataTreeConfiguration implements Immutable {
     }
 
     public static DataTreeConfiguration getDefault(final TreeType treeType) {
-        Preconditions.checkNotNull(treeType);
-        switch (treeType) {
+        switch (requireNonNull(treeType)) {
             case CONFIGURATION:
                 return DEFAULT_CONFIGURATION;
             case OPERATIONAL:
@@ -100,7 +100,7 @@ public class DataTreeConfiguration implements Immutable {
         private boolean mandatoryNodesValidation;
 
         public Builder(final TreeType treeType) {
-            this.treeType = Preconditions.checkNotNull(treeType);
+            this.treeType = requireNonNull(treeType);
             this.rootPath = YangInstanceIdentifier.EMPTY;
         }
 

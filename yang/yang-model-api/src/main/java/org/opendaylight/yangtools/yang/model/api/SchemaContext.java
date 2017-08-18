@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Sets;
 import java.net.URI;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;

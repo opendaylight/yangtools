@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.util;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -85,7 +86,7 @@ public final class TopologicalSort {
                 break;
             }
         }
-        Preconditions.checkState(!cycle, "Cycle detected in graph around node: " + cycledNode);
+        checkState(!cycle, "Cycle detected in graph around node: " + cycledNode);
     }
 
     /**

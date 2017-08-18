@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Verify;
+import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Map;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -30,7 +31,7 @@ abstract class AbstractMutableContainerNode implements MutableTreeNode {
         this.data = parent.getData();
         this.version = parent.getVersion();
         this.subtreeVersion = parent.getSubtreeVersion();
-        this.children = Preconditions.checkNotNull(children);
+        this.children = requireNonNull(children);
     }
 
     protected final Version getVersion() {
@@ -48,7 +49,7 @@ abstract class AbstractMutableContainerNode implements MutableTreeNode {
 
     @Override
     public final void setSubtreeVersion(final Version subtreeVersion) {
-        this.subtreeVersion = Preconditions.checkNotNull(subtreeVersion);
+        this.subtreeVersion = requireNonNull(subtreeVersion);
     }
 
     @Override
@@ -63,7 +64,7 @@ abstract class AbstractMutableContainerNode implements MutableTreeNode {
 
     @Override
     public final void setData(final NormalizedNode<?, ?> data) {
-        this.data = Preconditions.checkNotNull(data);
+        this.data = requireNonNull(data);
     }
 
     @Override
@@ -82,7 +83,7 @@ abstract class AbstractMutableContainerNode implements MutableTreeNode {
             final Map<PathArgument, TreeNode> newChildren = MapAdaptor.getDefaultInstance().optimize(children);
             final int dataSize = getData().getValue().size();
             if (dataSize != newChildren.size()) {
-                Verify.verify(dataSize > newChildren.size(), "Detected %s modified children, data has only %s",
+                verify(dataSize > newChildren.size(), "Detected %s modified children, data has only %s",
                     newChildren.size(), dataSize);
                 ret = new LazyContainerNode(data, version, newChildren, subtreeVersion);
             } else {

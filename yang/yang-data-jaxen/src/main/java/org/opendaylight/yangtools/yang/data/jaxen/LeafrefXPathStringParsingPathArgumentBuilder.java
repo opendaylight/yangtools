@@ -10,12 +10,12 @@ package org.opendaylight.yangtools.yang.data.jaxen;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.RegEx;

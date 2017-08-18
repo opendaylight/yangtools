@@ -15,7 +15,6 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.base.Converter;
-import com.google.common.base.Optional;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -27,6 +26,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import javax.xml.xpath.XPathExpressionException;
 import org.jaxen.Context;
 import org.jaxen.Function;

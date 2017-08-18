@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.UncheckedExecutionException;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -63,10 +63,10 @@ abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeC
     @Override
     public final Optional<ModificationApplyOperation> getChild(final PathArgument identifier) {
         try {
-            return Optional.fromNullable(childCache.get(identifier));
+            return Optional.ofNullable(childCache.get(identifier));
         } catch (ExecutionException | UncheckedExecutionException e) {
             LOG.trace("Child {} not present in container schema {} children {}", identifier, this, schema.getChildNodes(), e.getCause());
-            return Optional.absent();
+            return Optional.empty();
         }
     }
 

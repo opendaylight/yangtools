@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.Map;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -102,7 +102,7 @@ public final class ImmutableNodes {
      * @return serialized normalized node for provided instance Id
      */
     public static NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id) {
-        return fromInstanceId(ctx, id, Optional.absent(), Optional.absent());
+        return fromInstanceId(ctx, id, Optional.empty(), Optional.empty());
     }
 
     /**
@@ -114,7 +114,7 @@ public final class ImmutableNodes {
      * @return serialized normalized node for provided instance Id with overridden last child.
      */
     public static NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id, final NormalizedNode<?, ?> deepestElement) {
-        return fromInstanceId(ctx, id, Optional.of(deepestElement), Optional.absent());
+        return fromInstanceId(ctx, id, Optional.of(deepestElement), Optional.empty());
     }
 
     /**
@@ -127,8 +127,6 @@ public final class ImmutableNodes {
      * @return serialized normalized node for provided instance Id with (optionally) overridden last child and (optionally) marked with specific operation attribute.
      */
     public static NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id, final Optional<NormalizedNode<?, ?>> deepestElement, final Optional<Map.Entry<QName, ModifyAction>> operation) {
-        Preconditions.checkNotNull(ctx);
-        Preconditions.checkNotNull(id);
         final YangInstanceIdentifier.PathArgument topLevelElement = id.getPathArguments().get(0);
         final DataSchemaNode dataChildByName = ctx.getDataChildByName(topLevelElement.getNodeType());
         Preconditions.checkNotNull(dataChildByName, "Cannot find %s node in schema context. Instance identifier has to start from root", topLevelElement);

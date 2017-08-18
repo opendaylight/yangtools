@@ -8,7 +8,8 @@
 
 package org.opendaylight.yangtools.util.concurrent;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.LongAdder;
@@ -30,7 +31,7 @@ public class CountingRejectedExecutionHandler implements RejectedExecutionHandle
      * @param delegate the backing RejectedExecutionHandler.
      */
     public CountingRejectedExecutionHandler(final RejectedExecutionHandler delegate) {
-        this.delegate = Preconditions.checkNotNull(delegate);
+        this.delegate = requireNonNull(delegate);
     }
 
     @Override

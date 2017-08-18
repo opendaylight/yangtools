@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.List;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -44,9 +44,9 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
             final ContainerSchemaNode containerSchema = (ContainerSchemaNode) schemaNode;
             if (containerSchema.isPresenceContainer()) {
                 return new PresenceContainerModificationStrategy(containerSchema, treeConfig);
-            } else {
-                return new StructuralContainerModificationStrategy(containerSchema, treeConfig);
             }
+
+            return new StructuralContainerModificationStrategy(containerSchema, treeConfig);
         } else if (schemaNode instanceof ListSchemaNode) {
             return fromListSchemaNode((ListSchemaNode) schemaNode, treeConfig);
         } else if (schemaNode instanceof ChoiceSchemaNode) {
@@ -193,7 +193,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         case DELETE:
             // Deletion of a non-existing node is a no-op, report it as such
             modification.resolveModificationType(currentMeta.isPresent() ? ModificationType.DELETE : ModificationType.UNMODIFIED);
-            return modification.setSnapshot(Optional.absent());
+            return modification.setSnapshot(Optional.empty());
         case TOUCH:
             Preconditions.checkArgument(currentMeta.isPresent(), "Metadata not available for modification %s",
                     modification);

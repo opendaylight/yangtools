@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
@@ -45,8 +45,8 @@ public final class BaseConstraints {
      *
      * @param min  length-restricting lower bound value. The value MUST NOT be negative.
      * @param max length-restricting upper bound value. The value MUST NOT be negative.
-     * @param description Description associated with constraint. {@link Optional#absent()} if description is undefined.
-     * @param reference Reference associated with constraint. {@link Optional#absent()} if reference is undefined.
+     * @param description Description associated with constraint. {@link Optional#empty()} if description is undefined.
+     * @param reference Reference associated with constraint. {@link Optional#empty()} if reference is undefined.
      * @return Instance of {@link LengthConstraint}
      */
     public static LengthConstraint newLengthConstraint(final Number min, final Number max,
@@ -70,8 +70,8 @@ public final class BaseConstraints {
      *
      * @param min  length-restricting lower bound value. The value MUST NOT be negative.
      * @param max length-restricting upper bound value. The value MUST NOT be negative.
-     * @param description Description associated with constraint. {@link Optional#absent()} if description is undefined.
-     * @param reference Reference associated with constraint. {@link Optional#absent()} if reference is undefined.
+     * @param description Description associated with constraint. {@link Optional#empty()} if description is undefined.
+     * @param reference Reference associated with constraint. {@link Optional#empty()} if reference is undefined.
      * @param errorAppTag error-app-tag associated with constraint.
      * @param errorMessage error message associated with constraint.
      * @return Instance of {@link LengthConstraint}
@@ -99,8 +99,8 @@ public final class BaseConstraints {
      * @param <T> Type of constraint
      * @param min value-restricting lower bound value. The value MUST NOT Be null.
      * @param max value-restricting upper bound value. The value MUST NOT Be null.
-     * @param description Description associated with constraint. {@link Optional#absent()} if description is undefined.
-     * @param reference Reference associated with constraint. {@link Optional#absent()} if reference is undefined.
+     * @param description Description associated with constraint. {@link Optional#empty()} if description is undefined.
+     * @param reference Reference associated with constraint. {@link Optional#empty()} if reference is undefined.
      * @return Instance of {@link RangeConstraint}
      */
     public static <T extends Number> RangeConstraint newRangeConstraint(final T min, final T max,
@@ -125,8 +125,8 @@ public final class BaseConstraints {
      * @param <T> Type of constraint
      * @param min value-restricting lower bound value. The value MUST NOT Be null.
      * @param max value-restricting upper bound value. The value MUST NOT Be null.
-     * @param description Description associated with constraint. {@link Optional#absent()} if description is undefined.
-     * @param reference Reference associated with constraint. {@link Optional#absent()} if reference is undefined.
+     * @param description Description associated with constraint. {@link Optional#empty()} if description is undefined.
+     * @param reference Reference associated with constraint. {@link Optional#empty()} if reference is undefined.
      * @param errorAppTag error-app-tag associated with constraint.
      * @param errorMessage error message associated with constraint.
      * @return Instance of {@link RangeConstraint}
