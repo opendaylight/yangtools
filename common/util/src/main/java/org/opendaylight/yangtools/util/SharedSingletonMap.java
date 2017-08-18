@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.util;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -69,7 +71,7 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
     @SuppressWarnings("unchecked")
     SharedSingletonMap(final K key, final V value) {
         this.keySet = (SingletonSet<K>) CACHE.getUnchecked(key);
-        this.value = Preconditions.checkNotNull(value);
+        this.value = requireNonNull(value);
     }
 
     public static <K, V> SharedSingletonMap<K, V> orderedOf(final K key, final V value) {
@@ -81,14 +83,14 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
     }
 
     public static <K, V> SharedSingletonMap<K, V> orderedCopyOf(final Map<K, V> map) {
-        Preconditions.checkArgument(map.size() == 1);
+        checkArgument(map.size() == 1);
 
         final Entry<K, V> e = map.entrySet().iterator().next();
         return new Ordered<>(e.getKey(), e.getValue());
     }
 
     public static <K, V> SharedSingletonMap<K, V> unorderedCopyOf(final Map<K, V> map) {
-        Preconditions.checkArgument(map.size() == 1);
+        checkArgument(map.size() == 1);
 
         final Entry<K, V> e = map.entrySet().iterator().next();
         return new Unordered<>(e.getKey(), e.getValue());

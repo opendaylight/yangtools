@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.util;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
 
 import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
@@ -22,7 +22,7 @@ public abstract class AbstractSchemaSourceRegistration<T extends SchemaSourceRep
     protected AbstractSchemaSourceRegistration(final SchemaSourceProvider<?> provider,
             final PotentialSchemaSource<T> source) {
         super(source);
-        this.provider = Preconditions.checkNotNull(provider);
+        this.provider = requireNonNull(provider);
     }
 
     protected final SchemaSourceProvider<?> getProvider() {

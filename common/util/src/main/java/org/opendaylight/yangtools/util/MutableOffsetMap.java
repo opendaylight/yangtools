@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.util;
 
+import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableMap;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
@@ -122,10 +123,10 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     private boolean needClone = true;
 
     MutableOffsetMap(final Map<K, Integer> offsets, final V[] objects, final HashMap<K, V> newKeys) {
-        Verify.verify(newKeys.isEmpty());
-        this.offsets = Preconditions.checkNotNull(offsets);
-        this.objects = Preconditions.checkNotNull(objects);
-        this.newKeys = Preconditions.checkNotNull(newKeys);
+        verify(newKeys.isEmpty());
+        this.offsets = requireNonNull(offsets);
+        this.objects = requireNonNull(objects);
+        this.newKeys = requireNonNull(newKeys);
     }
 
     @SuppressWarnings("unchecked")
@@ -138,7 +139,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         this(offsets, (V[]) new Object[offsets.size()], newKeys);
 
         for (Entry<K, V> e : source.entrySet()) {
-            objects[offsets.get(e.getKey())] = Preconditions.checkNotNull(e.getValue());
+            objects[offsets.get(e.getKey())] = requireNonNull(e.getValue());
         }
 
         this.needClone = false;
@@ -239,8 +240,8 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
     @Override
     public final V put(final K key, final V value) {
-        Preconditions.checkNotNull(value);
-        final Integer offset = offsets.get(Preconditions.checkNotNull(key));
+        requireNonNull(value);
+        final Integer offset = offsets.get(requireNonNull(key));
         if (offset != null) {
             final Object obj = objects[offset];
 
@@ -531,9 +532,9 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         @Override
         @SuppressWarnings("checkstyle:parameterName")
         public boolean add(final Entry<K, V> e) {
-            Preconditions.checkNotNull(e.getValue());
-            final V p = MutableOffsetMap.this.put(e.getKey(), e.getValue());
-            return !e.getValue().equals(p);
+            final V v = requireNonNull(e.getValue());
+            final V p = MutableOffsetMap.this.put(e.getKey(), v);
+            return !v.equals(p);
         }
 
         @Override
@@ -619,7 +620,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
         @Override
         public final void remove() {
-            Preconditions.checkState(currentKey != null);
+            requireNonNull(currentKey != null);
 
             checkModCount();
             final Integer offset = offsets.get(currentKey);

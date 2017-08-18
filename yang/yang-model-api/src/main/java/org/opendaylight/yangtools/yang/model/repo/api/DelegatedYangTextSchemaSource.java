@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.api;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +20,7 @@ final class DelegatedYangTextSchemaSource extends YangTextSchemaSource implement
 
     DelegatedYangTextSchemaSource(final SourceIdentifier identifier, final ByteSource delegate) {
         super(identifier);
-        this.delegate = Preconditions.checkNotNull(delegate);
+        this.delegate = requireNonNull(delegate);
     }
 
     @Override

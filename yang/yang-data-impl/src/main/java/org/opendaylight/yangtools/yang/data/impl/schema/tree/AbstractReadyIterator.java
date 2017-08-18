@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 
 abstract class AbstractReadyIterator {
@@ -20,9 +22,9 @@ abstract class AbstractReadyIterator {
 
     private AbstractReadyIterator(final ModifiedNode node, final Iterator<ModifiedNode> children,
             final ModificationApplyOperation operation) {
-        this.children = Preconditions.checkNotNull(children);
-        this.node = Preconditions.checkNotNull(node);
-        this.op = Preconditions.checkNotNull(operation);
+        this.children = requireNonNull(children);
+        this.node = requireNonNull(node);
+        this.op = requireNonNull(operation);
     }
 
     static AbstractReadyIterator create(final ModifiedNode root, final ModificationApplyOperation operation) {
@@ -36,8 +38,7 @@ abstract class AbstractReadyIterator {
         while (children.hasNext()) {
             final ModifiedNode child = children.next();
             final Optional<ModificationApplyOperation> childOperation = op.getChild(child.getIdentifier());
-            Preconditions.checkState(childOperation.isPresent(), "Schema for child %s is not present.",
-                    child.getIdentifier());
+            checkState(childOperation.isPresent(), "Schema for child %s is not present.", child.getIdentifier());
             final Collection<ModifiedNode> grandChildren = child.getChildren();
             final ModificationApplyOperation childOp = childOperation.get();
 
@@ -73,7 +74,7 @@ abstract class AbstractReadyIterator {
         private NestedReadyIterator(final AbstractReadyIterator parent, final ModifiedNode node,
                 final Iterator<ModifiedNode> children, final ModificationApplyOperation operation) {
             super(node, children, operation);
-            this.parent = Preconditions.checkNotNull(parent);
+            this.parent = requireNonNull(parent);
         }
 
         @Override

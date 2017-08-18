@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -131,8 +132,7 @@ class LeafRefContextTreeBuilder {
                 currentLeafRefContextBuilder.setReferencing(true);
 
                 final LeafRefPathParserImpl leafRefPathParser = new LeafRefPathParserImpl(schemaContext,
-                        Preconditions.checkNotNull(getBaseTypeModule(leafrefType),
-                                "Unable to find base module for leafref %s", node),
+                        checkNotNull(getBaseTypeModule(leafrefType), "Unable to find base module for leafref %s", node),
                         node);
 
                 final LeafRefPath leafRefPath = leafRefPathParser.parseLeafRefPathSourceToSchemaPath(

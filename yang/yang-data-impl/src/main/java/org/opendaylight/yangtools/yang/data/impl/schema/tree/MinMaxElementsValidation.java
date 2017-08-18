@@ -8,9 +8,9 @@
 
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -40,7 +40,7 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
 
     static SchemaAwareApplyOperation from(final SchemaAwareApplyOperation delegate, final DataSchemaNode schema) {
         final ConstraintDefinition constraints = schema.getConstraints();
-        if (constraints == null || (constraints.getMinElements() == null && constraints.getMaxElements() == null)) {
+        if (constraints == null || constraints.getMinElements() == null && constraints.getMaxElements() == null) {
             return delegate;
         }
         return new MinMaxElementsValidation(delegate, constraints.getMinElements(), constraints.getMaxElements());
@@ -176,7 +176,7 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
     }
 
     @Override
-    void recursivelyVerifyStructure(NormalizedNode<?, ?> value) {
+    void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
         delegate.recursivelyVerifyStructure(value);
     }
 }

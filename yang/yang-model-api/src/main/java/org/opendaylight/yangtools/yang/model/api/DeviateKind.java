@@ -8,7 +8,7 @@
 
 package org.opendaylight.yangtools.yang.model.api;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Enum describing YANG deviation 'deviate' statement. It defines how the
@@ -22,7 +22,7 @@ public enum DeviateKind {
     private final String keyword;
 
     DeviateKind(final String keyword) {
-        this.keyword = Preconditions.checkNotNull(keyword);
+        this.keyword = requireNonNull(keyword);
     }
 
     /**

@@ -8,7 +8,8 @@
 
 package org.opendaylight.yangtools.yang.data.util;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -23,8 +24,8 @@ public abstract class AbstractStringUnionCodec implements Codec<String, Object> 
     protected final UnionTypeDefinition typeDefinition;
 
     protected AbstractStringUnionCodec(final DataSchemaNode schema, final UnionTypeDefinition typeDefinition) {
-        this.schema = Preconditions.checkNotNull(schema);
-        this.typeDefinition = Preconditions.checkNotNull(typeDefinition);
+        this.schema = requireNonNull(schema);
+        this.typeDefinition = requireNonNull(typeDefinition);
     }
 
     protected abstract Codec<String, Object> codecFor(TypeDefinition<?> type);
