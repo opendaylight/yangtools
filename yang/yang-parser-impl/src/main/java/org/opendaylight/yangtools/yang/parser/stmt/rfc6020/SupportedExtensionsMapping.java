@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -41,8 +42,8 @@ public enum SupportedExtensionsMapping implements StatementDefinition {
             final Class<? extends DeclaredStatement<?>> declared,
             final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr, final String argumentStr,
             final boolean yinElement) {
-        type = Preconditions.checkNotNull(declared);
-        effectiveType = Preconditions.checkNotNull(effective);
+        type = requireNonNull(declared);
+        effectiveType = requireNonNull(effective);
         name = createQName(namespace, revision, nameStr);
         argument = createQName(namespace, revision, argumentStr);
         this.yinElement = yinElement;
@@ -51,8 +52,8 @@ public enum SupportedExtensionsMapping implements StatementDefinition {
     private SupportedExtensionsMapping(final String namespace, final Class<? extends DeclaredStatement<?>> declared,
             final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr, final String argumentStr,
             final boolean yinElement) {
-        type = Preconditions.checkNotNull(declared);
-        effectiveType = Preconditions.checkNotNull(effective);
+        type = requireNonNull(declared);
+        effectiveType = requireNonNull(effective);
         name = createQName(namespace, nameStr);
         argument = createQName(namespace, argumentStr);
         this.yinElement = yinElement;

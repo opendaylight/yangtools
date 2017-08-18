@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -37,13 +37,13 @@ public final class NormalizedNodes {
     public static Optional<NormalizedNode<?, ?>> findNode(final YangInstanceIdentifier rootPath,
             final NormalizedNode<?, ?> rootNode, final YangInstanceIdentifier childPath) {
         final Optional<YangInstanceIdentifier> relativePath = childPath.relativeTo(rootPath);
-        return relativePath.isPresent() ? findNode(rootNode, relativePath.get()) : Optional.absent();
+        return relativePath.isPresent() ? findNode(rootNode, relativePath.get()) : Optional.empty();
     }
 
     public static Optional<NormalizedNode<?, ?>> findNode(final Optional<NormalizedNode<?, ?>> parent,
             final Iterable<PathArgument> relativePath) {
-        checkNotNull(parent, "Parent must not be null");
-        checkNotNull(relativePath, "Relative path must not be null");
+        requireNonNull(parent, "Parent must not be null");
+        requireNonNull(relativePath, "Relative path must not be null");
 
         Optional<NormalizedNode<?, ?>> currentNode = parent;
         final Iterator<PathArgument> pathIterator = relativePath.iterator();
@@ -60,7 +60,7 @@ public final class NormalizedNodes {
 
     public static Optional<NormalizedNode<?, ?>> findNode(final NormalizedNode<?, ?> parent,
             final Iterable<PathArgument> relativePath) {
-        return findNode(Optional.fromNullable(parent), relativePath);
+        return findNode(Optional.ofNullable(parent), relativePath);
     }
 
     public static Optional<NormalizedNode<?, ?>> findNode(final NormalizedNode<?, ?> parent,
@@ -70,8 +70,8 @@ public final class NormalizedNodes {
 
     public static Optional<NormalizedNode<?, ?>> findNode(final NormalizedNode<?, ?> tree,
             final YangInstanceIdentifier path) {
-        checkNotNull(tree, "Tree must not be null");
-        checkNotNull(path, "Path must not be null");
+        requireNonNull(tree, "Tree must not be null");
+        requireNonNull(path, "Path must not be null");
 
         return findNode(Optional.of(tree), path.getPathArguments());
     }
@@ -80,7 +80,7 @@ public final class NormalizedNodes {
     public static Optional<NormalizedNode<?, ?>> getDirectChild(final NormalizedNode<?, ?> node,
             final PathArgument pathArg) {
         if (node instanceof LeafNode<?> || node instanceof LeafSetEntryNode<?>) {
-            return Optional.absent();
+            return Optional.empty();
         } else if (node instanceof DataContainerNode<?>) {
             return (Optional) ((DataContainerNode<?>) node).getChild(pathArg);
         } else if (node instanceof MapNode && pathArg instanceof NodeIdentifierWithPredicates) {
@@ -88,7 +88,7 @@ public final class NormalizedNodes {
         } else if (node instanceof LeafSetNode<?>) {
             return (Optional) ((LeafSetNode<?>) node).getChild((NodeWithValue) pathArg);
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     /**

@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Splitter;
 import java.net.URI;
 import java.util.Iterator;
@@ -43,7 +44,7 @@ abstract class AbstractNamespaceCodec {
 
     protected final StringBuilder appendQName(final StringBuilder sb, final QName qname) {
         final String prefix = prefixForNamespace(qname.getNamespace());
-        Preconditions.checkArgument(prefix != null, "Failed to map QName {}", qname);
+        checkArgument(prefix != null, "Failed to map QName {}", qname);
         sb.append(prefix);
         sb.append(':');
         sb.append(qname.getLocalName());

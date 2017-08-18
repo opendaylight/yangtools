@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.Objects;
+import java.util.Optional;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
@@ -45,8 +45,8 @@ final class LengthConstraintImpl implements LengthConstraint, Immutable {
             final Optional<String> reference, final String errorAppTag, final String errorMessage) {
         this.min = Preconditions.checkNotNull(min, "min must not be null.");
         this.max = Preconditions.checkNotNull(max, "max must not be null");
-        this.description = description.orNull();
-        this.reference = reference.orNull();
+        this.description = description.orElse(null);
+        this.reference = reference.orElse(null);
         this.errorAppTag = errorAppTag != null ? errorAppTag : "length-out-of-specified-bounds";
         this.errorMessage = errorMessage != null ? errorMessage : "The argument is out of bounds <" + min + ", " + max
                 + ">";

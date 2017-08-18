@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Objects;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
 public class LengthConstraintEffectiveImpl implements LengthConstraint {
@@ -25,15 +26,15 @@ public class LengthConstraintEffectiveImpl implements LengthConstraint {
 
     public LengthConstraintEffectiveImpl(final Number min, final Number max, final Optional<String> description,
             final Optional<String> reference) {
-        this(min, max, description.orNull(), reference.orNull(), "length-out-of-specified-bounds", "The argument is out of bounds <"
-                + min + ", " + max + ">");
+        this(min, max, description.orElse(null), reference.orElse(null), "length-out-of-specified-bounds",
+            "The argument is out of bounds <" + min + ", " + max + ">");
     }
 
     public LengthConstraintEffectiveImpl(final Number min, final Number max, final String description,
             final String reference, final String errorAppTag, final String errorMessage) {
         super();
-        this.min = Preconditions.checkNotNull(min, "min must not be null.");
-        this.max = Preconditions.checkNotNull(max, "max must not be null");
+        this.min = requireNonNull(min, "min must not be null");
+        this.max = requireNonNull(max, "max must not be null");
         this.description = description;
         this.reference = reference;
         this.errorAppTag = errorAppTag != null ? errorAppTag : "length-out-of-specified-bounds";

@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.util;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import java.util.AbstractQueue;
 import java.util.Collections;
 import java.util.Deque;
@@ -110,7 +111,7 @@ public final class EmptyDeque<E> extends AbstractQueue<E> implements Deque<E>, I
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     public <T> T[] toArray(final T[] a) {
-        return Preconditions.checkNotNull(a);
+        return requireNonNull(a);
     }
 
     @Override

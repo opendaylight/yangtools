@@ -8,9 +8,9 @@
 
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import com.google.common.base.Optional;
 import com.google.common.io.BaseEncoding;
 import java.util.Objects;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.UnionCodec;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
@@ -26,7 +26,7 @@ final class UnionStringCodec extends TypeDefinitionAwareCodec<Object, UnionTypeD
     }
 
     static TypeDefinitionAwareCodec<?, UnionTypeDefinition> from(final UnionTypeDefinition normalizedType) {
-        return new UnionStringCodec(Optional.fromNullable(normalizedType));
+        return new UnionStringCodec(Optional.ofNullable(normalizedType));
     }
 
     @Override

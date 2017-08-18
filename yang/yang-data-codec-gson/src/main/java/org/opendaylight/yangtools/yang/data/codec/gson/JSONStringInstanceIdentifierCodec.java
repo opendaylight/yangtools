@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
@@ -27,9 +29,9 @@ final class JSONStringInstanceIdentifierCodec extends AbstractModuleStringInstan
     private final SchemaContext context;
 
     JSONStringInstanceIdentifierCodec(final SchemaContext context, final JSONCodecFactory jsonCodecFactory) {
-        this.context = Preconditions.checkNotNull(context);
+        this.context = requireNonNull(context);
         this.dataContextTree = DataSchemaContextTree.from(context);
-        this.codecFactory = Preconditions.checkNotNull(jsonCodecFactory);
+        this.codecFactory = requireNonNull(jsonCodecFactory);
     }
 
     @Override
@@ -51,8 +53,8 @@ final class JSONStringInstanceIdentifierCodec extends AbstractModuleStringInstan
 
     @Override
     protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final String value) {
-        Preconditions.checkNotNull(schemaNode, "schemaNode cannot be null");
-        Preconditions.checkArgument(schemaNode instanceof LeafSchemaNode, "schemaNode must be of type LeafSchemaNode");
+        requireNonNull(schemaNode, "schemaNode cannot be null");
+        checkArgument(schemaNode instanceof LeafSchemaNode, "schemaNode must be of type LeafSchemaNode");
         final JSONCodec<?> objectJSONCodec = codecFactory.codecFor((LeafSchemaNode) schemaNode);
         return objectJSONCodec.parseValue(null, value);
     }

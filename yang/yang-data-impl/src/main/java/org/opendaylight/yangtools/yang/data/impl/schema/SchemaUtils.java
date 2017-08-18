@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
@@ -22,6 +21,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -74,7 +74,7 @@ public final class SchemaUtils {
                 }
             }
         }
-        return Optional.fromNullable(sNode);
+        return Optional.ofNullable(sNode);
     }
 
     /**
@@ -120,7 +120,7 @@ public final class SchemaUtils {
     }
 
     public static AugmentationSchema findSchemaForAugment(final ChoiceSchemaNode schema, final Set<QName> qNames) {
-        Optional<AugmentationSchema> schemaForAugment = Optional.absent();
+        Optional<AugmentationSchema> schemaForAugment = Optional.empty();
 
         for (final ChoiceCaseNode choiceCaseNode : schema.getCases()) {
             schemaForAugment = findAugment(choiceCaseNode, qNames);
@@ -144,7 +144,7 @@ public final class SchemaUtils {
             }
         }
 
-        return Optional.absent();
+        return Optional.empty();
     }
 
     public static DataSchemaNode findSchemaForChild(final ChoiceSchemaNode schema, final QName childPartialQName) {
@@ -230,7 +230,7 @@ public final class SchemaUtils {
 
             for (final DataSchemaNode child : ((DataNodeContainer) schema).getChildNodes()) {
                 // If is not augmented child, continue
-                if (!(augments.containsKey(child.getQName()))) {
+                if (!augments.containsKey(child.getQName())) {
                     continue;
                 }
 
@@ -256,7 +256,7 @@ public final class SchemaUtils {
         // Choice Node has to map child nodes from all its cases
         if (schema instanceof ChoiceSchemaNode) {
             for (final ChoiceCaseNode choiceCaseNode : ((ChoiceSchemaNode) schema).getCases()) {
-                if (!(augments.containsKey(choiceCaseNode.getQName()))) {
+                if (!augments.containsKey(choiceCaseNode.getQName())) {
                     continue;
                 }
 
@@ -307,7 +307,7 @@ public final class SchemaUtils {
      * @return set of nodes
      */
     public static Set<DataSchemaNode> getRealSchemasForAugment(final AugmentationTarget targetSchema, final AugmentationSchema augmentSchema) {
-        if (!(targetSchema.getAvailableAugmentations().contains(augmentSchema))) {
+        if (!targetSchema.getAvailableAugmentations().contains(augmentSchema)) {
             return Collections.emptySet();
         }
 
@@ -348,7 +348,7 @@ public final class SchemaUtils {
             }
         }
 
-        return Optional.absent();
+        return Optional.empty();
     }
 
     public static boolean belongsToCaseAugment(final ChoiceCaseNode caseNode, final AugmentationIdentifier childToProcess) {
@@ -600,7 +600,7 @@ public final class SchemaUtils {
     }
 
     private static Optional<SchemaNode> tryFindRpc(final SchemaContext ctx, final QName qname) {
-        return Optional.fromNullable(Iterables.find(ctx.getOperations(), new SchemaNodePredicate(qname), null));
+        return Optional.ofNullable(Iterables.find(ctx.getOperations(), new SchemaNodePredicate(qname), null));
     }
 
     private static Optional<SchemaNode> tryFindNotification(final NotificationNodeContainer notificationContanier,
@@ -625,5 +625,4 @@ public final class SchemaUtils {
             return input.getQName().equals(qname);
         }
     }
-
 }

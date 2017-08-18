@@ -14,15 +14,15 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.Maps;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.AbstractMap;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.stream.XMLOutputFactory;
@@ -73,7 +73,7 @@ public class XmlStreamUtilsTest {
         QName name = getAttrQName("namespace", "2012-12-12", "attr", Optional.of("prefix"));
         final Map.Entry<QName, String> attributeEntry = new AbstractMap.SimpleEntry<>(name, "value");
 
-        name = getAttrQName("namespace2", "2012-12-12", "attr", Optional.absent());
+        name = getAttrQName("namespace2", "2012-12-12", "attr", Optional.empty());
         final Map.Entry<QName, String> attributeEntryNoPrefix = new AbstractMap.SimpleEntry<>(name, "value");
 
         final RandomPrefix randomPrefix = new RandomPrefix(null);
@@ -176,7 +176,7 @@ public class XmlStreamUtilsTest {
     }
 
     private static Map<String, String> mapPrefixed(final Iterable<Map.Entry<URI, String>> prefixes) {
-        final Map<String, String> mappedPrefixes = Maps.newHashMap();
+        final Map<String, String> mappedPrefixes = new HashMap<>();
         for (final Map.Entry<URI, String> prefix : prefixes) {
             mappedPrefixes.put(prefix.getKey().toString(), prefix.getValue());
         }

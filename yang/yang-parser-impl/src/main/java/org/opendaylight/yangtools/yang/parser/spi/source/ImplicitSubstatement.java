@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 
 /**
@@ -23,7 +24,7 @@ public final class ImplicitSubstatement implements StatementSourceReference {
     private final StatementSourceReference parentRef;
 
     private ImplicitSubstatement(final StatementSourceReference parentRef) {
-        this.parentRef = Preconditions.checkNotNull(parentRef);
+        this.parentRef = requireNonNull(parentRef);
     }
 
     /**

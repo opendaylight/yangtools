@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Verify;
+import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
@@ -42,7 +43,7 @@ abstract class UnionJSONCodec<T> implements JSONCodec<T> {
 
         SingleType(final Class<T> dataClass, final List<JSONCodec<?>> codecs) {
             super(codecs);
-            this.dataClass = Preconditions.checkNotNull(dataClass);
+            this.dataClass = requireNonNull(dataClass);
         }
 
         @Override
@@ -61,7 +62,7 @@ abstract class UnionJSONCodec<T> implements JSONCodec<T> {
 
     static UnionJSONCodec<?> create(final UnionTypeDefinition type, final List<JSONCodec<?>> codecs) {
         final Iterator<JSONCodec<?>> it = codecs.iterator();
-        Verify.verify(it.hasNext(), "Union %s has no subtypes", type);
+        verify(it.hasNext(), "Union %s has no subtypes", type);
 
         Class<?> dataClass = it.next().getDataType();
         while (it.hasNext()) {

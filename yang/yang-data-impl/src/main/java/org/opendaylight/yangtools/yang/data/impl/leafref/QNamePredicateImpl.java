@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.io.Serializable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -19,8 +20,8 @@ class QNamePredicateImpl implements Immutable, Serializable, QNamePredicate {
     private final LeafRefPath pathKeyExpression;
 
     public QNamePredicateImpl(final QName identifier, final LeafRefPath pathKeyExpression) {
-        this.identifier = Preconditions.checkNotNull(identifier, "QNamePredicate: identifier should not be null");
-        this.pathKeyExpression = Preconditions.checkNotNull(pathKeyExpression, "QNamePredicate: pathKeyExpression should not be null");
+        this.identifier = requireNonNull(identifier, "QNamePredicate: identifier should not be null");
+        this.pathKeyExpression = requireNonNull(pathKeyExpression, "QNamePredicate: pathKeyExpression should not be null");
     }
 
     @Override

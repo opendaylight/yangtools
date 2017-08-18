@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Map;
@@ -43,7 +44,7 @@ public enum BuiltinEffectiveStatement implements TypeEffectiveStatement<TypeStat
     private final TypeDefinition<?> typedef;
 
     BuiltinEffectiveStatement(final TypeDefinition<?> typedef) {
-        this.typedef = Preconditions.checkNotNull(typedef);
+        this.typedef = requireNonNull(typedef);
     }
 
     @Override

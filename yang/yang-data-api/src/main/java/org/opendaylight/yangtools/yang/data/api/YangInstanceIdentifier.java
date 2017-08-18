@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import javax.annotation.Nonnull;
@@ -235,7 +237,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         while (oit.hasNext()) {
             // Ancestor is not really an ancestor
             if (!lit.hasNext() || !lit.next().equals(oit.next())) {
-                return Optional.absent();
+                return Optional.empty();
             }
 
             ++common;
@@ -257,7 +259,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
             return true;
         }
 
-        Preconditions.checkArgument(other != null, "other should not be null");
+        checkArgument(other != null, "other should not be null");
         final Iterator<PathArgument> lit = getPathArguments().iterator();
         final Iterator<PathArgument> oit = other.getPathArguments().iterator();
 
@@ -423,7 +425,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         private transient volatile boolean hashGuard = false;
 
         protected AbstractPathArgument(final QName nodeType) {
-            this.nodeType = Preconditions.checkNotNull(nodeType);
+            this.nodeType = requireNonNull(nodeType);
         }
 
         @Override

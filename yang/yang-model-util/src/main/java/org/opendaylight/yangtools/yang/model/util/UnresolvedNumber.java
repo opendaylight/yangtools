@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import java.util.List;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
@@ -92,7 +93,7 @@ public abstract class UnresolvedNumber extends Number implements Immutable {
     }
 
     private static Number resolve(final Number number) {
-        Preconditions.checkArgument(!(number instanceof UnresolvedNumber));
+        checkArgument(!(number instanceof UnresolvedNumber));
         return number;
     }
 

@@ -8,9 +8,10 @@
 
 package org.opendaylight.yangtools.util.concurrent;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.AbstractListeningExecutorService;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.List;
@@ -65,7 +66,7 @@ public class AsyncNotifyingListeningExecutorService extends AbstractListeningExe
      */
     public AsyncNotifyingListeningExecutorService(final ExecutorService delegate,
             @Nullable final Executor listenableFutureExecutor) {
-        this.delegate = Preconditions.checkNotNull(delegate);
+        this.delegate = requireNonNull(delegate);
         this.listenableFutureExecutor = listenableFutureExecutor;
     }
 

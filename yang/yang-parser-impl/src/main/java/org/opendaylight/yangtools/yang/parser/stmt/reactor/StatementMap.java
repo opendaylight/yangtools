@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.ImmutableList;
@@ -52,14 +55,14 @@ abstract class StatementMap {
 
         Regular(final int index, final StatementContextBase<?, ?, ?> object) {
             elements = new StatementContextBase<?, ?, ?>[index + 1];
-            elements[index] = Preconditions.checkNotNull(object);
+            elements[index] = requireNonNull(object);
         }
 
         Regular(final StatementContextBase<?, ?, ?> object0, final int index,
                 final StatementContextBase<?, ?, ?> object) {
             elements = new StatementContextBase<?, ?, ?>[index + 1];
-            elements[0] = Preconditions.checkNotNull(object0);
-            elements[index] = Preconditions.checkNotNull(object);
+            elements[0] = requireNonNull(object0);
+            elements[index] = requireNonNull(object);
         }
 
         @Override
@@ -74,12 +77,12 @@ abstract class StatementMap {
         @Override
         StatementMap put(final int index, final StatementContextBase<?, ?, ?> object) {
             if (index < elements.length) {
-                Preconditions.checkArgument(elements[index] == null);
+                checkArgument(elements[index] == null);
             } else {
                 elements = Arrays.copyOf(elements, index + 1);
             }
 
-            elements[index] = Preconditions.checkNotNull(object);
+            elements[index] = requireNonNull(object);
             return this;
         }
 
@@ -157,7 +160,7 @@ abstract class StatementMap {
         private final StatementContextBase<?, ?, ?> object;
 
         Singleton(final StatementContextBase<?, ?, ?> object) {
-            this.object = Preconditions.checkNotNull(object);
+            this.object = requireNonNull(object);
         }
 
         @Override
@@ -167,7 +170,7 @@ abstract class StatementMap {
 
         @Override
         StatementMap put(final int index, final StatementContextBase<?, ?, ?> object) {
-            Preconditions.checkArgument(index != 0);
+            checkArgument(index != 0);
             return new Regular(this.object, index, object);
         }
 

@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableMap;
@@ -86,7 +90,6 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
     }
 
     public static Builder derivedFrom(final StatementSupportBundle parent) {
-        Preconditions.checkNotNull(parent);
         return new Builder(parent.getSupportedVersions(), parent);
     }
 
@@ -99,7 +102,7 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
             final Class<N> namespace) throws NamespaceNotAvailableException {
         final NamespaceBehaviour<?, ?, ?> potential = namespaceDefinitions.get(namespace);
         if (potential != null) {
-            Preconditions.checkState(namespace.equals(potential.getIdentifier()));
+            checkState(namespace.equals(potential.getIdentifier()));
 
             /*
              * Safe cast, previous checkState checks equivalence of key from
@@ -166,15 +169,15 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
         private StatementSupportBundle parent;
 
         Builder(final Set<YangVersion> supportedVersions, final StatementSupportBundle parent) {
-            this.parent = Preconditions.checkNotNull(parent);
+            this.parent = requireNonNull(parent);
             this.supportedVersions = ImmutableSet.copyOf(supportedVersions);
         }
 
         public Builder addSupport(final StatementSupport<?, ?, ?> definition) {
             final QName identifier = definition.getStatementName();
-            Preconditions.checkState(!commonStatements.containsKey(identifier),
+            checkState(!commonStatements.containsKey(identifier),
                     "Statement %s already defined in common statement bundle.", identifier);
-            Preconditions.checkState(parent.getCommonStatementDefinition(identifier) == null,
+            checkState(parent.getCommonStatementDefinition(identifier) == null,
                     "Statement %s already defined.", identifier);
             commonStatements.put(identifier, definition);
             return this;
@@ -182,18 +185,16 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
 
         public Builder addVersionSpecificSupport(final YangVersion version,
                 final StatementSupport<?, ?, ?> definition) {
-            Preconditions.checkNotNull(version);
-            Preconditions.checkNotNull(definition);
-            Preconditions.checkArgument(supportedVersions.contains(version));
+            checkArgument(supportedVersions.contains(requireNonNull(version)));
 
             final QName identifier = definition.getStatementName();
-            Preconditions.checkState(!commonStatements.containsKey(identifier),
+            checkState(!commonStatements.containsKey(identifier),
                     "Statement %s already defined in common statement bundle.", identifier);
-            Preconditions.checkState(!versionSpecificStatements.contains(version, identifier),
+            checkState(!versionSpecificStatements.contains(version, identifier),
                     "Statement %s already defined for version %s.", identifier, version);
-            Preconditions.checkState(parent.getCommonStatementDefinition(identifier) == null,
+            checkState(parent.getCommonStatementDefinition(identifier) == null,
                     "Statement %s already defined in parent's common statement bundle.", identifier);
-            Preconditions.checkState(parent.getVersionSpecificStatementDefinition(version, identifier) == null,
+            checkState(parent.getVersionSpecificStatementDefinition(version, identifier) == null,
                     "Statement %s already defined for version %s in parent's statement bundle.", identifier, version);
             versionSpecificStatements.put(version, identifier, definition);
             return this;
@@ -202,8 +203,8 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
         public <K, V, N extends IdentifierNamespace<K, V>> Builder addSupport(
                 final NamespaceBehaviour<K, V, N> namespaceSupport) {
             final Class<N> identifier = namespaceSupport.getIdentifier();
-            Preconditions.checkState(!namespaces.containsKey(identifier));
-            Preconditions.checkState(!parent.hasNamespaceBehaviour(identifier));
+            checkState(!namespaces.containsKey(identifier));
+            checkState(!parent.hasNamespaceBehaviour(identifier));
             namespaces.put(identifier, namespaceSupport);
             return this;
         }
