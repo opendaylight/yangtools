@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -47,7 +47,7 @@ final class BaseDecimalType extends AbstractRangedBaseType<DecimalTypeDefinition
 
     private static List<RangeConstraint> createRangeConstraint(final String min, final String max) {
         return ImmutableList.of(BaseConstraints.newRangeConstraint(new BigDecimal(min), new BigDecimal(max),
-            Optional.absent(), Optional.of("https://tools.ietf.org/html/rfc6020#section-9.3.4")));
+            Optional.empty(), Optional.of("https://tools.ietf.org/html/rfc6020#section-9.3.4")));
     }
 
     static List<RangeConstraint> constraintsForDigits(final int fractionDigits) {

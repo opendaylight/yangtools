@@ -9,8 +9,9 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import com.google.common.base.Optional;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import java.util.Optional;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedLeafSetNode;
@@ -48,10 +49,7 @@ final class OrderedLeafSetModificationStrategy extends AbstractNodeContainerModi
     }
 
     @Override
-    public Optional<ModificationApplyOperation> getChild(final YangInstanceIdentifier.PathArgument identifier) {
-        if (identifier instanceof YangInstanceIdentifier.NodeWithValue) {
-            return entryStrategy;
-        }
-        return Optional.absent();
+    public Optional<ModificationApplyOperation> getChild(final PathArgument identifier) {
+        return identifier instanceof NodeWithValue ? entryStrategy : Optional.empty();
     }
 }

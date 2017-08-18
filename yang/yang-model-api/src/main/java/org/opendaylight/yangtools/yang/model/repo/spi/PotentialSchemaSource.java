@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.spi;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.objcache.ObjectCache;
 import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
@@ -71,9 +72,9 @@ public final class PotentialSchemaSource<T extends SchemaSourceRepresentation> {
 
     private PotentialSchemaSource(final SourceIdentifier sourceIdentifier, final Class<? extends T> representation,
             final int cost) {
-        this.representation = Preconditions.checkNotNull(representation);
-        this.sourceIdentifier = Preconditions.checkNotNull(sourceIdentifier);
-        Preconditions.checkArgument(cost >= 0, "cost has to be non-negative");
+        this.representation = requireNonNull(representation);
+        this.sourceIdentifier = requireNonNull(sourceIdentifier);
+        checkArgument(cost >= 0, "cost has to be non-negative");
         this.cost = cost;
     }
 

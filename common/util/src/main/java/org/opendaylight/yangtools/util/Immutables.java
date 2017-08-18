@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.util;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.collect.ImmutableSet;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -36,7 +37,7 @@ public final class Immutables {
      * @return true if object is known to be immutable false otherwise.
      */
     public static boolean isImmutable(final Object obj) {
-        Preconditions.checkArgument(obj != null,"Object should not be null");
+        checkArgument(obj != null,"Object should not be null");
         if (obj instanceof Mutable) {
             return false;
         } else if (obj instanceof Immutable) {

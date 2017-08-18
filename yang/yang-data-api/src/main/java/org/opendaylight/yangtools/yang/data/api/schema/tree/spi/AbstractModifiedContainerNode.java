@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Preconditions;
 import java.util.Map;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -24,8 +25,8 @@ abstract class AbstractModifiedContainerNode extends AbstractContainerNode {
     protected AbstractModifiedContainerNode(final NormalizedNode<?, ?> data, final Version version,
             final Map<PathArgument, TreeNode> children, final Version subtreeVersion) {
         super(data, version);
-        this.subtreeVersion = Preconditions.checkNotNull(subtreeVersion);
-        this.children = Preconditions.checkNotNull(children);
+        this.subtreeVersion = requireNonNull(subtreeVersion);
+        this.children = requireNonNull(children);
     }
 
     protected final TreeNode getModifiedChild(final PathArgument childId) {

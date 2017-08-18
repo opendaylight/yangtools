@@ -7,18 +7,17 @@
  */
 package org.opendaylight.yangtools.util;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
-import com.google.common.base.Supplier;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,8 +41,8 @@ public final class ClassLoaderUtils {
      * @return Result of supplier invocation.
      */
     public static <V> V withClassLoader(final ClassLoader cls, final Supplier<V> function) {
-        checkNotNull(cls, "Classloader should not be null");
-        checkNotNull(function, "Function should not be null");
+        requireNonNull(cls, "Classloader should not be null");
+        requireNonNull(function, "Function should not be null");
 
         final Thread currentThread = Thread.currentThread();
         final ClassLoader oldCls = currentThread.getContextClassLoader();
@@ -67,8 +66,8 @@ public final class ClassLoaderUtils {
      * @return Result of callable invocation.
      */
     public static <V> V withClassLoader(final ClassLoader cls, final Callable<V> function) throws Exception {
-        checkNotNull(cls, "Classloader should not be null");
-        checkNotNull(function, "Function should not be null");
+        requireNonNull(cls, "Classloader should not be null");
+        requireNonNull(function, "Function should not be null");
 
         final Thread currentThread = Thread.currentThread();
         final ClassLoader oldCls = currentThread.getContextClassLoader();
@@ -161,8 +160,8 @@ public final class ClassLoaderUtils {
     }
 
     public static ParameterizedType findParameterizedType(final Class<?> subclass, final Class<?> genericType) {
-        Preconditions.checkNotNull(subclass);
-        Preconditions.checkNotNull(genericType);
+        requireNonNull(subclass);
+        requireNonNull(genericType);
 
         for (final Type type : subclass.getGenericInterfaces()) {
             if (type instanceof ParameterizedType && genericType.equals(((ParameterizedType) type).getRawType())) {

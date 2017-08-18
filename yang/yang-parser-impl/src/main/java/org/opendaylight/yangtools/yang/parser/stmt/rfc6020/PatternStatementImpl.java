@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import javax.annotation.Nonnull;
@@ -63,7 +63,7 @@ public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConst
                 return null;
             }
 
-            return new PatternConstraintEffectiveImpl(pattern, value, Optional.absent(), Optional.absent());
+            return new PatternConstraintEffectiveImpl(pattern, value, Optional.empty(), Optional.empty());
         }
 
         @Override

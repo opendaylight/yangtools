@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.util;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ForwardingMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
@@ -34,7 +35,7 @@ final class ReadOnlyTrieMap<K, V> extends ForwardingMap<K, V> {
 
     ReadOnlyTrieMap(final MutableTrieMap<K, V> map, final int size) {
         super();
-        this.readWrite = Preconditions.checkNotNull(map);
+        this.readWrite = requireNonNull(map);
         this.size = size;
     }
 

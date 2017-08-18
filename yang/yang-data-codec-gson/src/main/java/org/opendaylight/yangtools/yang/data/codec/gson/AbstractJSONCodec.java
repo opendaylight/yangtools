@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import org.opendaylight.yangtools.yang.data.impl.codec.DataStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 
@@ -20,7 +21,7 @@ abstract class AbstractJSONCodec<T> implements JSONCodec<T> {
     private final DataStringCodec<T> codec;
 
     AbstractJSONCodec(final DataStringCodec<T> codec) {
-        this.codec = Preconditions.checkNotNull(codec);
+        this.codec = requireNonNull(codec);
     }
 
     @Override

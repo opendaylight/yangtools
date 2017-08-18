@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Verify;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.Iterators;
@@ -33,8 +35,8 @@ final class StmtNamespaceContext implements NamespaceContext {
     }
 
     private StmtNamespaceContext(final StmtContext<?, ?, ?> ctx, final BiMap<String, String> URIToPrefixMap) {
-        this.ctx = Preconditions.checkNotNull(ctx);
-        this.URIToPrefixMap = ImmutableBiMap.copyOf(Preconditions.checkNotNull(URIToPrefixMap));
+        this.ctx = requireNonNull(ctx);
+        this.URIToPrefixMap = ImmutableBiMap.copyOf(requireNonNull(URIToPrefixMap));
     }
 
     public static NamespaceContext create(final StmtContext<?, ?, ?> ctx) {
@@ -47,8 +49,7 @@ final class StmtNamespaceContext implements NamespaceContext {
 
     private String localNamespaceURI() {
         if (localNamespaceURI == null) {
-            localNamespaceURI = Verify.verifyNotNull(
-                ctx.getPublicDefinition().getStatementName().getNamespace().toString(),
+            localNamespaceURI = verifyNotNull(ctx.getPublicDefinition().getStatementName().getNamespace().toString(),
                 "Local namespace URI not found in %s", ctx);
         }
         return localNamespaceURI;
@@ -57,7 +58,7 @@ final class StmtNamespaceContext implements NamespaceContext {
     @Override
     public String getNamespaceURI(final String prefix) {
         // API-mandated by NamespaceContext
-        Preconditions.checkArgument(prefix != null);
+        checkArgument(prefix != null);
 
         final String uri = URIToPrefixMap.inverse().get(prefix);
         if (uri != null) {
@@ -75,7 +76,7 @@ final class StmtNamespaceContext implements NamespaceContext {
     @Override
     public String getPrefix(final String namespaceURI) {
         // API-mandated by NamespaceContext
-        Preconditions.checkArgument(namespaceURI != null);
+        checkArgument(namespaceURI != null);
 
         final String prefix = URIToPrefixMap.get(namespaceURI);
         if (prefix != null) {

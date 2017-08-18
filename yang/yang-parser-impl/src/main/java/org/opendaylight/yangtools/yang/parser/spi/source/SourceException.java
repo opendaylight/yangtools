@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Optional;
 import javax.annotation.Nonnull;
 
@@ -133,8 +134,8 @@ public class SourceException extends RuntimeException {
     }
 
     private static String createMessage(@Nonnull final String message, @Nonnull final StatementSourceReference source) {
-        Preconditions.checkNotNull(message);
-        Preconditions.checkNotNull(source);
+        requireNonNull(message);
+        requireNonNull(source);
 
         return message + " [at " + source + ']';
     }

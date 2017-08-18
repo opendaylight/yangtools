@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import com.google.common.base.Optional;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -23,7 +23,8 @@ final class SemVerDependencyResolver extends DependencyResolver {
         super(depInfo);
     }
 
-    protected static SourceIdentifier findCompatibleVersion(final Iterable<SourceIdentifier> haystack, final ModuleImport mi) {
+    protected static SourceIdentifier findCompatibleVersion(final Iterable<SourceIdentifier> haystack,
+            final ModuleImport mi) {
         final String requestedModuleName = mi.getModuleName();
         for (SourceIdentifier r : haystack) {
             if (requestedModuleName.equals(r.getName())
@@ -42,7 +43,8 @@ final class SemVerDependencyResolver extends DependencyResolver {
     @Override
     protected boolean isKnown(final Collection<SourceIdentifier> haystack, final ModuleImport mi) {
         final String rev = mi.getRevision() != null ? QName.formattedRevision(mi.getRevision()) : null;
-        final SemVerSourceIdentifier msi = SemVerSourceIdentifier.create(mi.getModuleName(), Optional.fromNullable(rev), mi.getSemanticVersion());
+        final SemVerSourceIdentifier msi = SemVerSourceIdentifier.create(mi.getModuleName(), Optional.ofNullable(rev),
+            mi.getSemanticVersion());
 
         // Quick lookup
         if (haystack.contains(msi)) {

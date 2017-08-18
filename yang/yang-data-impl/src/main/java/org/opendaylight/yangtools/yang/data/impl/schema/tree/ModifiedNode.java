@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -111,11 +111,11 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      */
     @Override
     public Optional<ModifiedNode> getChild(final PathArgument child) {
-        return Optional.fromNullable(children.get(child));
+        return Optional.ofNullable(children.get(child));
     }
 
     private Optional<TreeNode> metadataFromSnapshot(@Nonnull final PathArgument child) {
-        return original.isPresent() ? original.get().getChild(child) : Optional.absent();
+        return original.isPresent() ? original.get().getChild(child) : Optional.empty();
     }
 
     private Optional<TreeNode> metadataFromData(@Nonnull final PathArgument child, final Version modVersion) {
@@ -142,7 +142,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         switch (operation) {
         case DELETE:
             // DELETE implies non-presence
-            return Optional.absent();
+            return Optional.empty();
         case NONE:
         case TOUCH:
         case MERGE:

@@ -8,13 +8,14 @@
 
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.io.BaseEncoding;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
+import java.util.Optional;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -78,11 +79,11 @@ public class Bug5446Test extends XMLTestCase {
         final ContainerNode docNode = createDocNode();
 
         Optional<DataContainerChild<? extends PathArgument, ?>> root = docNode.getChild(new NodeIdentifier(rootQName));
-        assertTrue(root.orNull() instanceof ContainerNode);
+        assertTrue(root.orElse(null) instanceof ContainerNode);
 
-        Optional<DataContainerChild<? extends PathArgument, ?>> child = ((ContainerNode) root.orNull())
+        Optional<DataContainerChild<? extends PathArgument, ?>> child = ((ContainerNode) root.orElse(null))
                 .getChild(new NodeIdentifier(ipAddressQName));
-        assertTrue(child.orNull() instanceof LeafNode);
+        assertTrue(child.orElse(null) instanceof LeafNode);
         LeafNode<?> ipAdress = (LeafNode<?>) child.get();
 
         Object value = ipAdress.getValue();
@@ -145,9 +146,7 @@ public class Bug5446Test extends XMLTestCase {
 
     private static Document loadDocument(final String xmlPath) throws IOException, SAXException {
         final InputStream resourceAsStream = Bug5446Test.class.getResourceAsStream(xmlPath);
-        final Document currentConfigElement = readXmlToDocument(resourceAsStream);
-        Preconditions.checkNotNull(currentConfigElement);
-        return currentConfigElement;
+        return requireNonNull(readXmlToDocument(resourceAsStream));
     }
 
     private static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {

@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import java.util.Objects;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
@@ -26,14 +27,14 @@ public class PatternConstraintEffectiveImpl implements PatternConstraint {
 
     public PatternConstraintEffectiveImpl(final String regex, final String rawRegex,
             final Optional<String> description, final Optional<String> reference) {
-        this(regex, rawRegex, description.orNull(), reference.orNull(), null, null, null);
+        this(regex, rawRegex, description.orElse(null), reference.orElse(null), null, null, null);
     }
 
     public PatternConstraintEffectiveImpl(final String regex, final String rawRegex, final String description,
             final String reference, final String errorAppTag, final String errorMessage, final ModifierKind modifier) {
         super();
-        this.regEx = Preconditions.checkNotNull(regex, "regex must not be null.");
-        this.rawRegEx = Preconditions.checkNotNull(rawRegex, "raw regex must not be null.");
+        this.regEx = requireNonNull(regex, "regex must not be null");
+        this.rawRegEx = requireNonNull(rawRegex, "raw regex must not be null");
         this.description = description;
         this.reference = reference;
         this.errorAppTag = errorAppTag != null ? errorAppTag : "invalid-regular-expression";
