@@ -1,0 +1,37 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    include sub-foo-1 {
+        revision-date 2017-07-07;
+    }
+    include sub-foo-2 {
+        revision-date 2017-07-07;
+    }
+    import bar-3 { prefix bar; revision-date 2000-01-03; }
+    
+    include sub-foo-4 {
+        revision-date 2017-07-07;
+    }
+
+    revision 2017-07-07;
+
+    typedef foo-type {
+        type string;
+    }
+
+    container root {
+        leaf my-leaf {
+            type bar:bar-3-type;
+        }
+        leaf my-leaf-1 {
+            type sub-foo-1-type;
+        }
+        leaf my-leaf-2 {
+            type sub-foo-2-type;
+        }
+        leaf my-leaf-4 {
+            type sub-foo-4-type;
+        }
+    }
+}

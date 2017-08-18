@@ -1,0 +1,22 @@
+submodule sub-foo-4 {
+    belongs-to foo {
+        prefix foo;
+    }
+
+    import bar-4 { prefix bar; revision-date 2000-01-04; }
+
+    revision 2017-07-07;
+
+    typedef sub-foo-4-type {
+        type string;
+    }
+
+    container sub-root-4 {
+        leaf my-leaf {
+            type bar:bar-4-type;
+        }
+        leaf my-leaf-2 {
+            type foo:foo-type;
+        }
+    }
+}
