@@ -7,15 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -56,7 +55,6 @@ public class DOMSourceXMLStreamReaderTest {
         // deserialization
         final Document doc = loadDocument("/dom-reader-test/foo.xml");
         final DOMSource inputXml = new DOMSource(doc.getDocumentElement());
-        XMLInputFactory inputFactory = XMLInputFactory.newFactory();
         XMLStreamReader domXMLReader = new DOMSourceXMLStreamReader(inputXml);
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
@@ -87,9 +85,7 @@ public class DOMSourceXMLStreamReaderTest {
 
     private static Document loadDocument(final String xmlPath) throws IOException, SAXException {
         final InputStream resourceAsStream = NormalizedNodesToXmlTest.class.getResourceAsStream(xmlPath);
-        final Document currentConfigElement = readXmlToDocument(resourceAsStream);
-        Preconditions.checkNotNull(currentConfigElement);
-        return currentConfigElement;
+        return requireNonNull(readXmlToDocument(resourceAsStream));
     }
 
     private static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {

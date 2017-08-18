@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.model.repo.api;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Optional;
 import java.util.Objects;
+import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
@@ -67,7 +67,7 @@ public final class SemVerSourceIdentifier extends SourceIdentifier {
      *            semantic version of source
      */
     SemVerSourceIdentifier(final String name, final SemVer semVer) {
-        this(name, Optional.absent(), semVer);
+        this(name, Optional.empty(), semVer);
     }
 
     /**

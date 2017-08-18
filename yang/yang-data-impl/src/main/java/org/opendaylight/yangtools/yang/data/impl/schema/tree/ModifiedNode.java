@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -40,7 +41,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 @NotThreadSafe
 final class ModifiedNode extends NodeModification implements StoreTreeNode<ModifiedNode> {
     static final Predicate<ModifiedNode> IS_TERMINAL_PREDICATE = input -> {
-        Preconditions.checkNotNull(input);
+        requireNonNull(input);
         switch (input.getOperation()) {
             case DELETE:
             case MERGE:
@@ -111,11 +112,11 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      */
     @Override
     public Optional<ModifiedNode> getChild(final PathArgument child) {
-        return Optional.fromNullable(children.get(child));
+        return Optional.ofNullable(children.get(child));
     }
 
     private Optional<TreeNode> metadataFromSnapshot(@Nonnull final PathArgument child) {
-        return original.isPresent() ? original.get().getChild(child) : Optional.absent();
+        return original.isPresent() ? original.get().getChild(child) : Optional.empty();
     }
 
     private Optional<TreeNode> metadataFromData(@Nonnull final PathArgument child, final Version modVersion) {
@@ -142,7 +143,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         switch (operation) {
             case DELETE:
                 // DELETE implies non-presence
-                return Optional.absent();
+                return Optional.empty();
             case NONE:
             case TOUCH:
             case MERGE:
@@ -295,7 +296,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     }
 
     Optional<TreeNode> setSnapshot(final Optional<TreeNode> snapshot) {
-        snapshotCache = Preconditions.checkNotNull(snapshot);
+        snapshotCache = requireNonNull(snapshot);
         return snapshot;
     }
 
@@ -325,7 +326,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * @param value New node value
      */
     void updateValue(final LogicalOperation type, final NormalizedNode<?, ?> value) {
-        this.value = Preconditions.checkNotNull(value);
+        this.value = requireNonNull(value);
         updateOperationType(type);
     }
 
@@ -346,9 +347,9 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     }
 
     void setValidatedNode(final SchemaAwareApplyOperation op, final Optional<TreeNode> current, final TreeNode node) {
-        this.validatedOp = Preconditions.checkNotNull(op);
-        this.validatedCurrent = Preconditions.checkNotNull(current);
-        this.validatedNode = Preconditions.checkNotNull(node);
+        this.validatedOp = requireNonNull(op);
+        this.validatedCurrent = requireNonNull(current);
+        this.validatedNode = requireNonNull(node);
     }
 
     TreeNode getValidatedNode(final SchemaAwareApplyOperation op, final Optional<TreeNode> current) {

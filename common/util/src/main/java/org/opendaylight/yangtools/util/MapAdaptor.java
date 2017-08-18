@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.util;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.util.Collections;
@@ -72,10 +73,9 @@ public final class MapAdaptor {
 
     public static MapAdaptor getInstance(final boolean useSingleton, final int copyMaxItems,
             final int persistMinItems) {
-        Preconditions.checkArgument(copyMaxItems >= 0, "copyMaxItems has to be a non-negative integer");
-        Preconditions.checkArgument(persistMinItems >= 0, "persistMinItems has to be a positive integer");
-        Preconditions.checkArgument(persistMinItems <= copyMaxItems,
-                "persistMinItems must be less than or equal to copyMaxItems");
+        checkArgument(copyMaxItems >= 0, "copyMaxItems has to be a non-negative integer");
+        checkArgument(persistMinItems >= 0, "persistMinItems has to be a positive integer");
+        checkArgument(persistMinItems <= copyMaxItems, "persistMinItems must be less than or equal to copyMaxItems");
         return new MapAdaptor(useSingleton, copyMaxItems, persistMinItems);
     }
 
@@ -87,7 +87,7 @@ public final class MapAdaptor {
      * @return An empty mutable map.
      */
     public <K, V> Map<K, V> initialSnapshot(final int expectedSize) {
-        Preconditions.checkArgument(expectedSize >= 0);
+        checkArgument(expectedSize >= 0);
         if (expectedSize > persistMinItems) {
             return new ReadWriteTrieMap<>();
         }

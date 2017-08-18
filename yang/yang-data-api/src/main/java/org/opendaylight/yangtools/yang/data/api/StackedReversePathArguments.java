@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Verify;
+import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
 import java.util.Collection;
@@ -22,7 +23,7 @@ final class StackedReversePathArguments extends PathArgumentList {
     private volatile boolean haveSize;
 
     StackedReversePathArguments(final StackedYangInstanceIdentifier identifier) {
-        this.identifier = Preconditions.checkNotNull(identifier);
+        this.identifier = requireNonNull(identifier);
     }
 
     private static int calculateSize(final YangInstanceIdentifier parent) {
@@ -33,7 +34,7 @@ final class StackedReversePathArguments extends PathArgumentList {
                 return i + args.size();
             }
 
-            Verify.verify(current instanceof StackedYangInstanceIdentifier);
+            verify(current instanceof StackedYangInstanceIdentifier);
             current = current.getParent();
         }
     }
@@ -53,7 +54,7 @@ final class StackedReversePathArguments extends PathArgumentList {
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     public boolean contains(final Object o) {
-        final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
+        final PathArgument srch = (PathArgument) requireNonNull(o);
         return Iterators.contains(iterator(), srch);
     }
 
@@ -65,14 +66,14 @@ final class StackedReversePathArguments extends PathArgumentList {
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     public int indexOf(final Object o) {
-        final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
+        final PathArgument srch = (PathArgument) requireNonNull(o);
         return super.indexOf(srch);
     }
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     public int lastIndexOf(final Object o) {
-        final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
+        final PathArgument srch = (PathArgument) requireNonNull(o);
 
         int ret = -1;
         final Iterator<PathArgument> it = iterator();
@@ -96,7 +97,7 @@ final class StackedReversePathArguments extends PathArgumentList {
         private Iterator<PathArgument> tail;
 
         IteratorImpl(final StackedYangInstanceIdentifier identifier) {
-            this.identifier = Preconditions.checkNotNull(identifier);
+            this.identifier = requireNonNull(identifier);
         }
 
         @Override
@@ -117,7 +118,7 @@ final class StackedReversePathArguments extends PathArgumentList {
                 tail = args.iterator();
                 identifier = null;
             } else {
-                Verify.verify(next instanceof StackedYangInstanceIdentifier);
+                verify(next instanceof StackedYangInstanceIdentifier);
                 identifier = (StackedYangInstanceIdentifier) next;
             }
 

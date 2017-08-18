@@ -10,18 +10,17 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -106,10 +105,10 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
             builder.addChild(childOp.create(childId, lastChild, operation));
         } else {
             if (lastChild.isPresent()) {
-                builder.withValue(Lists.newArrayList((Collection<?>) lastChild.get().getValue()));
+                builder.withValue(ImmutableList.copyOf((Collection<?>) lastChild.get().getValue()));
             }
             if (operation.isPresent()) {
-                Preconditions.checkArgument(builder instanceof AttributesBuilder<?>);
+                checkArgument(builder instanceof AttributesBuilder<?>);
                 addModifyOpIfPresent(operation, (AttributesBuilder<?>) builder);
             }
         }

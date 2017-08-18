@@ -8,11 +8,8 @@
 
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -45,9 +42,7 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
     }
 
     protected final <S extends DeclaredStatement<?>> S firstDeclared(final Class<S> type) {
-        final Optional<? extends DeclaredStatement<?>> declaredSubstmt = Iterables.tryFind(substatements,
-                Predicates.instanceOf(type));
-        return declaredSubstmt.isPresent() ? type.cast(declaredSubstmt.get()) : null;
+        return substatements.stream().filter(type::isInstance).findFirst().map(type::cast).orElse(null);
     }
 
     @Override
@@ -78,8 +73,7 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
         return source;
     }
 
-    @SuppressWarnings("unchecked")
     protected final <S extends DeclaredStatement<?>> Collection<? extends S> allDeclared(final Class<S> type) {
-        return Collection.class.cast(Collections2.filter(substatements, Predicates.instanceOf(type)));
+        return Collections2.transform(Collections2.filter(substatements, type::isInstance), type::cast);
     }
 }

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -85,7 +85,7 @@ final class StructuralContainerModificationStrategy extends ModificationApplyOpe
          */
         if (((NormalizedNodeContainer<?, ?, ?>) ret.get().getData()).getValue().isEmpty()) {
             modification.resolveModificationType(ModificationType.DISAPPEARED);
-            return Optional.absent();
+            return Optional.empty();
         }
 
         return ret;

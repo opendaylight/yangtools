@@ -8,11 +8,9 @@
 
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import com.google.common.base.Function;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.SettableFuture;
-import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -46,13 +44,7 @@ class SettableSchemaProvider<T extends SchemaSourceRepresentation> implements Sc
 
     @Override
     public CheckedFuture<T, SchemaSourceException> getSource(final SourceIdentifier sourceIdentifier) {
-        return Futures.makeChecked(future, new Function<Exception, SchemaSourceException>() {
-            @Nullable
-            @Override
-            public SchemaSourceException apply(@Nullable final Exception input) {
-                return new SchemaSourceException("Failed", input);
-            }
-        });
+        return Futures.makeChecked(future, input -> new SchemaSourceException("Failed", input));
     }
 
     public T getSchemaSourceRepresentation() {

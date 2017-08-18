@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
@@ -349,8 +351,7 @@ public final class StmtContextUtils {
      */
     public static boolean hasAncestorOfType(final StmtContext<?, ?, ?> ctx,
             final Collection<StatementDefinition> ancestorTypes) {
-        Preconditions.checkNotNull(ctx);
-        Preconditions.checkNotNull(ancestorTypes);
+        requireNonNull(ancestorTypes);
         StmtContext<?, ?, ?> current = ctx.getParentContext();
         while (current != null) {
             if (ancestorTypes.contains(current.getPublicDefinition())) {
@@ -372,9 +373,9 @@ public final class StmtContextUtils {
     public static <A, D extends DeclaredStatement<A>> boolean hasAncestorOfTypeWithChildOfType(
             final StmtContext<?, ?, ?> ctx, final StatementDefinition ancestorType,
             final StatementDefinition ancestorChildType) {
-        Preconditions.checkNotNull(ctx);
-        Preconditions.checkNotNull(ancestorType);
-        Preconditions.checkNotNull(ancestorChildType);
+        requireNonNull(ctx);
+        requireNonNull(ancestorType);
+        requireNonNull(ancestorChildType);
 
         StmtContext<?, ?, ?> current = ctx.getParentContext();
         StmtContext<?, ?, ?> parent = current.getParentContext();
@@ -404,8 +405,7 @@ public final class StmtContextUtils {
      * @return true if the parent of StmtContext is of specified type, otherwise false
      */
     public static boolean hasParentOfType(final StmtContext<?, ?, ?> ctx, final StatementDefinition parentType) {
-        Preconditions.checkNotNull(ctx);
-        Preconditions.checkNotNull(parentType);
+        requireNonNull(parentType);
         final StmtContext<?, ?, ?> parentContext = ctx.getParentContext();
         return parentContext != null ? parentType.equals(parentContext.getPublicDefinition()) : false;
     }
@@ -421,8 +421,6 @@ public final class StmtContextUtils {
      * @param ctx statement context to be validated
      */
     public static void validateIfFeatureAndWhenOnListKeys(final StmtContext<?, ?, ?> ctx) {
-        Preconditions.checkNotNull(ctx);
-
         if (!isRelevantForIfFeatureAndWhenOnListKeysCheck(ctx)) {
             return;
         }
@@ -534,7 +532,7 @@ public final class StmtContextUtils {
             qnameModule = null;
         }
 
-        Preconditions.checkArgument(qnameModule != null, "Failed to look up root QNameModule for %s", ctx);
+        checkArgument(qnameModule != null, "Failed to look up root QNameModule for %s", ctx);
         if (qnameModule.getRevision() != null) {
             return qnameModule;
         }

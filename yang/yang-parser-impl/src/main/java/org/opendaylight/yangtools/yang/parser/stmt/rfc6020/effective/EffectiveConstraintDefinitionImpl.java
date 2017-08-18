@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.data.util.ConstraintDefinitions;
@@ -32,7 +33,7 @@ final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
         this.minElements = minElements;
         this.maxElements = maxElements;
         this.whenCondition = whenCondition;
-        this.mustConstraints = Preconditions.checkNotNull(mustConstraints);
+        this.mustConstraints = requireNonNull(mustConstraints);
     }
 
     static ConstraintDefinition forParent(final EffectiveStatementBase<?, ?> parent) {

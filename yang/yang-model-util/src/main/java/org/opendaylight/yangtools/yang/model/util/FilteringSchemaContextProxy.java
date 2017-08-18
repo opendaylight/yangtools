@@ -60,8 +60,10 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         Preconditions.checkNotNull(additionalModuleIds, "Additional modules cannot be null.");
 
         final Builder<Module> filteredModulesBuilder = new Builder<>();
-        final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(new TreeMap<>(), MODULE_SET_SUPPLIER);
-        final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(new TreeMap<>(), MODULE_SET_SUPPLIER);
+        final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(new TreeMap<>(),
+            AbstractSchemaContext::createModuleSet);
+        final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(new TreeMap<>(),
+            AbstractSchemaContext::createModuleSet);
 
         ImmutableMap.Builder<ModuleIdentifier, String> identifiersToSourcesBuilder = ImmutableMap.builder();
 

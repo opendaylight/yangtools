@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -21,8 +23,8 @@ final class IdentityrefJSONCodec implements JSONCodec<QName> {
     private final QNameModule parentModule;
 
     IdentityrefJSONCodec(final SchemaContext context, final QNameModule parentModule) {
-        this.schemaContext = Preconditions.checkNotNull(context);
-        this.parentModule = Preconditions.checkNotNull(parentModule);
+        this.schemaContext = requireNonNull(context);
+        this.parentModule = requireNonNull(parentModule);
     }
 
     @Override
@@ -38,7 +40,7 @@ final class IdentityrefJSONCodec implements JSONCodec<QName> {
             }
 
             final Module module = schemaContext.findModuleByName(prefix, null);
-            Preconditions.checkArgument(module != null, "Could not find module %s", prefix);
+            checkArgument(module != null, "Could not find module %s", prefix);
             return module.getQNameModule();
         });
     }
@@ -53,7 +55,7 @@ final class IdentityrefJSONCodec implements JSONCodec<QName> {
     public void writeValue(final JsonWriter writer, final QName value) throws IOException {
         final String str = QNameCodecUtil.encodeQName(value, uri -> {
             final Module module = schemaContext.findModuleByNamespaceAndRevision(uri.getNamespace(), null);
-            Preconditions.checkArgument(module != null, "Cannot find module for %s", uri);
+            checkArgument(module != null, "Cannot find module for %s", uri);
             return module.getName();
         });
         writer.value(str);

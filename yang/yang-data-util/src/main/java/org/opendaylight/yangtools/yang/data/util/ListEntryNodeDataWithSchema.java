@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -65,7 +66,7 @@ public class ListEntryNodeDataWithSchema extends CompositeNodeDataWithSchema {
             return;
         }
 
-        Preconditions.checkState(keyDef.size() == qnameToKeys.size(), "Input is missing some of the keys of %s",
+        checkState(keyDef.size() == qnameToKeys.size(), "Input is missing some of the keys of %s",
                 getSchema().getQName());
 
         // Need to restore schema order...
