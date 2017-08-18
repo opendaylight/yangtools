@@ -22,11 +22,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
@@ -38,6 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
@@ -131,7 +134,9 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
                 final SubmoduleEffectiveStatementImpl submodule = (SubmoduleEffectiveStatementImpl) submoduleCtx
                         .buildEffective();
                 submodulesInit.add(submodule);
-                substatementsOfSubmodulesInit.addAll(submodule.effectiveSubstatements());
+                substatementsOfSubmodulesInit.addAll(submodule.effectiveSubstatements().stream()
+                        .filter(sub -> sub instanceof SchemaNode || sub instanceof DataNodeContainer)
+                        .collect(Collectors.toList()));
             }
 
             this.submodules = ImmutableSet.copyOf(submodulesInit);
