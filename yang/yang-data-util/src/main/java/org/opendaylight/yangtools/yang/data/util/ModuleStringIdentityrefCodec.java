@@ -8,10 +8,10 @@
 
 package org.opendaylight.yangtools.yang.data.util;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.net.URI;
 import javax.annotation.Nonnull;
-
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.codec.IdentityrefCodec;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -24,8 +24,8 @@ public abstract class ModuleStringIdentityrefCodec
     protected final QNameModule parentModuleQname;
 
     public ModuleStringIdentityrefCodec(@Nonnull final SchemaContext context, @Nonnull final QNameModule parentModule) {
-        this.context = Preconditions.checkNotNull(context);
-        this.parentModuleQname = Preconditions.checkNotNull(parentModule);
+        this.context = requireNonNull(context);
+        this.parentModuleQname = requireNonNull(parentModule);
     }
 
     @Override

@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.util;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.UnmodifiableIterator;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -29,7 +30,7 @@ final class ConstantArrayCollection<E> implements Collection<E>, Serializable {
     private final E[] array;
 
     ConstantArrayCollection(final E[] array) {
-        this.array = Preconditions.checkNotNull(array);
+        this.array = requireNonNull(array);
     }
 
     @Override

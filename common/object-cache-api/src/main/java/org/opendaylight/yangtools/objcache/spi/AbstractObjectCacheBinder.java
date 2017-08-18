@@ -7,14 +7,15 @@
  */
 package org.opendaylight.yangtools.objcache.spi;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import javax.annotation.Nonnull;
 
 public abstract class AbstractObjectCacheBinder implements ObjectCacheFactoryBinder {
     private final IObjectCacheFactory factory;
 
     protected AbstractObjectCacheBinder(@Nonnull final IObjectCacheFactory factory) {
-        this.factory = Preconditions.checkNotNull(factory);
+        this.factory = requireNonNull(factory);
     }
 
     @Override

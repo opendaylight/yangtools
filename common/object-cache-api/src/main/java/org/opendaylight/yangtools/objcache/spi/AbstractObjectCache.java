@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.objcache.spi;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.FinalizableReferenceQueue;
 import com.google.common.base.FinalizableSoftReference;
-import com.google.common.base.Preconditions;
 import com.google.common.cache.Cache;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.ProductAwareBuilder;
@@ -37,7 +37,7 @@ public abstract class AbstractObjectCache implements ObjectCache {
         private final ProductAwareBuilder<?> builder;
 
         private BuilderKey(final ProductAwareBuilder<?> builder) {
-            this.builder = Preconditions.checkNotNull(builder);
+            this.builder = requireNonNull(builder);
         }
 
         @Override
@@ -88,7 +88,7 @@ public abstract class AbstractObjectCache implements ObjectCache {
         private final int hashCode;
 
         public SoftKey(final T referent, final FinalizableReferenceQueue queue) {
-            super(Preconditions.checkNotNull(referent), queue);
+            super(requireNonNull(referent), queue);
             hashCode = referent.hashCode();
         }
 
@@ -113,8 +113,8 @@ public abstract class AbstractObjectCache implements ObjectCache {
     private final Cache<SoftKey<?>, Object> cache;
 
     protected AbstractObjectCache(final Cache<SoftKey<?>, Object> cache, final FinalizableReferenceQueue queue) {
-        this.queue = Preconditions.checkNotNull(queue);
-        this.cache = Preconditions.checkNotNull(cache);
+        this.queue = requireNonNull(queue);
+        this.cache = requireNonNull(cache);
     }
 
     protected <T> SoftKey<T> createSoftKey(final T object) {
@@ -158,12 +158,7 @@ public abstract class AbstractObjectCache implements ObjectCache {
 
         final SoftKey<T> key = createSoftKey(object);
         try {
-            return (T) cache.get(key, new Callable<T>() {
-                @Override
-                public T call() {
-                    return object;
-                }
-            });
+            return (T) cache.get(key, () -> object);
         } catch (ExecutionException e) {
             throw new IllegalStateException("Failed to load value", e);
         }

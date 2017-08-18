@@ -9,13 +9,13 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
@@ -674,7 +674,7 @@ public final class SchemaContextUtil {
         final TypeDefinition<?> targetTypeDefinition = typeDefinition(dataSchemaNode);
 
         if (targetTypeDefinition instanceof LeafrefTypeDefinition) {
-            return getBaseTypeForLeafRef(((LeafrefTypeDefinition) targetTypeDefinition), schemaContext, dataSchemaNode);
+            return getBaseTypeForLeafRef((LeafrefTypeDefinition) targetTypeDefinition, schemaContext, dataSchemaNode);
         }
 
         return targetTypeDefinition;
@@ -703,7 +703,7 @@ public final class SchemaContextUtil {
             parentModule, strippedPathStatement);
         final TypeDefinition<?> targetTypeDefinition = typeDefinition(dataSchemaNode);
         if (targetTypeDefinition instanceof LeafrefTypeDefinition) {
-            return getBaseTypeForLeafRef(((LeafrefTypeDefinition) targetTypeDefinition), schemaContext, dataSchemaNode);
+            return getBaseTypeForLeafRef((LeafrefTypeDefinition) targetTypeDefinition, schemaContext, dataSchemaNode);
         }
 
         return targetTypeDefinition;

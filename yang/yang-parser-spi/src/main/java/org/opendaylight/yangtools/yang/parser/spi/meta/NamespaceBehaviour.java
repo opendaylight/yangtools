@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -85,7 +86,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
     private final Class<N> identifier;
 
     protected NamespaceBehaviour(final Class<N> identifier) {
-        this.identifier = Preconditions.checkNotNull(identifier);
+        this.identifier = requireNonNull(identifier);
     }
 
     /**
@@ -190,7 +191,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
 
         StorageSpecific(final Class<N> identifier, final StorageNodeType type) {
             super(identifier);
-            storageType = Preconditions.checkNotNull(type);
+            storageType = requireNonNull(type);
         }
 
         @Override

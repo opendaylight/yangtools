@@ -13,11 +13,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import com.google.common.base.Optional;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;

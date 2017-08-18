@@ -11,12 +11,12 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import com.google.common.collect.Sets;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -242,7 +242,7 @@ public class ImmutableNormalizedNodeStreamWriterTest {
                 .build();
 
         AugmentationNode myDoublyKeyedListAugNode = Builders.augmentationBuilder().withNodeIdentifier(
-                new AugmentationIdentifier(Sets.newHashSet(myDoublyKeyedList)))
+                new AugmentationIdentifier(Collections.singleton(myDoublyKeyedList)))
                 .withChild(myDoublyKeyedListNode).build();
 
         ContainerNode myContainer3Node = Builders.containerBuilder().withNodeIdentifier(
@@ -250,7 +250,7 @@ public class ImmutableNormalizedNodeStreamWriterTest {
                 .withChild(myDoublyKeyedListAugNode).build();
 
         AugmentationNode myContainer3AugNode = Builders.augmentationBuilder().withNodeIdentifier(
-                new AugmentationIdentifier(Sets.newHashSet(myContainer3)))
+                new AugmentationIdentifier(Collections.singleton(myContainer3)))
                 .withChild(myContainer3Node).build();
 
         ContainerNode outerContainerNode = Builders.containerBuilder().withNodeIdentifier(

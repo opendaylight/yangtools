@@ -7,11 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.collect.Sets;
 import java.util.Collections;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -21,13 +25,13 @@ public final class ImmutableLeafSetNodeSchemaAwareBuilder<T> extends ImmutableLe
     private final LeafListSchemaNode schema;
 
     private ImmutableLeafSetNodeSchemaAwareBuilder(final LeafListSchemaNode schema) {
-        this.schema = Preconditions.checkNotNull(schema);
+        this.schema = requireNonNull(schema);
         super.withNodeIdentifier(new NodeIdentifier(schema.getQName()));
     }
 
     public ImmutableLeafSetNodeSchemaAwareBuilder(final LeafListSchemaNode schema, final ImmutableLeafSetNode<T> node) {
         super(node);
-        this.schema = Preconditions.checkNotNull(schema);
+        this.schema = requireNonNull(schema);
         // FIXME: Preconditions.checkArgument(schema.getQName().equals(node.getIdentifier()));
         super.withNodeIdentifier(new NodeIdentifier(schema.getQName()));
     }
@@ -53,7 +57,7 @@ public final class ImmutableLeafSetNodeSchemaAwareBuilder<T> extends ImmutableLe
 
     @Override
     public ListNodeBuilder<T, LeafSetEntryNode<T>> withChild(final LeafSetEntryNode<T> child) {
-        Preconditions.checkArgument(schema.getQName().equals(child.getNodeType()),
+        checkArgument(schema.getQName().equals(child.getNodeType()),
                 "Incompatible node type, should be: %s, is: %s", schema.getQName(), child.getNodeType());
         // TODO check value type using TypeProvider ?
         DataValidationException.checkLegalChild(schema.getQName().equals(child.getNodeType()), child.getIdentifier(),
