@@ -18,9 +18,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
+import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -162,9 +163,9 @@ public class DataTreeCandidatesTest {
         final PathArgument mockedPathArgument31 = mock(PathArgument.class);
         doReturn(mockedPathArgument3).when(mockedChildNode3).getIdentifier();
         doReturn(mockedPathArgument31).when(mockedChildNode3ChildNode).getIdentifier();
-        doReturn(Lists.newArrayList(mockedChildNode3ChildNode)).when(mockedChildNode3).getChildNodes();
+        doReturn(Collections.singletonList(mockedChildNode3ChildNode)).when(mockedChildNode3).getChildNodes();
 
-        final Collection<DataTreeCandidateNode> childNodes = Lists.newArrayList(mockedChildNode1, mockedChildNode2,
+        final Collection<DataTreeCandidateNode> childNodes = ImmutableList.of(mockedChildNode1, mockedChildNode2,
                 mockedChildNode3);
         doReturn(childNodes).when(mockedDataTreeCandidateNode).getChildNodes();
 

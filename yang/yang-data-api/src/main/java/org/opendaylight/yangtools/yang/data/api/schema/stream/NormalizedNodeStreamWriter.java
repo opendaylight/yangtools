@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
@@ -17,7 +18,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-
 
 /**
  * Event Stream Writer based on Normalized Node tree representation
@@ -476,7 +476,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      * @throws NullPointerException if the argument is null
      */
     default void nextDataSchemaNode(@Nonnull final DataSchemaNode schema) {
-        Preconditions.checkNotNull(schema);
+        requireNonNull(schema);
     }
 
     @Override

@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -25,7 +25,7 @@ abstract class AbstractRangeRestrictedBaseType<T extends RangeRestrictedTypeDefi
     AbstractRangeRestrictedBaseType(final QName qname, final Number minValue, final Number maxValue) {
         super(qname);
         this.rangeConstraints = ImmutableList.of(BaseConstraints.newRangeConstraint(
-                minValue, maxValue, Optional.absent(), Optional.absent()));
+                minValue, maxValue, Optional.empty(), Optional.empty()));
     }
 
     AbstractRangeRestrictedBaseType(final SchemaPath path, final List<UnknownSchemaNode> unknownSchemaNodes,

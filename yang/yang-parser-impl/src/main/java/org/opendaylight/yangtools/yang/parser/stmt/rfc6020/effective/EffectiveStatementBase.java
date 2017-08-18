@@ -7,15 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -86,35 +84,29 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
     }
 
     protected final <S extends EffectiveStatement<?, ?>> S firstEffective(final Class<S> type) {
-        final Optional<? extends EffectiveStatement<?, ?>> possible = Iterables.tryFind(substatements,
-                Predicates.instanceOf(type));
-        return possible.isPresent() ? type.cast(possible.get()) : null;
+        return substatements.stream().filter(type::isInstance).findFirst().map(type::cast).orElse(null);
     }
 
     protected final <S extends SchemaNode> S firstSchemaNode(final Class<S> type) {
-        final Optional<? extends EffectiveStatement<?, ?>> possible = Iterables.tryFind(substatements,
-                Predicates.instanceOf(type));
-        return possible.isPresent() ? type.cast(possible.get()) : null;
+        return substatements.stream().filter(type::isInstance).findFirst().map(type::cast).orElse(null);
     }
 
     @SuppressWarnings("unchecked")
     protected final <T> Collection<T> allSubstatementsOfType(final Class<T> type) {
-        return Collection.class.cast(Collections2.filter(substatements, Predicates.instanceOf(type)));
+        return Collection.class.cast(Collections2.filter(substatements, type::isInstance));
     }
 
     protected final <T> T firstSubstatementOfType(final Class<T> type) {
-        final Optional<? extends EffectiveStatement<?, ?>> possible = Iterables.tryFind(substatements,
-                Predicates.instanceOf(type));
-        return possible.isPresent() ? type.cast(possible.get()) : null;
+        return substatements.stream().filter(type::isInstance).findFirst().map(type::cast).orElse(null);
     }
 
     protected final <R> R firstSubstatementOfType(final Class<?> type, final Class<R> returnType) {
-        final Optional<? extends EffectiveStatement<?, ?>> possible = Iterables.tryFind(substatements,
-                Predicates.and(Predicates.instanceOf(type), Predicates.instanceOf(returnType)));
-        return possible.isPresent() ? returnType.cast(possible.get()) : null;
+        return substatements.stream()
+                .filter(((Predicate<Object>)type::isInstance).and(returnType::isInstance))
+                .findFirst().map(returnType::cast).orElse(null);
     }
 
     protected final EffectiveStatement<?, ?> firstEffectiveSubstatementOfType(final Class<?> type) {
-        return Iterables.tryFind(substatements, Predicates.instanceOf(type)).orNull();
+        return substatements.stream().filter(type::isInstance).findFirst().orElse(null);
     }
 }

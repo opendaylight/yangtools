@@ -7,8 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
@@ -70,9 +73,9 @@ public final class JsonParserStream implements Closeable, Flushable {
 
     private JsonParserStream(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
             final JSONCodecFactory codecs, final DataSchemaNode parentNode) {
-        this.schema = Preconditions.checkNotNull(schemaContext);
-        this.writer = Preconditions.checkNotNull(writer);
-        this.codecs = Preconditions.checkNotNull(codecs);
+        this.schema = requireNonNull(schemaContext);
+        this.writer = requireNonNull(writer);
+        this.codecs = requireNonNull(codecs);
         this.parentNode = parentNode;
     }
 
@@ -86,7 +89,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         if (parentNode instanceof RpcDefinition) {
             return new JsonParserStream(writer, schemaContext, new RpcAsContainer((RpcDefinition) parentNode));
         }
-        Preconditions.checkArgument(parentNode instanceof DataSchemaNode, "Instance of DataSchemaNode class awaited.");
+        checkArgument(parentNode instanceof DataSchemaNode, "Instance of DataSchemaNode class awaited.");
         return new JsonParserStream(writer, schemaContext, (DataSchemaNode) parentNode);
     }
 
@@ -231,7 +234,7 @@ public final class JsonParserStream implements Closeable, Flushable {
                     final Deque<DataSchemaNode> childDataSchemaNodes =
                             ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, localName,
                                 getCurrentNamespace());
-                    Preconditions.checkState(!childDataSchemaNodes.isEmpty(),
+                    checkState(!childDataSchemaNodes.isEmpty(),
                         "Schema for node with name %s and namespace %s does not exist.", localName,
                         getCurrentNamespace());
 
@@ -269,10 +272,10 @@ public final class JsonParserStream implements Closeable, Flushable {
     }
 
     private void setValue(final AbstractNodeDataWithSchema parent, final String value) {
-        Preconditions.checkArgument(parent instanceof SimpleNodeDataWithSchema, "Node %s is not a simple type",
+        checkArgument(parent instanceof SimpleNodeDataWithSchema, "Node %s is not a simple type",
                 parent.getSchema().getQName());
         final SimpleNodeDataWithSchema parentSimpleNode = (SimpleNodeDataWithSchema) parent;
-        Preconditions.checkArgument(parentSimpleNode.getValue() == null, "Node '%s' has already set its value to '%s'",
+        checkArgument(parentSimpleNode.getValue() == null, "Node '%s' has already set its value to '%s'",
                 parentSimpleNode.getSchema().getQName(), parentSimpleNode.getValue());
 
         final Object translatedValue = translateValueByType(value, parentSimpleNode.getSchema());
@@ -280,7 +283,7 @@ public final class JsonParserStream implements Closeable, Flushable {
     }
 
     private Object translateValueByType(final String value, final DataSchemaNode node) {
-        Preconditions.checkArgument(node instanceof TypedSchemaNode);
+        checkArgument(node instanceof TypedSchemaNode);
         return codecs.codecFor((TypedSchemaNode) node).parseValue(null, value);
     }
 

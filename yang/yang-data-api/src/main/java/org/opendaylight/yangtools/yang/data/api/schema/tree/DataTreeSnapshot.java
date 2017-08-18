@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 

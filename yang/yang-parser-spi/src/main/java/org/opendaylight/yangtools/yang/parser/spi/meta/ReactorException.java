@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 public class ReactorException extends Exception {
@@ -19,13 +20,13 @@ public class ReactorException extends Exception {
     public ReactorException(final ModelProcessingPhase phase, final String message, final SourceIdentifier sourceId,
             final Throwable cause) {
         super(message, cause);
-        this.phase = Preconditions.checkNotNull(phase);
+        this.phase = requireNonNull(phase);
         this.sourceIdentifier = sourceId;
     }
 
     public ReactorException(final ModelProcessingPhase phase, final String message, final SourceIdentifier sourceId) {
         super(message);
-        this.phase = Preconditions.checkNotNull(phase);
+        this.phase = requireNonNull(phase);
         this.sourceIdentifier = sourceId;
     }
 

@@ -13,7 +13,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -54,7 +53,7 @@ public class OpenconfigVerSharedSchemaRepositoryTest {
         assertSchemaContext(inetAndTopologySchemaContextFuture.get(), 3);
 
         final ListenableFuture<SchemaContext> barSchemaContextFuture = fact
-                .createSchemaContext(Lists.newArrayList(bar.getId(), semVer.getId()), StatementParserMode.SEMVER_MODE);
+                .createSchemaContext(ImmutableList.of(bar.getId(), semVer.getId()), StatementParserMode.SEMVER_MODE);
         assertTrue(barSchemaContextFuture.isDone());
         assertSchemaContext(barSchemaContextFuture.get(), 2);
     }
@@ -80,12 +79,12 @@ public class OpenconfigVerSharedSchemaRepositoryTest {
                 .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
 
         final ListenableFuture<SchemaContext> inetAndTopologySchemaContextFuture =
-                fact.createSchemaContext(Lists.newArrayList(bar.getId(), foo.getId(), semVer.getId()));
+                fact.createSchemaContext(ImmutableList.of(bar.getId(), foo.getId(), semVer.getId()));
         assertTrue(inetAndTopologySchemaContextFuture.isDone());
         assertSchemaContext(inetAndTopologySchemaContextFuture.get(), 3);
 
         final ListenableFuture<SchemaContext> barSchemaContextFuture =
-                fact.createSchemaContext(Lists.newArrayList(bar.getId(), semVer.getId()));
+                fact.createSchemaContext(ImmutableList.of(bar.getId(), semVer.getId()));
         assertTrue(barSchemaContextFuture.isDone());
         assertSchemaContext(barSchemaContextFuture.get(), 2);
     }

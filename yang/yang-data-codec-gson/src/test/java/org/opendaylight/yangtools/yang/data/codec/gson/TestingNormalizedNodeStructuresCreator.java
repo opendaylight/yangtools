@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -42,7 +43,7 @@ public class TestingNormalizedNodeStructuresCreator {
         DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> cont1 = Builders.containerBuilder();
         cont1.withNodeIdentifier(new NodeIdentifier(QName.create("ns:complex:json", "2014-08-11", "cont1")));
 
-        cont1.withValue(Lists.newArrayList(children));
+        cont1.withValue(Arrays.asList(children));
         return cont1.build();
     }
 
@@ -81,7 +82,7 @@ public class TestingNormalizedNodeStructuresCreator {
     private static DataContainerChild<? extends PathArgument, ?> externalAugmentC11AWithLf15_11AndLf15_12Node() {
         DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> augmentationBuilder = Builders
                 .augmentationBuilder();
-        augmentationBuilder.withNodeIdentifier(new AugmentationIdentifier(Sets.newHashSet(
+        augmentationBuilder.withNodeIdentifier(new AugmentationIdentifier(ImmutableSet.of(
                 QName.create("ns:complex:json:augmentation", "2014-08-14", "lf15_11"),
                 QName.create("ns:complex:json:augmentation", "2014-08-14", "lf15_12"))));
         augmentationBuilder.withChild(lf15_11NodeExternal());
@@ -110,7 +111,7 @@ public class TestingNormalizedNodeStructuresCreator {
             final DataContainerChild<? extends PathArgument, ?>... children) {
         DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> choc11Builder = Builders.choiceBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create("ns:complex:json", "2014-08-11", "choc11")));
-        choc11Builder.withValue(Lists.newArrayList(children));
+        choc11Builder.withValue(Arrays.asList(children));
         // choc11Builder.addChild(lf13Node());
         // choc11Builder.addChild(augmentChoc11_c11A_lf1511AndLf1512Children());
         // choc11Builder.addChild(augmentChoc11_c11_lf1521Children());
@@ -125,7 +126,7 @@ public class TestingNormalizedNodeStructuresCreator {
 
     private static DataContainerChild<? extends PathArgument, ?> augmentC11AWithLf15_21Node() {
         return Builders.augmentationBuilder().withNodeIdentifier(
-            new AugmentationIdentifier(Sets.newHashSet(QName.create("ns:complex:json", "2014-08-11", "lf15_21"))))
+            new AugmentationIdentifier(Collections.singleton(QName.create("ns:complex:json", "2014-08-11", "lf15_21"))))
                 .withChild(lf15_21Node()).build();
     }
 
@@ -137,7 +138,7 @@ public class TestingNormalizedNodeStructuresCreator {
 
     private static DataContainerChild<? extends PathArgument, ?> augmentC11AWithLf15_11AndLf15_12Node() {
         return Builders.augmentationBuilder()
-                .withNodeIdentifier(new AugmentationIdentifier(Sets.newHashSet(
+                .withNodeIdentifier(new AugmentationIdentifier(ImmutableSet.of(
                     QName.create("ns:complex:json", "2014-08-11", "lf15_11"),
                     QName.create("ns:complex:json", "2014-08-11", "lf15_12"))))
                 .withChild(lf15_11Node())
@@ -154,13 +155,13 @@ public class TestingNormalizedNodeStructuresCreator {
     private static LeafNode<Object> lf15_11Node() {
         return Builders.leafBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create("ns:complex:json", "2014-08-11", "lf15_11")))
-                .withValue(Sets.newHashSet("one", "two")).build();
+                .withValue(ImmutableSet.of("one", "two")).build();
     }
 
     private static DataContainerChild<? extends PathArgument, ?> lf12_1Node() {
         DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> augmentBuilder = Builders
                 .augmentationBuilder().withNodeIdentifier(
-                        new AugmentationIdentifier(Sets.newHashSet(
+                        new AugmentationIdentifier(ImmutableSet.of(
                                 QName.create("ns:complex:json", "2014-08-11", "lf12_1"),
                                 QName.create("ns:complex:json", "2014-08-11", "lf12_2"))));
         augmentBuilder.withChild(Builders.leafBuilder()

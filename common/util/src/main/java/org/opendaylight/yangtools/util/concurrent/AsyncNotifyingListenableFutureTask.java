@@ -8,7 +8,8 @@
 
 package org.opendaylight.yangtools.util.concurrent;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.util.concurrent.ExecutionList;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListenableFutureTask;
@@ -57,13 +58,13 @@ public class AsyncNotifyingListenableFutureTask<V> extends FutureTask<V> impleme
         private DelegatingAsyncNotifyingListenableFutureTask(final Callable<V> callable,
                 @Nullable final Executor listenerExecutor) {
             super(callable);
-            this.listenerExecutor = Preconditions.checkNotNull(listenerExecutor);
+            this.listenerExecutor = requireNonNull(listenerExecutor);
         }
 
         private DelegatingAsyncNotifyingListenableFutureTask(final Runnable runnable, @Nullable final V result,
                 @Nullable final Executor listenerExecutor) {
             super(runnable, result);
-            this.listenerExecutor = Preconditions.checkNotNull(listenerExecutor);
+            this.listenerExecutor = requireNonNull(listenerExecutor);
         }
 
         @Override
@@ -86,8 +87,8 @@ public class AsyncNotifyingListenableFutureTask<V> extends FutureTask<V> impleme
         private final Executor executor;
 
         DelegatingRunnable(final Runnable delegate, final Executor executor) {
-            this.delegate = Preconditions.checkNotNull(delegate);
-            this.executor = Preconditions.checkNotNull(executor);
+            this.delegate = requireNonNull(delegate);
+            this.executor = requireNonNull(executor);
         }
 
         @Override

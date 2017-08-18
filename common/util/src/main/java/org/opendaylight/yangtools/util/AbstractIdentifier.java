@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.util;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.concepts.Identifier;
 
 /**
@@ -25,7 +26,7 @@ public abstract class AbstractIdentifier<T> implements Identifier {
     private final T value;
 
     public AbstractIdentifier(final T value) {
-        this.value = Preconditions.checkNotNull(value);
+        this.value = requireNonNull(value);
     }
 
     public final T getValue() {

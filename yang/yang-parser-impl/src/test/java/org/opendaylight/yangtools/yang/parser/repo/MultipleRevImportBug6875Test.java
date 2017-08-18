@@ -14,7 +14,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.junit.Test;
@@ -105,7 +104,7 @@ public class MultipleRevImportBug6875Test {
                 .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
 
         final CheckedFuture<SchemaContext, SchemaResolutionException> schemaContextFuture = fact
-                .createSchemaContext(Lists.newArrayList(foo.getId(), bar1.getId(), bar2.getId()));
+                .createSchemaContext(ImmutableList.of(foo.getId(), bar1.getId(), bar2.getId()));
         assertTrue(schemaContextFuture.isDone());
 
         try {

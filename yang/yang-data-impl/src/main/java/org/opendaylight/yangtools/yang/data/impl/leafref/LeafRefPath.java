@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import java.util.Arrays;
@@ -195,7 +196,7 @@ public abstract class LeafRefPath implements Immutable {
      * @return A new child path
      */
     public LeafRefPath createChild(final LeafRefPath relative) {
-        Preconditions.checkArgument(!relative.isAbsolute(), "Child creation requires relative path");
+        checkArgument(!relative.isAbsolute(), "Child creation requires relative path");
 
         LeafRefPath parent = this;
         for (QNameWithPredicate qname : relative.getPathFromRoot()) {

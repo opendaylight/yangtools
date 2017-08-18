@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.api;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
 import java.io.File;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map.Entry;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -37,7 +39,7 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
     private final SourceIdentifier identifier;
 
     protected YinTextSchemaSource(final SourceIdentifier identifier) {
-        this.identifier = Preconditions.checkNotNull(identifier);
+        this.identifier = requireNonNull(identifier);
     }
 
     public static SourceIdentifier identifierFromFilename(final String name) {
@@ -53,7 +55,7 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
         }
 
         final Entry<String, String> parsed = YangNames.parseFilename(baseName);
-        return RevisionSourceIdentifier.create(parsed.getKey(), Optional.fromNullable(parsed.getValue()));
+        return RevisionSourceIdentifier.create(parsed.getKey(), Optional.ofNullable(parsed.getValue()));
     }
 
     @Override
@@ -97,7 +99,7 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
     }
 
     public static YinTextSchemaSource forFile(final File file) {
-        Preconditions.checkArgument(file.isFile(), "Supplied file %s is not a file", file);
+        checkArgument(file.isFile(), "Supplied file %s is not a file", file);
         return new YinTextFileSchemaSource(identifierFromFilename(file.getName()), file);
     }
 
@@ -114,7 +116,7 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
 
         private DelegatedYinTextSchemaSource(final SourceIdentifier identifier, final ByteSource delegate) {
             super(identifier);
-            this.delegate = Preconditions.checkNotNull(delegate);
+            this.delegate = requireNonNull(delegate);
         }
 
         @Override

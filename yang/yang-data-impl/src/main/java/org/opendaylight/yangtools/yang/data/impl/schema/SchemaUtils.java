@@ -7,21 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -77,7 +77,7 @@ public final class SchemaUtils {
                 }
             }
         }
-        return Optional.fromNullable(schema);
+        return Optional.ofNullable(schema);
     }
 
     /**
@@ -139,7 +139,7 @@ public final class SchemaUtils {
     }
 
     public static AugmentationSchema findSchemaForAugment(final ChoiceSchemaNode schema, final Set<QName> qnames) {
-        Optional<AugmentationSchema> schemaForAugment = Optional.absent();
+        Optional<AugmentationSchema> schemaForAugment = Optional.empty();
 
         for (final ChoiceCaseNode choiceCaseNode : schema.getCases()) {
             schemaForAugment = findAugment(choiceCaseNode, qnames);
@@ -155,7 +155,7 @@ public final class SchemaUtils {
 
     private static Optional<AugmentationSchema> findAugment(final AugmentationTarget schema, final Set<QName> qnames) {
         for (final AugmentationSchema augment : schema.getAvailableAugmentations()) {
-            final HashSet<QName> qNamesFromAugment = Sets.newHashSet(Collections2.transform(augment.getChildNodes(),
+            final Set<QName> qNamesFromAugment = ImmutableSet.copyOf(Collections2.transform(augment.getChildNodes(),
                 DataSchemaNode::getQName));
 
             if (qNamesFromAugment.equals(qnames)) {
@@ -163,7 +163,7 @@ public final class SchemaUtils {
             }
         }
 
-        return Optional.absent();
+        return Optional.empty();
     }
 
     /**
@@ -178,7 +178,7 @@ public final class SchemaUtils {
 
     private static Map<QName, ChoiceSchemaNode> mapChildElementsFromChoices(final DataNodeContainer schema,
             final Iterable<DataSchemaNode> childNodes) {
-        final Map<QName, ChoiceSchemaNode> mappedChoices = Maps.newLinkedHashMap();
+        final Map<QName, ChoiceSchemaNode> mappedChoices = new LinkedHashMap<>();
 
         for (final DataSchemaNode childSchema : childNodes) {
             if (childSchema instanceof ChoiceSchemaNode) {
@@ -220,10 +220,10 @@ public final class SchemaUtils {
      */
     public static Map<QName, AugmentationSchema> mapChildElementsFromAugments(final AugmentationTarget schema) {
 
-        final Map<QName, AugmentationSchema> childNodesToAugmentation = Maps.newLinkedHashMap();
+        final Map<QName, AugmentationSchema> childNodesToAugmentation = new LinkedHashMap<>();
 
         // Find QNames of augmented child nodes
-        final Map<QName, AugmentationSchema> augments = Maps.newHashMap();
+        final Map<QName, AugmentationSchema> augments = new HashMap<>();
         for (final AugmentationSchema augmentationSchema : schema.getAvailableAugmentations()) {
             for (final DataSchemaNode dataSchemaNode : augmentationSchema.getChildNodes()) {
                 augments.put(dataSchemaNode.getQName(), augmentationSchema);
@@ -282,7 +282,7 @@ public final class SchemaUtils {
      * @return set of QNames
      */
     public static Set<QName> getChildNodesRecursive(final DataNodeContainer nodeContainer) {
-        final Set<QName> allChildNodes = Sets.newHashSet();
+        final Set<QName> allChildNodes = new HashSet<>();
 
         for (final DataSchemaNode childSchema : nodeContainer.getChildNodes()) {
             if (childSchema instanceof ChoiceSchemaNode) {
@@ -315,12 +315,11 @@ public final class SchemaUtils {
         if (!targetSchema.getAvailableAugmentations().contains(augmentSchema)) {
             return Collections.emptySet();
         }
-
-        Set<DataSchemaNode> realChildNodes = Sets.newHashSet();
-
         if (targetSchema instanceof DataNodeContainer) {
-            realChildNodes = getRealSchemasForAugment((DataNodeContainer)targetSchema, augmentSchema);
-        } else if (targetSchema instanceof ChoiceSchemaNode) {
+            return getRealSchemasForAugment((DataNodeContainer)targetSchema, augmentSchema);
+        }
+        final Set<DataSchemaNode> realChildNodes = new HashSet<>();
+        if (targetSchema instanceof ChoiceSchemaNode) {
             for (final DataSchemaNode dataSchemaNode : augmentSchema.getChildNodes()) {
                 for (final ChoiceCaseNode choiceCaseNode : ((ChoiceSchemaNode) targetSchema).getCases()) {
                     if (getChildNodesRecursive(choiceCaseNode).contains(dataSchemaNode.getQName())) {
@@ -335,7 +334,7 @@ public final class SchemaUtils {
 
     public static Set<DataSchemaNode> getRealSchemasForAugment(final DataNodeContainer targetSchema,
             final AugmentationSchema augmentSchema) {
-        final Set<DataSchemaNode> realChildNodes = Sets.newHashSet();
+        final Set<DataSchemaNode> realChildNodes = new HashSet<>();
         for (final DataSchemaNode dataSchemaNode : augmentSchema.getChildNodes()) {
             final DataSchemaNode realChild = targetSchema.getDataChildByName(dataSchemaNode.getQName());
             realChildNodes.add(realChild);
@@ -354,14 +353,14 @@ public final class SchemaUtils {
             }
         }
 
-        return Optional.absent();
+        return Optional.empty();
     }
 
     public static boolean belongsToCaseAugment(final ChoiceCaseNode caseNode,
             final AugmentationIdentifier childToProcess) {
         for (final AugmentationSchema augmentationSchema : caseNode.getAvailableAugmentations()) {
 
-            final Set<QName> currentAugmentChildNodes = Sets.newHashSet();
+            final Set<QName> currentAugmentChildNodes = new HashSet<>();
             for (final DataSchemaNode dataSchemaNode : augmentationSchema.getChildNodes()) {
                 currentAugmentChildNodes.add(dataSchemaNode.getQName());
             }
@@ -464,13 +463,13 @@ public final class SchemaUtils {
         if (node instanceof DataNodeContainer) {
             child = ((DataNodeContainer) node).getDataChildByName(qname);
             if (child == null && node instanceof SchemaContext) {
-                child = tryFindRpc((SchemaContext) node, qname).orNull();
+                child = tryFindRpc((SchemaContext) node, qname).orElse(null);
             }
             if (child == null && node instanceof NotificationNodeContainer) {
-                child = tryFindNotification((NotificationNodeContainer) node, qname).orNull();
+                child = tryFindNotification((NotificationNodeContainer) node, qname).orElse(null);
             }
             if (child == null && node instanceof ActionNodeContainer) {
-                child = tryFindAction((ActionNodeContainer) node, qname).orNull();
+                child = tryFindAction((ActionNodeContainer) node, qname).orElse(null);
             }
         } else if (node instanceof ChoiceSchemaNode) {
             child = ((ChoiceSchemaNode) node).getCaseNodeByName(qname);
@@ -516,7 +515,7 @@ public final class SchemaUtils {
     public static SchemaNode findChildSchemaByQName(final SchemaNode node, final QName qname) {
         SchemaNode child = findDataChildSchemaByQName(node, qname);
         if (child == null && node instanceof DataNodeContainer) {
-            child = tryFindGroupings((DataNodeContainer) node, qname).orNull();
+            child = tryFindGroupings((DataNodeContainer) node, qname).orElse(null);
         }
 
         return child;
@@ -580,32 +579,28 @@ public final class SchemaUtils {
             childNodes.add(dataNode);
         }
         if (node instanceof DataNodeContainer) {
-            final SchemaNode groupingNode = tryFindGroupings((DataNodeContainer) node, qname).orNull();
-            if (groupingNode != null) {
-                childNodes.add(groupingNode);
-            }
+            tryFindGroupings((DataNodeContainer) node, qname).ifPresent(childNodes::add);
         }
         return childNodes.isEmpty() ? Collections.emptyList() : ImmutableList.copyOf(childNodes);
     }
 
     private static Optional<SchemaNode> tryFindGroupings(final DataNodeContainer dataNodeContainer, final QName qname) {
         return Optional
-                .fromNullable(Iterables.find(dataNodeContainer.getGroupings(), new SchemaNodePredicate(qname), null));
+                .ofNullable(Iterables.find(dataNodeContainer.getGroupings(), new SchemaNodePredicate(qname), null));
     }
 
     private static Optional<SchemaNode> tryFindRpc(final SchemaContext ctx, final QName qname) {
-        return Optional.fromNullable(Iterables.find(ctx.getOperations(), new SchemaNodePredicate(qname), null));
+        return Optional.ofNullable(Iterables.find(ctx.getOperations(), new SchemaNodePredicate(qname), null));
     }
 
     private static Optional<SchemaNode> tryFindNotification(final NotificationNodeContainer notificationContanier,
             final QName qname) {
-        return Optional.fromNullable(
+        return Optional.ofNullable(
                 Iterables.find(notificationContanier.getNotifications(), new SchemaNodePredicate(qname), null));
     }
 
     private static Optional<SchemaNode> tryFindAction(final ActionNodeContainer actionContanier, final QName qname) {
-        return Optional.fromNullable(Iterables.find(actionContanier.getActions(), new SchemaNodePredicate(qname),
-            null));
+        return Optional.ofNullable(Iterables.find(actionContanier.getActions(), new SchemaNodePredicate(qname), null));
     }
 
     private static final class SchemaNodePredicate implements Predicate<SchemaNode> {

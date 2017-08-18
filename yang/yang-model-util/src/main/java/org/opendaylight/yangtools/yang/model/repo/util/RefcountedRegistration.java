@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.util;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
 
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 
@@ -16,7 +17,7 @@ final class RefcountedRegistration {
     private int refcount = 1;
 
     RefcountedRegistration(final SchemaSourceRegistration<?> reg) {
-        this.reg = Preconditions.checkNotNull(reg);
+        this.reg = requireNonNull(reg);
     }
 
     public void incRef() {
@@ -24,13 +25,13 @@ final class RefcountedRegistration {
     }
 
     public boolean decRef() {
-        Preconditions.checkState(refcount > 0, "Refcount underflow: %s", refcount);
+        checkState(refcount > 0, "Refcount underflow: %s", refcount);
 
         if (0 == --refcount) {
             reg.close();
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 }
