@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.util;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.UnmodifiableIterator;
 import java.io.IOException;
@@ -93,9 +95,9 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
      *              is responsible for ensuring its contents remain unmodified.
      */
     ImmutableOffsetMap(@Nonnull final Map<K, Integer> offsets, @Nonnull final V[] objects) {
-        this.offsets = Preconditions.checkNotNull(offsets);
-        this.objects = Preconditions.checkNotNull(objects);
-        Preconditions.checkArgument(offsets.size() == objects.length);
+        this.offsets = requireNonNull(offsets);
+        this.objects = requireNonNull(objects);
+        checkArgument(offsets.size() == objects.length);
     }
 
     @Nonnull

@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -21,7 +22,7 @@ final class EmptyDataTreeCandidateNode implements DataTreeCandidateNode {
     private final PathArgument identifier;
 
     EmptyDataTreeCandidateNode(final PathArgument identifier) {
-        this.identifier = Preconditions.checkNotNull(identifier, "Identifier should not be null");
+        this.identifier = requireNonNull(identifier, "Identifier should not be null");
     }
 
     @Nonnull
@@ -51,12 +52,12 @@ final class EmptyDataTreeCandidateNode implements DataTreeCandidateNode {
     @Nonnull
     @Override
     public Optional<NormalizedNode<?, ?>> getDataAfter() {
-        return Optional.absent();
+        return Optional.empty();
     }
 
     @Nonnull
     @Override
     public Optional<NormalizedNode<?, ?>> getDataBefore() {
-        return Optional.absent();
+        return Optional.empty();
     }
 }

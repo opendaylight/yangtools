@@ -8,11 +8,11 @@
 
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -62,9 +62,7 @@ public class Bug8745Test {
         final NormalizedNodeStreamWriter streamWriter = XMLStreamNormalizedNodeStreamWriter.create(
                 xmlStreamWriter, schemaContext);
 
-        final InputStream resourceAsStream = Bug8745Test.class.getResourceAsStream(
-                "/bug8745/foo.xml");
-        final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+        final InputStream resourceAsStream = Bug8745Test.class.getResourceAsStream("/bug8745/foo.xml");
 //        final XMLStreamReader reader = inputFactory.createXMLStreamReader(resourceAsStream);
         final XMLStreamReader reader = new DOMSourceXMLStreamReader(domSource);
 
@@ -83,9 +81,7 @@ public class Bug8745Test {
 
     private static Document loadDocument(final String xmlPath) throws IOException, SAXException {
         final InputStream resourceAsStream = NormalizedNodesToXmlTest.class.getResourceAsStream(xmlPath);
-        final Document currentConfigElement = readXmlToDocument(resourceAsStream);
-        Preconditions.checkNotNull(currentConfigElement);
-        return currentConfigElement;
+        return requireNonNull(readXmlToDocument(resourceAsStream));
     }
 
     private static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {

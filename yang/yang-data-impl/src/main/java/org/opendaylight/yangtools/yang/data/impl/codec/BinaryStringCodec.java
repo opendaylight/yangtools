@@ -7,19 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;
 import com.google.common.io.BaseEncoding;
+import java.util.Optional;
 import javax.xml.bind.DatatypeConverter;
 import org.opendaylight.yangtools.yang.data.api.codec.BinaryCodec;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
-
 
 /**
  * Do not use this class outside of yangtools, its presence does not fall into the API stability contract.
@@ -43,8 +43,8 @@ public abstract class BinaryStringCodec extends TypeDefinitionAwareCodec<byte[],
 
         @Override
         void validate(final byte[] value) {
-            Preconditions.checkArgument(ranges.contains(value.length),
-                "Value length %s does not match constraints %s", value.length, ranges);
+            checkArgument(ranges.contains(value.length), "Value length %s does not match constraints %s", value.length,
+                ranges);
         }
     }
 

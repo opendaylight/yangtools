@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Strings;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
@@ -28,7 +29,6 @@ class CompiledPatternContext {
     }
 
     public void validate(final String s) {
-        Preconditions.checkArgument(pattern.matcher(s).matches(), errorMessage, s);
+        checkArgument(pattern.matcher(s).matches(), errorMessage, s);
     }
-
 }

@@ -22,20 +22,16 @@ public class LoggerVariableModifiersCheck extends AbstractCheck {
     }
 
     @Override
-    public void visitToken(DetailAST ast) {
+    public void visitToken(final DetailAST ast) {
         if (CheckLoggingUtil.isAFieldVariable(ast) && CheckLoggingUtil.isLoggerType(ast)
                 && !hasPrivatStaticFinalModifier(ast)) {
             log(ast.getLineNo(), LOG_MESSAGE);
         }
     }
 
-    private boolean hasPrivatStaticFinalModifier(DetailAST ast) {
-        DetailAST modifiers = ast.findFirstToken(TokenTypes.MODIFIERS);
-        if (modifiers != null && modifiers.branchContains(TokenTypes.LITERAL_PRIVATE)
-                && modifiers.branchContains(TokenTypes.LITERAL_STATIC) && modifiers.branchContains(TokenTypes.FINAL)) {
-            return true;
-        }
-        return false;
+    private static boolean hasPrivatStaticFinalModifier(final DetailAST ast) {
+        final DetailAST modifiers = ast.findFirstToken(TokenTypes.MODIFIERS);
+        return modifiers != null && modifiers.branchContains(TokenTypes.LITERAL_PRIVATE)
+                && modifiers.branchContains(TokenTypes.LITERAL_STATIC) && modifiers.branchContains(TokenTypes.FINAL);
     }
-
 }

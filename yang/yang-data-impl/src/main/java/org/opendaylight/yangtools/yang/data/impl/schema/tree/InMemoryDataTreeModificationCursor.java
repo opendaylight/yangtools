@@ -7,13 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -80,8 +82,8 @@ final class InMemoryDataTreeModificationCursor extends AbstractCursor<InMemoryDa
 
     @Override
     public void exit(final int depth) {
-        Preconditions.checkArgument(depth >= 0);
-        Preconditions.checkState(depth < stack.size());
+        checkArgument(depth >= 0);
+        checkState(depth < stack.size());
 
         for (int i = 0; i < depth; i++) {
             stack.pop();

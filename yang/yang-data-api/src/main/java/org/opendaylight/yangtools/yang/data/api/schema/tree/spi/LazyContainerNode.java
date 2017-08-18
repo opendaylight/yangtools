@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Optional;
 import com.google.common.collect.Collections2;
 import java.util.Map;
+import java.util.Optional;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;

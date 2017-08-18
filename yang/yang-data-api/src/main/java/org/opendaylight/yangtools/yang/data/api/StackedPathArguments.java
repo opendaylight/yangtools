@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Verify;
+import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.UnmodifiableIterator;
 import java.util.Iterator;
 import java.util.List;
@@ -20,7 +21,7 @@ final class StackedPathArguments extends PathArgumentList {
     private final List<PathArgument> stack;
 
     StackedPathArguments(@Nonnull final YangInstanceIdentifier base, @Nonnull final List<PathArgument> stack) {
-        Verify.verify(!stack.isEmpty());
+        verify(!stack.isEmpty());
         this.base = base.getPathArguments();
         this.stack = stack;
     }
@@ -33,7 +34,7 @@ final class StackedPathArguments extends PathArgumentList {
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     public boolean contains(final Object o) {
-        final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
+        final PathArgument srch = (PathArgument) requireNonNull(o);
         return stack.contains(srch) || base.contains(srch);
     }
 
@@ -48,7 +49,7 @@ final class StackedPathArguments extends PathArgumentList {
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     public int indexOf(final Object o) {
-        final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
+        final PathArgument srch = (PathArgument) requireNonNull(o);
 
         int ret = base.indexOf(srch);
         if (ret == -1) {
@@ -63,7 +64,7 @@ final class StackedPathArguments extends PathArgumentList {
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     public int lastIndexOf(final Object o) {
-        final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
+        final PathArgument srch = (PathArgument) requireNonNull(o);
 
         final int ret = stack.lastIndexOf(srch);
         if (ret != -1) {

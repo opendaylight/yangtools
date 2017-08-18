@@ -8,8 +8,9 @@
 
 package org.opendaylight.yangtools.util.concurrent;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Supplier;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.util.concurrent.ForwardingListenableFuture;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.concurrent.Callable;
@@ -18,6 +19,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -82,7 +84,7 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
             @Nonnull final Supplier<Exception> deadlockExceptionSupplier,
             @Nullable final Executor listenableFutureExecutor) {
         super(delegate, listenableFutureExecutor);
-        this.deadlockExceptionFunction = Preconditions.checkNotNull(deadlockExceptionSupplier);
+        this.deadlockExceptionFunction = requireNonNull(deadlockExceptionSupplier);
     }
 
     @Override
@@ -118,7 +120,7 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
 
     private SettableBoolean primeDetector() {
         final SettableBoolean b = deadlockDetector.get();
-        Preconditions.checkState(!b.isSet(), "Detector for {} has already been primed", this);
+        checkState(!b.isSet(), "Detector for {} has already been primed", this);
         b.set();
         return b;
     }

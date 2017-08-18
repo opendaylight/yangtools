@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
@@ -61,7 +62,7 @@ abstract class JSONStreamWriterContext {
         final URI ns = qname.getNamespace();
         if (!ns.equals(getNamespace())) {
             final Module module = schema.findModuleByNamespaceAndRevision(ns, null);
-            Preconditions.checkArgument(module != null, "Could not find module for namespace {}", ns);
+            checkArgument(module != null, "Could not find module for namespace {}", ns);
 
             sb.append(module.getName());
             sb.append(':');

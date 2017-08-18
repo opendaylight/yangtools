@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import com.google.common.base.Optional;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -105,7 +106,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
             }
             if (operation.isPresent()) {
                 Preconditions.checkArgument(builder instanceof AttributesBuilder<?>);
-                addModifyOpIfPresent(operation, ((AttributesBuilder<?>) builder));
+                addModifyOpIfPresent(operation, (AttributesBuilder<?>) builder);
             }
         }
 

@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.UNKNOWN_SIZE;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import javax.xml.stream.XMLStreamReader;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -50,7 +50,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
     private final NormalizedNodeStreamWriter writer;
 
     protected NormalizedNodeWriter(final NormalizedNodeStreamWriter writer) {
-        this.writer = Preconditions.checkNotNull(writer);
+        this.writer = requireNonNull(writer);
     }
 
     protected final NormalizedNodeStreamWriter getWriter() {
@@ -125,7 +125,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
      * @return Best estimate of the collection size required to hold all the children.
      */
     protected static int childSizeHint(final Iterable<?> children) {
-        return (children instanceof Collection) ? ((Collection<?>) children).size() : UNKNOWN_SIZE;
+        return children instanceof Collection ? ((Collection<?>) children).size() : UNKNOWN_SIZE;
     }
 
     protected boolean wasProcessAsSimpleNode(final NormalizedNode<?, ?> node) throws IOException {

@@ -16,16 +16,16 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.ma
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
-import com.google.common.base.Optional;
 import java.util.Map;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
@@ -183,7 +183,7 @@ public class StoreTreeNodesTest {
         final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
                 TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper);
         final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
-        final Optional<TreeNode> node = StoreTreeNodes.getChild(Optional.fromNullable(rootNode),
+        final Optional<TreeNode> node = StoreTreeNodes.getChild(Optional.ofNullable(rootNode),
                 TestModel.TEST_PATH.getLastPathArgument());
         assertPresentAndType(node, TreeNode.class);
     }
@@ -193,7 +193,7 @@ public class StoreTreeNodesTest {
         final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
                 TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper);
         final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
-        final Optional<TreeNode> node = StoreTreeNodes.getChild(Optional.fromNullable(rootNode),
+        final Optional<TreeNode> node = StoreTreeNodes.getChild(Optional.ofNullable(rootNode),
                 TestModel.OUTER_LIST_PATH.getLastPathArgument());
         assertFalse(node.isPresent());
     }

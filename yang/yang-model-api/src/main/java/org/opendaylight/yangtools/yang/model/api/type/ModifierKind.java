@@ -8,7 +8,8 @@
 
 package org.opendaylight.yangtools.yang.model.api.type;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.Maps;
 import java.util.Arrays;
 import java.util.Map;
@@ -32,7 +33,7 @@ public enum ModifierKind {
     private final String keyword;
 
     ModifierKind(final String keyword) {
-        this.keyword = Preconditions.checkNotNull(keyword);
+        this.keyword = requireNonNull(keyword);
     }
 
     /**
@@ -53,6 +54,6 @@ public enum ModifierKind {
      * @throws NullPointerException if keyword is null
      */
     public static Optional<ModifierKind> parse(final String keyword) {
-        return Optional.ofNullable(MODIFIER_KIND_MAP.get(Preconditions.checkNotNull(keyword)));
+        return Optional.ofNullable(MODIFIER_KIND_MAP.get(requireNonNull(keyword)));
     }
 }

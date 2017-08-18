@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -23,7 +23,7 @@ abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
     private static Optional<NormalizedNode<?, ?>> getChild(
             final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> container,
                     final PathArgument identifier) {
-        return container == null ? Optional.absent() : container.getChild(identifier);
+        return container == null ? Optional.empty() : container.getChild(identifier);
     }
 
     static DataTreeCandidateNode deltaChild(
