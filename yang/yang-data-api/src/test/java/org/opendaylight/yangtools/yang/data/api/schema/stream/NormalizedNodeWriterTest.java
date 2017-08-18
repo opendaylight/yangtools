@@ -16,13 +16,13 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
@@ -104,7 +104,7 @@ public class NormalizedNodeWriterTest {
         final MapEntryNode mockedMapEntryNode = mock(MapEntryNode.class);
         doReturn(new NodeIdentifierWithPredicates(myKeyedList, myKeyLeaf, "list-key-value-1"))
                 .when(mockedMapEntryNode).getIdentifier();
-        doReturn(Optional.absent()).when(mockedMapEntryNode).getChild(any(NodeIdentifier.class));
+        doReturn(Optional.empty()).when(mockedMapEntryNode).getChild(any(NodeIdentifier.class));
         assertNotNull(orderedNormalizedNodeWriter.write(mockedMapEntryNode));
 
         final UnkeyedListEntryNode mockedUnkeyedListEntryNode = mock(UnkeyedListEntryNode.class);

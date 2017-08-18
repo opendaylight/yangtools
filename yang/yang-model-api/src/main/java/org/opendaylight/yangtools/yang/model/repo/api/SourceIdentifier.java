@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.model.repo.api;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import javax.annotation.RegEx;
 import org.opendaylight.yangtools.concepts.Identifier;
@@ -92,7 +92,7 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      */
     SourceIdentifier(final String name, final Optional<String> formattedRevision) {
         this.name = Preconditions.checkNotNull(name);
-        this.revision = formattedRevision.orNull();
+        this.revision = formattedRevision.orElse(null);
     }
 
     /**
@@ -165,7 +165,7 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      */
     public String toYangFilename() {
         final String rev = NOT_PRESENT_FORMATTED_REVISION.equals(revision) ? null : revision;
-        return toYangFileName(name, Optional.fromNullable(rev));
+        return toYangFileName(name, Optional.ofNullable(rev));
     }
 
     /**

@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.Objects;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
@@ -26,7 +26,7 @@ public class PatternConstraintEffectiveImpl implements PatternConstraint {
 
     public PatternConstraintEffectiveImpl(final String regex, final String rawRegex,
             final Optional<String> description, final Optional<String> reference) {
-        this(regex, rawRegex, description.orNull(), reference.orNull(), null, null, null);
+        this(regex, rawRegex, description.orElse(null), reference.orElse(null), null, null, null);
     }
 
     public PatternConstraintEffectiveImpl(final String regex, final String rawRegex, final String description,

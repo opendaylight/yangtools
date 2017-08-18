@@ -8,13 +8,14 @@
 
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.augmentationBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -335,10 +336,7 @@ public class NormalizedNodeXmlTranslationTest {
 
     private static Document loadDocument(final String xmlPath) throws IOException, SAXException {
         final InputStream resourceAsStream = NormalizedNodeXmlTranslationTest.class.getResourceAsStream(xmlPath);
-
-        final Document currentConfigElement = readXmlToDocument(resourceAsStream);
-        Preconditions.checkNotNull(currentConfigElement);
-        return currentConfigElement;
+        return requireNonNull(readXmlToDocument(resourceAsStream));
     }
 
     private static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {
@@ -368,7 +366,7 @@ public class NormalizedNodeXmlTranslationTest {
         for (Module module : context.getModules()) {
             if (module.getName().equals(moduleName)) {
                 DataSchemaNode found = findChildNode(module.getChildNodes(), childNodeName);
-                Preconditions.checkState(found != null, "Unable to find %s", childNodeName);
+                checkState(found != null, "Unable to find %s", childNodeName);
                 return found;
             }
         }

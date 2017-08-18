@@ -8,8 +8,9 @@
 
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Verify;
+import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import java.util.Iterator;
 import java.util.List;
@@ -37,7 +38,7 @@ abstract class UnionXmlCodec<T> implements XmlCodec<T> {
 
         SingleType(final Class<T> dataClass, final List<XmlCodec<?>> codecs) {
             super(codecs);
-            this.dataClass = Preconditions.checkNotNull(dataClass);
+            this.dataClass = requireNonNull(dataClass);
         }
 
         @Override
@@ -56,7 +57,7 @@ abstract class UnionXmlCodec<T> implements XmlCodec<T> {
 
     static UnionXmlCodec<?> create(final UnionTypeDefinition type, final List<XmlCodec<?>> codecs) {
         final Iterator<XmlCodec<?>> it = codecs.iterator();
-        Verify.verify(it.hasNext(), "Union %s has no subtypes", type);
+        verify(it.hasNext(), "Union %s has no subtypes", type);
 
         Class<?> dataClass = it.next().getDataType();
         while (it.hasNext()) {

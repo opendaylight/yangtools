@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -17,6 +16,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -118,7 +118,7 @@ public final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumente
     @Nonnull
     @Override
     public Optional<RevisionAwareXPath> getWhenCondition() {
-        return Optional.fromNullable(whenCondition);
+        return Optional.ofNullable(whenCondition);
     }
 
     @Override

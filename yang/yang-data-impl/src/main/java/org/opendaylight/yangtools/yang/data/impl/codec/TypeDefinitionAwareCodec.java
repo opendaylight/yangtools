@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -27,7 +27,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
     protected TypeDefinitionAwareCodec(final Optional<T> typeDefinition, final Class<J> outputClass) {
         Preconditions.checkArgument(outputClass != null, "Output class must be specified.");
-        this.typeDefinition = typeDefinition.orNull();
+        this.typeDefinition = typeDefinition.orElse(null);
         this.inputClass = outputClass;
     }
 
@@ -37,7 +37,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     }
 
     public Optional<T> getTypeDefinition() {
-        return Optional.fromNullable(typeDefinition);
+        return Optional.ofNullable(typeDefinition);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })

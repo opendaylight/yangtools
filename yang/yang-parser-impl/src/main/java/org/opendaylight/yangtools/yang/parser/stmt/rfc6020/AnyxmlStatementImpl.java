@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import com.google.common.base.Optional;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -103,7 +103,7 @@ public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implem
                     return Optional.of((ContainerSchemaNode) anyXmlSchemaNode);
                 }
             }
-            return Optional.absent();
+            return Optional.empty();
         }
 
         @Override

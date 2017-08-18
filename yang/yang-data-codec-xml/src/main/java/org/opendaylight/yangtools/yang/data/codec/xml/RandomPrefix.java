@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import java.net.URI;
@@ -74,7 +75,7 @@ class RandomPrefix {
         int ret = 0;
         for (char c : str.toCharArray()) {
             int idx = LOOKUP.indexOf(c);
-            Preconditions.checkArgument(idx != -1, "Invalid string %s", str);
+            checkArgument(idx != -1, "Invalid string %s", str);
             ret = (ret << SHIFT) + idx;
         }
 

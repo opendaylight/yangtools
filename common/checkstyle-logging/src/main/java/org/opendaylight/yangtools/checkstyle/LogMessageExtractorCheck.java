@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.checkstyle;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.io.FileWriteMode;
 import com.google.common.io.Files;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import java.io.File;
@@ -35,7 +37,7 @@ public class LogMessageExtractorCheck extends AbstractLogMessageCheck {
 
     private File logMessagesReportFile = DEFAULT_REPORT_FILE;
 
-    public void setLogMessagesReportFileName(String fileName) {
+    public void setLogMessagesReportFileName(final String fileName) {
         logMessagesReportFile = new File(fileName);
         logMessagesReportFile.getParentFile().mkdirs();
     }
@@ -45,7 +47,7 @@ public class LogMessageExtractorCheck extends AbstractLogMessageCheck {
     }
 
     @Override
-    protected void visitLogMessage(DetailAST ast, String logMessage) {
+    protected void visitLogMessage(final DetailAST ast, final String logMessage) {
         File file = new File(getFileContents().getFileName());
         String fileName = FileNameUtil.getPathRelativeToMavenProjectRootIfPossible(file).getPath();
         int lineNumber = ast.getLineNo();
@@ -53,15 +55,11 @@ public class LogMessageExtractorCheck extends AbstractLogMessageCheck {
         updateMessagesReportFile(log);
     }
 
-    protected void updateMessagesReportFile(LogMessageOccurence log) {
+    protected void updateMessagesReportFile(final LogMessageOccurence log) {
         try {
             final File file = getLogMessagesReportFile();
             file.getParentFile().mkdirs();
-            if (file.exists()) {
-                Files.append(log.toString() + "\n", file, StandardCharsets.UTF_8);
-            } else {
-                Files.write(log.toString() + "\n", file, StandardCharsets.UTF_8);
-            }
+            Files.asCharSink(file, StandardCharsets.UTF_8, FileWriteMode.APPEND).write(log.toString() + "\n");
         } catch (IOException e) {
             LOG.error("Failed to append to file: {}", logMessagesReportFile.getPath(), e);
         }
@@ -74,10 +72,10 @@ public class LogMessageExtractorCheck extends AbstractLogMessageCheck {
         public final int lineNumber;
         public final String message;
 
-        public LogMessageOccurence(String javaSourceFilePath, int lineNumber, String message) {
-            this.javaSourceFilePath = Preconditions.checkNotNull(javaSourceFilePath, "javaSourceFilePath");
+        public LogMessageOccurence(final String javaSourceFilePath, final int lineNumber, final String message) {
+            this.javaSourceFilePath = requireNonNull(javaSourceFilePath, "javaSourceFilePath");
             this.lineNumber = lineNumber;
-            this.message = Preconditions.checkNotNull(message, "message");
+            this.message = requireNonNull(message, "message");
         }
 
         @Override

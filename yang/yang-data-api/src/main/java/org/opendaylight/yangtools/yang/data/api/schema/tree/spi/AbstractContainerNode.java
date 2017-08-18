@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -28,7 +28,7 @@ abstract class AbstractContainerNode extends AbstractTreeNode {
 
     protected final Optional<TreeNode> getChildFromData(final PathArgument childId) {
         // We do not cache the instantiated node as it is dirt cheap
-        return Optional.fromNullable(getChildFromData(castData(), childId, getVersion()));
+        return Optional.ofNullable(getChildFromData(castData(), childId, getVersion()));
     }
 
     static TreeNode getChildFromData(final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> data,

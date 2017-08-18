@@ -13,9 +13,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import com.google.common.base.Optional;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Optional;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import org.junit.Before;
@@ -88,7 +88,7 @@ public class Bug5396Test {
 
         Optional<DataContainerChild<? extends PathArgument, ?>> myLeaf = rootContainer.getChild(new NodeIdentifier(
                 QName.create(fooModuleQName, "my-leaf")));
-        assertTrue(myLeaf.orNull() instanceof LeafNode);
+        assertTrue(myLeaf.orElse(null) instanceof LeafNode);
 
         assertEquals(expectedValue, myLeaf.get().getValue());
     }

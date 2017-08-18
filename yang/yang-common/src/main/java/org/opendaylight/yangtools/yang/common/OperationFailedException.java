@@ -8,8 +8,9 @@
 
 package org.opendaylight.yangtools.yang.common;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,7 +48,7 @@ public class OperationFailedException extends Exception {
      */
     public OperationFailedException(final String message, final Throwable cause,
                                     final RpcError... errors) {
-        super(Preconditions.checkNotNull(message), cause);
+        super(requireNonNull(message), cause);
 
         if (errors != null && errors.length > 0) {
             errorList = ImmutableList.copyOf(Arrays.asList(errors));

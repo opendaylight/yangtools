@@ -22,7 +22,7 @@ public class LogMessageConcatenationCheck extends AbstractCheck {
     }
 
     @Override
-    public void visitToken(DetailAST ast) {
+    public void visitToken(final DetailAST ast) {
         final String methodName = CheckLoggingUtil.getMethodName(ast);
         if (CheckLoggingUtil.isLogMethod(methodName)) {
             DetailAST plus = ast.findFirstToken(TokenTypes.ELIST).getFirstChild().findFirstToken(TokenTypes.PLUS);

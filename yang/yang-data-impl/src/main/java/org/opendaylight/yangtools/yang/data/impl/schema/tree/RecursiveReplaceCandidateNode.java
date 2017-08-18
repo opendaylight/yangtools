@@ -8,9 +8,10 @@
 
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Collection;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -24,7 +25,7 @@ final class RecursiveReplaceCandidateNode extends AbstractDataTreeCandidateNode 
     public RecursiveReplaceCandidateNode(final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> oldData,
             final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> newData) {
         super(newData);
-        this.oldData = Preconditions.checkNotNull(oldData);
+        this.oldData = requireNonNull(oldData);
     }
 
     @Override

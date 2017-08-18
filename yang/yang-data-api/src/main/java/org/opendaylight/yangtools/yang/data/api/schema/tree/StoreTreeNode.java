@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
@@ -22,7 +22,7 @@ public interface StoreTreeNode<C extends StoreTreeNode<C>> {
      * Returns a direct child of the node.
      *
      * @param child Identifier of child
-     * @return Optional with node if the child is existing, {@link Optional#absent()} otherwise.
+     * @return Optional with node if the child is existing, {@link Optional#empty()} otherwise.
      */
     Optional<C> getChild(PathArgument child);
 }

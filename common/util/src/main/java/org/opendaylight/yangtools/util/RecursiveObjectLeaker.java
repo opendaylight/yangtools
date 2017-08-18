@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.util;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -91,7 +92,7 @@ public final class RecursiveObjectLeaker {
     // Make sure to call this from a finally block
     public static void afterConstructor(final Object key) {
         final Deque<Entry<?, Object>> stack = STACK.get();
-        Preconditions.checkState(stack != null, "No stack allocated when completing %s", key);
+        checkState(stack != null, "No stack allocated when completing %s", key);
 
         final Entry<?, Object> top = stack.pop();
         if (stack.isEmpty()) {
@@ -99,8 +100,8 @@ public final class RecursiveObjectLeaker {
             STACK.set(null);
         }
 
-        Preconditions.checkState(key == top.getKey(), "Expected key %s, have %s", top.getKey(), key);
-        Preconditions.checkState(top.getValue() != null, "");
+        checkState(key == top.getKey(), "Expected key %s, have %s", top.getKey(), key);
+        checkState(top.getValue() != null, "");
     }
 
     // BEWARE: this method returns incpmpletely-initialized objects (that is the purpose of this class).
@@ -112,7 +113,7 @@ public final class RecursiveObjectLeaker {
             for (Entry<?, Object> e : stack) {
                 // Keys are treated as identities
                 if (key == e.getKey()) {
-                    Preconditions.checkState(e.getValue() != null, "Object for %s is not resolved", key);
+                    checkState(e.getValue() != null, "Object for %s is not resolved", key);
                     LOG.debug("Looked up key {}", e.getKey());
                     return requiredClass.cast(e.getValue());
                 }

@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Verify;
+import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
+
 import java.net.URI;
 import java.util.Map.Entry;
 import javax.xml.stream.XMLStreamException;
@@ -24,13 +25,13 @@ final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils {
     private final SchemaContext schemaContext;
 
     SchemaAwareXMLStreamWriterUtils(final SchemaContext schemaContext) {
-        this.schemaContext = Preconditions.checkNotNull(schemaContext);
+        this.schemaContext = requireNonNull(schemaContext);
     }
 
     @Override
     TypeDefinition<?> getBaseTypeForLeafRef(final SchemaNode schemaNode, final LeafrefTypeDefinition type) {
         final TypeDefinition<?> ret = SchemaContextUtil.getBaseTypeForLeafRef(type, schemaContext, schemaNode);
-        return Verify.verifyNotNull(ret, "Unable to find base type for leafref node '%s'.", schemaNode.getPath());
+        return verifyNotNull(ret, "Unable to find base type for leafref node '%s'.", schemaNode.getPath());
     }
 
     @Override

@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.model.repo.api;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * YANG Schema revision source identifier.

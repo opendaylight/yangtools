@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.data.jaxen;
 
 import com.google.common.base.Converter;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import java.util.Optional;
 import org.jaxen.ContextSupport;
 import org.jaxen.SimpleVariableContext;
 import org.opendaylight.yangtools.yang.common.QNameModule;

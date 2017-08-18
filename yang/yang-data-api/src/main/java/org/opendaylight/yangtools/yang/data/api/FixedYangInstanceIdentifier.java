@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import java.io.ObjectStreamException;
 import java.util.List;
@@ -24,7 +26,7 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
 
     private FixedYangInstanceIdentifier(final ImmutableList<PathArgument> path, final int hash) {
         super(hash);
-        this.path = Preconditions.checkNotNull(path, "path must not be null.");
+        this.path = requireNonNull(path, "path must not be null.");
     }
 
     static FixedYangInstanceIdentifier create(final Iterable<? extends PathArgument> path, final int hash) {
@@ -63,8 +65,8 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
     @Nonnull
     @Override
     public YangInstanceIdentifier getAncestor(final int depth) {
-        Preconditions.checkArgument(depth >= 0, "Negative depth is not allowed");
-        Preconditions.checkArgument(depth <= path.size(), "Depth %s exceeds maximum depth %s", depth, path.size());
+        checkArgument(depth >= 0, "Negative depth is not allowed");
+        checkArgument(depth <= path.size(), "Depth %s exceeds maximum depth %s", depth, path.size());
 
         if (depth == path.size()) {
             return this;

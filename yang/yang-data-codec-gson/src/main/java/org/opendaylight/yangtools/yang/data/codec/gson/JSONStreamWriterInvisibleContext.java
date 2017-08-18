@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.gson.stream.JsonWriter;
 
 /**
@@ -16,7 +17,7 @@ import com.google.gson.stream.JsonWriter;
  */
 final class JSONStreamWriterInvisibleContext extends JSONStreamWriterURIContext {
     JSONStreamWriterInvisibleContext(final JSONStreamWriterContext parent) {
-        super(Preconditions.checkNotNull(parent), parent.getNamespace());
+        super(requireNonNull(parent), parent.getNamespace());
     }
 
     @Override
