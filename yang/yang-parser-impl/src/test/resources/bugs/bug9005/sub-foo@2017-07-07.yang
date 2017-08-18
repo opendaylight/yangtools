@@ -1,0 +1,9 @@
+submodule sub-foo {
+    belongs-to foo {
+        prefix foo;
+    }
+
+    import bar-1 { prefix bar; }
+
+    revision 2017-07-07;
+}
