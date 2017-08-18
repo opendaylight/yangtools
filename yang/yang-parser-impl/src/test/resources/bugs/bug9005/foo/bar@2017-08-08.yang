@@ -1,0 +1,10 @@
+module bar {
+    namespace bar;
+    prefix bar;
+
+    revision 2017-08-08;
+    
+    typedef bar-type {
+        type string;
+    }
+}
