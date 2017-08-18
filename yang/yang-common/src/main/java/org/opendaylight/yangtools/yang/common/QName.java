@@ -65,11 +65,6 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     private static final String QNAME_STRING_NO_REVISION = "^\\((.+)\\)(.+)$";
     private static final Pattern QNAME_PATTERN_NO_REVISION = Pattern.compile(QNAME_STRING_NO_REVISION);
 
-    @RegEx
-    private static final String QNAME_STRING_NO_NAMESPACE_NO_REVISION = "^(.+)$";
-    private static final Pattern QNAME_PATTERN_NO_NAMESPACE_NO_REVISION =
-        Pattern.compile(QNAME_STRING_NO_NAMESPACE_NO_REVISION);
-
     private static final char[] ILLEGAL_CHARACTERS = new char[] { '?', '(', ')', '&', ':' };
 
     // Non-null
@@ -123,12 +118,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
             final String localName = matcher.group(2);
             return new QName(namespace, localName);
         }
-        matcher = QNAME_PATTERN_NO_NAMESPACE_NO_REVISION.matcher(input);
-        if (matcher.matches()) {
-            final String localName = matcher.group(1);
-            return new QName((URI) null, localName);
-        }
-        throw new IllegalArgumentException("Invalid input:" + input);
+        throw new IllegalArgumentException("Invalid input: " + input);
     }
 
     public static QName create(final QName base, final String localName) {
@@ -145,7 +135,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @return Instance of QName
      */
     public static QName create(final QNameModule qnameModule, final String localName) {
-        return new QName(Preconditions.checkNotNull(qnameModule,"module may not be null"), localName);
+        return new QName(Preconditions.checkNotNull(qnameModule, "module may not be null"), localName);
     }
 
     /**
