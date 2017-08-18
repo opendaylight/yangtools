@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
@@ -22,10 +24,8 @@ import org.slf4j.LoggerFactory;
 public final class QNameModule implements Immutable, Serializable {
     private static final Interner<QNameModule> INTERNER = Interners.newWeakInterner();
     private static final Logger LOG = LoggerFactory.getLogger(QNameModule.class);
-    private static final QNameModule NULL_INSTANCE = new QNameModule(null, null);
     private static final long serialVersionUID = 2L;
 
-    //Nullable
     private final URI namespace;
 
     //Nullable
@@ -37,8 +37,7 @@ public final class QNameModule implements Immutable, Serializable {
     private transient int hash;
 
     private QNameModule(final URI namespace, final Date revision) {
-        // FIXME: 2.0.0: Preconditions.checkNotNull(namespace)
-        this.namespace = namespace;
+        this.namespace = requireNonNull(namespace);
         this.revision = revision;
     }
 
@@ -59,10 +58,6 @@ public final class QNameModule implements Immutable, Serializable {
      * @return A new, potentially shared, QNameModule instance
      */
     public static QNameModule create(final URI namespace, final Date revision) {
-        if (namespace == null && revision == null) {
-            return NULL_INSTANCE;
-        }
-
         return new QNameModule(namespace, revision);
     }
 
