@@ -1,0 +1,11 @@
+module openconfig-isis {
+  yang-version "1";
+  namespace "http://openconfig.net/yang/openconfig-isis";
+  prefix "oc-isis";
+
+
+  import ietf-inet-types { prefix "inet"; }
+  include openconfig-isis-lsp;
+
+  revision "2017-07-26";
+}

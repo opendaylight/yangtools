@@ -1,0 +1,7 @@
+module openconfig-inet-types {
+  yang-version "1";
+  namespace "http://openconfig.net/yang/types/inet";
+  prefix "oc-inet";
+
+  revision 2017-07-06;
+}

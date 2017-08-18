@@ -1,0 +1,8 @@
+ module ietf-inet-types {
+    yang-version 1;
+    namespace
+      "urn:ietf:params:xml:ns:yang:ietf-inet-types";
+    prefix inet;
+
+   revision "2013-07-15";
+}

@@ -1,0 +1,10 @@
+submodule openconfig-isis-lsp {
+
+  belongs-to openconfig-isis {
+    prefix oc-isis;
+  }
+
+  import openconfig-inet-types { prefix "inet"; }
+
+  revision "2017-07-26";
+}
