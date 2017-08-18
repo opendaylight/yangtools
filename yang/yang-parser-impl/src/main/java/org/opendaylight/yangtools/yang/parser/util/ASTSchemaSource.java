@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.model.api.Module.DEFAULT_SEMANTIC_VERSION;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
 import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -34,18 +33,6 @@ import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
  */
 @Beta
 public final class ASTSchemaSource implements SchemaSourceRepresentation {
-    @Deprecated
-    public static final Function<ASTSchemaSource, SourceIdentifier> GET_IDENTIFIER =
-        ASTSchemaSource::getIdentifier;
-    @Deprecated
-    public static final Function<ASTSchemaSource, SourceIdentifier> GET_SEMVER_IDENTIFIER =
-        ASTSchemaSource::getSemVerIdentifier;
-    @Deprecated
-    public static final Function<ASTSchemaSource, YangModelDependencyInfo> GET_DEPINFO =
-        ASTSchemaSource::getDependencyInformation;
-    @Deprecated
-    public static final Function<ASTSchemaSource, ParserRuleContext> GET_AST = ASTSchemaSource::getAST;
-
     private final YangModelDependencyInfo depInfo;
     private final SemVerSourceIdentifier semVerId;
     private final ParserRuleContext tree;
@@ -55,10 +42,10 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
     private ASTSchemaSource(@Nonnull final SourceIdentifier id, @Nonnull final SemVerSourceIdentifier semVerId,
             @Nonnull final ParserRuleContext tree, @Nonnull final YangModelDependencyInfo depInfo,
             @Nullable final String symbolicName) {
-        this.depInfo = Preconditions.checkNotNull(depInfo);
-        this.tree = Preconditions.checkNotNull(tree);
-        this.id = Preconditions.checkNotNull(id);
-        this.semVerId = Preconditions.checkNotNull(semVerId);
+        this.depInfo = requireNonNull(depInfo);
+        this.tree = requireNonNull(tree);
+        this.id = requireNonNull(id);
+        this.semVerId = requireNonNull(semVerId);
         this.symbolicName = symbolicName;
     }
 
@@ -203,8 +190,8 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
     private static SemVerSourceIdentifier getSemVerSourceId(final YangModelDependencyInfo depInfo) {
         return depInfo.getFormattedRevision() == null
                 ? SemVerSourceIdentifier.create(depInfo.getName(),
-                    depInfo.getSemanticVersion().or(DEFAULT_SEMANTIC_VERSION))
+                    depInfo.getSemanticVersion().orElse(DEFAULT_SEMANTIC_VERSION))
                         : SemVerSourceIdentifier.create(depInfo.getName(), depInfo.getFormattedRevision(),
-                            depInfo.getSemanticVersion().or(DEFAULT_SEMANTIC_VERSION));
+                            depInfo.getSemanticVersion().orElse(DEFAULT_SEMANTIC_VERSION));
     }
 }

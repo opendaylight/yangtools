@@ -51,8 +51,10 @@ public class SimpleSchemaContext extends AbstractSchemaContext {
          *
          * Invest some quality time in building up lookup tables for both.
          */
-        final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(new TreeMap<>(), MODULE_SET_SUPPLIER);
-        final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(new TreeMap<>(), MODULE_SET_SUPPLIER);
+        final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(new TreeMap<>(),
+            AbstractSchemaContext::createModuleSet);
+        final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(new TreeMap<>(),
+            AbstractSchemaContext::createModuleSet);
         final Set<ModuleIdentifier> modIdBuilder = new HashSet<>();
         for (Module m : modules) {
             nameMap.put(m.getName(), m);

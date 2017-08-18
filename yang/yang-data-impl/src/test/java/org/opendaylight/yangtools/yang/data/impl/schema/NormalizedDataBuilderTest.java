@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
@@ -99,7 +99,7 @@ public class NormalizedDataBuilderTest {
         AugmentationNode augmentation = Builders
                 .augmentationBuilder()
                 .withNodeIdentifier(
-                        new AugmentationIdentifier(Sets.newHashSet(getQName("augmentUint32"))))
+                        new AugmentationIdentifier(Collections.singleton(getQName("augmentUint32"))))
                 .withChild(
                         Builders.<Integer>leafBuilder().withNodeIdentifier(getNodeIdentifier("augmentUint32"))
                                 .withValue(11).build()).build();
@@ -196,7 +196,7 @@ public class NormalizedDataBuilderTest {
         for (Module module : context.getModules()) {
             if (module.getName().equals(moduleName)) {
                 DataSchemaNode found = findChildNode(module.getChildNodes(), childNodeName);
-                Preconditions.checkState(found != null, "Unable to find %s", childNodeName);
+                checkState(found != null, "Unable to find %s", childNodeName);
                 return found;
             }
         }

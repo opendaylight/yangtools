@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -22,7 +23,7 @@ public final class SynchronizedDataTreeModification implements DataTreeModificat
     private final DataTreeModification delegate;
 
     private SynchronizedDataTreeModification(final DataTreeModification delegate) {
-        this.delegate = Preconditions.checkNotNull(delegate);
+        this.delegate = requireNonNull(delegate);
     }
 
     public static DataTreeModification create(final DataTreeModification delegate) {

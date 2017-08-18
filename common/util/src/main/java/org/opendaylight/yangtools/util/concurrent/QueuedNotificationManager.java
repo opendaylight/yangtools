@@ -8,7 +8,9 @@
 
 package org.opendaylight.yangtools.util.concurrent;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayDeque;
 import java.util.Collection;
@@ -100,11 +102,11 @@ public class QueuedNotificationManager<L, N> implements NotificationManager<L, N
 
     private QueuedNotificationManager(final Executor executor, final BatchedInvoker<L, N> listenerInvoker,
             final int maxQueueCapacity, final String name) {
-        Preconditions.checkArgument(maxQueueCapacity > 0, "Invalid maxQueueCapacity %s must be > 0", maxQueueCapacity);
-        this.executor = Preconditions.checkNotNull(executor);
-        this.listenerInvoker = Preconditions.checkNotNull(listenerInvoker);
+        checkArgument(maxQueueCapacity > 0, "Invalid maxQueueCapacity %s must be > 0", maxQueueCapacity);
+        this.executor = requireNonNull(executor);
+        this.listenerInvoker = requireNonNull(listenerInvoker);
         this.maxQueueCapacity = maxQueueCapacity;
-        this.name = Preconditions.checkNotNull(name);
+        this.name = requireNonNull(name);
     }
 
     /**
@@ -129,7 +131,7 @@ public class QueuedNotificationManager<L, N> implements NotificationManager<L, N
             }
 
         }), maxQueueCapacity, name);
-        Preconditions.checkNotNull(listenerInvoker);
+        requireNonNull(listenerInvoker);
     }
 
     /**
@@ -264,7 +266,7 @@ public class QueuedNotificationManager<L, N> implements NotificationManager<L, N
         private final L listener;
 
         ListenerKey(final L listener) {
-            this.listener = Preconditions.checkNotNull(listener);
+            this.listener = requireNonNull(listener);
         }
 
         L getListener() {
@@ -307,7 +309,7 @@ public class QueuedNotificationManager<L, N> implements NotificationManager<L, N
         private boolean exiting;
 
         NotificationTask(final ListenerKey<L> listenerKey, final Iterator<N> notifications) {
-            this.listenerKey = Preconditions.checkNotNull(listenerKey);
+            this.listenerKey = requireNonNull(listenerKey);
             while (notifications.hasNext()) {
                 queue.offer(notifications.next());
             }

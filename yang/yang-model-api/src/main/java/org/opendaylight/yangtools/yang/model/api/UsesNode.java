@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import com.google.common.base.Optional;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 
@@ -71,6 +71,6 @@ public interface UsesNode extends DocumentedNode.WithStatus {
      * @return Optional of XPath condition
      */
     default @Nonnull Optional<RevisionAwareXPath> getWhenCondition() {
-        return Optional.absent();
+        return Optional.empty();
     }
 }

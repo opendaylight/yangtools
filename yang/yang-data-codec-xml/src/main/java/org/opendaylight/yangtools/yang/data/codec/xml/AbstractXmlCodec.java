@@ -8,7 +8,8 @@
 
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import javax.xml.namespace.NamespaceContext;
 import org.opendaylight.yangtools.yang.data.impl.codec.DataStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
@@ -23,7 +24,7 @@ abstract class AbstractXmlCodec<T> implements XmlCodec<T> {
     private final DataStringCodec<T> codec;
 
     protected AbstractXmlCodec(final DataStringCodec<T> codec) {
-        this.codec = Preconditions.checkNotNull(codec);
+        this.codec = requireNonNull(codec);
     }
 
     @Override

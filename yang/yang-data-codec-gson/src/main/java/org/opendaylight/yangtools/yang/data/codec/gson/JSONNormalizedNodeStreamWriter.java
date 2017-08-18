@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.data.codec.gson.JsonParserStream.ANYXML_ARRAY_ELEMENT_ID;
 import static org.w3c.dom.Node.ELEMENT_NODE;
 import static org.w3c.dom.Node.TEXT_NODE;
 
-import com.google.common.base.Preconditions;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
@@ -86,10 +86,10 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
 
     JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final SchemaPath path, final JsonWriter writer,
             final JSONStreamWriterRootContext rootContext) {
-        this.writer = Preconditions.checkNotNull(writer);
-        this.codecs = Preconditions.checkNotNull(codecFactory);
+        this.writer = requireNonNull(writer);
+        this.codecs = requireNonNull(codecFactory);
         this.tracker = SchemaTracker.create(codecFactory.getSchemaContext(), path);
-        this.context = Preconditions.checkNotNull(rootContext);
+        this.context = requireNonNull(rootContext);
     }
 
     /**
