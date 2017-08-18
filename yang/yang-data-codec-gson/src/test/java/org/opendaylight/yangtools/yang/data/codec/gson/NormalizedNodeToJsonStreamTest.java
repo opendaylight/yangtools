@@ -15,7 +15,7 @@ import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.childArr
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.childPrimitive;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.resolveCont1;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonNull;
@@ -82,13 +82,13 @@ public class NormalizedNodeToJsonStreamTest {
         final JsonArray lflst11 = childArray(cont1, "complexjson:lflst11", "lflst11");
         assertNotNull(lflst11);
 
-        final HashSet<Object> lflst11Values = Sets.newHashSet();
+        final HashSet<Object> lflst11Values = new HashSet<>();
         for (final JsonElement jsonElement : lflst11) {
             assertTrue(jsonElement instanceof JsonPrimitive);
             lflst11Values.add(jsonElement.getAsString());
         }
 
-        assertEquals(Sets.newHashSet("lflst11 value2\r\nanother line 2", "lflst11 value1\nanother line 1"),
+        assertEquals(ImmutableSet.of("lflst11 value2\r\nanother line 2", "lflst11 value1\nanother line 1"),
             lflst11Values);
     }
 
@@ -118,13 +118,13 @@ public class NormalizedNodeToJsonStreamTest {
         final JsonArray lflst11 = childArray(cont1, "complexjson:lflst11", "lflst11");
         assertNotNull(lflst11);
 
-        final HashSet<Object> lflst11Values = Sets.newHashSet();
+        final HashSet<Object> lflst11Values = new HashSet<>();
         for (final JsonElement jsonElement : lflst11) {
             assertTrue(jsonElement instanceof JsonPrimitive);
             lflst11Values.add(jsonElement.getAsString());
         }
 
-        assertEquals(Sets.newHashSet("lflst11 value2", "lflst11 value1"), lflst11Values);
+        assertEquals(ImmutableSet.of("lflst11 value2", "lflst11 value1"), lflst11Values);
     }
 
     @Test

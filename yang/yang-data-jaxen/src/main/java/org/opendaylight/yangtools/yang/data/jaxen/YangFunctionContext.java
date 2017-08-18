@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.jaxen;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Verify;
@@ -16,6 +15,7 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.jaxen.ContextSupport;
 import org.jaxen.Function;

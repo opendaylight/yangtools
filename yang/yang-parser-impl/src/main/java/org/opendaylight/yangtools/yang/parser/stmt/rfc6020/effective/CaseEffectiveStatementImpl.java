@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.base.Optional;
 import java.util.Objects;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
@@ -36,7 +36,7 @@ public final class CaseEffectiveStatementImpl extends AbstractEffectiveSimpleDat
 
     @Override
     public Optional<ChoiceCaseNode> getOriginal() {
-        return Optional.fromNullable(original);
+        return Optional.ofNullable(original);
     }
 
     @Override

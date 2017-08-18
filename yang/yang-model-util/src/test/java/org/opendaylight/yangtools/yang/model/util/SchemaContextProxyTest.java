@@ -14,7 +14,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
@@ -465,7 +464,7 @@ public class SchemaContextProxyTest {
                 new HashSet<>(), moduleConfig);
 
         final ExtensionDefinition mockedExtension = mock(ExtensionDefinition.class);
-        final List<ExtensionDefinition> extensions = Lists.newArrayList(mockedExtension);
+        final List<ExtensionDefinition> extensions = Collections.singletonList(mockedExtension);
         doReturn(extensions).when(moduleConfig).getExtensionSchemaNodes();
 
         final Set<ExtensionDefinition> schemaContextProxyExtensions = filteringSchemaContextProxy.getExtensions();
@@ -480,7 +479,7 @@ public class SchemaContextProxyTest {
                 new HashSet<>(), moduleConfig);
 
         final UnknownSchemaNode mockedUnknownSchemaNode = mock(UnknownSchemaNode.class);
-        final List<UnknownSchemaNode> unknownSchemaNodes = Lists.newArrayList(mockedUnknownSchemaNode);
+        final List<UnknownSchemaNode> unknownSchemaNodes = Collections.singletonList(mockedUnknownSchemaNode);
         doReturn(unknownSchemaNodes).when(moduleConfig).getUnknownSchemaNodes();
 
         final List<UnknownSchemaNode> schemaContextProxyUnknownSchemaNodes =

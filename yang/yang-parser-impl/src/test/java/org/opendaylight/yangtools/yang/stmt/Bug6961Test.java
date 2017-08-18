@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.Date;
 import java.util.Optional;
@@ -35,7 +35,7 @@ public class Bug6961Test {
         final ModuleIdentifier bar = ModuleIdentifierImpl.create("bar", Optional.of(new URI("bar")), date);
         final ModuleIdentifier sub1Bar = ModuleIdentifierImpl.create("sub1-bar", Optional.of(new URI("bar")), date);
         final ModuleIdentifier baz = ModuleIdentifierImpl.create("baz", Optional.of(new URI("baz")), date);
-        final Set<ModuleIdentifier> testSet = Sets.newHashSet(foo, sub1Foo, sub2Foo, bar, sub1Bar, baz);
+        final Set<ModuleIdentifier> testSet = ImmutableSet.of(foo, sub1Foo, sub2Foo, bar, sub1Bar, baz);
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6961/");
         assertNotNull(context);
         final Set<ModuleIdentifier> allModuleIdentifiers = context.getAllModuleIdentifiers();

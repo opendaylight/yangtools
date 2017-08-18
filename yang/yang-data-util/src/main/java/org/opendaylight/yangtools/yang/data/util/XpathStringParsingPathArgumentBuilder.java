@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
@@ -66,8 +67,8 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Collection<PathAr
     private int offset;
 
     XpathStringParsingPathArgumentBuilder(final AbstractStringInstanceIdentifierCodec codec, final String data) {
-        this.codec = Preconditions.checkNotNull(codec);
-        this.data = Preconditions.checkNotNull(data);
+        this.codec = requireNonNull(codec);
+        this.data = requireNonNull(data);
         this.current = codec.getDataContextTree().getRoot();
         this.offset = 0;
     }
