@@ -13,7 +13,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -79,33 +79,33 @@ public class DataNodeIteratorTest {
         final ChoiceSchemaNode mockedChoice = mock(ChoiceSchemaNode.class);
         final ChoiceCaseNode mockedCase1 = mock(ChoiceCaseNode.class);
         final ChoiceCaseNode mockedCase2 = mock(ChoiceCaseNode.class);
-        final Set<ChoiceCaseNode> cases = Sets.newHashSet(mockedCase1, mockedCase2);
+        final Set<ChoiceCaseNode> cases = ImmutableSet.of(mockedCase1, mockedCase2);
         doReturn(cases).when(mockedChoice).getCases();
 
-        final Set<DataSchemaNode> childNodes = Sets.newHashSet(mockedAugmentingContainer, mockedContainer, mockedList,
+        final Set<DataSchemaNode> childNodes = ImmutableSet.of(mockedAugmentingContainer, mockedContainer, mockedList,
                 mockedChoice);
         doReturn(childNodes).when(mockedModule).getChildNodes();
 
         final NotificationDefinition mockedNotification = mock(NotificationDefinition.class);
         final ContainerSchemaNode mockedContainerInNotification = mock(ContainerSchemaNode.class);
-        final Set<DataSchemaNode> notificationChildNodes = Sets.newHashSet(mockedContainerInNotification);
+        final Set<DataSchemaNode> notificationChildNodes = ImmutableSet.of(mockedContainerInNotification);
         doReturn(notificationChildNodes).when(mockedNotification).getChildNodes();
-        final Set<NotificationDefinition> notifications = Sets.newHashSet(mockedNotification);
+        final Set<NotificationDefinition> notifications = ImmutableSet.of(mockedNotification);
 
         doReturn(notifications).when(mockedModule).getNotifications();
 
         final RpcDefinition mockedRpc = mock(RpcDefinition.class);
         final ContainerSchemaNode mockedContainerInRpcInput = mock(ContainerSchemaNode.class);
         final ListSchemaNode mockedListInRpcInputContainer = mock(ListSchemaNode.class);
-        final Set<DataSchemaNode> rpcInputChildNodes = Sets.newHashSet(mockedListInRpcInputContainer);
+        final Set<DataSchemaNode> rpcInputChildNodes = ImmutableSet.of(mockedListInRpcInputContainer);
         doReturn(rpcInputChildNodes).when(mockedContainerInRpcInput).getChildNodes();
         doReturn(mockedContainerInRpcInput).when(mockedRpc).getInput();
-        final Set<RpcDefinition> rpcs = Sets.newHashSet(mockedRpc);
+        final Set<RpcDefinition> rpcs = ImmutableSet.of(mockedRpc);
 
         doReturn(rpcs).when(mockedModule).getRpcs();
 
         final GroupingDefinition mockedGrouping = mock(GroupingDefinition.class);
-        final Set<GroupingDefinition> groupings = Sets.newHashSet(mockedGrouping);
+        final Set<GroupingDefinition> groupings = ImmutableSet.of(mockedGrouping);
 
         doReturn(groupings).when(mockedModule).getGroupings();
 

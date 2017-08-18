@@ -8,7 +8,9 @@
 
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import java.net.URI;
 import java.util.Map.Entry;
 import javax.xml.namespace.NamespaceContext;
@@ -25,8 +27,8 @@ final class IdentityrefXmlCodec implements XmlCodec<QName> {
     private final QNameModule parentModule;
 
     IdentityrefXmlCodec(final SchemaContext context, final QNameModule parentModule) {
-        this.schemaContext = Preconditions.checkNotNull(context);
-        this.parentModule = Preconditions.checkNotNull(parentModule);
+        this.schemaContext = requireNonNull(context);
+        this.parentModule = requireNonNull(parentModule);
     }
 
     @Override
@@ -43,7 +45,7 @@ final class IdentityrefXmlCodec implements XmlCodec<QName> {
 
             final String prefixedNS = ctx.getNamespaceURI(prefix);
             final Module module = schemaContext.findModuleByNamespaceAndRevision(URI.create(prefixedNS), null);
-            Preconditions.checkArgument(module != null, "Could not find module for namespace %s", prefixedNS);
+            checkArgument(module != null, "Could not find module for namespace %s", prefixedNS);
             return module.getQNameModule();
         });
     }

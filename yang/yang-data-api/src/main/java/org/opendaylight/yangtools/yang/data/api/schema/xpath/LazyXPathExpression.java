@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.data.api.schema.xpath;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Optional;
 import com.google.common.util.concurrent.CheckedFuture;
+import java.util.Optional;
 import java.util.concurrent.Future;
 import javax.annotation.Nonnull;
 import javax.xml.xpath.XPathExpressionException;
@@ -33,7 +33,7 @@ public interface LazyXPathExpression {
     /**
      * Evaluate this expression at the specified path in a document. If evaluation succeeds, it will return an
      * {@link XPathResult} at some point it the future. If it fails to match anything, it {@link Future#get()} will
-     * return {@link Optional#absent()}.
+     * return {@link Optional#empty()}.
      *
      * <p>
      * FIXME: The amount of overhead an implementation can incur on the user as data from the resulting

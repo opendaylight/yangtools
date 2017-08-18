@@ -11,11 +11,11 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -45,7 +45,7 @@ abstract class DependencyResolver {
     protected DependencyResolver(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo) {
         final Collection<SourceIdentifier> resolved = new ArrayList<>(depInfo.size());
         final Collection<SourceIdentifier> pending = new ArrayList<>(depInfo.keySet());
-        final Map<SourceIdentifier, BelongsToDependency> submodules = Maps.newHashMap();
+        final Map<SourceIdentifier, BelongsToDependency> submodules = new HashMap<>();
 
         boolean progress;
         do {

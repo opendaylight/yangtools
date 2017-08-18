@@ -8,8 +8,9 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -29,7 +30,7 @@ public final class ModelDefinedStatementDefinition implements StatementDefinitio
     private final boolean yinElement;
 
     ModelDefinedStatementDefinition(final QName statementName, final QName argumentName, final boolean yinElement) {
-        this.statementName = Preconditions.checkNotNull(statementName);
+        this.statementName = requireNonNull(statementName);
         this.argumentName = argumentName;
         this.yinElement = yinElement;
     }

@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Optional;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;

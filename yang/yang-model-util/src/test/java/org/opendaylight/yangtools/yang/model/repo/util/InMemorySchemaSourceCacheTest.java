@@ -11,12 +11,12 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Optional;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
@@ -128,7 +128,7 @@ public class InMemorySchemaSourceCacheTest {
         private final String content;
 
         protected TestingYangSource(final String name, final String revision, final String content) {
-            super(RevisionSourceIdentifier.create(name, Optional.fromNullable(revision)));
+            super(RevisionSourceIdentifier.create(name, Optional.ofNullable(revision)));
             this.content = content;
         }
 

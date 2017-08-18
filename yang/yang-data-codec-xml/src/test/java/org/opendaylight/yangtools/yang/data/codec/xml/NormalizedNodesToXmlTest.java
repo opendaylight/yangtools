@@ -8,14 +8,15 @@
 
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.stream.XMLOutputFactory;
@@ -213,7 +214,7 @@ public class NormalizedNodesToXmlTest {
                 .build();
 
         AugmentationNode myDoublyKeyedListAugNode = Builders.augmentationBuilder().withNodeIdentifier(
-                new AugmentationIdentifier(Sets.newHashSet(myDoublyKeyedList)))
+                new AugmentationIdentifier(Collections.singleton(myDoublyKeyedList)))
                 .withChild(myDoublyKeyedListNode).build();
 
         ContainerNode myContainer3Node = Builders.containerBuilder().withNodeIdentifier(
@@ -221,7 +222,7 @@ public class NormalizedNodesToXmlTest {
                 .withChild(myDoublyKeyedListAugNode).build();
 
         AugmentationNode myContainer3AugNode = Builders.augmentationBuilder().withNodeIdentifier(
-                new AugmentationIdentifier(Sets.newHashSet(myContainer3)))
+                new AugmentationIdentifier(Collections.singleton(myContainer3)))
                 .withChild(myContainer3Node).build();
 
         ContainerNode outerContainerNode = Builders.containerBuilder().withNodeIdentifier(
@@ -235,9 +236,7 @@ public class NormalizedNodesToXmlTest {
 
     private static Document loadDocument(final String xmlPath) throws IOException, SAXException {
         final InputStream resourceAsStream = NormalizedNodesToXmlTest.class.getResourceAsStream(xmlPath);
-        final Document currentConfigElement = readXmlToDocument(resourceAsStream);
-        Preconditions.checkNotNull(currentConfigElement);
-        return currentConfigElement;
+        return requireNonNull(readXmlToDocument(resourceAsStream));
     }
 
     private static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {

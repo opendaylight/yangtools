@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,8 +29,8 @@ final class YangInstanceIdentifierBuilder implements InstanceIdentifierBuilder {
         this.path = new ArrayList<>();
     }
 
-    YangInstanceIdentifierBuilder(final Iterable<PathArgument> prefix, final int hash) {
-        this.path = Lists.newArrayList(prefix);
+    YangInstanceIdentifierBuilder(final List<PathArgument> prefix, final int hash) {
+        this.path = new ArrayList<>(prefix);
         this.hash = new HashCodeBuilder<>(hash);
     }
 
@@ -42,7 +42,7 @@ final class YangInstanceIdentifierBuilder implements InstanceIdentifierBuilder {
 
     @Override
     public InstanceIdentifierBuilder node(final PathArgument arg) {
-        return addArgument(Preconditions.checkNotNull(arg));
+        return addArgument(requireNonNull(arg));
     }
 
     @Override

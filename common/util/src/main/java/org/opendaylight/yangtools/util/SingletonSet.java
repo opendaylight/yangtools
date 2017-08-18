@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.util;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import java.io.Serializable;
 import java.util.Collection;
@@ -176,7 +177,7 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
         private final E element;
 
         RegularSingletonSet(final E element) {
-            this.element = Preconditions.checkNotNull(element);
+            this.element = requireNonNull(element);
         }
 
         @Override

@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -25,7 +26,7 @@ public class ImmutableChoiceNodeSchemaAwareBuilder extends ImmutableChoiceNodeBu
     private DataNodeContainerValidator validator;
 
     protected ImmutableChoiceNodeSchemaAwareBuilder(final ChoiceSchemaNode schema) {
-        this.schema = Preconditions.checkNotNull(schema, "Schema was null");
+        this.schema = requireNonNull(schema, "Schema was null");
         super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 

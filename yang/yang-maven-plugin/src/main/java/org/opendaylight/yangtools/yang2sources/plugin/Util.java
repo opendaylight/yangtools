@@ -23,6 +23,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -144,7 +145,7 @@ final class Util {
     private static void checkArtifact(final Artifact artifact, final Collection<Artifact> dependencies) {
         for (org.apache.maven.artifact.Artifact d : dependencies) {
             if (artifact.getGroupId().equals(d.getGroupId()) && artifact.getArtifactId().equals(d.getArtifactId())) {
-                if (!(artifact.getVersion().equals(d.getVersion()))) {
+                if (!artifact.getVersion().equals(d.getVersion())) {
                     LOG.warn("{} Dependency resolution conflict:", LOG_PREFIX);
                     LOG.warn("{} '{}' dependency [{}] has different version than one declared in current project [{}]"
                             + ". It is recommended to fix this problem because it may cause compilation errors.",
@@ -268,11 +269,11 @@ final class Util {
     static SourceIdentifier moduleToIdentifier(final Module module) {
         final QNameModule mod = module.getQNameModule();
         final Date rev = mod.getRevision();
-        final com.google.common.base.Optional<String> optRev;
+        final Optional<String> optRev;
         if (SimpleDateFormatUtil.DEFAULT_DATE_REV.equals(rev)) {
-            optRev = com.google.common.base.Optional.absent();
+            optRev = Optional.empty();
         } else {
-            optRev = com.google.common.base.Optional.of(mod.getFormattedRevision());
+            optRev = Optional.of(mod.getFormattedRevision());
         }
 
         return RevisionSourceIdentifier.create(module.getName(), optRev);
