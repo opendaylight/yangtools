@@ -1,0 +1,10 @@
+module bar-3 {
+    namespace bar-3;
+    prefix bar;
+
+    revision 2000-01-03;
+    
+    typedef bar-3-type {
+        type string;
+    }
+}
