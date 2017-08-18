@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.jaxen;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Optional;
 import org.jaxen.expr.AllNodeStep;
 import org.jaxen.expr.BinaryExpr;
@@ -29,7 +30,7 @@ final class ExprWalker {
     private final ExprListener listener;
 
     ExprWalker(final ExprListener listener) {
-        this.listener = Preconditions.checkNotNull(listener);
+        this.listener = requireNonNull(listener);
     }
 
     public void walk(final Expr expr) {

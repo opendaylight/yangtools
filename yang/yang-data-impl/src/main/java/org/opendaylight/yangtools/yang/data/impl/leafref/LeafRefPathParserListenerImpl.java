@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.collect.Lists;
 import java.net.URI;
 import java.util.ArrayList;
@@ -116,8 +117,8 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener 
         final String prefix = ctx.getText();
         if (!module.getPrefix().equals(prefix)) {
             final Optional<QNameModule> qnameModuleOpt = getQNameModuleForImportPrefix(prefix);
-            Preconditions.checkArgument(qnameModuleOpt.isPresent(), "No module import for prefix: %s in module: %s",
-                prefix, module.getName());
+            checkArgument(qnameModuleOpt.isPresent(), "No module import for prefix: %s in module: %s", prefix,
+                module.getName());
             currentQnameModule = qnameModuleOpt.get();
         } else {
             currentQnameModule = module.getQNameModule();

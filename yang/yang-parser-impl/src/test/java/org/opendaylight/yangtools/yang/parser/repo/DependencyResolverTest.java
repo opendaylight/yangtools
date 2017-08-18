@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.yang.parser.repo;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.common.base.Optional;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -73,6 +73,6 @@ public class DependencyResolverTest {
 
     private static SourceIdentifier getSourceId(final YangModelDependencyInfo depInfo) {
         final String name = depInfo.getName();
-        return RevisionSourceIdentifier.create(name, Optional.fromNullable(depInfo.getFormattedRevision()));
+        return RevisionSourceIdentifier.create(name, Optional.ofNullable(depInfo.getFormattedRevision()));
     }
 }

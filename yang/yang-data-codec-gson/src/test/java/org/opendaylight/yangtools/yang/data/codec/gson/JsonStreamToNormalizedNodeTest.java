@@ -17,15 +17,16 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBu
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 
-import com.google.common.collect.Sets;
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -162,7 +163,7 @@ public class JsonStreamToNormalizedNodeTest {
     public void emptyTypeTest() throws IOException, URISyntaxException {
         final String inputJson = loadTextFile("/complexjson/type-empty.json");
         final ContainerNode awaitedStructure = containerBuilder()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(CONT_1))
+                .withNodeIdentifier(new NodeIdentifier(CONT_1))
                 .addChild(leafNode(EMPTY_LEAF, null))
                 .build();
 
@@ -225,19 +226,14 @@ public class JsonStreamToNormalizedNodeTest {
         final QName containerQName = QName.create(augmentChoice1QName, "case11-choice-case-container");
         final QName leafQName = QName.create(augmentChoice1QName, "case11-choice-case-leaf");
 
-        final YangInstanceIdentifier.AugmentationIdentifier aug1Id =
-                new YangInstanceIdentifier.AugmentationIdentifier(Sets.newHashSet(augmentChoice1QName));
-        final YangInstanceIdentifier.AugmentationIdentifier aug2Id =
-                new YangInstanceIdentifier.AugmentationIdentifier(Sets.newHashSet(augmentChoice2QName));
-        final YangInstanceIdentifier.NodeIdentifier augmentChoice1Id =
-                new YangInstanceIdentifier.NodeIdentifier(augmentChoice1QName);
-        final YangInstanceIdentifier.NodeIdentifier augmentChoice2Id =
-                new YangInstanceIdentifier.NodeIdentifier(augmentChoice2QName);
-        final YangInstanceIdentifier.NodeIdentifier containerId =
-                new YangInstanceIdentifier.NodeIdentifier(containerQName);
+        final AugmentationIdentifier aug1Id = new AugmentationIdentifier(Collections.singleton(augmentChoice1QName));
+        final AugmentationIdentifier aug2Id = new AugmentationIdentifier(Collections.singleton(augmentChoice2QName));
+        final NodeIdentifier augmentChoice1Id = new NodeIdentifier(augmentChoice1QName);
+        final NodeIdentifier augmentChoice2Id = new NodeIdentifier(augmentChoice2QName);
+        final NodeIdentifier containerId = new NodeIdentifier(containerQName);
 
         final NormalizedNode<?, ?> cont1Normalized =
-                containerBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(parentNode.getQName()))
+                containerBuilder().withNodeIdentifier(new NodeIdentifier(parentNode.getQName()))
                         .withChild(augmentationBuilder().withNodeIdentifier(aug1Id)
                                 .withChild(choiceBuilder().withNodeIdentifier(augmentChoice1Id)
                                         .withChild(augmentationBuilder().withNodeIdentifier(aug2Id)

@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 /**
@@ -40,7 +41,7 @@ public class DataValidationFailedException extends Exception {
     public DataValidationFailedException(final YangInstanceIdentifier path, final String message,
             final Throwable cause) {
         super(message, cause);
-        this.path = Preconditions.checkNotNull(path);
+        this.path = requireNonNull(path);
     }
 
     /**

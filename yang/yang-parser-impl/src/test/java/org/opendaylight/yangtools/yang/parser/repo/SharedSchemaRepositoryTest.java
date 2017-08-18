@@ -22,11 +22,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter.ALWAYS_ACCEPT;
 
-import com.google.common.base.Function;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Optional;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.FutureCallback;
@@ -41,6 +39,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import javax.annotation.Nonnull;
 import org.junit.Test;
@@ -255,10 +254,8 @@ public class SharedSchemaRepositoryTest {
 
         assertEquals(4, listener.registeredSources.size());
 
-        final Function<PotentialSchemaSource<?>, SourceIdentifier> potSourceToSID =
-                PotentialSchemaSource::getSourceIdentifier;
-        assertThat(Collections2.transform(listener.registeredSources, potSourceToSID),
-                both(hasItem(RevisionSourceIdentifier.create("test", Optional.absent())))
+        assertThat(Lists.transform(listener.registeredSources, PotentialSchemaSource::getSourceIdentifier),
+                both(hasItem(RevisionSourceIdentifier.create("test", Optional.empty())))
                         .and(hasItem(RevisionSourceIdentifier.create("test", Optional.of("2012-12-12"))))
                         .and(hasItem(RevisionSourceIdentifier.create("test", Optional.of("2013-12-12"))))
                         .and(hasItem(RevisionSourceIdentifier.create("module", Optional.of("2010-12-12"))))

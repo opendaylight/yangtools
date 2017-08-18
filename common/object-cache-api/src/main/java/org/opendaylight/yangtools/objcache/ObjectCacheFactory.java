@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.objcache;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.GuardedBy;
 import org.opendaylight.yangtools.objcache.impl.StaticObjectCacheBinder;
@@ -59,6 +60,6 @@ public final class ObjectCacheFactory {
             fa = initialize();
         }
 
-        return fa.getObjectCache(Preconditions.checkNotNull(objClass));
+        return fa.getObjectCache(requireNonNull(objClass));
     }
 }
