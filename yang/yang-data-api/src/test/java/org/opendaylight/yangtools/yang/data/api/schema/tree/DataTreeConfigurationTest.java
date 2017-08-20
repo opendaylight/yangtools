@@ -44,6 +44,6 @@ public class DataTreeConfigurationTest {
         dataTreeConfiguration = DataTreeConfiguration.getDefault(TreeType.OPERATIONAL);
         assertEquals(TreeType.OPERATIONAL, dataTreeConfiguration.getTreeType());
         assertFalse(dataTreeConfiguration.isUniqueIndexEnabled());
-        assertFalse(dataTreeConfiguration.isMandatoryNodesValidationEnabled());
+        assertTrue(dataTreeConfiguration.isMandatoryNodesValidationEnabled());
     }
 }
