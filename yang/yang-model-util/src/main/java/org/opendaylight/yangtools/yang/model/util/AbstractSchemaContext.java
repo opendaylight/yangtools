@@ -13,7 +13,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -23,6 +22,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -110,7 +110,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
-    public Module findModuleByName(final String name, final Date revision) {
+    public Module findModuleByName(final String name, final Revision revision) {
         for (final Module module : getNameToModules().get(name)) {
             if (revision == null || revision.equals(module.getRevision())) {
                 return module;

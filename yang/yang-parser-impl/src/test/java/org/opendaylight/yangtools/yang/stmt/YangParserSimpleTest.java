@@ -16,14 +16,13 @@ import static org.junit.Assert.assertTrue;
 import java.net.URI;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -189,11 +188,9 @@ public class YangParserSimpleTest {
     private static final URI NS = URI.create("urn:opendaylight:simple-nodes");
 
     private static SchemaPath createPath(final String... names) throws ParseException {
-        final Date rev = SimpleDateFormatUtil.getRevisionFormat().parse("2013-07-30");
-
-        final List<QName> path = new ArrayList<>();
+        final List<QName> path = new ArrayList<>(names.length);
         for (final String name : names) {
-            path.add(QName.create(NS, rev, name));
+            path.add(QName.create(NS, Revision.forString("2013-07-30"), name));
         }
         return SchemaPath.create(path, true);
     }

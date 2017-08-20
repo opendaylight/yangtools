@@ -117,14 +117,13 @@ public class QNameTest {
         assertEquals(qname1, qname.withoutRevision());
         assertEquals(qname1, qname2);
         assertTrue(qname.isEqualWithoutRevision(qname1));
-        assertNotNull(QName.formattedRevision(new Date()));
         assertNotNull(qname.hashCode());
         assertEquals(qname, qname.intern());
     }
 
     @Test
     public void testQNameModule() {
-        final QNameModule qnameModule = QNameModule.create(ns, new Date());
+        final QNameModule qnameModule = QNameModule.create(ns, Revision.forDate(new Date()));
         assertNotNull(qnameModule.toString());
         assertNotNull(qnameModule.getRevisionNamespace());
     }

@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import java.util.Date;
 import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.yang.common.Revision;
 
 /**
  * Interface describing YANG 'import' statement.
@@ -30,7 +30,7 @@ public interface ModuleImport extends DocumentedNode {
      *
      * @return Revision of module to import
      */
-    Date getRevision();
+    Revision getRevision();
 
     /**
      * Returns the semantic version to import.

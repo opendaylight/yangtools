@@ -23,13 +23,13 @@ import com.google.common.collect.TreeMultimap;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
 import javax.annotation.concurrent.Immutable;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -129,7 +129,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         for (Module module : baseModules) {
             for (ModuleImport moduleImport : module.getImports()) {
 
-                Date revisionDate = moduleImport.getRevision() == null
+                Revision revisionDate = moduleImport.getRevision() == null
                     ? nameToModulesAll.get(moduleImport.getModuleName()).first().getRevision()
                     : moduleImport.getRevision();
 
@@ -212,9 +212,9 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
 
     public static final class ModuleId {
         private final String name;
-        private final Date rev;
+        private final Revision rev;
 
-        public ModuleId(final String name, final Date rev) {
+        public ModuleId(final String name, final Revision rev) {
             Preconditions.checkArgument(!Strings.isNullOrEmpty(name),
                     "No module dependency name given. Nothing to do.");
             this.name = name;
@@ -225,7 +225,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
             return name;
         }
 
-        public Date getRev() {
+        public Revision getRev() {
             return rev;
         }
 

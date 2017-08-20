@@ -15,7 +15,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,7 +23,7 @@ import java.util.Objects;
 import org.opendaylight.yangtools.util.TopologicalSort;
 import org.opendaylight.yangtools.util.TopologicalSort.Node;
 import org.opendaylight.yangtools.util.TopologicalSort.NodeImpl;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -76,12 +75,12 @@ public final class ModuleDependencySort {
     }
 
     private static List<Node> sortInternal(final Iterable<Module> modules) {
-        final Table<String, Date, ModuleNodeImpl> moduleGraph = createModuleGraph(modules);
+        final Table<String, Revision, ModuleNodeImpl> moduleGraph = createModuleGraph(modules);
         return TopologicalSort.sort(new HashSet<>(moduleGraph.values()));
     }
 
-    private static Table<String, Date, ModuleNodeImpl> createModuleGraph(final Iterable<Module> builders) {
-        final Table<String, Date, ModuleNodeImpl> moduleGraph = HashBasedTable.create();
+    private static Table<String, Revision, ModuleNodeImpl> createModuleGraph(final Iterable<Module> builders) {
+        final Table<String, Revision, ModuleNodeImpl> moduleGraph = HashBasedTable.create();
 
         processModules(moduleGraph, builders);
         processDependencies(moduleGraph, builders);
@@ -92,16 +91,16 @@ public final class ModuleDependencySort {
     /**
      * Extract module:revision from modules.
      */
-    private static void processDependencies(final Table<String, Date, ModuleNodeImpl> moduleGraph,
+    private static void processDependencies(final Table<String, Revision, ModuleNodeImpl> moduleGraph,
             final Iterable<Module> mmbs) {
         final Map<URI, Module> allNS = new HashMap<>();
 
         // Create edges in graph
         for (final Module module : mmbs) {
-            final Map<String, Date> imported = new HashMap<>();
+            final Map<String, Revision> imported = new HashMap<>();
             final String fromName = module.getName();
             final URI ns = module.getNamespace();
-            Date fromRevision = module.getRevision();
+            Revision fromRevision = module.getRevision();
 
             // check for existence of module with same namespace
             final Module prev = allNS.putIfAbsent(ns, module);
@@ -122,7 +121,7 @@ public final class ModuleDependencySort {
 
             for (final ModuleImport imprt : module.getImports()) {
                 final String toName = imprt.getModuleName();
-                final Date toRevision = imprt.getRevision() == null ? DEFAULT_DATE_REV : imprt.getRevision();
+                final Revision toRevision = imprt.getRevision() == null ? DEFAULT_DATE_REV : imprt.getRevision();
 
                 final ModuleNodeImpl from = moduleGraph.get(fromName, fromRevision);
 
@@ -134,7 +133,7 @@ public final class ModuleDependencySort {
                  * revisions then throw exception
                  */
                 if (YangVersion.VERSION_1.toString().equals(module.getYangVersion())) {
-                    final Date impRevision = imported.get(toName);
+                    final Revision impRevision = imported.get(toName);
                     if (impRevision != null && !impRevision.equals(toRevision)
                         && !DEFAULT_DATE_REV.equals(impRevision) && !DEFAULT_DATE_REV.equals(toRevision)) {
                         throw new IllegalArgumentException(String.format(
@@ -153,8 +152,8 @@ public final class ModuleDependencySort {
     /**
      * Get imported module by its name and revision from moduleGraph.
      */
-    private static ModuleNodeImpl getModuleByNameAndRevision(final Table<String, Date, ModuleNodeImpl> moduleGraph,
-            final String fromName, final Date fromRevision, final String toName, final Date toRevision) {
+    private static ModuleNodeImpl getModuleByNameAndRevision(final Table<String, Revision, ModuleNodeImpl> moduleGraph,
+            final String fromName, final Revision fromRevision, final String toName, final Revision toRevision) {
 
         final ModuleNodeImpl exact = moduleGraph.get(toName, toRevision);
         if (exact != null) {
@@ -163,7 +162,7 @@ public final class ModuleDependencySort {
 
         // If revision is not specified in import, but module exists with different revisions, take first one
         if (DEFAULT_DATE_REV.equals(toRevision)) {
-            final Map<Date, ModuleNodeImpl> modulerevs = moduleGraph.row(toName);
+            final Map<Revision, ModuleNodeImpl> modulerevs = moduleGraph.row(toName);
 
             if (!modulerevs.isEmpty()) {
                 final ModuleNodeImpl first = modulerevs.values().iterator().next();
@@ -186,19 +185,19 @@ public final class ModuleDependencySort {
     /**
      * Extract dependencies from modules to fill dependency graph.
      */
-    private static void processModules(final Table<String, Date, ModuleNodeImpl> moduleGraph,
+    private static void processModules(final Table<String, Revision, ModuleNodeImpl> moduleGraph,
             final Iterable<Module> modules) {
 
         // Process nodes
         for (final Module momb : modules) {
 
             final String name = momb.getName();
-            Date rev = momb.getRevision();
+            Revision rev = momb.getRevision();
             if (rev == null) {
                 rev = DEFAULT_DATE_REV;
             }
 
-            final Map<Date, ModuleNodeImpl> revs = moduleGraph.row(name);
+            final Map<Revision, ModuleNodeImpl> revs = moduleGraph.row(name);
             if (revs.containsKey(rev)) {
                 throw new IllegalArgumentException(String.format("Module:%s with revision:%s declared twice", name,
                     formatRevDate(rev)));
@@ -208,16 +207,16 @@ public final class ModuleDependencySort {
         }
     }
 
-    private static String formatRevDate(final Date rev) {
-        return rev.equals(DEFAULT_DATE_REV) ? "default" : SimpleDateFormatUtil.getRevisionFormat().format(rev);
+    private static String formatRevDate(final Revision rev) {
+        return rev.equals(DEFAULT_DATE_REV) ? "default" : rev.toString();
     }
 
     private static final class ModuleNodeImpl extends NodeImpl {
         private final String name;
-        private final Date revision;
+        private final Revision revision;
         private final Module originalObject;
 
-        ModuleNodeImpl(final String name, final Date revision, final Module module) {
+        ModuleNodeImpl(final String name, final Revision revision, final Module module) {
             this.name = name;
             this.revision = revision;
             this.originalObject = module;
@@ -227,7 +226,7 @@ public final class ModuleDependencySort {
             return name;
         }
 
-        Date getRevision() {
+        Revision getRevision() {
             return revision;
         }
 

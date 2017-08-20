@@ -17,14 +17,13 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -57,14 +56,14 @@ public class YangDataExtensionTest {
     private static final StatementStreamSource IETF_RESTCONF_MODULE = sourceForResource(
             "/yang-data-extension-test/ietf-restconf.yang");
 
-    private static Date revision;
+    private static Revision revision;
     private static QNameModule fooModule;
     private static QName myYangDataA;
     private static QName myYangDataB;
 
     @BeforeClass
     public static void setup() throws ParseException {
-        revision = SimpleDateFormatUtil.getRevisionFormat().parse("2017-06-01");
+        revision = Revision.forString("2017-06-01");
         fooModule = QNameModule.create(URI.create("foo"), revision);
         myYangDataA = QName.create(fooModule, "my-yang-data-a");
         myYangDataB = QName.create(fooModule, "my-yang-data-b");

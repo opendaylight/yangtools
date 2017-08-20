@@ -14,12 +14,12 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import com.google.common.base.Verify;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
@@ -217,7 +217,7 @@ public class ImportStatementDefinition extends
 
         private static ModuleIdentifier getImportedModuleIdentifier(
                 final StmtContext<String, ImportStatement, ?> stmt) {
-            Date revision = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
+            Revision revision = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
             if (revision == null) {
                 revision = SimpleDateFormatUtil.DEFAULT_DATE_IMP;
             }

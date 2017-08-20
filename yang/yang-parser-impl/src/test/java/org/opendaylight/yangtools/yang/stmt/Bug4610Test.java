@@ -9,12 +9,12 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
 import java.net.URI;
-import java.util.Date;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -28,7 +28,7 @@ public class Bug4610Test {
     public void test() throws Exception {
         SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug4610");
 
-        Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2015-12-12");
+        Revision revision = Revision.forString("2015-12-12");
         QNameModule foo = QNameModule.create(new URI("foo"), revision);
         QNameModule bar = QNameModule.create(new URI("bar"), revision);
 

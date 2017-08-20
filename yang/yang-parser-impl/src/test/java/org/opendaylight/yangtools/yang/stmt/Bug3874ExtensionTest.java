@@ -11,12 +11,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
-import java.util.Date;
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -32,28 +31,32 @@ public class Bug3874ExtensionTest {
 
     @Test
     public void test() throws Exception {
-            SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug3874");
+        SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug3874");
 
-            Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("1970-01-01");
-            QNameModule foo = QNameModule.create(new URI("foo"), revision);
-            QName myContainer2QName = QName.create(foo, "my-container-2");
-            QName myAnyXmlDataQName = QName.create(foo, "my-anyxml-data");
+        QNameModule foo = QNameModule.create(new URI("foo"), Revision.forString("1970-01-01"));
+        QName myContainer2QName = QName.create(foo, "my-container-2");
+        QName myAnyXmlDataQName = QName.create(foo, "my-anyxml-data");
 
-            DataSchemaNode dataChildByName = context.getDataChildByName(myAnyXmlDataQName);
-            assertTrue(dataChildByName instanceof YangModeledAnyXmlEffectiveStatementImpl);
-            YangModeledAnyXmlEffectiveStatementImpl yangModeledAnyXml = (YangModeledAnyXmlEffectiveStatementImpl) dataChildByName;
+        DataSchemaNode dataChildByName = context.getDataChildByName(myAnyXmlDataQName);
+        assertTrue(dataChildByName instanceof YangModeledAnyXmlEffectiveStatementImpl);
+        YangModeledAnyXmlEffectiveStatementImpl yangModeledAnyXml =
+                (YangModeledAnyXmlEffectiveStatementImpl) dataChildByName;
 
-            SchemaNode myContainer2 = SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, myContainer2QName));
-            assertTrue(myContainer2 instanceof ContainerSchemaNode);
-            assertEquals(myContainer2, yangModeledAnyXml.getSchemaOfAnyXmlData());
+        SchemaNode myContainer2 = SchemaContextUtil.findDataSchemaNode(context,
+            SchemaPath.create(true, myContainer2QName));
+        assertTrue(myContainer2 instanceof ContainerSchemaNode);
+        assertEquals(myContainer2, yangModeledAnyXml.getSchemaOfAnyXmlData());
 
-            List<UnknownSchemaNode> unknownSchemaNodes = yangModeledAnyXml.getUnknownSchemaNodes();
-            assertEquals(1, unknownSchemaNodes.size());
+        List<UnknownSchemaNode> unknownSchemaNodes = yangModeledAnyXml.getUnknownSchemaNodes();
+        assertEquals(1, unknownSchemaNodes.size());
 
-            UnknownSchemaNode next = unknownSchemaNodes.iterator().next();
-            assertTrue(next instanceof AnyxmlSchemaLocationEffectiveStatementImpl);
-            AnyxmlSchemaLocationEffectiveStatementImpl anyxmlSchemaLocationUnknownNode= (AnyxmlSchemaLocationEffectiveStatementImpl) next;
-            assertEquals(SupportedExtensionsMapping.ANYXML_SCHEMA_LOCATION.getStatementName(), anyxmlSchemaLocationUnknownNode.getNodeType());
-            assertEquals(SupportedExtensionsMapping.ANYXML_SCHEMA_LOCATION.getStatementName(), anyxmlSchemaLocationUnknownNode.getQName());
+        UnknownSchemaNode next = unknownSchemaNodes.iterator().next();
+        assertTrue(next instanceof AnyxmlSchemaLocationEffectiveStatementImpl);
+        AnyxmlSchemaLocationEffectiveStatementImpl anyxmlSchemaLocationUnknownNode =
+                (AnyxmlSchemaLocationEffectiveStatementImpl) next;
+        assertEquals(SupportedExtensionsMapping.ANYXML_SCHEMA_LOCATION.getStatementName(),
+            anyxmlSchemaLocationUnknownNode.getNodeType());
+        assertEquals(SupportedExtensionsMapping.ANYXML_SCHEMA_LOCATION.getStatementName(),
+            anyxmlSchemaLocationUnknownNode.getQName());
     }
 }

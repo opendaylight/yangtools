@@ -10,34 +10,33 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.DEFAULT_DATE_REV;
-import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.getRevisionFormat;
 
 import java.text.ParseException;
-import java.util.Date;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public class Bug6491Test {
-    private Date date;
+    private Revision rev;
 
     @Before
     public void setup() throws ParseException {
-        date = getRevisionFormat().parse("2016-01-01");
+        rev = Revision.forString("2016-01-01");
     }
 
     @Test
     public void tetststs() throws Exception {
         testRevision("withoutRevision", DEFAULT_DATE_REV, DEFAULT_DATE_REV);
-        testRevision("withRevision", date, date);
-        testRevision("importedModuleRevisionOnly", DEFAULT_DATE_REV, date);
-        testRevision("moduleRevisionOnly", date, DEFAULT_DATE_REV);
+        testRevision("withRevision", rev, rev);
+        testRevision("importedModuleRevisionOnly", DEFAULT_DATE_REV, rev);
+        testRevision("moduleRevisionOnly", rev, DEFAULT_DATE_REV);
     }
 
-    private static void testRevision(final String path, final Date moduleRevision, final Date importedRevision)
+    private static void testRevision(final String path, final Revision moduleRevision, final Revision importedRevision)
             throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6491/".concat(path));
         assertNotNull(context);

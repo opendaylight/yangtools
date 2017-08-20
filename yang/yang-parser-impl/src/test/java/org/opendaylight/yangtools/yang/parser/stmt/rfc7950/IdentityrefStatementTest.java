@@ -13,11 +13,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.Date;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -33,9 +32,7 @@ public class IdentityrefStatementTest {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/identityref-stmt/foo.yang");
         assertNotNull(schemaContext);
 
-        final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2017-01-11");
-
-        final Module foo = schemaContext.findModuleByName("foo", revision);
+        final Module foo = schemaContext.findModuleByName("foo", Revision.forString("2017-01-11"));
         assertNotNull(foo);
 
         final Set<IdentitySchemaNode> identities = foo.getIdentities();

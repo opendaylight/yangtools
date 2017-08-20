@@ -18,10 +18,9 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.Date;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -45,9 +44,7 @@ public class DeviationResolutionTest {
                 "/deviation-resolution-test/deviation-not-supported");
         assertNotNull(schemaContext);
 
-        final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2017-01-20");
-
-        final Module importedModule = schemaContext.findModuleByName("imported", revision);
+        final Module importedModule = schemaContext.findModuleByName("imported", Revision.forString("2017-01-20"));
         assertNotNull(importedModule);
 
         final ContainerSchemaNode myContA = (ContainerSchemaNode) importedModule.getDataChildByName(
@@ -77,9 +74,7 @@ public class DeviationResolutionTest {
                 sourceForResource("/deviation-resolution-test/deviation-add/bar.yang"));
         assertNotNull(schemaContext);
 
-        final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2017-01-20");
-
-        final Module barModule = schemaContext.findModuleByName("bar", revision);
+        final Module barModule = schemaContext.findModuleByName("bar", Revision.forString("2017-01-20"));
         assertNotNull(barModule);
 
         final LeafListSchemaNode myLeafList = (LeafListSchemaNode) barModule.getDataChildByName(
@@ -125,9 +120,7 @@ public class DeviationResolutionTest {
                 sourceForResource("/deviation-resolution-test/deviation-replace/bar.yang"));
         assertNotNull(schemaContext);
 
-        final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2017-01-20");
-
-        final Module barModule = schemaContext.findModuleByName("bar", revision);
+        final Module barModule = schemaContext.findModuleByName("bar", Revision.forString("2017-01-20"));
         assertNotNull(barModule);
 
         final LeafSchemaNode myLeaf = (LeafSchemaNode) barModule.getDataChildByName(
@@ -190,9 +183,7 @@ public class DeviationResolutionTest {
                 sourceForResource("/deviation-resolution-test/deviation-delete/bar.yang"));
         assertNotNull(schemaContext);
 
-        final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2017-01-20");
-
-        final Module barModule = schemaContext.findModuleByName("bar", revision);
+        final Module barModule = schemaContext.findModuleByName("bar", Revision.forString("2017-01-20"));
         assertNotNull(barModule);
 
         final LeafSchemaNode myLeaf = (LeafSchemaNode) barModule.getDataChildByName(

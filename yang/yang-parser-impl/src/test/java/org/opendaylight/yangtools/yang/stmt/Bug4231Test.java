@@ -13,7 +13,7 @@ import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -27,11 +27,9 @@ public class Bug4231Test {
 
         assertNotNull(context);
 
-        QNameModule foo = QNameModule.create(new URI("foo"),
-                SimpleDateFormatUtil.getRevisionFormat().parse("2015-09-02"));
+        QNameModule foo = QNameModule.create(new URI("foo"), Revision.forString("2015-09-02"));
 
-        SchemaPath targetPath = SchemaPath
-                .create(true, QName.create(foo, "augment-target"))
+        SchemaPath targetPath = SchemaPath.create(true, QName.create(foo, "augment-target"))
                 .createChild(QName.create(foo, "my-container-in-grouping"))
                 .createChild(QName.create(foo, "l2"));
 

@@ -12,11 +12,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Date;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -34,7 +33,7 @@ public class Bug6972Test {
         assertNotNull(schemaContext);
         assertEquals(3, schemaContext.getModules().size());
 
-        final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2016-10-20");
+        final Revision revision = Revision.forString("2016-10-20");
 
         final Module foo = schemaContext.findModuleByName("foo", revision);
         assertNotNull(foo);

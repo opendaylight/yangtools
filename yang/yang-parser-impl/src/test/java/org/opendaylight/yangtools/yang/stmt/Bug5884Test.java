@@ -10,12 +10,11 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Date;
 import java.util.Iterator;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -36,8 +35,7 @@ public class Bug5884Test {
         final QName root = QName.create(NS, REV, "main-container");
         final QName choice = QName.create(NS, REV, "test-choice");
         final QName testContainerQname = QName.create(NS, REV, "test");
-        final Date date = SimpleDateFormatUtil.getRevisionFormat().parse("2016-01-01");
-        final Module foo = context.findModuleByName("foo", date);
+        final Module foo = context.findModuleByName("foo", Revision.forString("2016-01-01"));
         final ContainerSchemaNode rootContainer = (ContainerSchemaNode) context.getDataChildByName(root);
         final ContainerSchemaNode testContainer = (ContainerSchemaNode) rootContainer.getDataChildByName(
             testContainerQname);

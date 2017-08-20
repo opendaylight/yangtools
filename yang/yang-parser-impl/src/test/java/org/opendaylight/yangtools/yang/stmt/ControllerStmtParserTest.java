@@ -19,7 +19,7 @@ import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -45,9 +45,8 @@ public class ControllerStmtParserTest {
 
     private static void salDomBrokerImplModuleTest(final SchemaContext context)
             throws ParseException {
-        final Module module = context.findModuleByName(
-                "opendaylight-sal-dom-broker-impl", SimpleDateFormatUtil
-                        .getRevisionFormat().parse("2013-10-28"));
+        final Module module = context.findModuleByName("opendaylight-sal-dom-broker-impl",
+            Revision.forString("2013-10-28"));
         assertNotNull(module);
 
         final Set<AugmentationSchema> augmentations = module.getAugmentations();
@@ -83,16 +82,15 @@ public class ControllerStmtParserTest {
 
     private static void configModuleTest(final SchemaContext context) throws ParseException,
             URISyntaxException {
-        final Module configModule = context.findModuleByName("config",
-                SimpleDateFormatUtil.getRevisionFormat().parse("2013-04-05"));
+        final Module configModule = context.findModuleByName("config", Revision.forString("2013-04-05"));
         assertNotNull(configModule);
 
-        final Module module = context.findModuleByName(
-                "opendaylight-sal-dom-broker-impl", SimpleDateFormatUtil
-                        .getRevisionFormat().parse("2013-10-28"));
+        final Module module = context.findModuleByName( "opendaylight-sal-dom-broker-impl",
+            Revision.forString("2013-10-28"));
         assertNotNull(module);
 
-        final DataSchemaNode dataNode = configModule.getDataChildByName(QName.create(configModule.getQNameModule(), "modules"));
+        final DataSchemaNode dataNode = configModule.getDataChildByName(QName.create(configModule.getQNameModule(),
+            "modules"));
         assertTrue(dataNode instanceof ContainerSchemaNode);
 
         final ContainerSchemaNode moduleContainer = (ContainerSchemaNode) dataNode;
@@ -142,7 +140,8 @@ public class ControllerStmtParserTest {
 
         assertEquals(1, schemaServiceContainer.getUses().size());
         final UsesNode uses = schemaServiceContainer.getUses().iterator().next();
-        final QName groupingQName = QName.create("urn:opendaylight:params:xml:ns:yang:controller:config","2013-04-05","service-ref");
+        final QName groupingQName = QName.create("urn:opendaylight:params:xml:ns:yang:controller:config", "2013-04-05",
+            "service-ref");
         final QName usesGroupingPathLastComponent = uses.getGroupingPath().getLastComponent();
         assertEquals(groupingQName, usesGroupingPathLastComponent);
         assertEquals(0, getChildNodeSizeWithoutUses(schemaServiceContainer));
@@ -155,11 +154,8 @@ public class ControllerStmtParserTest {
 
         final UnknownSchemaNode typeUnknownSchemaNode = typeUnknownSchemaNodes.get(0);
 
-        final QNameModule qNameModule = QNameModule
-                .create(new URI(
-                        "urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom"),
-                        SimpleDateFormatUtil.getRevisionFormat().parse(
-                                "2013-10-28"));
+        final QNameModule qNameModule = QNameModule.create(
+            new URI("urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom"), Revision.forString("2013-10-28"));
         final QName qName = QName.create(qNameModule, "schema-service");
 
         assertEquals(qName, typeUnknownSchemaNode.getQName());
