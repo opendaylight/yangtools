@@ -16,11 +16,10 @@ import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.text.ParseException;
-import java.util.Date;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -71,7 +70,7 @@ public class RpcStmtTest {
         anyXml = (AnyXmlSchemaNode) output.getDataChildByName(QName.create(testModule.getQNameModule(), "data"));
         assertNotNull(anyXml);
 
-        final Module fooModule = result.findModuleByName("foo", SimpleDateFormatUtil.getRevisionFormat().parse("2016-09-23"));
+        final Module fooModule = result.findModuleByName("foo", Revision.forString("2016-09-23"));
         assertNotNull(fooModule);
 
         final Set<RpcDefinition> rpcs = fooModule.getRpcs();
@@ -111,9 +110,7 @@ public class RpcStmtTest {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rpc-stmt-test/bar.yang");
         assertNotNull(schemaContext);
 
-        final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2016-11-25");
-
-        final Module barModule = schemaContext.findModuleByName("bar", revision);
+        final Module barModule = schemaContext.findModuleByName("bar", Revision.forString("2016-11-25"));
         assertNotNull(barModule);
 
         final Set<RpcDefinition> rpcs = barModule.getRpcs();

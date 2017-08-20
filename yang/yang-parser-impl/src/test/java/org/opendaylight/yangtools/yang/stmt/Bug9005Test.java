@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.Set;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -23,8 +24,7 @@ public class Bug9005Test {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug9005");
         assertNotNull(context);
 
-        final Module foo = context.findModuleByName("foo",
-                SimpleDateFormatUtil.getRevisionFormat().parse("2017-07-07"));
+        final Module foo = context.findModuleByName("foo", Revision.forString("2017-07-07"));
 
         final Set<ModuleImport> imports = foo.getImports();
         assertEquals(1, imports.size());

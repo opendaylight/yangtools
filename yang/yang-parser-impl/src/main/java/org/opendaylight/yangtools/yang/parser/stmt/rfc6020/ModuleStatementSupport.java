@@ -10,12 +10,12 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import java.net.URI;
-import java.util.Date;
 import java.util.NavigableMap;
 import java.util.Optional;
 import java.util.TreeMap;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
@@ -118,7 +118,7 @@ public class ModuleStatementSupport extends
 
         stmt.addContext(PreLinkageModuleNamespace.class, moduleName, stmt);
 
-        Optional<Date> revisionDate = Optional.ofNullable(StmtContextUtils.getLatestRevision(
+        Optional<Revision> revisionDate = Optional.ofNullable(StmtContextUtils.getLatestRevision(
             stmt.declaredSubstatements()));
         if (!revisionDate.isPresent()) {
             revisionDate = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
@@ -140,7 +140,7 @@ public class ModuleStatementSupport extends
         SourceException.throwIf(!moduleNs.isPresent(), stmt.getStatementSourceReference(),
             "Namespace of the module [%s] is missing", stmt.getStatementArgument());
 
-        Optional<Date> revisionDate = Optional.ofNullable(StmtContextUtils.getLatestRevision(
+        Optional<Revision> revisionDate = Optional.ofNullable(StmtContextUtils.getLatestRevision(
             stmt.declaredSubstatements()));
         if (!revisionDate.isPresent()) {
             revisionDate = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);

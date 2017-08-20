@@ -8,11 +8,11 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.net.URI;
-import java.util.Date;
+import org.opendaylight.yangtools.yang.common.Revision;
 
 public interface NamespaceRevisionAware {
 
     URI getNamespace();
 
-    Date getRevision();
+    Revision getRevision();
 }

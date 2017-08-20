@@ -15,7 +15,6 @@ import com.google.common.collect.Iterables;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -304,11 +303,6 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
     @Override
     public String getName() {
         return name;
-    }
-
-    @Override
-    public Date getRevision() {
-        return getQNameModule().getRevision();
     }
 
     @Override

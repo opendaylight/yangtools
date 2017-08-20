@@ -11,9 +11,9 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPha
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import java.util.Collection;
-import java.util.Date;
 import java.util.Optional;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -108,7 +108,7 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
                 final StmtContext<String, IncludeStatement, ?> stmt) {
             final String subModuleName = stmt.getStatementArgument();
 
-            Date revisionDate = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
+            Revision revisionDate = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
             if (revisionDate == null) {
                 revisionDate = SimpleDateFormatUtil.DEFAULT_DATE_IMP;
             }

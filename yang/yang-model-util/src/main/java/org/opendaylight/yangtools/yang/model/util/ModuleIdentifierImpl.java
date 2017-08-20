@@ -11,11 +11,11 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.annotations.Beta;
 import java.net.URI;
-import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 
@@ -30,31 +30,26 @@ public final class ModuleIdentifierImpl implements ModuleIdentifier {
     private final String name;
     private final SemVer semVer;
 
-    private ModuleIdentifierImpl(final String name, final Optional<URI> namespace, final Optional<Date> revision,
+    private ModuleIdentifierImpl(final String name, final Optional<URI> namespace, final Optional<Revision> revision,
             final SemVer semVer) {
         this.name = checkNotNull(name);
         this.qnameModule = QNameModule.create(namespace.orElse(null), revision.orElse(null));
-        this.semVer = (semVer == null ? Module.DEFAULT_SEMANTIC_VERSION : semVer);
+        this.semVer = semVer == null ? Module.DEFAULT_SEMANTIC_VERSION : semVer;
     }
 
     public static ModuleIdentifier create(final String name, final Optional<URI> namespace,
-            final Optional<Date> revision) {
+            final Optional<Revision> revision) {
         return create(name, namespace, revision, Module.DEFAULT_SEMANTIC_VERSION);
     }
 
     public static ModuleIdentifier create(final String name, final Optional<URI> namespace,
-            final Optional<Date> revision, final SemVer semVer) {
+            final Optional<Revision> revision, final SemVer semVer) {
         return new ModuleIdentifierImpl(name, namespace, revision, semVer);
     }
 
     @Override
     public QNameModule getQNameModule() {
         return qnameModule;
-    }
-
-    @Override
-    public Date getRevision() {
-        return qnameModule.getRevision();
     }
 
     @Override

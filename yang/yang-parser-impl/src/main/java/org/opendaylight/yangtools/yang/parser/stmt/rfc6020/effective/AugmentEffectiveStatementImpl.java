@@ -10,13 +10,13 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.NamespaceRevisionAware;
@@ -35,7 +35,7 @@ public final class AugmentEffectiveStatementImpl
         implements AugmentationSchema, NamespaceRevisionAware {
     private final SchemaPath targetPath;
     private final URI namespace;
-    private final Date revision;
+    private final Revision revision;
     private final Set<ActionDefinition> actions;
     private final Set<NotificationDefinition> notifications;
     private final List<UnknownSchemaNode> unknownNodes;
@@ -50,7 +50,7 @@ public final class AugmentEffectiveStatementImpl
 
         final QNameModule rootModuleQName = StmtContextUtils.getRootModuleQName(ctx);
         this.namespace = rootModuleQName.getNamespace();
-        this.revision = rootModuleQName.getRevision();
+        this.revision = rootModuleQName.getRevision().get();
 
         this.copyOf = (AugmentationSchema) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
 
@@ -113,7 +113,7 @@ public final class AugmentEffectiveStatementImpl
     }
 
     @Override
-    public Date getRevision() {
+    public Revision getRevision() {
         return revision;
     }
 

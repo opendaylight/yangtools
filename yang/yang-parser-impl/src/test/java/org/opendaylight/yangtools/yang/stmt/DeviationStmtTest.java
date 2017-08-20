@@ -15,11 +15,10 @@ import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.DeviateDefinition;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
@@ -46,9 +45,7 @@ public class DeviationStmtTest {
         final SchemaContext schemaContext = reactor.buildEffective();
         assertNotNull(schemaContext);
 
-        Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2016-06-23");
-
-        Module testModule = schemaContext.findModuleByName("foo", revision);
+        Module testModule = schemaContext.findModuleByName("foo", Revision.forString("2016-06-23"));
         assertNotNull(testModule);
 
         Set<Deviation> deviations = testModule.getDeviations();
@@ -87,8 +84,7 @@ public class DeviationStmtTest {
             }
         }
 
-        revision = SimpleDateFormatUtil.getRevisionFormat().parse("2016-09-22");
-        testModule = schemaContext.findModuleByName("bar", revision);
+        testModule = schemaContext.findModuleByName("bar", Revision.forString("2016-09-22"));
         assertNotNull(testModule);
 
         deviations = testModule.getDeviations();

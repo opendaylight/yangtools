@@ -13,9 +13,10 @@ import static org.junit.Assert.assertFalse;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Date;
+import java.text.ParseException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 
@@ -24,7 +25,7 @@ public class BitImplTest {
     @Test
     // We're testing equals()
     @SuppressWarnings({"ObjectEqualsNull", "EqualsBetweenInconvertibleTypes"})
-    public void test() throws URISyntaxException {
+    public void test() throws URISyntaxException, ParseException {
 
         // hashCode method test
         final URI uriA1 = new URI("some:uriA1");
@@ -32,12 +33,12 @@ public class BitImplTest {
         final URI uriB1 = new URI("some:uriB1");
         final URI uriB2 = new URI("some:uriB2");
 
-        QName qnameA1 = QName.create(uriA1, new Date(6000000), "some nameA1");
-        QName qnameA2 = QName.create(uriA2, new Date(7000000), "some nameA2");
+        QName qnameA1 = QName.create(uriA1, Revision.forString("1999-12-20"), "some nameA1");
+        QName qnameA2 = QName.create(uriA2, Revision.forString("1999-12-25"), "some nameA2");
         SchemaPath schemaPathA = SchemaPath.create(true, qnameA1, qnameA2);
 
-        final QName qnameB1 = QName.create(uriB1, new Date(6000000), "some nameB1");
-        final QName qnameB2 = QName.create(uriB2, new Date(7000000), "some nameB2");
+        final QName qnameB1 = QName.create(uriB1, Revision.forString("1999-12-20"), "some nameB1");
+        final QName qnameB2 = QName.create(uriB2, Revision.forString("1999-12-25"), "some nameB2");
         final SchemaPath schemaPathB = SchemaPath.create(true, qnameB1, qnameB2);
 
         BitImpl biA = new BitImpl(schemaPathA, 55L, "description", "reference", Status.CURRENT, emptyList());

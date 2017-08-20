@@ -7,18 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import java.util.Date;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class RevisionEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Date, RevisionStatement>
+public final class RevisionEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Revision, RevisionStatement>
         implements DocumentedNode {
 
     private final String reference;
     private final String description;
 
-    public RevisionEffectiveStatementImpl(final StmtContext<Date, RevisionStatement, ?> ctx) {
+    public RevisionEffectiveStatementImpl(final StmtContext<Revision, RevisionStatement, ?> ctx) {
         super(ctx);
 
         final DescriptionEffectiveStatementImpl descStmt = firstEffective(DescriptionEffectiveStatementImpl.class);

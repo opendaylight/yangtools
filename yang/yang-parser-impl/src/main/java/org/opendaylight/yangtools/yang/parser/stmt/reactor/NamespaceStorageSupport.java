@@ -8,12 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -101,7 +101,7 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
             return false;
         }
 
-        final Date rev = ((ModuleIdentifier) obj).getRevision();
+        final Revision rev = ((ModuleIdentifier) obj).getRevision();
         return rev == SimpleDateFormatUtil.DEFAULT_DATE_IMP || rev == SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE;
     }
 
