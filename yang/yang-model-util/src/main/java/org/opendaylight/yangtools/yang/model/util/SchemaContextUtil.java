@@ -220,14 +220,15 @@ public final class SchemaContextUtil {
         final QName qname = schemaNode.getPath().getLastComponent();
         Preconditions.checkState(qname != null, "Schema Path contains invalid state of path parts. "
                 + "The Schema Path MUST contain at least ONE QName  which defines namespace and Local name of path.");
-        return context.findModuleByNamespaceAndRevision(qname.getNamespace(), qname.getRevision());
+        return context.findModuleByNamespaceAndRevision(qname.getNamespace(), qname.getRevision().orElse(null));
     }
 
     public static SchemaNode findNodeInSchemaContext(final SchemaContext context, final Iterable<QName> path) {
         final QName current = path.iterator().next();
 
         LOG.trace("Looking up module {} in context {}", current, path);
-        final Module module = context.findModuleByNamespaceAndRevision(current.getNamespace(), current.getRevision());
+        final Module module = context.findModuleByNamespaceAndRevision(current.getNamespace(),
+            current.getRevision().orElse(null));
         if (module == null) {
             LOG.debug("Module {} not found", current);
             return null;
@@ -698,7 +699,7 @@ public final class SchemaContextUtil {
         }
 
         final Module parentModule = schemaContext.findModuleByNamespaceAndRevision(qname.getNamespace(),
-                qname.getRevision());
+                qname.getRevision().orElse(null));
         final DataSchemaNode dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNode(schemaContext,
             parentModule, strippedPathStatement);
         final TypeDefinition<?> targetTypeDefinition = typeDefinition(dataSchemaNode);
@@ -722,7 +723,7 @@ public final class SchemaContextUtil {
 
             final QNameModule typeDefModuleQname = nodeType.getQName().getModule();
             return schemaContext.findModuleByNamespaceAndRevision(typeDefModuleQname.getNamespace(),
-                    typeDefModuleQname.getRevision());
+                    typeDefModuleQname.getRevision().orElse(null));
         }
 
         return SchemaContextUtil.findParentModule(schemaContext, schemaNode);
