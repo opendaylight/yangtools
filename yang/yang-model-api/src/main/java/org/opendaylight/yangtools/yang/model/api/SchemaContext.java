@@ -13,7 +13,9 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.concurrent.Immutable;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Revision;
 
 /**
  * The interface represents static view of compiled yang files,
@@ -96,14 +98,11 @@ public interface SchemaContext extends ContainerSchemaNode {
      * Returns module instance based on given namespace and revision. If
      * revision is not specified, returns module with newest revision.
      *
-     * @param namespace Module namespace, may be null
+     * @param namespace Module namespace
      * @param revision Module revision, may be null
      * @return Matching module or null if a match is not found
      */
-    default Module findModuleByNamespaceAndRevision(final URI namespace, final Date revision) {
-        if (namespace == null) {
-            return null;
-        }
+    default Module findModuleByNamespaceAndRevision(final URI namespace, final @Nullable Revision revision) {
         for (Module module : findModuleByNamespace(namespace)) {
             if (revision == null || revision.equals(module.getRevision())) {
                 return module;

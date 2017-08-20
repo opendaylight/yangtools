@@ -18,12 +18,13 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
-import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.RegEx;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
@@ -149,7 +150,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *            Local name part of QName. MUST NOT BE null.
      * @return Instance of QName
      */
-    public static QName create(final URI namespace, final Date revision, final String localName) {
+    public static QName create(final @NonNull URI namespace, final Revision revision, final @NonNull String localName) {
         return create(QNameModule.create(namespace, revision), localName);
     }
 
@@ -157,14 +158,14 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * Creates new QName.
      *
      * @param namespace
-     *            Namespace of QName or null if namespace is undefined.
+     *            Namespace of QName.
      * @param revision
      *            Revision of namespace or null if revision is unspecified.
      * @param localName
      *            Local name part of QName. MUST NOT BE null.
      * @return Instance of QName
      */
-    public static QName create(final String namespace, final String localName, final Date revision) {
+    public static QName create(final @NonNull String namespace, final String localName, final Revision revision) {
         final URI namespaceUri = parseNamespace(namespace);
         return create(QNameModule.create(namespaceUri, revision), localName);
     }
@@ -187,9 +188,9 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *             <code>revision</code> is not according to format
      *             <code>YYYY-mm-dd</code>.
      */
-    public static QName create(final String namespace, final String revision, final String localName) {
+    public static QName create(final @NonNull String namespace, final String revision, final String localName) {
         final URI namespaceUri = parseNamespace(namespace);
-        final Date revisionDate = parseRevision(revision);
+        final Revision revisionDate = parseRevision(revision);
         return create(namespaceUri, revisionDate, localName);
     }
 
@@ -224,7 +225,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *
      * @return XMLNamespace assigned to the YANG module.
      */
-    public URI getNamespace() {
+    public @NonNull URI getNamespace() {
         return module.getNamespace();
     }
 
@@ -246,7 +247,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @return revision of the YANG module if the module has defined revision,
      *         otherwise returns <code>null</code>
      */
-    public Date getRevision() {
+    public Optional<Revision> getRevision() {
         return module.getRevision();
     }
 
@@ -331,8 +332,8 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @return String representation of revision or null, if revision is not
      *         set.
      */
-    public String getFormattedRevision() {
-        return module.getFormattedRevision();
+    public Optional<String> getFormattedRevision() {
+        return module.getRevision().map(Revision::toString);
     }
 
     /**
@@ -345,33 +346,13 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    public static Date parseRevision(final String formatedDate) {
+    public static Revision parseRevision(final String formatedDate) {
         try {
-            return getRevisionFormat().parse(formatedDate);
+            return Revision.forDate(getRevisionFormat().parse(formatedDate));
         } catch (ParseException | RuntimeException e) {
             throw new IllegalArgumentException(
                     String.format("Revision '%s'is not in a supported format", formatedDate), e);
         }
-    }
-
-    /**
-     * Formats {@link Date} representing revision to format
-     * <code>YYYY-mm-dd</code>
-     *
-     * <p>
-     * YANG Specification defines format for <code>revision</code> as
-     * YYYY-mm-dd. This format for revision is reused accross multiple places
-     * such as capabilities URI, YANG modules, etc.
-     *
-     * @param revision
-     *            Date object to format or null
-     * @return String representation or null if the input was null.
-     */
-    public static String formattedRevision(final Date revision) {
-        if (revision == null) {
-            return null;
-        }
-        return getRevisionFormat().format(revision);
     }
 
     /**
@@ -390,7 +371,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *             if <code>other</code> is null.
      */
     public boolean isEqualWithoutRevision(final QName other) {
-        return localName.equals(other.getLocalName()) && Objects.equals(getNamespace(), other.getNamespace());
+        return localName.equals(other.getLocalName()) && getNamespace().equals(other.getNamespace());
     }
 
     @Override
@@ -401,37 +382,6 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
             return result;
         }
 
-        // compare nullable namespace parameter
-        if (getNamespace() == null) {
-            if (other.getNamespace() != null) {
-                return -1;
-            }
-        } else {
-            if (other.getNamespace() == null) {
-                return 1;
-            }
-            result = getNamespace().compareTo(other.getNamespace());
-            if (result != 0) {
-                return result;
-            }
-        }
-
-        // compare nullable revision parameter
-        if (getRevision() == null) {
-            if (other.getRevision() != null) {
-                return -1;
-            }
-        } else {
-            if (other.getRevision() == null) {
-                return 1;
-            }
-            result = getRevision().compareTo(other.getRevision());
-            if (result != 0) {
-                return result;
-            }
-        }
-
-        return result;
+        return module.compareTo(other.module);
     }
-
 }

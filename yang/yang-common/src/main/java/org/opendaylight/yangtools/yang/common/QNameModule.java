@@ -15,28 +15,26 @@ import com.google.common.collect.Interners;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class QNameModule implements Immutable, Serializable {
+public final class QNameModule implements Comparable<QNameModule>, Immutable, Serializable {
     private static final Interner<QNameModule> INTERNER = Interners.newWeakInterner();
     private static final Logger LOG = LoggerFactory.getLogger(QNameModule.class);
     private static final long serialVersionUID = 2L;
 
-    private final URI namespace;
+    private final @NonNull URI namespace;
 
-    //Nullable
-    private final Date revision;
-
-    //Nullable
-    private transient volatile String formattedRevision;
+    private final @Nullable Revision revision;
 
     private transient int hash;
 
-    private QNameModule(final URI namespace, final Date revision) {
+    private QNameModule(final @NonNull URI namespace, final Revision revision) {
         this.namespace = requireNonNull(namespace);
         this.revision = revision;
     }
@@ -57,22 +55,8 @@ public final class QNameModule implements Immutable, Serializable {
      * @param revision Module revision
      * @return A new, potentially shared, QNameModule instance
      */
-    public static QNameModule create(final URI namespace, final Date revision) {
+    public static QNameModule create(final @NonNull URI namespace, final Revision revision) {
         return new QNameModule(namespace, revision);
-    }
-
-    public String getFormattedRevision() {
-        if (revision == null) {
-            return null;
-        }
-
-        String ret = formattedRevision;
-        if (ret == null) {
-            ret = SimpleDateFormatUtil.getRevisionFormat().format(revision);
-            formattedRevision = ret;
-        }
-
-        return ret;
     }
 
     /**
@@ -81,7 +65,7 @@ public final class QNameModule implements Immutable, Serializable {
      *
      * @return URI format of the namespace of the module
      */
-    public URI getNamespace() {
+    public @NonNull URI getNamespace() {
         return namespace;
     }
 
@@ -91,9 +75,26 @@ public final class QNameModule implements Immutable, Serializable {
      * @return date of the module revision which is specified as argument of
      *         YANG Module <b><font color="#339900">revison</font></b> keyword
      */
-    // FIXME: BUG-4688: should return Optional<Revision>
-    public Date getRevision() {
-        return revision;
+    public Optional<Revision> getRevision() {
+        return Optional.ofNullable(revision);
+    }
+
+    @Override
+    public int compareTo(final QNameModule o) {
+        final int result = namespace.compareTo(o.namespace);
+        if (result != 0) {
+            return result;
+        }
+        if (revision == o.revision) {
+            return 0;
+        }
+        if (revision == null) {
+            return -1;
+        }
+        if (o.revision == null) {
+            return 1;
+        }
+        return revision.compareTo(o.revision);
     }
 
     @Override
@@ -128,11 +129,7 @@ public final class QNameModule implements Immutable, Serializable {
      *
      */
     URI getRevisionNamespace() {
-        if (namespace == null) {
-            return null;
-        }
-
-        final String query = revision == null ? "" : "revision=" + getFormattedRevision();
+        final String query = revision == null ? "" : "revision=" + revision.toString();
         try {
             return new URI(namespace.getScheme(), namespace.getUserInfo(), namespace.getHost(),
                     namespace.getPort(), namespace.getPath(), query, namespace.getFragment());
@@ -145,6 +142,6 @@ public final class QNameModule implements Immutable, Serializable {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(QNameModule.class).omitNullValues().add("ns", getNamespace())
-            .add("rev", getFormattedRevision()).toString();
+            .add("rev", revision).toString();
     }
 }
