@@ -9,9 +9,9 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.net.URI;
-import java.util.Date;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 
 
 public interface ModuleIdentifier {
@@ -39,20 +39,21 @@ public interface ModuleIdentifier {
      *
      * @return URI format of the namespace of the module
      */
-    // FIXME: 2.0.0: should be a default method calling getQNameModule().getNamespace()
-    URI getNamespace();
+    default URI getNamespace() {
+        return getQNameModule().getNamespace();
+    }
 
     /**
      * Returns the revision date for the module. If you need both namespace and
      * revision, please consider using {@link #getQNameModule()}.
      *
-     * @return date of the module revision which is specified as argument of
+     * @return Revision of the module rwhich is specified as argument of
      *         YANG {@link Module <b><font color="#339900">revison</font></b>}
      *         keyword
      */
-    // FIXME: BUG-4688: should return Revision
-    // FIXME: BUG-4688: should be a default method calling getQNameModule().getRevision().get()
-    Date getRevision();
+    default Revision getRevision() {
+        return getQNameModule().getRevision().get();
+    }
 
     /**
      * Returns the semantic version of yang module.

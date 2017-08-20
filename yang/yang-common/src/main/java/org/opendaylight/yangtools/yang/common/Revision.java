@@ -146,6 +146,11 @@ public abstract class Revision implements Comparable<Revision>, Serializable {
     @Deprecated
     @Nonnull public abstract Date toDate();
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return String representation of this revision.
+     */
     @Override
     public abstract String toString();
 
