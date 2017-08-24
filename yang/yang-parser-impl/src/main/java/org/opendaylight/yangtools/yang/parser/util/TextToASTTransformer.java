@@ -9,11 +9,9 @@
 package org.opendaylight.yangtools.yang.parser.util;
 
 import com.google.common.annotations.Beta;
-import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
 import java.io.IOException;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
@@ -31,45 +29,11 @@ import org.slf4j.LoggerFactory;
  */
 @Beta
 public final class TextToASTTransformer extends SchemaSourceTransformer<YangTextSchemaSource, ASTSchemaSource> {
-
-    /**
-     * A text-to-AST Transformation.
-     *
-     * @deprecated Use {@link TextToASTTransformer#transformText(YangTextSchemaSource)} instead.
-     */
-    @Deprecated
-    public static final class TextToASTTransformation implements Transformation<YangTextSchemaSource, ASTSchemaSource> {
-        @Override
-        public CheckedFuture<ASTSchemaSource, SchemaSourceException> apply(@Nonnull final YangTextSchemaSource input)
-                throws IOException, YangSyntaxErrorException {
-            final YangStatementStreamSource src = YangStatementStreamSource.create(input);
-
-            final ParserRuleContext ctx = src.getYangAST();
-            LOG.debug("Model {} parsed successfully", input);
-
-            //:TODO missing validation (YangModelBasicValidationListener should be re-implemented to new parser)
-
-            final Optional<String> opt = input.getSymbolicName();
-            final ASTSchemaSource result = opt.isPresent()
-                    ? ASTSchemaSource.create(opt.get(), input.getIdentifier(), ctx)
-                            : ASTSchemaSource.create(input.getIdentifier(), ctx);
-
-            return Futures.immediateCheckedFuture(result);
-        }
-    }
-
-    /**
-     * Singleton instance of {@link TextToASTTransformation}.
-     *
-     * @deprecated Use {@link TextToASTTransformer#transformText(YangTextSchemaSource)} instead.
-     */
-    @Deprecated
-    public static final TextToASTTransformation TRANSFORMATION = new TextToASTTransformation();
-
     private static final Logger LOG = LoggerFactory.getLogger(TextToASTTransformer.class);
 
     private TextToASTTransformer(final SchemaRepository provider, final SchemaSourceRegistry consumer) {
-        super(provider, YangTextSchemaSource.class, consumer, ASTSchemaSource.class, TRANSFORMATION);
+        super(provider, YangTextSchemaSource.class, consumer, ASTSchemaSource.class,
+            input -> Futures.immediateFuture(transformText(input)));
     }
 
     public static TextToASTTransformer create(final SchemaRepository provider, final SchemaSourceRegistry consumer) {
@@ -78,6 +42,16 @@ public final class TextToASTTransformer extends SchemaSourceTransformer<YangText
 
     public static ASTSchemaSource transformText(final YangTextSchemaSource text) throws SchemaSourceException,
             IOException, YangSyntaxErrorException {
-        return TRANSFORMATION.apply(text).checkedGet();
+        final YangStatementStreamSource src = YangStatementStreamSource.create(text);
+        final ParserRuleContext ctx = src.getYangAST();
+        LOG.debug("Model {} parsed successfully", text);
+
+        // TODO: missing validation (YangModelBasicValidationListener should be re-implemented to new parser)
+
+        final Optional<String> opt = text.getSymbolicName();
+        final ASTSchemaSource result = opt.isPresent() ? ASTSchemaSource.create(opt.get(), text.getIdentifier(), ctx)
+                : ASTSchemaSource.create(text.getIdentifier(), ctx);
+
+        return result;
     }
 }
