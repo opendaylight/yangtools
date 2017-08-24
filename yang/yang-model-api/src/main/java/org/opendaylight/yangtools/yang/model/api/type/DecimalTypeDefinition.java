@@ -7,24 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
-import java.util.List;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
- * Contains methods for getting data from the YANG <code>type</code>
- * substatement for <code>decimal64</code> built-in type.
+ * Contains methods for getting data from the YANG <code>type</code> substatement for <code>decimal64</code> built-in
+ * type.
  */
-public interface DecimalTypeDefinition extends TypeDefinition<DecimalTypeDefinition> {
-    /**
-     * Returns range constraints for instance of this type.
-     *
-     * @return list of range constraints which are specified as the argument of
-     *         the <code>range</code> which is substatement of the
-     *         <code>type</code> statement
-     */
-    @Nonnull List<RangeConstraint> getRangeConstraints();
-
+public interface DecimalTypeDefinition extends RangeRestrictedTypeDefinition<DecimalTypeDefinition> {
     /**
      * Returns integer between 1 and 18 inclusively.
      *
