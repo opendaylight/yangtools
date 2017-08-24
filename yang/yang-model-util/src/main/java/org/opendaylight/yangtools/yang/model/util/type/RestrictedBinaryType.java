@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
@@ -17,8 +18,8 @@ final class RestrictedBinaryType extends AbstractLengthRestrictedType<BinaryType
         implements BinaryTypeDefinition {
     RestrictedBinaryType(final BinaryTypeDefinition baseType, final SchemaPath path,
             final Collection<UnknownSchemaNode> unknownSchemaNodes,
-            final Collection<LengthConstraint> lengthConstraints) {
-        super(baseType, path, unknownSchemaNodes, lengthConstraints);
+            final @Nullable LengthConstraint lengthConstraint) {
+        super(baseType, path, unknownSchemaNodes, lengthConstraint);
     }
 
     @Override

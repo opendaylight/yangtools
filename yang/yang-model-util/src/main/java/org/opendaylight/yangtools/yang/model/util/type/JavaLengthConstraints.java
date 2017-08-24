@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
-import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 
@@ -18,6 +15,6 @@ final class JavaLengthConstraints {
         throw new UnsupportedOperationException();
     }
 
-    static final List<LengthConstraint> INTEGER_SIZE_CONSTRAINTS = ImmutableList.of(
-        BaseConstraints.newLengthConstraint(0, Integer.MAX_VALUE, Optional.absent(), Optional.absent()));
+    static final LengthConstraint INTEGER_SIZE_CONSTRAINTS = BaseConstraints.newLengthConstraint(0, Integer.MAX_VALUE,
+        null, null);
 }

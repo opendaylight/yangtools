@@ -23,8 +23,7 @@ public class BaseConstraintsTest {
         final String description = "Any description";
         final String reference = "any_ref";
 
-        LengthConstraint lengthCons = BaseConstraints.newLengthConstraint(min, max, Optional.of(description),
-            Optional.of(reference));
+        LengthConstraint lengthCons = BaseConstraints.newLengthConstraint(min, max, description, reference);
 
         assertEquals("LengthConstraints Get min", min, lengthCons.getMin());
         assertEquals("LengthConstraints Get max", max, lengthCons.getMax());

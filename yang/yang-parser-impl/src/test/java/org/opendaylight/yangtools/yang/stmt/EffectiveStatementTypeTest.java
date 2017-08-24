@@ -15,8 +15,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import com.google.common.collect.Range;
 import java.util.List;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -54,10 +55,10 @@ public class EffectiveStatementTypeTest {
 
     private static final StatementStreamSource IMPORTED_MODULE = sourceForResource("/type-tests/types.yang");
     private static SchemaContext effectiveSchemaContext;
-    private static LeafSchemaNode currentLeaf;
+    private LeafSchemaNode currentLeaf;
     private static Module types;
 
-    @Before
+    @BeforeClass
     public void setup() throws ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSource(IMPORTED_MODULE);
@@ -71,14 +72,15 @@ public class EffectiveStatementTypeTest {
         currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-binary"));
         assertNotNull(currentLeaf.getType());
 
-        final BinaryTypeDefinition binaryEff = (BinaryTypeDefinition) ((TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl) currentLeaf)
+        final BinaryTypeDefinition binaryEff = (BinaryTypeDefinition)
+                ((TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl) currentLeaf)
                 .effectiveSubstatements().iterator().next()).getTypeDefinition();
 
         assertNull(binaryEff.getBaseType());
         assertNull(binaryEff.getUnits());
         assertNull(binaryEff.getDefaultValue());
         assertEquals("binary", binaryEff.getQName().getLocalName());
-        assertEquals(0, binaryEff.getLengthConstraints().size());
+        assertFalse(binaryEff.getLengthConstraint().isPresent());
         assertEquals("CURRENT", binaryEff.getStatus().toString());
         assertEquals("binary", binaryEff.getPath().getPathFromRoot().iterator().next().getLocalName());
         assertNotNull(binaryEff.getUnknownSchemaNodes());
@@ -383,19 +385,14 @@ public class EffectiveStatementTypeTest {
     public void testLengthConstraint() {
         currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(),
                 "leaf-length-pattern"));
-        assertNotNull(currentLeaf.getType());
-        final LengthConstraint lengthConstraint = ((StringTypeDefinition) currentLeaf.getType())
-                .getLengthConstraints().get(0);
-        final LengthConstraint lengthConstraintThird = ((StringTypeDefinition) currentLeaf.getType())
-                .getLengthConstraints().get(0);
-        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(),
-                "leaf-length-pattern-second"));
-        assertNotNull(currentLeaf.getType());
-        final LengthConstraint lengthConstraintSecond = ((StringTypeDefinition) currentLeaf.getType())
-                .getLengthConstraints().get(0);
 
-        assertEquals(1, lengthConstraint.getMin().intValue());
-        assertEquals(255, lengthConstraint.getMax().intValue());
+        final StringTypeDefinition leafType = (StringTypeDefinition) currentLeaf.getType();
+        assertNotNull(leafType);
+        final LengthConstraint lengthConstraint = leafType.getLengthConstraint().get();
+
+        final Range<Integer> span = lengthConstraint.getAllowedRanges().span();
+        assertEquals(1, span.lowerEndpoint().intValue());
+        assertEquals(255, span.upperEndpoint().intValue());
         assertNull(lengthConstraint.getReference());
         assertNull(lengthConstraint.getDescription());
         assertEquals("The argument is out of bounds <1, 255>", lengthConstraint.getErrorMessage());
@@ -404,8 +401,13 @@ public class EffectiveStatementTypeTest {
         assertNotNull(lengthConstraint.hashCode());
         assertFalse(lengthConstraint.equals(null));
         assertFalse(lengthConstraint.equals("test"));
+
+        currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(),
+                "leaf-length-pattern-second"));
+        assertNotNull(currentLeaf.getType());
+        final LengthConstraint lengthConstraintSecond = ((StringTypeDefinition) currentLeaf.getType())
+                .getLengthConstraint().get();
         assertFalse(lengthConstraint.equals(lengthConstraintSecond));
-        assertTrue(lengthConstraint.equals(lengthConstraintThird));
     }
 
     @Test
@@ -457,7 +459,7 @@ public class EffectiveStatementTypeTest {
         assertFalse(stringEff.equals("test"));
         assertTrue(stringEff.equals(stringEff));
         assertEquals("string", stringEff.getPath().getLastComponent().getLocalName());
-        assertEquals(0, stringEff.getLengthConstraints().size());
+        assertFalse(stringEff.getLengthConstraint().isPresent());
         assertNotNull(stringEff.getPatternConstraints());
     }
 }

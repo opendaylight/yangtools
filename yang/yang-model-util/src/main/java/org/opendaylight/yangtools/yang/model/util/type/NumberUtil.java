@@ -105,8 +105,9 @@ final class NumberUtil {
         throw new UnsupportedOperationException();
     }
 
-    static Function<Number, Number> converterTo(final Class<? extends Number> clazz) {
-        return CONVERTERS.get(clazz);
+    @SuppressWarnings("unchecked")
+    static <T extends Number> Function<Number, T> converterTo(final Class<T> clazz) {
+        return (Function<Number, T>) CONVERTERS.get(clazz);
     }
 
     static boolean isRangeCovered(final Number min, final Number max, final Number superMin, final Number superMax) {

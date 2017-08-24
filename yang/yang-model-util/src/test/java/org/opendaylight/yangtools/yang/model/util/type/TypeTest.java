@@ -54,7 +54,7 @@ public class TypeTest {
         final BaseBinaryType baseBinaryType1 = BaseBinaryType.INSTANCE;
         final BaseBinaryType baseBinaryType2 = (BaseBinaryType)BaseTypes.binaryType();
         hashCodeEqualsToStringTest(baseBinaryType1, baseBinaryType2);
-        assertEquals(baseBinaryType1.getLengthConstraints(), baseBinaryType2.getLengthConstraints());
+        assertEquals(baseBinaryType1.getLengthConstraint(), baseBinaryType2.getLengthConstraint());
 
         final DerivedBinaryType derivedBinaryType1 = (DerivedBinaryType)DerivedTypes.derivedTypeBuilder(baseBinaryType1,
                 SCHEMA_PATH).build();
@@ -256,7 +256,7 @@ public class TypeTest {
         final BaseStringType baseStringType1 = BaseStringType.INSTANCE;
         final BaseStringType baseStringType2 = (BaseStringType)BaseTypes.stringType();
         hashCodeEqualsToStringTest(baseStringType1, baseStringType2);
-        assertEquals(baseStringType1.getLengthConstraints(), baseStringType2.getLengthConstraints());
+        assertEquals(baseStringType1.getLengthConstraint(), baseStringType2.getLengthConstraint());
         assertEquals(baseStringType1.getPatternConstraints(), baseStringType2.getPatternConstraints());
 
         final DerivedStringType derivedStringType1 = (DerivedStringType)

@@ -11,6 +11,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Range;
+import com.google.common.collect.RangeSet;
 import com.google.common.primitives.UnsignedInteger;
 import java.net.URI;
 import java.util.Collection;
@@ -478,7 +480,7 @@ class SchemaContextEmitter {
         } else if (typeDef instanceof UnionTypeDefinition) {
             emitUnionSpecification((UnionTypeDefinition) typeDef);
         } else if (typeDef instanceof BinaryTypeDefinition) {
-            emitLength(((BinaryTypeDefinition) typeDef).getLengthConstraints());
+            ((BinaryTypeDefinition) typeDef).getLengthConstraint().ifPresent(this::emitLength);
         } else if (typeDef instanceof BooleanTypeDefinition || typeDef instanceof EmptyTypeDefinition) {
             // NOOP
         } else {
@@ -522,32 +524,24 @@ class SchemaContextEmitter {
     }
 
     private void emitStringRestrictions(final StringTypeDefinition typeDef) {
-
-        // FIXME: BUG-2444:  Wrong decomposition in API, should be LenghtConstraint
-        // which contains ranges.
-        emitLength(typeDef.getLengthConstraints());
+        typeDef.getLengthConstraint().ifPresent(this::emitLength);
 
         for (final PatternConstraint pattern : typeDef.getPatternConstraints()) {
             emitPatternNode(pattern);
         }
-
     }
 
-    private void emitLength(final List<LengthConstraint> list) {
-        if (!list.isEmpty()) {
-            writer.startLengthNode(toLengthString(list));
-            // FIXME: BUG-2444:  Workaround for incorrect decomposition in API
-            final LengthConstraint first = list.iterator().next();
-            emitErrorMessageNode(first.getErrorMessage());
-            emitErrorAppTagNode(first.getErrorAppTag());
-            emitDescriptionNode(first.getDescription());
-            emitReferenceNode(first.getReference());
-            writer.endNode();
-        }
+    private void emitLength(final LengthConstraint constraint) {
+        writer.startLengthNode(toLengthString(constraint.getAllowedRanges()));
+        emitErrorMessageNode(constraint.getErrorMessage());
+        emitErrorAppTagNode(constraint.getErrorAppTag());
+        emitDescriptionNode(constraint.getDescription());
+        emitReferenceNode(constraint.getReference());
+        writer.endNode();
     }
 
-    private static String toLengthString(final List<LengthConstraint> list) {
-        final Iterator<LengthConstraint> it = list.iterator();
+    private static String toLengthString(final RangeSet<Integer> allowed) {
+        final Iterator<Range<Integer>> it = allowed.asRanges().iterator();
         if (!it.hasNext()) {
             return "";
         }
@@ -555,9 +549,9 @@ class SchemaContextEmitter {
         final StringBuilder sb = new StringBuilder();
         boolean haveNext;
         do {
-            final LengthConstraint current = it.next();
+            final Range<Integer> current = it.next();
             haveNext = it.hasNext();
-            appendRange(sb, current.getMin(), current.getMax(), haveNext);
+            appendRange(sb, current.lowerEndpoint(), current.upperEndpoint(), haveNext);
         } while (haveNext);
 
         return sb.toString();

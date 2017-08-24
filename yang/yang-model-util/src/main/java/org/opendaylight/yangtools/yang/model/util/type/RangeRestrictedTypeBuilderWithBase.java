@@ -26,5 +26,5 @@ abstract class RangeRestrictedTypeBuilderWithBase<T extends RangeRestrictedTypeD
         return buildType(calculateRangeConstraints(getBaseType().getRangeConstraints()));
     }
 
-    abstract T buildType(final List<RangeConstraint> rangeConstraints);
+    abstract T buildType(List<RangeConstraint> rangeConstraints);
 }
