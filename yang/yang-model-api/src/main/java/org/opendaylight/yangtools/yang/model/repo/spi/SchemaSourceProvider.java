@@ -8,9 +8,8 @@
 package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import com.google.common.annotations.Beta;
-import com.google.common.util.concurrent.CheckedFuture;
+import com.google.common.util.concurrent.ListenableFuture;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
@@ -44,8 +43,7 @@ public interface SchemaSourceProvider<T extends SchemaSourceRepresentation> {
      * this different invocation of this method may produce different results.
      *
      * @param sourceIdentifier source identifier
-     * @return source representation if supplied YANG module is available
-     *
+     * @return future source representation, if supplied YANG module is available
      */
-    CheckedFuture<? extends T, SchemaSourceException> getSource(SourceIdentifier sourceIdentifier);
+    ListenableFuture<? extends T> getSource(SourceIdentifier sourceIdentifier);
 }
