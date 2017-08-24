@@ -12,8 +12,8 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -36,7 +36,6 @@ import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -115,19 +114,18 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
     }
 
     @Override
-    public synchronized CheckedFuture<? extends T, SchemaSourceException> getSource(
+    public synchronized ListenableFuture<? extends T> getSource(
             final SourceIdentifier sourceIdentifier) {
         final File file = sourceIdToFile(sourceIdentifier, storageDirectory);
         if (file.exists() && file.canRead()) {
             LOG.trace("Source {} found in cache as {}", sourceIdentifier, file);
             final SchemaSourceRepresentation restored = STORAGE_ADAPTERS.get(representation).restore(sourceIdentifier,
                     file);
-            return Futures.immediateCheckedFuture(representation.cast(restored));
+            return Futures.immediateFuture(representation.cast(restored));
         }
 
         LOG.debug("Source {} not found in cache as {}", sourceIdentifier, file);
-        return Futures.immediateFailedCheckedFuture(new MissingSchemaSourceException("Source not found",
-                    sourceIdentifier));
+        return Futures.immediateFailedFuture(new MissingSchemaSourceException("Source not found", sourceIdentifier));
     }
 
     @Override

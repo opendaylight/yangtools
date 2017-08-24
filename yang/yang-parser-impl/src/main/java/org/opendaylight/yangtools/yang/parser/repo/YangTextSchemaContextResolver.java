@@ -13,17 +13,19 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
@@ -229,14 +231,17 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             } while (ver != version);
 
             while (true) {
-                final CheckedFuture<SchemaContext, SchemaResolutionException> f = factory.createSchemaContext(sources,
-                    statementParserMode);
+                final ListenableFuture<SchemaContext> f = factory.createSchemaContext(sources, statementParserMode);
                 try {
-                    sc = Optional.of(f.checkedGet());
+                    sc = Optional.of(f.get());
                     break;
-                } catch (SchemaResolutionException e) {
+                } catch (InterruptedException e) {
+                    throw new RuntimeException("Interrupted while assembling schema context", e);
+                } catch (ExecutionException e) {
                     LOG.info("Failed to fully assemble schema context for {}", sources, e);
-                    sources = e.getResolvedSources();
+                    final Throwable cause = e.getCause();
+                    Verify.verify(cause instanceof SchemaResolutionException);
+                    sources = ((SchemaResolutionException) cause).getResolvedSources();
                 }
             }
 
@@ -254,17 +259,17 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     }
 
     @Override
-    public synchronized CheckedFuture<YangTextSchemaSource, SchemaSourceException> getSource(
+    public synchronized ListenableFuture<YangTextSchemaSource> getSource(
             final SourceIdentifier sourceIdentifier) {
         final Collection<YangTextSchemaSource> ret = texts.get(sourceIdentifier);
 
         LOG.debug("Lookup {} result {}", sourceIdentifier, ret);
         if (ret.isEmpty()) {
-            return Futures.immediateFailedCheckedFuture(new MissingSchemaSourceException(
+            return Futures.immediateFailedFuture(new MissingSchemaSourceException(
                 "URL for " + sourceIdentifier + " not registered", sourceIdentifier));
         }
 
-        return Futures.immediateCheckedFuture(ret.iterator().next());
+        return Futures.immediateFuture(ret.iterator().next());
     }
 
     /**
