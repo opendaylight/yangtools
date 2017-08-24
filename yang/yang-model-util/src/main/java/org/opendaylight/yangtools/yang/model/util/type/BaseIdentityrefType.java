@@ -27,6 +27,7 @@ final class BaseIdentityrefType extends AbstractBaseType<IdentityrefTypeDefiniti
         this.identities = Preconditions.checkNotNull(identities);
     }
 
+    @Deprecated
     @Override
     public IdentitySchemaNode getIdentity() {
         return identity;
