@@ -7,13 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
-import java.util.List;
-import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-
 /**
- * IntegerTypeDefinition is interface which represents SIGNED Integer values defined in Yang language.<br>
- * The integer built-in types in Yang are int8, int16, int32, int64. They represent signed integers of different
+ * IntegerTypeDefinition is interface which represents SIGNED Integer values defined in YANG language.<br>
+ * The integer built-in types in YANG are int8, int16, int32, int64. They represent signed integers of different
  * sizes:<br>
  * <ul>
  * <li>int8 represents integer values between -128 and 127, inclusively.</li>
@@ -25,12 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * <p>
  * The Integer Built-In Types are defined in <a href="https://tools.ietf.org/html/rfc6020#section-9.2"> [RFC-6020]</a>
  */
-public interface IntegerTypeDefinition extends TypeDefinition<IntegerTypeDefinition> {
-    /**
-     * Returns Range Constraints defined for given Integer Type. These are the effective constraints, e.g. they include
-     * any range constraints imposed by base types.
-     *
-     * @return Range Constraints defined for given Integer Type.
-     */
-    @Nonnull List<RangeConstraint> getRangeConstraints();
+public interface IntegerTypeDefinition extends RangeRestrictedTypeDefinition<IntegerTypeDefinition> {
+
 }
