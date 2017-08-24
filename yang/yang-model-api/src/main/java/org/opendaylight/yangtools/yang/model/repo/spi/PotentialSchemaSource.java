@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
-
-import org.opendaylight.yangtools.objcache.ObjectCache;
-import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
+import com.google.common.collect.Interner;
+import com.google.common.collect.Interners;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
@@ -64,7 +64,7 @@ public final class PotentialSchemaSource<T extends SchemaSourceRepresentation> {
         }
     }
 
-    private static final ObjectCache CACHE = ObjectCacheFactory.getObjectCache(PotentialSchemaSource.class);
+    private static final Interner<PotentialSchemaSource<?>> INTERNER = Interners.newWeakInterner();
     private final Class<? extends T> representation;
     private final SourceIdentifier sourceIdentifier;
     private final int cost;
@@ -87,8 +87,9 @@ public final class PotentialSchemaSource<T extends SchemaSourceRepresentation> {
      *
      * @return A potentially shared reference, not guaranteed to be unique.
      */
+    @SuppressWarnings("unchecked")
     public PotentialSchemaSource<T> cachedReference() {
-        return CACHE.getReference(this);
+        return (PotentialSchemaSource<T>) INTERNER.intern(this);
     }
 
     public SourceIdentifier getSourceIdentifier() {
@@ -105,12 +106,7 @@ public final class PotentialSchemaSource<T extends SchemaSourceRepresentation> {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + cost;
-        result = prime * result + representation.hashCode();
-        result = prime * result + sourceIdentifier.hashCode();
-        return result;
+        return Objects.hash(cost, representation, sourceIdentifier);
     }
 
     @Override
@@ -122,15 +118,7 @@ public final class PotentialSchemaSource<T extends SchemaSourceRepresentation> {
             return false;
         }
         final PotentialSchemaSource<?> other = (PotentialSchemaSource<?>) obj;
-        if (cost != other.cost) {
-            return false;
-        }
-        if (!representation.equals(other.representation)) {
-            return false;
-        }
-        if (!sourceIdentifier.equals(other.sourceIdentifier)) {
-            return false;
-        }
-        return true;
+        return cost == other.cost && representation.equals(other.representation)
+                && sourceIdentifier.equals(other.sourceIdentifier);
     }
 }
