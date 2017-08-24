@@ -8,15 +8,14 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
-import java.util.List;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
-final class DerivedDecimalType extends AbstractDerivedType<DecimalTypeDefinition> implements DecimalTypeDefinition {
+final class DerivedDecimalType extends AbstractRangeRestrictedDerivedType<DecimalTypeDefinition>
+        implements DecimalTypeDefinition {
     DerivedDecimalType(final DecimalTypeDefinition baseType, final SchemaPath path, final Object defaultValue,
         final String description, final String reference, final Status status, final String units,
         final Collection<UnknownSchemaNode> unknownSchemNodes) {
@@ -27,12 +26,6 @@ final class DerivedDecimalType extends AbstractDerivedType<DecimalTypeDefinition
     @Override
     public Integer getFractionDigits() {
         return baseType().getFractionDigits();
-    }
-
-    @Nonnull
-    @Override
-    public List<RangeConstraint> getRangeConstraints() {
-        return baseType().getRangeConstraints();
     }
 
     @Override

@@ -17,12 +17,13 @@ import java.util.List;
 import java.util.function.Function;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 import org.opendaylight.yangtools.yang.model.util.UnresolvedNumber;
 
-public abstract class RangeRestrictedTypeBuilder<T extends TypeDefinition<T>> extends AbstractRestrictedTypeBuilder<T> {
+public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDefinition<T>>
+        extends AbstractRestrictedTypeBuilder<T> {
     private List<RangeConstraint> rangeAlternatives;
 
     RangeRestrictedTypeBuilder(final T baseType, final SchemaPath path) {
