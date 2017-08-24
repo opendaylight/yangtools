@@ -12,11 +12,12 @@ import java.util.Collection;
 import java.util.List;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 
-abstract class AbstractRangeRestrictedType<T extends TypeDefinition<T>> extends AbstractRestrictedType<T> {
+abstract class AbstractRangeRestrictedType<T extends RangeRestrictedTypeDefinition<T>>
+        extends AbstractRestrictedType<T> implements RangeRestrictedTypeDefinition<T> {
     private final List<RangeConstraint> rangeConstraints;
 
     AbstractRangeRestrictedType(final T baseType, final SchemaPath path,
@@ -25,6 +26,7 @@ abstract class AbstractRangeRestrictedType<T extends TypeDefinition<T>> extends 
         this.rangeConstraints = ImmutableList.copyOf(rangeConstraints);
     }
 
+    @Override
     @Nonnull
     public final List<RangeConstraint> getRangeConstraints() {
         return rangeConstraints;
