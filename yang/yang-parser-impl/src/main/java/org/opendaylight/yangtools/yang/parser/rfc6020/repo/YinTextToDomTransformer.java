@@ -36,7 +36,7 @@ public final class YinTextToDomTransformer extends SchemaSourceTransformer<YinTe
         final DefaultHandler handler = new StatementSourceReferenceHandler(doc, null);
         parser.parse(input.openStream(), handler);
 
-        return Futures.immediateCheckedFuture(YinDomSchemaSource.create(input.getIdentifier(), new DOMSource(doc)));
+        return Futures.immediateFuture(YinDomSchemaSource.create(input.getIdentifier(), new DOMSource(doc)));
     };
 
     private YinTextToDomTransformer(final SchemaRepository provider, final SchemaSourceRegistry consumer) {
