@@ -13,7 +13,8 @@ import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
-final class BaseStringType extends AbstractLengthRestrictedBaseType<StringTypeDefinition> implements StringTypeDefinition {
+final class BaseStringType extends AbstractLengthRestrictedBaseType<StringTypeDefinition>
+        implements StringTypeDefinition {
     static final BaseStringType INSTANCE = new BaseStringType();
 
     private BaseStringType() {
