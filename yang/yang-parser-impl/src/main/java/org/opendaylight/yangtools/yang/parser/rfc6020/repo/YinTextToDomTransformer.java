@@ -32,7 +32,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public final class YinTextToDomTransformer extends SchemaSourceTransformer<YinTextSchemaSource, YinDomSchemaSource> {
     private YinTextToDomTransformer(final SchemaRepository provider, final SchemaSourceRegistry consumer) {
         super(provider, YinTextSchemaSource.class, consumer, YinDomSchemaSource.class,
-            input -> Futures.immediateCheckedFuture(transformSource(input)));
+            input -> Futures.immediateFuture(transformSource(input)));
     }
 
     public static YinTextToDomTransformer create(final SchemaRepository provider, final SchemaSourceRegistry consumer) {
