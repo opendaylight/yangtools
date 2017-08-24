@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.api.schema.xpath;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
-import com.google.common.util.concurrent.CheckedFuture;
+import com.google.common.util.concurrent.ListenableFuture;
 import java.util.concurrent.Future;
 import javax.annotation.Nonnull;
 import javax.xml.xpath.XPathExpressionException;
@@ -52,6 +52,6 @@ public interface LazyXPathExpression {
      * @throws NullPointerException if any of the arguments are null
      * @throws IllegalArgumentException if the path does not match the path at which this expression was compiled
      */
-    CheckedFuture<Optional<? extends XPathResult<?>>, XPathExpressionException> evaluateLazily(
-            @Nonnull XPathDocument document, @Nonnull YangInstanceIdentifier path);
+    ListenableFuture<Optional<? extends XPathResult<?>>> evaluateLazily(@Nonnull XPathDocument document,
+            @Nonnull YangInstanceIdentifier path);
 }
