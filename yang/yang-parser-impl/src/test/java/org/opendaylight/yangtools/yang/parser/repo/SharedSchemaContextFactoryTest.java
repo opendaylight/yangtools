@@ -46,10 +46,10 @@ public class SharedSchemaContextFactoryTest {
         final TextToASTTransformer transformer = TextToASTTransformer.create(repository, repository);
         repository.registerSchemaSourceListener(transformer);
 
-        repository.registerSchemaSource(sourceIdentifier -> Futures.immediateCheckedFuture(source1),
+        repository.registerSchemaSource(sourceIdentifier -> Futures.immediateFuture(source1),
             PotentialSchemaSource.create(s1, YangTextSchemaSource.class, 1));
 
-        repository.registerSchemaSource(sourceIdentifier -> Futures.immediateCheckedFuture(source2),
+        repository.registerSchemaSource(sourceIdentifier -> Futures.immediateFuture(source2),
             PotentialSchemaSource.create(s2, YangTextSchemaSource.class, 1));
     }
 
