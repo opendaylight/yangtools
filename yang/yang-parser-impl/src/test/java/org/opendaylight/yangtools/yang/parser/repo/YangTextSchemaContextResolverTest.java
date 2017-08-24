@@ -14,7 +14,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.google.common.base.Optional;
-import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.io.IOException;
 import java.net.URL;
@@ -22,7 +21,6 @@ import java.util.concurrent.ExecutionException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -73,14 +71,13 @@ public class YangTextSchemaContextResolverTest {
         assertEquals(bazModuleId, baz.get().getIdentifier());
 
         final SourceIdentifier foobarModuleId = RevisionSourceIdentifier.create("foobar", "2016-09-26");
-        final CheckedFuture<YangTextSchemaSource, SchemaSourceException> foobar =
-                yangTextSchemaContextResolver.getSource(foobarModuleId);
+        final ListenableFuture<YangTextSchemaSource> foobar = yangTextSchemaContextResolver.getSource(foobarModuleId);
         assertTrue(foobar.isDone());
         try {
-            foobar.checkedGet();
+            foobar.get();
             fail("A MissingSchemaSourceException should have been thrown.");
-        } catch (MissingSchemaSourceException ex) {
-            assertEquals("URL for RevisionSourceIdentifier [name=foobar@2016-09-26] not registered", ex.getMessage());
+        } catch (ExecutionException e) {
+            assertEquals("URL for RevisionSourceIdentifier [name=foobar@2016-09-26] not registered", e.getMessage());
         }
 
         Optional<SchemaContext> schemaContextOptional = yangTextSchemaContextResolver.getSchemaContext();

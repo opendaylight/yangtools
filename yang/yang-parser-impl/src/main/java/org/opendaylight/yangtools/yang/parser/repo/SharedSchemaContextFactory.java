@@ -16,7 +16,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.AsyncFunction;
-import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -71,9 +70,8 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
     }
 
     @Override
-    public CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
-            final Collection<SourceIdentifier> requiredSources, final StatementParserMode statementParserMode,
-            final Set<QName> supportedFeatures) {
+    public ListenableFuture<SchemaContext> createSchemaContext(final Collection<SourceIdentifier> requiredSources,
+            final StatementParserMode statementParserMode, final Set<QName> supportedFeatures) {
         return createSchemaContext(requiredSources,
                 statementParserMode == StatementParserMode.SEMVER_MODE ? this.semVerCache : this.cache,
                 new AssembleSources(Optional.ofNullable(supportedFeatures), statementParserMode));
@@ -83,8 +81,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         return repository.getSchemaSource(identifier, ASTSchemaSource.class);
     }
 
-    private CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
-            final Collection<SourceIdentifier> requiredSources,
+    private ListenableFuture<SchemaContext> createSchemaContext(final Collection<SourceIdentifier> requiredSources,
             final Cache<Collection<SourceIdentifier>, SchemaContext> cache,
             final AsyncFunction<List<ASTSchemaSource>, SchemaContext> assembleSources) {
         // Make sources unique
@@ -93,7 +90,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         final SchemaContext existing = cache.getIfPresent(uniqueSourceIdentifiers);
         if (existing != null) {
             LOG.debug("Returning cached context {}", existing);
-            return Futures.immediateCheckedFuture(existing);
+            return Futures.immediateFuture(existing);
         }
 
         // Request all sources be loaded
@@ -123,7 +120,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
             }
         }, MoreExecutors.directExecutor());
 
-        return Futures.makeChecked(cf, MAPPER);
+        return cf;
     }
 
     /**
@@ -214,7 +211,10 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
 
             final Map<SourceIdentifier, ParserRuleContext> asts = Maps.transformValues(srcs, ASTSchemaSource::getAST);
             final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(
-                statementParserMode, supportedFeatures);
+                statementParserMode);
+            if (supportedFeatures.isPresent()) {
+                reactor.setSupportedFeatures(supportedFeatures.get());
+            }
 
             for (final Entry<SourceIdentifier, ParserRuleContext> e : asts.entrySet()) {
                 final ParserRuleContext parserRuleCtx = e.getValue();
@@ -231,7 +231,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
                 throw new SchemaResolutionException("Failed to resolve required models", ex.getSourceIdentifier(), ex);
             }
 
-            return Futures.immediateCheckedFuture(schemaContext);
+            return Futures.immediateFuture(schemaContext);
         }
     }
 }
