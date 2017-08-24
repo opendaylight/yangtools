@@ -9,16 +9,13 @@ package org.opendaylight.yangtools.yang.model.repo.util;
 
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.AsyncFunction;
-import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.util.concurrent.ExceptionMapper;
-import org.opendaylight.yangtools.util.concurrent.ReflectiveExceptionMapper;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
@@ -29,14 +26,12 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 
 public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D extends SchemaSourceRepresentation>
         implements SchemaSourceListener, SchemaSourceProvider<D> {
-    private static final ExceptionMapper<SchemaSourceException> MAPPER = ReflectiveExceptionMapper.create(
-            "Source transformation", SchemaSourceException.class);
 
     @FunctionalInterface
     public interface Transformation<S extends SchemaSourceRepresentation, D extends SchemaSourceRepresentation>
             extends AsyncFunction<S, D> {
         @Override
-        CheckedFuture<D, SchemaSourceException> apply(@Nonnull S input) throws Exception;
+        ListenableFuture<D> apply(@Nonnull S input) throws Exception;
     }
 
     private final Map<PotentialSchemaSource<?>, RefcountedRegistration> sources = new HashMap<>();
@@ -56,9 +51,9 @@ public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D ext
     }
 
     @Override
-    public CheckedFuture<D, SchemaSourceException> getSource(final SourceIdentifier sourceIdentifier) {
-        final CheckedFuture<S, SchemaSourceException> f = provider.getSchemaSource(sourceIdentifier, srcClass);
-        return Futures.makeChecked(Futures.transformAsync(f, function, MoreExecutors.directExecutor()), MAPPER);
+    public ListenableFuture<D> getSource(final SourceIdentifier sourceIdentifier) {
+        return Futures.transformAsync(provider.getSchemaSource(sourceIdentifier, srcClass), function,
+            MoreExecutors.directExecutor());
     }
 
     @Override

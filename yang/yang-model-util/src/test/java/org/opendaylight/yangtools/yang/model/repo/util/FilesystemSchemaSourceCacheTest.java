@@ -23,7 +23,6 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.collect.Collections2;
 import com.google.common.io.Files;
-import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -40,7 +39,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
@@ -198,10 +196,9 @@ public class FilesystemSchemaSourceCacheTest {
         final YangTextSchemaSource source = new TestingYangSource("test", "2013-12-12", content);
         cache.offer(source);
         final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test", "2013-12-12");
-        final CheckedFuture<? extends YangTextSchemaSource, SchemaSourceException> checked = cache
-                .getSource(sourceIdentifier);
+        final ListenableFuture<? extends YangTextSchemaSource> checked = cache.getSource(sourceIdentifier);
         Assert.assertNotNull(checked);
-        final YangTextSchemaSource checkedGet = checked.checkedGet();
+        final YangTextSchemaSource checkedGet = checked.get();
         Assert.assertEquals(sourceIdentifier, checkedGet.getIdentifier());
         Assert.assertTrue(checked.isDone());
     }
