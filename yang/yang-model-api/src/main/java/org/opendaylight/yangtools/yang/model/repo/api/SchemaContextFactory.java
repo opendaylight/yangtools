@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.repo.api;
 
 import com.google.common.annotations.Beta;
-import com.google.common.util.concurrent.CheckedFuture;
+import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Collection;
 import java.util.Set;
 import javax.annotation.Nonnull;
@@ -32,7 +32,7 @@ public interface SchemaContextFactory {
      *         with an explanation why the creation of the schema context
      *         failed.
      */
-    default CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
+    default ListenableFuture<SchemaContext> createSchemaContext(
             @Nonnull final Collection<SourceIdentifier> requiredSources) {
         return createSchemaContext(requiredSources, StatementParserMode.DEFAULT_MODE);
     }
@@ -49,7 +49,7 @@ public interface SchemaContextFactory {
      *         with an explanation why the creation of the schema context
      *         failed.
      */
-    default CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
+    default ListenableFuture<SchemaContext> createSchemaContext(
             final Collection<SourceIdentifier> requiredSources, final StatementParserMode statementParserMode) {
         return createSchemaContext(requiredSources, statementParserMode, null);
     }
@@ -67,7 +67,7 @@ public interface SchemaContextFactory {
      *         with an explanation why the creation of the schema context
      *         failed.
      */
-    default CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
+    default ListenableFuture<SchemaContext> createSchemaContext(
             @Nonnull final Collection<SourceIdentifier> requiredSources, final Set<QName> supportedFeatures) {
         return createSchemaContext(requiredSources, StatementParserMode.DEFAULT_MODE, supportedFeatures);
     }
@@ -87,7 +87,6 @@ public interface SchemaContextFactory {
      *         with an explanation why the creation of the schema context
      *         failed.
      */
-    CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
-            Collection<SourceIdentifier> requiredSources, StatementParserMode statementParserMode,
-            Set<QName> supportedFeatures);
+    ListenableFuture<SchemaContext> createSchemaContext(Collection<SourceIdentifier> requiredSources,
+            StatementParserMode statementParserMode, Set<QName> supportedFeatures);
 }

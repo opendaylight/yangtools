@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.repo.util;
 
 import com.google.common.util.concurrent.AsyncFunction;
-import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Arrays;
 import java.util.concurrent.Future;
@@ -22,7 +21,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -133,9 +131,9 @@ public class SchemaSourceTransformerTest {
         }
 
         @Override
-        public CheckedFuture<? extends YangSchemaSourceRepresentation, SchemaSourceException> getSource(
+        public ListenableFuture<? extends YangSchemaSourceRepresentation> getSource(
                 final SourceIdentifier sourceIdentifier) {
-            return Mockito.mock(CheckedFuture.class);
+            return Mockito.mock(ListenableFuture.class);
         }
 
     }
