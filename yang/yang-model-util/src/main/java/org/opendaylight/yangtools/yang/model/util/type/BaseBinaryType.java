@@ -7,22 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.collect.ImmutableList;
-import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
-final class BaseBinaryType extends AbstractBaseType<BinaryTypeDefinition> implements BinaryTypeDefinition {
+final class BaseBinaryType extends AbstractLengthRestrictedBaseType<BinaryTypeDefinition>
+        implements BinaryTypeDefinition {
     static final BaseBinaryType INSTANCE = new BaseBinaryType();
 
     private BaseBinaryType() {
         super(BaseTypes.BINARY_QNAME);
-    }
-
-    @Override
-    public List<LengthConstraint> getLengthConstraints() {
-        return ImmutableList.of();
     }
 
     @Override

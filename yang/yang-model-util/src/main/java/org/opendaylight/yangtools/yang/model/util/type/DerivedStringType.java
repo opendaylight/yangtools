@@ -12,11 +12,11 @@ import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 
-final class DerivedStringType extends AbstractDerivedType<StringTypeDefinition> implements StringTypeDefinition {
+final class DerivedStringType extends AbstractLengthRestrictedDerivedType<StringTypeDefinition>
+        implements StringTypeDefinition {
     DerivedStringType(final StringTypeDefinition baseType, final SchemaPath path, final Object defaultValue,
             final String description, final String reference, final Status status, final String units,
             final Collection<UnknownSchemaNode> unknownSchemaNodes) {
@@ -26,11 +26,6 @@ final class DerivedStringType extends AbstractDerivedType<StringTypeDefinition> 
     @Override
     public List<PatternConstraint> getPatternConstraints() {
         return baseType().getPatternConstraints();
-    }
-
-    @Override
-    public List<LengthConstraint> getLengthConstraints() {
-        return baseType().getLengthConstraints();
     }
 
     @Override

@@ -29,11 +29,6 @@ public final class StringTypeBuilder extends LengthRestrictedTypeBuilder<StringT
     }
 
     @Override
-    List<LengthConstraint> getLengthConstraints(final StringTypeDefinition type) {
-        return type.getLengthConstraints();
-    }
-
-    @Override
     List<LengthConstraint> typeLengthConstraints() {
         /**
          * Length constraint imposed on YANG string type by our implementation. {@link String#length()} is an integer,

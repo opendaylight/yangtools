@@ -8,23 +8,17 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
-import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
-final class DerivedBinaryType extends AbstractDerivedType<BinaryTypeDefinition> implements BinaryTypeDefinition {
+final class DerivedBinaryType extends AbstractLengthRestrictedDerivedType<BinaryTypeDefinition>
+        implements BinaryTypeDefinition {
     DerivedBinaryType(final BinaryTypeDefinition baseType, final SchemaPath path, final Object defaultValue,
             final String description, final String reference, final Status status, final String units,
             final Collection<UnknownSchemaNode> unknownSchemNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemNodes);
-    }
-
-    @Override
-    public List<LengthConstraint> getLengthConstraints() {
-        return baseType().getLengthConstraints();
     }
 
     @Override
