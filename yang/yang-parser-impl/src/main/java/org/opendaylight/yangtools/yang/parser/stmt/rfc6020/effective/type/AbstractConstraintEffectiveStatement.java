@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
+import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
@@ -25,7 +26,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ReferenceEf
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.effective.ModifierEffectiveStatementImpl;
 
 abstract class AbstractConstraintEffectiveStatement<A, D extends DeclaredStatement<A>> extends
-        DeclaredEffectiveStatementBase<A, D> {
+        DeclaredEffectiveStatementBase<A, D> implements ConstraintMetaDefinition {
     private final String description;
     private final String reference;
     private final String errorAppTag;
@@ -78,6 +79,7 @@ abstract class AbstractConstraintEffectiveStatement<A, D extends DeclaredStateme
                 || this.errorMessage != null || this.modifier != null;
     }
 
+    @Override
     public final String getDescription() {
         return description;
     }
@@ -86,14 +88,17 @@ abstract class AbstractConstraintEffectiveStatement<A, D extends DeclaredStateme
         return modifier;
     }
 
+    @Override
     public final String getReference() {
         return reference;
     }
 
+    @Override
     public final String getErrorAppTag() {
         return errorAppTag;
     }
 
+    @Override
     public final String getErrorMessage() {
         return errorMessage;
     }
