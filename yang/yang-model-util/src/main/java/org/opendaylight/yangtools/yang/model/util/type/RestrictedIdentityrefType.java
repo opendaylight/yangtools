@@ -21,6 +21,7 @@ final class RestrictedIdentityrefType extends AbstractRestrictedType<Identityref
         super(baseType, path, unknownSchemaNodes);
     }
 
+    @Deprecated
     @Override
     public IdentitySchemaNode getIdentity() {
         return getBaseType().getIdentity();
