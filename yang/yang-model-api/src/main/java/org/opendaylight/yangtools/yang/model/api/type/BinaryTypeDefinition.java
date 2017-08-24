@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
-import java.util.List;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-
 /**
  * The binary built-in type represents any binary data, i.e., a sequence of
  * octets.
@@ -25,14 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * href="https://tools.ietf.org/html/rfc6020#section-9.8">[RFC-6020] The binary
  * Built-In Type</a>
  */
-public interface BinaryTypeDefinition extends TypeDefinition<BinaryTypeDefinition> {
-    /**
-     * Returns List of number of octets that binary value contains. These are the effective constraints, e.g. they
-     * include any range constraints imposed by base types.
-     *
-     * @return List of number of octets that binary value contains.
-     *
-     * @see LengthConstraint
-     */
-    List<LengthConstraint> getLengthConstraints();
+public interface BinaryTypeDefinition extends LengthRestrictedTypeDefinition<BinaryTypeDefinition> {
+
 }
