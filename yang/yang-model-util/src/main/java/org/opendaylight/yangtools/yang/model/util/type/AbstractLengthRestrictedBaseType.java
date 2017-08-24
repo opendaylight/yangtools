@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.collect.ImmutableList;
-import java.util.List;
+import com.google.common.collect.ImmutableRangeMap;
+import com.google.common.collect.RangeMap;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthRestrictedTypeDefinition;
 
 abstract class AbstractLengthRestrictedBaseType<T extends LengthRestrictedTypeDefinition<T>> extends AbstractBaseType<T>
@@ -21,7 +21,7 @@ abstract class AbstractLengthRestrictedBaseType<T extends LengthRestrictedTypeDe
     }
 
     @Override
-    public final List<LengthConstraint> getLengthConstraints() {
-        return ImmutableList.of();
+    public final RangeMap<Integer, ConstraintMetaDefinition> getLengthConstraints() {
+        return ImmutableRangeMap.of();
     }
 }

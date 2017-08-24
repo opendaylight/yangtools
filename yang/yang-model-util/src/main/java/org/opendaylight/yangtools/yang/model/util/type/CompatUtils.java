@@ -8,15 +8,16 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.RangeMap;
 import java.util.List;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
@@ -170,10 +171,10 @@ public final class CompatUtils {
     private static TypeDefinition<?> baseTypeIfNotConstrained(final StringTypeDefinition type) {
         final StringTypeDefinition base = type.getBaseType();
         final List<PatternConstraint> patterns = type.getPatternConstraints();
-        final List<LengthConstraint> lengths = type.getLengthConstraints();
+        final RangeMap<Integer, ConstraintMetaDefinition> lengths = type.getLengthConstraints();
 
         if ((patterns.isEmpty() || patterns.equals(base.getPatternConstraints()))
-                && (lengths.isEmpty() || lengths.equals(base.getLengthConstraints()))) {
+                && (lengths.asMapOfRanges().isEmpty() || lengths.equals(base.getLengthConstraints()))) {
             return base;
         }
 
@@ -187,9 +188,11 @@ public final class CompatUtils {
 
     private static TypeDefinition<?> baseTypeIfNotConstrained(final TypeDefinition<?> type,
             final List<?> typeConstraints, final TypeDefinition<?> base, final List<?> baseConstraints) {
-        if (typeConstraints.isEmpty() || typeConstraints.equals(baseConstraints)) {
-            return base;
-        }
-        return type;
+        return typeConstraints.isEmpty() || typeConstraints.equals(baseConstraints) ? base : type;
+    }
+
+    private static TypeDefinition<?> baseTypeIfNotConstrained(final TypeDefinition<?> type,
+            final RangeMap<?, ?> typeConstraints, final TypeDefinition<?> base, final RangeMap<?, ?> baseConstraints) {
+        return typeConstraints.asMapOfRanges().isEmpty() || typeConstraints.equals(baseConstraints) ? base : type;
     }
 }

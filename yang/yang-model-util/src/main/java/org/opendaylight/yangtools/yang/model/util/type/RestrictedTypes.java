@@ -8,8 +8,10 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.RangeMap;
 import java.util.List;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -21,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
@@ -70,12 +71,12 @@ public final class RestrictedTypes {
             @Nonnull final BinaryTypeDefinition baseType, @Nonnull final SchemaPath path) {
         return new LengthRestrictedTypeBuilder<BinaryTypeDefinition>(baseType, path) {
             @Override
-            BinaryTypeDefinition buildType(final List<LengthConstraint> lengthConstraints) {
+            BinaryTypeDefinition buildType(final RangeMap<Integer, ConstraintMetaDefinition> lengthConstraints) {
                 return new RestrictedBinaryType(getBaseType(), getPath(), getUnknownSchemaNodes(), lengthConstraints);
             }
 
             @Override
-            List<LengthConstraint> typeLengthConstraints() {
+            RangeMap<Integer, ConstraintMetaDefinition> typeLengthConstraints() {
                 /**
                  * Length constraint imposed on YANG binary type by our implementation. byte[].length is an integer,
                  * capping our ability to support arbitrary binary data.

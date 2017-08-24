@@ -10,14 +10,10 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableRangeSet;
-import com.google.common.collect.Range;
-import com.google.common.collect.RangeSet;
-import com.google.common.collect.TreeRangeSet;
-import java.util.Collection;
+import com.google.common.collect.RangeMap;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.data.api.codec.StringCodec;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 
 /**
@@ -27,19 +23,14 @@ import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 public class StringStringCodec extends TypeDefinitionAwareCodec<String, StringTypeDefinition>
         implements StringCodec<String> {
 
-    private final RangeSet<Integer> lengths;
+    private final RangeMap<Integer, ConstraintMetaDefinition> lengths;
 
     StringStringCodec(final StringTypeDefinition typeDef) {
         super(Optional.of(typeDef), String.class);
 
-        final Collection<LengthConstraint> constraints = typeDef.getLengthConstraints();
-        if (!constraints.isEmpty()) {
-            final RangeSet<Integer> tmp = TreeRangeSet.create();
-            for (LengthConstraint c : constraints) {
-                tmp.add(Range.closed(c.getMin().intValue(), c.getMax().intValue()));
-            }
-
-            lengths = ImmutableRangeSet.copyOf(tmp);
+        final RangeMap<Integer, ConstraintMetaDefinition> constraints = typeDef.getLengthConstraints();
+        if (!constraints.asMapOfRanges().isEmpty()) {
+            lengths = constraints;
         } else {
             lengths = null;
         }
@@ -70,8 +61,8 @@ public class StringStringCodec extends TypeDefinitionAwareCodec<String, StringTy
 
     void validate(final String s) {
         if (lengths != null) {
-            Preconditions.checkArgument(lengths.contains(s.length()), "String '%s' does not match allowed lengths %s",
-                lengths);
+            Preconditions.checkArgument(lengths.get(s.length()) != null,
+                    "String '%s' does not match allowed lengths %s", lengths);
         }
     }
 }

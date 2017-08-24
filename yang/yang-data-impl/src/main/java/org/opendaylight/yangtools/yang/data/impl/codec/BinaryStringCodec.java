@@ -10,15 +10,12 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableRangeSet;
-import com.google.common.collect.Range;
-import com.google.common.collect.RangeSet;
-import com.google.common.collect.TreeRangeSet;
+import com.google.common.collect.RangeMap;
 import com.google.common.io.BaseEncoding;
 import javax.xml.bind.DatatypeConverter;
 import org.opendaylight.yangtools.yang.data.api.codec.BinaryCodec;
+import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
 
 /**
@@ -28,22 +25,17 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 public abstract class BinaryStringCodec extends TypeDefinitionAwareCodec<byte[], BinaryTypeDefinition>
         implements BinaryCodec<String> {
     private static final class Restricted extends BinaryStringCodec {
-        private final RangeSet<Integer> ranges;
+        private final RangeMap<Integer, ConstraintMetaDefinition> ranges;
 
         Restricted(final BinaryTypeDefinition typeDef) {
             super(typeDef);
-
-            final RangeSet<Integer> r = TreeRangeSet.create();
-            for (LengthConstraint c : typeDef.getLengthConstraints()) {
-                r.add(Range.closed(c.getMin().intValue(), c.getMax().intValue()));
-            }
-
-            ranges = ImmutableRangeSet.copyOf(r);
+            ranges = typeDef.getLengthConstraints();
         }
 
         @Override
         void validate(final byte[] value) {
-            Preconditions.checkArgument(ranges.contains(value.length),
+            final ConstraintMetaDefinition constraint = ranges.get(value.length);
+            Preconditions.checkArgument(constraint != null,
                 "Value length %s does not match constraints %s", value.length, ranges);
         }
     }
@@ -64,7 +56,7 @@ public abstract class BinaryStringCodec extends TypeDefinitionAwareCodec<byte[],
     }
 
     public static BinaryStringCodec from(final BinaryTypeDefinition type) {
-        return type.getLengthConstraints().isEmpty() ? new Unrestricted(type) : new Restricted(type);
+        return type.getLengthConstraints().asMapOfRanges().isEmpty() ? new Unrestricted(type) : new Restricted(type);
     }
 
     @Override

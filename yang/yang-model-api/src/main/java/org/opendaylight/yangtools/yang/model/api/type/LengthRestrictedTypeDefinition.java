@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
-import java.util.List;
+import com.google.common.collect.RangeMap;
+import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -23,5 +24,5 @@ public interface LengthRestrictedTypeDefinition<T extends TypeDefinition<T>> ext
      * @return list of length constraint which are specified in the <code>length</code> substatement
      *         of the <code>type</code> statement.
      */
-    List<LengthConstraint> getLengthConstraints();
+    RangeMap<Integer, ConstraintMetaDefinition> getLengthConstraints();
 }

@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import com.google.common.collect.Range;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -26,6 +27,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,6 +39,7 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
+import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
@@ -56,7 +59,6 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
@@ -245,7 +247,7 @@ public class YangParserTest {
         assertEquals(1, patterns.size());
         PatternConstraint pattern = patterns.iterator().next();
         assertEquals("^[e-z]*$", pattern.getRegularExpression());
-        assertEquals(1, type.getLengthConstraints().size());
+        assertEquals(1, type.getLengthConstraints().asMapOfRanges().size());
 
         final StringTypeDefinition baseType1 = type.getBaseType();
         final QName baseType1QName = baseType1.getQName();
@@ -258,7 +260,7 @@ public class YangParserTest {
         assertEquals(1, patterns.size());
         pattern = patterns.iterator().next();
         assertEquals("^[b-u]*$", pattern.getRegularExpression());
-        assertEquals(1, baseType1.getLengthConstraints().size());
+        assertEquals(1, baseType1.getLengthConstraints().asMapOfRanges().size());
 
         final StringTypeDefinition baseType2 = baseType1.getBaseType();
         final QName baseType2QName = baseType2.getQName();
@@ -268,11 +270,12 @@ public class YangParserTest {
         assertNull(baseType2.getUnits());
         assertNull(baseType2.getDefaultValue());
         assertTrue(baseType2.getPatternConstraints().isEmpty());
-        final List<LengthConstraint> baseType2Lengths = baseType2.getLengthConstraints();
+        final Map<Range<Integer>, ConstraintMetaDefinition> baseType2Lengths = baseType2.getLengthConstraints()
+                .asMapOfRanges();
         assertEquals(1, baseType2Lengths.size());
-        LengthConstraint length = baseType2Lengths.get(0);
-        assertEquals(6, length.getMin().intValue());
-        assertEquals(10, length.getMax().intValue());
+        Range<Integer> length = baseType2Lengths.keySet().iterator().next();
+        assertEquals(6, length.lowerEndpoint().intValue());
+        assertEquals(10, length.upperEndpoint().intValue());
 
         final StringTypeDefinition baseType3 = baseType2.getBaseType();
         final QName baseType3QName = baseType3.getQName();
@@ -285,11 +288,12 @@ public class YangParserTest {
         assertEquals(1, patterns.size());
         pattern = patterns.iterator().next();
         assertEquals("^[a-k]*$", pattern.getRegularExpression());
-        final List<LengthConstraint> baseType3Lengths = baseType3.getLengthConstraints();
+        final Map<Range<Integer>, ConstraintMetaDefinition> baseType3Lengths = baseType3.getLengthConstraints()
+                .asMapOfRanges();
         assertEquals(1, baseType3Lengths.size());
-        length = baseType3Lengths.get(0);
-        assertEquals(5, length.getMin().intValue());
-        assertEquals(11, length.getMax().intValue());
+        length = baseType3Lengths.keySet().iterator().next();
+        assertEquals(5, length.lowerEndpoint().intValue());
+        assertEquals(11, length.upperEndpoint().intValue());
 
         assertEquals(BaseTypes.stringType(), baseType3.getBaseType());
     }
@@ -335,7 +339,7 @@ public class YangParserTest {
         assertEquals(1, patterns.size());
         final PatternConstraint pattern = patterns.iterator().next();
         assertEquals("^[e-z]*$", pattern.getRegularExpression());
-        assertEquals(1, type.getLengthConstraints().size());
+        assertEquals(1, type.getLengthConstraints().asMapOfRanges().size());
 
         final LeafSchemaNode multiplePatternDirectStringDefLeaf = (LeafSchemaNode) foo
                 .getDataChildByName(QName.create(foo.getQNameModule(), "multiple-pattern-direct-string-def-leaf"));
@@ -377,11 +381,11 @@ public class YangParserTest {
         assertNull(type.getUnits());
         assertNull(type.getDefaultValue());
         assertTrue(type.getPatternConstraints().isEmpty());
-        final List<LengthConstraint> typeLengths = type.getLengthConstraints();
+        final Map<Range<Integer>, ConstraintMetaDefinition> typeLengths = type.getLengthConstraints().asMapOfRanges();
         assertEquals(1, typeLengths.size());
-        LengthConstraint length = typeLengths.get(0);
-        assertEquals(7, length.getMin().intValue());
-        assertEquals(10, length.getMax().intValue());
+        Range<Integer> length = typeLengths.keySet().iterator().next();
+        assertEquals(7, length.lowerEndpoint().intValue());
+        assertEquals(10, length.upperEndpoint().intValue());
 
         final StringTypeDefinition baseType1 = type.getBaseType();
         final QName baseType1QName = baseType1.getQName();
@@ -391,11 +395,12 @@ public class YangParserTest {
         assertNull(baseType1.getUnits());
         assertNull(baseType1.getDefaultValue());
         assertTrue(baseType1.getPatternConstraints().isEmpty());
-        final List<LengthConstraint> baseType2Lengths = baseType1.getLengthConstraints();
+        final Map<Range<Integer>, ConstraintMetaDefinition> baseType2Lengths = baseType1.getLengthConstraints()
+                .asMapOfRanges();
         assertEquals(1, baseType2Lengths.size());
-        length = baseType2Lengths.get(0);
-        assertEquals(6, length.getMin().intValue());
-        assertEquals(10, length.getMax().intValue());
+        length = baseType2Lengths.keySet().iterator().next();
+        assertEquals(6, length.lowerEndpoint().intValue());
+        assertEquals(10, length.upperEndpoint().intValue());
 
         final StringTypeDefinition baseType2 = baseType1.getBaseType();
         final QName baseType2QName = baseType2.getQName();
@@ -408,11 +413,12 @@ public class YangParserTest {
         assertEquals(1, patterns.size());
         final PatternConstraint pattern = patterns.iterator().next();
         assertEquals("^[a-k]*$", pattern.getRegularExpression());
-        final List<LengthConstraint> baseType3Lengths = baseType2.getLengthConstraints();
+        final Map<Range<Integer>, ConstraintMetaDefinition> baseType3Lengths = baseType2.getLengthConstraints()
+                .asMapOfRanges();
         assertEquals(1, baseType3Lengths.size());
-        length = baseType3Lengths.get(0);
-        assertEquals(5, length.getMin().intValue());
-        assertEquals(11, length.getMax().intValue());
+        length = baseType3Lengths.keySet().iterator().next();
+        assertEquals(5, length.lowerEndpoint().intValue());
+        assertEquals(11, length.upperEndpoint().intValue());
 
         assertEquals(BaseTypes.stringType(), baseType2.getBaseType());
     }

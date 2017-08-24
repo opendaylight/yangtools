@@ -8,16 +8,18 @@
 
 package org.opendaylight.yangtools.yang.stmt;
 
+import com.google.common.collect.Range;
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 
@@ -48,7 +50,8 @@ public class Bug4623Test {
         Assert.assertEquals(unknownSchemaNode.getNodeParameter(), "unknown");
         Assert.assertEquals(unknownSchemaNode.getNodeType().getModule().getNamespace().toString(), "urn:simple.extension.typedefs");
 
-        final List<LengthConstraint> lengthConstraints = ((StringTypeDefinition) type).getLengthConstraints();
+        final Map<Range<Integer>, ConstraintMetaDefinition> lengthConstraints =
+                ((StringTypeDefinition) type).getLengthConstraints().asMapOfRanges();
         final List<PatternConstraint> patternConstraints = ((StringTypeDefinition) type).getPatternConstraints();
 
         Assert.assertNotNull(lengthConstraints);
@@ -56,9 +59,9 @@ public class Bug4623Test {
         Assert.assertFalse(lengthConstraints.size() == 0);
         Assert.assertFalse(patternConstraints.size() == 0);
 
-        final LengthConstraint lengthConstraint = lengthConstraints.get(0);
-        Assert.assertEquals(lengthConstraint.getMin(), Integer.valueOf(2));
-        Assert.assertEquals(lengthConstraint.getMax(), Integer.valueOf(10));
+        final Range<Integer> lengthConstraint = lengthConstraints.keySet().iterator().next();
+        Assert.assertEquals(Integer.valueOf(2), lengthConstraint.lowerEndpoint());
+        Assert.assertEquals(Integer.valueOf(10), lengthConstraint.upperEndpoint());
 
         final PatternConstraint patternConstraint = patternConstraints.get(0);
         Assert.assertEquals(patternConstraint.getRegularExpression(), "^[0-9a-fA-F]$");
@@ -89,7 +92,8 @@ public class Bug4623Test {
         Assert.assertEquals(unknownSchemaNode.getNodeParameter(), "unknown");
         Assert.assertEquals(unknownSchemaNode.getNodeType().getModule().getNamespace().toString(), "urn:simple.extension.typedefs");
 
-        final List<LengthConstraint> lengthConstraints = ((StringTypeDefinition) type).getLengthConstraints();
+        final Map<Range<Integer>, ConstraintMetaDefinition> lengthConstraints =
+                ((StringTypeDefinition) type).getLengthConstraints().asMapOfRanges();
         final List<PatternConstraint> patternConstraints = ((StringTypeDefinition) type).getPatternConstraints();
 
         Assert.assertNotNull(lengthConstraints);
@@ -97,9 +101,9 @@ public class Bug4623Test {
         Assert.assertFalse(lengthConstraints.size() == 0);
         Assert.assertFalse(patternConstraints.size() == 0);
 
-        final LengthConstraint lengthConstraint = lengthConstraints.get(0);
-        Assert.assertEquals(lengthConstraint.getMin(), Integer.valueOf(2));
-        Assert.assertEquals(lengthConstraint.getMax(), Integer.valueOf(10));
+        final Range<Integer> lengthConstraint = lengthConstraints.keySet().iterator().next();
+        Assert.assertEquals(Integer.valueOf(2), lengthConstraint.lowerEndpoint());
+        Assert.assertEquals(Integer.valueOf(10), lengthConstraint.upperEndpoint());
 
         final PatternConstraint patternConstraint = patternConstraints.get(0);
         Assert.assertEquals(patternConstraint.getRegularExpression(), "^[0-9a-fA-F]$");
@@ -130,7 +134,8 @@ public class Bug4623Test {
         Assert.assertEquals(unknownSchemaNode.getNodeParameter(), "unknown");
         Assert.assertEquals(unknownSchemaNode.getNodeType().getModule().getNamespace().toString(), "urn:simple.extension.typedefs");
 
-        final List<LengthConstraint> lengthConstraints = ((StringTypeDefinition) type).getLengthConstraints();
+        final Map<Range<Integer>, ConstraintMetaDefinition> lengthConstraints =
+                ((StringTypeDefinition) type).getLengthConstraints().asMapOfRanges();
         final List<PatternConstraint> patternConstraints = ((StringTypeDefinition) type).getPatternConstraints();
 
         Assert.assertNotNull(lengthConstraints);
@@ -138,9 +143,9 @@ public class Bug4623Test {
         Assert.assertFalse(lengthConstraints.size() == 0);
         Assert.assertFalse(patternConstraints.size() == 0);
 
-        final LengthConstraint lengthConstraint = lengthConstraints.get(0);
-        Assert.assertEquals(lengthConstraint.getMin(), Integer.valueOf(2));
-        Assert.assertEquals(lengthConstraint.getMax(), Integer.valueOf(10));
+        final Range<Integer> lengthConstraint = lengthConstraints.keySet().iterator().next();
+        Assert.assertEquals(Integer.valueOf(2), lengthConstraint.lowerEndpoint());
+        Assert.assertEquals(Integer.valueOf(10), lengthConstraint.upperEndpoint());
 
         final PatternConstraint patternConstraint = patternConstraints.get(0);
         Assert.assertEquals(patternConstraint.getRegularExpression(), "^[0-9a-fA-F]$");

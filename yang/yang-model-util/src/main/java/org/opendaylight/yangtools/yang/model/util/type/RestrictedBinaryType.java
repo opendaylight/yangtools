@@ -7,17 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import com.google.common.collect.RangeMap;
 import java.util.Collection;
+import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
 final class RestrictedBinaryType extends AbstractLengthRestrictedType<BinaryTypeDefinition>
         implements BinaryTypeDefinition {
     RestrictedBinaryType(final BinaryTypeDefinition baseType, final SchemaPath path,
             final Collection<UnknownSchemaNode> unknownSchemaNodes,
-            final Collection<LengthConstraint> lengthConstraints) {
+            final RangeMap<Integer, ConstraintMetaDefinition> lengthConstraints) {
         super(baseType, path, unknownSchemaNodes, lengthConstraints);
     }
 

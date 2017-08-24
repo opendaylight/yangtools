@@ -15,12 +15,15 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import com.google.common.collect.Range;
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -33,7 +36,6 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
@@ -159,11 +161,11 @@ public class TypesResolutionTest {
                 + "([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.?)" + "|\\.$";
         assertEquals(expectedPattern, patterns.get(0).getRegularExpression());
 
-        List<LengthConstraint> lengths = type.getLengthConstraints();
+        Map<Range<Integer>, ConstraintMetaDefinition> lengths = type.getLengthConstraints().asMapOfRanges();
         assertEquals(1, lengths.size());
-        LengthConstraint length = type.getLengthConstraints().get(0);
-        assertEquals(Integer.valueOf(1), length.getMin());
-        assertEquals(Integer.valueOf(253), length.getMax());
+        Range<Integer> length = lengths.keySet().iterator().next();
+        assertEquals(Integer.valueOf(1), length.lowerEndpoint());
+        assertEquals(Integer.valueOf(253), length.upperEndpoint());
     }
 
     @Test

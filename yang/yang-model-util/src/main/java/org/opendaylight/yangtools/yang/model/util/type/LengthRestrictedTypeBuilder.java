@@ -7,18 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.ImmutableRangeMap;
+import com.google.common.collect.ImmutableRangeMap.Builder;
+import com.google.common.collect.Range;
+import com.google.common.collect.RangeMap;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
+import java.util.Map.Entry;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.LengthRestrictedTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 import org.opendaylight.yangtools.yang.model.util.UnresolvedNumber;
 
 public abstract class LengthRestrictedTypeBuilder<T extends LengthRestrictedTypeDefinition<T>>
@@ -36,132 +39,68 @@ public abstract class LengthRestrictedTypeBuilder<T extends LengthRestrictedType
         touch();
     }
 
-    private static List<LengthConstraint> ensureResolvedLengths(final List<LengthConstraint> unresolved,
-            final List<LengthConstraint> baseRangeConstraints) {
-        // First check if we need to resolve anything at all
+    private static RangeMap<Integer, ConstraintMetaDefinition> ensureResolvedLengths(
+            final List<LengthConstraint> unresolved, final RangeMap<Integer, ConstraintMetaDefinition> baseLengths) {
+        final Builder<Integer, ConstraintMetaDefinition> builder = ImmutableRangeMap.builder();
+        final Range<Integer> span = baseLengths.span();
         for (LengthConstraint c : unresolved) {
-            if (c.getMax() instanceof UnresolvedNumber || c.getMin() instanceof UnresolvedNumber) {
-                return resolveLengths(unresolved, baseRangeConstraints);
-            }
-        }
-
-        // No need, just return the same list
-        return unresolved;
-    }
-
-    private static List<LengthConstraint> resolveLengths(final List<LengthConstraint> unresolved,
-            final List<LengthConstraint> baseLengthConstraints) {
-        final Builder<LengthConstraint> builder = ImmutableList.builder();
-
-        for (LengthConstraint c : unresolved) {
-            final Number max = c.getMax();
-            final Number min = c.getMin();
-
-            if (max instanceof UnresolvedNumber || min instanceof UnresolvedNumber) {
-                final Number rMax = max instanceof UnresolvedNumber
-                    ? ((UnresolvedNumber)max).resolveLength(baseLengthConstraints) : max;
-                final Number rMin = min instanceof UnresolvedNumber
-                    ? ((UnresolvedNumber)min).resolveLength(baseLengthConstraints) : min;
-
-                builder.add(BaseConstraints.newLengthConstraint(rMin, rMax, Optional.fromNullable(c.getDescription()),
-                    Optional.fromNullable(c.getReference()), c.getErrorAppTag(), c.getErrorMessage()));
-            } else {
-                builder.add(c);
-            }
+            builder.put(Range.closed(resolveLength(c.getMin(), span), resolveLength(c.getMax(), span)), c);
         }
 
         return builder.build();
     }
 
-    private static List<LengthConstraint> ensureTypedLengths(final List<LengthConstraint> lengths,
-            final Class<? extends Number> clazz) {
-        for (LengthConstraint c : lengths) {
-            if (!clazz.isInstance(c.getMin()) || !clazz.isInstance(c.getMax())) {
-                return typedLengths(lengths, clazz);
-            }
+    private static Integer resolveLength(final Number unresolved, final Range<Integer> span) {
+        if (unresolved instanceof Integer) {
+            return (Integer) unresolved;
+        }
+        if (unresolved instanceof UnresolvedNumber) {
+            return ((UnresolvedNumber)unresolved).resolveLength(span);
         }
 
-        return lengths;
+        return Verify.verifyNotNull(NumberUtil.converterTo(Integer.class)).apply(unresolved);
     }
 
-    private static List<LengthConstraint> typedLengths(final List<LengthConstraint> lengths,
-            final Class<? extends Number> clazz) {
-        final Function<Number, Number> function = NumberUtil.converterTo(clazz);
-        Preconditions.checkArgument(function != null, "Unsupported range class %s", clazz);
-
-        final Builder<LengthConstraint> builder = ImmutableList.builder();
-
-        for (LengthConstraint c : lengths) {
-            if (!clazz.isInstance(c.getMin()) || !clazz.isInstance(c.getMax())) {
-                final Number min;
-                final Number max;
-
-                try {
-                    min = function.apply(c.getMin());
-                    max = function.apply(c.getMax());
-                } catch (NumberFormatException e) {
-                    throw new IllegalArgumentException(String.format("Constraint %s does not fit into range of %s",
-                        c, clazz.getSimpleName()), e);
-                }
-                builder.add(BaseConstraints.newLengthConstraint(min, max, Optional.fromNullable(c.getDescription()),
-                    Optional.fromNullable(c.getReference()), c.getErrorAppTag(), c.getErrorMessage()));
-            } else {
-                builder.add(c);
-            }
-        }
-
-        return builder.build();
-    }
-
-    private static boolean lengthCovered(final List<LengthConstraint> where,
-            final LengthConstraint what) {
-        for (LengthConstraint c : where) {
-            if (NumberUtil.isRangeCovered(what.getMin(), what.getMax(), c.getMin(), c.getMax())) {
-                return true;
-            }
-        }
-
-        return false;
+    private static boolean lengthCovered(final RangeMap<Integer, ConstraintMetaDefinition> where,
+            final Range<Integer> what) {
+        return where.asMapOfRanges().keySet().stream().anyMatch(range -> range.encloses(what));
     }
 
     @Override
     final T buildType() {
-        final List<LengthConstraint> baseLengths = findLenghts();
+        final RangeMap<Integer, ConstraintMetaDefinition> baseLengths = findLenghts();
 
         if (lengthAlternatives == null || lengthAlternatives.isEmpty()) {
             return buildType(baseLengths);
         }
 
         // Run through alternatives and resolve them against the base type
-        final List<LengthConstraint> resolvedLengths = ensureResolvedLengths(lengthAlternatives, baseLengths);
-
-        // Next up, ensure the of boundaries match base constraints
-        final Class<? extends Number> clazz = baseLengths.get(0).getMin().getClass();
-        final List<LengthConstraint> typedLengths = ensureTypedLengths(resolvedLengths, clazz);
+        final RangeMap<Integer, ConstraintMetaDefinition> resolvedLengths = ensureResolvedLengths(lengthAlternatives,
+            baseLengths);
 
         // Now verify if new ranges are strict subset of base ranges
-        for (LengthConstraint c : typedLengths) {
-            if (!lengthCovered(baseLengths, c)) {
-                throw new InvalidLengthConstraintException(c,
-                        "Length constraint %s is not a subset of parent constraints %s", c, baseLengths);
+        for (Entry<Range<Integer>, ConstraintMetaDefinition> entry : resolvedLengths.asMapOfRanges().entrySet()) {
+            if (!lengthCovered(baseLengths, entry.getKey())) {
+                throw new InvalidLengthConstraintException((LengthConstraint)entry.getValue(),
+                        "Length constraint %s is not a subset of parent constraints %s", entry.getValue(), baseLengths);
             }
         }
 
-        return buildType(typedLengths);
+        return buildType(resolvedLengths);
     }
 
-    abstract T buildType(List<LengthConstraint> lengthConstraints);
+    abstract T buildType(RangeMap<Integer, ConstraintMetaDefinition> lengthConstraints);
 
-    abstract List<LengthConstraint> typeLengthConstraints();
+    abstract RangeMap<Integer, ConstraintMetaDefinition> typeLengthConstraints();
 
-    private List<LengthConstraint> findLenghts() {
-        List<LengthConstraint> ret = ImmutableList.of();
+    private RangeMap<Integer, ConstraintMetaDefinition> findLenghts() {
+        RangeMap<Integer, ConstraintMetaDefinition> ret = ImmutableRangeMap.of();
         T wlk = getBaseType();
-        while (wlk != null && ret.isEmpty()) {
+        while (wlk != null && ret.asMapOfRanges().isEmpty()) {
             ret = wlk.getLengthConstraints();
             wlk = wlk.getBaseType();
         }
 
-        return ret.isEmpty() ? typeLengthConstraints() : ret;
+        return ret.asMapOfRanges().isEmpty() ? typeLengthConstraints() : ret;
     }
 }

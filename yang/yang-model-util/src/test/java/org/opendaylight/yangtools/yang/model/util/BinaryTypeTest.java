@@ -25,7 +25,7 @@ public class BinaryTypeTest {
         final BinaryTypeDefinition binType = binaryType();
         final BinaryTypeDefinition binType1 = binaryType();
 
-        assertEquals(0, binType.getLengthConstraints().size());
+        assertEquals(0, binType.getLengthConstraints().asMapOfRanges().size());
         assertNull(binType.getDefaultValue());
         assertEquals("CURRENT", Status.CURRENT, binType.getStatus());
         assertEquals("Base type is null", null, binType.getBaseType());

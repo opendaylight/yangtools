@@ -15,10 +15,13 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import com.google.common.collect.Range;
 import java.util.List;
+import java.util.Map.Entry;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -34,7 +37,6 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPai
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -78,7 +80,7 @@ public class EffectiveStatementTypeTest {
         assertNull(binaryEff.getUnits());
         assertNull(binaryEff.getDefaultValue());
         assertEquals("binary", binaryEff.getQName().getLocalName());
-        assertEquals(0, binaryEff.getLengthConstraints().size());
+        assertEquals(0, binaryEff.getLengthConstraints().asMapOfRanges().size());
         assertEquals("CURRENT", binaryEff.getStatus().toString());
         assertEquals("binary", binaryEff.getPath().getPathFromRoot().iterator().next().getLocalName());
         assertNotNull(binaryEff.getUnknownSchemaNodes());
@@ -384,22 +386,25 @@ public class EffectiveStatementTypeTest {
         currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(),
                 "leaf-length-pattern"));
         assertNotNull(currentLeaf.getType());
-        final LengthConstraint lengthConstraint = ((StringTypeDefinition) currentLeaf.getType())
-                .getLengthConstraints().get(0);
-        final LengthConstraint lengthConstraintThird = ((StringTypeDefinition) currentLeaf.getType())
-                .getLengthConstraints().get(0);
+        final Entry<Range<Integer>, ConstraintMetaDefinition> lengthConstraint =
+                ((StringTypeDefinition) currentLeaf.getType())
+                .getLengthConstraints().asMapOfRanges().entrySet().iterator().next();
+        final Entry<Range<Integer>, ConstraintMetaDefinition> lengthConstraintThird =
+                ((StringTypeDefinition) currentLeaf.getType())
+                .getLengthConstraints().asMapOfRanges().entrySet().iterator().next();
         currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(),
                 "leaf-length-pattern-second"));
         assertNotNull(currentLeaf.getType());
-        final LengthConstraint lengthConstraintSecond = ((StringTypeDefinition) currentLeaf.getType())
-                .getLengthConstraints().get(0);
+        final Entry<Range<Integer>, ConstraintMetaDefinition> lengthConstraintSecond =
+                ((StringTypeDefinition) currentLeaf.getType())
+                .getLengthConstraints().asMapOfRanges().entrySet().iterator().next();
 
-        assertEquals(1, lengthConstraint.getMin().intValue());
-        assertEquals(255, lengthConstraint.getMax().intValue());
-        assertNull(lengthConstraint.getReference());
-        assertNull(lengthConstraint.getDescription());
-        assertEquals("The argument is out of bounds <1, 255>", lengthConstraint.getErrorMessage());
-        assertEquals("length-out-of-specified-bounds", lengthConstraint.getErrorAppTag());
+        assertEquals(1, lengthConstraint.getKey().lowerEndpoint().intValue());
+        assertEquals(255, lengthConstraint.getKey().upperEndpoint().intValue());
+        assertNull(lengthConstraint.getValue().getReference());
+        assertNull(lengthConstraint.getValue().getDescription());
+        assertEquals("The argument is out of bounds <1, 255>", lengthConstraint.getValue().getErrorMessage());
+        assertEquals("length-out-of-specified-bounds", lengthConstraint.getValue().getErrorAppTag());
         assertNotNull(lengthConstraint.toString());
         assertNotNull(lengthConstraint.hashCode());
         assertFalse(lengthConstraint.equals(null));
@@ -457,7 +462,7 @@ public class EffectiveStatementTypeTest {
         assertFalse(stringEff.equals("test"));
         assertTrue(stringEff.equals(stringEff));
         assertEquals("string", stringEff.getPath().getLastComponent().getLocalName());
-        assertEquals(0, stringEff.getLengthConstraints().size());
+        assertEquals(0, stringEff.getLengthConstraints().asMapOfRanges().size());
         assertNotNull(stringEff.getPatternConstraints());
     }
 }

@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Range;
 import com.google.common.primitives.UnsignedInteger;
 import java.net.URI;
 import java.util.Collection;
@@ -33,6 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
+import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -75,7 +77,6 @@ import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
@@ -478,7 +479,7 @@ class SchemaContextEmitter {
         } else if (typeDef instanceof UnionTypeDefinition) {
             emitUnionSpecification((UnionTypeDefinition) typeDef);
         } else if (typeDef instanceof BinaryTypeDefinition) {
-            emitLength(((BinaryTypeDefinition) typeDef).getLengthConstraints());
+            emitLength(((BinaryTypeDefinition) typeDef).getLengthConstraints().asMapOfRanges());
         } else if (typeDef instanceof BooleanTypeDefinition || typeDef instanceof EmptyTypeDefinition) {
             // NOOP
         } else {
@@ -525,7 +526,7 @@ class SchemaContextEmitter {
 
         // FIXME: BUG-2444:  Wrong decomposition in API, should be LenghtConstraint
         // which contains ranges.
-        emitLength(typeDef.getLengthConstraints());
+        emitLength(typeDef.getLengthConstraints().asMapOfRanges());
 
         for (final PatternConstraint pattern : typeDef.getPatternConstraints()) {
             emitPatternNode(pattern);
@@ -533,11 +534,11 @@ class SchemaContextEmitter {
 
     }
 
-    private void emitLength(final List<LengthConstraint> list) {
-        if (!list.isEmpty()) {
-            writer.startLengthNode(toLengthString(list));
+    private void emitLength(final Map<Range<Integer>, ConstraintMetaDefinition> map) {
+        if (!map.isEmpty()) {
+            writer.startLengthNode(toLengthString(map.keySet()));
             // FIXME: BUG-2444:  Workaround for incorrect decomposition in API
-            final LengthConstraint first = list.iterator().next();
+            final ConstraintMetaDefinition first = map.values().iterator().next();
             emitErrorMessageNode(first.getErrorMessage());
             emitErrorAppTagNode(first.getErrorAppTag());
             emitDescriptionNode(first.getDescription());
@@ -546,8 +547,8 @@ class SchemaContextEmitter {
         }
     }
 
-    private static String toLengthString(final List<LengthConstraint> list) {
-        final Iterator<LengthConstraint> it = list.iterator();
+    private static String toLengthString(final Set<Range<Integer>> set) {
+        final Iterator<Range<Integer>> it = set.iterator();
         if (!it.hasNext()) {
             return "";
         }
@@ -555,9 +556,9 @@ class SchemaContextEmitter {
         final StringBuilder sb = new StringBuilder();
         boolean haveNext;
         do {
-            final LengthConstraint current = it.next();
+            final Range<Integer> current = it.next();
             haveNext = it.hasNext();
-            appendRange(sb, current.getMin(), current.getMax(), haveNext);
+            appendRange(sb, current.lowerEndpoint(), current.upperEndpoint(), haveNext);
         } while (haveNext);
 
         return sb.toString();
