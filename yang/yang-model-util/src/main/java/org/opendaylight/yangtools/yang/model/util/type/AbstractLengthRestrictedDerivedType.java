@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -27,7 +27,7 @@ abstract class AbstractLengthRestrictedDerivedType<T extends LengthRestrictedTyp
 
     @Nonnull
     @Override
-    public final List<LengthConstraint> getLengthConstraints() {
-        return baseType().getLengthConstraints();
+    public final Optional<LengthConstraint> getLengthConstraint() {
+        return baseType().getLengthConstraint();
     }
 }

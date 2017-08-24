@@ -8,6 +8,8 @@
 
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
+import static org.mockito.Mockito.doReturn;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import java.io.ByteArrayInputStream;
@@ -194,7 +196,8 @@ public class XmlDocumentUtilsTest {
         Assert.assertNotNull(provider);
         Assert.assertEquals(XmlUtils.DEFAULT_XML_CODEC_PROVIDER, provider);
 
-        final TypeDefinition<?> baseType = Mockito.mock(BinaryTypeDefinition.class);
+        final BinaryTypeDefinition baseType = Mockito.mock(BinaryTypeDefinition.class);
+        doReturn(java.util.Optional.empty()).when(baseType).getLengthConstraint();
         final TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codec = provider.codecFor(baseType);
         Assert.assertNotNull(codec);
     }

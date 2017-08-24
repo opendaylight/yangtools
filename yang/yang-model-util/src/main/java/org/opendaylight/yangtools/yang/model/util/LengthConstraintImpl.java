@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableRangeSet;
+import com.google.common.collect.RangeSet;
 import java.util.Objects;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
@@ -25,31 +26,24 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
  * </ul>
  */
 final class LengthConstraintImpl implements LengthConstraint, Immutable {
-
-    private final Number min;
-    private final Number max;
-
+    private final RangeSet<Integer> ranges;
     private final String description;
     private final String reference;
-
     private final String errorAppTag;
     private final String errorMessage;
 
-    LengthConstraintImpl(final Number min, final Number max, final Optional<String> description,
-            final Optional<String> reference) {
-        this(min, max, description, reference, "length-out-of-specified-bounds", "The argument is out of bounds <"
-                + min + ", " + max + ">");
+    LengthConstraintImpl(final RangeSet<Integer> ranges, final @Nullable String description,
+            final @Nullable String reference) {
+        this(ranges, description, reference, null, null);
     }
 
-    LengthConstraintImpl(final Number min, final Number max, final Optional<String> description,
-            final Optional<String> reference, final String errorAppTag, final String errorMessage) {
-        this.min = Preconditions.checkNotNull(min, "min must not be null.");
-        this.max = Preconditions.checkNotNull(max, "max must not be null");
-        this.description = description.orNull();
-        this.reference = reference.orNull();
+    LengthConstraintImpl(final RangeSet<Integer> ranges, final @Nullable String description,
+            final @Nullable String reference, final String errorAppTag, final String errorMessage) {
+        this.ranges = ImmutableRangeSet.copyOf(ranges);
+        this.description = description;
+        this.reference = reference;
         this.errorAppTag = errorAppTag != null ? errorAppTag : "length-out-of-specified-bounds";
-        this.errorMessage = errorMessage != null ? errorMessage : "The argument is out of bounds <" + min + ", " + max
-                + ">";
+        this.errorMessage = errorMessage != null ? errorMessage : "The argument is out of bounds" + ranges;
     }
 
     @Override
@@ -73,26 +67,13 @@ final class LengthConstraintImpl implements LengthConstraint, Immutable {
     }
 
     @Override
-    public Number getMin() {
-        return min;
-    }
-
-    @Override
-    public Number getMax() {
-        return max;
+    public RangeSet<Integer> getAllowedRanges() {
+        return ranges;
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(description);
-        result = prime * result + errorAppTag.hashCode();
-        result = prime * result + errorMessage.hashCode();
-        result = prime * result + max.hashCode();
-        result = prime * result + min.hashCode();
-        result = prime * result + Objects.hashCode(reference);
-        return result;
+        return Objects.hash(description, errorAppTag, errorMessage, ranges, reference);
     }
 
     @Override
@@ -107,31 +88,14 @@ final class LengthConstraintImpl implements LengthConstraint, Immutable {
             return false;
         }
         final LengthConstraintImpl other = (LengthConstraintImpl) obj;
-        if (!Objects.equals(description, other.description)) {
-            return false;
-        }
-        if (!Objects.equals(errorAppTag, other.errorAppTag)) {
-            return false;
-        }
-        if (!Objects.equals(errorMessage, other.errorMessage)) {
-            return false;
-        }
-        if (max != other.max) {
-            return false;
-        }
-        if (min != other.min) {
-            return false;
-        }
-        if (!Objects.equals(reference, other.reference)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(description, other.description) && Objects.equals(errorAppTag, other.errorAppTag)
+            && Objects.equals(errorMessage, other.errorMessage) && ranges.equals(other.ranges)
+            && Objects.equals(reference, other.reference);
     }
 
     @Override
     public String toString() {
-        return "LengthConstraintImpl [min=" + min
-            + ", max=" + max
+        return "LengthConstraintImpl [ranges=" + ranges
             + ", description=" + description
             + ", errorAppTag=" + errorAppTag
             + ", reference=" + reference

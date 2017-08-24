@@ -201,7 +201,7 @@ public final class TypeUtils {
         final List<LengthConstraint> lengthConstraints = new ArrayList<>();
 
         for (final String singleRange : PIPE_SPLITTER.split(lengthArgument)) {
-            final Iterator<String> boundaries = TWO_DOTS_SPLITTER.splitToList(singleRange).iterator();
+            final Iterator<String> boundaries = TWO_DOTS_SPLITTER.split(singleRange).iterator();
             final Number min = parseIntegerConstraintValue(ctx, boundaries.next());
 
             final Number max;
