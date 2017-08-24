@@ -83,11 +83,6 @@ public final class RestrictedTypes {
                  */
                 return JavaLengthConstraints.INTEGER_SIZE_CONSTRAINTS;
             }
-
-            @Override
-            List<LengthConstraint> getLengthConstraints(final BinaryTypeDefinition type) {
-                return type.getLengthConstraints();
-            }
         };
     }
 

@@ -9,21 +9,16 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.collect.ImmutableList;
 import java.util.List;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
-final class BaseStringType extends AbstractBaseType<StringTypeDefinition> implements StringTypeDefinition {
+final class BaseStringType extends AbstractLengthRestrictedBaseType<StringTypeDefinition>
+        implements StringTypeDefinition {
     static final BaseStringType INSTANCE = new BaseStringType();
 
     private BaseStringType() {
         super(BaseTypes.STRING_QNAME);
-    }
-
-    @Override
-    public List<LengthConstraint> getLengthConstraints() {
-        return ImmutableList.of();
     }
 
     @Override

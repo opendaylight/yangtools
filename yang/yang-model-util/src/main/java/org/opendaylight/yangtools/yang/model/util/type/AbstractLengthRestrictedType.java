@@ -11,11 +11,12 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.LengthRestrictedTypeDefinition;
 
-abstract class AbstractLengthRestrictedType<T extends TypeDefinition<T>> extends AbstractRestrictedType<T> {
+abstract class AbstractLengthRestrictedType<T extends LengthRestrictedTypeDefinition<T>>
+        extends AbstractRestrictedType<T> implements LengthRestrictedTypeDefinition<T> {
     private final List<LengthConstraint> lengthConstraints;
 
     AbstractLengthRestrictedType(final T baseType, final SchemaPath path,
@@ -24,6 +25,7 @@ abstract class AbstractLengthRestrictedType<T extends TypeDefinition<T>> extends
         this.lengthConstraints = ImmutableList.copyOf(lengthConstraints);
     }
 
+    @Override
     public final List<LengthConstraint> getLengthConstraints() {
         return lengthConstraints;
     }

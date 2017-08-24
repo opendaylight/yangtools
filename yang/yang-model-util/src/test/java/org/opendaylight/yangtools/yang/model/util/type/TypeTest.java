@@ -71,8 +71,6 @@ public class TypeTest {
         final LengthRestrictedTypeBuilder<BinaryTypeDefinition> lengthRestrictedTypeBuilder = RestrictedTypes
                 .newBinaryBuilder(baseBinaryType1, SCHEMA_PATH);
         final BaseBinaryType baseBinaryType = (BaseBinaryType)lengthRestrictedTypeBuilder.build();
-        assertEquals(lengthRestrictedTypeBuilder.getLengthConstraints(baseBinaryType1),
-                baseBinaryType.getLengthConstraints());
         assertEquals(baseBinaryType, baseBinaryType1);
         concreteBuilderTest(baseBinaryType1, derivedBinaryType1);
     }
