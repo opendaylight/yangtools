@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 
-final class BaseDecimalType extends AbstractRangedBaseType<DecimalTypeDefinition> implements DecimalTypeDefinition {
+final class BaseDecimalType extends AbstractRangeRestrictedBaseType<DecimalTypeDefinition> implements DecimalTypeDefinition {
     private static final List<List<RangeConstraint>> IMPLICIT_RANGE_STATEMENTS;
 
     static {
