@@ -12,7 +12,6 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
-import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -26,11 +25,8 @@ import java.util.Iterator;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.GuardedBy;
-import org.opendaylight.yangtools.util.concurrent.ExceptionMapper;
-import org.opendaylight.yangtools.util.concurrent.ReflectiveExceptionMapper;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -51,8 +47,6 @@ import org.slf4j.LoggerFactory;
 @Beta
 public abstract class AbstractSchemaRepository implements SchemaRepository, SchemaSourceRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractSchemaRepository.class);
-    private static final ExceptionMapper<SchemaSourceException> FETCH_MAPPER = ReflectiveExceptionMapper.create(
-            "Schema source fetch", SchemaSourceException.class);
 
     /*
      * Source identifier -> representation -> provider map. We usually are looking for
@@ -86,7 +80,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
     }
 
     @Override
-    public <T extends SchemaSourceRepresentation> CheckedFuture<T, SchemaSourceException> getSchemaSource(
+    public <T extends SchemaSourceRepresentation> ListenableFuture<T> getSchemaSource(
             @Nonnull final SourceIdentifier id, @Nonnull final Class<T> representation) {
         final ArrayList<AbstractSchemaSourceRegistration<?>> sortedSchemaSourceRegistrations;
 
@@ -94,8 +88,8 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
             final ListMultimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> srcs =
                 sources.get(id);
             if (srcs == null) {
-                return Futures.immediateFailedCheckedFuture(new MissingSchemaSourceException(
-                            "No providers registered for source" + id, id));
+                return Futures.immediateFailedFuture(new MissingSchemaSourceException(
+                    "No providers registered for source" + id, id));
             }
 
             sortedSchemaSourceRegistrations = Lists.newArrayList(srcs.get(representation));
@@ -106,7 +100,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
 
         final Iterator<AbstractSchemaSourceRegistration<?>> regs = sortedSchemaSourceRegistrations.iterator();
         if (!regs.hasNext()) {
-            return Futures.immediateFailedCheckedFuture(new MissingSchemaSourceException(
+            return Futures.immediateFailedFuture(new MissingSchemaSourceException(
                         "No providers for source " + id + " representation " + representation + " available", id));
         }
 
@@ -127,7 +121,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
             }
         }, MoreExecutors.directExecutor());
 
-        return Futures.makeChecked(fetchSourceFuture, FETCH_MAPPER);
+        return fetchSourceFuture;
     }
 
     private synchronized <T extends SchemaSourceRepresentation> void addSource(final PotentialSchemaSource<T> source,
