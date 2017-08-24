@@ -86,7 +86,7 @@ public class SimpleModuleTest {
     }
 
     private void testSetOfModules(final Collection<SourceIdentifier> source) throws Exception {
-        final SchemaContext schemaContext = schemaContextFactory.createSchemaContext(source).checkedGet();
+        final SchemaContext schemaContext = schemaContextFactory.createSchemaContext(source).get();
         final File outDir = new File("target/collection");
         outDir.mkdirs();
         for (final Module module : schemaContext.getModules()) {
