@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Optional;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
@@ -17,16 +17,16 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthRestrictedTypeDefini
 
 abstract class AbstractLengthRestrictedType<T extends LengthRestrictedTypeDefinition<T>>
         extends AbstractRestrictedType<T> implements LengthRestrictedTypeDefinition<T> {
-    private final List<LengthConstraint> lengthConstraints;
+    private final @Nullable LengthConstraint lengthConstraint;
 
     AbstractLengthRestrictedType(final T baseType, final SchemaPath path,
-        final Collection<UnknownSchemaNode> unknownSchemaNodes, final Collection<LengthConstraint> lengthConstraints) {
+        final Collection<UnknownSchemaNode> unknownSchemaNodes, final @Nullable LengthConstraint lengthConstraint) {
         super(baseType, path, unknownSchemaNodes);
-        this.lengthConstraints = ImmutableList.copyOf(lengthConstraints);
+        this.lengthConstraint = lengthConstraint;
     }
 
     @Override
-    public final List<LengthConstraint> getLengthConstraints() {
-        return lengthConstraints;
+    public final Optional<LengthConstraint> getLengthConstraint() {
+        return Optional.ofNullable(lengthConstraint);
     }
 }

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Optional;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
@@ -50,7 +51,7 @@ public final class BaseConstraints {
      * @return Instance of {@link LengthConstraint}
      */
     public static LengthConstraint newLengthConstraint(final Number min, final Number max,
-            final Optional<String> description, final Optional<String> reference) {
+            final @Nullable String description, final @Nullable String reference) {
         return new LengthConstraintImpl(min, max, description, reference);
     }
 
@@ -77,7 +78,7 @@ public final class BaseConstraints {
      * @return Instance of {@link LengthConstraint}
      */
     public static LengthConstraint newLengthConstraint(final Number min, final Number max,
-            final Optional<String> description, final Optional<String> reference, final String errorAppTag,
+            final @Nullable String description, final @Nullable String reference, final String errorAppTag,
             final String errorMessage) {
         return new LengthConstraintImpl(min, max, description, reference, errorAppTag, errorMessage);
     }

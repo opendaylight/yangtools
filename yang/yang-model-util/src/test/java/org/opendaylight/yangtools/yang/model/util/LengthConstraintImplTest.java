@@ -11,7 +11,6 @@ package org.opendaylight.yangtools.yang.model.util;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.base.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
@@ -19,39 +18,35 @@ public class LengthConstraintImplTest {
 
     @Test
     public void testLengthConstraint() {
-        LengthConstraint lengthConstraint = new LengthConstraintImpl(3, 5, Optional.of("test description"),
-                Optional.of("test reference"));
-        LengthConstraint lengthConstraint2 = new LengthConstraintImpl(3, 5, Optional.of("test description"),
-                Optional.of("test reference"));
+        LengthConstraint lengthConstraint = new LengthConstraintImpl(3, 5, "test description", "test reference");
+        LengthConstraint lengthConstraint2 = new LengthConstraintImpl(3, 5, "test description", "test reference");
         assertTrue(lengthConstraint.equals(lengthConstraint2));
 
         assertFalse(lengthConstraint.equals(null));
         assertFalse(lengthConstraint.equals(new Object()));
 
-        lengthConstraint2 = new LengthConstraintImpl(3, 5, Optional.of("another test description"),
-                Optional.of("test reference"));
+        lengthConstraint2 = new LengthConstraintImpl(3, 5, "another test description", "test reference");
         assertFalse(lengthConstraint.equals(lengthConstraint2));
 
-        lengthConstraint2 = new LengthConstraintImpl(3, 5, Optional.of("test description"),
-                Optional.of("another test reference"));
+        lengthConstraint2 = new LengthConstraintImpl(3, 5, "test description", "another test reference");
         assertFalse(lengthConstraint.equals(lengthConstraint2));
 
-        lengthConstraint = new LengthConstraintImpl(3, 5, Optional.of("test description"),
-                Optional.of("test reference"), "error app-tag", "error message");
-        lengthConstraint2 = new LengthConstraintImpl(2, 5, Optional.of("test description"),
-                Optional.of("test reference"), "error app-tag", "error message");
+        lengthConstraint = new LengthConstraintImpl(3, 5, "test description",
+                "test reference", "error app-tag", "error message");
+        lengthConstraint2 = new LengthConstraintImpl(2, 5, "test description",
+                "test reference", "error app-tag", "error message");
         assertFalse(lengthConstraint.equals(lengthConstraint2));
 
-        lengthConstraint2 = new LengthConstraintImpl(3, 6, Optional.of("test description"),
-                Optional.of("test reference"), "error app-tag", "error message");
+        lengthConstraint2 = new LengthConstraintImpl(3, 6, "test description",
+                "test reference", "error app-tag", "error message");
         assertFalse(lengthConstraint.equals(lengthConstraint2));
 
-        lengthConstraint2 = new LengthConstraintImpl(3, 5, Optional.of("test description"),
-                Optional.of("test reference"), "another error app-tag", "error message");
+        lengthConstraint2 = new LengthConstraintImpl(3, 5, "test description",
+                "test reference", "another error app-tag", "error message");
         assertFalse(lengthConstraint.equals(lengthConstraint2));
 
-        lengthConstraint2 = new LengthConstraintImpl(3, 5, Optional.of("test description"),
-                Optional.of("test reference"), "error app-tag", "another error message");
+        lengthConstraint2 = new LengthConstraintImpl(3, 5, "test description",
+                "test reference", "error app-tag", "another error message");
         assertFalse(lengthConstraint.equals(lengthConstraint2));
     }
 }

@@ -54,7 +54,7 @@ public class TypeTest {
         final BaseBinaryType baseBinaryType1 = BaseBinaryType.INSTANCE;
         final BaseBinaryType baseBinaryType2 = (BaseBinaryType)BaseTypes.binaryType();
         hashCodeEqualsToStringTest(baseBinaryType1, baseBinaryType2);
-        assertEquals(baseBinaryType1.getLengthConstraints(), baseBinaryType2.getLengthConstraints());
+        assertEquals(baseBinaryType1.getLengthConstraint(), baseBinaryType2.getLengthConstraint());
 
         final DerivedBinaryType derivedBinaryType1 = (DerivedBinaryType)DerivedTypes.derivedTypeBuilder(baseBinaryType1,
                 SCHEMA_PATH).build();
@@ -256,7 +256,7 @@ public class TypeTest {
         final BaseStringType baseStringType1 = BaseStringType.INSTANCE;
         final BaseStringType baseStringType2 = (BaseStringType)BaseTypes.stringType();
         hashCodeEqualsToStringTest(baseStringType1, baseStringType2);
-        assertEquals(baseStringType1.getLengthConstraints(), baseStringType2.getLengthConstraints());
+        assertEquals(baseStringType1.getLengthConstraint(), baseStringType2.getLengthConstraint());
         assertEquals(baseStringType1.getPatternConstraints(), baseStringType2.getPatternConstraints());
 
         final DerivedStringType derivedStringType1 = (DerivedStringType)
@@ -411,7 +411,7 @@ public class TypeTest {
                 .newBinaryBuilder(baseBinaryType, SCHEMA_PATH);
         final Long min = Long.valueOf(0);
         final UnresolvedNumber max = UnresolvedNumber.max();
-        final LengthConstraint lengthConstraint = BaseConstraints.newLengthConstraint(min, max, ABSENT, ABSENT);
+        final LengthConstraint lengthConstraint = BaseConstraints.newLengthConstraint(min, max, null, null);
         final ArrayList<LengthConstraint> lengthArrayList = new ArrayList<>(1);
         assertEquals(lengthConstraint.getErrorAppTag(), "length-out-of-specified-bounds");
         assertEquals(lengthConstraint.getErrorMessage(), "The argument is out of bounds <0, max>");
@@ -423,7 +423,7 @@ public class TypeTest {
         final IntegerTypeDefinition integerTypeDefinition8 = BaseTypes.int8Type();
         final RangeRestrictedTypeBuilder<?> rangeRestrictedTypeBuilder = RestrictedTypes
                 .newIntegerBuilder(integerTypeDefinition8, SCHEMA_PATH);
-        final RangeConstraint rangeConstraint = BaseConstraints.newRangeConstraint(min, max, ABSENT, ABSENT);
+        final RangeConstraint rangeConstraint = BaseConstraints.newRangeConstraint(min, max, null, null);
         final ArrayList<RangeConstraint> rangeArrayList = new ArrayList<>(1);
         rangeArrayList.add(rangeConstraint);
         rangeRestrictedTypeBuilder.setRangeAlternatives(rangeArrayList);
@@ -433,11 +433,10 @@ public class TypeTest {
 
     @Test
     public void exceptionTest() {
-        final Optional<String> absent = Optional.absent();
         final UnresolvedNumber min = UnresolvedNumber.min();
         final UnresolvedNumber max = UnresolvedNumber.max();
-        final LengthConstraint lengthConstraint = BaseConstraints.newLengthConstraint(min, max, absent, absent);
-        final RangeConstraint rangeConstraint = BaseConstraints.newRangeConstraint(min, max, absent, absent);
+        final LengthConstraint lengthConstraint = BaseConstraints.newLengthConstraint(min, max, null, null);
+        final RangeConstraint rangeConstraint = BaseConstraints.newRangeConstraint(min, max, null, null);
 
         final EnumPair enumPair = EnumPairBuilder.create("enum1", 1).setDescription("description")
                 .setReference("reference").setUnknownSchemaNodes(mock(UnknownSchemaNode.class)).build();

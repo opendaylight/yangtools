@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
+import com.google.common.collect.RangeSet;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 
 /**
- * The Lenght Constraint value consists of an explicit value, or a lower bound
+ * The Length Constraint value consists of an explicit value, or a lower bound
  * returned by {@link #getMin()} and an upper bound returned by
  * {@link #getMax()}. <br>
  * <br>
@@ -31,20 +32,10 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
  * @see ConstraintMetaDefinition
  */
 public interface LengthConstraint extends ConstraintMetaDefinition {
-
     /**
-     * Returns the length-restricting lower bound value. <br>
-     * The value MUST NOT be negative.
+     * Return allowed length ranges. Returned RangeSet must not be empty.
      *
-     * @return the length-restricting lower bound value.
+     * @return Set of allowed lengths.
      */
-    Number getMin();
-
-    /**
-     * Returns the length-restricting upper bound value. <br>
-     * The value MUST NOT be negative.
-     *
-     * @return length-restricting upper bound value.
-     */
-    Number getMax();
+    RangeSet<Integer> getAllowedRanges();
 }

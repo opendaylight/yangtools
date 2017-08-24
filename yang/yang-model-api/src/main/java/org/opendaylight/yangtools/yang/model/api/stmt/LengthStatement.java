@@ -7,15 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import com.google.common.collect.Range;
 import java.util.List;
-
 import javax.annotation.Nonnull;
-
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
 public interface LengthStatement extends DeclaredStatement<List<LengthConstraint>>, DocumentedConstraintGroup {
-
     @Nonnull
-    List<LengthConstraint> getValue();
+    <T extends Number & Comparable<T>> List<Range<T>> getValue();
 }
