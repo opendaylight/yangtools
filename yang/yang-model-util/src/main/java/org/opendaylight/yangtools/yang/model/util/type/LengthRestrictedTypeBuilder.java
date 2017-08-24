@@ -16,12 +16,12 @@ import java.util.List;
 import java.util.function.Function;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.LengthRestrictedTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 import org.opendaylight.yangtools.yang.model.util.UnresolvedNumber;
 
-public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>>
+public abstract class LengthRestrictedTypeBuilder<T extends LengthRestrictedTypeDefinition<T>>
         extends AbstractRestrictedTypeBuilder<T> {
     private List<LengthConstraint> lengthAlternatives;
 
@@ -152,15 +152,13 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>>
 
     abstract T buildType(List<LengthConstraint> lengthConstraints);
 
-    abstract List<LengthConstraint> getLengthConstraints(T type);
-
     abstract List<LengthConstraint> typeLengthConstraints();
 
     private List<LengthConstraint> findLenghts() {
         List<LengthConstraint> ret = ImmutableList.of();
         T wlk = getBaseType();
         while (wlk != null && ret.isEmpty()) {
-            ret = getLengthConstraints(wlk);
+            ret = wlk.getLengthConstraints();
             wlk = wlk.getBaseType();
         }
 
