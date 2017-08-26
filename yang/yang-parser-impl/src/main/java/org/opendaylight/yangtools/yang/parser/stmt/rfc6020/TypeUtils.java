@@ -209,21 +209,20 @@ public final class TypeUtils {
                 max = parseIntegerConstraintValue(ctx, boundaries.next());
 
                 // if min larger than max then error
-                Preconditions.checkArgument(compareNumbers(min, max) != 1,
-                        "Length constraint %s has descending order of boundaries; should be ascending. Statement source at %s",
-                        singleRange, ctx.getStatementSourceReference());
-                Preconditions.checkArgument(!boundaries.hasNext(),
-                        "Wrong number of boundaries in length constraint %s. Statement source at %s", singleRange,
-                        ctx.getStatementSourceReference());
+                SourceException.throwIf(compareNumbers(min, max) == 1, ctx.getStatementSourceReference(),
+                        "Length constraint %s has descending order of boundaries; should be ascending.",
+                        singleRange);
+                SourceException.throwIf(boundaries.hasNext(), ctx.getStatementSourceReference(),
+                        "Wrong number of boundaries in length constraint %s.", singleRange);
             } else {
                 max = min;
             }
 
             // some of intervals overlapping
-            if (lengthConstraints.size() > 1 && compareNumbers(min, Iterables.getLast(lengthConstraints).getMax()) != 1) {
-                throw new InferenceException(ctx.getStatementSourceReference(),
-                    "Some of the length ranges in %s are not disjoint", lengthArgument);
-            }
+            InferenceException.throwIf(lengthConstraints.size() > 1
+                && compareNumbers(min, Iterables.getLast(lengthConstraints).getMax()) != 1,
+                        ctx.getStatementSourceReference(),  "Some of the length ranges in %s are not disjoint",
+                        lengthArgument);
 
             lengthConstraints.add(new LengthConstraintEffectiveImpl(min, max, description, reference));
         }
