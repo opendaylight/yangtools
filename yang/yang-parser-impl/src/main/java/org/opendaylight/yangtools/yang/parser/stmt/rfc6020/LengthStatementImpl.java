@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.List;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -84,11 +83,5 @@ public class LengthStatementImpl extends AbstractDeclaredStatement<List<LengthCo
     @Override
     public ReferenceStatement getReference() {
         return firstDeclared(ReferenceStatement.class);
-    }
-
-    @Nonnull
-    @Override
-    public List<LengthConstraint> getValue() {
-        return argument();
     }
 }
