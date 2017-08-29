@@ -19,10 +19,7 @@ import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT8_QNAME;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
-import com.google.common.collect.Range;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.google.common.collect.RangeSet;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -51,20 +48,12 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
                     + "\n  - a hexadecimal number (prefix 0x)," + "%n  - an octal number (prefix 0)."
                     + "\nSigned values are allowed. Spaces between digits are NOT allowed.";
 
-    private final List<Range<N>> rangeConstraints;
+    private final RangeSet<N> rangeConstraints;
 
-    AbstractIntegerStringCodec(final Optional<T> typeDefinition, final List<RangeConstraint> constraints,
+    AbstractIntegerStringCodec(final Optional<T> typeDefinition, final Optional<RangeConstraint<?>> constraint,
         final Class<N> outputClass) {
         super(typeDefinition, outputClass);
-        if (constraints.isEmpty()) {
-            rangeConstraints = Collections.emptyList();
-        } else {
-            final List<Range<N>> builder = new ArrayList<>(constraints.size());
-            for (final RangeConstraint yangConstraint : constraints) {
-                builder.add(createRange(yangConstraint.getMin(), yangConstraint.getMax()));
-            }
-            rangeConstraints = builder;
-        }
+        rangeConstraints = (RangeSet<N>) constraint.map(RangeConstraint::getAllowedRanges).orElse(null);
     }
 
     public static AbstractIntegerStringCodec<?, IntegerTypeDefinition> from(final IntegerTypeDefinition type) {
@@ -114,12 +103,6 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
         }
     }
 
-    private Range<N> createRange(final Number yangMin, final Number yangMax) {
-        final N min = convertValue(yangMin);
-        final N max = convertValue(yangMax);
-        return Range.closed(min, max);
-    }
-
     @Override
     public final N deserialize(final String stringRepresentation) {
         final int base = provideBase(stringRepresentation);
@@ -143,32 +126,19 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
      */
     abstract N deserialize(String stringRepresentation, int radix);
 
-    abstract N convertValue(Number value);
-
     private void validate(final N value) {
-        if (rangeConstraints.isEmpty()) {
-            return;
+        if (rangeConstraints != null) {
+            checkArgument(rangeConstraints.contains(value), "Value '%s'  is not in required ranges %s",
+                value, rangeConstraints);
         }
-        for (final Range<N> constraint : rangeConstraints) {
-            if (constraint.contains(value)) {
-                return;
-            }
-        }
-        throw new IllegalArgumentException("Value '" + value + "'  is not in required range " + rangeConstraints);
     }
 
-    protected static List<RangeConstraint> extractRange(final IntegerTypeDefinition type) {
-        if (type == null) {
-            return Collections.emptyList();
-        }
-        return type.getRangeConstraints();
+    protected static Optional<RangeConstraint<?>> extractRange(final IntegerTypeDefinition type) {
+        return type == null ? Optional.empty() : type.getRangeConstraint();
     }
 
-    protected static List<RangeConstraint> extractRange(final UnsignedIntegerTypeDefinition type) {
-        if (type == null) {
-            return Collections.emptyList();
-        }
-        return type.getRangeConstraints();
+    protected static Optional<RangeConstraint<?>> extractRange(final UnsignedIntegerTypeDefinition type) {
+        return type == null ? Optional.empty() : type.getRangeConstraint();
     }
 
     private static int provideBase(final String integer) {

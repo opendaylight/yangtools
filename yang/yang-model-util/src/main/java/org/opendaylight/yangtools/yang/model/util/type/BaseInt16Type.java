@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
-final class BaseInt16Type extends AbstractIntegerBaseType {
+final class BaseInt16Type extends AbstractIntegerBaseType<Short> {
     static final BaseInt16Type INSTANCE = new BaseInt16Type();
 
     private BaseInt16Type() {

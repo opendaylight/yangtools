@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Range;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,7 +42,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
@@ -99,11 +99,11 @@ public class YangParserWithContextTest {
 
         final UnsignedIntegerTypeDefinition dscpExt = (UnsignedIntegerTypeDefinition) TestUtils.findTypedef(
                 module.getTypeDefinitions(), "dscp-ext");
-        final List<RangeConstraint> ranges = dscpExt.getRangeConstraints();
+        final Set<? extends Range<?>> ranges = dscpExt.getRangeConstraint().get().getAllowedRanges().asRanges();
         assertEquals(1, ranges.size());
-        final RangeConstraint range = ranges.get(0);
-        assertEquals(0, range.getMin().intValue());
-        assertEquals(63, range.getMax().intValue());
+        final Range<?> range = ranges.iterator().next();
+        assertEquals((short)0, range.lowerEndpoint());
+        assertEquals((short)63, range.upperEndpoint());
     }
 
     @Test
