@@ -5,14 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.util;
+package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.Range;
 import java.util.List;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
 @Beta
@@ -22,8 +22,8 @@ public abstract class UnresolvedNumber extends Number implements Immutable {
         private static final long serialVersionUID = 1L;
 
         @Override
-        public Number resolveLength(final List<LengthConstraint> constraints) {
-            return resolve(constraints.get(constraints.size() - 1).getMax());
+        public <T extends Number & Comparable<T>> T resolveLength(final Range<T> span) {
+            return resolve(span.upperEndpoint());
         }
 
         @Override
@@ -45,8 +45,8 @@ public abstract class UnresolvedNumber extends Number implements Immutable {
         private static final long serialVersionUID = 1L;
 
         @Override
-        public Number resolveLength(final List<LengthConstraint> constraints) {
-            return resolve(constraints.get(0).getMin());
+        public <T extends Number & Comparable<T>> T resolveLength(final Range<T> span) {
+            return resolve(span.lowerEndpoint());
         }
 
         @Override
@@ -92,12 +92,12 @@ public abstract class UnresolvedNumber extends Number implements Immutable {
         throw new UnsupportedOperationException();
     }
 
-    private static Number resolve(final Number number) {
+    private static <T extends Number> T resolve(final T number) {
         checkArgument(!(number instanceof UnresolvedNumber));
         return number;
     }
 
-    public abstract Number resolveLength(List<LengthConstraint> constraints);
+    public abstract <T extends Number & Comparable<T>> T resolveLength(Range<T> span);
 
     public abstract Number resolveRange(List<RangeConstraint> constraints);
 
