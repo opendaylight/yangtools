@@ -78,7 +78,7 @@ final class TypeDefinitions {
     static int hashCode(final DecimalTypeDefinition type) {
         return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
             type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getFractionDigits(),
-            type.getRangeConstraints());
+            type.getRangeConstraint().orElse(null));
     }
 
     static int hashCode(final EmptyTypeDefinition type) {
@@ -103,7 +103,7 @@ final class TypeDefinitions {
 
     static int hashCode(final IntegerTypeDefinition type) {
         return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
-            type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getRangeConstraints());
+            type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getRangeConstraint().orElse(null));
     }
 
     static int hashCode(final LeafrefTypeDefinition type) {
@@ -124,7 +124,7 @@ final class TypeDefinitions {
 
     static int hashCode(final UnsignedIntegerTypeDefinition type) {
         return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
-            type.getDefaultValue(), type.getRangeConstraints());
+            type.getDefaultValue(), type.getRangeConstraint());
     }
 
     static boolean equals(final BinaryTypeDefinition type, final Object obj) {
@@ -156,7 +156,7 @@ final class TypeDefinitions {
 
         final DecimalTypeDefinition other = castIfEquals(DecimalTypeDefinition.class, type, obj);
         return other != null && type.getFractionDigits().equals(other.getFractionDigits())
-                && type.getRangeConstraints().equals(other.getRangeConstraints());
+                && type.getRangeConstraint().equals(other.getRangeConstraint());
     }
 
     static boolean equals(final EmptyTypeDefinition type, final Object obj) {
@@ -196,7 +196,7 @@ final class TypeDefinitions {
         }
 
         final IntegerTypeDefinition other = castIfEquals(IntegerTypeDefinition.class, type, obj);
-        return other != null && type.getRangeConstraints().equals(other.getRangeConstraints());
+        return other != null && type.getRangeConstraint().equals(other.getRangeConstraint());
     }
 
     static boolean equals(final LeafrefTypeDefinition type, final Object obj) {
@@ -233,7 +233,7 @@ final class TypeDefinitions {
         }
 
         final UnsignedIntegerTypeDefinition other = castIfEquals(UnsignedIntegerTypeDefinition.class, type, obj);
-        return other != null && type.getRangeConstraints().equals(other.getRangeConstraints());
+        return other != null && type.getRangeConstraint().equals(other.getRangeConstraint());
     }
 
     static String toString(final BinaryTypeDefinition type) {
@@ -250,7 +250,7 @@ final class TypeDefinitions {
 
     static String toString(final DecimalTypeDefinition type) {
         return toStringHelper(type).add("fractionDigits", type.getFractionDigits())
-                .add("range", type.getRangeConstraints()).toString();
+                .add("range", type.getRangeConstraint().orElse(null)).toString();
     }
 
     static String toString(final EmptyTypeDefinition type) {
@@ -270,7 +270,7 @@ final class TypeDefinitions {
     }
 
     static String toString(final IntegerTypeDefinition type) {
-        return toStringHelper(type).add("range", type.getRangeConstraints()).toString();
+        return toStringHelper(type).add("range", type.getRangeConstraint().orElse(null)).toString();
     }
 
     static String toString(final LeafrefTypeDefinition type) {
@@ -287,6 +287,6 @@ final class TypeDefinitions {
     }
 
     static String toString(final UnsignedIntegerTypeDefinition type) {
-        return toStringHelper(type).add("range", type.getRangeConstraints()).toString();
+        return toStringHelper(type).add("range", type.getRangeConstraint().orElse(null)).toString();
     }
 }

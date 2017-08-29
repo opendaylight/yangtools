@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
@@ -18,17 +18,17 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinit
 
 abstract class AbstractRangeRestrictedType<T extends RangeRestrictedTypeDefinition<T>>
         extends AbstractRestrictedType<T> implements RangeRestrictedTypeDefinition<T> {
-    private final List<RangeConstraint> rangeConstraints;
+    private final @Nullable RangeConstraint<?> rangeConstraint;
 
     AbstractRangeRestrictedType(final T baseType, final SchemaPath path,
-        final Collection<UnknownSchemaNode> unknownSchemaNodes, final Collection<RangeConstraint> rangeConstraints) {
+        final Collection<UnknownSchemaNode> unknownSchemaNodes, final @Nullable RangeConstraint<?> rangeConstraint) {
         super(baseType, path, unknownSchemaNodes);
-        this.rangeConstraints = ImmutableList.copyOf(rangeConstraints);
+        this.rangeConstraint = rangeConstraint;
     }
 
     @Override
     @Nonnull
-    public final List<RangeConstraint> getRangeConstraints() {
-        return rangeConstraints;
+    public final Optional<RangeConstraint<?>> getRangeConstraint() {
+        return Optional.ofNullable(rangeConstraint);
     }
 }
