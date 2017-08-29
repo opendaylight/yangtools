@@ -1,27 +1,21 @@
 <module xmlns="urn:ietf:params:xml:ns:yang:yin:1" xmlns:bin="binary-spec"
     name="binary-spec">
-    <yang-version value="1"></yang-version>
-    <namespace uri="binary-spec"></namespace>
-    <prefix value="bin"></prefix>
-    <revision date="1970-01-01"></revision>
+    <yang-version value="1"/>
+    <namespace uri="binary-spec"/>
+    <prefix value="bin"/>
+    <revision date="1970-01-01"/>
     <leaf name="bin-leaf">
         <type name="binary">
-            <length value="1..99">
-                <error-message>
-                    <value>The argument is out of bounds &lt;1, 99&gt;
-                    </value>
-                </error-message>
-                <error-app-tag value="length-out-of-specified-bounds"></error-app-tag>
-            </length>
+            <length value="1..99"/>
         </type>
-        <config value="true"></config>
-        <mandatory value="false"></mandatory>
-        <status value="current"></status>
+        <config value="true"/>
+        <mandatory value="false"/>
+        <status value="current"/>
     </leaf>
     <leaf name="bin-leaf-2">
-        <type name="binary"></type>
-        <config value="true"></config>
-        <mandatory value="false"></mandatory>
-        <status value="current"></status>
+        <type name="binary"/>
+        <config value="true"/>
+        <mandatory value="false"/>
+        <status value="current"/>
     </leaf>
 </module>

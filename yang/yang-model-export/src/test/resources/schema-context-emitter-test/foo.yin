@@ -118,12 +118,7 @@
                 <status value="current"></status>
                 <leaf name="first-case-leaf">
                     <type name="string">
-                        <length value="10|15">
-                            <error-message>
-                                <value>The argument is out of bounds &lt;10, 10&gt;</value>
-                            </error-message>
-                            <error-app-tag value="length-out-of-specified-bounds"></error-app-tag>
-                        </length>
+                        <length value="10|15"/>
                     </type>
                     <config value="false"></config>
                     <mandatory value="false"></mandatory>

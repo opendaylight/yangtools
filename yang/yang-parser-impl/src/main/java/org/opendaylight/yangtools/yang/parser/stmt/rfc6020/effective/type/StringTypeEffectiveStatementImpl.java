@@ -12,7 +12,6 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.InvalidLengthConstraintException;
@@ -41,7 +40,17 @@ public final class StringTypeEffectiveStatementImpl extends DeclaredEffectiveSta
 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof LengthEffectiveStatementImpl) {
-                builder.setLengthAlternatives(((LengthEffectiveStatementImpl)stmt).argument());
+                final LengthEffectiveStatementImpl length = (LengthEffectiveStatementImpl)stmt;
+
+                try {
+                    builder.setLengthConstraint(length, length.argument());
+                } catch (IllegalStateException e) {
+                    throw new SourceException(ctx.getStatementSourceReference(), e,
+                            "Multiple length constraints encountered");
+                } catch (InvalidLengthConstraintException e) {
+                    throw new SourceException(ctx.getStatementSourceReference(), e, "Invalid length constraint %s",
+                        length.argument());
+                }
             }
             if (stmt instanceof PatternEffectiveStatementImpl) {
                 final PatternConstraint pattern = ((PatternEffectiveStatementImpl)stmt).argument();
@@ -56,13 +65,7 @@ public final class StringTypeEffectiveStatementImpl extends DeclaredEffectiveSta
             }
         }
 
-        try {
-            typeDefinition = builder.build();
-        } catch (InvalidLengthConstraintException e) {
-            final LengthConstraint c = e.getOffendingConstraint();
-            throw new SourceException(ctx.getStatementSourceReference(), e, "Invalid length constraint: <%s, %s>",
-                c.getMin(), c.getMax());
-        }
+        typeDefinition = builder.build();
     }
 
     @Nonnull

@@ -125,7 +125,7 @@
  *
  * <dt>length
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.LengthConstraint}
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition#getLengthConstraints()}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition#getLengthConstraint()}
  *
  * <dt>list
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ListSchemaNode}

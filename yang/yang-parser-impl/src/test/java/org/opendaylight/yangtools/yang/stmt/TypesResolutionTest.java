@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import com.google.common.collect.Range;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -159,11 +160,11 @@ public class TypesResolutionTest {
                 + "([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.?)" + "|\\.$";
         assertEquals(expectedPattern, patterns.get(0).getRegularExpression());
 
-        List<LengthConstraint> lengths = type.getLengthConstraints();
-        assertEquals(1, lengths.size());
-        LengthConstraint length = type.getLengthConstraints().get(0);
-        assertEquals(Integer.valueOf(1), length.getMin());
-        assertEquals(Integer.valueOf(253), length.getMax());
+        LengthConstraint lengths = type.getLengthConstraint().get();
+        assertEquals(1, lengths.getAllowedRanges().asRanges().size());
+        Range<Integer> length = lengths.getAllowedRanges().span();
+        assertEquals(Integer.valueOf(1), length.lowerEndpoint());
+        assertEquals(Integer.valueOf(253), length.upperEndpoint());
     }
 
     @Test

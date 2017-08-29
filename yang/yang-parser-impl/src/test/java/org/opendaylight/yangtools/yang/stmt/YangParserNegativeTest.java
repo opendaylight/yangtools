@@ -123,7 +123,9 @@ public class YangParserNegativeTest {
                 fail("YangParseException should be thrown");
             }
         } catch (final ReactorException e) {
-            assertTrue(e.getCause().getMessage().contains("Invalid length constraint: <4, 10>"));
+            final String message = e.getCause().getMessage();
+
+            assertTrue(message.contains("Invalid length constraint [4..10]"));
         }
     }
 

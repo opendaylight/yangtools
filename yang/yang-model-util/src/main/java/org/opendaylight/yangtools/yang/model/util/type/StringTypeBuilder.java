@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
@@ -29,7 +30,7 @@ public final class StringTypeBuilder extends LengthRestrictedTypeBuilder<StringT
     }
 
     @Override
-    List<LengthConstraint> typeLengthConstraints() {
+    LengthConstraint typeLengthConstraints() {
         /**
          * Length constraint imposed on YANG string type by our implementation. {@link String#length()} is an integer,
          * capping our ability to support strings up to 18446744073709551615 as defined in
@@ -43,7 +44,7 @@ public final class StringTypeBuilder extends LengthRestrictedTypeBuilder<StringT
     }
 
     @Override
-    StringTypeDefinition buildType(final List<LengthConstraint> lengthConstraints) {
+    StringTypeDefinition buildType(final @Nullable LengthConstraint lengthConstraints) {
         return new RestrictedStringType(getBaseType(), getPath(), getUnknownSchemaNodes(),
             lengthConstraints, patternConstraints);
     }

@@ -7,17 +7,43 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
-import java.util.List;
+import com.google.common.collect.ImmutableRangeSet;
+import com.google.common.collect.Range;
+import com.google.common.collect.RangeSet;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
-import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 
 final class JavaLengthConstraints {
     private JavaLengthConstraints() {
         throw new UnsupportedOperationException();
     }
 
-    static final List<LengthConstraint> INTEGER_SIZE_CONSTRAINTS = ImmutableList.of(
-        BaseConstraints.newLengthConstraint(0, Integer.MAX_VALUE, Optional.absent(), Optional.absent()));
+    private static final RangeSet<Integer> INTEGER_ALLOWED_RANGES =
+            ImmutableRangeSet.of(Range.closed(0, Integer.MAX_VALUE));
+
+    static final LengthConstraint INTEGER_SIZE_CONSTRAINTS = new LengthConstraint() {
+        @Override
+        public String getReference() {
+            return null;
+        }
+
+        @Override
+        public String getErrorMessage() {
+            return null;
+        }
+
+        @Override
+        public String getErrorAppTag() {
+            return null;
+        }
+
+        @Override
+        public String getDescription() {
+            return null;
+        }
+
+        @Override
+        public RangeSet<Integer> getAllowedRanges() {
+            return INTEGER_ALLOWED_RANGES;
+        }
+    };
 }
