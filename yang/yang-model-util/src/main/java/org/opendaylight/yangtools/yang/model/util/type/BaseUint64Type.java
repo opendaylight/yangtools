@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import java.math.BigInteger;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
-final class BaseUint64Type extends AbstractUnsignedBaseType {
+final class BaseUint64Type extends AbstractUnsignedBaseType<BigInteger> {
     static final BaseUint64Type INSTANCE = new BaseUint64Type();
 
     private BaseUint64Type() {
