@@ -30,6 +30,6 @@ public final class DecimalTypeBuilder extends RangeRestrictedTypeBuilder<Decimal
         Preconditions.checkState(fractionDigits != null, "Fraction digits not defined");
 
         return new BaseDecimalType(getPath(), getUnknownSchemaNodes(), fractionDigits,
-            calculateRangeConstraints(BaseDecimalType.constraintsForDigits(fractionDigits)));
+            calculateRangeConstraint(BaseDecimalType.constraintsForDigits(fractionDigits)));
     }
 }

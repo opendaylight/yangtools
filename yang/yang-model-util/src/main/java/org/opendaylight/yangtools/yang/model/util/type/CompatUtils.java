@@ -20,6 +20,8 @@ import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.LengthRestrictedTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
@@ -154,8 +156,7 @@ public final class CompatUtils {
     }
 
     private static TypeDefinition<?> baseTypeIfNotConstrained(final DecimalTypeDefinition type) {
-        final DecimalTypeDefinition base = type.getBaseType();
-        return baseTypeIfNotConstrained(type, type.getRangeConstraints(), base, base.getRangeConstraints());
+        return baseTypeIfNotConstrained(type, type.getBaseType());
     }
 
     private static TypeDefinition<?> baseTypeIfNotConstrained(final InstanceIdentifierTypeDefinition type) {
@@ -164,8 +165,7 @@ public final class CompatUtils {
     }
 
     private static TypeDefinition<?> baseTypeIfNotConstrained(final IntegerTypeDefinition type) {
-        final IntegerTypeDefinition base = type.getBaseType();
-        return baseTypeIfNotConstrained(type, type.getRangeConstraints(), base, base.getRangeConstraints());
+        return baseTypeIfNotConstrained(type, type.getBaseType());
     }
 
     private static TypeDefinition<?> baseTypeIfNotConstrained(final StringTypeDefinition type) {
@@ -182,13 +182,16 @@ public final class CompatUtils {
     }
 
     private static TypeDefinition<?> baseTypeIfNotConstrained(final UnsignedIntegerTypeDefinition type) {
-        final UnsignedIntegerTypeDefinition base = type.getBaseType();
-        return baseTypeIfNotConstrained(type, type.getRangeConstraints(), base, base.getRangeConstraints());
+        return baseTypeIfNotConstrained(type, type.getBaseType());
     }
 
-    private static TypeDefinition<?> baseTypeIfNotConstrained(final TypeDefinition<?> type,
-            final List<?> typeConstraints, final TypeDefinition<?> base, final List<?> baseConstraints) {
-        return typeConstraints.isEmpty() || typeConstraints.equals(baseConstraints) ? base : type;
+    private static <T extends RangeRestrictedTypeDefinition<T>> T baseTypeIfNotConstrained(final T type,
+            final T base) {
+        final Optional<RangeConstraint<?>> optConstraint = type.getRangeConstraint();
+        if (!optConstraint.isPresent()) {
+            return base;
+        }
+        return optConstraint.equals(base.getRangeConstraint()) ? base : type;
     }
 
     private static <T extends LengthRestrictedTypeDefinition<T>> T baseTypeIfNotConstrained(final T type,

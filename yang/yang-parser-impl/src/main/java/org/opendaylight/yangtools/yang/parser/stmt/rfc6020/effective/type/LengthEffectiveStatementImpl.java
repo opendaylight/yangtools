@@ -14,13 +14,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class LengthEffectiveStatementImpl extends
         AbstractListConstraintEffectiveStatement<ValueRange, LengthStatement> {
-
     public LengthEffectiveStatementImpl(final StmtContext<List<ValueRange>, LengthStatement, ?> ctx) {
         super(ctx);
-    }
-
-    @Override
-    final ValueRange createCustomizedConstraint(final ValueRange lengthConstraint) {
-        return lengthConstraint;
     }
 }

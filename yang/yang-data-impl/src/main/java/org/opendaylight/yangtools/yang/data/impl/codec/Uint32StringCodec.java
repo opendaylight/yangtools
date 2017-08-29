@@ -29,9 +29,4 @@ final class Uint32StringCodec extends AbstractIntegerStringCodec<Long, UnsignedI
     public String serialize(final Long data) {
         return Objects.toString(data, "");
     }
-
-    @Override
-    Long convertValue(final Number value) {
-        return value.longValue();
-    }
 }

@@ -181,8 +181,8 @@
  *
  * <dt>range
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.RangeConstraint}
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition#getRangeConstraints()}
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition#getRangeConstraints()}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition#getRangeConstraint()}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition#getRangeConstraint()}
  *
  * <dt>reference
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.SchemaNode#getReference()}

@@ -38,7 +38,8 @@ public final class DecimalTypeEffectiveStatementImpl extends DeclaredEffectiveSt
 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof RangeEffectiveStatementImpl) {
-                builder.setRangeAlternatives(((RangeEffectiveStatementImpl)stmt).argument());
+                final RangeEffectiveStatementImpl range = (RangeEffectiveStatementImpl) stmt;
+                builder.setRangeConstraint(range, range.argument());
             }
             if (stmt instanceof UnknownEffectiveStatementImpl) {
                 builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl)stmt);

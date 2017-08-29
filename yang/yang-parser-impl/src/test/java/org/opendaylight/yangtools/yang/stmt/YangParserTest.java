@@ -176,40 +176,46 @@ public class YangParserTest {
         assertEquals(Optional.of("mile"), leafType.getUnits());
         assertEquals(Optional.of("11"), leafType.getDefaultValue());
 
-        final List<RangeConstraint> ranges = leafType.getRangeConstraints();
+        final RangeSet<? extends Number> rangeset = leafType.getRangeConstraint().get().getAllowedRanges();
+        final Set<? extends Range<? extends Number>> ranges = rangeset.asRanges();
         assertEquals(1, ranges.size());
-        final RangeConstraint range = ranges.get(0);
-        assertEquals(12, range.getMin().intValue());
-        assertEquals(20, range.getMax().intValue());
 
-        final IntegerTypeDefinition baseType = leafType.getBaseType();
-        assertEquals(QName.create(BAR, "int32-ext2"), baseType.getQName());
-        assertEquals(Optional.of("mile"), baseType.getUnits());
-        assertEquals(Optional.of("11"), baseType.getDefaultValue());
+        final Range<? extends Number> range = ranges.iterator().next();
+        assertEquals(12, range.lowerEndpoint().intValue());
+        assertEquals(20, range.upperEndpoint().intValue());
 
-        final List<RangeConstraint> baseTypeRanges = baseType.getRangeConstraints();
-        assertEquals(2, baseTypeRanges.size());
-        final RangeConstraint baseTypeRange1 = baseTypeRanges.get(0);
-        assertEquals(3, baseTypeRange1.getMin().intValue());
-        assertEquals(9, baseTypeRange1.getMax().intValue());
-        final RangeConstraint baseTypeRange2 = baseTypeRanges.get(1);
-        assertEquals(11, baseTypeRange2.getMin().intValue());
-        assertEquals(20, baseTypeRange2.getMax().intValue());
+        final IntegerTypeDefinition firstBaseType = leafType.getBaseType();
+        assertEquals(QName.create(BAR, "int32-ext2"), firstBaseType.getQName());
+        assertEquals(Optional.of("mile"), firstBaseType.getUnits());
+        assertEquals(Optional.of("11"), firstBaseType.getDefaultValue());
 
-        final IntegerTypeDefinition base = baseType.getBaseType();
-        final QName baseQName = base.getQName();
+        final RangeSet<? extends Number> firstRangeset = firstBaseType.getRangeConstraint().get().getAllowedRanges();
+        final Set<? extends Range<? extends Number>> baseRanges = firstRangeset.asRanges();
+        assertEquals(2, baseRanges.size());
+
+        final Iterator<? extends Range<? extends Number>> it = baseRanges.iterator();
+        final Range<? extends Number> baseTypeRange1 = it.next();
+        assertEquals(3, baseTypeRange1.lowerEndpoint().intValue());
+        assertEquals(9, baseTypeRange1.upperEndpoint().intValue());
+        final Range<? extends Number> baseTypeRange2 = it.next();
+        assertEquals(11, baseTypeRange2.lowerEndpoint().intValue());
+        assertEquals(20, baseTypeRange2.upperEndpoint().intValue());
+
+        final IntegerTypeDefinition secondBaseType = firstBaseType.getBaseType();
+        final QName baseQName = secondBaseType.getQName();
         assertEquals("int32-ext1", baseQName.getLocalName());
         assertEquals(BAR, baseQName.getModule());
-        assertEquals(Optional.empty(), base.getUnits());
-        assertEquals(Optional.empty(), base.getDefaultValue());
+        assertEquals(Optional.empty(), secondBaseType.getUnits());
+        assertEquals(Optional.empty(), secondBaseType.getDefaultValue());
 
-        final List<RangeConstraint> baseRanges = base.getRangeConstraints();
-        assertEquals(1, baseRanges.size());
-        final RangeConstraint baseRange = baseRanges.get(0);
-        assertEquals(2, baseRange.getMin().intValue());
-        assertEquals(20, baseRange.getMax().intValue());
+        final Set<? extends Range<? extends Number>> secondRanges = secondBaseType.getRangeConstraint().get()
+                .getAllowedRanges().asRanges();
+        assertEquals(1, secondRanges.size());
+        final Range<? extends Number> secondRange = secondRanges.iterator().next();
+        assertEquals(2, secondRange.lowerEndpoint().intValue());
+        assertEquals(20, secondRange.upperEndpoint().intValue());
 
-        assertEquals(BaseTypes.int32Type(), base.getBaseType());
+        assertEquals(BaseTypes.int32Type(), secondBaseType.getBaseType());
     }
 
     @Test
@@ -384,14 +390,14 @@ public class YangParserTest {
         assertEquals(Optional.empty(), type.getUnits());
         assertEquals(Optional.empty(), type.getDefaultValue());
         assertEquals(6, type.getFractionDigits().intValue());
-        assertEquals(1, type.getRangeConstraints().size());
+        assertEquals(1, type.getRangeConstraint().get().getAllowedRanges().asRanges().size());
 
         final DecimalTypeDefinition typeBase = type.getBaseType();
         assertEquals(QName.create(BAR, "decimal64"), typeBase.getQName());
         assertEquals(Optional.empty(), typeBase.getUnits());
         assertEquals(Optional.empty(), typeBase.getDefaultValue());
         assertEquals(6, typeBase.getFractionDigits().intValue());
-        assertEquals(1, typeBase.getRangeConstraints().size());
+        assertEquals(1, typeBase.getRangeConstraint().get().getAllowedRanges().asRanges().size());
 
         assertNull(typeBase.getBaseType());
     }
@@ -407,7 +413,7 @@ public class YangParserTest {
         assertEquals(Optional.empty(), type.getUnits());
         assertEquals(Optional.empty(), type.getDefaultValue());
         assertEquals(6, type.getFractionDigits().intValue());
-        assertEquals(1, type.getRangeConstraints().size());
+        assertEquals(1, type.getRangeConstraint().get().getAllowedRanges().asRanges().size());
 
         final DecimalTypeDefinition baseTypeDecimal = type.getBaseType();
         assertEquals(6, baseTypeDecimal.getFractionDigits().intValue());
@@ -438,11 +444,11 @@ public class YangParserTest {
         assertEquals(Optional.empty(), unionType1.getUnits());
         assertEquals(Optional.empty(), unionType1.getDefaultValue());
 
-        final List<RangeConstraint> ranges = unionType1.getRangeConstraints();
-        assertEquals(1, ranges.size());
-        final RangeConstraint range = ranges.get(0);
-        assertEquals(1, range.getMin().intValue());
-        assertEquals(100, range.getMax().intValue());
+        final RangeConstraint<?> ranges = unionType1.getRangeConstraint().get();
+        assertEquals(1, ranges.getAllowedRanges().asRanges().size());
+        final Range<?> range = ranges.getAllowedRanges().span();
+        assertEquals((short)1, range.lowerEndpoint());
+        assertEquals((short)100, range.upperEndpoint());
         assertEquals(BaseTypes.int16Type(), unionType1.getBaseType());
 
         assertEquals(BaseTypes.int32Type(), unionTypes.get(1));
@@ -502,11 +508,12 @@ public class YangParserTest {
         assertEquals(QName.create(BAR, "int16"), int16Ext.getQName());
         assertEquals(Optional.empty(), int16Ext.getUnits());
         assertEquals(Optional.empty(), int16Ext.getDefaultValue());
-        final List<RangeConstraint> ranges = int16Ext.getRangeConstraints();
+        final Set<? extends Range<? extends Number>> ranges = int16Ext.getRangeConstraint().get().getAllowedRanges()
+                .asRanges();
         assertEquals(1, ranges.size());
-        final RangeConstraint range = ranges.get(0);
-        assertEquals(1, range.getMin().intValue());
-        assertEquals(100, range.getMax().intValue());
+        final Range<? extends Number> range = ranges.iterator().next();
+        assertEquals(1, range.lowerEndpoint().intValue());
+        assertEquals(100, range.upperEndpoint().intValue());
 
         assertEquals(BaseTypes.int16Type(), int16Ext.getBaseType());
     }

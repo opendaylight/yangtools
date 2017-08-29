@@ -35,7 +35,8 @@ public final class UnsignedIntegerTypeEffectiveStatementImpl extends
 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof RangeEffectiveStatementImpl) {
-                builder.setRangeAlternatives(((RangeEffectiveStatementImpl)stmt).argument());
+                final RangeEffectiveStatementImpl rangeStmt = (RangeEffectiveStatementImpl)stmt;
+                builder.setRangeConstraint(rangeStmt, rangeStmt.argument());
             }
             if (stmt instanceof UnknownEffectiveStatementImpl) {
                 builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl)stmt);

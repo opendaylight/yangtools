@@ -7,59 +7,80 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
+import com.google.common.collect.ImmutableRangeSet;
+import com.google.common.collect.Range;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
-import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 
-final class BaseDecimalType extends AbstractRangeRestrictedBaseType<DecimalTypeDefinition>
+final class BaseDecimalType extends AbstractRangeRestrictedBaseType<DecimalTypeDefinition, BigDecimal>
         implements DecimalTypeDefinition {
-    private static final List<List<RangeConstraint>> IMPLICIT_RANGE_STATEMENTS;
+    private static final ConstraintMetaDefinition BUILTIN_CONSTRAINT = new ConstraintMetaDefinition() {
 
-    static {
-        final Builder<List<RangeConstraint>> b = ImmutableList.builder();
-        b.add(createRangeConstraint("-922337203685477580.8", "922337203685477580.7"));
-        b.add(createRangeConstraint("-92233720368547758.08", "92233720368547758.07"));
-        b.add(createRangeConstraint("-9223372036854775.808", "9223372036854775.807"));
-        b.add(createRangeConstraint("-922337203685477.5808", "922337203685477.5807"));
-        b.add(createRangeConstraint("-92233720368547.75808", "92233720368547.75807"));
-        b.add(createRangeConstraint("-9223372036854.775808", "9223372036854.775807"));
-        b.add(createRangeConstraint("-922337203685.4775808", "922337203685.4775807"));
-        b.add(createRangeConstraint("-92233720368.54775808", "92233720368.54775807"));
-        b.add(createRangeConstraint("-9223372036.854775808", "9223372036.854775807"));
-        b.add(createRangeConstraint("-922337203.6854775808", "922337203.6854775807"));
-        b.add(createRangeConstraint("-92233720.36854775808", "92233720.36854775807"));
-        b.add(createRangeConstraint("-9223372.036854775808", "9223372.036854775807"));
-        b.add(createRangeConstraint("-922337.2036854775808", "922337.2036854775807"));
-        b.add(createRangeConstraint("-92233.72036854775808", "92233.72036854775807"));
-        b.add(createRangeConstraint("-9223.372036854775808", "9223.372036854775807"));
-        b.add(createRangeConstraint("-922.3372036854775808", "922.3372036854775807"));
-        b.add(createRangeConstraint("-92.23372036854775808", "92.23372036854775807"));
-        b.add(createRangeConstraint("-9.223372036854775808", "9.223372036854775807"));
-        IMPLICIT_RANGE_STATEMENTS = b.build();
+        @Override
+        public Optional<String> getReference() {
+            return Optional.of("https://tools.ietf.org/html/rfc6020#section-9.3.4");
+        }
+
+        @Override
+        public Optional<String> getDescription() {
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<String> getErrorMessage() {
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<String> getErrorAppTag() {
+            return Optional.empty();
+        }
+    };
+
+    private static final ImmutableList<RangeConstraint<BigDecimal>> IMPLICIT_RANGE_STATEMENTS = ImmutableList.of(
+        createRangeConstraint("-922337203685477580.8", "922337203685477580.7"),
+        createRangeConstraint("-92233720368547758.08", "92233720368547758.07"),
+        createRangeConstraint("-9223372036854775.808", "9223372036854775.807"),
+        createRangeConstraint("-922337203685477.5808", "922337203685477.5807"),
+        createRangeConstraint("-92233720368547.75808", "92233720368547.75807"),
+        createRangeConstraint("-9223372036854.775808", "9223372036854.775807"),
+        createRangeConstraint("-922337203685.4775808", "922337203685.4775807"),
+        createRangeConstraint("-92233720368.54775808", "92233720368.54775807"),
+        createRangeConstraint("-9223372036.854775808", "9223372036.854775807"),
+        createRangeConstraint("-922337203.6854775808", "922337203.6854775807"),
+        createRangeConstraint("-92233720.36854775808", "92233720.36854775807"),
+        createRangeConstraint("-9223372.036854775808", "9223372.036854775807"),
+        createRangeConstraint("-922337.2036854775808", "922337.2036854775807"),
+        createRangeConstraint("-92233.72036854775808", "92233.72036854775807"),
+        createRangeConstraint("-9223.372036854775808", "9223.372036854775807"),
+        createRangeConstraint("-922.3372036854775808", "922.3372036854775807"),
+        createRangeConstraint("-92.23372036854775808", "92.23372036854775807"),
+        createRangeConstraint("-9.223372036854775808", "9.223372036854775807"));
+
+    private static RangeConstraint<BigDecimal> createRangeConstraint(final String min, final String max) {
+        return new ResolvedRangeConstraint<>(BUILTIN_CONSTRAINT, ImmutableRangeSet.of(
+            Range.closed(new BigDecimal(min), new BigDecimal(max))));
     }
 
-    private static List<RangeConstraint> createRangeConstraint(final String min, final String max) {
-        return ImmutableList.of(BaseConstraints.newRangeConstraint(new BigDecimal(min), new BigDecimal(max),
-            Optional.empty(), Optional.of("https://tools.ietf.org/html/rfc6020#section-9.3.4")));
-    }
-
-    static List<RangeConstraint> constraintsForDigits(final int fractionDigits) {
-        return IMPLICIT_RANGE_STATEMENTS.get(fractionDigits - 1);
+    static RangeConstraint<BigDecimal> constraintsForDigits(final int fractionDigits) {
+        return verifyNotNull(IMPLICIT_RANGE_STATEMENTS.get(fractionDigits - 1));
     }
 
     private final Integer fractionDigits;
 
     BaseDecimalType(final SchemaPath path, final List<UnknownSchemaNode> unknownSchemaNodes,
-            final Integer fractionDigits, final List<RangeConstraint> rangeConstraints) {
-        super(path, unknownSchemaNodes, rangeConstraints);
+            final Integer fractionDigits, final RangeConstraint<BigDecimal> rangeConstraint) {
+        super(path, unknownSchemaNodes, rangeConstraint);
         this.fractionDigits = fractionDigits;
     }
 

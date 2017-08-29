@@ -28,9 +28,4 @@ final class Int32StringCodec extends AbstractIntegerStringCodec<Integer, Integer
     public String serialize(final Integer data) {
         return Objects.toString(data, "");
     }
-
-    @Override
-    Integer convertValue(final Number value) {
-        return value.intValue();
-    }
 }

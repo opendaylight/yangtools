@@ -28,9 +28,4 @@ final class Uint16StringCodec extends AbstractIntegerStringCodec<Integer, Unsign
     public String serialize(final Integer data) {
         return Objects.toString(data, "");
     }
-
-    @Override
-    Integer convertValue(final Number value) {
-        return value.intValue();
-    }
 }

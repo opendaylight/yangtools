@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
-final class BaseUint8Type extends AbstractUnsignedBaseType {
+final class BaseUint8Type extends AbstractUnsignedBaseType<Short> {
     static final BaseUint8Type INSTANCE = new BaseUint8Type();
 
     private BaseUint8Type() {

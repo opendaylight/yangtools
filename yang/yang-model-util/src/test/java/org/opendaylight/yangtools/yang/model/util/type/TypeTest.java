@@ -11,11 +11,14 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableList;
-import java.util.ArrayList;
+import com.google.common.collect.ImmutableRangeSet;
+import com.google.common.collect.Range;
+import com.google.common.collect.RangeSet;
 import java.util.List;
 import java.util.Optional;
 import org.junit.Test;
@@ -38,7 +41,6 @@ import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
@@ -422,10 +424,7 @@ public class TypeTest {
         final IntegerTypeDefinition integerTypeDefinition8 = BaseTypes.int8Type();
         final RangeRestrictedTypeBuilder<?> rangeRestrictedTypeBuilder = RestrictedTypes
                 .newIntegerBuilder(integerTypeDefinition8, SCHEMA_PATH);
-        final RangeConstraint rangeConstraint = BaseConstraints.newRangeConstraint(min, max, ABSENT, ABSENT);
-        final ArrayList<RangeConstraint> rangeArrayList = new ArrayList<>(1);
-        rangeArrayList.add(rangeConstraint);
-        rangeRestrictedTypeBuilder.setRangeAlternatives(rangeArrayList);
+        rangeRestrictedTypeBuilder.setRangeConstraint(mock(ConstraintMetaDefinition.class), lengthArrayList);
         final TypeDefinition<?> typeDefinition1 = rangeRestrictedTypeBuilder.buildType();
         assertNotNull(typeDefinition1);
     }
@@ -434,15 +433,13 @@ public class TypeTest {
     public void exceptionTest() {
         final UnresolvedNumber min = UnresolvedNumber.min();
         final UnresolvedNumber max = UnresolvedNumber.max();
-        final RangeConstraint rangeConstraint = BaseConstraints.newRangeConstraint(min, max, Optional.empty(),
-            Optional.empty());
-
         final EnumPair enumPair = EnumPairBuilder.create("enum1", 1).setDescription("description")
                 .setReference("reference").setUnknownSchemaNodes(mock(UnknownSchemaNode.class)).build();
 
+        final RangeSet<Integer> rangeset = ImmutableRangeSet.of(Range.closed(1, 2));
         final InvalidRangeConstraintException invalidRangeConstraintException = new InvalidRangeConstraintException(
-                rangeConstraint, "error msg", "other important messages");
-        assertEquals(invalidRangeConstraintException.getOffendingConstraint(), rangeConstraint);
+                rangeset, "error msg", "other important messages");
+        assertSame(rangeset, invalidRangeConstraintException.getOffendingRanges());
 
         final InvalidBitDefinitionException invalidBitDefinitionException = new InvalidBitDefinitionException(
                 BIT_A, "error msg", "other important messages");
