@@ -30,17 +30,16 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LengthConstraintEffectiveImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeConstraintEffectiveImpl;
 
 /**
@@ -134,8 +133,7 @@ public final class TypeUtils {
         try {
             return new BigInteger(value);
         } catch (final NumberFormatException e) {
-            throw new SourceException(String.format("Value %s is not a valid integer", value),
-                    ctx.getStatementSourceReference(), e);
+            throw new SourceException(ctx.getStatementSourceReference(), e, "Value %s is not a valid integer", value);
         }
     }
 
@@ -193,15 +191,12 @@ public final class TypeUtils {
         return rangeConstraints;
     }
 
-    public static List<LengthConstraint> parseLengthListFromString(final StmtContext<?, ?, ?> ctx,
+    public static List<ValueRange> parseLengthListFromString(final StmtContext<?, ?, ?> ctx,
             final String lengthArgument) {
-        final Optional<String> description = Optional.absent();
-        final Optional<String> reference = Optional.absent();
-
-        final List<LengthConstraint> lengthConstraints = new ArrayList<>();
+        final List<ValueRange> ranges = new ArrayList<>();
 
         for (final String singleRange : PIPE_SPLITTER.split(lengthArgument)) {
-            final Iterator<String> boundaries = TWO_DOTS_SPLITTER.splitToList(singleRange).iterator();
+            final Iterator<String> boundaries = TWO_DOTS_SPLITTER.split(singleRange).iterator();
             final Number min = parseIntegerConstraintValue(ctx, boundaries.next());
 
             final Number max;
@@ -219,15 +214,15 @@ public final class TypeUtils {
             }
 
             // some of intervals overlapping
-            InferenceException.throwIf(lengthConstraints.size() > 1
-                && compareNumbers(min, Iterables.getLast(lengthConstraints).getMax()) != 1,
+            InferenceException.throwIf(ranges.size() > 1
+                && compareNumbers(min, Iterables.getLast(ranges).upperBound()) != 1,
                         ctx.getStatementSourceReference(),  "Some of the length ranges in %s are not disjoint",
                         lengthArgument);
 
-            lengthConstraints.add(new LengthConstraintEffectiveImpl(min, max, description, reference));
+            ranges.add(ValueRange.of(min, max));
         }
 
-        return lengthConstraints;
+        return ranges;
     }
 
     public static boolean isYangTypeBodyStmtString(final String typeName) {
