@@ -21,6 +21,7 @@ import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -36,7 +37,6 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPai
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
@@ -57,7 +57,7 @@ public class TypeTest {
         final BaseBinaryType baseBinaryType1 = BaseBinaryType.INSTANCE;
         final BaseBinaryType baseBinaryType2 = (BaseBinaryType)BaseTypes.binaryType();
         hashCodeEqualsToStringTest(baseBinaryType1, baseBinaryType2);
-        assertEquals(baseBinaryType1.getLengthConstraints(), baseBinaryType2.getLengthConstraints());
+        assertEquals(baseBinaryType1.getLengthConstraint(), baseBinaryType2.getLengthConstraint());
 
         final DerivedBinaryType derivedBinaryType1 = (DerivedBinaryType)DerivedTypes.derivedTypeBuilder(baseBinaryType1,
                 SCHEMA_PATH).build();
@@ -259,7 +259,7 @@ public class TypeTest {
         final BaseStringType baseStringType1 = BaseStringType.INSTANCE;
         final BaseStringType baseStringType2 = (BaseStringType)BaseTypes.stringType();
         hashCodeEqualsToStringTest(baseStringType1, baseStringType2);
-        assertEquals(baseStringType1.getLengthConstraints(), baseStringType2.getLengthConstraints());
+        assertEquals(baseStringType1.getLengthConstraint(), baseStringType2.getLengthConstraint());
         assertEquals(baseStringType1.getPatternConstraints(), baseStringType2.getPatternConstraints());
 
         final DerivedStringType derivedStringType1 = (DerivedStringType)
@@ -408,14 +408,14 @@ public class TypeTest {
     }
 
     @Test
-    public void constraintTypeBuilderTest() {
+    public void constraintTypeBuilderTest() throws InvalidLengthConstraintException {
         final BaseBinaryType baseBinaryType = (BaseBinaryType)BaseTypes.binaryType();
         final LengthRestrictedTypeBuilder<?> lengthRestrictedTypeBuilder = RestrictedTypes
                 .newBinaryBuilder(baseBinaryType, SCHEMA_PATH);
         final Long min = Long.valueOf(0);
         final UnresolvedNumber max = UnresolvedNumber.max();
         final List<ValueRange> lengthArrayList = ImmutableList.of(ValueRange.of(min, max));
-        lengthRestrictedTypeBuilder.setLengthAlternatives(lengthArrayList);
+        lengthRestrictedTypeBuilder.setLengthConstraint(mock(ConstraintMetaDefinition.class), lengthArrayList);
         final TypeDefinition<?> typeDefinition = lengthRestrictedTypeBuilder.buildType();
         assertNotNull(typeDefinition);
 
@@ -432,18 +432,13 @@ public class TypeTest {
 
     @Test
     public void exceptionTest() {
-        final Optional<String> absent = Optional.absent();
         final UnresolvedNumber min = UnresolvedNumber.min();
         final UnresolvedNumber max = UnresolvedNumber.max();
-        final LengthConstraint lengthConstraint = BaseConstraints.newLengthConstraint(min, max, absent, absent);
-        final RangeConstraint rangeConstraint = BaseConstraints.newRangeConstraint(min, max, absent, absent);
+        final RangeConstraint rangeConstraint = BaseConstraints.newRangeConstraint(min, max, Optional.absent(),
+            Optional.absent());
 
         final EnumPair enumPair = EnumPairBuilder.create("enum1", 1).setDescription("description")
                 .setReference("reference").setUnknownSchemaNodes(mock(UnknownSchemaNode.class)).build();
-
-        final InvalidLengthConstraintException invalidLengthConstraintException = new InvalidLengthConstraintException(
-                lengthConstraint, "error msg", "other important messages");
-        assertEquals(invalidLengthConstraintException.getOffendingConstraint(), lengthConstraint);
 
         final InvalidRangeConstraintException invalidRangeConstraintException = new InvalidRangeConstraintException(
                 rangeConstraint, "error msg", "other important messages");
