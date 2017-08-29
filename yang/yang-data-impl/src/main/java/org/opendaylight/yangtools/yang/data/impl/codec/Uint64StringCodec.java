@@ -30,12 +30,4 @@ final class Uint64StringCodec extends AbstractIntegerStringCodec<BigInteger, Uns
     public String serialize(final BigInteger data) {
         return Objects.toString(data, "");
     }
-
-    @Override
-    BigInteger convertValue(final Number value) {
-        if (value instanceof BigInteger) {
-            return (BigInteger) value;
-        }
-        return BigInteger.valueOf(value.longValue());
-    }
 }
