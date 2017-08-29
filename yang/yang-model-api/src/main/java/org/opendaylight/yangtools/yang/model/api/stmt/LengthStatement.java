@@ -10,10 +10,9 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.List;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
-public interface LengthStatement extends DeclaredStatement<List<LengthConstraint>>, DocumentedConstraintGroup {
+public interface LengthStatement extends DeclaredStatement<List<ValueRange>>, DocumentedConstraintGroup {
     @Nonnull
     @Override
-    List<LengthConstraint> argument();
+    List<ValueRange> argument();
 }

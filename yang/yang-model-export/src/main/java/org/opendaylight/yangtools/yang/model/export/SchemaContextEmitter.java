@@ -12,6 +12,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Range;
+import com.google.common.collect.RangeSet;
 import com.google.common.primitives.UnsignedInteger;
 import java.net.URI;
 import java.util.Collection;
@@ -1116,7 +1118,7 @@ abstract class SchemaContextEmitter {
                 } else if (child instanceof ConfigStatement) {
                     emitConfigNode((ConfigStatement) child);
                 } else if (child instanceof UnknownStatement) {
-                    emitUnknownStatementNode((UnknownStatement<?>) child);
+                    emitUnknownStatementNode(child);
                 }
             }
             super.writer.endNode();
@@ -1495,7 +1497,7 @@ abstract class SchemaContextEmitter {
             } else if (typeDef instanceof UnionTypeDefinition) {
                 emitUnionSpecification((UnionTypeDefinition) typeDef);
             } else if (typeDef instanceof BinaryTypeDefinition) {
-                emitLength(((BinaryTypeDefinition) typeDef).getLengthConstraints());
+                ((BinaryTypeDefinition) typeDef).getLengthConstraint().ifPresent(this::emitLength);
             } else if (typeDef instanceof BooleanTypeDefinition || typeDef instanceof EmptyTypeDefinition) {
                 // NOOP
             } else {
@@ -1540,34 +1542,24 @@ abstract class SchemaContextEmitter {
         }
 
         private void emitStringRestrictions(final StringTypeDefinition typeDef) {
-
-            // FIXME: BUG-2444: Wrong decomposition in API, should be
-            // LenghtConstraint
-            // which contains ranges.
-            emitLength(typeDef.getLengthConstraints());
+            typeDef.getLengthConstraint().ifPresent(this::emitLength);
 
             for (final PatternConstraint pattern : typeDef.getPatternConstraints()) {
                 emitPatternNode(pattern);
             }
-
         }
 
-        private void emitLength(final List<LengthConstraint> list) {
-            if (!list.isEmpty()) {
-                super.writer.startLengthNode(toLengthString(list));
-                // FIXME: BUG-2444: Workaround for incorrect decomposition in
-                // API
-                final LengthConstraint first = list.iterator().next();
-                emitErrorMessageNode(first.getErrorMessage());
-                emitErrorAppTagNode(first.getErrorAppTag());
-                emitDescriptionNode(first.getDescription());
-                emitReferenceNode(first.getReference());
-                super.writer.endNode();
-            }
+        private void emitLength(final LengthConstraint constraint) {
+            super.writer.startLengthNode(toLengthString(constraint.getAllowedRanges()));
+            emitErrorMessageNode(constraint.getErrorMessage());
+            emitErrorAppTagNode(constraint.getErrorAppTag());
+            emitDescriptionNode(constraint.getDescription());
+            emitReferenceNode(constraint.getReference());
+            super.writer.endNode();
         }
 
-        private static String toLengthString(final List<LengthConstraint> list) {
-            final Iterator<LengthConstraint> it = list.iterator();
+        private static String toLengthString(final RangeSet<Integer> ranges) {
+            final Iterator<Range<Integer>> it = ranges.asRanges().iterator();
             if (!it.hasNext()) {
                 return "";
             }
@@ -1575,9 +1567,9 @@ abstract class SchemaContextEmitter {
             final StringBuilder sb = new StringBuilder();
             boolean haveNext;
             do {
-                final LengthConstraint current = it.next();
+                final Range<Integer> current = it.next();
                 haveNext = it.hasNext();
-                appendRange(sb, current.getMin(), current.getMax(), haveNext);
+                appendRange(sb, current.lowerEndpoint(), current.upperEndpoint(), haveNext);
             } while (haveNext);
 
             return sb.toString();

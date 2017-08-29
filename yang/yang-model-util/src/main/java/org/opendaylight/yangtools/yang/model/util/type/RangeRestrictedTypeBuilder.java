@@ -17,10 +17,10 @@ import java.util.Optional;
 import java.util.function.Function;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
-import org.opendaylight.yangtools.yang.model.util.UnresolvedNumber;
 
 public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDefinition<T>>
         extends AbstractRestrictedTypeBuilder<T> {
@@ -88,7 +88,7 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
 
     private static List<RangeConstraint> typedRanges(final List<RangeConstraint> ranges,
             final Class<? extends Number> clazz) {
-        final Function<Number, Number> function = NumberUtil.converterTo(clazz);
+        final Function<Number, ? extends Number> function = NumberUtil.converterTo(clazz);
         Preconditions.checkArgument(function != null, "Unsupported range class %s", clazz);
 
         final Builder<RangeConstraint> builder = ImmutableList.builder();

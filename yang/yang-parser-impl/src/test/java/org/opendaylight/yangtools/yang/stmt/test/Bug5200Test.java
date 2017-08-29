@@ -52,15 +52,15 @@ public class Bug5200Test {
         assertTrue(myLeafType instanceof StringTypeDefinition);
         assertTrue(myLeaf2Type instanceof IntegerTypeDefinition);
 
-        List<LengthConstraint> lengthConstraints = ((StringTypeDefinition) myLeafType).getLengthConstraints();
-        List<PatternConstraint> patternConstraints = ((StringTypeDefinition) myLeafType).getPatternConstraints();
+        final LengthConstraint lengthConstraint =
+                ((StringTypeDefinition) myLeafType).getLengthConstraint().get();
+        final List<PatternConstraint> patternConstraints = ((StringTypeDefinition) myLeafType).getPatternConstraints();
 
-        assertEquals(1, lengthConstraints.size());
+        assertEquals(1, lengthConstraint.getAllowedRanges().asRanges().size());
         assertEquals(1, patternConstraints.size());
 
-        LengthConstraint lenghtConstraint = lengthConstraints.iterator().next();
-        assertEquals("lenght constraint error-app-tag", lenghtConstraint.getErrorAppTag());
-        assertEquals("lenght constraint error-app-message", lenghtConstraint.getErrorMessage());
+        assertEquals("lenght constraint error-app-tag", lengthConstraint.getErrorAppTag());
+        assertEquals("lenght constraint error-app-message", lengthConstraint.getErrorMessage());
 
         PatternConstraint patternConstraint = patternConstraints.iterator().next();
         assertEquals("pattern constraint error-app-tag", patternConstraint.getErrorAppTag());
