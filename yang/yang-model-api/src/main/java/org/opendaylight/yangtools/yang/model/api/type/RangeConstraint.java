@@ -7,39 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
+import com.google.common.collect.RangeSet;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 
 /**
- * The Range Constraint interface is used to restrict integer and decimal
- * built-in types, or types derived from those.
- * <br>
- * A range consists of an explicit value consists of an explicit value, or a lower bound
- * returned by {@link #getMin()} and an upper bound returned by
- * {@link #getMax()}. <br>
- * <br>
- * Each explicit value and range boundary value given in
- * the range expression MUST match the type being restricted, or be one of the
- * special values "min" or "max". "min" and "max" mean the minimum and maximum
- * value accepted for the type being restricted, respectively
- * <br>
- * <br>
- * This interface was modeled according to definition in <a
- * href="https://tools.ietf.org/html/rfc6020#section-9.2.4">[RFC-6020] The
- * range Statement</a>.
+ * A single value range restriction, as expressed by a range statement, as specified by
+ * <a href="https://tools.ietf.org/html/rfc6020#section-9.2.4">[RFC-6020] The range Statement</a>.
  */
-public interface RangeConstraint extends ConstraintMetaDefinition {
-
+public interface RangeConstraint<T extends Number & Comparable<T>> extends ConstraintMetaDefinition {
     /**
-     * Returns the length-restricting lower bound value.
+     * Return allowed length ranges. Returned RangeSet must not be empty.
      *
-     * @return the length-restricting lower bound value.
+     * @return Set of allowed lengths.
      */
-    Number getMin();
-
-    /**
-     * Returns the length-restricting upper bound value.
-     *
-     * @return the length-restricting upper bound value.
-     */
-    Number getMax();
+    RangeSet<? extends T> getAllowedRanges();
 }
