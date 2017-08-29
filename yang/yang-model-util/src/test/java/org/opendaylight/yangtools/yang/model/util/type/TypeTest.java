@@ -15,7 +15,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableList;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.junit.Test;
@@ -422,10 +421,7 @@ public class TypeTest {
         final IntegerTypeDefinition integerTypeDefinition8 = BaseTypes.int8Type();
         final RangeRestrictedTypeBuilder<?> rangeRestrictedTypeBuilder = RestrictedTypes
                 .newIntegerBuilder(integerTypeDefinition8, SCHEMA_PATH);
-        final RangeConstraint rangeConstraint = BaseConstraints.newRangeConstraint(min, max, ABSENT, ABSENT);
-        final ArrayList<RangeConstraint> rangeArrayList = new ArrayList<>(1);
-        rangeArrayList.add(rangeConstraint);
-        rangeRestrictedTypeBuilder.setRangeAlternatives(rangeArrayList);
+        rangeRestrictedTypeBuilder.setRangeConstraint(mock(ConstraintMetaDefinition.class), lengthArrayList);
         final TypeDefinition<?> typeDefinition1 = rangeRestrictedTypeBuilder.buildType();
         assertNotNull(typeDefinition1);
     }
@@ -434,8 +430,9 @@ public class TypeTest {
     public void exceptionTest() {
         final UnresolvedNumber min = UnresolvedNumber.min();
         final UnresolvedNumber max = UnresolvedNumber.max();
-        final RangeConstraint rangeConstraint = BaseConstraints.newRangeConstraint(min, max, Optional.empty(),
-            Optional.empty());
+//        final RangeConstraint rangeConstraint = BaseConstraints.newRangeConstraint(min, max, Optional.empty(),
+//            Optional.empty());
+        final RangeConstraint rangeConstraint = null;
 
         final EnumPair enumPair = EnumPairBuilder.create("enum1", 1).setDescription("description")
                 .setReference("reference").setUnknownSchemaNodes(mock(UnknownSchemaNode.class)).build();
