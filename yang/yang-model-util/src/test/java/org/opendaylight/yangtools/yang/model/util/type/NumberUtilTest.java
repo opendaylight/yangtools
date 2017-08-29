@@ -70,8 +70,8 @@ public class NumberUtilTest {
 
     @Test
     public void testConverterToShort() {
-        final short shortNum = 20;
-        final Function<Number, Number> numberFunction = NumberUtil.converterTo(Short.class);
+        final Short shortNum = 20;
+        final Function<Number, Short> numberFunction = NumberUtil.converterTo(Short.class);
         assertEquals(shortNum, numberFunction.apply(shortNum));
 
         final byte byteNum = 20;
@@ -83,16 +83,16 @@ public class NumberUtilTest {
 
     @Test
     public void testConverterToInteger() {
-        final int intNum = 20;
+        final Integer intNum = 20;
         final byte byteNum = 20;
-        final Function<Number, Number> numberFunction = NumberUtil.converterTo(Integer.class);
+        final Function<Number, Integer> numberFunction = NumberUtil.converterTo(Integer.class);
         assertEquals(intNum, numberFunction.apply(byteNum));
     }
 
     @Test
     public void testConverterToLong() {
-        final long longNum = 20L;
-        final Function<Number, Number> numberFunction = NumberUtil.converterTo(Long.class);
+        final Long longNum = 20L;
+        final Function<Number, Long> numberFunction = NumberUtil.converterTo(Long.class);
         assertEquals(longNum, numberFunction.apply(longNum));
 
         final byte byteNum = 20;
@@ -105,7 +105,7 @@ public class NumberUtilTest {
     @Test
     public void testConverterToBigDecimal() {
         BigDecimal bigDecNum = new BigDecimal(20.0);
-        final Function<Number, Number> numberFunction = NumberUtil.converterTo(BigDecimal.class);
+        final Function<Number, BigDecimal> numberFunction = NumberUtil.converterTo(BigDecimal.class);
         assertEquals(bigDecNum, numberFunction.apply(bigDecNum));
 
         int intNum = 20;
@@ -118,7 +118,7 @@ public class NumberUtilTest {
 
     @Test public void testConverterToBigInteger() {
         final BigInteger bigIntNum = new BigInteger("20");
-        final Function<Number, Number> numberFunction = NumberUtil.converterTo(BigInteger.class);
+        final Function<Number, BigInteger> numberFunction = NumberUtil.converterTo(BigInteger.class);
         assertEquals(bigIntNum, numberFunction.apply(bigIntNum));
 
         final int intNum = 20;

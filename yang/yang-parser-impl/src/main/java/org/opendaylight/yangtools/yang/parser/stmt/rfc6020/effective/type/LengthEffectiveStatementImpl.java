@@ -9,19 +9,18 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class LengthEffectiveStatementImpl extends
-        AbstractListConstraintEffectiveStatement<LengthConstraint, LengthStatement> {
+        AbstractListConstraintEffectiveStatement<ValueRange, LengthStatement> {
 
-    public LengthEffectiveStatementImpl(final StmtContext<List<LengthConstraint>, LengthStatement, ?> ctx) {
+    public LengthEffectiveStatementImpl(final StmtContext<List<ValueRange>, LengthStatement, ?> ctx) {
         super(ctx);
     }
 
     @Override
-    final LengthConstraint createCustomizedConstraint(final LengthConstraint lengthConstraint) {
-        return new LengthConstraintEffectiveImpl(lengthConstraint.getMin(), lengthConstraint.getMax(),
-                getDescription(), getReference(), getErrorAppTag(), getErrorMessage());
+    final ValueRange createCustomizedConstraint(final ValueRange lengthConstraint) {
+        return lengthConstraint;
     }
 }
