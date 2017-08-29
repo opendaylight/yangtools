@@ -29,9 +29,4 @@ final class Int8StringCodec extends AbstractIntegerStringCodec<Byte, IntegerType
     public String serialize(final Byte data) {
         return Objects.toString(data, "");
     }
-
-    @Override
-    Byte convertValue(final Number value) {
-        return value.byteValue();
-    }
 }

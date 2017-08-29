@@ -29,9 +29,4 @@ final class Int64StringCodec extends AbstractIntegerStringCodec<Long, IntegerTyp
     public String serialize(final Long data) {
         return Objects.toString(data, "");
     }
-
-    @Override
-    Long convertValue(final Number value) {
-        return value.longValue();
-    }
 }

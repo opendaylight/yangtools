@@ -28,9 +28,4 @@ final class Int16StringCodec extends AbstractIntegerStringCodec<Short, IntegerTy
     public String serialize(final Short data) {
         return Objects.toString(data, "");
     }
-
-    @Override
-    Short convertValue(final Number value) {
-        return value.shortValue();
-    }
 }

@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.math.BigDecimal;
 import java.util.List;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -17,14 +16,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeEffectiveStatementImpl;
 
-public class RangeStatementImpl extends AbstractDeclaredStatement<List<RangeConstraint>> implements RangeStatement {
+public class RangeStatementImpl extends AbstractDeclaredStatement<List<ValueRange>> implements RangeStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .RANGE)
             .addOptional(YangStmtMapping.DESCRIPTION)
@@ -38,30 +37,30 @@ public class RangeStatementImpl extends AbstractDeclaredStatement<List<RangeCons
     public static final BigDecimal YANG_MIN_NUM = BigDecimal.valueOf(-Double.MAX_VALUE);
     public static final BigDecimal YANG_MAX_NUM = BigDecimal.valueOf(Double.MAX_VALUE);
 
-    protected RangeStatementImpl(final StmtContext<List<RangeConstraint>, RangeStatement, ?> context) {
+    protected RangeStatementImpl(final StmtContext<List<ValueRange>, RangeStatement, ?> context) {
         super(context);
     }
 
-    public static class Definition extends AbstractStatementSupport<List<RangeConstraint>, RangeStatement,
-            EffectiveStatement<List<RangeConstraint>, RangeStatement>> {
+    public static class Definition extends AbstractStatementSupport<List<ValueRange>, RangeStatement,
+            EffectiveStatement<List<ValueRange>, RangeStatement>> {
 
         public Definition() {
             super(YangStmtMapping.RANGE);
         }
 
         @Override
-        public List<RangeConstraint> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        public List<ValueRange> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return TypeUtils.parseRangeListFromString(ctx, value);
         }
 
         @Override
-        public RangeStatement createDeclared(final StmtContext<List<RangeConstraint>, RangeStatement, ?> ctx) {
+        public RangeStatement createDeclared(final StmtContext<List<ValueRange>, RangeStatement, ?> ctx) {
             return new RangeStatementImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<List<RangeConstraint>, RangeStatement> createEffective(
-                final StmtContext<List<RangeConstraint>, RangeStatement, EffectiveStatement<List<RangeConstraint>,
+        public EffectiveStatement<List<ValueRange>, RangeStatement> createEffective(
+                final StmtContext<List<ValueRange>, RangeStatement, EffectiveStatement<List<ValueRange>,
                         RangeStatement>> ctx) {
             return new RangeEffectiveStatementImpl(ctx);
         }
@@ -90,11 +89,5 @@ public class RangeStatementImpl extends AbstractDeclaredStatement<List<RangeCons
     @Override
     public ReferenceStatement getReference() {
         return firstDeclared(ReferenceStatement.class);
-    }
-
-    @Nonnull
-    @Override
-    public List<RangeConstraint> getRange() {
-        return argument();
     }
 }

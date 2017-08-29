@@ -7,26 +7,28 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import com.google.common.collect.RangeSet;
 
 @Beta
 public class InvalidRangeConstraintException extends IllegalArgumentException {
     private static final long serialVersionUID = 1L;
-    private final RangeConstraint offendingRangeConstraint;
 
-    protected InvalidRangeConstraintException(final RangeConstraint offendingConstraint, final String message) {
+    private final RangeSet<?> offendingRangeConstraint;
+
+    protected InvalidRangeConstraintException(final RangeSet<?> offendingConstraint, final String message) {
         super(message);
-        this.offendingRangeConstraint = Preconditions.checkNotNull(offendingConstraint);
+        this.offendingRangeConstraint = requireNonNull(offendingConstraint);
     }
 
-    public InvalidRangeConstraintException(final RangeConstraint offendingConstraint, final String format,
+    public InvalidRangeConstraintException(final RangeSet<?> offendingConstraint, final String format,
             final Object... args) {
         this(offendingConstraint, String.format(format, args));
     }
 
-    public RangeConstraint getOffendingConstraint() {
+    public RangeSet<?> getOffendingRanges() {
         return offendingRangeConstraint;
     }
 }
