@@ -14,6 +14,16 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 public class PatternEffectiveStatementImpl extends
         AbstractConstraintEffectiveStatement<PatternConstraint, PatternStatement> {
     public PatternEffectiveStatementImpl(final StmtContext<PatternConstraint, PatternStatement, ?> ctx) {
-        super(ctx, new PatternConstraintFactory());
+        super(ctx);
+    }
+
+    @Override
+    protected PatternConstraint createConstraints(final PatternConstraint argument) {
+        if (!isCustomizedStatement()) {
+            return argument;
+        }
+
+        return new PatternConstraintEffectiveImpl(argument.getRegularExpression(), argument.getRawRegularExpression(),
+            getDescription(), getReference(), getErrorAppTag(), getErrorMessage(), getModifier());
     }
 }

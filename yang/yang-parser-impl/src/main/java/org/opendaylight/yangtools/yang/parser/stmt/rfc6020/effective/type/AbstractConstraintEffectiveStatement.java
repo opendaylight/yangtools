@@ -7,16 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import com.google.common.collect.ImmutableList;
-import java.util.ArrayList;
-import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
-import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DescriptionEffectiveStatementImpl;
@@ -34,8 +28,7 @@ abstract class AbstractConstraintEffectiveStatement<A, D extends DeclaredStateme
     private final ModifierKind modifier;
     private final A constraints;
 
-    public AbstractConstraintEffectiveStatement(final StmtContext<A, D, ?> ctx,
-            final ConstraintFactory<A> constraintFactory) {
+    public AbstractConstraintEffectiveStatement(final StmtContext<A, D, ?> ctx) {
         super(ctx);
         String descriptionInit = null;
         String referenceInit = null;
@@ -66,7 +59,7 @@ abstract class AbstractConstraintEffectiveStatement<A, D extends DeclaredStateme
         this.errorAppTag = errorAppTagInit;
         this.errorMessage = errorMessageInit;
         this.modifier = modifierInit;
-        this.constraints = constraintFactory.createConstraints(this, super.argument());
+        this.constraints = createConstraints(super.argument());
     }
 
     @Override
@@ -102,63 +95,7 @@ abstract class AbstractConstraintEffectiveStatement<A, D extends DeclaredStateme
     public final String getErrorMessage() {
         return errorMessage;
     }
+
+    abstract A createConstraints(A argument);
 }
 
-abstract class ConstraintFactory<A> {
-    abstract protected A createConstraints(AbstractConstraintEffectiveStatement<A, ?> stmt, A argument);
-}
-
-abstract class ListConstraintFactory<A> extends ConstraintFactory<List<A>> {
-    @Override
-    protected List<A> createConstraints(final AbstractConstraintEffectiveStatement<List<A>, ?> stmt,
-            final List<A> argument) {
-        if (!stmt.isCustomizedStatement()) {
-            return ImmutableList.copyOf(argument);
-        }
-
-        final List<A> customizedConstraints = new ArrayList<>(argument.size());
-        for (final A constraint : argument) {
-            customizedConstraints.add(createCustomizedConstraint(constraint, stmt));
-        }
-        return ImmutableList.copyOf(customizedConstraints);
-    }
-
-    abstract protected A createCustomizedConstraint(A constraint, AbstractConstraintEffectiveStatement<List<A>, ?> stmt);
-}
-
-final class LengthConstraintFactory extends ListConstraintFactory<LengthConstraint> {
-    @Override
-    protected LengthConstraint createCustomizedConstraint(final LengthConstraint lengthConstraint,
-            final AbstractConstraintEffectiveStatement<List<LengthConstraint>, ?> stmt) {
-        return new LengthConstraintEffectiveImpl(lengthConstraint.getMin(), lengthConstraint.getMax(),
-                stmt.getDescription(), stmt.getReference(), stmt.getErrorAppTag(), stmt.getErrorMessage());
-    }
-}
-
-final class RangeConstraintFactory extends ListConstraintFactory<RangeConstraint> {
-    @Override
-    protected RangeConstraint createCustomizedConstraint(final RangeConstraint rangeConstraint,
-            final AbstractConstraintEffectiveStatement<List<RangeConstraint>, ?> stmt) {
-        return new RangeConstraintEffectiveImpl(rangeConstraint.getMin(), rangeConstraint.getMax(),
-                stmt.getDescription(), stmt.getReference(), stmt.getErrorAppTag(), stmt.getErrorMessage());
-    }
-}
-
-final class PatternConstraintFactory extends ConstraintFactory<PatternConstraint> {
-    @Override
-    protected PatternConstraint createConstraints(
-            final AbstractConstraintEffectiveStatement<PatternConstraint, ?> stmt, final PatternConstraint argument) {
-        if (!stmt.isCustomizedStatement()) {
-            return argument;
-        }
-
-        return createCustomizedConstraint(argument, stmt);
-    }
-
-    private static PatternConstraint createCustomizedConstraint(final PatternConstraint patternConstraint,
-            final AbstractConstraintEffectiveStatement<?, ?> stmt) {
-        return new PatternConstraintEffectiveImpl(patternConstraint.getRegularExpression(),
-                patternConstraint.getRawRegularExpression(), stmt.getDescription(), stmt.getReference(),
-                stmt.getErrorAppTag(), stmt.getErrorMessage(), stmt.getModifier());
-    }
-}
