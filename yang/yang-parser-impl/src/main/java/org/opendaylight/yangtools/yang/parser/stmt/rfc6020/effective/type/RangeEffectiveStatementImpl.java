@@ -13,8 +13,14 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class RangeEffectiveStatementImpl extends
-        AbstractConstraintEffectiveStatement<List<RangeConstraint>, RangeStatement> {
+        AbstractListConstraintEffectiveStatement<RangeConstraint, RangeStatement> {
     public RangeEffectiveStatementImpl(final StmtContext<List<RangeConstraint>, RangeStatement, ?> ctx) {
-        super(ctx, new RangeConstraintFactory());
+        super(ctx);
+    }
+
+    @Override
+    final RangeConstraint createCustomizedConstraint(final RangeConstraint rangeConstraint) {
+        return new RangeConstraintEffectiveImpl(rangeConstraint.getMin(), rangeConstraint.getMax(),
+                getDescription(), getReference(), getErrorAppTag(), getErrorMessage());
     }
 }
