@@ -166,14 +166,14 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
         if (type == null) {
             return Collections.emptyList();
         }
-        return type.getRangeConstraints();
+        return type.getRangeConstraint();
     }
 
     protected static List<RangeConstraint> extractRange(final UnsignedIntegerTypeDefinition type) {
         if (type == null) {
             return Collections.emptyList();
         }
-        return type.getRangeConstraints();
+        return type.getRangeConstraint();
     }
 
     private static int provideBase(final String integer) {

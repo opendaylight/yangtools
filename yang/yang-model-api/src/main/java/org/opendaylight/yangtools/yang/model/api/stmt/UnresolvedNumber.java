@@ -10,9 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Range;
-import java.util.List;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
 @Beta
 public abstract class UnresolvedNumber extends Number implements Immutable {
@@ -26,8 +24,8 @@ public abstract class UnresolvedNumber extends Number implements Immutable {
         }
 
         @Override
-        public Number resolveRange(final List<RangeConstraint> constraints) {
-            return resolve(constraints.get(constraints.size() - 1).getMax());
+        public <T extends Number & Comparable<T>> T resolveRange(final Range<T> span) {
+            return resolve(span.upperEndpoint());
         }
 
         @Override
@@ -49,8 +47,8 @@ public abstract class UnresolvedNumber extends Number implements Immutable {
         }
 
         @Override
-        public Number resolveRange(final List<RangeConstraint> constraints) {
-            return resolve(constraints.get(0).getMin());
+        public <T extends Number & Comparable<T>> T resolveRange(final Range<T> span) {
+            return resolve(span.lowerEndpoint());
         }
 
         @Override
@@ -98,7 +96,7 @@ public abstract class UnresolvedNumber extends Number implements Immutable {
 
     public abstract <T extends Number & Comparable<T>> T resolveLength(Range<T> span);
 
-    public abstract Number resolveRange(List<RangeConstraint> constraints);
+    public abstract <T extends Number & Comparable<T>> T resolveRange(Range<T> span);
 
     @Override
     public abstract String toString();

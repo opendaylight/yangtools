@@ -9,18 +9,11 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class RangeEffectiveStatementImpl extends
-        AbstractListConstraintEffectiveStatement<RangeConstraint, RangeStatement> {
-    public RangeEffectiveStatementImpl(final StmtContext<List<RangeConstraint>, RangeStatement, ?> ctx) {
+public class RangeEffectiveStatementImpl extends AbstractListConstraintEffectiveStatement<ValueRange, RangeStatement> {
+    public RangeEffectiveStatementImpl(final StmtContext<List<ValueRange>, RangeStatement, ?> ctx) {
         super(ctx);
-    }
-
-    @Override
-    final RangeConstraint createCustomizedConstraint(final RangeConstraint rangeConstraint) {
-        return new RangeConstraintEffectiveImpl(rangeConstraint.getMin(), rangeConstraint.getMax(),
-                getDescription(), getReference(), getErrorAppTag(), getErrorMessage());
     }
 }

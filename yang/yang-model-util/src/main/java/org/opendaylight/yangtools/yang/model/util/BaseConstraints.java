@@ -48,7 +48,7 @@ public final class BaseConstraints {
      * @param reference Reference associated with constraint. {@link Optional#absent()} if reference is undefined.
      * @return Instance of {@link RangeConstraint}
      */
-    public static <T extends Number> RangeConstraint newRangeConstraint(final T min, final T max,
+    public static <T extends Number & Comparable<T>> RangeConstraint<T> newRangeConstraint(final T min, final T max,
             final Optional<String> description, final Optional<String> reference) {
         return new RangeConstraintImpl(min, max, description, reference);
     }

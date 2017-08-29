@@ -44,8 +44,7 @@ public abstract class LengthRestrictedTypeBuilder<T extends LengthRestrictedType
      */
     public final void setLengthConstraint(final @NonNull ConstraintMetaDefinition constraint,
             final @NonNull List<ValueRange> ranges) throws InvalidLengthConstraintException {
-        Preconditions.checkState(lengthConstraint == null, "Length alternatives already defined as %s",
-                lengthConstraint);
+        Preconditions.checkState(lengthConstraint == null, "Length constraint already defined as %s", lengthConstraint);
         final LengthConstraint baseLengths = findLenghts();
         if (ranges.isEmpty()) {
             lengthConstraint = baseLengths;

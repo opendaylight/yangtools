@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.annotations.Beta;
-import java.util.List;
 import javax.annotation.Nonnull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -104,8 +103,8 @@ public final class RestrictedTypes {
             final DecimalTypeDefinition baseType, final SchemaPath path) {
         return new RangeRestrictedTypeBuilderWithBase<DecimalTypeDefinition>(baseType, path) {
             @Override
-            DecimalTypeDefinition buildType(final List<RangeConstraint> rangeConstraints) {
-                return new RestrictedDecimalType(getBaseType(), getPath(), getUnknownSchemaNodes(), rangeConstraints);
+            DecimalTypeDefinition buildType(final RangeConstraint<?> rangeConstraint) {
+                return new RestrictedDecimalType(getBaseType(), getPath(), getUnknownSchemaNodes(), rangeConstraint);
             }
         };
     }
@@ -158,8 +157,8 @@ public final class RestrictedTypes {
             final IntegerTypeDefinition baseType, final SchemaPath path) {
         return new RangeRestrictedTypeBuilderWithBase<IntegerTypeDefinition>(baseType, path) {
             @Override
-            IntegerTypeDefinition buildType(final List<RangeConstraint> rangeConstraints) {
-                return new RestrictedIntegerType(getBaseType(), getPath(), getUnknownSchemaNodes(), rangeConstraints);
+            IntegerTypeDefinition buildType(final RangeConstraint<?> rangeConstraint) {
+                return new RestrictedIntegerType(getBaseType(), getPath(), getUnknownSchemaNodes(), rangeConstraint);
             }
         };
     }
@@ -182,8 +181,8 @@ public final class RestrictedTypes {
             final UnsignedIntegerTypeDefinition baseType, final SchemaPath path) {
         return new RangeRestrictedTypeBuilderWithBase<UnsignedIntegerTypeDefinition>(baseType, path) {
             @Override
-            UnsignedIntegerTypeDefinition buildType(final List<RangeConstraint> rangeConstraints) {
-                return new RestrictedUnsignedType(getBaseType(), getPath(), getUnknownSchemaNodes(), rangeConstraints);
+            UnsignedIntegerTypeDefinition buildType(final RangeConstraint<?> rangeConstraint) {
+                return new RestrictedUnsignedType(getBaseType(), getPath(), getUnknownSchemaNodes(), rangeConstraint);
             }
         };
     }

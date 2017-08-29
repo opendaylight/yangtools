@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -34,13 +33,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeConstraintEffectiveImpl;
 
 /**
 * util class for manipulating YANG base and extended types implementation
@@ -153,16 +150,12 @@ public final class TypeUtils {
         }
     }
 
-    public static List<RangeConstraint> parseRangeListFromString(final StmtContext<?, ?, ?> ctx,
-                                                                 final String rangeArgument) {
-
-        final Optional<String> description = Optional.absent();
-        final Optional<String> reference = Optional.absent();
-
-        final List<RangeConstraint> rangeConstraints = new ArrayList<>();
+    public static List<ValueRange> parseRangeListFromString(final StmtContext<?, ?, ?> ctx,
+            final String rangeArgument) {
+        final List<ValueRange> ranges = new ArrayList<>();
 
         for (final String singleRange : PIPE_SPLITTER.split(rangeArgument)) {
-            final Iterator<String> boundaries = TWO_DOTS_SPLITTER.splitToList(singleRange).iterator();
+            final Iterator<String> boundaries = TWO_DOTS_SPLITTER.split(singleRange).iterator();
             final Number min = parseDecimalConstraintValue(ctx, boundaries.next());
 
             final Number max;
@@ -170,9 +163,8 @@ public final class TypeUtils {
                 max = parseDecimalConstraintValue(ctx, boundaries.next());
 
                 // if min larger than max then error
-                InferenceException.throwIf(compareNumbers(min, max) == 1, ctx.getStatementSourceReference(),
+                SourceException.throwIf(compareNumbers(min, max) == 1, ctx.getStatementSourceReference(),
                         "Range constraint %s has descending order of boundaries; should be ascending", singleRange);
-
                 SourceException.throwIf(boundaries.hasNext(), ctx.getStatementSourceReference(),
                     "Wrong number of boundaries in range constraint %s", singleRange);
             } else {
@@ -180,15 +172,14 @@ public final class TypeUtils {
             }
 
             // some of intervals overlapping
-            if (rangeConstraints.size() > 1 && compareNumbers(min, Iterables.getLast(rangeConstraints).getMax()) != 1) {
-                throw new InferenceException(ctx.getStatementSourceReference(),
-                    "Some of the ranges in %s are not disjoint", rangeArgument);
-            }
-
-            rangeConstraints.add(new RangeConstraintEffectiveImpl(min, max, description, reference));
+            InferenceException.throwIf(ranges.size() > 1
+                && compareNumbers(min, Iterables.getLast(ranges).upperBound()) != 1,
+                ctx.getStatementSourceReference(),  "Some of the value ranges in %s are not disjoint",
+                rangeArgument);
+            ranges.add(ValueRange.of(min, max));
         }
 
-        return rangeConstraints;
+        return ranges;
     }
 
     public static List<ValueRange> parseLengthListFromString(final StmtContext<?, ?, ?> ctx,
@@ -205,8 +196,7 @@ public final class TypeUtils {
 
                 // if min larger than max then error
                 SourceException.throwIf(compareNumbers(min, max) == 1, ctx.getStatementSourceReference(),
-                        "Length constraint %s has descending order of boundaries; should be ascending.",
-                        singleRange);
+                        "Length constraint %s has descending order of boundaries; should be ascending.", singleRange);
                 SourceException.throwIf(boundaries.hasNext(), ctx.getStatementSourceReference(),
                         "Wrong number of boundaries in length constraint %s.", singleRange);
             } else {
@@ -218,7 +208,6 @@ public final class TypeUtils {
                 && compareNumbers(min, Iterables.getLast(ranges).upperBound()) != 1,
                         ctx.getStatementSourceReference(),  "Some of the length ranges in %s are not disjoint",
                         lengthArgument);
-
             ranges.add(ValueRange.of(min, max));
         }
 

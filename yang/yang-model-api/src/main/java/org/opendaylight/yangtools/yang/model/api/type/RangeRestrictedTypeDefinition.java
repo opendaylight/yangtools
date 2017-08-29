@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
-import java.util.List;
-import javax.annotation.Nonnull;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -18,11 +17,11 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  */
 public interface RangeRestrictedTypeDefinition<T extends TypeDefinition<T>> extends TypeDefinition<T> {
     /**
-     * Returns range constraints for instance of this type. These are the effective constraints, e.g. they include
-     * any range constraints imposed by base types.
+     * Returns range constraint of this type, if applicable. This is the effective constraint, e.g. it includes any
+     * range constraints implied by base type hierarchy.
      *
-     * @return list of range constraints which are specified as the argument of the <code>range</code> which is
-     *         a substatement of the <code>type</code> statement
+     * @return range constraint which are specified in the <code>range</code> substatement of the <code>type</code>
+     *         statement.
      */
-    @Nonnull List<RangeConstraint> getRangeConstraints();
+    Optional<RangeConstraint<?>> getRangeConstraint();
 }

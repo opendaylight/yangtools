@@ -12,27 +12,33 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 
 public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDefinition<T>>
         extends AbstractRestrictedTypeBuilder<T> {
-    private List<RangeConstraint> rangeAlternatives;
+    private RangeConstraint<?> rangeConstraint;
 
     RangeRestrictedTypeBuilder(final T baseType, final SchemaPath path) {
         super(baseType, path);
     }
 
-    public final void setRangeAlternatives(@Nonnull final Collection<RangeConstraint> rangeAlternatives) {
-        Preconditions.checkState(this.rangeAlternatives == null, "Range alternatives already defined as %s",
-                this.rangeAlternatives);
+    public final void setRangeConstraint(final @NonNull ConstraintMetaDefinition constraint,
+            final @NonNull List<ValueRange> ranges) {
+        Preconditions.checkState(rangeConstraint == null, "Range constraint already defined as %s", rangeConstraint);
+
+
+
+
+
         this.rangeAlternatives = ImmutableList.copyOf(rangeAlternatives);
         touch();
     }

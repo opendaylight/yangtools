@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import java.math.BigDecimal;
@@ -21,10 +22,10 @@ import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 
 final class BaseDecimalType extends AbstractRangeRestrictedBaseType<DecimalTypeDefinition>
         implements DecimalTypeDefinition {
-    private static final List<List<RangeConstraint>> IMPLICIT_RANGE_STATEMENTS;
+    private static final List<RangeConstraint<BigDecimal>> IMPLICIT_RANGE_STATEMENTS;
 
     static {
-        final Builder<List<RangeConstraint>> b = ImmutableList.builder();
+        final Builder<RangeConstraint<BigDecimal>> b = ImmutableList.builder();
         b.add(createRangeConstraint("-922337203685477580.8", "922337203685477580.7"));
         b.add(createRangeConstraint("-92233720368547758.08", "92233720368547758.07"));
         b.add(createRangeConstraint("-9223372036854775.808", "9223372036854775.807"));
@@ -46,20 +47,20 @@ final class BaseDecimalType extends AbstractRangeRestrictedBaseType<DecimalTypeD
         IMPLICIT_RANGE_STATEMENTS = b.build();
     }
 
-    private static List<RangeConstraint> createRangeConstraint(final String min, final String max) {
-        return ImmutableList.of(BaseConstraints.newRangeConstraint(new BigDecimal(min), new BigDecimal(max),
-            Optional.absent(), Optional.of("https://tools.ietf.org/html/rfc6020#section-9.3.4")));
+    private static RangeConstraint<BigDecimal> createRangeConstraint(final String min, final String max) {
+        return BaseConstraints.newRangeConstraint(new BigDecimal(min), new BigDecimal(max),
+            Optional.absent(), Optional.of("https://tools.ietf.org/html/rfc6020#section-9.3.4"));
     }
 
-    static List<RangeConstraint> constraintsForDigits(final int fractionDigits) {
-        return IMPLICIT_RANGE_STATEMENTS.get(fractionDigits - 1);
+    static RangeConstraint<BigDecimal> constraintsForDigits(final int fractionDigits) {
+        return Verify.verifyNotNull(IMPLICIT_RANGE_STATEMENTS.get(fractionDigits - 1));
     }
 
     private final Integer fractionDigits;
 
     BaseDecimalType(final SchemaPath path, final List<UnknownSchemaNode> unknownSchemaNodes,
-            final Integer fractionDigits, final List<RangeConstraint> rangeConstraints) {
-        super(path, unknownSchemaNodes, rangeConstraints);
+            final Integer fractionDigits, final RangeConstraint<BigDecimal> rangeConstraint) {
+        super(path, unknownSchemaNodes, rangeConstraint);
         this.fractionDigits = fractionDigits;
     }
 

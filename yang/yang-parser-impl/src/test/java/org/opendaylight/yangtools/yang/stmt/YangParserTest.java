@@ -220,7 +220,7 @@ public class YangParserTest {
         assertNull(base.getUnits());
         assertNull(base.getDefaultValue());
 
-        final List<RangeConstraint> baseRanges = base.getRangeConstraints();
+        final RangeConstraint<?> baseRanges = base.getRangeConstraint().get();
         assertEquals(1, baseRanges.size());
         final RangeConstraint baseRange = baseRanges.get(0);
         assertEquals(2, baseRange.getMin().intValue());
@@ -433,7 +433,7 @@ public class YangParserTest {
         assertNull(type.getUnits());
         assertNull(type.getDefaultValue());
         assertEquals(6, type.getFractionDigits().intValue());
-        assertEquals(1, type.getRangeConstraints().size());
+        assertEquals(1, type.getRangeConstraint().get().getAllowedRanges().asRanges().size());
 
         final DecimalTypeDefinition typeBase = type.getBaseType();
         final QName typeBaseQName = typeBase.getQName();
@@ -443,7 +443,7 @@ public class YangParserTest {
         assertNull(typeBase.getUnits());
         assertNull(typeBase.getDefaultValue());
         assertEquals(6, typeBase.getFractionDigits().intValue());
-        assertEquals(1, typeBase.getRangeConstraints().size());
+        assertEquals(1, typeBase.getRangeConstraint().get().getAllowedRanges().asRanges().size());
 
         assertNull(typeBase.getBaseType());
     }
@@ -462,7 +462,7 @@ public class YangParserTest {
         assertNull(type.getUnits());
         assertNull(type.getDefaultValue());
         assertEquals(6, type.getFractionDigits().intValue());
-        assertEquals(1, type.getRangeConstraints().size());
+        assertEquals(1, type.getRangeConstraint().get().getAllowedRanges().asRanges().size());
 
         final DecimalTypeDefinition baseTypeDecimal = type.getBaseType();
         assertEquals(6, baseTypeDecimal.getFractionDigits().intValue());
@@ -502,11 +502,11 @@ public class YangParserTest {
         assertNull(unionType1.getUnits());
         assertNull(unionType1.getDefaultValue());
 
-        final List<RangeConstraint> ranges = unionType1.getRangeConstraints();
-        assertEquals(1, ranges.size());
-        final RangeConstraint range = ranges.get(0);
-        assertEquals(1, range.getMin().intValue());
-        assertEquals(100, range.getMax().intValue());
+        final RangeConstraint<?> ranges = unionType1.getRangeConstraint().get();
+        assertEquals(1, ranges.getAllowedRanges().asRanges().size());
+        final Range<?> range = ranges.getAllowedRanges().span();
+        assertEquals(1, range.lowerEndpoint());
+        assertEquals(100, range.upperEndpoint());
         assertEquals(BaseTypes.int16Type(), unionType1.getBaseType());
 
         assertEquals(BaseTypes.int32Type(), unionTypes.get(1));
