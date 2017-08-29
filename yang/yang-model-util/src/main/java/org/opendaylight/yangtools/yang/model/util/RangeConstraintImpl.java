@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
  * out of bounds &lt;<i>min</i>, <i>max</i> &gt;</code>
  * </ul>
  */
-final class RangeConstraintImpl implements RangeConstraint, Immutable {
+final class RangeConstraintImpl<T extends Number & Comparable<T>> implements RangeConstraint<T>, Immutable {
     private final Number min;
     private final Number max;
 

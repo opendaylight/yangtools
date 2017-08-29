@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.collect.ImmutableList;
+import static java.util.Objects.requireNonNull;
+
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nonnull;
@@ -20,23 +21,23 @@ import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 
 abstract class AbstractRangeRestrictedBaseType<T extends RangeRestrictedTypeDefinition<T>> extends AbstractBaseType<T>
         implements RangeRestrictedTypeDefinition<T> {
-    private final List<RangeConstraint> rangeConstraints;
+    private final RangeConstraint<?> rangeConstraint;
 
     AbstractRangeRestrictedBaseType(final QName qname, final Number minValue, final Number maxValue) {
         super(qname);
-        this.rangeConstraints = ImmutableList.of(BaseConstraints.newRangeConstraint(
-                minValue, maxValue, Optional.empty(), Optional.empty()));
+        this.rangeConstraint = BaseConstraints.newRangeConstraint(minValue, maxValue,
+            Optional.empty(), Optional.empty());
     }
 
     AbstractRangeRestrictedBaseType(final SchemaPath path, final List<UnknownSchemaNode> unknownSchemaNodes,
-        final List<RangeConstraint> rangeConstraints) {
+        final RangeConstraint<?> rangeConstraint) {
         super(path, unknownSchemaNodes);
-        this.rangeConstraints = ImmutableList.copyOf(rangeConstraints);
+        this.rangeConstraint = requireNonNull(rangeConstraint);
     }
 
     @Override
     @Nonnull
-    public final List<RangeConstraint> getRangeConstraints() {
-        return rangeConstraints;
+    public final Optional<RangeConstraint<?>> getRangeConstraint() {
+        return Optional.ofNullable(rangeConstraint);
     }
 }
