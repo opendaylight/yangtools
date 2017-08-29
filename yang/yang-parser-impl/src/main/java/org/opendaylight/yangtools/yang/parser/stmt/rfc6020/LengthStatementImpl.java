@@ -15,14 +15,15 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LengthEffectiveStatementImpl;
 
-public class LengthStatementImpl extends AbstractDeclaredStatement<List<LengthConstraint>> implements LengthStatement {
+public class LengthStatementImpl extends AbstractDeclaredStatement<List<ValueRange>>
+        implements LengthStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .LENGTH)
             .addOptional(YangStmtMapping.DESCRIPTION)
@@ -31,30 +32,30 @@ public class LengthStatementImpl extends AbstractDeclaredStatement<List<LengthCo
             .addOptional(YangStmtMapping.REFERENCE)
             .build();
 
-    protected LengthStatementImpl(final StmtContext<List<LengthConstraint>, LengthStatement, ?> context) {
+    protected LengthStatementImpl(final StmtContext<List<ValueRange>, LengthStatement, ?> context) {
         super(context);
     }
 
-    public static class Definition extends AbstractStatementSupport<List<LengthConstraint>, LengthStatement,
-            EffectiveStatement<List<LengthConstraint>, LengthStatement>> {
+    public static class Definition extends AbstractStatementSupport<List<ValueRange>, LengthStatement,
+            EffectiveStatement<List<ValueRange>, LengthStatement>> {
 
         public Definition() {
             super(YangStmtMapping.LENGTH);
         }
 
         @Override
-        public List<LengthConstraint> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        public List<ValueRange> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return TypeUtils.parseLengthListFromString(ctx, value);
         }
 
         @Override
-        public LengthStatement createDeclared(final StmtContext<List<LengthConstraint>, LengthStatement, ?> ctx) {
+        public LengthStatement createDeclared(final StmtContext<List<ValueRange>, LengthStatement, ?> ctx) {
             return new LengthStatementImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<List<LengthConstraint>, LengthStatement> createEffective(
-                final StmtContext<List<LengthConstraint>, LengthStatement, EffectiveStatement<List<LengthConstraint>,
+        public EffectiveStatement<List<ValueRange>, LengthStatement> createEffective(
+                final StmtContext<List<ValueRange>, LengthStatement, EffectiveStatement<List<ValueRange>,
                         LengthStatement>> ctx) {
             return new LengthEffectiveStatementImpl(ctx);
         }
