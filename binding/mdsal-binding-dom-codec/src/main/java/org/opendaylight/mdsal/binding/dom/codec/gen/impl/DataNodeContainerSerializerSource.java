@@ -117,7 +117,10 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
         }
 
         final String prefix;
-        if (type instanceof BooleanTypeDefinition || type instanceof EmptyTypeDefinition) {
+        // Bug 8903: If it is a derived type of boolean or empty, not an inner type, then the return type
+        // of method would be the generated type of typedef not build-in types, so here it should be 'get'.
+        if ((type instanceof BooleanTypeDefinition || type instanceof EmptyTypeDefinition)
+                && (type.getPath().equals(node.getPath()) || type.getBaseType() == null)) {
             prefix = "is";
         } else {
             prefix = "get";

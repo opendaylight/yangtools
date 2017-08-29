@@ -102,12 +102,14 @@ abstract class ValueTypeCodec implements Codec<Object, Object> {
         } else if (rootType instanceof EmptyTypeDefinition) {
             return EMPTY_LOADER;
         }
-        return EncapsulatedValueCodec.loader(typeClz);
+        return EncapsulatedValueCodec.loader(typeClz, def);
     }
 
     @SuppressWarnings("rawtypes")
-    static ValueTypeCodec encapsulatedValueCodecFor(final Class<?> typeClz, final Codec delegate) {
-        SchemaUnawareCodec extractor = getCachedSchemaUnawareCodec(typeClz, EncapsulatedValueCodec.loader(typeClz));
+    static ValueTypeCodec encapsulatedValueCodecFor(final Class<?> typeClz, final TypeDefinition<?> typeDef,
+             final Codec delegate) {
+        SchemaUnawareCodec extractor = getCachedSchemaUnawareCodec(typeClz,
+            EncapsulatedValueCodec.loader(typeClz, typeDef));
         return new CompositeValueCodec(extractor, delegate);
     }
 

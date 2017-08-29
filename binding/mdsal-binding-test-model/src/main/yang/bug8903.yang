@@ -1,0 +1,28 @@
+module bug8903 {
+    yang-version 1;
+    namespace "bug8903";
+    prefix "bug8903";
+
+    revision "2017-08-29" {
+    }
+
+    typedef policy-logging-flag {
+        description "false-disable,true-enable";
+        type boolean;
+    }
+
+    container default-policy{
+      leaf action {
+        type boolean;
+      }
+
+      leaf action2 {
+        type policy-logging-flag;
+      }
+
+      leaf action3 {
+        type boolean;
+        default "true";
+      }
+    }
+}
