@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.Range;
 import java.util.List;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
@@ -21,8 +22,8 @@ public abstract class UnresolvedNumber extends Number implements Immutable {
         private static final long serialVersionUID = 1L;
 
         @Override
-        public Number resolveLength(final List<ValueRange> constraints) {
-            return resolve(constraints.get(constraints.size() - 1).upperBound());
+        public <T extends Number & Comparable<T>> T resolveLength(final Range<T> span) {
+            return resolve(span.upperEndpoint());
         }
 
         @Override
@@ -44,8 +45,8 @@ public abstract class UnresolvedNumber extends Number implements Immutable {
         private static final long serialVersionUID = 1L;
 
         @Override
-        public Number resolveLength(final List<ValueRange> constraints) {
-            return resolve(constraints.get(0).lowerBound());
+        public <T extends Number & Comparable<T>> T resolveLength(final Range<T> span) {
+            return resolve(span.lowerEndpoint());
         }
 
         @Override
@@ -91,12 +92,12 @@ public abstract class UnresolvedNumber extends Number implements Immutable {
         throw new UnsupportedOperationException();
     }
 
-    private static Number resolve(final Number number) {
+    private static <T extends Number> T resolve(final T number) {
         checkArgument(!(number instanceof UnresolvedNumber));
         return number;
     }
 
-    public abstract Number resolveLength(List<ValueRange> constraints);
+    public abstract <T extends Number & Comparable<T>> T resolveLength(Range<T> span);
 
     public abstract Number resolveRange(List<RangeConstraint> constraints);
 

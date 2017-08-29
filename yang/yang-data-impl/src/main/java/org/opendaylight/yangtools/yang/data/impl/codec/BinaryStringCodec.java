@@ -8,12 +8,9 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableRangeSet;
-import com.google.common.collect.Range;
-import com.google.common.collect.RangeSet;
-import com.google.common.collect.TreeRangeSet;
 import com.google.common.io.BaseEncoding;
 import java.util.Optional;
 import javax.xml.bind.DatatypeConverter;
@@ -28,23 +25,18 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 public abstract class BinaryStringCodec extends TypeDefinitionAwareCodec<byte[], BinaryTypeDefinition>
         implements BinaryCodec<String> {
     private static final class Restricted extends BinaryStringCodec {
-        private final RangeSet<Integer> ranges;
+        private final LengthConstraint lengthConstraint;
 
-        Restricted(final BinaryTypeDefinition typeDef) {
+        Restricted(final BinaryTypeDefinition typeDef, final LengthConstraint lengthConstraint) {
             super(typeDef);
-
-            final RangeSet<Integer> r = TreeRangeSet.create();
-            for (LengthConstraint c : typeDef.getLengthConstraints()) {
-                r.add(Range.closed(c.getMin().intValue(), c.getMax().intValue()));
-            }
-
-            ranges = ImmutableRangeSet.copyOf(r);
+            this.lengthConstraint = requireNonNull(lengthConstraint);
         }
 
         @Override
         void validate(final byte[] value) {
-            checkArgument(ranges.contains(value.length), "Value length %s does not match constraints %s", value.length,
-                ranges);
+            // FIXME: throw an exception capturing the constraint violation
+            checkArgument(lengthConstraint.getAllowedRanges().contains(value.length),
+                "Value length %s does not match constraint %s", value.length, lengthConstraint);
         }
     }
 
@@ -64,7 +56,8 @@ public abstract class BinaryStringCodec extends TypeDefinitionAwareCodec<byte[],
     }
 
     public static BinaryStringCodec from(final BinaryTypeDefinition type) {
-        return type.getLengthConstraints().isEmpty() ? new Unrestricted(type) : new Restricted(type);
+        final java.util.Optional<LengthConstraint> optConstraint = type.getLengthConstraint();
+        return optConstraint.isPresent() ? new Restricted(type, optConstraint.get()) : new Unrestricted(type);
     }
 
     @Override

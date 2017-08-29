@@ -8,25 +8,13 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.eclipse.jdt.annotation.NonNull;
 
 @Beta
-public class InvalidLengthConstraintException extends IllegalArgumentException {
+public final class InvalidLengthConstraintException extends Exception {
     private static final long serialVersionUID = 1L;
-    private final LengthConstraint offendingConstraint;
 
-    protected InvalidLengthConstraintException(final LengthConstraint offendingConstraint, final String message) {
-        super(message);
-        this.offendingConstraint = Preconditions.checkNotNull(offendingConstraint);
-    }
-
-    public InvalidLengthConstraintException(final LengthConstraint offendingRange, final String format,
-            final Object... args) {
-        this(offendingRange, String.format(format, args));
-    }
-
-    public LengthConstraint getOffendingConstraint() {
-        return offendingConstraint;
+    public InvalidLengthConstraintException(final @NonNull String format, final Object... args) {
+        super(String.format(format, args));
     }
 }

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
-import java.util.List;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -17,11 +17,11 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  */
 public interface LengthRestrictedTypeDefinition<T extends TypeDefinition<T>> extends TypeDefinition<T> {
     /**
-     * Returns length constraints. These are the effective constraints, e.g. they include any length constraints
-     * implied by base types.
+     * Returns length constraint of this type, if applicable. This is the effective constraint, e.g. it includes any
+     * length constraints implied by base type hierarchy.
      *
-     * @return list of length constraint which are specified in the <code>length</code> substatement
-     *         of the <code>type</code> statement.
+     * @return length constraint which are specified in the <code>length</code> substatement of the <code>type</code>
+     *         statement.
      */
-    List<LengthConstraint> getLengthConstraints();
+    Optional<LengthConstraint> getLengthConstraint();
 }

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import com.google.common.annotations.Beta;
 import java.util.List;
 import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -70,12 +71,12 @@ public final class RestrictedTypes {
             @Nonnull final BinaryTypeDefinition baseType, @Nonnull final SchemaPath path) {
         return new LengthRestrictedTypeBuilder<BinaryTypeDefinition>(baseType, path) {
             @Override
-            BinaryTypeDefinition buildType(final List<LengthConstraint> lengthConstraints) {
-                return new RestrictedBinaryType(getBaseType(), getPath(), getUnknownSchemaNodes(), lengthConstraints);
+            BinaryTypeDefinition buildType(final @Nullable LengthConstraint lengthConstraint) {
+                return new RestrictedBinaryType(getBaseType(), getPath(), getUnknownSchemaNodes(), lengthConstraint);
             }
 
             @Override
-            List<LengthConstraint> typeLengthConstraints() {
+            LengthConstraint typeLengthConstraints() {
                 /**
                  * Length constraint imposed on YANG binary type by our implementation. byte[].length is an integer,
                  * capping our ability to support arbitrary binary data.

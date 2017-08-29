@@ -88,7 +88,7 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
 
     private static List<RangeConstraint> typedRanges(final List<RangeConstraint> ranges,
             final Class<? extends Number> clazz) {
-        final Function<Number, Number> function = NumberUtil.converterTo(clazz);
+        final Function<Number, ? extends Number> function = NumberUtil.converterTo(clazz);
         Preconditions.checkArgument(function != null, "Unsupported range class %s", clazz);
 
         final Builder<RangeConstraint> builder = ImmutableList.builder();
