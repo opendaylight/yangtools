@@ -13,8 +13,15 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class LengthEffectiveStatementImpl extends
-        AbstractConstraintEffectiveStatement<List<LengthConstraint>, LengthStatement> {
+        AbstractListConstraintEffectiveStatement<LengthConstraint, LengthStatement> {
+
     public LengthEffectiveStatementImpl(final StmtContext<List<LengthConstraint>, LengthStatement, ?> ctx) {
-        super(ctx, new LengthConstraintFactory());
+        super(ctx);
+    }
+
+    @Override
+    final LengthConstraint createCustomizedConstraint(final LengthConstraint lengthConstraint) {
+        return new LengthConstraintEffectiveImpl(lengthConstraint.getMin(), lengthConstraint.getMax(),
+                getDescription(), getReference(), getErrorAppTag(), getErrorMessage());
     }
 }
