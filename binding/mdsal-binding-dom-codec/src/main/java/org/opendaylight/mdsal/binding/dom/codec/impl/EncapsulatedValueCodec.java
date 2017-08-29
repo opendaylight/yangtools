@@ -18,6 +18,7 @@ import java.util.concurrent.Callable;
 import org.opendaylight.mdsal.binding.dom.codec.impl.ValueTypeCodec.SchemaUnawareCodec;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 
 /**
  * Derived YANG types are just immutable value holders for simple value
@@ -41,7 +42,7 @@ final class EncapsulatedValueCodec extends ReflectionBasedCodec implements Schem
     static Callable<EncapsulatedValueCodec> loader(final Class<?> typeClz, TypeDefinition<?> typeDef) {
         return () -> {
             final Method m;
-            if (typeDef instanceof BooleanTypeDefinition) {
+            if (typeDef instanceof BooleanTypeDefinition || typeDef instanceof EmptyTypeDefinition) {
                 m = typeClz.getMethod("isValue");
             } else {
                 m = typeClz.getMethod("getValue");

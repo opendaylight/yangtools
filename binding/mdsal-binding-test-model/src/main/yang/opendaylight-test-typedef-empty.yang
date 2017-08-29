@@ -1,0 +1,27 @@
+module opendaylight-test-typedef-empty {
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:mdsal:test:typedef:empty";
+    prefix "typedef-empty";
+
+    revision "2017-08-29" {
+    }
+
+    typedef typedef-empty {
+        type empty;
+    }
+
+    container test-cont{
+      leaf empty-leaf {
+        type empty;
+      }
+
+      leaf empty-leaf2 {
+        type typedef-empty;
+      }
+
+      leaf empty-leaf3{
+         type empty;
+         default "";
+      }
+    }
+}

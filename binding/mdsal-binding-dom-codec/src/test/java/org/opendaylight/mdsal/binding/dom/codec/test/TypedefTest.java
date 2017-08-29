@@ -18,6 +18,9 @@ import org.opendaylight.mdsal.binding.generator.util.JavassistUtils;
 import org.opendaylight.yang.gen.v1.bug8903.rev170829.DefaultPolicy;
 import org.opendaylight.yang.gen.v1.bug8903.rev170829.DefaultPolicyBuilder;
 import org.opendaylight.yang.gen.v1.bug8903.rev170829.PolicyLoggingFlag;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.typedef.empty.rev170829.TestCont;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.typedef.empty.rev170829.TestContBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.typedef.empty.rev170829.TypedefEmpty;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -28,6 +31,8 @@ public class TypedefTest extends AbstractBindingRuntimeTest {
 
     private static final InstanceIdentifier<DefaultPolicy> BA_DEFAULT_POLICY =
             InstanceIdentifier.builder(DefaultPolicy.class).build();
+    private static final InstanceIdentifier<TestCont> BA_TEST_CONT =
+            InstanceIdentifier.builder(TestCont.class).build();
     private BindingNormalizedNodeCodecRegistry registry;
 
     @Override
@@ -47,6 +52,22 @@ public class TypedefTest extends AbstractBindingRuntimeTest {
                 .build();
         final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> dom =
                 registry.toNormalizedNode(BA_DEFAULT_POLICY, binding);
+        final Entry<InstanceIdentifier<?>, DataObject> readed =
+                registry.fromNormalizedNode(dom.getKey(),dom.getValue());
+
+        assertEquals(binding,readed.getValue());
+
+    }
+
+    @Test
+    public void testTypedefEmptyType() {
+        TestCont binding = new TestContBuilder()
+                .setEmptyLeaf(true)
+                .setEmptyLeaf2(new TypedefEmpty(true))
+                .setEmptyLeaf3(true)
+                .build();
+        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> dom =
+                registry.toNormalizedNode(BA_TEST_CONT, binding);
         final Entry<InstanceIdentifier<?>, DataObject> readed =
                 registry.fromNormalizedNode(dom.getKey(),dom.getValue());
 

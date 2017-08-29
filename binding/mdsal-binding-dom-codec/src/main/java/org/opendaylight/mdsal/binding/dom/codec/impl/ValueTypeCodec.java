@@ -99,8 +99,6 @@ abstract class ValueTypeCodec implements Codec<Object, Object> {
             return EnumerationCodec.loader(typeClz, (EnumTypeDefinition) rootType);
         } else if (rootType instanceof BitsTypeDefinition) {
             return BitsCodec.loader(typeClz, (BitsTypeDefinition) rootType);
-        } else if (rootType instanceof EmptyTypeDefinition) {
-            return EMPTY_LOADER;
         }
         return EncapsulatedValueCodec.loader(typeClz, def);
     }
