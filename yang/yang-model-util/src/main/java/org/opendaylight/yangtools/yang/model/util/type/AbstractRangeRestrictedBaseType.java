@@ -7,36 +7,62 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.collect.ImmutableList;
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.collect.ImmutableRangeSet;
+import com.google.common.collect.Range;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 
-abstract class AbstractRangeRestrictedBaseType<T extends RangeRestrictedTypeDefinition<T>> extends AbstractBaseType<T>
-        implements RangeRestrictedTypeDefinition<T> {
-    private final List<RangeConstraint> rangeConstraints;
+abstract class AbstractRangeRestrictedBaseType<T extends RangeRestrictedTypeDefinition<T>,
+    C extends Number & Comparable<C>> extends AbstractBaseType<T> implements RangeRestrictedTypeDefinition<T> {
+    private static final ConstraintMetaDefinition BUILTIN_CONSTRAINT = new ConstraintMetaDefinition() {
 
-    AbstractRangeRestrictedBaseType(final QName qname, final Number minValue, final Number maxValue) {
+        @Override
+        public Optional<String> getReference() {
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<String> getDescription() {
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<String> getErrorMessage() {
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<String> getErrorAppTag() {
+            return Optional.empty();
+        }
+    };
+
+    private final RangeConstraint<?> rangeConstraint;
+
+    AbstractRangeRestrictedBaseType(final QName qname, final C minValue, final C maxValue) {
         super(qname);
-        this.rangeConstraints = ImmutableList.of(BaseConstraints.newRangeConstraint(
-                minValue, maxValue, Optional.empty(), Optional.empty()));
+        this.rangeConstraint = new ResolvedRangeConstraint<>(BUILTIN_CONSTRAINT, ImmutableRangeSet.of(
+            Range.closed(minValue, maxValue)));
     }
 
     AbstractRangeRestrictedBaseType(final SchemaPath path, final List<UnknownSchemaNode> unknownSchemaNodes,
-        final List<RangeConstraint> rangeConstraints) {
+        final RangeConstraint<?> rangeConstraint) {
         super(path, unknownSchemaNodes);
-        this.rangeConstraints = ImmutableList.copyOf(rangeConstraints);
+        this.rangeConstraint = requireNonNull(rangeConstraint);
     }
 
     @Override
     @Nonnull
-    public final List<RangeConstraint> getRangeConstraints() {
-        return rangeConstraints;
+    public final Optional<RangeConstraint<?>> getRangeConstraint() {
+        return Optional.of(rangeConstraint);
     }
 }
