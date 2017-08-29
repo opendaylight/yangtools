@@ -111,7 +111,7 @@ public class YangParserNegativeTest {
             TestUtils.loadModuleResources(getClass(), "/negative-scenario/testfile6.yang");
             fail("ReactorException should be thrown");
         } catch (final ReactorException e) {
-            assertTrue(e.getCause().getMessage().contains("Invalid range constraint: <5, 20>"));
+            assertTrue(e.getCause().getMessage().startsWith("Invalid range constraint: [[5..20]]"));
         }
     }
 
