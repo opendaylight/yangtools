@@ -1506,34 +1506,25 @@ abstract class SchemaContextEmitter {
         }
 
         private void emitIntegerSpefication(final IntegerTypeDefinition typeDef) {
-            emitRangeNodeOptional(typeDef.getRangeConstraints());
+            typeDef.getRangeConstraint().ifPresent(this::emitRangeNode);
         }
 
         private void emitUnsignedIntegerSpecification(final UnsignedIntegerTypeDefinition typeDef) {
-            emitRangeNodeOptional(typeDef.getRangeConstraints());
-
+            typeDef.getRangeConstraint().ifPresent(this::emitRangeNode);
         }
 
-        private void emitRangeNodeOptional(final List<RangeConstraint> list) {
-            // FIXME: BUG-2444: Wrong decomposition in API, should be
-            // LenghtConstraint
-            // which contains ranges.
-            if (!list.isEmpty()) {
-                super.writer.startRangeNode(toRangeString(list));
-                final RangeConstraint first = list.iterator().next();
-                emitErrorMessageNode(first.getErrorMessage());
-                emitErrorAppTagNode(first.getErrorAppTag());
-                emitDescriptionNode(first.getDescription());
-                emitReferenceNode(first.getReference());
-                super.writer.endNode();
-            }
-
+        private void emitRangeNode(final RangeConstraint<?> constraint) {
+            super.writer.startRangeNode(toRangeString(constraint.getAllowedRanges()));
+            emitErrorMessageNode(constraint.getErrorMessage());
+            emitErrorAppTagNode(constraint.getErrorAppTag());
+            emitDescriptionNode(constraint.getDescription());
+            emitReferenceNode(constraint.getReference());
+            super.writer.endNode();
         }
 
         private void emitDecimal64Specification(final DecimalTypeDefinition typeDefinition) {
             emitFranctionDigitsNode(typeDefinition.getFractionDigits());
-            emitRangeNodeOptional(typeDefinition.getRangeConstraints());
-
+            typeDefinition.getRangeConstraint().ifPresent(this::emitRangeNode);
         }
 
         private void emitFranctionDigitsNode(final Integer fractionDigits) {
@@ -1575,8 +1566,8 @@ abstract class SchemaContextEmitter {
             return sb.toString();
         }
 
-        private static String toRangeString(final List<RangeConstraint> list) {
-            final Iterator<RangeConstraint> it = list.iterator();
+        private static String toRangeString(final RangeSet<?> ranges) {
+            final Iterator<? extends Range<?>> it = ranges.asRanges().iterator();
             if (!it.hasNext()) {
                 return "";
             }
@@ -1584,15 +1575,15 @@ abstract class SchemaContextEmitter {
             final StringBuilder sb = new StringBuilder();
             boolean haveNext;
             do {
-                final RangeConstraint current = it.next();
+                final Range<?> current = it.next();
                 haveNext = it.hasNext();
-                appendRange(sb, current.getMin(), current.getMax(), haveNext);
+                appendRange(sb, current.lowerEndpoint(), current.upperEndpoint(), haveNext);
             } while (haveNext);
 
             return sb.toString();
         }
 
-        private static void appendRange(final StringBuilder sb, final Number min, final Number max,
+        private static void appendRange(final StringBuilder sb, final Object min, final Object max,
                 final boolean haveNext) {
             sb.append(min);
             if (!min.equals(max)) {
