@@ -11,36 +11,37 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.LengthRestrictedTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
-import org.opendaylight.yangtools.yang.model.util.UnresolvedNumber;
 
 public abstract class LengthRestrictedTypeBuilder<T extends LengthRestrictedTypeDefinition<T>>
         extends AbstractRestrictedTypeBuilder<T> {
-    private List<LengthConstraint> lengthAlternatives;
+    private List<ValueRange> lengthAlternatives;
 
     LengthRestrictedTypeBuilder(final T baseType, final SchemaPath path) {
         super(Preconditions.checkNotNull(baseType), path);
     }
 
-    public final void setLengthAlternatives(@Nonnull final Collection<LengthConstraint> lengthAlternatives) {
-        Preconditions.checkState(this.lengthAlternatives == null, "Range alternatives already defined as %s",
+    public final void setLengthAlternatives(@Nonnull final List<ValueRange> lengthAlternatives) {
+        Preconditions.checkState(this.lengthAlternatives == null, "Length alternatives already defined as %s",
                 lengthAlternatives);
         this.lengthAlternatives = ImmutableList.copyOf(lengthAlternatives);
         touch();
     }
 
-    private static List<LengthConstraint> ensureResolvedLengths(final List<LengthConstraint> unresolved,
-            final List<LengthConstraint> baseRangeConstraints) {
+    private static List<ValueRange> ensureResolvedLengths(final List<ValueRange> unresolved,
+            final List<ValueRange> baseRangeConstraints) {
         // First check if we need to resolve anything at all
-        for (LengthConstraint c : unresolved) {
-            if (c.getMax() instanceof UnresolvedNumber || c.getMin() instanceof UnresolvedNumber) {
+        for (ValueRange c : unresolved) {
+            if (c.lowerBound() instanceof UnresolvedNumber || c.upperBound() instanceof UnresolvedNumber) {
                 return resolveLengths(unresolved, baseRangeConstraints);
             }
         }
@@ -49,28 +50,30 @@ public abstract class LengthRestrictedTypeBuilder<T extends LengthRestrictedType
         return unresolved;
     }
 
-    private static List<LengthConstraint> resolveLengths(final List<LengthConstraint> unresolved,
-            final List<LengthConstraint> baseLengthConstraints) {
-        final Builder<LengthConstraint> builder = ImmutableList.builder();
+    private static List<ValueRange> resolveLengths(final List<ValueRange> unresolved,
+            final List<ValueRange> baseLengthConstraints) {
+        final List<ValueRange> resolved = new ArrayList<>(unresolved.size());
 
-        for (LengthConstraint c : unresolved) {
-            final Number max = c.getMax();
-            final Number min = c.getMin();
+        for (ValueRange c : unresolved) {
+            final Number min = c.lowerBound();
+            final Number max = c.upperBound();
 
-            if (max instanceof UnresolvedNumber || min instanceof UnresolvedNumber) {
+            final ValueRange res;
+            if (min instanceof UnresolvedNumber || max instanceof UnresolvedNumber) {
                 final Number rMax = max instanceof UnresolvedNumber
                     ? ((UnresolvedNumber)max).resolveLength(baseLengthConstraints) : max;
                 final Number rMin = min instanceof UnresolvedNumber
                     ? ((UnresolvedNumber)min).resolveLength(baseLengthConstraints) : min;
 
-                builder.add(BaseConstraints.newLengthConstraint(rMin, rMax, Optional.fromNullable(c.getDescription()),
-                    Optional.fromNullable(c.getReference()), c.getErrorAppTag(), c.getErrorMessage()));
+                res = ValueRange.of(rMin, rMax);
             } else {
-                builder.add(c);
+                res = c;
             }
+
+            resolved.add(res);
         }
 
-        return builder.build();
+        return ImmutableList.copyOf(resolved);
     }
 
     private static List<LengthConstraint> ensureTypedLengths(final List<LengthConstraint> lengths,

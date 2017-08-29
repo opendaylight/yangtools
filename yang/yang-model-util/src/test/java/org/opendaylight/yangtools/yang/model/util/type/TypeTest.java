@@ -15,7 +15,9 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
+import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -25,6 +27,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
@@ -39,7 +43,6 @@ import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
-import org.opendaylight.yangtools.yang.model.util.UnresolvedNumber;
 
 public class TypeTest {
     private static final QName Q_NAME = QName.create("test.namespace", "2016-01-01", "test-name");
@@ -411,11 +414,7 @@ public class TypeTest {
                 .newBinaryBuilder(baseBinaryType, SCHEMA_PATH);
         final Long min = Long.valueOf(0);
         final UnresolvedNumber max = UnresolvedNumber.max();
-        final LengthConstraint lengthConstraint = BaseConstraints.newLengthConstraint(min, max, ABSENT, ABSENT);
-        final ArrayList<LengthConstraint> lengthArrayList = new ArrayList<>(1);
-        assertEquals(lengthConstraint.getErrorAppTag(), "length-out-of-specified-bounds");
-        assertEquals(lengthConstraint.getErrorMessage(), "The argument is out of bounds <0, max>");
-        lengthArrayList.add(lengthConstraint);
+        final List<ValueRange> lengthArrayList = ImmutableList.of(ValueRange.of(min, max));
         lengthRestrictedTypeBuilder.setLengthAlternatives(lengthArrayList);
         final TypeDefinition<?> typeDefinition = lengthRestrictedTypeBuilder.buildType();
         assertNotNull(typeDefinition);
