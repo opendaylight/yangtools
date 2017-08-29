@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.base.Preconditions;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -17,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.LengthRestrictedTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
@@ -147,9 +149,8 @@ public final class CompatUtils {
         }
     }
 
-    private static TypeDefinition<?> baseTypeIfNotConstrained(final BinaryTypeDefinition type) {
-        final BinaryTypeDefinition base = type.getBaseType();
-        return baseTypeIfNotConstrained(type, type.getLengthConstraints(), base, base.getLengthConstraints());
+    private static BinaryTypeDefinition baseTypeIfNotConstrained(final BinaryTypeDefinition type) {
+        return baseTypeIfNotConstrained(type, type.getBaseType());
     }
 
     private static TypeDefinition<?> baseTypeIfNotConstrained(final DecimalTypeDefinition type) {
@@ -170,10 +171,10 @@ public final class CompatUtils {
     private static TypeDefinition<?> baseTypeIfNotConstrained(final StringTypeDefinition type) {
         final StringTypeDefinition base = type.getBaseType();
         final List<PatternConstraint> patterns = type.getPatternConstraints();
-        final List<LengthConstraint> lengths = type.getLengthConstraints();
+        final Optional<LengthConstraint> optLengths = type.getLengthConstraint();
 
         if ((patterns.isEmpty() || patterns.equals(base.getPatternConstraints()))
-                && (lengths.isEmpty() || lengths.equals(base.getLengthConstraints()))) {
+                && (!optLengths.isPresent() || optLengths.equals(base.getLengthConstraint()))) {
             return base;
         }
 
@@ -187,9 +188,15 @@ public final class CompatUtils {
 
     private static TypeDefinition<?> baseTypeIfNotConstrained(final TypeDefinition<?> type,
             final List<?> typeConstraints, final TypeDefinition<?> base, final List<?> baseConstraints) {
-        if (typeConstraints.isEmpty() || typeConstraints.equals(baseConstraints)) {
+        return typeConstraints.isEmpty() || typeConstraints.equals(baseConstraints) ? base : type;
+    }
+
+    private static <T extends LengthRestrictedTypeDefinition<T>> T baseTypeIfNotConstrained(final T type,
+            final T base) {
+        final Optional<LengthConstraint> optConstraint = type.getLengthConstraint();
+        if (!optConstraint.isPresent()) {
             return base;
         }
-        return type;
+        return optConstraint.equals(base.getLengthConstraint()) ? base : type;
     }
 }

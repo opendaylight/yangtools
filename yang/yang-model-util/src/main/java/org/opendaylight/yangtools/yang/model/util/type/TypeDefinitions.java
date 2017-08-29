@@ -62,7 +62,7 @@ final class TypeDefinitions {
 
     static int hashCode(final BinaryTypeDefinition type) {
         return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
-            type.getDefaultValue(), type.getLengthConstraints());
+            type.getDefaultValue(), type.getLengthConstraint());
     }
 
     static int hashCode(final BitsTypeDefinition type) {
@@ -111,7 +111,7 @@ final class TypeDefinitions {
 
     static int hashCode(final StringTypeDefinition type) {
         return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
-            type.getDefaultValue(), type.getLengthConstraints(), type.getPatternConstraints());
+            type.getDefaultValue(), type.getLengthConstraint(), type.getPatternConstraints());
     }
 
     static int hashCode(final UnionTypeDefinition type) {
@@ -130,7 +130,7 @@ final class TypeDefinitions {
         }
 
         final BinaryTypeDefinition other = castIfEquals(BinaryTypeDefinition.class, type, obj);
-        return other != null && type.getLengthConstraints().equals(other.getLengthConstraints());
+        return other != null && type.getLengthConstraint().equals(other.getLengthConstraint());
     }
 
     static boolean equals(final BitsTypeDefinition type, final Object obj) {
@@ -211,7 +211,7 @@ final class TypeDefinitions {
         }
 
         final StringTypeDefinition other = castIfEquals(StringTypeDefinition.class, type, obj);
-        return other != null && type.getLengthConstraints().equals(other.getLengthConstraints())
+        return other != null && type.getLengthConstraint().equals(other.getLengthConstraint())
                 && type.getPatternConstraints().equals(other.getPatternConstraints());
     }
 
@@ -234,7 +234,7 @@ final class TypeDefinitions {
     }
 
     static String toString(final BinaryTypeDefinition type) {
-        return toStringHelper(type).add("length", type.getLengthConstraints()).toString();
+        return toStringHelper(type).add("length", type.getLengthConstraint().orElse(null)).toString();
     }
 
     static String toString(final BitsTypeDefinition type) {
@@ -275,7 +275,7 @@ final class TypeDefinitions {
     }
 
     static String toString(final StringTypeDefinition type) {
-        return toStringHelper(type).add("length", type.getLengthConstraints())
+        return toStringHelper(type).add("length", type.getLengthConstraint().orElse(null))
                 .add("patterns", type.getPatternConstraints()).toString();
     }
 
