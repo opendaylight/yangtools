@@ -5,7 +5,7 @@ submodule subtest {
        }
     }
 
-    yang-version: 1;
+    yang-version 1;
 
     belongs-to test {
         aaa {

@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 /**
  * Statement stream source, which is used for inference of effective model.
@@ -49,7 +51,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
  * build full declared statement model of source.</li>
  * </ol>
  */
-public interface StatementStreamSource {
+public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
 
     /**
      * Emits only pre-linkage-related statements to supplied {@code writer}.
