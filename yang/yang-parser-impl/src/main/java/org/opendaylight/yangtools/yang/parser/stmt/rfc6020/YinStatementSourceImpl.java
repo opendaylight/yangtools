@@ -83,6 +83,11 @@ public final class YinStatementSourceImpl extends ForwardingObject implements St
     }
 
     @Override
+    public SourceIdentifier getIdentifier() {
+        return delegate.getIdentifier();
+    }
+
+    @Override
     public void writePreLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
         delegate.writePreLinkage(writer, stmtDef);
     }
@@ -91,7 +96,6 @@ public final class YinStatementSourceImpl extends ForwardingObject implements St
     public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
             final PrefixToModule preLinkagePrefixes) {
         delegate.writeLinkage(writer, stmtDef, preLinkagePrefixes);
-
     }
 
     @Override
@@ -105,5 +109,4 @@ public final class YinStatementSourceImpl extends ForwardingObject implements St
             final PrefixToModule prefixes) {
         delegate().writeFull(writer, stmtDef, prefixes);
     }
-
 }
