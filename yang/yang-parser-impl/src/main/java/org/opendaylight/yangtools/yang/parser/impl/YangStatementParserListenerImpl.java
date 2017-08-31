@@ -83,7 +83,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
         final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, ctx.getStart().getLine(),
                 ctx.getStart().getCharPositionInLine());
         final String keywordTxt = Verify.verifyNotNull(ctx.getChild(KeywordContext.class, 0)).getText();
-        final QName validStatementDefinition = getValidStatementDefinition(prefixes, stmtDef, keywordTxt);
+        final QName validStatementDefinition = getValidStatementDefinition(prefixes, stmtDef, keywordTxt, ref);
 
         final int childId = counters.peek().getAndIncrement();
         counters.push(new Counter());
@@ -107,7 +107,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
 
         final KeywordContext keyword = ctx.getChild(KeywordContext.class, 0);
         final String statementName = keyword.getText();
-        if (stmtDef != null && getValidStatementDefinition(prefixes, stmtDef, statementName) != null
+        if (stmtDef != null && getValidStatementDefinition(prefixes, stmtDef, statementName, ref) != null
                 && toBeSkipped.isEmpty()) {
             writer.endStatement(ref);
         }
@@ -125,10 +125,11 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
      * @param prefixes collection of all relevant prefix mappings supplied for actual parsing phase
      * @param stmtDef collection of all relevant statement definition mappings provided for actual parsing phase
      * @param keywordText statement keyword text to parse from source
+     * @param ref Source reference
      * @return valid QName for declared statement to be written, or null
      */
     private static QName getValidStatementDefinition(final PrefixToModule prefixes,
-            final QNameToStatementDefinition stmtDef, final String keywordText) {
+            final QNameToStatementDefinition stmtDef, final String keywordText, final StatementSourceReference ref) {
         final int firstColon = keywordText.indexOf(':');
         if (firstColon == -1) {
             final StatementDefinition statementDefinition = stmtDef.get(
@@ -136,11 +137,9 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
             return statementDefinition != null ? statementDefinition.getStatementName() : null;
         }
 
-        final int secondColon = keywordText.indexOf(':', firstColon + 1);
-        if (secondColon != -1) {
-            // Malformed string
-            return null;
-        }
+        SourceException.throwIf(firstColon == keywordText.length() - 1
+                || keywordText.indexOf(':', firstColon + 1) != -1, ref, "Malformed statement '%s'", keywordText);
+
         if (prefixes == null) {
             // No prefixes to look up from
             return null;
