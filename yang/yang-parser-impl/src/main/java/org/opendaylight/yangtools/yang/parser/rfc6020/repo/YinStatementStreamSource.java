@@ -19,7 +19,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import javax.annotation.Nonnull;
 import javax.xml.transform.TransformerException;
-import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -47,7 +46,7 @@ import org.w3c.dom.NodeList;
  * @author Robert Varga
  */
 @Beta
-public final class YinStatementStreamSource implements Identifiable<SourceIdentifier>, StatementStreamSource {
+public final class YinStatementStreamSource implements StatementStreamSource {
     private static final Logger LOG = LoggerFactory.getLogger(YinStatementStreamSource.class);
     private static final LoadingCache<String, URI> URI_CACHE = CacheBuilder.newBuilder().weakValues().build(
         new CacheLoader<String, URI>() {
