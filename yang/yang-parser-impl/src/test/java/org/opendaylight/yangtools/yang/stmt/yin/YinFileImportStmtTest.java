@@ -13,6 +13,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Iterator;
@@ -21,23 +22,25 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
+import org.xml.sax.SAXException;
 
 public class YinFileImportStmtTest {
 
-    private Set<Module> modules;
+    private SchemaContext context;
 
     @Before
-    public void init() throws URISyntaxException, ReactorException {
-        modules = TestUtils.loadYinModules(getClass().getResource("/semantic-statement-parser/yin/modules").toURI());
-        assertEquals(9, modules.size());
+    public void init() throws URISyntaxException, ReactorException, SAXException, IOException {
+        context = TestUtils.loadYinModules(getClass().getResource("/semantic-statement-parser/yin/modules").toURI());
+        assertEquals(9, context.getModules().size());
 
     }
 
     @Test
     public void testImport() throws ParseException {
-        Module testModule = TestUtils.findModule(modules, "ietf-netconf-monitoring");
+        Module testModule = TestUtils.findModule(context, "ietf-netconf-monitoring").get();
         assertNotNull(testModule);
 
         Set<ModuleImport> imports = testModule.getImports();

@@ -26,7 +26,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,15 +33,7 @@ public class DataTreeCandidatesTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataTreeCandidates.class);
 
-    private static final SchemaContext SCHEMA_CONTEXT;
-
-    static {
-        try {
-            SCHEMA_CONTEXT = TestModel.createTestContext();
-        } catch (ReactorException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-    }
+    private static final SchemaContext SCHEMA_CONTEXT = TestModel.createTestContext();
 
     private DataTree dataTree;
 

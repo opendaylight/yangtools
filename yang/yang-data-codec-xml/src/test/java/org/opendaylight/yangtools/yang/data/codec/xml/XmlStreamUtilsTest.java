@@ -57,7 +57,7 @@ public class XmlStreamUtilsTest {
 
     @BeforeClass
     public static void initialize() throws URISyntaxException, FileNotFoundException, ReactorException {
-        schemaContext = YangParserTestUtils.parseYangSource("/leafref-test.yang");
+        schemaContext = YangParserTestUtils.parseYangResource("/leafref-test.yang");
         assertNotNull(schemaContext);
         assertEquals(1, schemaContext.getModules().size());
         leafRefModule = schemaContext.getModules().iterator().next();
