@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import javax.annotation.Nonnull;
 import com.google.common.base.Optional;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -16,7 +16,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNod
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 
 final class RecursiveUnmodifiedCandidateNode extends AbstractRecursiveCandidateNode {
-    protected RecursiveUnmodifiedCandidateNode(final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> data) {
+    protected RecursiveUnmodifiedCandidateNode(
+            final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> data) {
         super(data);
     }
 
@@ -39,12 +40,13 @@ final class RecursiveUnmodifiedCandidateNode extends AbstractRecursiveCandidateN
     }
 
     @Override
-    protected DataTreeCandidateNode createContainer(final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> childData) {
+    DataTreeCandidateNode createContainer(
+            final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> childData) {
         return new RecursiveUnmodifiedCandidateNode(childData);
     }
 
     @Override
-    protected DataTreeCandidateNode createLeaf(final NormalizedNode<?, ?> childData) {
+    DataTreeCandidateNode createLeaf(final NormalizedNode<?, ?> childData) {
         return new UnmodifiedLeafCandidateNode(childData);
     }
 }

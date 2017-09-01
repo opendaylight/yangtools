@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
  * <li><b>Not Upgradable</b> - operation is immutable, invocation of
  * {@link #upgradeIfPossible()} is no-op and method {@link #snapshot()} returns
  * pointer on same object.
- *
+ * </ul>
  * <h3>Upgradable Root Modification Operation</h3>
  *
  * Upgradable Root Modification Operation may be created using:
@@ -51,13 +51,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
  * automatically, but client code must explicitly invoke
  * {@link #upgradeIfPossible()} to get latest implementation.
  *
+ * <p>
  * Note: This is helpful for implementing
  * {@link org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification}
  * which may be derived from
  * {@link org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree} before
  * update of schema and user actually writes data after schema update. During
  * update user did not invoked any operation.
- *
  */
 abstract class RootModificationApplyOperation extends ModificationApplyOperation {
 
@@ -100,7 +100,7 @@ abstract class RootModificationApplyOperation extends ModificationApplyOperation
     }
 
     @Override
-    void recursivelyVerifyStructure(NormalizedNode<?, ?> value) {
+    void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
         getDelegate().recursivelyVerifyStructure(value);
     }
 
@@ -123,9 +123,10 @@ abstract class RootModificationApplyOperation extends ModificationApplyOperation
 
     /**
      * Creates a snapshot from this modification, which may have separate
-     * upgrade lifecycle and is not affected by upgrades
+     * upgrade lifecycle and is not affected by upgrades.
+     *
      * <p>
-     * Newly created snapshot uses backing implementation of this modi
+     * Newly created snapshot uses backing implementation of this modification.
      *
      * @return Derived {@link RootModificationApplyOperation} with separate
      *         upgrade lifecycle.
@@ -134,6 +135,7 @@ abstract class RootModificationApplyOperation extends ModificationApplyOperation
 
     /**
      * Upgrades backing implementation to latest available, if possible.
+     *
      * <p>
      * Latest implementation of {@link RootModificationApplyOperation} is
      * managed by {@link LatestOperationHolder} which was used to construct this

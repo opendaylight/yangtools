@@ -21,7 +21,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 final class InMemoryDataTreeSnapshotCursor extends AbstractCursor<InMemoryDataTreeSnapshot> {
     private final Deque<NormalizedNodeContainer<?, ?, ?>> stack = new ArrayDeque<>();
 
-    InMemoryDataTreeSnapshotCursor(final InMemoryDataTreeSnapshot parent, final YangInstanceIdentifier rootPath, final NormalizedNodeContainer<?, ?, ?> normalizedNode) {
+    InMemoryDataTreeSnapshotCursor(final InMemoryDataTreeSnapshot parent, final YangInstanceIdentifier rootPath,
+            final NormalizedNodeContainer<?, ?, ?> normalizedNode) {
         super(parent, rootPath);
         stack.push(normalizedNode);
     }
@@ -37,6 +38,7 @@ final class InMemoryDataTreeSnapshotCursor extends AbstractCursor<InMemoryDataTr
     }
 
     @Override
+    @SuppressWarnings("checkstyle:illegalCatch")
     public void enter(@Nonnull final Iterable<PathArgument> path) {
         final Optional<NormalizedNode<?, ?>> maybeChildNode = NormalizedNodes.findNode(stack.peek(), path);
         Preconditions.checkArgument(maybeChildNode.isPresent(), "Child %s not found", path);

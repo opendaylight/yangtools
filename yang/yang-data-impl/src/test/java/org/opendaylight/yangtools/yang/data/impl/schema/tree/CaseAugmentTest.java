@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
+
 import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,22 +26,17 @@ import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
-
 public class CaseAugmentTest {
 
     private SchemaContext schemaContext;
-    private final QName CHOICE1_QNAME = QName.create(TestModel.TEST_QNAME, "choice1");
-    private final QName C1L1_QNAME = QName.create(TestModel.TEST_QNAME, "case1-leaf1");
-    private final QName C1L2_QNAME = QName.create(TestModel.TEST_QNAME, "case1-leaf2");
-    private final QName C1L3_QNAME = QName.create(TestModel.TEST_QNAME, "case1-leaf3");
-    private final QName C2L1_QNAME = QName.create(TestModel.TEST_QNAME, "case2-leaf1");
-    private final NodeIdentifier CHOICE_ID = new NodeIdentifier(CHOICE1_QNAME);
-    private final AugmentationIdentifier AUGMENT_ID =
-            new AugmentationIdentifier(ImmutableSet.<QName>builder().add(C1L2_QNAME).add(C1L3_QNAME).build());
-
+    private static final QName CHOICE1_QNAME = QName.create(TestModel.TEST_QNAME, "choice1");
+    private static final QName C1L1_QNAME = QName.create(TestModel.TEST_QNAME, "case1-leaf1");
+    private static final QName C1L2_QNAME = QName.create(TestModel.TEST_QNAME, "case1-leaf2");
+    private static final QName C1L3_QNAME = QName.create(TestModel.TEST_QNAME, "case1-leaf3");
+    private static final QName C2L1_QNAME = QName.create(TestModel.TEST_QNAME, "case2-leaf1");
+    private static final NodeIdentifier CHOICE_ID = new NodeIdentifier(CHOICE1_QNAME);
+    private static final AugmentationIdentifier AUGMENT_ID = new AugmentationIdentifier(
+        ImmutableSet.of(C1L2_QNAME, C1L3_QNAME));
 
     @Before
     public void prepare() throws ReactorException {

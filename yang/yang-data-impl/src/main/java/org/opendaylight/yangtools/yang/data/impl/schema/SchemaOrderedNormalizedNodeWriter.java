@@ -74,7 +74,6 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
             currentSchemaNode = root;
         }
         return write(node, currentSchemaNode);
-
     }
 
     /**
@@ -92,10 +91,10 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
         }
 
         throw new IllegalStateException("It wasn't possible to serialize nodes " + nodes);
-
     }
 
-    private SchemaOrderedNormalizedNodeWriter write(final NormalizedNode<?, ?> node, final SchemaNode dataSchemaNode) throws IOException {
+    private SchemaOrderedNormalizedNodeWriter write(final NormalizedNode<?, ?> node, final SchemaNode dataSchemaNode)
+            throws IOException {
 
         //Set current schemaNode
         try (SchemaNodeSetter sns = new SchemaNodeSetter(dataSchemaNode)) {
@@ -126,7 +125,8 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
         return writeChildren(children, currentSchemaNode, true);
     }
 
-    private boolean writeChildren(final Iterable<? extends NormalizedNode<?, ?>> children, final SchemaNode parentSchemaNode, final boolean endParent) throws IOException {
+    private boolean writeChildren(final Iterable<? extends NormalizedNode<?, ?>> children,
+            final SchemaNode parentSchemaNode, final boolean endParent) throws IOException {
         //Augmentations cannot be gotten with node.getChild so create our own structure with augmentations resolved
         final ArrayListMultimap<QName, NormalizedNode<?, ?>> qNameToNodes = ArrayListMultimap.create();
         for (final NormalizedNode<?, ?> child : children) {
@@ -184,15 +184,14 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
         return resolvedAugs;
     }
 
-
-    private class SchemaNodeSetter implements AutoCloseable {
+    private final class SchemaNodeSetter implements AutoCloseable {
 
         private final SchemaNode previousSchemaNode;
 
         /**
          * Sets current schema node new value and store old value for later restore
          */
-        public SchemaNodeSetter(final SchemaNode schemaNode) {
+        SchemaNodeSetter(final SchemaNode schemaNode) {
             previousSchemaNode = SchemaOrderedNormalizedNodeWriter.this.currentSchemaNode;
             SchemaOrderedNormalizedNodeWriter.this.currentSchemaNode = schemaNode;
         }
@@ -205,5 +204,4 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
             SchemaOrderedNormalizedNodeWriter.this.currentSchemaNode = previousSchemaNode;
         }
     }
-
 }

@@ -27,8 +27,11 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LeafRefContextTreeBuilderTest {
+    private static final Logger LOG = LoggerFactory.getLogger(LeafRefContextTreeBuilderTest.class);
 
     private static SchemaContext context;
     private static Module impMod;
@@ -73,14 +76,10 @@ public class LeafRefContextTreeBuilderTest {
         assertNotNull(leafRefCtx.getAbsoluteLeafRefTargetPath());
         assertTrue(leafRefCtx.getAbsoluteLeafRefTargetPath().isAbsolute());
 
-        System.out.println();
-        System.out.println("******* Test 1 ************");
-        System.out.println("Original definition string:");
-        System.out.println(leafRefCtx.getLeafRefTargetPathString());
-        System.out.println("Parsed leafref path:");
-        System.out.println(leafRefCtx.getLeafRefTargetPath().toString());
-        System.out.println("Absolute leafref path:");
-        System.out.println(leafRefCtx.getAbsoluteLeafRefTargetPath().toString());
+        LOG.debug("******* Test 1 ************");
+        LOG.debug("Original definition string: {}", leafRefCtx.getLeafRefTargetPathString());
+        LOG.debug("Parsed leafref path: {}", leafRefCtx.getLeafRefTargetPath());
+        LOG.debug("Absolute leafref path: {}", leafRefCtx.getAbsoluteLeafRefTargetPath());
     }
 
     @Test
@@ -99,16 +98,10 @@ public class LeafRefContextTreeBuilderTest {
         assertNotNull(leafRefCtx2.getAbsoluteLeafRefTargetPath());
         assertTrue(leafRefCtx2.getAbsoluteLeafRefTargetPath().isAbsolute());
 
-        System.out.println();
-        System.out.println("******* Test 2 ************");
-        System.out.println("Original definition string2:");
-        System.out.println(leafRefCtx2.getLeafRefTargetPathString());
-        System.out.println("Parsed leafref path2:");
-        System.out.println(leafRefCtx2.getLeafRefTargetPath().toString());
-        System.out.println("Absolute leafref path2:");
-        System.out.println(leafRefCtx2.getAbsoluteLeafRefTargetPath().toString());
-        System.out.println();
-
+        LOG.debug("******* Test 2 ************");
+        LOG.debug("Original definition string2: {}", leafRefCtx2.getLeafRefTargetPathString());
+        LOG.debug("Parsed leafref path2: {}", leafRefCtx2.getLeafRefTargetPath());
+        LOG.debug("Absolute leafref path2: {}", leafRefCtx2.getAbsoluteLeafRefTargetPath());
     }
 
     @Test
@@ -129,15 +122,10 @@ public class LeafRefContextTreeBuilderTest {
         assertNotNull(leafRefCtx3.getAbsoluteLeafRefTargetPath());
         assertTrue(leafRefCtx3.getAbsoluteLeafRefTargetPath().isAbsolute());
 
-        System.out.println();
-        System.out.println("******* Test 3 ************");
-        System.out.println("Original definition string2:");
-        System.out.println(leafRefCtx3.getLeafRefTargetPathString());
-        System.out.println("Parsed leafref path2:");
-        System.out.println(leafRefCtx3.getLeafRefTargetPath().toString());
-        System.out.println("Absolute leafref path2:");
-        System.out.println(leafRefCtx3.getAbsoluteLeafRefTargetPath().toString());
-        System.out.println();
+        LOG.debug("******* Test 3 ************");
+        LOG.debug("Original definition string2: {}", leafRefCtx3.getLeafRefTargetPathString());
+        LOG.debug("Parsed leafref path2: {}", leafRefCtx3.getLeafRefTargetPath());
+        LOG.debug("Absolute leafref path2: {}", leafRefCtx3.getAbsoluteLeafRefTargetPath());
     }
 
     @Test
@@ -226,7 +214,6 @@ public class LeafRefContextTreeBuilderTest {
 
         assertNotNull(allChildsReferencedByLeafRef);
         assertTrue(allChildsReferencedByLeafRef.isEmpty());
-
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -236,5 +223,4 @@ public class LeafRefContextTreeBuilderTest {
             "/leafref-context-test/incorrect-modules");
         LeafRefContext.create(context);
     }
-
 }

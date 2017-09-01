@@ -26,6 +26,8 @@ public final class LeafRefUtils {
     }
 
     /**
+     * Create an absolute leafref path.
+     *
      * @param leafRefPath leafRefPath
      * @param contextNodeSchemaPath contextNodeSchemaPath
      * @param module module

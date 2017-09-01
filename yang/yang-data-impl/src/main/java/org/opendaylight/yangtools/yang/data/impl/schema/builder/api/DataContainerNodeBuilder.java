@@ -22,5 +22,6 @@ public interface DataContainerNodeBuilder<I extends PathArgument, R extends Data
     DataContainerNodeBuilder<I, R> withNodeIdentifier(I nodeIdentifier);
 
     DataContainerNodeBuilder<I, R> withChild(DataContainerChild<?, ?> child);
+
     DataContainerNodeBuilder<I, R> withoutChild(PathArgument key);
 }

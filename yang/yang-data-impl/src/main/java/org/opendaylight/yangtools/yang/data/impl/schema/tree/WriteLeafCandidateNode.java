@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import javax.annotation.Nonnull;
 import com.google.common.base.Optional;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 final class WriteLeafCandidateNode extends AbstractWriteCandidate {

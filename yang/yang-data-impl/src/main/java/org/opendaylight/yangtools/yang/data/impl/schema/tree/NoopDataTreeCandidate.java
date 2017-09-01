@@ -63,7 +63,8 @@ final class NoopDataTreeCandidate extends AbstractDataTreeCandidate {
     };
     private final TreeNode afterRoot;
 
-    protected NoopDataTreeCandidate(final YangInstanceIdentifier rootPath, final ModifiedNode modificationRoot, final TreeNode afterRoot) {
+    protected NoopDataTreeCandidate(final YangInstanceIdentifier rootPath, final ModifiedNode modificationRoot,
+            final TreeNode afterRoot) {
         super(rootPath);
         Preconditions.checkArgument(modificationRoot.getOperation() == LogicalOperation.NONE);
         this.afterRoot = Preconditions.checkNotNull(afterRoot);

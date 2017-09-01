@@ -22,27 +22,28 @@ final class LeafRefPathParserImpl {
     private final Module module;
     private final SchemaNode node;
 
-     public LeafRefPathParserImpl(final SchemaContext schemaContext, final Module currentModule, final SchemaNode currentNode) {
+    public LeafRefPathParserImpl(final SchemaContext schemaContext, final Module currentModule,
+            final SchemaNode currentNode) {
         this.schemaContext = schemaContext;
         this.module = currentModule;
         this.node = currentNode;
     }
 
-    public LeafRefPath parseLeafRefPathSourceToSchemaPath(final InputStream stream) throws IOException, LeafRefYangSyntaxErrorException {
-
+    public LeafRefPath parseLeafRefPathSourceToSchemaPath(final InputStream stream) throws IOException,
+            LeafRefYangSyntaxErrorException {
         final Path_argContext pathCtx = parseLeafRefPathSource(stream);
 
         final ParseTreeWalker walker = new ParseTreeWalker();
-        final LeafRefPathParserListenerImpl leafRefPathParserListenerImpl = new LeafRefPathParserListenerImpl(schemaContext, module, node);
-        walker.walk(leafRefPathParserListenerImpl,pathCtx);
+        final LeafRefPathParserListenerImpl leafRefPathParserListenerImpl = new LeafRefPathParserListenerImpl(
+            schemaContext, module, node);
+        walker.walk(leafRefPathParserListenerImpl, pathCtx);
 
-        final LeafRefPath leafRefPath = leafRefPathParserListenerImpl.getLeafRefPath();
-
-        return leafRefPath;
+        return leafRefPathParserListenerImpl.getLeafRefPath();
     }
 
 
-    private Path_argContext parseLeafRefPathSource(final InputStream stream) throws IOException, LeafRefYangSyntaxErrorException {
+    private Path_argContext parseLeafRefPathSource(final InputStream stream) throws IOException,
+            LeafRefYangSyntaxErrorException {
         final LeafRefPathLexer lexer = new LeafRefPathLexer(CharStreams.fromStream(stream));
         final CommonTokenStream tokens = new CommonTokenStream(lexer);
         final LeafRefPathParser parser = new LeafRefPathParser(tokens);
@@ -53,8 +54,6 @@ final class LeafRefPathParserImpl {
 
         final Path_argContext result = parser.path_arg();
         errorListener.validate();
-
         return result;
     }
-
 }

@@ -13,9 +13,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
@@ -40,7 +40,8 @@ final class StructuralContainerModificationStrategy extends ModificationApplyOpe
     private static final Version FAKE_VERSION = Version.initial();
     private final ContainerModificationStrategy delegate;
 
-    StructuralContainerModificationStrategy(final ContainerSchemaNode schemaNode, final DataTreeConfiguration treeConfig) {
+    StructuralContainerModificationStrategy(final ContainerSchemaNode schemaNode,
+        final DataTreeConfiguration treeConfig) {
         this.delegate = new ContainerModificationStrategy(schemaNode, treeConfig);
     }
 
@@ -50,7 +51,8 @@ final class StructuralContainerModificationStrategy extends ModificationApplyOpe
     }
 
     @Override
-    Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta, final Version version) {
+    Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
+            final Version version) {
         final Optional<TreeNode> ret;
         if (modification.getOperation() == LogicalOperation.TOUCH && !storeMeta.isPresent()) {
             // Container is not present, let's take care of the 'magically appear' part of our job
@@ -101,7 +103,7 @@ final class StructuralContainerModificationStrategy extends ModificationApplyOpe
     }
 
     @Override
-    void verifyStructure(final NormalizedNode<?, ?> modification, final boolean verifyChildren) throws IllegalArgumentException {
+    void verifyStructure(final NormalizedNode<?, ?> modification, final boolean verifyChildren) {
         delegate.verifyStructure(modification, verifyChildren);
     }
 
@@ -116,7 +118,8 @@ final class StructuralContainerModificationStrategy extends ModificationApplyOpe
     }
 
     @Override
-    void mergeIntoModifiedNode(final ModifiedNode modification, final NormalizedNode<?, ?> value, final Version version) {
+    void mergeIntoModifiedNode(final ModifiedNode modification, final NormalizedNode<?, ?> value,
+            final Version version) {
         delegate.mergeIntoModifiedNode(modification, value, version);
     }
 

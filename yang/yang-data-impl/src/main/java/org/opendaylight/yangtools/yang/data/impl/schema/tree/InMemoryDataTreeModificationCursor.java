@@ -20,10 +20,12 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModificationCursor;
 
-final class InMemoryDataTreeModificationCursor extends AbstractCursor<InMemoryDataTreeModification> implements DataTreeModificationCursor {
+final class InMemoryDataTreeModificationCursor extends AbstractCursor<InMemoryDataTreeModification>
+        implements DataTreeModificationCursor {
     private final Deque<OperationWithModification> stack = new ArrayDeque<>();
 
-    InMemoryDataTreeModificationCursor(final InMemoryDataTreeModification parent, final YangInstanceIdentifier rootPath, final OperationWithModification rootOp) {
+    InMemoryDataTreeModificationCursor(final InMemoryDataTreeModification parent, final YangInstanceIdentifier rootPath,
+            final OperationWithModification rootOp) {
         super(parent, rootPath);
         stack.push(rootOp);
     }
@@ -62,6 +64,7 @@ final class InMemoryDataTreeModificationCursor extends AbstractCursor<InMemoryDa
     }
 
     @Override
+    @SuppressWarnings("checkstyle:illegalCatch")
     public void enter(@Nonnull final Iterable<PathArgument> path) {
         int depth = 0;
         for (PathArgument child : path) {

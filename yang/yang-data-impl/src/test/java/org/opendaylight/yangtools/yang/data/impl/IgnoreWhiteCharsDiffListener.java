@@ -13,22 +13,21 @@ import org.custommonkey.xmlunit.DifferenceListener;
 
 /**
  * Implementatin of {@link DifferenceListener} ignoring white characters around text elements
- * @author mirehak
  *
+ * @author mirehak
  */
 public class IgnoreWhiteCharsDiffListener implements DifferenceListener {
-    
+
     @Override
     public void skippedComparison(org.w3c.dom.Node control,
             org.w3c.dom.Node test) {
-        // do nothing                
+        // do nothing
     }
 
     @Override
     public int differenceFound(Difference diff) {
-        
+
         if (diff.getId() == DifferenceConstants.TEXT_VALUE.getId()) {
-            
             String control = diff.getControlNodeDetail().getValue();
             if (control != null) {
                 control = control.trim();

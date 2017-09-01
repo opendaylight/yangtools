@@ -105,6 +105,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         return Optional.absent();
     }
 
+    @SuppressWarnings("checkstyle:illegalCatch")
     private Optional<TreeNode> resolveSnapshot(final YangInstanceIdentifier path, final ModifiedNode modification) {
         final Optional<TreeNode> potentialSnapshot = modification.getSnapshot();
         if (potentialSnapshot != null) {
@@ -217,28 +218,28 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     private static void applyNode(final DataTreeModificationCursor cursor, final ModifiedNode node) {
         switch (node.getOperation()) {
-        case NONE:
-            break;
-        case DELETE:
-            cursor.delete(node.getIdentifier());
-            break;
-        case MERGE:
-            cursor.merge(node.getIdentifier(), node.getWrittenValue());
-            applyChildren(cursor, node);
-            break;
-        case TOUCH:
-            // TODO: we could improve efficiency of cursor use if we could understand
-            //       nested TOUCH operations. One way of achieving that would be a proxy
-            //       cursor, which would keep track of consecutive enter and exit calls
-            //       and coalesce them.
-            applyChildren(cursor, node);
-            break;
-        case WRITE:
-            cursor.write(node.getIdentifier(), node.getWrittenValue());
-            applyChildren(cursor, node);
-            break;
-        default:
-            throw new IllegalArgumentException("Unhandled node operation " + node.getOperation());
+            case NONE:
+                break;
+            case DELETE:
+                cursor.delete(node.getIdentifier());
+                break;
+            case MERGE:
+                cursor.merge(node.getIdentifier(), node.getWrittenValue());
+                applyChildren(cursor, node);
+                break;
+            case TOUCH:
+                // TODO: we could improve efficiency of cursor use if we could understand
+                //       nested TOUCH operations. One way of achieving that would be a proxy
+                //       cursor, which would keep track of consecutive enter and exit calls
+                //       and coalesce them.
+                applyChildren(cursor, node);
+                break;
+            case WRITE:
+                cursor.write(node.getIdentifier(), node.getWrittenValue());
+                applyChildren(cursor, node);
+                break;
+            default:
+                throw new IllegalArgumentException("Unhandled node operation " + node.getOperation());
         }
     }
 
