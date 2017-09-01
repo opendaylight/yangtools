@@ -30,7 +30,7 @@ public class DomToNormalizedNodeParserFactoryTest {
 
     @Test
     public void testFactoryInstantiation() throws ReactorException, FileNotFoundException, URISyntaxException {
-        SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/foo.yang");
+        SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/foo.yang");
 
         DomToNormalizedNodeParserFactory factory = DomToNormalizedNodeParserFactory.getInstance(
                 DomUtils.defaultValueCodecProvider(), schemaContext,

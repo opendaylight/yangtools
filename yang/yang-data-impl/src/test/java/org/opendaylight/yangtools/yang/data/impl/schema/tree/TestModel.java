@@ -7,14 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Collections;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class TestModel {
@@ -39,16 +34,11 @@ public class TestModel {
     public static final QName TWO_QNAME = QName.create(TEST_QNAME, "two");
     public static final QName THREE_QNAME = QName.create(TEST_QNAME, "three");
 
-    public static InputStream getDatastoreTestInputStream() {
-        return TestModel.class.getResourceAsStream(DATASTORE_TEST_YANG);
+    public static SchemaContext createTestContext() {
+        return createTestContext(DATASTORE_TEST_YANG);
     }
 
-    public static SchemaContext createTestContext() throws ReactorException {
-        return YangParserTestUtils.parseYangStreams(Arrays.asList(getDatastoreTestInputStream()));
-    }
-
-    public static SchemaContext createTestContext(String resourcePath) throws ReactorException {
-        InputStream yangStream = TestModel.class.getResourceAsStream(resourcePath);
-        return YangParserTestUtils.parseYangStreams(Collections.singletonList(yangStream));
+    public static SchemaContext createTestContext(final String resourcePath) {
+        return YangParserTestUtils.parseYangResources(TestModel.class, resourcePath);
     }
 }
