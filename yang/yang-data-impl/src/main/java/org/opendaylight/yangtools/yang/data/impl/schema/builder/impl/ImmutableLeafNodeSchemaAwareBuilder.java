@@ -24,12 +24,13 @@ public final class ImmutableLeafNodeSchemaAwareBuilder<T> extends ImmutableLeafN
 
     @Override
     public NormalizedNodeAttrBuilder<NodeIdentifier, T, LeafNode<T>> withValue(final T value) {
-//        TODO check value type
+        // TODO: check value type
         return super.withValue(value);
     }
 
     @Override
-    public NormalizedNodeAttrBuilder<NodeIdentifier, T, LeafNode<T>> withNodeIdentifier(final NodeIdentifier nodeIdentifier) {
+    public NormalizedNodeAttrBuilder<NodeIdentifier, T, LeafNode<T>> withNodeIdentifier(
+            final NodeIdentifier nodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 }

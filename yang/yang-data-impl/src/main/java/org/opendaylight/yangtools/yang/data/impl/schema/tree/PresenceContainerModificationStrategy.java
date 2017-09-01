@@ -22,7 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 final class PresenceContainerModificationStrategy extends ContainerModificationStrategy {
     private final MandatoryLeafEnforcer enforcer;
 
-    PresenceContainerModificationStrategy(final ContainerSchemaNode schemaNode, final DataTreeConfiguration treeConfig) {
+    PresenceContainerModificationStrategy(final ContainerSchemaNode schemaNode,
+            final DataTreeConfiguration treeConfig) {
         super(schemaNode, treeConfig);
         enforcer = MandatoryLeafEnforcer.forContainer(schemaNode, treeConfig);
     }

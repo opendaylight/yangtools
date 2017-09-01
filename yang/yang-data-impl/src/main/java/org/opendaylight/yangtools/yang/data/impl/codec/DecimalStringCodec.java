@@ -37,7 +37,7 @@ public final class DecimalStringCodec extends TypeDefinitionAwareCodec<BigDecima
 
     @Override
     public BigDecimal deserialize(final String stringRepresentation) {
-        Preconditions.checkArgument( stringRepresentation != null , "Input cannot be null" );
+        Preconditions.checkArgument(stringRepresentation != null, "Input cannot be null");
         // FIXME: run value validation
         return new BigDecimal(stringRepresentation);
     }

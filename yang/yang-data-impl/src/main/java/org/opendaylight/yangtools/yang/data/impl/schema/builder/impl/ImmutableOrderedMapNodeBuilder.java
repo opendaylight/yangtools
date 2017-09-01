@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableN
 
 public class ImmutableOrderedMapNodeBuilder implements CollectionNodeBuilder<MapEntryNode, OrderedMapNode> {
     private static final int DEFAULT_CAPACITY = 4;
+
     private Map<NodeIdentifierWithPredicates, MapEntryNode> value;
     private NodeIdentifier nodeIdentifier;
     private boolean dirty;
@@ -122,7 +123,9 @@ public class ImmutableOrderedMapNodeBuilder implements CollectionNodeBuilder<Map
         return withoutChild(key);
     }
 
-    protected static final class ImmutableOrderedMapNode extends AbstractImmutableNormalizedNode<NodeIdentifier, Collection<MapEntryNode>> implements Immutable, OrderedMapNode {
+    protected static final class ImmutableOrderedMapNode
+            extends AbstractImmutableNormalizedNode<NodeIdentifier, Collection<MapEntryNode>>
+            implements Immutable, OrderedMapNode {
 
         private final Map<NodeIdentifierWithPredicates, MapEntryNode> children;
 
@@ -138,6 +141,11 @@ public class ImmutableOrderedMapNodeBuilder implements CollectionNodeBuilder<Map
         }
 
         @Override
+        public MapEntryNode getChild(final int position) {
+            return Iterables.get(children.values(), position);
+        }
+
+        @Override
         protected int valueHashCode() {
             return children.hashCode();
         }
@@ -145,11 +153,6 @@ public class ImmutableOrderedMapNodeBuilder implements CollectionNodeBuilder<Map
         @Override
         protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
             return children.equals(((ImmutableOrderedMapNode) other).children);
-        }
-
-        @Override
-        public MapEntryNode getChild(final int position) {
-            return Iterables.get(children.values(), position);
         }
 
         @Override

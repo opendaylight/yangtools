@@ -24,9 +24,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContext;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefDataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefValidatation;
@@ -111,7 +111,7 @@ public class DataTreeCandidateValidatorTest3 {
         LOG.debug("*************************");
         LOG.debug("Before writeDevices: ");
         LOG.debug("*************************");
-        LOG.debug(inMemoryDataTree.toString());
+        LOG.debug("{}", inMemoryDataTree);
 
         boolean exception = false;
         try {
@@ -129,7 +129,7 @@ public class DataTreeCandidateValidatorTest3 {
         LOG.debug("*************************");
         LOG.debug("After writeDevices: ");
         LOG.debug("*************************");
-        LOG.debug(inMemoryDataTree.toString());
+        LOG.debug("{}", inMemoryDataTree);
     }
 
     private static void mergeDevices() {
@@ -149,7 +149,7 @@ public class DataTreeCandidateValidatorTest3 {
         LOG.debug("*************************");
         LOG.debug("Before mergeDevices: ");
         LOG.debug("*************************");
-        LOG.debug(inMemoryDataTree.toString());
+        LOG.debug("{}", inMemoryDataTree);
 
         boolean exception = false;
         try {
@@ -166,7 +166,7 @@ public class DataTreeCandidateValidatorTest3 {
         LOG.debug("*************************");
         LOG.debug("After mergeDevices: ");
         LOG.debug("*************************");
-        LOG.debug(inMemoryDataTree.toString());
+        LOG.debug("{}", inMemoryDataTree);
 
         assertTrue(exception);
     }
@@ -210,7 +210,7 @@ public class DataTreeCandidateValidatorTest3 {
 
     private static void initDataTree() {
 
-        inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL);
+        inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create(DataTreeConfiguration.DEFAULT_OPERATIONAL);
         inMemoryDataTree.setSchemaContext(context);
 
         final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
@@ -231,7 +231,7 @@ public class DataTreeCandidateValidatorTest3 {
 
         inMemoryDataTree.commit(writeChipsCandidate);
 
-        System.out.println(inMemoryDataTree.toString());
+        LOG.debug("{}", inMemoryDataTree);
     }
 
     private static void initLeafRefContext() {

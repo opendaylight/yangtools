@@ -22,8 +22,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
@@ -36,11 +36,11 @@ public class ConfigStatementValidationTest {
     private static final Short TWO_ID = 2;
 
     private static final YangInstanceIdentifier OUTER_LIST_1_PATH = YangInstanceIdentifier
-            .builder(TestModel.OUTER_LIST_PATH).nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID) //
+            .builder(TestModel.OUTER_LIST_PATH).nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID)
             .build();
 
     private static final YangInstanceIdentifier OUTER_LIST_2_PATH = YangInstanceIdentifier
-            .builder(TestModel.OUTER_LIST_PATH).nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID) //
+            .builder(TestModel.OUTER_LIST_PATH).nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID)
             .build();
 
     private static final MapEntryNode INNER_FOO_ENTRY_NODE = ImmutableNodes.mapEntry(TestModel.INNER_LIST_QNAME,
@@ -50,14 +50,14 @@ public class ConfigStatementValidationTest {
             .mapEntryBuilder(QName.create(TestModel.TEST_QNAME, "inner-list2"), TestModel.NAME_QNAME, "foo")
             .withChild(ImmutableNodes.leafNode(TestModel.VALUE_QNAME, "value")).build();
 
-    private static final MapEntryNode FOO_NODE = mapEntryBuilder(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID) //
-            .withChild(mapNodeBuilder(TestModel.INNER_LIST_QNAME).withChild(INNER_FOO_ENTRY_NODE) //
-                    .build()) //
+    private static final MapEntryNode FOO_NODE = mapEntryBuilder(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID)
+            .withChild(mapNodeBuilder(TestModel.INNER_LIST_QNAME).withChild(INNER_FOO_ENTRY_NODE)
+                    .build())
             .build();
 
-    private static final MapEntryNode BAR_NODE = mapEntryBuilder(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID) //
-            .withChild(mapNodeBuilder(TestModel.INNER_LIST_QNAME).withChild(INNER_BAR_ENTRY_NODE) //
-                    .build()) //
+    private static final MapEntryNode BAR_NODE = mapEntryBuilder(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID)
+            .withChild(mapNodeBuilder(TestModel.INNER_LIST_QNAME).withChild(INNER_BAR_ENTRY_NODE)
+                    .build())
             .build();
 
     private SchemaContext schemaContext;
@@ -83,7 +83,7 @@ public class ConfigStatementValidationTest {
     @Test(expected = SchemaValidationFailedException.class)
     public void testOnPathFail() throws DataValidationFailedException {
         final InMemoryDataTree inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(
-                TreeType.CONFIGURATION);
+            DataTreeConfiguration.DEFAULT_CONFIGURATION);
         inMemoryDataTree.setSchemaContext(schemaContext);
         final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         final YangInstanceIdentifier ii = OUTER_LIST_1_PATH.node(
@@ -99,7 +99,7 @@ public class ConfigStatementValidationTest {
     @Test(expected = SchemaValidationFailedException.class)
     public void testOnDataFail() throws DataValidationFailedException {
         final InMemoryDataTree inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(
-                TreeType.CONFIGURATION);
+            DataTreeConfiguration.DEFAULT_CONFIGURATION);
         inMemoryDataTree.setSchemaContext(schemaContext);
         final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(TestModel.TEST_PATH, createFooTestContainerNode());
@@ -112,7 +112,7 @@ public class ConfigStatementValidationTest {
     @Test(expected = SchemaValidationFailedException.class)
     public void testOnDataLeafFail() throws DataValidationFailedException {
         final InMemoryDataTree inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(
-                TreeType.CONFIGURATION);
+            DataTreeConfiguration.DEFAULT_CONFIGURATION);
         inMemoryDataTree.setSchemaContext(schemaContext);
         final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(TestModel.TEST_PATH, createBarTestContainerNode());
@@ -125,7 +125,7 @@ public class ConfigStatementValidationTest {
     @Test(expected = SchemaValidationFailedException.class)
     public void testOnPathCaseLeafFail() throws DataValidationFailedException {
         final InMemoryDataTree inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(
-                TreeType.CONFIGURATION);
+            DataTreeConfiguration.DEFAULT_CONFIGURATION);
         inMemoryDataTree.setSchemaContext(schemaContext);
         final YangInstanceIdentifier.NodeIdentifier choice1Id = new YangInstanceIdentifier.NodeIdentifier(QName.create(
                 TestModel.TEST_QNAME, "choice1"));
@@ -146,7 +146,7 @@ public class ConfigStatementValidationTest {
     @Test(expected = VerifyException.class)
     public void testOnDataCaseLeafFail() throws DataValidationFailedException {
         final InMemoryDataTree inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(
-                TreeType.CONFIGURATION);
+            DataTreeConfiguration.DEFAULT_CONFIGURATION);
         inMemoryDataTree.setSchemaContext(schemaContext);
         final YangInstanceIdentifier.NodeIdentifier choice1Id = new YangInstanceIdentifier.NodeIdentifier(QName.create(
                 TestModel.TEST_QNAME, "choice1"));

@@ -11,13 +11,15 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 public class ResultAlreadySetException extends IllegalStateException {
     private static final long serialVersionUID = 1L;
+
     private final NormalizedNode<?, ?> resultData;
 
     public ResultAlreadySetException(final String message, final NormalizedNode<?, ?> resultData) {
         this(message, resultData, null);
     }
 
-    public ResultAlreadySetException(final String message, final NormalizedNode<?, ?> resultData, final Throwable cause) {
+    public ResultAlreadySetException(final String message, final NormalizedNode<?, ?> resultData,
+            final Throwable cause) {
         super(message, cause);
         this.resultData = resultData;
     }

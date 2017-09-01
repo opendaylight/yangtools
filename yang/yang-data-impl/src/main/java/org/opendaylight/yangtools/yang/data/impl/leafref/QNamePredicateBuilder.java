@@ -7,17 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
+import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
 
-class QNamePredicateBuilder {
+class QNamePredicateBuilder implements Builder<QNamePredicate> {
 
     private QName identifier;
     private LeafRefPath pathKeyExpression;
 
-    public QNamePredicateBuilder() {
+    QNamePredicateBuilder() {
     }
 
-    public QNamePredicateBuilder(final QName identifier, final LeafRefPath pathKeyExpression) {
+    QNamePredicateBuilder(final QName identifier, final LeafRefPath pathKeyExpression) {
         this.identifier = identifier;
         this.pathKeyExpression = pathKeyExpression;
     }
@@ -38,6 +39,7 @@ class QNamePredicateBuilder {
         this.pathKeyExpression = pathKeyExpression;
     }
 
+    @Override
     public QNamePredicate build() {
         return new QNamePredicateImpl(identifier, pathKeyExpression);
     }
@@ -50,11 +52,8 @@ class QNamePredicateBuilder {
         sb.append(identifier);
         sb.append("=current()");
 
-        final Iterable<QNameWithPredicate> pathFromRoot = pathKeyExpression
-                .getPathFromRoot();
-
-        for (final QNameWithPredicate qName : pathFromRoot) {
-            sb.append('/').append(qName);
+        for (final QNameWithPredicate qname : pathKeyExpression.getPathFromRoot()) {
+            sb.append('/').append(qname);
         }
 
         sb.append(']');

@@ -15,7 +15,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueAttrNode;
 
-public class ImmutableAnyXmlNodeBuilder extends AbstractImmutableNormalizedNodeBuilder<NodeIdentifier, DOMSource, AnyXmlNode> {
+public class ImmutableAnyXmlNodeBuilder
+        extends AbstractImmutableNormalizedNodeBuilder<NodeIdentifier, DOMSource, AnyXmlNode> {
 
     public static NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> create() {
         return new ImmutableAnyXmlNodeBuilder();
@@ -26,9 +27,11 @@ public class ImmutableAnyXmlNodeBuilder extends AbstractImmutableNormalizedNodeB
         return new ImmutableXmlNode(getNodeIdentifier(), getValue(), getAttributes());
     }
 
-    private static final class ImmutableXmlNode extends AbstractImmutableNormalizedValueAttrNode<NodeIdentifier, DOMSource> implements AnyXmlNode {
+    private static final class ImmutableXmlNode
+            extends AbstractImmutableNormalizedValueAttrNode<NodeIdentifier, DOMSource> implements AnyXmlNode {
 
-        ImmutableXmlNode(final NodeIdentifier nodeIdentifier, final DOMSource value, final Map<QName, String> attributes) {
+        ImmutableXmlNode(final NodeIdentifier nodeIdentifier, final DOMSource value,
+                final Map<QName, String> attributes) {
             super(nodeIdentifier, value, attributes);
         }
     }

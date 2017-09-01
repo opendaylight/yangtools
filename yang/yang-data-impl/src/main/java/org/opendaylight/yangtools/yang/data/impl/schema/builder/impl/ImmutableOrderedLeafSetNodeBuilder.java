@@ -129,6 +129,11 @@ public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T,
         }
 
         @Override
+        public LeafSetEntryNode<T> getChild(final int position) {
+            return Iterables.get(children.values(), position);
+        }
+
+        @Override
         protected int valueHashCode() {
             return children.hashCode();
         }
@@ -140,11 +145,6 @@ public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T,
         @Override
         protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
             return children.equals(((ImmutableOrderedLeafSetNode<?>) other).children);
-        }
-
-        @Override
-        public LeafSetEntryNode<T> getChild(final int position) {
-            return Iterables.get(children.values(), position);
         }
 
         @Override
@@ -165,9 +165,8 @@ public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T,
     }
 
     @Override
-    public NormalizedNodeContainerBuilder<NodeIdentifier, PathArgument, LeafSetEntryNode<T>, LeafSetNode<T>> removeChild(
-            final PathArgument key) {
+    public NormalizedNodeContainerBuilder<NodeIdentifier, PathArgument, LeafSetEntryNode<T>, LeafSetNode<T>>
+            removeChild(final PathArgument key) {
         return withoutChild(key);
     }
-
 }

@@ -38,17 +38,9 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUn
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ListConstraintsValidation {
-    private static final Logger LOG = LoggerFactory.getLogger(ListConstraintsValidation.class);
-
     private static final String CONSTRAINTS_VALIDATION_TEST_YANG = "/list-constraints-validation-test-model.yang";
-    private SchemaContext schemaContext;
-
-    private InMemoryDataTree inMemoryDataTree;
-
     private static final QName MASTER_CONTAINER_QNAME = QName.create(
             "urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model", "2015-02-02",
             "master-container");
@@ -73,6 +65,9 @@ public class ListConstraintsValidation {
             .builder(MASTER_CONTAINER_PATH).node(UNBOUNDED_LEAF_LIST_QNAME).build();
     private static final YangInstanceIdentifier UNKEYED_LIST_PATH = YangInstanceIdentifier
             .builder(MASTER_CONTAINER_PATH).node(UNKEYED_LIST_QNAME).build();
+
+    private SchemaContext schemaContext;
+    private InMemoryDataTree inMemoryDataTree;
 
     @Before
     public void prepare() {
@@ -120,7 +115,7 @@ public class ListConstraintsValidation {
         assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 2);
     }
 
-    @Test(expected=DataValidationFailedException.class)
+    @Test(expected = DataValidationFailedException.class)
     public void minMaxListFail() throws DataValidationFailedException {
         InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
@@ -203,13 +198,13 @@ public class ListConstraintsValidation {
         final InMemoryDataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         final Optional<NormalizedNode<?, ?>> masterContainer = snapshotAfterCommit.readNode(MASTER_CONTAINER_PATH);
         assertTrue(masterContainer.isPresent());
-        final Optional<NormalizedNodeContainer<?, ?, ?>> leafList = ((NormalizedNodeContainer) masterContainer.get()).getChild(
-                new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME));
+        final Optional<NormalizedNodeContainer<?, ?, ?>> leafList = ((NormalizedNodeContainer) masterContainer.get())
+                .getChild(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME));
         assertTrue(leafList.isPresent());
         assertTrue(leafList.get().getValue().size() == 2);
     }
 
-    @Test(expected=DataValidationFailedException.class)
+    @Test(expected = DataValidationFailedException.class)
     public void minMaxLeafListFail() throws DataValidationFailedException {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
@@ -268,7 +263,7 @@ public class ListConstraintsValidation {
         assertTrue(((UnkeyedListNode) unkeyedListRead.get()).getSize() == 1);
     }
 
-    @Test(expected=DataValidationFailedException.class)
+    @Test(expected = DataValidationFailedException.class)
     public void unkeyedListTestFail() throws DataValidationFailedException {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 

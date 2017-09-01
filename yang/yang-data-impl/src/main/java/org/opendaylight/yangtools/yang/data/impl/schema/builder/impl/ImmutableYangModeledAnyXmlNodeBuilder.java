@@ -31,7 +31,8 @@ public class ImmutableYangModeledAnyXmlNodeBuilder extends
         this.contentSchema = yangModeledAnyXMLSchemaNode.getSchemaOfAnyXmlData();
     }
 
-    private ImmutableYangModeledAnyXmlNodeBuilder(final YangModeledAnyXmlSchemaNode yangModeledAnyXMLSchemaNode, final int sizeHint) {
+    private ImmutableYangModeledAnyXmlNodeBuilder(final YangModeledAnyXmlSchemaNode yangModeledAnyXMLSchemaNode,
+            final int sizeHint) {
         super(sizeHint);
         Preconditions.checkNotNull(yangModeledAnyXMLSchemaNode, "Yang modeled any xml node must not be null.");
         super.withNodeIdentifier(NodeIdentifier.create(yangModeledAnyXMLSchemaNode.getQName()));
@@ -62,7 +63,8 @@ public class ImmutableYangModeledAnyXmlNodeBuilder extends
                 final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> value,
                 final Map<QName, String> attributes, final ContainerSchemaNode contentSchema) {
             super(value, nodeIdentifier, attributes);
-            this.contentSchema = Preconditions.checkNotNull(contentSchema, "Schema of yang modeled anyXml content cannot be null.");
+            this.contentSchema = Preconditions.checkNotNull(contentSchema,
+                "Schema of yang modeled anyXml content cannot be null.");
         }
 
         @Nonnull

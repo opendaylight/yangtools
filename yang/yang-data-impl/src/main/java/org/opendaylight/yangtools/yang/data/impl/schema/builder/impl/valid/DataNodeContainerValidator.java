@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
 import java.util.HashSet;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -26,10 +25,9 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * General validator for container like statements, e.g. container, list-entry, choice, augment
  */
 public class DataNodeContainerValidator {
-
+    private final Set<AugmentationIdentifier> augments = new HashSet<>();
     private final DataNodeContainer schema;
     private final Set<QName> childNodes;
-    private final Set<AugmentationIdentifier> augments = new HashSet<>();
 
     public DataNodeContainerValidator(final DataNodeContainer schema) {
         this.schema = Preconditions.checkNotNull(schema, "Schema was null");
@@ -61,10 +59,11 @@ public class DataNodeContainerValidator {
     }
 
     /**
-     * Map all direct child nodes. Skip augments since they have no qname. List cases since cases do not exist in NormalizedNode API.
+     * Map all direct child nodes. Skip augments since they have no qname. List cases since cases do not exist in
+     * NormalizedNode API.
      */
     private static Set<QName> getChildNodes(final DataNodeContainer nodeContainer) {
-        Set<QName> allChildNodes = Sets.newHashSet();
+        Set<QName> allChildNodes = new HashSet<>();
 
         for (DataSchemaNode childSchema : nodeContainer.getChildNodes()) {
             if (childSchema instanceof ChoiceCaseNode) {
@@ -76,5 +75,4 @@ public class DataNodeContainerValidator {
 
         return allChildNodes;
     }
-
 }

@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableD
 public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, ChoiceNode> {
 
     protected ImmutableChoiceNodeBuilder() {
-        super();
+
     }
 
     protected ImmutableChoiceNodeBuilder(final int sizeHint) {
@@ -50,7 +50,8 @@ public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNo
         return new ImmutableChoiceNode(getNodeIdentifier(), buildValue());
     }
 
-    private static final class ImmutableChoiceNode extends AbstractImmutableDataContainerNode<NodeIdentifier> implements ChoiceNode {
+    private static final class ImmutableChoiceNode extends AbstractImmutableDataContainerNode<NodeIdentifier>
+            implements ChoiceNode {
 
         ImmutableChoiceNode(final NodeIdentifier nodeIdentifier,
                 final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children) {

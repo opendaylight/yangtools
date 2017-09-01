@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
+
 import com.google.common.base.Optional;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,9 +24,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -39,22 +40,22 @@ public class ConcurrentTreeModificationTest {
     private static final Short ONE_ID = 1;
     private static final Short TWO_ID = 2;
 
-    private static final YangInstanceIdentifier OUTER_LIST_1_PATH = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
-            .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID) //
+    private static final YangInstanceIdentifier OUTER_LIST_1_PATH = YangInstanceIdentifier.builder(
+        TestModel.OUTER_LIST_PATH)
+            .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID)
             .build();
 
-    private static final YangInstanceIdentifier OUTER_LIST_2_PATH = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
-            .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID) //
+    private static final YangInstanceIdentifier OUTER_LIST_2_PATH = YangInstanceIdentifier.builder(
+        TestModel.OUTER_LIST_PATH)
+            .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID)
             .build();
 
-    private static final MapEntryNode FOO_NODE = mapEntryBuilder(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID) //
-            .withChild(mapNodeBuilder(TestModel.INNER_LIST_QNAME) //
-                    .build()) //
+    private static final MapEntryNode FOO_NODE = mapEntryBuilder(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID)
+            .withChild(mapNodeBuilder(TestModel.INNER_LIST_QNAME).build())
             .build();
 
-    private static final MapEntryNode BAR_NODE = mapEntryBuilder(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID) //
-            .withChild(mapNodeBuilder(TestModel.INNER_LIST_QNAME) //
-                    .build()) //
+    private static final MapEntryNode BAR_NODE = mapEntryBuilder(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID)
+            .withChild(mapNodeBuilder(TestModel.INNER_LIST_QNAME).build())
             .build();
 
     private SchemaContext schemaContext;
@@ -64,13 +65,13 @@ public class ConcurrentTreeModificationTest {
     public void prepare() throws ReactorException {
         schemaContext = TestModel.createTestContext();
         assertNotNull("Schema context must not be null.", schemaContext);
-        inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL);
+        inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(
+            DataTreeConfiguration.DEFAULT_OPERATIONAL);
         inMemoryDataTree.setSchemaContext(schemaContext);
     }
 
     private static ContainerNode createFooTestContainerNode() {
-        return ImmutableContainerNodeBuilder
-                .create()
+        return ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TestModel.TEST_QNAME))
                 .withChild(
                         mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
@@ -450,7 +451,8 @@ public class ConcurrentTreeModificationTest {
     public void writeWriteFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
         final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
-        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
+        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
+            .build());
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
@@ -480,7 +482,8 @@ public class ConcurrentTreeModificationTest {
     public void writeMergeFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
         final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
-        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
+        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
+            .build());
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
@@ -510,7 +513,8 @@ public class ConcurrentTreeModificationTest {
     public void mergeWriteFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
         final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
-        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
+        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
+            .build());
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
@@ -540,7 +544,8 @@ public class ConcurrentTreeModificationTest {
     public void mergeMergeFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
         final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
-        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
+        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
+            .build());
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
@@ -570,7 +575,8 @@ public class ConcurrentTreeModificationTest {
     public void deleteWriteFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
         final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
-        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
+        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
+            .build());
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
@@ -592,8 +598,8 @@ public class ConcurrentTreeModificationTest {
             final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
             inMemoryDataTree.commit(prepare2);
             fail("Exception should have been thrown");
-        } catch (final Exception e) {
-            LOG.debug("Exception was thrown because path no longer exist in tree");
+        } catch (final ConflictingModificationAppliedException e) {
+            LOG.debug("Exception was thrown because path no longer exist in tree", e);
         }
 
         final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
@@ -604,7 +610,8 @@ public class ConcurrentTreeModificationTest {
     public void deleteMergeFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
         final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
-        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
+        initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
+            .build());
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
@@ -626,8 +633,8 @@ public class ConcurrentTreeModificationTest {
             final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
             inMemoryDataTree.commit(prepare2);
             fail("Exception should have been thrown");
-        } catch (final Exception e) {
-            LOG.debug("Exception was thrown because path no longer exist in tree");
+        } catch (final ConflictingModificationAppliedException e) {
+            LOG.debug("Exception was thrown because path no longer exist in tree", e);
         }
 
         final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();

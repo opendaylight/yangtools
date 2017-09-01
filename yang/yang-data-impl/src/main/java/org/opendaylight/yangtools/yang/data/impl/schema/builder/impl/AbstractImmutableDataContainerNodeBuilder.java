@@ -21,7 +21,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.CloneableMap;
 
-abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument, R extends DataContainerNode<I>> implements DataContainerNodeBuilder<I, R> {
+abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument, R extends DataContainerNode<I>>
+        implements DataContainerNodeBuilder<I, R> {
     private static final int DEFAULT_CAPACITY = 4;
     private Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> value;
     private I nodeIdentifier;
@@ -72,7 +73,8 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
 
     protected final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> buildValue() {
         if (value instanceof ModifiableMapPhase) {
-            return ((ModifiableMapPhase<PathArgument, DataContainerChild<? extends PathArgument, ?>>)value).toUnmodifiableMap();
+            return ((ModifiableMapPhase<PathArgument, DataContainerChild<? extends PathArgument, ?>>)value)
+                    .toUnmodifiableMap();
         }
 
         dirty = true;
@@ -82,9 +84,11 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
     private void checkDirty() {
         if (dirty) {
             if (value instanceof UnmodifiableMapPhase) {
-                value = ((UnmodifiableMapPhase<PathArgument, DataContainerChild<? extends PathArgument, ?>>) value).toModifiableMap();
+                value = ((UnmodifiableMapPhase<PathArgument, DataContainerChild<? extends PathArgument, ?>>) value)
+                        .toModifiableMap();
             } else if (value instanceof CloneableMap) {
-                value = ((CloneableMap<PathArgument, DataContainerChild<? extends PathArgument, ?>>) value).createMutableClone();
+                value = ((CloneableMap<PathArgument, DataContainerChild<? extends PathArgument, ?>>) value)
+                        .createMutableClone();
             } else {
                 value = new HashMap<>(value);
             }
@@ -93,7 +97,8 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
     }
 
     @Override
-    public DataContainerNodeBuilder<I, R> withValue(final Collection<DataContainerChild<? extends PathArgument, ?>> value) {
+    public DataContainerNodeBuilder<I, R> withValue(
+            final Collection<DataContainerChild<? extends PathArgument, ?>> value) {
         // TODO Replace or putAll ?
         for (final DataContainerChild<? extends PathArgument, ?> dataContainerChild : value) {
             withChild(dataContainerChild);
@@ -128,7 +133,8 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
     }
 
     @Override
-    public NormalizedNodeContainerBuilder<I, PathArgument, DataContainerChild<? extends PathArgument, ?>, R> removeChild(final PathArgument key) {
+    public NormalizedNodeContainerBuilder<I, PathArgument, DataContainerChild<? extends PathArgument, ?>, R>
+            removeChild(final PathArgument key) {
         return withoutChild(key);
     }
 }

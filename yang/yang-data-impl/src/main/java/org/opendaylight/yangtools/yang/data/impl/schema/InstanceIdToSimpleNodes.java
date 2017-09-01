@@ -8,9 +8,10 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import java.util.Map;
+import java.util.Map.Entry;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -34,10 +35,12 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
     }
 
     @Override
-    public NormalizedNode<?, ?> create(final YangInstanceIdentifier instanceId, final Optional<NormalizedNode<?, ?>> deepestChild, final Optional<Map.Entry<QName,ModifyAction>> operation) {
+    public NormalizedNode<?, ?> create(final YangInstanceIdentifier instanceId,
+            final Optional<NormalizedNode<?, ?>> deepestChild, final Optional<Entry<QName, ModifyAction>> operation) {
         checkNotNull(instanceId);
         final PathArgument pathArgument = instanceId.getPathArguments().get(0);
-        final NormalizedNodeAttrBuilder<? extends PathArgument, Object, ? extends NormalizedNode<? extends PathArgument, Object>> builder = getBuilder(pathArgument);
+        final NormalizedNodeAttrBuilder<? extends PathArgument, Object,
+                ? extends NormalizedNode<? extends PathArgument, Object>> builder = getBuilder(pathArgument);
 
         if (deepestChild.isPresent()) {
             builder.withValue(deepestChild.get().getValue());
@@ -47,7 +50,8 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
         return builder.build();
     }
 
-    protected abstract NormalizedNodeAttrBuilder<? extends PathArgument, Object, ? extends NormalizedNode<? extends PathArgument, Object>> getBuilder(PathArgument node);
+    protected abstract NormalizedNodeAttrBuilder<? extends PathArgument, Object,
+            ? extends NormalizedNode<? extends PathArgument, Object>> getBuilder(PathArgument node);
 
     @Override
     public InstanceIdToNodes<?> getChild(final PathArgument child) {
@@ -55,13 +59,13 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
     }
 
     static final class LeafNormalization extends InstanceIdToSimpleNodes<NodeIdentifier> {
-
-        protected LeafNormalization(final LeafSchemaNode potential) {
+        LeafNormalization(final LeafSchemaNode potential) {
             super(new NodeIdentifier(potential.getQName()));
         }
 
         @Override
-        protected NormalizedNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, Object, LeafNode<Object>> getBuilder(final PathArgument node) {
+        protected NormalizedNodeAttrBuilder<NodeIdentifier, Object, LeafNode<Object>> getBuilder(
+                final PathArgument node) {
             return Builders.leafBuilder().withNodeIdentifier(getIdentifier());
         }
 
@@ -72,15 +76,16 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
     }
 
     static final class LeafListEntryNormalization extends InstanceIdToSimpleNodes<NodeWithValue> {
-
-        public LeafListEntryNormalization(final LeafListSchemaNode potential) {
-            super(new YangInstanceIdentifier.NodeWithValue<>(potential.getQName(), null));
+        LeafListEntryNormalization(final LeafListSchemaNode potential) {
+            super(new NodeWithValue<>(potential.getQName(), null));
         }
 
         @Override
-        protected NormalizedNodeAttrBuilder<NodeWithValue, Object, LeafSetEntryNode<Object>> getBuilder(final YangInstanceIdentifier.PathArgument node) {
-            Preconditions.checkArgument(node instanceof YangInstanceIdentifier.NodeWithValue);
-            return Builders.leafSetEntryBuilder().withNodeIdentifier((YangInstanceIdentifier.NodeWithValue<?>) node).withValue(((YangInstanceIdentifier.NodeWithValue<?>) node).getValue());
+        protected NormalizedNodeAttrBuilder<NodeWithValue, Object, LeafSetEntryNode<Object>> getBuilder(
+                final PathArgument node) {
+            Preconditions.checkArgument(node instanceof NodeWithValue);
+            return Builders.leafSetEntryBuilder().withNodeIdentifier((NodeWithValue<?>) node)
+                    .withValue(((NodeWithValue<?>) node).getValue());
         }
 
         @Override

@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import java.util.Map;
+import java.util.Map.Entry;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -46,7 +46,7 @@ public final class ImmutableNodes {
     }
 
     /**
-     * Construct immutable leaf node
+     * Construct immutable leaf node.
      *
      * @param name Identifier of leaf node
      * @param value Value of leaf node
@@ -61,7 +61,7 @@ public final class ImmutableNodes {
     }
 
     /**
-     * Construct immutable leaf node
+     * Construct immutable leaf node.
      *
      * @param name QName which will be used as node identifier
      * @param value Value of leaf node.
@@ -72,18 +72,19 @@ public final class ImmutableNodes {
         return leafNode(NodeIdentifier.create(name), value);
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(final QName nodeName, final QName keyName, final Object keyValue) {
+    public static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
+            final QName nodeName, final QName keyName, final Object keyValue) {
         return ImmutableMapEntryNodeBuilder.create()
                 .withNodeIdentifier(new NodeIdentifierWithPredicates(nodeName, keyName, keyValue))
                 .withChild(leafNode(keyName, keyValue));
     }
 
-    public static MapEntryNode mapEntry(final QName nodeName,final QName keyName,final Object keyValue) {
-        return mapEntryBuilder(nodeName, keyName, keyValue).build();
-    }
-
     public static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder() {
         return ImmutableMapEntryNodeBuilder.create();
+    }
+
+    public static MapEntryNode mapEntry(final QName nodeName,final QName keyName,final Object keyValue) {
+        return mapEntryBuilder(nodeName, keyName, keyValue).build();
     }
 
     public static ContainerNode containerNode(final QName name) {
@@ -95,7 +96,7 @@ public final class ImmutableNodes {
     }
 
     /**
-     * Convert YangInstanceIdentifier into a normalized node structure
+     * Convert YangInstanceIdentifier into a normalized node structure.
      *
      * @param ctx schema context to used during serialization
      * @param id instance identifier to convert to node structure starting from root
@@ -106,33 +107,41 @@ public final class ImmutableNodes {
     }
 
     /**
-     * Convert YangInstanceIdentifier into a normalized node structure
+     * Convert YangInstanceIdentifier into a normalized node structure.
      *
      * @param ctx schema context to used during serialization
      * @param id instance identifier to convert to node structure starting from root
-     * @param deepestElement pre-built deepest child that will be inserted at the last path argument of provided instance Id
+     * @param deepestElement pre-built deepest child that will be inserted at the last path argument of provided
+     *                       instance identifier
      * @return serialized normalized node for provided instance Id with overridden last child.
      */
-    public static NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id, final NormalizedNode<?, ?> deepestElement) {
+    public static NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id,
+            final NormalizedNode<?, ?> deepestElement) {
         return fromInstanceId(ctx, id, Optional.of(deepestElement), Optional.absent());
     }
 
     /**
-     * Convert YangInstanceIdentifier into a normalized node structure
+     * Convert YangInstanceIdentifier into a normalized node structure.
      *
      * @param ctx schema context to used during serialization
      * @param id instance identifier to convert to node structure starting from root
-     * @param deepestElement pre-built deepest child that will be inserted at the last path argument of provided instance Id
-     * @param operation modify operation attribute to be added to the deepest child. QName is the operation attribute key and ModifyAction is the value.
-     * @return serialized normalized node for provided instance Id with (optionally) overridden last child and (optionally) marked with specific operation attribute.
+     * @param deepestElement pre-built deepest child that will be inserted at the last path argument of provided
+     *                       instance identifier
+     * @param operation modify operation attribute to be added to the deepest child. QName is the operation attribute
+     *                  key and ModifyAction is the value.
+     * @return serialized normalized node for provided instance Id with (optionally) overridden last child
+     *         and (optionally) marked with specific operation attribute.
      */
-    public static NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id, final Optional<NormalizedNode<?, ?>> deepestElement, final Optional<Map.Entry<QName, ModifyAction>> operation) {
+    public static NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id,
+            final Optional<NormalizedNode<?, ?>> deepestElement, final Optional<Entry<QName, ModifyAction>> operation) {
         Preconditions.checkNotNull(ctx);
         Preconditions.checkNotNull(id);
         final YangInstanceIdentifier.PathArgument topLevelElement = id.getPathArguments().get(0);
         final DataSchemaNode dataChildByName = ctx.getDataChildByName(topLevelElement.getNodeType());
-        Preconditions.checkNotNull(dataChildByName, "Cannot find %s node in schema context. Instance identifier has to start from root", topLevelElement);
-        final InstanceIdToNodes<?> instanceIdToNodes = InstanceIdToNodes.fromSchemaAndQNameChecked(ctx, topLevelElement.getNodeType());
+        Preconditions.checkNotNull(dataChildByName,
+            "Cannot find %s node in schema context. Instance identifier has to start from root", topLevelElement);
+        final InstanceIdToNodes<?> instanceIdToNodes = InstanceIdToNodes.fromSchemaAndQNameChecked(ctx,
+            topLevelElement.getNodeType());
         return instanceIdToNodes.create(id, deepestElement, operation);
     }
 }

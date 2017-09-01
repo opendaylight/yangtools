@@ -21,7 +21,8 @@ public final class ImmutableLeafSetEntryNodeSchemaAwareBuilder<T> extends Immuta
         this.schema = Preconditions.checkNotNull(schema);
     }
 
-    public static <T> NormalizedNodeAttrBuilder<NodeWithValue, T, LeafSetEntryNode<T>> create(final LeafListSchemaNode schema) {
+    public static <T> NormalizedNodeAttrBuilder<NodeWithValue, T, LeafSetEntryNode<T>> create(
+            final LeafListSchemaNode schema) {
         return new ImmutableLeafSetEntryNodeSchemaAwareBuilder<>(schema);
     }
 
@@ -33,7 +34,8 @@ public final class ImmutableLeafSetEntryNodeSchemaAwareBuilder<T> extends Immuta
     }
 
     @Override
-    public NormalizedNodeAttrBuilder<NodeWithValue, T, LeafSetEntryNode<T>> withNodeIdentifier(final NodeWithValue nodeIdentifier) {
+    public NormalizedNodeAttrBuilder<NodeWithValue, T, LeafSetEntryNode<T>> withNodeIdentifier(
+            final NodeWithValue nodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 

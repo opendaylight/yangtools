@@ -26,6 +26,8 @@ public final class LeafRefUtils {
     }
 
     /**
+     * Create an absolute leafref path.
+     *
      * @param leafRefPath leafRefPath
      * @param contextNodeSchemaPath contextNodeSchemaPath
      * @param module module
@@ -41,11 +43,7 @@ public final class LeafRefUtils {
 
         final Deque<QNameWithPredicate> absoluteLeafRefTargetPathList = schemaPathToXPathQNames(
                 contextNodeSchemaPath, module);
-
-        final Iterable<QNameWithPredicate> leafRefTargetPathFromRoot = leafRefPath
-                .getPathFromRoot();
-        final Iterator<QNameWithPredicate> leafRefTgtPathFromRootIterator = leafRefTargetPathFromRoot
-                .iterator();
+        final Iterator<QNameWithPredicate> leafRefTgtPathFromRootIterator = leafRefPath.getPathFromRoot().iterator();
 
         while (leafRefTgtPathFromRootIterator.hasNext()) {
             final QNameWithPredicate qname = leafRefTgtPathFromRootIterator.next();
@@ -59,11 +57,6 @@ public final class LeafRefUtils {
         return LeafRefPath.create(absoluteLeafRefTargetPathList, true);
     }
 
-    /**
-     * @param currentNodePath
-     * @param module
-     * @param absoluteLeafRefTargetPathList
-     */
     private static Deque<QNameWithPredicate> schemaPathToXPathQNames(
             final SchemaPath nodePath, final Module module) {
 
@@ -114,11 +107,7 @@ public final class LeafRefUtils {
         return xpath;
     }
 
-    public static LeafRefPath schemaPathToLeafRefPath(final SchemaPath nodePath,
-            final Module module) {
-        final Deque<QNameWithPredicate> xpathQNames = schemaPathToXPathQNames(
-                nodePath, module);
-        return LeafRefPath.create(xpathQNames, true);
+    public static LeafRefPath schemaPathToLeafRefPath(final SchemaPath nodePath, final Module module) {
+        return LeafRefPath.create(schemaPathToXPathQNames(nodePath, module), true);
     }
-
 }

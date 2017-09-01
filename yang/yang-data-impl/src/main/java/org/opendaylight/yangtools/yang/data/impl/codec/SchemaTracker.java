@@ -79,11 +79,10 @@ public final class SchemaTracker {
     }
 
     /**
-     * Create a new writer with the specified context and rooted in the specified schema path
+     * Create a new writer with the specified context and rooted in the specified schema path.
      *
      * @param context Associated {@link SchemaContext}
      * @param path schema path
-     *
      * @return A new {@link NormalizedNodeStreamWriter}
      */
     public static SchemaTracker create(final SchemaContext context, final SchemaPath path) {
@@ -113,7 +112,7 @@ public final class SchemaTracker {
         } else if (parent instanceof ChoiceSchemaNode) {
             schema = findChildInCases((ChoiceSchemaNode) parent, qname);
         } else {
-            throw new IllegalStateException("Unsupported schema type "+ parent.getClass() +" on stack.");
+            throw new IllegalStateException("Unsupported schema type " + parent.getClass() + " on stack.");
         }
 
         Preconditions.checkArgument(schema != null, "Could not find schema for node %s in %s", qname, parent);
@@ -166,7 +165,8 @@ public final class SchemaTracker {
     public LeafListSchemaNode startLeafSet(final NodeIdentifier name) {
         final SchemaNode schema = getSchema(name);
 
-        Preconditions.checkArgument(schema instanceof LeafListSchemaNode, "Node %s is not a leaf-list", schema.getPath());
+        Preconditions.checkArgument(schema instanceof LeafListSchemaNode, "Node %s is not a leaf-list",
+            schema.getPath());
         schemaStack.push(schema);
         return (LeafListSchemaNode)schema;
     }
@@ -234,8 +234,10 @@ public final class SchemaTracker {
             final QName name = Iterables.get(identifier.getPossibleChildNames(), 0);
             parent = findCaseByChild((ChoiceSchemaNode) parent, name);
         }
-        Preconditions.checkArgument(parent instanceof DataNodeContainer, "Augmentation allowed only in DataNodeContainer",parent);
-        final AugmentationSchema schema = SchemaUtils.findSchemaForAugment((AugmentationTarget) parent, identifier.getPossibleChildNames());
+        Preconditions.checkArgument(parent instanceof DataNodeContainer,
+            "Augmentation allowed only in DataNodeContainer", parent);
+        final AugmentationSchema schema = SchemaUtils.findSchemaForAugment((AugmentationTarget) parent,
+            identifier.getPossibleChildNames());
         final HashSet<DataSchemaNode> realChildSchemas = new HashSet<>();
         for (final DataSchemaNode child : schema.getChildNodes()) {
             realChildSchemas.add(((DataNodeContainer) parent).getDataChildByName(child.getQName()));
@@ -255,5 +257,4 @@ public final class SchemaTracker {
     public Object endNode() {
         return schemaStack.pop();
     }
-
 }

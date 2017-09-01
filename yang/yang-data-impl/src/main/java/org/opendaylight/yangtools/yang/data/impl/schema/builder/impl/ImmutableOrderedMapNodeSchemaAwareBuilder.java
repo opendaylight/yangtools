@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
+import java.util.Collections;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
@@ -26,7 +26,8 @@ public class ImmutableOrderedMapNodeSchemaAwareBuilder extends ImmutableOrderedM
         super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
-    protected ImmutableOrderedMapNodeSchemaAwareBuilder(final ListSchemaNode schema, final ImmutableOrderedMapNode node) {
+    protected ImmutableOrderedMapNodeSchemaAwareBuilder(final ListSchemaNode schema,
+            final ImmutableOrderedMapNode node) {
         super(node);
         this.schema = Preconditions.checkNotNull(schema);
         super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
@@ -47,7 +48,8 @@ public class ImmutableOrderedMapNodeSchemaAwareBuilder extends ImmutableOrderedM
 
     @Override
     public CollectionNodeBuilder<MapEntryNode, OrderedMapNode> withChild(final MapEntryNode child) {
-        DataValidationException.checkLegalChild(schema.getQName().equals(child.getNodeType()), child.getIdentifier(), schema, Sets.newHashSet(schema.getQName()));
+        DataValidationException.checkLegalChild(schema.getQName().equals(child.getNodeType()), child.getIdentifier(),
+            schema, Collections.singleton(schema.getQName()));
         return super.withChild(child);
     }
 

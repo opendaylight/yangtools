@@ -46,16 +46,16 @@ public final class EnumStringCodec extends TypeDefinitionAwareCodec<String, Enum
     }
 
     @Override
-    public String deserialize(final String s) {
+    public String deserialize(final String stringRepresentation) {
         if (values == null) {
-            return s;
+            return stringRepresentation;
         }
 
         // Lookup the serialized string in the values. Returned string is the interned instance, which we want
         // to use as the result.
-        final String result = values.get(s);
+        final String result = values.get(stringRepresentation);
         Preconditions.checkArgument(result != null, "Invalid value '%s' for enum type. Allowed values are: %s",
-                s, values.keySet());
+                stringRepresentation, values.keySet());
         return result;
     }
 

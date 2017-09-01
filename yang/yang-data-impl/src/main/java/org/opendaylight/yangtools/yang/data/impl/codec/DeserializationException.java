@@ -13,19 +13,20 @@ public class DeserializationException extends Exception {
     public DeserializationException() {
     }
 
-    public DeserializationException(String message) {
+    public DeserializationException(final String message) {
         super(message);
     }
 
-    public DeserializationException(Throwable cause) {
+    public DeserializationException(final Throwable cause) {
         super(cause);
     }
 
-    public DeserializationException(String message, Throwable cause) {
+    public DeserializationException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public DeserializationException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public DeserializationException(final String message, final Throwable cause, final boolean enableSuppression,
+            final boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 

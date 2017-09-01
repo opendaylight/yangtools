@@ -141,13 +141,13 @@ public class Bug5968Test {
         }
     }
 
-    private static void writeMap(final InMemoryDataTreeModification modificationTree, final boolean mandatoryDataMissing)
-            throws DataValidationFailedException {
+    private static void writeMap(final InMemoryDataTreeModification modificationTree,
+            final boolean mandatoryDataMissing) {
         final MapNode myList = createMap(mandatoryDataMissing);
         modificationTree.write(YangInstanceIdentifier.of(ROOT).node(MY_LIST), myList);
     }
 
-    private static MapNode createMap(final boolean mandatoryDataMissing) throws DataValidationFailedException {
+    private static MapNode createMap(final boolean mandatoryDataMissing) {
         return Builders
                 .mapBuilder()
                 .withNodeIdentifier(new NodeIdentifier(MY_LIST))
@@ -168,7 +168,7 @@ public class Bug5968Test {
     }
 
     private static MapEntryNode createMapEntry(final Object listIdValue, final Object mandatoryLeafValue,
-            final Object commonLeafValue) throws DataValidationFailedException {
+            final Object commonLeafValue) {
         return Builders.mapEntryBuilder()
                 .withNodeIdentifier(new NodeIdentifierWithPredicates(MY_LIST, ImmutableMap.of(LIST_ID, listIdValue)))
                 .withChild(ImmutableNodes.leafNode(LIST_ID, listIdValue))
@@ -176,8 +176,7 @@ public class Bug5968Test {
                 .withChild(ImmutableNodes.leafNode(COMMON_LEAF, commonLeafValue)).build();
     }
 
-    private static MapEntryNode createMapEntry(final Object listIdValue, final Object commonLeafValue)
-            throws DataValidationFailedException {
+    private static MapEntryNode createMapEntry(final Object listIdValue, final Object commonLeafValue) {
         return Builders.mapEntryBuilder()
                 .withNodeIdentifier(new NodeIdentifierWithPredicates(MY_LIST, ImmutableMap.of(LIST_ID, listIdValue)))
                 .withChild(ImmutableNodes.leafNode(LIST_ID, listIdValue))

@@ -46,21 +46,23 @@ public class DataValidationException extends RuntimeException {
         }
     }
 
-    public static void checkLegalData(final boolean isLegal, final String messageTemplate, final Object... messageAttrs) {
+    public static void checkLegalData(final boolean isLegal, final String messageTemplate,
+            final Object... messageAttrs) {
         if (!isLegal) {
             throw new DataValidationException(String.format(messageTemplate, messageAttrs));
         }
     }
 
-    public static void checkListKey(final NodeIdentifierWithPredicates nodeId, final QName keyQName, final Object expected, final Object actual) {
+    public static void checkListKey(final NodeIdentifierWithPredicates nodeId, final QName keyQName,
+            final Object expected, final Object actual) {
         // Objects.equals() does not deal with arrays, but is faster
         if (!Objects.equals(expected, actual) && !Objects.deepEquals(expected, actual)) {
             throw new IllegalListKeyException(keyQName, nodeId, actual, expected);
         }
     }
 
-    public static void checkListKey(final DataContainerChild<?, ?> childNode, final Map<QName, Object> keyValues, final QName keyQName,
-            final NodeIdentifierWithPredicates nodeId) {
+    public static void checkListKey(final DataContainerChild<?, ?> childNode, final Map<QName, Object> keyValues,
+            final QName keyQName, final NodeIdentifierWithPredicates nodeId) {
         checkListKey(childNode, keyQName, nodeId);
 
         final Object expected = keyValues.get(keyQName);
@@ -69,7 +71,8 @@ public class DataValidationException extends RuntimeException {
         checkListKey(nodeId, keyQName, expected, actual);
     }
 
-    public static void checkListKey(final DataContainerChild<?, ?> childNode, final QName keyQName, final NodeIdentifierWithPredicates nodeId) {
+    public static void checkListKey(final DataContainerChild<?, ?> childNode, final QName keyQName,
+            final NodeIdentifierWithPredicates nodeId) {
         if (childNode == null) {
             throw new IllegalListKeyException(keyQName, nodeId);
         }
@@ -88,21 +91,24 @@ public class DataValidationException extends RuntimeException {
             super(String.format("Unknown child node: %s, not detected in choice: %s", child, schema));
         }
 
-        private IllegalChildException(final PathArgument child, final DataSchemaNode schema, final Set<QName> childNodes) {
-            super(String.format("Unknown child node: %s, does not belong to: %s as a child. "
-                    + "Child nodes: %s", child, schema, childNodes));
+        private IllegalChildException(final PathArgument child, final DataSchemaNode schema,
+                final Set<QName> childNodes) {
+            super(String.format("Unknown child node: %s, does not belong to: %s as a child. Child nodes: %s", child,
+                schema, childNodes));
         }
     }
 
     private static final class IllegalListKeyException extends DataValidationException {
         private static final long serialVersionUID = 1L;
 
-        private IllegalListKeyException(final QName keyQName, final NodeIdentifierWithPredicates id) {
+        IllegalListKeyException(final QName keyQName, final NodeIdentifierWithPredicates id) {
             super(String.format("Key value not present for key: %s, in: %s", keyQName, id));
         }
 
-        private IllegalListKeyException(final QName keyQName, final NodeIdentifierWithPredicates id, final Object actualValue, final Object expectedValue) {
-            super(String.format("Illegal value for key: %s, in: %s, actual value: %s, expected value from key: %s", keyQName, id, actualValue, expectedValue));
+        IllegalListKeyException(final QName keyQName, final NodeIdentifierWithPredicates id, final Object actualValue,
+                final Object expectedValue) {
+            super(String.format("Illegal value for key: %s, in: %s, actual value: %s, expected value from key: %s",
+                keyQName, id, actualValue, expectedValue));
         }
     }
 }

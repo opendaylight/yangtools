@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import com.google.common.collect.ImmutableSet;
 import java.util.Collections;
 import org.junit.Test;
@@ -33,13 +34,13 @@ public class BitsCodecStringTest {
     private  static BitsTypeDefinition toBitsTypeDefinition(final String... bits) {
         final BitsTypeBuilder b = BaseTypes.bitsTypeBuilder(mock(SchemaPath.class));
 
-        long i = 0;
+        long pos = 0;
         for (String bit : bits) {
             BitsTypeDefinition.Bit mockBit = mock(BitsTypeDefinition.Bit.class);
             when(mockBit.getName()).thenReturn(bit);
-            when(mockBit.getPosition()).thenReturn(i);
+            when(mockBit.getPosition()).thenReturn(pos);
             b.addBit(mockBit);
-            ++i;
+            ++pos;
         }
 
         return b.build();
@@ -49,8 +50,8 @@ public class BitsCodecStringTest {
     @Test
     public void testSerialize() {
 
-        BitsCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(
-            toBitsTypeDefinition("foo"), BitsCodec.class);
+        BitsCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(toBitsTypeDefinition("foo"),
+                BitsCodec.class);
 
         ImmutableSet<String> toSerialize = ImmutableSet.of("foo", "bar");
 

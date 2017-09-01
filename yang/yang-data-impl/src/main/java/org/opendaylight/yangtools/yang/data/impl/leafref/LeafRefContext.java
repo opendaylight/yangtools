@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
-final public class LeafRefContext {
+public final class LeafRefContext {
 
     private final QName currentNodeQName;
     private final SchemaPath currentNodePath;

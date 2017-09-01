@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
@@ -36,11 +35,9 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableCo
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
-/**
- *
+/*
  * Schema structure of document is
  *
- * <pre>
  * container root { 
  *      list list-a {
  *              key leaf-a;
@@ -60,8 +57,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
  *              }
  *      }
  * }
- * </pre>
- *
  */
 public class ModificationMetadataTreeTest {
 
@@ -70,28 +65,30 @@ public class ModificationMetadataTreeTest {
     private static final String TWO_ONE_NAME = "one";
     private static final String TWO_TWO_NAME = "two";
 
-    private static final YangInstanceIdentifier OUTER_LIST_1_PATH = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
-            .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID) //
+    private static final YangInstanceIdentifier OUTER_LIST_1_PATH =
+            YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
+            .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, ONE_ID)
             .build();
 
-    private static final YangInstanceIdentifier OUTER_LIST_2_PATH = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
-            .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID) //
+    private static final YangInstanceIdentifier OUTER_LIST_2_PATH =
+            YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
+            .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID)
             .build();
 
     private static final YangInstanceIdentifier TWO_TWO_PATH = YangInstanceIdentifier.builder(OUTER_LIST_2_PATH)
-            .node(TestModel.INNER_LIST_QNAME) //
-            .nodeWithKey(TestModel.INNER_LIST_QNAME, TestModel.NAME_QNAME, TWO_TWO_NAME) //
+            .node(TestModel.INNER_LIST_QNAME)
+            .nodeWithKey(TestModel.INNER_LIST_QNAME, TestModel.NAME_QNAME, TWO_TWO_NAME)
             .build();
 
     private static final YangInstanceIdentifier TWO_TWO_VALUE_PATH = YangInstanceIdentifier.builder(TWO_TWO_PATH)
-            .node(TestModel.VALUE_QNAME) //
+            .node(TestModel.VALUE_QNAME)
             .build();
 
-    private static final MapEntryNode BAR_NODE = mapEntryBuilder(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID) //
-            .withChild(mapNodeBuilder(TestModel.INNER_LIST_QNAME) //
-                    .withChild(mapEntry(TestModel.INNER_LIST_QNAME, TestModel.NAME_QNAME, TWO_ONE_NAME)) //
-                    .withChild(mapEntry(TestModel.INNER_LIST_QNAME,TestModel.NAME_QNAME, TWO_TWO_NAME)) //
-                    .build()) //
+    private static final MapEntryNode BAR_NODE = mapEntryBuilder(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, TWO_ID)
+            .withChild(mapNodeBuilder(TestModel.INNER_LIST_QNAME)
+                    .withChild(mapEntry(TestModel.INNER_LIST_QNAME, TestModel.NAME_QNAME, TWO_ONE_NAME))
+                    .withChild(mapEntry(TestModel.INNER_LIST_QNAME,TestModel.NAME_QNAME, TWO_TWO_NAME))
+                    .build())
                     .build();
 
     private SchemaContext schemaContext;
@@ -101,12 +98,12 @@ public class ModificationMetadataTreeTest {
     public void prepare() throws ReactorException {
         schemaContext = TestModel.createTestContext();
         assertNotNull("Schema context must not be null.", schemaContext);
-        rootOper = RootModificationApplyOperation.from(SchemaAwareApplyOperation.from(schemaContext, DataTreeConfiguration.DEFAULT_OPERATIONAL));
+        rootOper = RootModificationApplyOperation.from(SchemaAwareApplyOperation.from(schemaContext,
+            DataTreeConfiguration.DEFAULT_OPERATIONAL));
     }
 
     /**
-     * Returns a test document
-     *
+     * Returns a test document.
      * <pre>
      * test
      *     outer-list
@@ -142,9 +139,9 @@ public class ModificationMetadataTreeTest {
 
     @Test
     public void basicReadWrites() {
-        final DataTreeModification modificationTree = new InMemoryDataTreeModification(new InMemoryDataTreeSnapshot(schemaContext,
-                TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper),
-                rootOper);
+        final DataTreeModification modificationTree = new InMemoryDataTreeModification(
+            new InMemoryDataTreeSnapshot(schemaContext,
+                TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper), rootOper);
         final Optional<NormalizedNode<?, ?>> originalBarNode = modificationTree.readNode(OUTER_LIST_2_PATH);
         assertTrue(originalBarNode.isPresent());
         assertSame(BAR_NODE, originalBarNode.get());
@@ -169,7 +166,7 @@ public class ModificationMetadataTreeTest {
         /**
          * Creates empty Snapshot with associated schema context.
          */
-        final DataTree t = InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL);
+        final DataTree t = InMemoryDataTreeFactory.getInstance().create(DataTreeConfiguration.DEFAULT_OPERATIONAL);
         t.setSchemaContext(schemaContext);
 
         /**
@@ -185,27 +182,18 @@ public class ModificationMetadataTreeTest {
     public void createFromEmptyState() {
 
         final DataTreeModification modificationTree = createEmptyModificationTree();
-        /**
-         * Writes empty container node to /test
-         *
-         */
+        // Writes empty container node to /test
         modificationTree.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
 
-        /**
-         * Writes empty list node to /test/outer-list
-         */
-        modificationTree.write(TestModel.OUTER_LIST_PATH, ImmutableNodes.mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
+        // Writes empty list node to /test/outer-list
+        modificationTree.write(TestModel.OUTER_LIST_PATH, ImmutableNodes.mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
+            .build());
 
-        /**
-         * Reads list node from /test/outer-list
-         */
+        // Reads list node from /test/outer-list.
         final Optional<NormalizedNode<?, ?>> potentialOuterList = modificationTree.readNode(TestModel.OUTER_LIST_PATH);
         assertTrue(potentialOuterList.isPresent());
 
-        /**
-         * Reads container node from /test and verifies that it contains test
-         * node
-         */
+        // Reads container node from /test and verifies that it contains test node.
         final Optional<NormalizedNode<?, ?>> potentialTest = modificationTree.readNode(TestModel.TEST_PATH);
         final ContainerNode containerTest = assertPresentAndType(potentialTest, ContainerNode.class);
 
@@ -216,7 +204,6 @@ public class ModificationMetadataTreeTest {
          *
          */
         assertPresentAndType(containerTest.getChild(new NodeIdentifier(TestModel.OUTER_LIST_QNAME)), MapNode.class);
-
     }
 
     @Test
@@ -248,5 +235,4 @@ public class ModificationMetadataTreeTest {
         assertTrue(type.isInstance(potential.get()));
         return type.cast(potential.get());
     }
-
 }

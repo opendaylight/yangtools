@@ -27,8 +27,7 @@ class CompiledPatternContext {
         }
     }
 
-    public void validate(final String s) {
-        Preconditions.checkArgument(pattern.matcher(s).matches(), errorMessage, s);
+    public void validate(final String str) {
+        Preconditions.checkArgument(pattern.matcher(str).matches(), errorMessage, str);
     }
-
 }

@@ -53,10 +53,6 @@ final class OperationWithModification {
     /**
      * Read a particular child. If the child has been modified and does not have a stable
      * view, one will we instantiated with specified version.
-     *
-     * @param child
-     * @param version
-     * @return
      */
     Optional<NormalizedNode<?, ?>> read(final PathArgument child, final Version version) {
         final Optional<ModifiedNode> maybeChild = modification.getChild(child);

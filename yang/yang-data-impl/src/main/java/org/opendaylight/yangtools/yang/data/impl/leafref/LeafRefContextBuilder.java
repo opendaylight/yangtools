@@ -10,13 +10,18 @@ package org.opendaylight.yangtools.yang.data.impl.leafref;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
-class LeafRefContextBuilder {
+class LeafRefContextBuilder implements Builder<LeafRefContext> {
+
+    private final Map<QName, LeafRefContext> referencingChildren = new HashMap<>();
+    private final Map<QName, LeafRefContext> referencedByChildren = new HashMap<>();
+    private final Map<QName, LeafRefContext> referencedByLeafRefCtx = new HashMap<>();
 
     private QName currentNodeQName;
     private SchemaPath currentNodePath;
@@ -29,17 +34,14 @@ class LeafRefContextBuilder {
     private boolean isReferencedBy = false;
     private boolean isReferencing = false;
 
-    private final Map<QName, LeafRefContext> referencingChildren = new HashMap<>();
-    private final Map<QName, LeafRefContext> referencedByChildren = new HashMap<>();
-    private final Map<QName, LeafRefContext> referencedByLeafRefCtx = new HashMap<>();
-
-    public LeafRefContextBuilder(final QName currentNodeQName,
-            final SchemaPath currentNodePath, final SchemaContext schemaContext) {
+    LeafRefContextBuilder(final QName currentNodeQName, final SchemaPath currentNodePath,
+        final SchemaContext schemaContext) {
         this.currentNodeQName = currentNodeQName;
         this.currentNodePath = currentNodePath;
         this.schemaContext = schemaContext;
     }
 
+    @Override
     public LeafRefContext build() {
         final LeafRefContext leafRefContext = new LeafRefContext(this);
 
@@ -176,5 +178,4 @@ class LeafRefContextBuilder {
     public Map<QName, LeafRefContext> getAllReferencedByLeafRefCtxs() {
         return referencedByLeafRefCtx;
     }
-
 }

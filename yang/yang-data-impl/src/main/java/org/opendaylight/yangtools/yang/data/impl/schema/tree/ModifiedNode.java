@@ -24,12 +24,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 
 /**
- * Node Modification Node and Tree
+ * Node Modification Node and Tree.
  *
+ * <p>
  * Tree which structurally resembles data tree and captures client modifications to the data store tree. This tree is
  * lazily created and populated via {@link #modifyChild(PathArgument, ModificationApplyOperation, Version)} and
  * {@link TreeNode} which represents original state as tracked by {@link #getOriginal()}.
  *
+ * <p>
  * The contract is that the state information exposed here preserves the temporal ordering of whatever modifications
  * were executed. A child's effects pertain to data node as modified by its ancestors. This means that in order to
  * reconstruct the effective data node presentation, it is sufficient to perform a depth-first pre-order traversal of
@@ -47,9 +49,9 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             case TOUCH:
             case NONE:
                 return false;
+            default:
+                throw new IllegalArgumentException("Unhandled modification type " + input.getOperation());
         }
-
-        throw new IllegalArgumentException(String.format("Unhandled modification type %s", input.getOperation()));
     };
 
     private final Map<PathArgument, ModifiedNode> children;
@@ -68,7 +70,8 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     private Optional<TreeNode> validatedCurrent;
     private TreeNode validatedNode;
 
-    private ModifiedNode(final PathArgument identifier, final Optional<TreeNode> original, final ChildTrackingPolicy childPolicy) {
+    private ModifiedNode(final PathArgument identifier, final Optional<TreeNode> original,
+            final ChildTrackingPolicy childPolicy) {
         this.identifier = identifier;
         this.original = original;
         this.children = childPolicy.createMap();
@@ -102,12 +105,9 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     }
 
     /**
+     * Returns child modification if child was modified.
      *
-     * Returns child modification if child was modified
-     *
-     * @return Child modification if direct child or it's subtree
-     *  was modified.
-     *
+     * @return Child modification if direct child or it's subtree was modified.
      */
     @Override
     public Optional<ModifiedNode> getChild(final PathArgument child) {
@@ -140,28 +140,25 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      */
     private Optional<TreeNode> findOriginalMetadata(@Nonnull final PathArgument child, final Version modVersion) {
         switch (operation) {
-        case DELETE:
-            // DELETE implies non-presence
-            return Optional.absent();
-        case NONE:
-        case TOUCH:
-        case MERGE:
-            return metadataFromSnapshot(child);
-        case WRITE:
-            // WRITE implies presence based on written data
-            return metadataFromData(child, modVersion);
+            case DELETE:
+                // DELETE implies non-presence
+                return Optional.absent();
+            case NONE:
+            case TOUCH:
+            case MERGE:
+                return metadataFromSnapshot(child);
+            case WRITE:
+                // WRITE implies presence based on written data
+                return metadataFromData(child, modVersion);
+            default:
+                throw new IllegalStateException("Unhandled node operation " + operation);
         }
-
-        throw new IllegalStateException("Unhandled node operation " + operation);
     }
 
     /**
-     *
      * Returns child modification if child was modified, creates {@link ModifiedNode}
-     * for child otherwise.
-     *
-     * If this node's {@link ModificationType} is {@link ModificationType#UNMODIFIED}
-     * changes modification type to {@link ModificationType#SUBTREE_MODIFIED}
+     * for child otherwise. If this node's {@link ModificationType} is {@link ModificationType#UNMODIFIED}
+     * changes modification type to {@link ModificationType#SUBTREE_MODIFIED}.
      *
      * @param child child identifier, may not be null
      * @param childOper Child operation
@@ -201,7 +198,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     }
 
     /**
-     * Returns all recorded direct child modification
+     * Returns all recorded direct child modifications.
      *
      * @return all recorded direct child modifications
      */
@@ -217,31 +214,29 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         final LogicalOperation newType;
 
         switch (operation) {
-        case DELETE:
-        case NONE:
-            // We need to record this delete.
-            newType = LogicalOperation.DELETE;
-            break;
-        case MERGE:
-                // In case of merge - delete needs to be recored and must not to be changed into
-                // NONE, because lazy expansion of parent MERGE node would reintroduce it
-                // again.
+            case DELETE:
+            case NONE:
+                // We need to record this delete.
                 newType = LogicalOperation.DELETE;
                 break;
-        case TOUCH:
-        case WRITE:
-            /*
-             * We are canceling a previous modification. This is a bit tricky,
-             * as the original write may have just introduced the data, or it
-             * may have modified it.
-             *
-             * As documented in BUG-2470, a delete of data introduced in this
-             * transaction needs to be turned into a no-op.
-             */
-            newType = original.isPresent() ? LogicalOperation.DELETE : LogicalOperation.NONE;
-            break;
-        default:
-            throw new IllegalStateException("Unhandled deletion of node with " + operation);
+            case MERGE:
+                // In case of merge - delete needs to be recored and must not to be changed into NONE, because lazy
+                // expansion of parent MERGE node would reintroduce it again.
+                newType = LogicalOperation.DELETE;
+                break;
+            case TOUCH:
+            case WRITE:
+                /*
+                 * We are canceling a previous modification. This is a bit tricky, as the original write may have just
+                 * introduced the data, or it may have modified it.
+                 *
+                 * As documented in BUG-2470, a delete of data introduced in this transaction needs to be turned into
+                 * a no-op.
+                 */
+                newType = original.isPresent() ? LogicalOperation.DELETE : LogicalOperation.NONE;
+                break;
+            default:
+                throw new IllegalStateException("Unhandled deletion of node with " + operation);
         }
 
         clearSnapshot();
@@ -253,7 +248,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     /**
      * Records a write for associated node.
      *
-     * @param value
+     * @param value new value
      */
     void write(final NormalizedNode<?, ?> value) {
         updateValue(LogicalOperation.WRITE, value);
@@ -263,7 +258,8 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     /**
      * Seal the modification node and prune any children which has not been modified.
      *
-     * @param schema
+     * @param schema associated apply operation
+     * @param version target version
      */
     void seal(final ModificationApplyOperation schema, final Version version) {
         clearSnapshot();

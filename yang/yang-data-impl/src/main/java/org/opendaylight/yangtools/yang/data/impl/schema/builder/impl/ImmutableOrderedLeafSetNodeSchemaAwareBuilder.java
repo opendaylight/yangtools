@@ -7,15 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-
-import com.google.common.base.Preconditions;
 
 public final class ImmutableOrderedLeafSetNodeSchemaAwareBuilder<T> extends ImmutableOrderedLeafSetNodeBuilder<T> {
 
@@ -23,21 +22,23 @@ public final class ImmutableOrderedLeafSetNodeSchemaAwareBuilder<T> extends Immu
 
     private ImmutableOrderedLeafSetNodeSchemaAwareBuilder(final LeafListSchemaNode schema) {
         this.schema = Preconditions.checkNotNull(schema);
-        super.withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(schema.getQName()));
+        super.withNodeIdentifier(new NodeIdentifier(schema.getQName()));
     }
 
-    public ImmutableOrderedLeafSetNodeSchemaAwareBuilder(final LeafListSchemaNode schema, final ImmutableOrderedLeafSetNode<T> node) {
+    public ImmutableOrderedLeafSetNodeSchemaAwareBuilder(final LeafListSchemaNode schema,
+            final ImmutableOrderedLeafSetNode<T> node) {
         super(node);
         this.schema = Preconditions.checkNotNull(schema);
         // FIXME: Preconditions.checkArgument(schema.getQName().equals(node.getIdentifier()));
-        super.withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(schema.getQName()));
+        super.withNodeIdentifier(new NodeIdentifier(schema.getQName()));
     }
 
     public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create(final LeafListSchemaNode schema) {
         return new ImmutableOrderedLeafSetNodeSchemaAwareBuilder<>(schema);
     }
 
-    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create(final LeafListSchemaNode schema, final LeafSetNode<T> node) {
+    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create(final LeafListSchemaNode schema,
+            final LeafSetNode<T> node) {
         if (!(node instanceof ImmutableOrderedLeafSetNode<?>)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
@@ -56,12 +57,13 @@ public final class ImmutableOrderedLeafSetNodeSchemaAwareBuilder<T> extends Immu
         Preconditions.checkArgument(schema.getQName().equals(child.getNodeType()),
                 "Incompatible node type, should be: %s, is: %s", schema.getQName(), child.getNodeType());
         // TODO check value type using TypeProvider ?
-        DataValidationException.checkLegalChild(schema.getQName().equals(child.getNodeType()), child.getIdentifier(), schema, Sets.newHashSet(schema.getQName()));
+        DataValidationException.checkLegalChild(schema.getQName().equals(child.getNodeType()), child.getIdentifier(),
+            schema, Sets.newHashSet(schema.getQName()));
         return super.withChild(child);
     }
 
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withNodeIdentifier(final YangInstanceIdentifier.NodeIdentifier nodeIdentifier) {
+    public ListNodeBuilder<T, LeafSetEntryNode<T>> withNodeIdentifier(final NodeIdentifier nodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 }

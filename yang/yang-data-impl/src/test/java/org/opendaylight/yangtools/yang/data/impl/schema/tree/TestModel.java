@@ -28,9 +28,9 @@ public class TestModel {
     public static final YangInstanceIdentifier TEST_PATH = YangInstanceIdentifier.of(TEST_QNAME);
     public static final YangInstanceIdentifier OUTER_LIST_PATH = YangInstanceIdentifier.builder(TEST_PATH)
             .node(OUTER_LIST_QNAME).build();
-    public static final YangInstanceIdentifier INNER_CONTAINER_PATH = YangInstanceIdentifier.builder(TEST_PATH).node(INNER_CONTAINER_QNAME).build();
+    public static final YangInstanceIdentifier INNER_CONTAINER_PATH = TEST_PATH.node(INNER_CONTAINER_QNAME);
     public static final YangInstanceIdentifier VALUE_PATH = YangInstanceIdentifier.of(VALUE_QNAME);
-    public static final YangInstanceIdentifier INNER_VALUE_PATH = YangInstanceIdentifier.builder(INNER_CONTAINER_PATH).node(VALUE_QNAME).build();
+    public static final YangInstanceIdentifier INNER_VALUE_PATH = INNER_CONTAINER_PATH.node(VALUE_QNAME);
     public static final QName TWO_QNAME = QName.create(TEST_QNAME, "two");
     public static final QName THREE_QNAME = QName.create(TEST_QNAME, "three");
 

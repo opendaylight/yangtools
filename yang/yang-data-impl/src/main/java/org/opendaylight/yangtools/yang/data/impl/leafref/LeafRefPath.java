@@ -62,8 +62,8 @@ public abstract class LeafRefPath implements Immutable {
     }
 
     @SuppressWarnings("rawtypes")
-    private static final AtomicReferenceFieldUpdater<LeafRefPath, ImmutableList> LEGACYPATH_UPDATER = AtomicReferenceFieldUpdater
-            .newUpdater(LeafRefPath.class, ImmutableList.class, "legacyPath");
+    private static final AtomicReferenceFieldUpdater<LeafRefPath, ImmutableList> LEGACYPATH_UPDATER =
+        AtomicReferenceFieldUpdater.newUpdater(LeafRefPath.class, ImmutableList.class, "legacyPath");
 
     /**
      * Shared instance of the conceptual root schema node.
@@ -110,12 +110,12 @@ public abstract class LeafRefPath implements Immutable {
         this.parent = parent;
         this.qname = qname;
 
-        int h = Objects.hashCode(parent);
+        int hc = Objects.hashCode(parent);
         if (qname != null) {
-            h = h * 31 + qname.hashCode();
+            hc = hc * 31 + qname.hashCode();
         }
 
-        hash = h;
+        hash = hc;
     }
 
     /**
@@ -313,16 +313,13 @@ public abstract class LeafRefPath implements Immutable {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        Iterable<QNameWithPredicate> pathFromRoot = this.getPathFromRoot();
-
         sb.append(isAbsolute() ? "Absolute path:" : "Relative path:");
 
-        for (QNameWithPredicate qName : pathFromRoot) {
-            sb.append('/').append(qName);
+        for (QNameWithPredicate qname : getPathFromRoot()) {
+            sb.append('/').append(qname);
         }
 
         return sb.toString();
-
     }
 
     // @Override

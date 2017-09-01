@@ -25,18 +25,19 @@ public class ImmutableAugmentationNodeSchemaAwareBuilder extends ImmutableAugmen
     }
 
     @Override
-    public DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> withNodeIdentifier(final AugmentationIdentifier nodeIdentifier) {
+    public DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> withNodeIdentifier(
+            final AugmentationIdentifier nodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 
     @Override
-    public DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> withChild(final DataContainerChild<?, ?> child) {
+    public DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> withChild(
+            final DataContainerChild<?, ?> child) {
         return super.withChild(validator.validateChild(child));
     }
 
-    public static DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> create(final AugmentationSchema schema) {
+    public static DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> create(
+            final AugmentationSchema schema) {
         return new ImmutableAugmentationNodeSchemaAwareBuilder(schema);
     }
-
-
 }

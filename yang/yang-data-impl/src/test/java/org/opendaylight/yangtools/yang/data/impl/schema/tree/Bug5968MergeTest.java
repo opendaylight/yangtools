@@ -142,8 +142,8 @@ public class Bug5968MergeTest {
         }
     }
 
-    private static void mergeMap(final InMemoryDataTreeModification modificationTree, final boolean mandatoryDataMissing)
-            throws DataValidationFailedException {
+    private static void mergeMap(final InMemoryDataTreeModification modificationTree,
+            final boolean mandatoryDataMissing) throws DataValidationFailedException {
         final MapNode myList = createMap(mandatoryDataMissing);
         modificationTree.merge(YangInstanceIdentifier.of(ROOT).node(MY_LIST), myList);
     }
@@ -292,12 +292,11 @@ public class Bug5968MergeTest {
                 .withChild(ImmutableNodes.leafNode(LIST_ID, listIdValue));
     }
 
-    private static CollectionNodeBuilder<MapEntryNode, MapNode> createMapBuilder() throws DataValidationFailedException {
+    private static CollectionNodeBuilder<MapEntryNode, MapNode> createMapBuilder() {
         return Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST));
     }
 
-    private static DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> createContainerBuilder()
-            throws DataValidationFailedException {
+    private static DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> createContainerBuilder() {
         return Builders.containerBuilder().withNodeIdentifier(new NodeIdentifier(ROOT));
     }
 

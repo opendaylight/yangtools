@@ -17,9 +17,10 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class UnionStringCodec extends TypeDefinitionAwareCodec<Object, UnionTypeDefinition> implements UnionCodec<String> {
+final class UnionStringCodec extends TypeDefinitionAwareCodec<Object, UnionTypeDefinition>
+        implements UnionCodec<String> {
 
-    private final static Logger LOG = LoggerFactory.getLogger(UnionStringCodec.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UnionStringCodec.class);
 
     private UnionStringCodec(final Optional<UnionTypeDefinition> typeDef) {
         super(typeDef, Object.class);
@@ -38,6 +39,7 @@ final class UnionStringCodec extends TypeDefinitionAwareCodec<Object, UnionTypeD
     }
 
     @Override
+    @SuppressWarnings("checkstyle:illegalCatch")
     public Object deserialize(final String stringRepresentation) {
 
         if (!getTypeDefinition().isPresent()) {

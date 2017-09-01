@@ -10,20 +10,21 @@ package org.opendaylight.yangtools.yang.data.impl.leafref;
 public class LeafRefDataValidationFailedException extends Exception {
 
     private static final long serialVersionUID = 1L;
-    private int errorsCount = 1;
 
-    public LeafRefDataValidationFailedException(String message) {
-        super(message);
-    }
+    private final int errorsCount;
 
-    public LeafRefDataValidationFailedException(String message, int errorsCount) {
+    public LeafRefDataValidationFailedException(final String message, final int errorsCount) {
         super(message);
         this.errorsCount = errorsCount;
     }
 
-    public LeafRefDataValidationFailedException(String message,
-            final Throwable cause) {
+    public LeafRefDataValidationFailedException(final String message) {
+        this(message, 1);
+    }
+
+    public LeafRefDataValidationFailedException(final String message, final Throwable cause) {
         super(message, cause);
+        errorsCount = 1;
     }
 
     public int getValidationsErrorsCount() {

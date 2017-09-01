@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 final class NotUpgradableModificationApplyOperation extends RootModificationApplyOperation {
     private final ModificationApplyOperation delegate;
 
-    public NotUpgradableModificationApplyOperation(final ModificationApplyOperation delegate) {
+    NotUpgradableModificationApplyOperation(final ModificationApplyOperation delegate) {
         this.delegate = delegate;
     }
 

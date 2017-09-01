@@ -30,7 +30,8 @@ public class ImmutableChoiceNodeSchemaAwareBuilder extends ImmutableChoiceNodeBu
     }
 
     @Override
-    public DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> withNodeIdentifier(final NodeIdentifier nodeIdentifier) {
+    public DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> withNodeIdentifier(
+            final NodeIdentifier nodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 

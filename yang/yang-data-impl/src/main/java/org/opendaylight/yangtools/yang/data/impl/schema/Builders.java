@@ -102,16 +102,16 @@ public final class Builders {
         return ImmutableYangModeledAnyXmlNodeBuilder.create(schema);
     }
 
-    public static <T> ListNodeBuilder<T,LeafSetEntryNode<T>> leafSetBuilder() {
-        return ImmutableLeafSetNodeBuilder.create();
-    }
-
-    public static <T> ListNodeBuilder<T,LeafSetEntryNode<T>>  orderedLeafSetBuilder() {
+    public static <T> ListNodeBuilder<T,LeafSetEntryNode<T>> orderedLeafSetBuilder() {
         return ImmutableOrderedLeafSetNodeBuilder.create();
     }
 
     public static <T> ListNodeBuilder<T,LeafSetEntryNode<T>> orderedLeafSetBuilder(final LeafListSchemaNode schema) {
         return ImmutableOrderedLeafSetNodeSchemaAwareBuilder.create(schema);
+    }
+
+    public static <T> ListNodeBuilder<T,LeafSetEntryNode<T>> leafSetBuilder() {
+        return ImmutableLeafSetNodeBuilder.create();
     }
 
     public static <T> ListNodeBuilder<T,LeafSetEntryNode<T>> leafSetBuilder(final LeafSetNode<T> node) {
@@ -122,7 +122,8 @@ public final class Builders {
         return ImmutableLeafSetNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static <T> ListNodeBuilder<T,LeafSetEntryNode<T>> leafSetBuilder(final LeafListSchemaNode schema, final LeafSetNode<T> node) {
+    public static <T> ListNodeBuilder<T,LeafSetEntryNode<T>> leafSetBuilder(final LeafListSchemaNode schema,
+            final LeafSetNode<T> node) {
         return ImmutableLeafSetNodeSchemaAwareBuilder.create(schema, node);
     }
 
@@ -130,7 +131,8 @@ public final class Builders {
         return ImmutableContainerNodeBuilder.create();
     }
 
-    public static DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> containerBuilder(final ContainerNode node) {
+    public static DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> containerBuilder(
+            final ContainerNode node) {
         return ImmutableContainerNodeBuilder.create(node);
     }
 
@@ -153,10 +155,6 @@ public final class Builders {
         return ImmutableMapEntryNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, MapNode> mapBuilder() {
-        return ImmutableMapNodeBuilder.create();
-    }
-
     public static CollectionNodeBuilder<MapEntryNode, OrderedMapNode> orderedMapBuilder() {
         return ImmutableOrderedMapNodeBuilder.create();
     }
@@ -169,6 +167,10 @@ public final class Builders {
         return ImmutableUnkeyedListNodeBuilder.create();
     }
 
+    public static CollectionNodeBuilder<MapEntryNode, MapNode> mapBuilder() {
+        return ImmutableMapNodeBuilder.create();
+    }
+
     public static CollectionNodeBuilder<MapEntryNode, MapNode> mapBuilder(final MapNode node) {
         return ImmutableMapNodeBuilder.create(node);
     }
@@ -177,7 +179,8 @@ public final class Builders {
         return ImmutableMapNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, MapNode> mapBuilder(final ListSchemaNode schema, final MapNode node) {
+    public static CollectionNodeBuilder<MapEntryNode, MapNode> mapBuilder(final ListSchemaNode schema,
+            final MapNode node) {
         return ImmutableMapNodeSchemaAwareBuilder.create(schema, node);
     }
 
@@ -185,7 +188,8 @@ public final class Builders {
         return ImmutableAugmentationNodeBuilder.create();
     }
 
-    public static DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> augmentationBuilder(final AugmentationSchema schema) {
+    public static DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> augmentationBuilder(
+            final AugmentationSchema schema) {
         return ImmutableAugmentationNodeSchemaAwareBuilder.create(schema);
     }
 
@@ -200,5 +204,4 @@ public final class Builders {
     public static DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> unkeyedListEntryBuilder() {
         return ImmutableUnkeyedListEntryNodeBuilder.create();
     }
-
 }

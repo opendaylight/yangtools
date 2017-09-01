@@ -14,7 +14,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueAttrNode;
 
-public class ImmutableLeafNodeBuilder<T> extends AbstractImmutableNormalizedNodeBuilder<NodeIdentifier, T, LeafNode<T>> {
+public class ImmutableLeafNodeBuilder<T>
+        extends AbstractImmutableNormalizedNodeBuilder<NodeIdentifier, T, LeafNode<T>> {
 
     public static <T> NormalizedNodeAttrBuilder<NodeIdentifier, T, LeafNode<T>> create() {
         return new ImmutableLeafNodeBuilder<>();

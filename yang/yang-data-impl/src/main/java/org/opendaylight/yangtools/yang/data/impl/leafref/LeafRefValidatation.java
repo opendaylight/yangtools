@@ -155,8 +155,9 @@ public class LeafRefValidatation {
         return childReferencedByCtx;
     }
 
-    private void validateNodeData(final NormalizedNode<?, ?> node, final LeafRefContext referencedByCtx, final
-            LeafRefContext referencingCtx, final ModificationType modificationType, final YangInstanceIdentifier current) {
+    private void validateNodeData(final NormalizedNode<?, ?> node, final LeafRefContext referencedByCtx,
+            final LeafRefContext referencingCtx, final ModificationType modificationType,
+            final YangInstanceIdentifier current) {
 
         if (node instanceof LeafNode) {
             final LeafNode<?> leaf = (LeafNode<?>) node;
@@ -218,8 +219,8 @@ public class LeafRefValidatation {
         } else if (node instanceof DataContainerNode) {
             final DataContainerNode<?> dataContainerNode = (DataContainerNode<?>) node;
 
-            for (final DataContainerChild<? extends PathArgument, ?> dataContainerChild : dataContainerNode.getValue()) {
-                final QName qname = dataContainerChild.getNodeType();
+            for (final DataContainerChild<? extends PathArgument, ?> child : dataContainerNode.getValue()) {
+                final QName qname = child.getNodeType();
 
                 final LeafRefContext childReferencedByCtx;
                 if (referencedByCtx != null) {
@@ -237,8 +238,8 @@ public class LeafRefValidatation {
 
                 if (childReferencedByCtx != null || childReferencingCtx != null) {
                     final YangInstanceIdentifier childYangInstanceIdentifier = current
-                            .node(dataContainerChild.getIdentifier());
-                    validateNodeData(dataContainerChild, childReferencedByCtx,
+                            .node(child.getIdentifier());
+                    validateNodeData(child, childReferencedByCtx,
                             childReferencingCtx, modificationType, childYangInstanceIdentifier);
                 }
             }
@@ -265,11 +266,8 @@ public class LeafRefValidatation {
                     }
 
                     if (childReferencedByCtx != null || childReferencingCtx != null) {
-                        final YangInstanceIdentifier mapEntryNodeYangInstanceIdentifier = mapEntryYangInstanceIdentifier
-                                .node(mapEntryNode.getIdentifier());
-                        validateNodeData(mapEntryNode, childReferencedByCtx,
-                                childReferencingCtx, modificationType,
-                                mapEntryNodeYangInstanceIdentifier);
+                        validateNodeData(mapEntryNode, childReferencedByCtx, childReferencingCtx, modificationType,
+                                mapEntryYangInstanceIdentifier.node(mapEntryNode.getIdentifier()));
                     }
                 }
             }
@@ -353,13 +351,13 @@ public class LeafRefValidatation {
                 final Set<?> leafRefValuesSet = entry.getValue();
                 for (final Object leafRefsValue : leafRefValuesSet) {
                     if (leafRefTargetNodeValues != null && !leafRefTargetNodeValues.contains(leafRefsValue)) {
-                        LOG.debug("Invalid leafref value [{}] allowed values {} by validation of leafref TARGET node:" +
-                                " {} path of invalid LEAFREF node: {} leafRef target path: {} {}", leafRefsValue,
+                        LOG.debug("Invalid leafref value [{}] allowed values {} by validation of leafref TARGET node: "
+                                + "{} path of invalid LEAFREF node: {} leafRef target path: {} {}", leafRefsValue,
                                 leafRefTargetNodeValues, leaf.getNodeType(), leafRefContext.getCurrentNodePath(),
                                 leafRefContext.getAbsoluteLeafRefTargetPath(), FAILED);
-                        errorsMessages.add(String.format("Invalid leafref value [%s] allowed values %s by validation " +
-                                        "of  leafref TARGET node: %s path of invalid LEAFREF node: %s leafRef target " +
-                                        "path: %s %s", leafRefsValue, leafRefTargetNodeValues, leaf.getNodeType(),
+                        errorsMessages.add(String.format("Invalid leafref value [%s] allowed values %s by validation "
+                                        + "of leafref TARGET node: %s path of invalid LEAFREF node: %s leafRef target "
+                                        + "path: %s %s", leafRefsValue, leafRefTargetNodeValues, leaf.getNodeType(),
                                 leafRefContext.getCurrentNodePath(), leafRefContext.getAbsoluteLeafRefTargetPath(),
                                 FAILED));
                     } else {
@@ -368,8 +366,8 @@ public class LeafRefValidatation {
                 }
             }
         } else if (leafRefsValues != null) {
-            LOG.debug("Operation [{}] validate data of leafref TARGET node: name[{}] = value[{}] -> SKIP: Already validated",
-                    modificationType, referencedByCtx.getNodeName(), leaf.getValue());
+            LOG.debug("Operation [{}] validate data of leafref TARGET node: name[{}] = value[{}] "
+                    + "-> SKIP: Already validated", modificationType, referencedByCtx.getNodeName(), leaf.getValue());
         }
     }
 
@@ -386,8 +384,8 @@ public class LeafRefValidatation {
                     modificationType, referencingCtx.getNodeName(), leaf.getValue(), FAILED);
             LOG.debug("Invalid leafref value [{}] allowed values {} of LEAFREF node: {} leafRef target path: {}",
                     leaf.getValue(), values, leaf.getNodeType(), referencingCtx.getAbsoluteLeafRefTargetPath());
-            errorsMessages.add(String.format("Invalid leafref value [%s] allowed values %s of LEAFREF node: %s " +
-                            "leafRef  target path: %s", leaf.getValue(), values, leaf.getNodeType(), referencingCtx
+            errorsMessages.add(String.format("Invalid leafref value [%s] allowed values %s of LEAFREF node: %s "
+                            + "leafRef target path: %s", leaf.getValue(), values, leaf.getNodeType(), referencingCtx
                     .getAbsoluteLeafRefTargetPath()));
         } else {
             LOG.debug("Operation [{}] validate data of LEAFREF node: name[{}] = value[{}] {}", modificationType,
@@ -396,7 +394,8 @@ public class LeafRefValidatation {
     }
 
     private void addValues(final Set<Object> values, final Optional<? extends NormalizedNode<?, ?>> optDataNode,
-            final Iterable<QNameWithPredicate> path, final YangInstanceIdentifier current, final QNameWithPredicate previousQName) {
+            final Iterable<QNameWithPredicate> path, final YangInstanceIdentifier current,
+            final QNameWithPredicate previousQName) {
 
         if (!optDataNode.isPresent()) {
             return;
@@ -496,7 +495,8 @@ public class LeafRefValidatation {
         return choiceNodes;
     }
 
-    private static boolean isMatchingPredicate(final MapEntryNode mapEntryNode, final Map<QName, Set<?>> allowedKeyValues) {
+    private static boolean isMatchingPredicate(final MapEntryNode mapEntryNode,
+            final Map<QName, Set<?>> allowedKeyValues) {
         for (final Entry<QName, Object> entryKeyValue : mapEntryNode.getIdentifier().getKeyValues().entrySet()) {
             final Set<?> allowedValues = allowedKeyValues.get(entryKeyValue.getKey());
             if (allowedValues != null && !allowedValues.contains(entryKeyValue.getValue())) {
@@ -511,13 +511,13 @@ public class LeafRefValidatation {
             final YangInstanceIdentifier current) {
 
         final Optional<NormalizedNode<?, ?>> parent = findParentNode(tree.getRootNode().getDataAfter(), current);
-
         final Iterable<QNameWithPredicate> predicatePathExpr = predicatePathKeyExpression.getPathFromRoot();
         final Iterable<QNameWithPredicate> predicatePath = nextLevel(predicatePathExpr);
 
         final Set<Object> values = new HashSet<>();
+        // FIXME: this null check does not look right
         if (parent != null) {
-            addValues(values, parent, predicatePath, null,QNameWithPredicate.ROOT);
+            addValues(values, parent, predicatePath, null, QNameWithPredicate.ROOT);
         }
 
         return values;

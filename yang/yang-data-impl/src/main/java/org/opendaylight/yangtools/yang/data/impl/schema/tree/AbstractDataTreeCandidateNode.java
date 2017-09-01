@@ -28,7 +28,8 @@ abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
 
     static DataTreeCandidateNode deltaChild(
             final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> oldData,
-            final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> newData, final PathArgument identifier) {
+            final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> newData,
+            final PathArgument identifier) {
 
         final Optional<NormalizedNode<?, ?>> maybeNewChild = getChild(newData, identifier);
         final Optional<NormalizedNode<?, ?>> maybeOldChild = getChild(oldData, identifier);

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -20,6 +21,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -55,8 +57,8 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
 /**
-* Base strategy for converting an instance identifier into a normalized node structure for container-like types.
-*/
+ * Base strategy for converting an instance identifier into a normalized node structure for container-like types.
+ */
 abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends InstanceIdToNodes<T> {
 
     protected InstanceIdToCompositeNodes(final T identifier) {
@@ -71,7 +73,8 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         return new AugmentationIdentifier(potentialChildren.build());
     }
 
-    private static DataNodeContainer augmentationProxy(final AugmentationSchema augmentation, final DataNodeContainer schema) {
+    private static DataNodeContainer augmentationProxy(final AugmentationSchema augmentation,
+            final DataNodeContainer schema) {
         final Set<DataSchemaNode> children = new HashSet<>();
         for (final DataSchemaNode augNode : augmentation.getChildNodes()) {
             children.add(schema.getDataChildByName(augNode.getQName()));
@@ -81,7 +84,8 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
 
     @Override
     @SuppressWarnings("unchecked")
-    public final NormalizedNode<?, ?> create(final YangInstanceIdentifier instanceId, final Optional<NormalizedNode<?, ?>> lastChild, final Optional<Map.Entry<QName,ModifyAction>> operation) {
+    public final NormalizedNode<?, ?> create(final YangInstanceIdentifier instanceId,
+            final Optional<NormalizedNode<?, ?>> lastChild, final Optional<Entry<QName,ModifyAction>> operation) {
         checkNotNull(instanceId);
         final Iterator<PathArgument> iterator = instanceId.getPathArguments().iterator();
         final PathArgument legacyData = iterator.next();
@@ -97,7 +101,8 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
             final PathArgument childPath = iterator.next();
             final InstanceIdToNodes<?> childOp = getChildOperation(childPath);
 
-            final YangInstanceIdentifier childId = YangInstanceIdentifier.create(Iterables.skip(instanceId.getPathArguments(), 1));
+            final YangInstanceIdentifier childId = YangInstanceIdentifier.create(
+                Iterables.skip(instanceId.getPathArguments(), 1));
             builder.addChild(childOp.create(childId, lastChild, operation));
         } else {
             if (lastChild.isPresent()) {
@@ -105,13 +110,14 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
             }
             if (operation.isPresent()) {
                 Preconditions.checkArgument(builder instanceof AttributesBuilder<?>);
-                addModifyOpIfPresent(operation, ((AttributesBuilder<?>) builder));
+                addModifyOpIfPresent(operation, (AttributesBuilder<?>) builder);
             }
         }
 
         return builder.build();
     }
 
+    @SuppressWarnings("checkstyle:illegalCatch")
     private InstanceIdToNodes<?> getChildOperation(final PathArgument childPath) {
         final InstanceIdToNodes<?> childOp;
         try {
@@ -123,10 +129,10 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         return childOp;
     }
 
-    protected abstract NormalizedNodeContainerBuilder<?, ?, ?, ?> createBuilder(final PathArgument compositeNode);
+    protected abstract NormalizedNodeContainerBuilder<?, ?, ?, ?> createBuilder(PathArgument compositeNode);
 
-    static abstract class DataContainerNormalizationOperation<T extends PathArgument> extends
-            InstanceIdToCompositeNodes<T> {
+    abstract static class DataContainerNormalizationOperation<T extends PathArgument>
+            extends InstanceIdToCompositeNodes<T> {
 
         private final DataNodeContainer schema;
         private final Map<PathArgument, InstanceIdToNodes<?>> byArg;
@@ -169,10 +175,12 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         }
 
         @Override
-        protected DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> createBuilder(final PathArgument currentArg) {
+        protected DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> createBuilder(
+                final PathArgument currentArg) {
+            final NodeIdentifierWithPredicates arg = (NodeIdentifierWithPredicates) currentArg;
             final DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> builder = Builders
-                    .mapEntryBuilder().withNodeIdentifier((NodeIdentifierWithPredicates) currentArg);
-            for (final Map.Entry<QName, Object> keyValue : ((NodeIdentifierWithPredicates) currentArg).getKeyValues().entrySet()) {
+                    .mapEntryBuilder().withNodeIdentifier(arg);
+            for (final Entry<QName, Object> keyValue : arg.getKeyValues().entrySet()) {
                 builder.addChild(Builders.leafBuilder()
                         .withNodeIdentifier(NodeIdentifier.create(keyValue.getKey())).withValue(keyValue.getValue())
                         .build());
@@ -187,13 +195,13 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
     }
 
     static final class UnkeyedListItemNormalization extends DataContainerNormalizationOperation<NodeIdentifier> {
-
-        protected UnkeyedListItemNormalization(final ListSchemaNode schema) {
+        UnkeyedListItemNormalization(final ListSchemaNode schema) {
             super(NodeIdentifier.create(schema.getQName()), schema);
         }
 
         @Override
-        protected DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> createBuilder(final PathArgument compositeNode) {
+        protected DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> createBuilder(
+                final PathArgument compositeNode) {
             return Builders.unkeyedListEntryBuilder().withNodeIdentifier(getIdentifier());
         }
 
@@ -204,12 +212,13 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
     }
 
     static final class ContainerTransformation extends DataContainerNormalizationOperation<NodeIdentifier> {
-        protected ContainerTransformation(final ContainerSchemaNode schema) {
+        ContainerTransformation(final ContainerSchemaNode schema) {
             super(NodeIdentifier.create(schema.getQName()), schema);
         }
 
         @Override
-        protected DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> createBuilder(final PathArgument compositeNode) {
+        protected DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> createBuilder(
+                final PathArgument compositeNode) {
             return Builders.containerBuilder().withNodeIdentifier(getIdentifier());
         }
 
@@ -220,9 +229,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
     }
 
     static final class OrderedLeafListMixinNormalization extends UnorderedLeafListMixinNormalization {
-
-
-        public OrderedLeafListMixinNormalization(final LeafListSchemaNode potential) {
+        OrderedLeafListMixinNormalization(final LeafListSchemaNode potential) {
             super(potential);
         }
 
@@ -233,10 +240,9 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
     }
 
     static class UnorderedLeafListMixinNormalization extends InstanceIdToCompositeNodes<NodeIdentifier> {
-
         private final InstanceIdToNodes<?> innerOp;
 
-        public UnorderedLeafListMixinNormalization(final LeafListSchemaNode potential) {
+        UnorderedLeafListMixinNormalization(final LeafListSchemaNode potential) {
             super(NodeIdentifier.create(potential.getQName()));
             innerOp = new InstanceIdToSimpleNodes.LeafListEntryNormalization(potential);
         }
@@ -261,13 +267,13 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
     }
 
     static final class AugmentationNormalization extends DataContainerNormalizationOperation<AugmentationIdentifier> {
-
-        public AugmentationNormalization(final AugmentationSchema augmentation, final DataNodeContainer schema) {
+        AugmentationNormalization(final AugmentationSchema augmentation, final DataNodeContainer schema) {
             super(augmentationIdentifierFrom(augmentation), augmentationProxy(augmentation, schema));
         }
 
         @Override
-        protected DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> createBuilder(final PathArgument compositeNode) {
+        protected DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> createBuilder(
+                final PathArgument compositeNode) {
             return Builders.augmentationBuilder().withNodeIdentifier(getIdentifier());
         }
 
@@ -278,17 +284,17 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
     }
 
     static class UnorderedMapMixinNormalization extends InstanceIdToCompositeNodes<NodeIdentifier> {
-
         private final ListItemNormalization innerNode;
 
-        public UnorderedMapMixinNormalization(final ListSchemaNode list) {
+        UnorderedMapMixinNormalization(final ListSchemaNode list) {
             super(NodeIdentifier.create(list.getQName()));
             this.innerNode = new ListItemNormalization(new NodeIdentifierWithPredicates(list.getQName(),
                     Collections.emptyMap()), list);
         }
 
         @Override
-        protected CollectionNodeBuilder<MapEntryNode, ? extends MapNode> createBuilder(final PathArgument compositeNode) {
+        protected CollectionNodeBuilder<MapEntryNode, ? extends MapNode> createBuilder(
+                final PathArgument compositeNode) {
             return Builders.mapBuilder().withNodeIdentifier(getIdentifier());
         }
 
@@ -307,8 +313,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
     }
 
     static final class OrderedMapMixinNormalization extends UnorderedMapMixinNormalization {
-
-        public OrderedMapMixinNormalization(final ListSchemaNode list) {
+        OrderedMapMixinNormalization(final ListSchemaNode list) {
             super(list);
         }
 
@@ -320,10 +325,9 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
     }
 
     static final class ChoiceNodeNormalization extends InstanceIdToCompositeNodes<NodeIdentifier> {
-
         private final ImmutableMap<PathArgument, InstanceIdToNodes<?>> byArg;
 
-        protected ChoiceNodeNormalization(final ChoiceSchemaNode schema) {
+        ChoiceNodeNormalization(final ChoiceSchemaNode schema) {
             super(NodeIdentifier.create(schema.getQName()));
             final ImmutableMap.Builder<PathArgument, InstanceIdToNodes<?>> byArgBuilder = ImmutableMap.builder();
 

@@ -39,7 +39,8 @@ public class StringPatternCheckingCodecTest {
     @Test
     public void testStringPatternCheckingCodec() throws ReactorException, ParseException, URISyntaxException,
             FileNotFoundException {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/string-pattern-checking-codec-test.yang");
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource(
+            "/string-pattern-checking-codec-test.yang");
         assertNotNull(schemaContext);
 
         final QNameModule testModuleQName = QNameModule.create(new URI("string-pattern-checking-codec-test"),
@@ -66,7 +67,8 @@ public class StringPatternCheckingCodecTest {
             fail("Exception should have been thrown.");
         } catch (final IllegalArgumentException ex) {
             LOG.debug("IllegalArgumentException was thrown as expected: {}", ex);
-            assertTrue(ex.getMessage().contains("Supplied value does not match the regular expression ^[A-Z]+$. [abcd]"));
+            assertTrue(ex.getMessage().contains(
+                "Supplied value does not match the regular expression ^[A-Z]+$. [abcd]"));
         }
     }
 }

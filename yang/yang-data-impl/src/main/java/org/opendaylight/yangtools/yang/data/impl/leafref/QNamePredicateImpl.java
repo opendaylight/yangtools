@@ -13,14 +13,15 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
 class QNamePredicateImpl implements Immutable, Serializable, QNamePredicate {
-
     private static final long serialVersionUID = 1L;
+
     private final QName identifier;
     private final LeafRefPath pathKeyExpression;
 
-    public QNamePredicateImpl(final QName identifier, final LeafRefPath pathKeyExpression) {
+    QNamePredicateImpl(final QName identifier, final LeafRefPath pathKeyExpression) {
         this.identifier = Preconditions.checkNotNull(identifier, "QNamePredicate: identifier should not be null");
-        this.pathKeyExpression = Preconditions.checkNotNull(pathKeyExpression, "QNamePredicate: pathKeyExpression should not be null");
+        this.pathKeyExpression = Preconditions.checkNotNull(pathKeyExpression,
+            "QNamePredicate: pathKeyExpression should not be null");
     }
 
     @Override
@@ -36,20 +37,12 @@ class QNamePredicateImpl implements Immutable, Serializable, QNamePredicate {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append('[');
+        sb.append('[').append(identifier).append("=current()");
 
-        sb.append(identifier);
-        sb.append("=current()");
-
-        final Iterable<QNameWithPredicate> pathFromRoot = pathKeyExpression
-                .getPathFromRoot();
-
-        for (final QNameWithPredicate qName : pathFromRoot) {
-            sb.append('/').append(qName);
+        for (final QNameWithPredicate qname : pathKeyExpression.getPathFromRoot()) {
+            sb.append('/').append(qname);
         }
 
-        sb.append(']');
-        return sb.toString();
+        return sb.append(']').toString();
     }
-
 }

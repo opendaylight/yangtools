@@ -16,7 +16,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
-public class ImmutableAugmentationNodeBuilder extends AbstractImmutableDataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> {
+public class ImmutableAugmentationNodeBuilder
+        extends AbstractImmutableDataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> {
 
     protected ImmutableAugmentationNodeBuilder() {
         super();
@@ -38,7 +39,8 @@ public class ImmutableAugmentationNodeBuilder extends AbstractImmutableDataConta
         return new ImmutableAugmentationNodeBuilder(sizeHint);
     }
 
-    public static DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> create(final AugmentationNode node) {
+    public static DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> create(
+            final AugmentationNode node) {
         if (!(node instanceof ImmutableAugmentationNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
@@ -67,11 +69,12 @@ public class ImmutableAugmentationNodeBuilder extends AbstractImmutableDataConta
         return new ImmutableAugmentationNode(getNodeIdentifier(), buildValue());
     }
 
-    private static final class ImmutableAugmentationNode extends AbstractImmutableDataContainerNode<AugmentationIdentifier> implements AugmentationNode {
+    private static final class ImmutableAugmentationNode
+            extends AbstractImmutableDataContainerNode<AugmentationIdentifier> implements AugmentationNode {
 
-        ImmutableAugmentationNode(final AugmentationIdentifier nodeIdentifier, final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children) {
+        ImmutableAugmentationNode(final AugmentationIdentifier nodeIdentifier,
+                final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children) {
             super(children, nodeIdentifier);
         }
     }
-
 }

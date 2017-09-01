@@ -13,7 +13,8 @@ import java.util.Objects;
 import org.opendaylight.yangtools.yang.data.api.codec.Int32Codec;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 
-final class Int32StringCodec extends AbstractIntegerStringCodec<Integer, IntegerTypeDefinition> implements Int32Codec<String> {
+final class Int32StringCodec extends AbstractIntegerStringCodec<Integer, IntegerTypeDefinition>
+        implements Int32Codec<String> {
     Int32StringCodec(final Optional<IntegerTypeDefinition> typeDef) {
         super(typeDef, extractRange(typeDef.orNull()), Integer.class);
     }

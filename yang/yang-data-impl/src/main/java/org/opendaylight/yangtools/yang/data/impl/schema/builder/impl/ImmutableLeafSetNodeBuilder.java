@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableN
 
 public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSetEntryNode<T>> {
     private static final int DEFAULT_CAPACITY = 4;
+
     private final Map<NodeWithValue, LeafSetEntryNode<T>> value;
     private NodeIdentifier nodeIdentifier;
 
@@ -111,13 +112,14 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
         return withChildValue(value, Collections.emptyMap());
     }
 
-    protected final static class ImmutableLeafSetNode<T> extends
+    protected static final class ImmutableLeafSetNode<T> extends
             AbstractImmutableNormalizedValueNode<NodeIdentifier, Collection<LeafSetEntryNode<T>>> implements
             Immutable, LeafSetNode<T> {
 
         private final Map<NodeWithValue, LeafSetEntryNode<T>> children;
 
-        ImmutableLeafSetNode(final NodeIdentifier nodeIdentifier, final Map<NodeWithValue, LeafSetEntryNode<T>> children) {
+        ImmutableLeafSetNode(final NodeIdentifier nodeIdentifier,
+                final Map<NodeWithValue, LeafSetEntryNode<T>> children) {
             super(nodeIdentifier, UnmodifiableCollection.create(children.values()));
             this.children = children;
         }
@@ -145,8 +147,8 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
     }
 
     @Override
-    public NormalizedNodeContainerBuilder<NodeIdentifier, PathArgument, LeafSetEntryNode<T>, LeafSetNode<T>> removeChild(
-            final PathArgument key) {
+    public NormalizedNodeContainerBuilder<NodeIdentifier, PathArgument, LeafSetEntryNode<T>, LeafSetNode<T>>
+            removeChild(final PathArgument key) {
         return withoutChild(key);
     }
 

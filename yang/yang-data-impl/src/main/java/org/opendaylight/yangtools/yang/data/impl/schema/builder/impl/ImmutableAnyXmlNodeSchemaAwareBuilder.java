@@ -19,7 +19,8 @@ public final class ImmutableAnyXmlNodeSchemaAwareBuilder extends ImmutableAnyXml
         super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
-    public static NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> create(final AnyXmlSchemaNode schema) {
+    public static NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> create(
+            final AnyXmlSchemaNode schema) {
         return new ImmutableAnyXmlNodeSchemaAwareBuilder(schema);
     }
 
@@ -29,7 +30,8 @@ public final class ImmutableAnyXmlNodeSchemaAwareBuilder extends ImmutableAnyXml
     }
 
     @Override
-    public NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> withNodeIdentifier(final NodeIdentifier nodeIdentifier) {
+    public NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> withNodeIdentifier(
+            final NodeIdentifier nodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 }

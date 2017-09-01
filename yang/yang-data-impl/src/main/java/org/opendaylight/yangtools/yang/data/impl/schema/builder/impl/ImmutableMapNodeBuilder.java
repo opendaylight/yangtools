@@ -15,7 +15,6 @@ import java.util.Map;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.util.UnmodifiableCollection;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -27,6 +26,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableN
 
 public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNode, MapNode> {
     private static final int DEFAULT_CAPACITY = 4;
+
     private final Map<NodeIdentifierWithPredicates, MapEntryNode> value;
     private NodeIdentifier nodeIdentifier;
 
@@ -109,18 +109,20 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
         return withoutChild(key);
     }
 
-    protected static final class ImmutableMapNode extends AbstractImmutableNormalizedNode<YangInstanceIdentifier.NodeIdentifier, Collection<MapEntryNode>> implements Immutable,MapNode {
+    protected static final class ImmutableMapNode
+            extends AbstractImmutableNormalizedNode<NodeIdentifier, Collection<MapEntryNode>>
+            implements Immutable, MapNode {
 
-        private final Map<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> children;
+        private final Map<NodeIdentifierWithPredicates, MapEntryNode> children;
 
-        ImmutableMapNode(final YangInstanceIdentifier.NodeIdentifier nodeIdentifier,
-                         final Map<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> children) {
+        ImmutableMapNode(final NodeIdentifier nodeIdentifier,
+                         final Map<NodeIdentifierWithPredicates, MapEntryNode> children) {
             super(nodeIdentifier);
             this.children = children;
         }
 
         @Override
-        public Optional<MapEntryNode> getChild(final YangInstanceIdentifier.NodeIdentifierWithPredicates child) {
+        public Optional<MapEntryNode> getChild(final NodeIdentifierWithPredicates child) {
             return Optional.fromNullable(children.get(child));
         }
 

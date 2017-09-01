@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidates;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModificationCursor;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
@@ -39,7 +40,7 @@ public class DataTreeCandidatesTest {
 
     @Before
     public void setUp() throws Exception {
-        dataTree = InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL);
+        dataTree = InMemoryDataTreeFactory.getInstance().create(DataTreeConfiguration.DEFAULT_OPERATIONAL);
         dataTree.setSchemaContext(SCHEMA_CONTEXT);
 
         final ContainerNode testContainer = ImmutableContainerNodeBuilder.create()
@@ -49,7 +50,8 @@ public class DataTreeCandidatesTest {
                         .build())
                 .build();
 
-        final InMemoryDataTreeModification modification = (InMemoryDataTreeModification) dataTree.takeSnapshot().newModification();
+        final InMemoryDataTreeModification modification = (InMemoryDataTreeModification) dataTree.takeSnapshot()
+                .newModification();
         final DataTreeModificationCursor cursor = modification.createCursor(YangInstanceIdentifier.EMPTY);
         cursor.write(TestModel.TEST_PATH.getLastPathArgument(), testContainer);
         modification.ready();
@@ -61,7 +63,8 @@ public class DataTreeCandidatesTest {
 
     @Test
     public void testRootedCandidate() throws Exception {
-        final DataTree innerDataTree = InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL, TestModel.INNER_CONTAINER_PATH);
+        final DataTree innerDataTree = InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL,
+            TestModel.INNER_CONTAINER_PATH);
         innerDataTree.setSchemaContext(SCHEMA_CONTEXT);
 
         final LeafNode<String> leaf = ImmutableLeafNodeBuilder.<String>create()
@@ -69,7 +72,8 @@ public class DataTreeCandidatesTest {
                 .withValue("testing-value")
                 .build();
 
-        final InMemoryDataTreeModification modification = (InMemoryDataTreeModification) innerDataTree.takeSnapshot().newModification();
+        final InMemoryDataTreeModification modification = (InMemoryDataTreeModification) innerDataTree.takeSnapshot()
+                .newModification();
         modification.write(TestModel.VALUE_PATH, leaf);
 
         modification.ready();
@@ -78,7 +82,8 @@ public class DataTreeCandidatesTest {
         dataTree.commit(candidate);
 
         final DataTreeModification newModification = dataTree.takeSnapshot().newModification();
-        final DataTreeCandidate newCandidate = DataTreeCandidates.newDataTreeCandidate(TestModel.INNER_CONTAINER_PATH, candidate.getRootNode());
+        final DataTreeCandidate newCandidate = DataTreeCandidates.newDataTreeCandidate(TestModel.INNER_CONTAINER_PATH,
+            candidate.getRootNode());
 
         try {
             // lets see if getting the identifier of the root node throws an exception

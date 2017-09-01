@@ -29,19 +29,17 @@ import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
 class LeafRefContextTreeBuilder {
+    private final List<LeafRefContext> leafRefs = new LinkedList<>();
     private final SchemaContext schemaContext;
-    private final List<LeafRefContext> leafRefs;
 
-    public LeafRefContextTreeBuilder(final SchemaContext schemaContext) {
+    LeafRefContextTreeBuilder(final SchemaContext schemaContext) {
         this.schemaContext = schemaContext;
-        this.leafRefs = new LinkedList<>();
     }
 
     public LeafRefContext buildLeafRefContextTree() throws IOException,
             LeafRefYangSyntaxErrorException {
-        final LeafRefContextBuilder rootBuilder = new LeafRefContextBuilder(
-                schemaContext.getQName(), schemaContext.getPath(),
-                schemaContext);
+        final LeafRefContextBuilder rootBuilder = new LeafRefContextBuilder(schemaContext.getQName(),
+            schemaContext.getPath(), schemaContext);
 
         final Set<Module> modules = schemaContext.getModules();
         for (final Module module : modules) {

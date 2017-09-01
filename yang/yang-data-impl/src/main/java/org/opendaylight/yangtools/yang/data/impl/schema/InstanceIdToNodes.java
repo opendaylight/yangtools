@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.FluentIterable;
+import com.google.common.collect.Iterables;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
@@ -57,29 +57,31 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
     }
 
     /**
-     * Build a strategy for the next path argument
+     * Build a strategy for the next path argument.
      *
      * @param child child identifier
      * @return transformation strategy for a specific child
      */
-    abstract InstanceIdToNodes<?> getChild(final PathArgument child);
+    abstract InstanceIdToNodes<?> getChild(PathArgument child);
 
     /**
-     *
-     * Convert instance identifier into a NormalizedNode structure
+     * Convert instance identifier into a NormalizedNode structure.
      *
      * @param instanceId Instance identifier to transform into NormalizedNodes
      * @param deepestChild Optional normalized node to be inserted as the last child
      * @param operation Optional modify operation to be set on the last child
      * @return NormalizedNode structure corresponding to submitted instance ID
      */
-    abstract NormalizedNode<?, ?> create(YangInstanceIdentifier instanceId, Optional<NormalizedNode<?, ?>> deepestChild, Optional<Entry<QName,ModifyAction>> operation);
+    abstract NormalizedNode<?, ?> create(YangInstanceIdentifier instanceId, Optional<NormalizedNode<?, ?>> deepestChild,
+            Optional<Entry<QName,ModifyAction>> operation);
 
     abstract boolean isMixin();
 
-    public void addModifyOpIfPresent(final Optional<Entry<QName,ModifyAction>> operation, final AttributesBuilder<?> builder) {
+    public void addModifyOpIfPresent(final Optional<Entry<QName,ModifyAction>> operation,
+            final AttributesBuilder<?> builder) {
         if (operation.isPresent()) {
-            builder.withAttributes(Collections.singletonMap(operation.get().getKey(), modifyOperationToXmlString(operation.get().getValue())));
+            builder.withAttributes(Collections.singletonMap(operation.get().getKey(),
+                modifyOperationToXmlString(operation.get().getValue())));
         }
     }
 
@@ -87,17 +89,17 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
         return operation.name().toLowerCase();
     }
 
-    private final static class UnkeyedListMixinNormalization extends InstanceIdToCompositeNodes<NodeIdentifier> {
-
+    private static final class UnkeyedListMixinNormalization extends InstanceIdToCompositeNodes<NodeIdentifier> {
         private final UnkeyedListItemNormalization innerNode;
 
-        public UnkeyedListMixinNormalization(final ListSchemaNode list) {
+        UnkeyedListMixinNormalization(final ListSchemaNode list) {
             super(NodeIdentifier.create(list.getQName()));
             this.innerNode = new UnkeyedListItemNormalization(list);
         }
 
         @Override
-        protected CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> createBuilder(final PathArgument compositeNode) {
+        protected CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> createBuilder(
+                final PathArgument compositeNode) {
             return Builders.unkeyedListBuilder().withNodeIdentifier(getIdentifier());
         }
 
@@ -116,8 +118,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
     }
 
     private static class AnyXmlNormalization extends InstanceIdToNodes<NodeIdentifier> {
-
-        protected AnyXmlNormalization(final AnyXmlSchemaNode schema) {
+        AnyXmlNormalization(final AnyXmlSchemaNode schema) {
             super(NodeIdentifier.create(schema.getQName()));
         }
 
@@ -135,7 +136,8 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
                 Preconditions.checkState(child instanceof AnyXmlNode);
 
                 final NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> anyXmlBuilder =
-                        Builders.anyXmlBuilder().withNodeIdentifier(getIdentifier()).withValue(((AnyXmlNode) child).getValue());
+                        Builders.anyXmlBuilder().withNodeIdentifier(getIdentifier()).withValue(
+                            ((AnyXmlNode) child).getValue());
                 addModifyOpIfPresent(operation, anyXmlBuilder);
                 return anyXmlBuilder.build();
             }
@@ -155,8 +157,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
     private static Optional<DataSchemaNode> findChildSchemaNode(final DataNodeContainer parent, final QName child) {
         DataSchemaNode potential = parent.getDataChildByName(child);
         if (potential == null) {
-            final Iterable<ChoiceSchemaNode> choices = FluentIterable.from(parent.getChildNodes()).filter(ChoiceSchemaNode.class);
-            potential = findChoice(choices, child);
+            potential = findChoice(Iterables.filter(parent.getChildNodes(), ChoiceSchemaNode.class), child);
         }
         return Optional.fromNullable(potential);
     }
@@ -164,7 +165,8 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
     static InstanceIdToNodes<?> fromSchemaAndQNameChecked(final DataNodeContainer schema, final QName child) {
         final Optional<DataSchemaNode> potential = findChildSchemaNode(schema, child);
         Preconditions.checkArgument(potential.isPresent(),
-                "Supplied QName %s is not valid according to schema %s, potential children nodes: %s", child, schema, schema.getChildNodes());
+                "Supplied QName %s is not valid according to schema %s, potential children nodes: %s", child, schema,
+                schema.getChildNodes());
 
         final DataSchemaNode result = potential.get();
         // We try to look up if this node was added by augmentation
@@ -197,7 +199,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
      * call for {@link #fromDataSchemaNode(org.opendaylight.yangtools.yang.model.api.DataSchemaNode)}.
      */
     private static InstanceIdToNodes<?> fromAugmentation(final DataNodeContainer parent,
-                                                          final AugmentationTarget parentAug, final DataSchemaNode child) {
+            final AugmentationTarget parentAug, final DataSchemaNode child) {
         AugmentationSchema augmentation = null;
         for (final AugmentationSchema aug : parentAug.getAvailableAugmentations()) {
             final DataSchemaNode potential = aug.getDataChildByName(child.getQName());
@@ -247,6 +249,4 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
         }
         return new InstanceIdToCompositeNodes.UnorderedLeafListMixinNormalization(potential);
     }
-
-
 }

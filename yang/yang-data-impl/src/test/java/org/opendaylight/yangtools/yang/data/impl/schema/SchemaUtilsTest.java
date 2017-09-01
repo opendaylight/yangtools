@@ -23,8 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class SchemaUtilsTest {
-    private static String NS = "my-namespace";
-    private static String REV = "1970-01-01";
+    private static final String NS = "my-namespace";
+    private static final String REV = "1970-01-01";
 
     @Test
     public void test() throws Exception {
@@ -52,28 +52,27 @@ public class SchemaUtilsTest {
         assertTrue(target.iterator().next() instanceof ContainerSchemaNode);
 
         // test l schema nodes (i.e. container and two leafs)
-        Collection<SchemaNode> l = SchemaUtils.findParentSchemaNodesOnPath(schemaContext,
+        Collection<SchemaNode> schema = SchemaUtils.findParentSchemaNodesOnPath(schemaContext,
                 SchemaPath.create(true, qN("my-name-3"), qN("input"), qN("con-3"), qN("l")));
-        assertEquals(1, l.size());
-        assertTrue(l.iterator().next() instanceof ContainerSchemaNode);
+        assertEquals(1, schema.size());
+        assertTrue(schema.iterator().next() instanceof ContainerSchemaNode);
 
-        l = SchemaUtils.findParentSchemaNodesOnPath(schemaContext,
+        schema = SchemaUtils.findParentSchemaNodesOnPath(schemaContext,
                 SchemaPath.create(true, qN("my-name-3"), qN("input"), qN("con-1"), qN("l")));
-        assertEquals(1, l.size());
-        assertTrue(l.iterator().next() instanceof LeafSchemaNode);
+        assertEquals(1, schema.size());
+        assertTrue(schema.iterator().next() instanceof LeafSchemaNode);
 
-        l = SchemaUtils.findParentSchemaNodesOnPath(schemaContext,
+        schema = SchemaUtils.findParentSchemaNodesOnPath(schemaContext,
                 SchemaPath.create(true, qN("my-name-3"), qN("input"), qN("con-2"), qN("l")));
-        assertTrue(l.isEmpty());
+        assertTrue(schema.isEmpty());
 
-        l = SchemaUtils.findParentSchemaNodesOnPath(schemaContext,
+        schema = SchemaUtils.findParentSchemaNodesOnPath(schemaContext,
                 SchemaPath.create(true, qN("my-name-3"), qN("output"), qN("con-2"), qN("l")));
-        assertEquals(1, l.size());
-        assertTrue(l.iterator().next() instanceof LeafSchemaNode);
+        assertEquals(1, schema.size());
+        assertTrue(schema.iterator().next() instanceof LeafSchemaNode);
     }
 
-    private QName qN(final String localName) {
+    private static QName qN(final String localName) {
         return QName.create(NS, REV, localName);
     }
-
 }

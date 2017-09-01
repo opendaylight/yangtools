@@ -16,10 +16,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerAttrNode;
 
-public class ImmutableUnkeyedListEntryNodeBuilder extends AbstractImmutableDataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> {
+public class ImmutableUnkeyedListEntryNodeBuilder
+        extends AbstractImmutableDataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> {
 
     protected ImmutableUnkeyedListEntryNodeBuilder() {
-        super();
+
     }
 
     protected ImmutableUnkeyedListEntryNodeBuilder(final int sizeHint) {
@@ -38,7 +39,8 @@ public class ImmutableUnkeyedListEntryNodeBuilder extends AbstractImmutableDataC
         return new ImmutableUnkeyedListEntryNodeBuilder(sizeHint);
     }
 
-    public static DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> create(final UnkeyedListEntryNode node) {
+    public static DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> create(
+            final UnkeyedListEntryNode node) {
         if (!(node instanceof ImmutableUnkeyedListEntryNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
@@ -50,10 +52,10 @@ public class ImmutableUnkeyedListEntryNodeBuilder extends AbstractImmutableDataC
         return new ImmutableUnkeyedListEntryNode(getNodeIdentifier(), buildValue(), getAttributes());
     }
 
-    protected static final class ImmutableUnkeyedListEntryNode extends AbstractImmutableDataContainerAttrNode<NodeIdentifier> implements UnkeyedListEntryNode {
+    protected static final class ImmutableUnkeyedListEntryNode
+            extends AbstractImmutableDataContainerAttrNode<NodeIdentifier> implements UnkeyedListEntryNode {
 
-        ImmutableUnkeyedListEntryNode(
-                final NodeIdentifier nodeIdentifier,
+        ImmutableUnkeyedListEntryNode(final NodeIdentifier nodeIdentifier,
                 final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children,
                 final Map<QName, String> attributes) {
             super(children, nodeIdentifier, attributes);

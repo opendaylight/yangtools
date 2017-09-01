@@ -10,27 +10,28 @@ package org.opendaylight.yangtools.yang.data.impl.leafref;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
-class QNameWithPredicateBuilder {
+class QNameWithPredicateBuilder implements Builder<QNameWithPredicate> {
 
     private final List<QNamePredicate> qnamePredicates = new ArrayList<>();
     private QNameModule moduleQname;
     private String localName;
 
-    public static final QNameWithPredicateBuilder UP_PARENT_BUILDER = new QNameWithPredicateBuilder(
-            null, "..") {
+    static final QNameWithPredicateBuilder UP_PARENT_BUILDER = new QNameWithPredicateBuilder(null, "..") {
         @Override
         public QNameWithPredicate build() {
             return QNameWithPredicate.UP_PARENT;
         }
     };
 
-    public QNameWithPredicateBuilder(final QNameModule moduleQname, final String localName) {
+    QNameWithPredicateBuilder(final QNameModule moduleQname, final String localName) {
         this.moduleQname = moduleQname;
         this.localName = localName;
     }
 
+    @Override
     public QNameWithPredicate build() {
         final QNameWithPredicateImpl qNameWithPredicateImpl = new QNameWithPredicateImpl(
                 moduleQname, localName, qnamePredicates);

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
-public class LeafRefPathSyntaxErrorException extends LeafRefYangSyntaxErrorException{
+public class LeafRefPathSyntaxErrorException extends LeafRefYangSyntaxErrorException {
 
     private static final long serialVersionUID = 1L;
 

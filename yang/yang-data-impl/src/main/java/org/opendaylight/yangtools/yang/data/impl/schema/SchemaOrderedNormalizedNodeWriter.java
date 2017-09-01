@@ -31,8 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This is an iterator over a {@link NormalizedNode}. Unlike {@link NormalizedNodeWriter},
- * this iterates over elements in order as they are defined in .yang file.
+ * This is an iterator over a {@link NormalizedNode}. Unlike {@link NormalizedNodeWriter}, this iterates over elements
+ * in the order as they are defined in YANG file.
  */
 public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaOrderedNormalizedNodeWriter.class);
@@ -74,7 +74,6 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
             currentSchemaNode = root;
         }
         return write(node, currentSchemaNode);
-
     }
 
     /**
@@ -92,10 +91,10 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
         }
 
         throw new IllegalStateException("It wasn't possible to serialize nodes " + nodes);
-
     }
 
-    private SchemaOrderedNormalizedNodeWriter write(final NormalizedNode<?, ?> node, final SchemaNode dataSchemaNode) throws IOException {
+    private SchemaOrderedNormalizedNodeWriter write(final NormalizedNode<?, ?> node, final SchemaNode dataSchemaNode)
+            throws IOException {
 
         //Set current schemaNode
         try (SchemaNodeSetter sns = new SchemaNodeSetter(dataSchemaNode)) {
@@ -126,7 +125,8 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
         return writeChildren(children, currentSchemaNode, true);
     }
 
-    private boolean writeChildren(final Iterable<? extends NormalizedNode<?, ?>> children, final SchemaNode parentSchemaNode, final boolean endParent) throws IOException {
+    private boolean writeChildren(final Iterable<? extends NormalizedNode<?, ?>> children,
+            final SchemaNode parentSchemaNode, final boolean endParent) throws IOException {
         //Augmentations cannot be gotten with node.getChild so create our own structure with augmentations resolved
         final ArrayListMultimap<QName, NormalizedNode<?, ?>> qNameToNodes = ArrayListMultimap.create();
         for (final NormalizedNode<?, ?> child : children) {
@@ -184,26 +184,24 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
         return resolvedAugs;
     }
 
-
-    private class SchemaNodeSetter implements AutoCloseable {
+    private final class SchemaNodeSetter implements AutoCloseable {
 
         private final SchemaNode previousSchemaNode;
 
         /**
-         * Sets current schema node new value and store old value for later restore
+         * Sets current schema node new value and store old value for later restore.
          */
-        public SchemaNodeSetter(final SchemaNode schemaNode) {
+        SchemaNodeSetter(final SchemaNode schemaNode) {
             previousSchemaNode = SchemaOrderedNormalizedNodeWriter.this.currentSchemaNode;
             SchemaOrderedNormalizedNodeWriter.this.currentSchemaNode = schemaNode;
         }
 
         /**
-         * Restore previous schema node
+         * Restore previous schema node.
          */
         @Override
         public void close() {
             SchemaOrderedNormalizedNodeWriter.this.currentSchemaNode = previousSchemaNode;
         }
     }
-
 }

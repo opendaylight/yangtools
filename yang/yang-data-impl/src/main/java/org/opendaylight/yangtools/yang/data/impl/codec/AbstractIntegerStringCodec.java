@@ -44,12 +44,12 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
     // For up to two characters, this is very fast
     private static final CharMatcher X_MATCHER = CharMatcher.anyOf("xX");
 
-    private static final String INCORRECT_LEXICAL_REPRESENTATION = "Incorrect lexical representation of integer value: %s."
-            + "\nAn integer value can be defined as: "
-            + "\n  - a decimal number,"
-            + "\n  - a hexadecimal number (prefix 0x)," + "%n  - an octal number (prefix 0)."
-            + "\nSigned values are allowed. Spaces between digits are NOT allowed.";
-
+    private static final String INCORRECT_LEXICAL_REPRESENTATION =
+            "Incorrect lexical representation of integer value: %s."
+                    + "\nAn integer value can be defined as: "
+                    + "\n  - a decimal number,"
+                    + "\n  - a hexadecimal number (prefix 0x)," + "%n  - an octal number (prefix 0)."
+                    + "\nSigned values are allowed. Spaces between digits are NOT allowed.";
 
     private final List<Range<N>> rangeConstraints;
 
@@ -133,6 +133,17 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
         return deserialized;
     }
 
+    /**
+     * Deserializes value from supplied string representation is supplied radix. See
+     * {@link Integer#parseInt(String, int)} for in-depth description about string and radix relationship.
+     *
+     * @param stringRepresentation String representation
+     * @param radix numeric base.
+     * @return Deserialized value.
+     */
+    abstract N deserialize(String stringRepresentation, int radix);
+
+    abstract N convertValue(Number value);
 
     private void validate(final N value) {
         if (rangeConstraints.isEmpty()) {
@@ -145,22 +156,6 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
         }
         throw new IllegalArgumentException("Value '" + value + "'  is not in required range " + rangeConstraints);
     }
-
-    /**
-     * Deserializes value from supplied string representation
-     * is supplied radix.
-     *
-     * See {@link Integer#parseInt(String, int)} for in-depth
-     * description about string and radix relationship.
-     *
-     * @param stringRepresentation String representation
-     * @param radix numeric base.
-     * @return Deserialized value.
-     */
-    abstract N deserialize(String stringRepresentation, int radix);
-
-    abstract N convertValue(Number value);
-
 
     protected static List<RangeConstraint> extractRange(final IntegerTypeDefinition type) {
         if (type == null) {

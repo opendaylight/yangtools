@@ -16,8 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class StringPatternCheckingCodec extends StringStringCodec {
-
     private static final Logger LOG = LoggerFactory.getLogger(StringPatternCheckingCodec.class);
+
     private final Collection<CompiledPatternContext> patterns;
 
     StringPatternCheckingCodec(final StringTypeDefinition typeDef) {
@@ -33,10 +33,10 @@ final class StringPatternCheckingCodec extends StringStringCodec {
     }
 
     @Override
-    void validate(final String s) {
-        super.validate(s);
+    void validate(final String str) {
+        super.validate(str);
         for (final CompiledPatternContext pattern : patterns) {
-            pattern.validate(s);
+            pattern.validate(str);
         }
     }
 

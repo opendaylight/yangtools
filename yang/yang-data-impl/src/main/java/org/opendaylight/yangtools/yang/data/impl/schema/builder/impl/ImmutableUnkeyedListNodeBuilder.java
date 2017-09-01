@@ -35,6 +35,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
 
     protected ImmutableUnkeyedListNodeBuilder(final ImmutableUnkeyedListNode node) {
         this.nodeIdentifier = node.getIdentifier();
+        // FIXME: clean this up, notably reuse unmodified lists
         this.value = new LinkedList<>();
         Iterables.addAll(value, node.getValue());
         this.dirty = true;
@@ -78,10 +79,11 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
     }
 
     @Override
-    public CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> withValue(final Collection<UnkeyedListEntryNode> value) {
+    public CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> withValue(
+            final Collection<UnkeyedListEntryNode> value) {
         // TODO replace or putAll ?
-        for (final UnkeyedListEntryNode UnkeyedListEntryNode : value) {
-            withChild(UnkeyedListEntryNode);
+        for (final UnkeyedListEntryNode node : value) {
+            withChild(node);
         }
 
         return this;
@@ -109,8 +111,8 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
     }
 
     @Override
-    public NormalizedNodeContainerBuilder<NodeIdentifier, PathArgument, UnkeyedListEntryNode, UnkeyedListNode> removeChild(
-            final PathArgument key) {
+    public NormalizedNodeContainerBuilder<NodeIdentifier, PathArgument, UnkeyedListEntryNode, UnkeyedListNode>
+            removeChild(final PathArgument key) {
         return withoutChild(key);
     }
 

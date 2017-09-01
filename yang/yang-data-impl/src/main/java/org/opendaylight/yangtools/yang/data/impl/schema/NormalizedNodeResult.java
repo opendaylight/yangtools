@@ -10,20 +10,19 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
- * Client allocated result holder for {@link ImmutableNormalizedNodeStreamWriter}.
- * which produces instance of NormalizedNode.
+ * Client allocated result holder for {@link ImmutableNormalizedNodeStreamWriter} which produces instance
+ * of NormalizedNode.
  *
- * Client may supply result holder to {@link ImmutableNormalizedNodeStreamWriter}
- * which will be once updated, when result is available.
+ * <p>
+ * Client may supply result holder to {@link ImmutableNormalizedNodeStreamWriter} which will be once updated when
+ * the result is available.
  *
- * This is intended for using {@link ImmutableNormalizedNodeStreamWriter}
- * without supplying builder, so instantiated writer will select
- * correct builder based on first event and sets resulting
- *  {@link NormalizedNode} when end event is invoked for node.
- *
+ * <p>
+ * This is intended for using {@link ImmutableNormalizedNodeStreamWriter} without supplying builder, so instantiated
+ * writer will select correct builder based on first event and sets resulting {@link NormalizedNode} when end event is
+ * invoked for node.
  */
 public class NormalizedNodeResult {
-
     private boolean finished = false;
     private NormalizedNode<?,?> result;
 
@@ -42,5 +41,4 @@ public class NormalizedNodeResult {
     public boolean isFinished() {
         return finished;
     }
-
 }
