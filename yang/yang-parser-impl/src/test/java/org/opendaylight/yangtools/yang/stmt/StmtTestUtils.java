@@ -8,9 +8,9 @@
 
 package org.opendaylight.yangtools.yang.stmt;
 
+import com.google.common.io.Files;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -27,18 +27,21 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangStatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YinStatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YinTextToDomTransformer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YinStatementSourceImpl;
-import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 public class StmtTestUtils {
 
@@ -191,28 +194,22 @@ public class StmtTestUtils {
     }
 
     public static SchemaContext parseYinSources(final String yinSourcesDirectoryPath, final StatementParserMode statementParserMode)
-            throws SourceException, ReactorException, FileNotFoundException, URISyntaxException {
-
+            throws URISyntaxException, SAXException, IOException, ReactorException {
         final URL resourceDir = StmtTestUtils.class.getResource(yinSourcesDirectoryPath);
-        final File testSourcesDir = new File(resourceDir.toURI());
-
-        return parseYinSources(statementParserMode, testSourcesDir.listFiles(YIN_FILE_FILTER));
-    }
-
-    public static SchemaContext parseYinSources(final StatementParserMode statementParserMode, final File... files)
-            throws SourceException, ReactorException, FileNotFoundException {
-
+        final File[] files = new File(resourceDir.toURI()).listFiles(YIN_FILE_FILTER);
         final StatementStreamSource[] sources = new StatementStreamSource[files.length];
-
         for (int i = 0; i < files.length; i++) {
-            sources[i] = new YinStatementSourceImpl(new NamedFileInputStream(files[i], files[i].getPath()));
+            final SourceIdentifier identifier = YinTextSchemaSource.identifierFromFilename(files[i].getName());
+
+            sources[i] = YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(
+                YinTextSchemaSource.delegateForByteSource(identifier, Files.asByteSource(files[i]))));
         }
 
         return parseYinSources(statementParserMode, sources);
     }
 
     public static SchemaContext parseYinSources(final StatementParserMode statementParserMode, final StatementStreamSource... sources)
-            throws SourceException, ReactorException {
+            throws ReactorException {
 
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(statementParserMode);
         reactor.addSources(sources);

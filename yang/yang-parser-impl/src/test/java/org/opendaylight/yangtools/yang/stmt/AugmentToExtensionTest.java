@@ -15,15 +15,16 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
 public class AugmentToExtensionTest {
-    private Set<Module> modules;
+    private SchemaContext context;
 
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void testIncorrectPath() throws Exception {
-        modules = TestUtils.loadModules(getClass().getResource("/augment-to-extension-test/incorrect-path").toURI());
+        context = TestUtils.loadModules(getClass().getResource("/augment-to-extension-test/incorrect-path").toURI());
     }
 
     /*
@@ -34,14 +35,14 @@ public class AugmentToExtensionTest {
     public void testCorrectPathIntoUnsupportedTarget() throws Exception {
 
         try {
-        modules = TestUtils.loadModules(getClass().getResource(
+        context = TestUtils.loadModules(getClass().getResource(
                 "/augment-to-extension-test/correct-path-into-unsupported-target").toURI());
         } catch (final Exception e) {
             StmtTestUtils.log(e, "    ");
             throw e;
         }
 
-        final Module devicesModule = TestUtils.findModule(modules, "augment-module");
+        final Module devicesModule = TestUtils.findModule(context, "augment-module").get();
 
         final ContainerSchemaNode devicesContainer = (ContainerSchemaNode) devicesModule.getDataChildByName(QName
                 .create(devicesModule.getQNameModule(), "my-container"));
@@ -55,9 +56,9 @@ public class AugmentToExtensionTest {
 
     @Test
     public void testCorrectAugment() throws Exception {
-        modules = TestUtils.loadModules(getClass().getResource("/augment-to-extension-test/correct-augment").toURI());
+        context = TestUtils.loadModules(getClass().getResource("/augment-to-extension-test/correct-augment").toURI());
 
-        final Module devicesModule = TestUtils.findModule(modules, "augment-module");
+        final Module devicesModule = TestUtils.findModule(context, "augment-module").get();
 
         final ContainerSchemaNode devicesContainer = (ContainerSchemaNode) devicesModule.getDataChildByName(QName
                 .create(devicesModule.getQNameModule(), "my-container"));
