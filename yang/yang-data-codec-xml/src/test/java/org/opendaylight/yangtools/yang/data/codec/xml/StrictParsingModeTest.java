@@ -31,7 +31,7 @@ public class StrictParsingModeTest {
     @Test
     public void testLenientParsing() throws Exception {
         // unknown child nodes in the top-level-container node will be skipped when the strictParsing is set to false
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource(
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource(
                 "/strict-parsing-mode-test/foo.yang");
         final Module fooModule = schemaContext.getModules().iterator().next();
         final ContainerSchemaNode topLevelContainer = (ContainerSchemaNode) fooModule.getDataChildByName(
@@ -58,7 +58,7 @@ public class StrictParsingModeTest {
     public void testStrictParsing() throws Exception {
         // should fail because strictParsing is switched on and the top-level-container node contains child nodes
         // which are not defined in the provided YANG model
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource(
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource(
                 "/strict-parsing-mode-test/foo.yang");
         final Module fooModule = schemaContext.getModules().iterator().next();
         final ContainerSchemaNode topLevelContainer = (ContainerSchemaNode) fooModule.getDataChildByName(
