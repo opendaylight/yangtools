@@ -12,7 +12,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
 import com.google.gson.stream.JsonReader;
+import java.io.IOException;
 import java.io.StringReader;
+import java.net.URISyntaxException;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -26,8 +28,8 @@ public class Bug8083Test {
 
     @Ignore("Instance-identifier codec has to be modified according to the RFC7951 to correctly parse this.")
     @Test
-    public void testRFC7951InstanceIdentifierPath() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSources("/bug8083/yang/");
+    public void testRFC7951InstanceIdentifierPath() throws IOException, URISyntaxException {
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResourceDirectory("/bug8083/yang/");
         final String inputJson = loadTextFile("/bug8083/json/foo.json");
 
         // deserialization
@@ -41,8 +43,8 @@ public class Bug8083Test {
 
     @Ignore("JSONEmptyCodec needs to be fixed first.")
     @Test
-    public void testInstanceIdentifierPathWithEmptyListKey() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/bug8083/yang/baz.yang");
+    public void testInstanceIdentifierPathWithEmptyListKey() throws IOException, URISyntaxException {
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/baz.yang");
         final String inputJson = loadTextFile("/bug8083/json/baz.json");
 
         // deserialization
@@ -55,8 +57,8 @@ public class Bug8083Test {
     }
 
     @Test
-    public void testInstanceIdentifierPathWithIdentityrefListKey() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/bug8083/yang/zab.yang");
+    public void testInstanceIdentifierPathWithIdentityrefListKey() throws IOException, URISyntaxException {
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/zab.yang");
         final String inputJson = loadTextFile("/bug8083/json/zab.json");
 
         // deserialization
@@ -69,8 +71,8 @@ public class Bug8083Test {
     }
 
     @Test
-    public void testInstanceIdentifierPathWithInstanceIdentifierListKey() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/bug8083/yang/foobar.yang");
+    public void testInstanceIdentifierPathWithInstanceIdentifierListKey() throws IOException, URISyntaxException {
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/foobar.yang");
         final String inputJson = loadTextFile("/bug8083/json/foobar.json");
 
         // deserialization

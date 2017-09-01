@@ -16,12 +16,12 @@ import java.util.Optional;
 import org.opendaylight.yangtools.concepts.Delegator;
 
 /**
- * A resource-backed {@link YinTextSchemaSource}.
+ * A resource-backed {@link YangTextSchemaSource}.
  */
-final class ResourceYangTextSchemaSource extends YangTextSchemaSource implements Delegator<URL> {
+final class ResourceYinTextSchemaSource extends YinTextSchemaSource implements Delegator<URL> {
     private final URL url;
 
-    ResourceYangTextSchemaSource(final SourceIdentifier identifier, final URL url) {
+    ResourceYinTextSchemaSource(final SourceIdentifier identifier, final URL url) {
         super(identifier);
         this.url = Preconditions.checkNotNull(url);
     }
