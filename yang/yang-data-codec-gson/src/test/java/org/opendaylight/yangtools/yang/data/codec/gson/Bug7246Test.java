@@ -38,7 +38,7 @@ public class Bug7246Test {
 
     @Test
     public void test() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/bug7246/yang/rpc-test.yang");
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/bug7246/yang/rpc-test.yang");
         final JsonParser parser = new JsonParser();
         final JsonElement expextedJson = parser
                 .parse(new FileReader(new File(getClass().getResource("/bug7246/json/expected-output.json").toURI())));

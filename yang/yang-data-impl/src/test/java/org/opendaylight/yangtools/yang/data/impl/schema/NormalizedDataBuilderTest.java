@@ -55,7 +55,7 @@ public class NormalizedDataBuilderTest {
     public void setUp() throws URISyntaxException, FileNotFoundException, ReactorException {
         final File resourceFile = new File(getClass().getResource(
                 "test.yang").toURI());
-        schema = YangParserTestUtils.parseYangSources(resourceFile);
+        schema = YangParserTestUtils.parseYangFiles(resourceFile);
         containerNode = (ContainerSchemaNode) getSchemaNode(schema, "test", "container");
     }
 

@@ -37,7 +37,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeS
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -53,8 +52,8 @@ public class AnyXmlSupportTest {
     private static SchemaContext schemaContext;
 
     @BeforeClass
-    public static void setup() throws IOException, URISyntaxException, ReactorException {
-        schemaContext = YangParserTestUtils.parseYangSources("/complexjson/yang");
+    public static void setup() {
+        schemaContext = YangParserTestUtils.parseYangResourceDirectory("/complexjson/yang");
     }
 
     @Test
