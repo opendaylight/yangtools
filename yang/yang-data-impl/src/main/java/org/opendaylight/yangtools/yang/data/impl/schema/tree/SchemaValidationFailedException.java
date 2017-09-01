@@ -10,17 +10,17 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 /**
  * SchemaValidationFailedException is thrown when an attempt is made to modify the data tree and the modification
- * does not match the schema context
+ * does not match the schema context.
  */
 public class SchemaValidationFailedException extends IllegalArgumentException {
 
     private static final long serialVersionUID = 1L;
 
-    public SchemaValidationFailedException(String message){
+    public SchemaValidationFailedException(final String message) {
         super(message);
     }
 
-    public SchemaValidationFailedException(String message, Throwable cause){
+    public SchemaValidationFailedException(final String message, final Throwable cause) {
         super(message, cause);
     }
 

@@ -107,6 +107,18 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
             initialSchemaContext, rootSchemaNode, maskMandatory);
     }
 
+    private static DataSchemaNode getRootSchemaNode(final SchemaContext schemaContext,
+            final YangInstanceIdentifier rootPath) {
+        final DataSchemaContextTree contextTree = DataSchemaContextTree.from(schemaContext);
+        final DataSchemaContextNode<?> rootContextNode = contextTree.getChild(rootPath);
+        Preconditions.checkArgument(rootContextNode != null, "Failed to find root %s in schema context", rootPath);
+
+        final DataSchemaNode rootSchemaNode = rootContextNode.getDataSchemaNode();
+        Preconditions.checkArgument(rootSchemaNode instanceof DataNodeContainer,
+            "Root %s resolves to non-container type %s", rootPath, rootSchemaNode);
+        return rootSchemaNode;
+    }
+
     private static NormalizedNode<?, ?> createRoot(final DataNodeContainer schemaNode,
             final YangInstanceIdentifier path) {
         if (path.isEmpty()) {
@@ -130,18 +142,6 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
         } else {
             throw new IllegalArgumentException("Unsupported root schema " + schemaNode);
         }
-    }
-
-    private static DataSchemaNode getRootSchemaNode(final SchemaContext schemaContext,
-            final YangInstanceIdentifier rootPath) {
-        final DataSchemaContextTree contextTree = DataSchemaContextTree.from(schemaContext);
-        final DataSchemaContextNode<?> rootContextNode = contextTree.getChild(rootPath);
-        Preconditions.checkArgument(rootContextNode != null, "Failed to find root %s in schema context", rootPath);
-
-        final DataSchemaNode rootSchemaNode = rootContextNode.getDataSchemaNode();
-        Preconditions.checkArgument(rootSchemaNode instanceof DataNodeContainer,
-            "Root %s resolves to non-container type %s", rootPath, rootSchemaNode);
-        return rootSchemaNode;
     }
 
     private static NormalizedNode<?, ?> createRoot(final YangInstanceIdentifier path) {

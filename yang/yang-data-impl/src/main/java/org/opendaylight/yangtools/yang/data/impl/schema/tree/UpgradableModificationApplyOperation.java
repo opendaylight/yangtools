@@ -10,20 +10,22 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 /**
  * Implementation of Upgradable {@link RootModificationApplyOperation}
  *
+ * <p>
  * This implementation is associated with {@link LatestOperationHolder}
  * which holds latest available implementation, which may be used for
  * upgrade.
  *
+ * <p>
  * Upgrading {@link LatestOperationHolder} will not affect any instance,
  * unless client invoked {@link #upgradeIfPossible()} which will result in
  * changing delegate to the latest one.
- *
  */
 final class UpgradableModificationApplyOperation extends RootModificationApplyOperation {
     private final LatestOperationHolder holder;
     private ModificationApplyOperation delegate;
 
-    UpgradableModificationApplyOperation(final LatestOperationHolder holder, final ModificationApplyOperation delegate) {
+    UpgradableModificationApplyOperation(final LatestOperationHolder holder,
+        final ModificationApplyOperation delegate) {
         this.holder = holder;
         this.delegate = delegate;
     }

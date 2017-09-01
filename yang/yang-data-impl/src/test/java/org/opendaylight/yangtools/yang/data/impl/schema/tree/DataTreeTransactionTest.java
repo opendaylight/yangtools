@@ -38,13 +38,13 @@ public class DataTreeTransactionTest {
         tree.prepare(mod);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testUnsealedValidate() throws DataValidationFailedException {
         final DataTreeModification mod = tree.takeSnapshot().newModification();
         tree.validate(mod);
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void testUnsealedPrepare() {
         final DataTreeModification mod = tree.takeSnapshot().newModification();
         tree.prepare(mod);

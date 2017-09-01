@@ -13,6 +13,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -24,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.util.type.EnumerationTypeBuilder;
 public class TypeDefinitionAwareCodecTestHelper {
 
     @SuppressWarnings("unchecked")
-    public static <T> T getCodec( final TypeDefinition<?> def, final Class<T> clazz) {
+    public static <T> T getCodec(final TypeDefinition<?> def, final Class<T> clazz) {
         Object codec = TypeDefinitionAwareCodec.from(def);
         assertNotNull(codec);
         assertTrue(clazz.isAssignableFrom(codec.getClass()));

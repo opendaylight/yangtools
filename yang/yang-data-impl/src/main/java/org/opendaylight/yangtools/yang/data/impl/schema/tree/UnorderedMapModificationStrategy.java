@@ -37,7 +37,8 @@ final class UnorderedMapModificationStrategy extends AbstractNodeContainerModifi
         } else if (original instanceof MapEntryNode) {
             return ImmutableMapEntryNodeBuilder.create((MapEntryNode) original);
         }
-        throw new IllegalArgumentException("MapModification strategy can only handle MapNode or MapEntryNode's, offending node: " + original);
+        throw new IllegalArgumentException("MapModification strategy can only handle MapNode or MapEntryNode's, "
+                + "offending node: " + original);
     }
 
     @Override
@@ -45,9 +46,11 @@ final class UnorderedMapModificationStrategy extends AbstractNodeContainerModifi
         if (original instanceof MapNode) {
             return ImmutableMapNodeBuilder.create().withNodeIdentifier(((MapNode) original).getIdentifier()).build();
         } else if (original instanceof MapEntryNode) {
-            return ImmutableMapEntryNodeBuilder.create().withNodeIdentifier(((MapEntryNode) original).getIdentifier()).build();
+            return ImmutableMapEntryNodeBuilder.create().withNodeIdentifier(
+                ((MapEntryNode) original).getIdentifier()).build();
         }
-        throw new IllegalArgumentException("MapModification strategy can only handle MapNode or MapEntryNode's, offending node: " + original);
+        throw new IllegalArgumentException("MapModification strategy can only handle MapNode or MapEntryNode's, "
+                + "offending node: " + original);
     }
 
     @Override

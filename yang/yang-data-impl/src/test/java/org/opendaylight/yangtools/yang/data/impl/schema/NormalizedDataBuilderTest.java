@@ -66,7 +66,7 @@ public class NormalizedDataBuilderTest {
                 .containerBuilder().withNodeIdentifier(getNodeIdentifier("container"));
 
         // leaf
-        LeafNode<String> leafChild = Builders.<String> leafBuilder().withNodeIdentifier(getNodeIdentifier("leaf"))
+        LeafNode<String> leafChild = Builders.<String>leafBuilder().withNodeIdentifier(getNodeIdentifier("leaf"))
                 .withValue("String").build();
         builder.withChild(leafChild);
 
@@ -76,7 +76,7 @@ public class NormalizedDataBuilderTest {
                 .withNodeIdentifier(getNodeIdentifier("leaf"))
                 .withChildValue(1)
                 .withChild(
-                        Builders.<Integer> leafSetEntryBuilder()
+                        Builders.<Integer>leafSetEntryBuilder()
                                 .withNodeIdentifier(getNodeWithValueIdentifier("leaf", 3)).withValue(3).build())
                 .build();
         builder.withChild(leafList);
@@ -85,7 +85,7 @@ public class NormalizedDataBuilderTest {
         MapEntryNode listChild1 = Builders
                 .mapEntryBuilder()
                 .withChild(
-                        Builders.<Integer> leafBuilder().withNodeIdentifier(getNodeIdentifier("uint32InList"))
+                        Builders.<Integer>leafBuilder().withNodeIdentifier(getNodeIdentifier("uint32InList"))
                                 .withValue(1).build())
                 .withChild(Builders.containerBuilder().withNodeIdentifier(getNodeIdentifier("containerInList")).build())
                 .withNodeIdentifier(
@@ -109,22 +109,21 @@ public class NormalizedDataBuilderTest {
 
         // This works without schema (adding child from augment as a direct
         // child)
-        builder.withChild(Builders.<Integer> leafBuilder().withNodeIdentifier(getNodeIdentifier("augmentUint32"))
+        builder.withChild(Builders.<Integer>leafBuilder().withNodeIdentifier(getNodeIdentifier("augmentUint32"))
                 .withValue(11).build());
     }
 
     @Test
     public void testSchemaAware() {
-        DataContainerNodeBuilder<NodeIdentifier, ContainerNode> builder = Builders
-                .containerBuilder(containerNode);
+        DataContainerNodeBuilder<NodeIdentifier, ContainerNode> builder = Builders.containerBuilder(containerNode);
 
         LeafSchemaNode schemaNode = (LeafSchemaNode) getSchemaNode(schema, "test", "uint32");
-        LeafNode<String> leafChild = Builders.<String> leafBuilder(schemaNode).withValue("String").build();
+        LeafNode<String> leafChild = Builders.<String>leafBuilder(schemaNode).withValue("String").build();
         builder.withChild(leafChild);
 
         LeafListSchemaNode leafListSchemaNode = (LeafListSchemaNode) getSchemaNode(schema, "test", "leafList");
-        LeafSetNode<Integer> leafList = Builders.<Integer> leafSetBuilder(leafListSchemaNode).withChildValue(1)
-                .withChild(Builders.<Integer> leafSetEntryBuilder(leafListSchemaNode).withValue(3).build()).build();
+        LeafSetNode<Integer> leafList = Builders.<Integer>leafSetBuilder(leafListSchemaNode).withChildValue(1)
+                .withChild(Builders.<Integer>leafSetEntryBuilder(leafListSchemaNode).withValue(3).build()).build();
         builder.withChild(leafList);
 
         ListSchemaNode listSchema = (ListSchemaNode) getSchemaNode(schema, "test", "list");
@@ -133,7 +132,7 @@ public class NormalizedDataBuilderTest {
                 "containerInList");
 
         MapEntryNode listChild1 = Builders.mapEntryBuilder(listSchema)
-                .withChild(Builders.<Integer> leafBuilder(uint32InListSchemaNode).withValue(1).build())
+                .withChild(Builders.<Integer>leafBuilder(uint32InListSchemaNode).withValue(1).build())
                 .withChild(Builders.containerBuilder(containerInListSchemaNode).build()).build();
 
         MapNode list = ImmutableMapNodeSchemaAwareBuilder.create(listSchema).withChild(listChild1).build();
@@ -144,12 +143,13 @@ public class NormalizedDataBuilderTest {
                 augmentUint32SchemaNode.getQName());
 
         AugmentationNode augmentation = Builders.augmentationBuilder(augmentationSchema)
-                .withChild(Builders.<Integer> leafBuilder(augmentUint32SchemaNode).withValue(11).build()).build();
+                .withChild(Builders.<Integer>leafBuilder(augmentUint32SchemaNode).withValue(11).build()).build();
 
         builder.withChild(augmentation);
 
         // This should fail with schema, since the leaf comes from augmentation
-        // builder.withChild(ImmutableLeafNodeSchemaAwareBuilder.<Integer>get(augmentUint32SchemaNode).withValue(11).build());
+        // builder.withChild(ImmutableLeafNodeSchemaAwareBuilder.<Integer>get(augmentUint32SchemaNode).withValue(11)
+        // .build());
 
         LeafSchemaNode augumentString1SchemaNode = (LeafSchemaNode) getSchemaNode(schema, "test", "augmentString1");
         LeafSchemaNode augumentString2SchemaNode = (LeafSchemaNode) getSchemaNode(schema, "test", "augmentString2");

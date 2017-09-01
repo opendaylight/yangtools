@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 final class InMemoryDataTreeCandidate extends AbstractDataTreeCandidate {
 
     private static final class RootNode extends AbstractModifiedNodeBasedCandidateNode {
-        public RootNode(final ModifiedNode mod, final TreeNode oldMeta, final TreeNode newMeta) {
+        RootNode(final ModifiedNode mod, final TreeNode oldMeta, final TreeNode newMeta) {
             super(mod, oldMeta, newMeta);
         }
 
@@ -53,6 +53,7 @@ final class InMemoryDataTreeCandidate extends AbstractDataTreeCandidate {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("rootPath", getRootPath()).add("rootNode", getRootNode()).toString();
+        return MoreObjects.toStringHelper(this).add("rootPath", getRootPath())
+                .add("rootNode", getRootNode()).toString();
     }
 }

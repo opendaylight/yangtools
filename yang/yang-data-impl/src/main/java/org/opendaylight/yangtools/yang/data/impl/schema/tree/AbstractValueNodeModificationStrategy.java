@@ -25,7 +25,8 @@ abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> e
     private final Class<? extends NormalizedNode<?, ?>> nodeClass;
     private final T schema;
 
-    protected AbstractValueNodeModificationStrategy(final T schema, final Class<? extends NormalizedNode<?, ?>> nodeClass) {
+    protected AbstractValueNodeModificationStrategy(final T schema,
+            final Class<? extends NormalizedNode<?, ?>> nodeClass) {
         this.nodeClass = Preconditions.checkNotNull(nodeClass);
         this.schema = schema;
     }

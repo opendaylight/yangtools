@@ -15,7 +15,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-public abstract class AbstractImmutableNormalizedNode<K extends PathArgument,V> implements NormalizedNode<K, V>, Immutable {
+public abstract class AbstractImmutableNormalizedNode<K extends PathArgument,V> implements NormalizedNode<K, V>,
+        Immutable {
     private final K nodeIdentifier;
 
     protected AbstractImmutableNormalizedNode(final K nodeIdentifier) {
@@ -42,6 +43,7 @@ public abstract class AbstractImmutableNormalizedNode<K extends PathArgument,V> 
     }
 
     protected abstract boolean valueEquals(AbstractImmutableNormalizedNode<?, ?> other);
+
     protected abstract int valueHashCode();
 
     @Override

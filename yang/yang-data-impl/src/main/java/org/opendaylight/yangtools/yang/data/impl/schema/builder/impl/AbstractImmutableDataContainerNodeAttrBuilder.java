@@ -17,19 +17,20 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerAttrNode;
 
-abstract class AbstractImmutableDataContainerNodeAttrBuilder<I extends PathArgument, R extends DataContainerNode<I>> extends AbstractImmutableDataContainerNodeBuilder<I, R> implements DataContainerNodeAttrBuilder<I, R> {
+abstract class AbstractImmutableDataContainerNodeAttrBuilder<I extends PathArgument, R extends DataContainerNode<I>>
+        extends AbstractImmutableDataContainerNodeBuilder<I, R> implements DataContainerNodeAttrBuilder<I, R> {
     private Map<QName, String> attributes;
 
-    protected AbstractImmutableDataContainerNodeAttrBuilder() {
+    AbstractImmutableDataContainerNodeAttrBuilder() {
         this.attributes = Collections.emptyMap();
     }
 
-    protected AbstractImmutableDataContainerNodeAttrBuilder(final int sizeHint) {
+    AbstractImmutableDataContainerNodeAttrBuilder(final int sizeHint) {
         super(sizeHint);
         this.attributes = Collections.emptyMap();
     }
 
-    protected AbstractImmutableDataContainerNodeAttrBuilder(final AbstractImmutableDataContainerAttrNode<I> node) {
+    AbstractImmutableDataContainerNodeAttrBuilder(final AbstractImmutableDataContainerAttrNode<I> node) {
         super(node);
         this.attributes = node.getAttributes();
     }
@@ -39,13 +40,14 @@ abstract class AbstractImmutableDataContainerNodeAttrBuilder<I extends PathArgum
     }
 
     @Override
-    public DataContainerNodeAttrBuilder<I, R> withAttributes(final Map<QName, String> attributes){
+    public DataContainerNodeAttrBuilder<I, R> withAttributes(final Map<QName, String> attributes) {
         this.attributes = attributes;
         return this;
     }
 
     @Override
-    public DataContainerNodeAttrBuilder<I, R> withValue(final Collection<DataContainerChild<? extends PathArgument, ?>> value) {
+    public DataContainerNodeAttrBuilder<I, R> withValue(
+            final Collection<DataContainerChild<? extends PathArgument, ?>> value) {
         return (DataContainerNodeAttrBuilder<I, R>) super.withValue(value);
     }
 

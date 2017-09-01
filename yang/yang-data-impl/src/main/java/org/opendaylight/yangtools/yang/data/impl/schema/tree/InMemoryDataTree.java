@@ -52,8 +52,8 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
         }
     }
 
-    InMemoryDataTree(final TreeNode rootNode, final DataTreeConfiguration treeConfig, final SchemaContext schemaContext,
-            final DataSchemaNode rootSchemaNode, final boolean maskMandatory) {
+    InMemoryDataTree(final TreeNode rootNode, final DataTreeConfiguration treeConfig,
+            final SchemaContext schemaContext, final DataSchemaNode rootSchemaNode, final boolean maskMandatory) {
         this.treeConfig = Preconditions.checkNotNull(treeConfig, "treeConfig");
         this.maskMandatory = maskMandatory;
 
@@ -92,7 +92,8 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
         }
 
         final ModificationApplyOperation rootNode = getOperation(rootSchemaNode);
-        DataTreeState currentState, newState;
+        DataTreeState currentState;
+        DataTreeState newState;
         do {
             currentState = state;
             newState = currentState.withSchemaContext(newSchemaContext, rootNode);
@@ -109,7 +110,8 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
         if (candidate instanceof NoopDataTreeCandidate) {
             return;
         }
-        Preconditions.checkArgument(candidate instanceof InMemoryDataTreeCandidate, "Invalid candidate class %s", candidate.getClass());
+        Preconditions.checkArgument(candidate instanceof InMemoryDataTreeCandidate, "Invalid candidate class %s",
+            candidate.getClass());
         final InMemoryDataTreeCandidate c = (InMemoryDataTreeCandidate)candidate;
 
         if (LOG.isTraceEnabled()) {
@@ -117,7 +119,8 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
         }
 
         final TreeNode newRoot = c.getTipRoot();
-        DataTreeState currentState, newState;
+        DataTreeState currentState;
+        DataTreeState newState;
         do {
             currentState = state;
             final TreeNode currentRoot = currentState.getRoot();
@@ -127,7 +130,8 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
             if (oldRoot != currentRoot) {
                 final String oldStr = simpleToString(oldRoot);
                 final String currentStr = simpleToString(currentRoot);
-                throw new IllegalStateException("Store tree " + currentStr + " and candidate base " + oldStr + " differ.");
+                throw new IllegalStateException("Store tree " + currentStr + " and candidate base " + oldStr
+                    + " differ.");
             }
 
             newState = currentState.withRoot(newRoot);
@@ -135,8 +139,8 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
         } while (!STATE_UPDATER.compareAndSet(this, currentState, newState));
     }
 
-    private static String simpleToString(final Object o) {
-        return o.getClass().getName() + "@" + Integer.toHexString(o.hashCode());
+    private static String simpleToString(final Object obj) {
+        return obj.getClass().getName() + "@" + Integer.toHexString(obj.hashCode());
     }
 
     @Override
@@ -146,11 +150,11 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).
-                add("object", super.toString()).
-                add("config", treeConfig).
-                add("state", state).
-                toString();
+        return MoreObjects.toStringHelper(this)
+                .add("object", super.toString())
+                .add("config", treeConfig)
+                .add("state", state)
+                .toString();
     }
 
     @Override
