@@ -46,7 +46,7 @@ public class Bug6392Test {
 
     @Test
     public void testLenientParsingOfUnkeyedListEntries() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/bug6392/foo.yang");
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/bug6392/foo.yang");
         assertNotNull(schemaContext);
 
         final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2017-03-10");

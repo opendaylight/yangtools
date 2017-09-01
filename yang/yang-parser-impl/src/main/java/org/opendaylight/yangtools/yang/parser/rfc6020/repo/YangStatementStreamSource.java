@@ -87,6 +87,11 @@ public final class YangStatementStreamSource implements Identifiable<SourceIdent
         return new YangStatementStreamSource(source.getIdentifier(), parser, context);
     }
 
+    public static YangStatementStreamSource create(final SourceIdentifier identifier, final StatementContext context,
+        final String symbolicName) {
+        return new YangStatementStreamSource(identifier, new YangStatementParserListenerImpl(symbolicName), context);
+    }
+
     @Override
     public void writePreLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
         yangStatementModelParser.setAttributes(writer, stmtDef);

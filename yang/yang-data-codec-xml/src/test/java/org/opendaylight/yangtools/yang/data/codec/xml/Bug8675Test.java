@@ -36,7 +36,7 @@ public class Bug8675Test {
 
     @BeforeClass
     public static void setup() throws Exception {
-        schemaContext = YangParserTestUtils.parseYangSource("/bug8675/foo.yang");
+        schemaContext = YangParserTestUtils.parseYangResource("/bug8675/foo.yang");
         fooModule = schemaContext.getModules().iterator().next();
     }
 

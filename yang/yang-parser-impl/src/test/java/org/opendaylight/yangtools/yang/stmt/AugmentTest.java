@@ -12,10 +12,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
 import java.net.URI;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,9 +20,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -38,45 +35,34 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 public class AugmentTest {
-    private static final URI fooNS = URI.create("urn:opendaylight.foo");
-    private static final URI barNS = URI.create("urn:opendaylight.bar");
-    private static final URI bazNS = URI.create("urn:opendaylight.baz");
-    private static Date fooRev;
-    private static Date barRev;
-    private static Date bazRev;
-    private static QName q0;
-    private static QName q1;
-    private static QName q2;
+    private static final QNameModule FOO = QNameModule.create(
+        URI.create("urn:opendaylight.foo"), QName.parseRevision("2013-10-13"));
+    private static final QNameModule BAR = QNameModule.create(
+        URI.create("urn:opendaylight.bar"), QName.parseRevision("2013-10-14"));
+    private static final QNameModule BAZ = QNameModule.create(
+        URI.create("urn:opendaylight.baz"), QName.parseRevision("2013-10-15"));
 
-    private Set<Module> modules;
-
-    @BeforeClass
-    public static void init() throws FileNotFoundException, ParseException {
-        final DateFormat simpleDateFormat = SimpleDateFormatUtil.getRevisionFormat();
-        fooRev = simpleDateFormat.parse("2013-10-13");
-        barRev = simpleDateFormat.parse("2013-10-14");
-        bazRev = simpleDateFormat.parse("2013-10-15");
-
-        q0 = QName.create(barNS, barRev, "interfaces");
-        q1 = QName.create(barNS, barRev, "ifEntry");
-        q2 = QName.create(bazNS, bazRev, "augment-holder");
-    }
+    private static final QName Q0 = QName.create(BAR, "interfaces");
+    private static final QName Q1 = QName.create(BAR, "ifEntry");
+    private static final QName Q2 = QName.create(BAZ, "augment-holder");
 
     @Test
     public void testAugmentParsing() throws Exception {
-        modules = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment").toURI());
+        final SchemaContext context = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment")
+            .toURI());
         SchemaPath expectedSchemaPath;
         final List<QName> qnames = new ArrayList<>();
-        qnames.add(q0);
-        qnames.add(q1);
-        qnames.add(q2);
+        qnames.add(Q0);
+        qnames.add(Q1);
+        qnames.add(Q2);
 
         // foo.yang
-        final Module module1 = TestUtils.findModule(modules, "foo");
+        final Module module1 = TestUtils.findModule(context, "foo").get();
         Set<AugmentationSchema> augmentations = module1.getAugmentations();
         assertEquals(1, augmentations.size());
         final AugmentationSchema augment = augmentations.iterator().next();
@@ -106,7 +92,7 @@ public class AugmentTest {
         assertNotNull(odl);
 
         // leaf ds0ChannelNumber
-        QName qname = QName.create(fooNS, fooRev, "ds0ChannelNumber");
+        QName qname = QName.create(FOO, "ds0ChannelNumber");
         qnames.add(qname);
         assertEquals(qname, ds0ChannelNumber.getQName());
         expectedSchemaPath = SchemaPath.create(qnames, true);
@@ -119,7 +105,7 @@ public class AugmentTest {
         assertEquals(expectedSchemaPath, ds0ChannelNumber.getType().getPath());
 
         // leaf interface-id
-        qname = QName.create(fooNS, fooRev, "interface-id");
+        qname = QName.create(FOO, "interface-id");
         assertEquals(qname, interfaceId.getQName());
         qnames.set(3, qname);
         expectedSchemaPath = SchemaPath.create(qnames, true);
@@ -127,7 +113,7 @@ public class AugmentTest {
         assertFalse(interfaceId.isAugmenting());
 
         // container schemas
-        qname = QName.create(fooNS, fooRev, "schemas");
+        qname = QName.create(FOO, "schemas");
         assertEquals(qname, schemas.getQName());
         qnames.set(3, qname);
         expectedSchemaPath = SchemaPath.create(qnames, true);
@@ -135,7 +121,7 @@ public class AugmentTest {
         assertFalse(schemas.isAugmenting());
 
         // choice odl
-        qname = QName.create(fooNS, fooRev, "odl");
+        qname = QName.create(FOO, "odl");
         assertEquals(qname, odl.getQName());
         qnames.set(3, qname);
         expectedSchemaPath = SchemaPath.create(qnames, true);
@@ -143,7 +129,7 @@ public class AugmentTest {
         assertFalse(odl.isAugmenting());
 
         // baz.yang
-        final Module module3 = TestUtils.findModule(modules, "baz");
+        final Module module3 = TestUtils.findModule(context, "baz").get();
         augmentations = module3.getAugmentations();
         assertEquals(3, augmentations.size());
         AugmentationSchema augment1 = null;
@@ -180,8 +166,9 @@ public class AugmentTest {
 
     @Test
     public void testAugmentResolving() throws Exception {
-        modules = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment").toURI());
-        final Module module2 = TestUtils.findModule(modules, "bar");
+        final SchemaContext context = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment")
+            .toURI());
+        final Module module2 = TestUtils.findModule(context, "bar").get();
         final ContainerSchemaNode interfaces = (ContainerSchemaNode) module2.getDataChildByName(QName.create(
                 module2.getQNameModule(), "interfaces"));
         final ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName(QName.create(
@@ -189,29 +176,28 @@ public class AugmentTest {
 
         SchemaPath expectedPath;
         final List<QName> qnames = new ArrayList<>();
-        qnames.add(q0);
-        qnames.add(q1);
-        qnames.add(q2);
+        qnames.add(Q0);
+        qnames.add(Q1);
+        qnames.add(Q2);
 
         // baz.yang
         // augment "/br:interfaces/br:ifEntry" {
-        final ContainerSchemaNode augmentHolder = (ContainerSchemaNode) ifEntry.getDataChildByName(QName.create(bazNS,
-                bazRev, "augment-holder"));
+        final ContainerSchemaNode augmentHolder = (ContainerSchemaNode) ifEntry.getDataChildByName(QName.create(BAZ,
+                "augment-holder"));
         TestUtils.checkIsAugmenting(augmentHolder, true);
-        assertEquals(q2, augmentHolder.getQName());
+        assertEquals(Q2, augmentHolder.getQName());
         expectedPath = SchemaPath.create(qnames, true);
         assertEquals(expectedPath, augmentHolder.getPath());
 
         // foo.yang
         // augment "/br:interfaces/br:ifEntry/bz:augment-holder"
-        final LeafSchemaNode ds0ChannelNumber = (LeafSchemaNode) augmentHolder.getDataChildByName(QName.create(fooNS,
-                fooRev, "ds0ChannelNumber"));
-        final LeafSchemaNode interfaceId = (LeafSchemaNode) augmentHolder.getDataChildByName(QName.create(fooNS,
-                fooRev, "interface-id"));
-        final ContainerSchemaNode schemas = (ContainerSchemaNode) augmentHolder.getDataChildByName(QName.create(fooNS,
-                fooRev, "schemas"));
-        final ChoiceSchemaNode odl = (ChoiceSchemaNode) augmentHolder.getDataChildByName(QName.create(fooNS, fooRev,
-                "odl"));
+        final LeafSchemaNode ds0ChannelNumber = (LeafSchemaNode) augmentHolder.getDataChildByName(QName.create(FOO,
+                "ds0ChannelNumber"));
+        final LeafSchemaNode interfaceId = (LeafSchemaNode) augmentHolder.getDataChildByName(QName.create(FOO,
+                "interface-id"));
+        final ContainerSchemaNode schemas = (ContainerSchemaNode) augmentHolder.getDataChildByName(QName.create(FOO,
+                "schemas"));
+        final ChoiceSchemaNode odl = (ChoiceSchemaNode) augmentHolder.getDataChildByName(QName.create(FOO, "odl"));
 
         assertNotNull(ds0ChannelNumber);
         assertNotNull(interfaceId);
@@ -219,28 +205,28 @@ public class AugmentTest {
         assertNotNull(odl);
 
         // leaf ds0ChannelNumber
-        QName qname = QName.create(fooNS, fooRev, "ds0ChannelNumber");
+        QName qname = QName.create(FOO, "ds0ChannelNumber");
         assertEquals(qname, ds0ChannelNumber.getQName());
         qnames.add(qname);
         expectedPath = SchemaPath.create(qnames, true);
         assertEquals(expectedPath, ds0ChannelNumber.getPath());
 
         // leaf interface-id
-        qname = QName.create(fooNS, fooRev, "interface-id");
+        qname = QName.create(FOO, "interface-id");
         assertEquals(qname, interfaceId.getQName());
         qnames.set(3, qname);
         expectedPath = SchemaPath.create(qnames, true);
         assertEquals(expectedPath, interfaceId.getPath());
 
         // container schemas
-        qname = QName.create(fooNS, fooRev, "schemas");
+        qname = QName.create(FOO, "schemas");
         assertEquals(qname, schemas.getQName());
         qnames.set(3, qname);
         expectedPath = SchemaPath.create(qnames, true);
         assertEquals(expectedPath, schemas.getPath());
 
         // choice odl
-        qname = QName.create(fooNS, fooRev, "odl");
+        qname = QName.create(FOO, "odl");
         assertEquals(qname, odl.getQName());
         qnames.set(3, qname);
         expectedPath = SchemaPath.create(qnames, true);
@@ -249,20 +235,20 @@ public class AugmentTest {
 
     @Test
     public void testAugmentedChoice() throws Exception {
-        modules = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment").toURI());
-        final Module module2 = TestUtils.findModule(modules, "bar");
+        final SchemaContext context = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment")
+            .toURI());
+        final Module module2 = TestUtils.findModule(context, "bar").get();
         final ContainerSchemaNode interfaces = (ContainerSchemaNode) module2.getDataChildByName(QName.create(
                 module2.getQNameModule(), "interfaces"));
         final ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName(QName.create(
                 module2.getQNameModule(), "ifEntry"));
         final ContainerSchemaNode augmentedHolder = (ContainerSchemaNode) ifEntry.getDataChildByName(QName.create(
-                bazNS, bazRev, "augment-holder"));
+                BAZ, "augment-holder"));
         TestUtils.checkIsAugmenting(augmentedHolder, true);
 
         // foo.yang
         // augment "/br:interfaces/br:ifEntry/bz:augment-holder"
-        final ChoiceSchemaNode odl = (ChoiceSchemaNode) augmentedHolder.getDataChildByName(QName.create(fooNS, fooRev,
-                "odl"));
+        final ChoiceSchemaNode odl = (ChoiceSchemaNode) augmentedHolder.getDataChildByName(QName.create(FOO, "odl"));
         assertNotNull(odl);
         final Set<ChoiceCaseNode> cases = odl.getCases();
         assertEquals(4, cases.size());
@@ -291,13 +277,13 @@ public class AugmentTest {
 
         SchemaPath expectedPath;
         final List<QName> qnames = new ArrayList<>();
-        qnames.add(q0);
-        qnames.add(q1);
-        qnames.add(q2);
-        qnames.add(QName.create(fooNS, fooRev, "odl"));
+        qnames.add(Q0);
+        qnames.add(Q1);
+        qnames.add(Q2);
+        qnames.add(QName.create(FOO, "odl"));
 
         // case id
-        QName qname = QName.create(fooNS, fooRev, "id");
+        QName qname = QName.create(FOO, "id");
         assertEquals(qname, id.getQName());
         qnames.add(qname);
         expectedPath = SchemaPath.create(qnames, true);
@@ -306,7 +292,7 @@ public class AugmentTest {
         assertEquals(1, idChildren.size());
 
         // case node1
-        qname = QName.create(fooNS, fooRev, "node1");
+        qname = QName.create(FOO, "node1");
         assertEquals(qname, node1.getQName());
         qnames.set(4, qname);
         expectedPath = SchemaPath.create(qnames, true);
@@ -315,7 +301,7 @@ public class AugmentTest {
         assertTrue(node1Children.isEmpty());
 
         // case node2
-        qname = QName.create(fooNS, fooRev, "node2");
+        qname = QName.create(FOO, "node2");
         assertEquals(qname, node2.getQName());
         qnames.set(4, qname);
         expectedPath = SchemaPath.create(qnames, true);
@@ -324,7 +310,7 @@ public class AugmentTest {
         assertTrue(node2Children.isEmpty());
 
         // case node3
-        qname = QName.create(fooNS, fooRev, "node3");
+        qname = QName.create(FOO, "node3");
         assertEquals(qname, node3.getQName());
         qnames.set(4, qname);
         expectedPath = SchemaPath.create(qnames, true);
@@ -334,22 +320,22 @@ public class AugmentTest {
 
         // test cases
         qnames.clear();
-        qnames.add(q0);
-        qnames.add(q1);
-        qnames.add(q2);
-        qnames.add(QName.create(fooNS, fooRev, "odl"));
+        qnames.add(Q0);
+        qnames.add(Q1);
+        qnames.add(Q2);
+        qnames.add(QName.create(FOO, "odl"));
 
         // case id child
-        qnames.add(QName.create(fooNS, fooRev, "id"));
-        qnames.add(QName.create(fooNS, fooRev, "id"));
+        qnames.add(QName.create(FOO, "id"));
+        qnames.add(QName.create(FOO, "id"));
         final LeafSchemaNode caseIdChild = (LeafSchemaNode) idChildren.iterator().next();
         assertNotNull(caseIdChild);
         expectedPath = SchemaPath.create(qnames, true);
         assertEquals(expectedPath, caseIdChild.getPath());
 
         // case node3 child
-        qnames.set(4, QName.create(fooNS, fooRev, "node3"));
-        qnames.set(5, QName.create(fooNS, fooRev, "node3"));
+        qnames.set(4, QName.create(FOO, "node3"));
+        qnames.set(5, QName.create(FOO, "node3"));
         final ContainerSchemaNode caseNode3Child = (ContainerSchemaNode) node3Children.iterator().next();
         assertNotNull(caseNode3Child);
         expectedPath = SchemaPath.create(qnames, true);
@@ -358,12 +344,12 @@ public class AugmentTest {
 
     @Test
     public void testAugmentRpc() throws Exception {
-        modules = TestUtils.loadModules(getClass().getResource("/augment-test/rpc").toURI());
+        final SchemaContext context = TestUtils.loadModules(getClass().getResource("/augment-test/rpc").toURI());
         final URI NS_BAR = URI.create("urn:opendaylight:bar");
         final URI NS_FOO = URI.create("urn:opendaylight:foo");
         final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2013-10-11");
 
-        final Module bar = TestUtils.findModule(modules, "bar");
+        final Module bar = TestUtils.findModule(context, "bar").get();
         final Set<RpcDefinition> rpcs = bar.getRpcs();
         assertEquals(2, rpcs.size());
 
@@ -442,10 +428,11 @@ public class AugmentTest {
 
     @Test
     public void testAugmentInUsesResolving() throws Exception {
-        modules = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-uses").toURI());
-        assertEquals(1, modules.size());
+        final SchemaContext context = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-uses")
+            .toURI());
+        assertEquals(1, context.getModules().size());
 
-        final Module test = modules.iterator().next();
+        final Module test = context.getModules().iterator().next();
         final DataNodeContainer links = (DataNodeContainer) test.getDataChildByName(QName.create(test.getQNameModule(),
                 "links"));
         final DataNodeContainer link = (DataNodeContainer) links.getDataChildByName(QName.create(test.getQNameModule(),

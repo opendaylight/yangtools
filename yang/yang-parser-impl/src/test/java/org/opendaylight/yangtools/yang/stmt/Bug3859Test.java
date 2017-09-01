@@ -9,17 +9,14 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertNotNull;
 
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
 public class Bug3859Test {
-
     @Test
     public void test() throws Exception {
-        Set<Module> modules = TestUtils.loadModules(getClass().getResource("/bugs/bug3859").toURI());
-        Module bug3859 = TestUtils.findModule(modules, "reference-in-unknown");
+        final Module bug3859 = TestUtils.findModule(
+            TestUtils.loadModules(getClass().getResource("/bugs/bug3859").toURI()), "reference-in-unknown").get();
         assertNotNull(bug3859);
     }
-
 }

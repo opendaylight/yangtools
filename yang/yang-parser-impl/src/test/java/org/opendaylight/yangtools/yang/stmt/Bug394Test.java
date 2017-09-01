@@ -12,12 +12,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 /**
@@ -27,11 +27,9 @@ public class Bug394Test {
 
     @Test
     public void testParseList() throws Exception {
-        final Set<Module> modules = TestUtils.loadModules(getClass().getResource("/bugs/bug394-retest").toURI());
-        final Module bug394 = TestUtils.findModule(modules, "bug394");
-        assertNotNull(bug394);
-        final Module bug394_ext = TestUtils.findModule(modules, "bug394-ext");
-        assertNotNull(bug394_ext);
+        final SchemaContext context = TestUtils.loadModules(getClass().getResource("/bugs/bug394-retest").toURI());
+        final Module bug394 = TestUtils.findModule(context, "bug394").get();
+        final Module bug394_ext = TestUtils.findModule(context, "bug394-ext").get();
 
         final ContainerSchemaNode logrecords = (ContainerSchemaNode) bug394.getDataChildByName(QName.create(
                 bug394.getQNameModule(), "logrecords"));

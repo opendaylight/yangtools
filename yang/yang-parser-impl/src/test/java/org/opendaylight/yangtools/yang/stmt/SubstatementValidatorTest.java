@@ -46,9 +46,7 @@ public class SubstatementValidatorTest {
 
     @Test
     public void noException() throws Exception {
-        final Set<Module> modules = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment")
-                .toURI());
-        assertNotNull(modules);
+        assertNotNull(TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment").toURI()));
     }
 
     @Test
@@ -83,7 +81,7 @@ public class SubstatementValidatorTest {
     @Test
     public void bug6173Test() throws Exception {
         final Set<Module> loadModules = TestUtils.loadModules(getClass().getResource(
-                "/substatement-validator/empty-element").toURI());
+                "/substatement-validator/empty-element").toURI()).getModules();
         assertEquals(1, loadModules.size());
     }
 

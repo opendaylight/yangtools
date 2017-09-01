@@ -40,7 +40,7 @@ public class InstanceIdentifierForXmlCodecTest {
     @Before
     public void setup() throws Exception {
         final File rpcTestYang = new File(getClass().getResource("iid-test.yang").toURI());
-        this.schemaContext = YangParserTestUtils.parseYangSources(rpcTestYang);
+        this.schemaContext = YangParserTestUtils.parseYangFiles(rpcTestYang);
 
         final YangInstanceIdentifier.NodeIdentifier container = new YangInstanceIdentifier.NodeIdentifier(
                 QName.create(InstanceIdentifierForXmlCodecTest.NS, InstanceIdentifierForXmlCodecTest.REVISION, "cont"));

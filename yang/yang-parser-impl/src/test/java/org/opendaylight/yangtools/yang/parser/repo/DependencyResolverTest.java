@@ -10,12 +10,11 @@ package org.opendaylight.yangtools.yang.parser.repo;
 
 import static org.junit.Assert.assertEquals;
 
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-
 import com.google.common.base.Optional;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
 
@@ -26,9 +25,9 @@ public class DependencyResolverTest {
     public void testModulesWithoutRevisionAndImport() throws Exception {
         final Map<SourceIdentifier, YangModelDependencyInfo> map = new HashMap<>();
 
-        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/no-revision/imported.yang")));
-        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/no-revision/imported@2012-12-12.yang")));
-        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/no-revision/top@2012-10-10.yang")));
+        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.forResource(getClass(), "/no-revision/imported.yang"));
+        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.forResource(getClass(), "/no-revision/imported@2012-12-12.yang"));
+        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.forResource(getClass(), "/no-revision/top@2012-10-10.yang"));
 
         final DependencyResolver resolved = RevisionDependencyResolver.create(map);
 
@@ -41,9 +40,9 @@ public class DependencyResolverTest {
         final Map<SourceIdentifier, YangModelDependencyInfo> map = new HashMap<>();
 
         // Subfoo does not have parent in reactor
-        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/model/subfoo.yang")));
-        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/model/bar.yang")));
-        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/model/baz.yang")));
+        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.forResource(getClass(), "/model/subfoo.yang"));
+        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.forResource(getClass(), "/model/bar.yang"));
+        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.forResource(getClass(), "/model/baz.yang"));
 
         final DependencyResolver resolved = RevisionDependencyResolver.create(map);
 
@@ -56,10 +55,10 @@ public class DependencyResolverTest {
     public void testSubmodule() throws Exception {
         final Map<SourceIdentifier, YangModelDependencyInfo> map = new HashMap<>();
 
-        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/model/subfoo.yang")));
-        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/model/foo.yang")));
-        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/model/bar.yang")));
-        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/model/baz.yang")));
+        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.forResource(getClass(), "/model/subfoo.yang"));
+        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.forResource(getClass(), "/model/foo.yang"));
+        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.forResource(getClass(), "/model/bar.yang"));
+        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.forResource(getClass(), "/model/baz.yang"));
 
         final DependencyResolver resolved = RevisionDependencyResolver.create(map);
 

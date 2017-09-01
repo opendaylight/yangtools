@@ -12,7 +12,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -27,8 +26,8 @@ public class Bug1413Test {
 
     @Test
     public void test() throws Exception {
-        Set<Module> modules = TestUtils.loadModules(getClass().getResource("/bugs/bug1413").toURI());
-        Module bug1413 = TestUtils.findModule(modules, "bug1413");
+        final Module bug1413 = TestUtils.findModule(
+            TestUtils.loadModules(getClass().getResource("/bugs/bug1413").toURI()), "bug1413").get();
         assertNotNull(bug1413);
 
         List<ExtensionDefinition> extensions = bug1413.getExtensionSchemaNodes();

@@ -122,7 +122,7 @@ public class Bug4454Test {
 
     public static SchemaContext createTestContext() throws IOException, YangSyntaxErrorException, ReactorException,
             URISyntaxException {
-        return YangParserTestUtils.parseYangSource("/bug-4454-test.yang");
+        return YangParserTestUtils.parseYangResource("/bug-4454-test.yang");
     }
 
     @Test

@@ -12,10 +12,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
-import java.util.Arrays;
+
 import java.util.List;
 import java.util.Set;
 import org.junit.BeforeClass;
@@ -29,7 +26,6 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class LeafRefContextTreeBuilderTest {
@@ -42,12 +38,8 @@ public class LeafRefContextTreeBuilderTest {
     private static LeafRefContext rootLeafRefContext;
 
     @BeforeClass
-    public static void init() throws URISyntaxException, FileNotFoundException, ReactorException {
-        final File resourceFile = new File(LeafRefContextTreeBuilderTest.class.getResource(
-                "/leafref-context-test/correct-modules/leafref-test.yang").toURI());
-        final File resourceDir = resourceFile.getParentFile();
-
-        context = YangParserTestUtils.parseYangSources(Arrays.asList(resourceDir.listFiles()));
+    public static void init() {
+        context = YangParserTestUtils.parseYangResourceDirectory("/leafref-context-test/correct-modules");
 
         final Set<Module> modules = context.getModules();
         for (final Module module : modules) {
@@ -239,15 +231,10 @@ public class LeafRefContextTreeBuilderTest {
 
     @Test(expected = IllegalArgumentException.class)
     @Ignore
-    public void incorrectLeafRefPathTest() throws URISyntaxException, FileNotFoundException, ReactorException {
-        final File resourceFile = new File(getClass().getResource(
-                "/leafref-context-test/incorrect-modules/leafref-test.yang").toURI());
-        final File resourceDir = resourceFile.getParentFile();
-
-        final SchemaContext context = YangParserTestUtils.parseYangSources(Arrays.asList(resourceDir.listFiles()));
-
+    public void incorrectLeafRefPathTest() {
+        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory(
+            "/leafref-context-test/incorrect-modules");
         LeafRefContext.create(context);
-
     }
 
 }

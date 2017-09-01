@@ -84,7 +84,7 @@ public class DerefXPathFunctionTest {
 
     @Test
     public void testDerefFunctionForInstanceIdentifier() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource(
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(DerefXPathFunctionTest.class,
                 "/yang-xpath-functions-test/deref-function-iid/foo.yang");
         assertNotNull(schemaContext);
 
@@ -116,7 +116,7 @@ public class DerefXPathFunctionTest {
     @Test
     public void testDerefFunctionForLeafref() throws Exception {
         // tests absolute and relative leafref that references a leaf node
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource(
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(DerefXPathFunctionTest.class,
                 "/yang-xpath-functions-test/deref-function-leafref/foo.yang");
         assertNotNull(schemaContext);
 
@@ -156,7 +156,7 @@ public class DerefXPathFunctionTest {
     @Test
     public void testDerefFunctionForLeafref2() throws Exception {
         // tests leafref that references a leaf-list node
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource(
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(DerefXPathFunctionTest.class,
                 "/yang-xpath-functions-test/deref-function-leafref/foo.yang");
         assertNotNull(schemaContext);
 

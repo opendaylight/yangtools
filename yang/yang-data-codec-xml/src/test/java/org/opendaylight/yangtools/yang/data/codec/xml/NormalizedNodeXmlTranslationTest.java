@@ -16,12 +16,10 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.le
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,7 +77,6 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -263,8 +260,8 @@ public class NormalizedNodeXmlTranslationTest {
     }
 
     public NormalizedNodeXmlTranslationTest(final String yangPath, final String xmlPath,
-            final ContainerNode expectedNode) throws ReactorException, FileNotFoundException, URISyntaxException {
-        this.schema = YangParserTestUtils.parseYangSource(yangPath);
+            final ContainerNode expectedNode) {
+        this.schema = YangParserTestUtils.parseYangResource(yangPath);
         this.xmlPath = xmlPath;
         this.containerNode = (ContainerSchemaNode) getSchemaNode(schema, "test", "container");
         this.expectedNode = expectedNode;

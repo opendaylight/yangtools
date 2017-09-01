@@ -11,30 +11,32 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
+import org.xml.sax.SAXException;
 
 public class YinFileLeafListStmtTest {
 
-    private Set<Module> modules;
+    private SchemaContext context;
 
     @Before
-    public void init() throws URISyntaxException, ReactorException {
-        modules = TestUtils.loadYinModules(getClass().getResource("/semantic-statement-parser/yin/modules").toURI());
-        assertEquals(9, modules.size());
+    public void init() throws URISyntaxException, ReactorException, SAXException, IOException {
+        context = TestUtils.loadYinModules(getClass().getResource("/semantic-statement-parser/yin/modules").toURI());
+        assertEquals(9, context.getModules().size());
     }
 
     @Test
     public void testLeafList() {
-        final Module testModule = TestUtils.findModule(modules, "ietf-netconf-monitoring");
+        final Module testModule = TestUtils.findModule(context, "ietf-netconf-monitoring").get();
         assertNotNull(testModule);
 
         ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(QName.create(

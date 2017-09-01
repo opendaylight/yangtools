@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.Set;
@@ -21,23 +22,25 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
+import org.xml.sax.SAXException;
 
 public class YinFileUsesStmtTest {
 
-    private Set<Module> modules;
+    private SchemaContext context;
 
     @Before
-    public void init() throws URISyntaxException, ReactorException {
-        modules = TestUtils.loadYinModules(getClass().getResource("/semantic-statement-parser/yin/modules").toURI());
-        assertEquals(9, modules.size());
+    public void init() throws URISyntaxException, ReactorException, SAXException, IOException {
+        context = TestUtils.loadYinModules(getClass().getResource("/semantic-statement-parser/yin/modules").toURI());
+        assertEquals(9, context.getModules().size());
     }
 
     @Test
     public void testUses() {
-        final Module testModule = TestUtils.findModule(modules, "main-impl");
+        final Module testModule = TestUtils.findModule(context, "main-impl").get();
         assertNotNull(testModule);
 
         final Set<AugmentationSchema> augmentations = testModule.getAugmentations();

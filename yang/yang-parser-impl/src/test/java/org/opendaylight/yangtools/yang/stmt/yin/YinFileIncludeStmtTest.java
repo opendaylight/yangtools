@@ -10,30 +10,32 @@ package org.opendaylight.yangtools.yang.stmt.yin;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Iterator;
-import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
+import org.xml.sax.SAXException;
 
 public class YinFileIncludeStmtTest {
 
-    private Set<Module> modules;
+    private SchemaContext context;
 
     @Before
-    public void init() throws URISyntaxException, ReactorException {
-        modules = TestUtils.loadYinModules(getClass().getResource
+    public void init() throws URISyntaxException, ReactorException, SAXException, IOException {
+        context = TestUtils.loadYinModules(getClass().getResource
                 ("/semantic-statement-parser/yin/include-belongs-to-test").toURI());
-        assertEquals(1, modules.size());
+        assertEquals(1, context.getModules().size());
     }
 
     @Test
     public void testInclude() throws URISyntaxException {
-        Module parentModule = TestUtils.findModule(modules, "parent");
+        Module parentModule = TestUtils.findModule(context, "parent").get();
         assertNotNull(parentModule);
 
         assertEquals(1, parentModule.getSubmodules().size());

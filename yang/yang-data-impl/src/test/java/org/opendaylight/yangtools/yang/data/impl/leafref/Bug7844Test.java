@@ -30,7 +30,7 @@ public class Bug7844Test {
 
     @Test
     public void test() throws Exception {
-        final SchemaContext context = YangParserTestUtils.parseYangSources("/bug7844");
+        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/bug7844");
         assertNotNull(context);
 
         final LeafRefContext leafRefContext = LeafRefContext.create(context);

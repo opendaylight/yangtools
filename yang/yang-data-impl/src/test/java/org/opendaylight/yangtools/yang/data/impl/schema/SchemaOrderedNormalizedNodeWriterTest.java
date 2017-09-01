@@ -155,7 +155,7 @@ public class SchemaOrderedNormalizedNodeWriterTest {
 
     private static SchemaContext getSchemaContext(final String filePath) throws URISyntaxException,
             ReactorException, FileNotFoundException {
-        return YangParserTestUtils.parseYangSource(filePath);
+        return YangParserTestUtils.parseYangResource(filePath);
     }
 
     private static YangInstanceIdentifier.NodeIdentifier getNodeIdentifier(final String ns, final String name) {

@@ -39,7 +39,7 @@ public class StringPatternCheckingCodecTest {
     @Test
     public void testStringPatternCheckingCodec() throws ReactorException, ParseException, URISyntaxException,
             FileNotFoundException {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/string-pattern-checking-codec-test.yang");
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/string-pattern-checking-codec-test.yang");
         assertNotNull(schemaContext);
 
         final QNameModule testModuleQName = QNameModule.create(new URI("string-pattern-checking-codec-test"),

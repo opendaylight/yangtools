@@ -13,7 +13,6 @@ import static org.junit.Assert.assertNotNull;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -31,15 +30,8 @@ public class Bug1412Test {
 
     @Test
     public void test() throws Exception {
-
-        Set<Module> modules = null;
-
-
-        modules = TestUtils.loadModules(getClass().getResource("/bugs/bug1412").toURI());
-
-
-        final Module bug1412 = TestUtils.findModule(modules, "bug1412");
-        assertNotNull(bug1412);
+        final Module bug1412 = TestUtils.findModule(
+            TestUtils.loadModules(getClass().getResource("/bugs/bug1412").toURI()), "bug1412").get();
 
         final ContainerSchemaNode node = (ContainerSchemaNode) bug1412.getDataChildByName(QName.create(
                 bug1412.getQNameModule(), "node"));

@@ -44,7 +44,7 @@ public class Bug8745Test {
 
     @Test
     public void testParsingAttributes() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/bug8745/foo.yang");
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/bug8745/foo.yang");
         final QName contWithAttributes = QName.create("foo", "1970-01-01", "cont-with-attributes");
         final ContainerSchemaNode contWithAttr = (ContainerSchemaNode) SchemaContextUtil.findDataSchemaNode(
                 schemaContext, SchemaPath.create(true, contWithAttributes));

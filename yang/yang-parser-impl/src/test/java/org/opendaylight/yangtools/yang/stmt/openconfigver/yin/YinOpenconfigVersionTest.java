@@ -13,7 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import org.junit.Test;
@@ -22,20 +22,20 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
+import org.xml.sax.SAXException;
 
 public class YinOpenconfigVersionTest {
 
     @Test
-    public void basicTest() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void basicTest() throws URISyntaxException, SAXException, IOException, ReactorException {
         SchemaContext context = StmtTestUtils.parseYinSources("/openconfig-version/yin-input/basic",
                 StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
-        Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
-        Module bar = context.findModuleByNamespace(new URI("bar")).iterator().next();
-        Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
+        Module foo = context.findModuleByNamespace(URI.create("foo")).iterator().next();
+        Module bar = context.findModuleByNamespace(URI.create("bar")).iterator().next();
+        Module semVer = context.findModuleByNamespace(URI.create("http://openconfig.net/yang/openconfig-ext"))
                 .iterator().next();
 
         assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion());
@@ -44,13 +44,13 @@ public class YinOpenconfigVersionTest {
     }
 
     @Test
-    public void basicImportTest1() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+    public void basicImportTest1() throws URISyntaxException, SAXException, IOException, ReactorException {
         SchemaContext context = StmtTestUtils.parseYinSources("/openconfig-version/yin-input/basic-import",
                 StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
-        Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
-        Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
+        Module foo = context.findModuleByNamespace(URI.create("foo")).iterator().next();
+        Module semVer = context.findModuleByNamespace(URI.create("http://openconfig.net/yang/openconfig-ext"))
                 .iterator().next();
 
         assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion());
@@ -60,8 +60,7 @@ public class YinOpenconfigVersionTest {
     }
 
     @Test
-    public void basicImportErrTest1() throws SourceException, FileNotFoundException, ReactorException,
-            URISyntaxException {
+    public void basicImportErrTest1() throws URISyntaxException, SAXException, IOException {
         try {
             StmtTestUtils.parseYinSources("/openconfig-version/yin-input/basic-import-invalid", StatementParserMode.SEMVER_MODE);
             fail("Test should fail due to invalid openconfig version");

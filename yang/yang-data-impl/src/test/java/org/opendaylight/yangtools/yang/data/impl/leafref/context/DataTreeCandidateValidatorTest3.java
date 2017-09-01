@@ -9,10 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.leafref.context;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
-import java.util.Arrays;
+
 import java.util.Set;
 import org.apache.log4j.BasicConfigurator;
 import org.junit.BeforeClass;
@@ -42,7 +39,6 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,8 +80,7 @@ public class DataTreeCandidateValidatorTest3 {
     }
 
     @BeforeClass
-    public static void init() throws FileNotFoundException, ReactorException, URISyntaxException {
-
+    public static void init() {
         initSchemaContext();
         initLeafRefContext();
         initQnames();
@@ -200,13 +195,8 @@ public class DataTreeCandidateValidatorTest3 {
         desc = QName.create(rootModuleQname, "desc");
     }
 
-    private static void initSchemaContext() throws URISyntaxException, FileNotFoundException, ReactorException {
-
-        final File resourceFile = new File(DataTreeCandidateValidatorTest.class.getResource(
-                "/leafref-validation/leafref-validation3.yang").toURI());
-        final File resourceDir = resourceFile.getParentFile();
-
-        context = YangParserTestUtils.parseYangSources(Arrays.asList(resourceDir.listFiles()));
+    private static void initSchemaContext() {
+        context = YangParserTestUtils.parseYangResourceDirectory("/leafref-validation");
 
         final Set<Module> modules = context.getModules();
         for (final Module module : modules) {

@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -34,7 +33,9 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveSchemaContext;
@@ -43,17 +44,19 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline
 public class EffectiveSchemaContextTest {
 
     @Test
-    public void testEffectiveSchemaContext() throws ReactorException, ParseException, URISyntaxException, IOException {
+    public void testEffectiveSchemaContext() throws ReactorException, ParseException, URISyntaxException, IOException,
+            YangSyntaxErrorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
 
-        final YangTextSchemaSource source1 = YangTextSchemaSource.forResource(
-            "/effective-schema-context-test/foo.yang");
-        final YangTextSchemaSource source2 = YangTextSchemaSource.forResource(
-            "/effective-schema-context-test/bar.yang");
-        final YangTextSchemaSource source3 = YangTextSchemaSource.forResource(
-            "/effective-schema-context-test/baz.yang");
+        final YangStatementStreamSource source1 = YangStatementStreamSource.create(YangTextSchemaSource.forResource(
+            "/effective-schema-context-test/foo.yang"));
+        final YangStatementStreamSource source2 = YangStatementStreamSource.create(YangTextSchemaSource.forResource(
+            "/effective-schema-context-test/bar.yang"));
+        final YangStatementStreamSource source3 = YangStatementStreamSource.create(YangTextSchemaSource.forResource(
+            "/effective-schema-context-test/baz.yang"));
 
-        final SchemaContext schemaContext = reactor.buildEffective(Arrays.asList(source1, source2, source3));
+        reactor.addSources(source1, source2, source3);
+        final SchemaContext schemaContext = reactor.buildEffective();
         assertNotNull(schemaContext);
 
         final Set<DataSchemaNode> dataDefinitions = schemaContext.getDataDefinitions();

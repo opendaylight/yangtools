@@ -76,7 +76,7 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
         myContainer2QName = QName.create(bazModuleQName, "my-container-2");
         myAnyXMLDataBaz = QName.create(bazModuleQName, "my-anyxml-data");
 
-        schemaContext = YangParserTestUtils.parseYangSources("/anyxml-support/serialization");
+        schemaContext = YangParserTestUtils.parseYangResourceDirectory("/anyxml-support/serialization");
     }
 
     @Test

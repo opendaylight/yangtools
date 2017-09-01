@@ -205,7 +205,7 @@ public class Bug5830Test {
         inMemoryDataTree.commit(prepare);
     }
 
-    private static void testMandatoryLeaf2IsPresent(final SchemaContext schemaContext, boolean withPresenceContianer)
+    private static void testMandatoryLeaf2IsPresent(final SchemaContext schemaContext, final boolean withPresenceContianer)
             throws DataValidationFailedException {
         final InMemoryDataTree inMemoryDataTree = initDataTree(schemaContext);
 
@@ -226,7 +226,7 @@ public class Bug5830Test {
         inMemoryDataTree.commit(prepare);
     }
 
-    private static DataContainerChild<?, ?> createTaskDataContainer(boolean withMandatoryNode) {
+    private static DataContainerChild<?, ?> createTaskDataContainer(final boolean withMandatoryNode) {
         DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> taskDataBuilder = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TASK_DATA))
                 .withChild(ImmutableNodes.leafNode(OTHER_DATA, "foo"));
@@ -236,7 +236,7 @@ public class Bug5830Test {
         return taskDataBuilder.build();
     }
 
-    private static DataContainerChild<?, ?> createTaskDataMultipleContainer(boolean withPresenceContianer) {
+    private static DataContainerChild<?, ?> createTaskDataMultipleContainer(final boolean withPresenceContianer) {
         DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> nonPresenceContainerBuilder = Builders
                 .containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(NON_PRESENCE_CONTAINER))

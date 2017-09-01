@@ -49,7 +49,7 @@ public class DomSerializerTestUtils {
 
     public static SchemaContext getSchemaContext() throws ReactorException, IOException, YangSyntaxErrorException,
             URISyntaxException {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/dom-serializer-test/serializer-test.yang");
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/dom-serializer-test/serializer-test.yang");
 
         assertNotNull("Schema context must not be null.", schemaContext);
         return schemaContext;

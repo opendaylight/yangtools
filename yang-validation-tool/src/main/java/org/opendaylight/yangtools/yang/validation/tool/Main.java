@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.validation.tool;
 
 import java.io.File;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +27,7 @@ public final class Main {
             final File[] yangModels = params.getYangSourceDir().listFiles();
 
             try {
-                YangParserTestUtils.parseYangSources(Arrays.asList(yangModels));
+                YangParserTestUtils.parseYangFiles(yangModels);
             } catch (Exception e) {
                 LOG.error("Yang files could not be parsed.", e);
             }

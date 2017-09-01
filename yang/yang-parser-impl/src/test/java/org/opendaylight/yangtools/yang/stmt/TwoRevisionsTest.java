@@ -17,7 +17,7 @@ public class TwoRevisionsTest {
 
     @Test
     public void testTwoRevisions() throws Exception {
-        Set<Module> modules = TestUtils.loadModules(getClass().getResource("/ietf").toURI());
+        Set<Module> modules = TestUtils.loadModules(getClass().getResource("/ietf").toURI()).getModules();
         //FIXME: following assert needs module revisions .equals() solution first
         assertEquals(2, TestUtils.findModules(modules, "network-topology").size());
     }

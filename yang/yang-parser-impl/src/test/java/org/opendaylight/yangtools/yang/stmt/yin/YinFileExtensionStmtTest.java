@@ -11,30 +11,32 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
+import org.xml.sax.SAXException;
 
 public class YinFileExtensionStmtTest {
 
-    private Set<Module> modules;
+    private SchemaContext context;
 
     @Before
-    public void init() throws URISyntaxException, ReactorException {
-        modules = TestUtils.loadYinModules(getClass().getResource("/semantic-statement-parser/yin/modules").toURI());
-        assertEquals(9, modules.size());
+    public void init() throws ReactorException, SAXException, IOException, URISyntaxException {
+        context = TestUtils.loadYinModules(getClass().getResource("/semantic-statement-parser/yin/modules").toURI());
+        assertEquals(9, context.getModules().size());
     }
 
     @Test
     public void testExtensions() {
-        Module testModule = TestUtils.findModule(modules, "config");
+        Module testModule = TestUtils.findModule(context, "config").get();
         assertNotNull(testModule);
 
         List<ExtensionDefinition> extensions = testModule.getExtensionSchemaNodes();

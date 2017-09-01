@@ -51,7 +51,7 @@ public class Bug4295Test {
     public void init() throws Exception {
         final File resourceFile = new File(Bug4295Test.class.getResource("/bug-4295/foo.yang")
                 .toURI());
-        context = YangParserTestUtils.parseYangSources(resourceFile);
+        context = YangParserTestUtils.parseYangFiles(resourceFile);
         foo = QNameModule.create(new URI("foo"), SimpleDateFormatUtil.getRevisionFormat().parse("1970-01-01"));
         root = QName.create(foo, "root");
         subRoot = QName.create(foo, "sub-root");

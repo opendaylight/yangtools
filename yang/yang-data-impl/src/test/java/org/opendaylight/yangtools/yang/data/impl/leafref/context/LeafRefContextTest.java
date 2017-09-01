@@ -10,10 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.leafref.context;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
-import java.util.Arrays;
+
 import java.util.Map;
 import java.util.Set;
 import org.junit.BeforeClass;
@@ -26,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class LeafRefContextTest {
@@ -37,14 +33,8 @@ public class LeafRefContextTest {
     private static LeafRefContext rootLeafRefContext;
 
     @BeforeClass
-    public static void init() throws URISyntaxException, FileNotFoundException, ReactorException {
-
-        final File resourceFile = new File(LeafRefContextTreeBuilderTest.class.getResource(
-                "/leafref-context-test/correct-modules/leafref-test2.yang").toURI());
-
-        final File resourceDir = resourceFile.getParentFile();
-
-        context = YangParserTestUtils.parseYangSources(Arrays.asList(resourceDir.listFiles()));
+    public static void init() {
+        context = YangParserTestUtils.parseYangResourceDirectory("/leafref-context-test/correct-modules");
 
         final Set<Module> modules = context.getModules();
         for (final Module module : modules) {

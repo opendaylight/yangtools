@@ -212,7 +212,7 @@ public class JaxenTest {
     }
 
     private static SchemaContext createSchemaContext() throws IOException, URISyntaxException, ReactorException {
-        return YangParserTestUtils.parseYangSources("/test/documentTest");
+        return YangParserTestUtils.parseYangResourceDirectory("/test/documentTest");
     }
 
     private static NormalizedNode<?, ?> createNormalizedNodes() {

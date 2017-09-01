@@ -11,9 +11,8 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
 import com.google.common.base.Optional;
-import java.io.InputStream;
-import java.util.Collections;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -44,16 +43,8 @@ public class Bug2690Test {
         inMemoryDataTree.setSchemaContext(schemaContext);
     }
 
-    public static InputStream getDatastoreTestInputStream() {
-        return getInputStream(ODL_DATASTORE_TEST_YANG);
-    }
-
-    private static InputStream getInputStream(final String resourceName) {
-        return TestModel.class.getResourceAsStream(ODL_DATASTORE_TEST_YANG);
-    }
-
     public static SchemaContext createTestContext() throws ReactorException {
-        return YangParserTestUtils.parseYangStreams(Collections.singletonList(getDatastoreTestInputStream()));
+        return YangParserTestUtils.parseYangResource(ODL_DATASTORE_TEST_YANG);
     }
 
     @Test
@@ -89,7 +80,5 @@ public class Bug2690Test {
         final Optional<NormalizedNode<?, ?>> readNode = modificationAfterTx.readNode(TestModel.OUTER_LIST_PATH);
         assertTrue(readNode.isPresent());
         assertEquals(2, ((NormalizedNodeContainer<?,?,?>)readNode.get()).getValue().size());
-
     }
-
 }

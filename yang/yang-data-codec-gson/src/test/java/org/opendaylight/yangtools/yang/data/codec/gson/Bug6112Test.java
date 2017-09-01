@@ -28,15 +28,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug6112Test {
     private static SchemaContext schemaContext;
 
     @BeforeClass
-    public static void initialization() throws IOException, URISyntaxException, ReactorException {
-        schemaContext = YangParserTestUtils.parseYangSources("/bug-6112/yang");
+    public static void initialization() {
+        schemaContext = YangParserTestUtils.parseYangResourceDirectory("/bug-6112/yang");
     }
 
     private static NormalizedNode<?, ?> readJson(final String jsonPath) throws IOException, URISyntaxException {

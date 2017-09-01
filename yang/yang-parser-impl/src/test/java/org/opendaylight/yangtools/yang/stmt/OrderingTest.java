@@ -11,8 +11,11 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Set;
+import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -20,14 +23,28 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class OrderingTest {
 
+    private SchemaContext context;
+    private Module foo;
+    private Module bar;
+    private Module baz;
+
+    @Before
+    public void setup() throws ReactorException, IOException, YangSyntaxErrorException, URISyntaxException {
+        context = TestUtils.loadModules(getClass().getResource("/model").toURI());
+        foo = TestUtils.findModule(context, "foo").get();
+        bar = TestUtils.findModule(context, "bar").get();
+        baz = TestUtils.findModule(context, "baz").get();
+    }
+
     @Test
     public void testOrderingTypedef() throws Exception {
-        final Set<Module> modules = TestUtils.loadModules(getClass().getResource("/model").toURI());
-        final Module bar = TestUtils.findModule(modules, "bar");
         final Set<TypeDefinition<?>> typedefs = bar.getTypeDefinitions();
         final String[] expectedOrder = new String[] { "int32-ext1", "int32-ext2",
                 "string-ext1", "string-ext2", "string-ext3", "string-ext4",
@@ -45,8 +62,6 @@ public class OrderingTest {
 
     @Test
     public void testOrderingChildNodes() throws Exception {
-        final Set<Module> modules = TestUtils.loadModules(getClass().getResource("/model").toURI());
-        final Module foo = TestUtils.findModule(modules, "foo");
         AugmentationSchema augment1 = null;
         for (final AugmentationSchema as : foo.getAugmentations()) {
             if (as.getChildNodes().size() == 5) {
@@ -71,9 +86,6 @@ public class OrderingTest {
 
     @Test
     public void testOrderingNestedChildNodes1() throws Exception {
-        final Set<Module> modules = TestUtils.loadModules(getClass().getResource("/model").toURI());
-        final Module foo = TestUtils.findModule(modules, "foo");
-
         final Collection<DataSchemaNode> childNodes = foo.getChildNodes();
         final String[] expectedOrder = new String[] { "int32-leaf", "string-leaf",
                 "invalid-pattern-string-leaf",
@@ -96,8 +108,6 @@ public class OrderingTest {
 
     @Test
     public void testOrderingNestedChildNodes2() throws Exception {
-        final Set<Module> modules = TestUtils.loadModules(getClass().getResource("/model").toURI());
-        final Module baz = TestUtils.findModule(modules, "baz");
         final Set<GroupingDefinition> groupings = baz.getGroupings();
         assertEquals(1, groupings.size());
         final GroupingDefinition target = groupings.iterator().next();
@@ -117,8 +127,8 @@ public class OrderingTest {
 
     @Test
     public void testOrderingNestedChildNodes3() throws Exception {
-        final Module baz = TestUtils.loadModule(getClass().getResourceAsStream(
-                "/ordering/foo.yang"));
+        final Module baz = TestUtils.loadModuleResources(getClass(), "/ordering/foo.yang")
+                .getModules().iterator().next();
         final ContainerSchemaNode x = (ContainerSchemaNode) baz
                 .getDataChildByName(QName.create(baz.getQNameModule(), "x"));
         final Collection<DataSchemaNode> childNodes = x.getChildNodes();
@@ -134,5 +144,4 @@ public class OrderingTest {
         }
         assertArrayEquals(expectedOrder, actualOrder);
     }
-
 }

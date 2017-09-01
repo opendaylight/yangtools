@@ -9,10 +9,9 @@ package org.opendaylight.yangtools.yang.data.impl.leafref.context;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import java.io.File;
+
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -115,15 +114,8 @@ public class DataTreeCandidateValidatorTest {
 
     }
 
-    private static void initSchemaContext() throws URISyntaxException,
-            FileNotFoundException, ReactorException {
-        final File resourceFile = new File(DataTreeCandidateValidatorTest.class
-                .getResource("/leafref-validation/leafref-validation.yang")
-                .toURI());
-        final File resourceDir = resourceFile.getParentFile();
-
-        context = YangParserTestUtils.parseYangSources(Arrays.asList(resourceDir
-                .listFiles()));
+    private static void initSchemaContext() {
+        context = YangParserTestUtils.parseYangResourceDirectory("/leafref-validation");
 
         final Set<Module> modules = context.getModules();
         for (final Module module : modules) {

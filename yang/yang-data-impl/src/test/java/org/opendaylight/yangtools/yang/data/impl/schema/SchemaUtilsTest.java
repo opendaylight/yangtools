@@ -28,7 +28,7 @@ public class SchemaUtilsTest {
 
     @Test
     public void test() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/schema-utils-test/foo.yang");
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/schema-utils-test/foo.yang");
         assertTrue(SchemaUtils.findDataParentSchemaOnPath(schemaContext,
                 SchemaPath.create(true, qN("my-name"), qN("my-name"))) instanceof ContainerSchemaNode);
         assertTrue(SchemaUtils.findDataParentSchemaOnPath(schemaContext,
@@ -40,7 +40,7 @@ public class SchemaUtilsTest {
     @Test
     public void testNameConflicts() throws Exception {
         final SchemaContext schemaContext = YangParserTestUtils
-                .parseYangSource("/schema-utils-test/name-conflicts.yang");
+                .parseYangResource("/schema-utils-test/name-conflicts.yang");
         // test my-name conflicts
         assertEquals(8, SchemaUtils.findParentSchemaNodesOnPath(schemaContext,
                 SchemaPath.create(true, qN("my-name"), qN("my-name"), qN("my-name"))).size());

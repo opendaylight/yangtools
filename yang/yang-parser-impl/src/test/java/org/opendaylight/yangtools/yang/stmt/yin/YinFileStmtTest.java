@@ -12,20 +12,22 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YinStatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YinTextToDomTransformer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YinStatementSourceImpl;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
+import org.xml.sax.SAXException;
 
 public class YinFileStmtTest {
 
@@ -35,20 +37,26 @@ public class YinFileStmtTest {
     private static final StatementStreamSource INVALID_YIN_FILE = createSource("incorrect-foo.yin");
     private static final StatementStreamSource INVALID_YIN_FILE_2 = createSource("incorrect-bar.yin");
 
-    private Set<Module> modules;
+    private SchemaContext context;
 
     private static StatementStreamSource createSource(final String name) {
-        return new YinStatementSourceImpl("/semantic-statement-parser/yin/" + name, false);
+        try {
+            return YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(
+                YinTextSchemaSource.forResource(YinFileStmtTest.class, "/semantic-statement-parser/yin/" + name)));
+        } catch (SAXException | IOException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 
     @Before
-    public void init() throws URISyntaxException, ReactorException {
-        modules = TestUtils.loadYinModules(getClass().getResource("/semantic-statement-parser/yin/modules").toURI());
+    public void init() throws URISyntaxException, ReactorException, SAXException, IOException {
+        context = TestUtils.loadYinModules(getClass().getResource("/semantic-statement-parser/yin/modules").toURI());
     }
 
     @Test
     public void readAndParseYinFileTestModel() throws SourceException, ReactorException {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+
         addSources(reactor, YIN_FILE, EXT_FILE, EXT_USE_FILE);
         SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
@@ -81,7 +89,7 @@ public class YinFileStmtTest {
 
     @Test
     public void testModulesSize() {
-        assertEquals(modules.size(), 9);
+        assertEquals(context.getModules().size(), 9);
     }
 
     private static void addSources(final CrossSourceStatementReactor.BuildAction reactor,  final

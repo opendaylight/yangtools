@@ -45,8 +45,7 @@ public class Bug5396Test {
     public void setUp() throws Exception {
         fooModuleQName = QNameModule.create(new URI("foo"), SimpleDateFormatUtil.getRevisionFormat().parse(
                     "2016-03-22"));
-
-        schemaContext = YangParserTestUtils.parseYangSource("/bug5396/yang/foo.yang");
+        schemaContext = YangParserTestUtils.parseYangResource("/bug5396/yang/foo.yang");
     }
 
     @Test

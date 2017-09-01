@@ -66,7 +66,7 @@ public class XmlDocumentUtilsTest {
         final File rpcTestYang1 = new File(getClass().getResource("xml-doc-test.yang").toURI());
         final File rpcTestYang2 = new File(getClass().getResource("xml-doc-test2.yang").toURI());
 
-        this.schema = YangParserTestUtils.parseYangSources(rpcTestYang1, rpcTestYang2);
+        this.schema = YangParserTestUtils.parseYangFiles(rpcTestYang1, rpcTestYang2);
     }
 
     public static Document readXmlToDocument(final String xmlContent) throws SAXException, IOException {

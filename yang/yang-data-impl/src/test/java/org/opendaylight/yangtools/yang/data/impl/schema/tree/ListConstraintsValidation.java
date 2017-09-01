@@ -9,10 +9,9 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
 import com.google.common.base.Optional;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,7 +37,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLe
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +75,7 @@ public class ListConstraintsValidation {
             .builder(MASTER_CONTAINER_PATH).node(UNKEYED_LIST_QNAME).build();
 
     @Before
-    public void prepare() throws ReactorException {
+    public void prepare() {
         schemaContext = createTestContext();
         assertNotNull("Schema context must not be null.", schemaContext);
         inMemoryDataTree =  (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL);
@@ -90,16 +88,8 @@ public class ListConstraintsValidation {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(modificationTree));
     }
 
-    public static InputStream getDatastoreTestInputStream() {
-        return getInputStream(CONSTRAINTS_VALIDATION_TEST_YANG);
-    }
-
-    private static InputStream getInputStream(final String resourceName) {
-        return TestModel.class.getResourceAsStream(CONSTRAINTS_VALIDATION_TEST_YANG);
-    }
-
-    public static SchemaContext createTestContext() throws ReactorException {
-        return YangParserTestUtils.parseYangStreams(Collections.singletonList(getDatastoreTestInputStream()));
+    public static SchemaContext createTestContext() {
+        return YangParserTestUtils.parseYangResource(CONSTRAINTS_VALIDATION_TEST_YANG);
     }
 
     @Test

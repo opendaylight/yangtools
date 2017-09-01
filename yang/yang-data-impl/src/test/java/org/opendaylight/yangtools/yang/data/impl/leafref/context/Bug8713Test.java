@@ -31,7 +31,7 @@ public class Bug8713Test {
 
     @Test
     public void dataTreeCanditateValidationTest() throws Exception {
-        final SchemaContext context = YangParserTestUtils.parseYangSources("/bug8713/");
+        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/bug8713/");
         final LeafRefContext rootLeafRefContext = LeafRefContext.create(context);
         final TipProducingDataTree inMemoryDataTree = InMemoryDataTreeFactory.getInstance()
                 .create(DataTreeConfiguration.DEFAULT_OPERATIONAL);
@@ -49,7 +49,7 @@ public class Bug8713Test {
         inMemoryDataTree.commit(writeContributorsCandidate);
     }
 
-    private ContainerNode createRootContainer() {
+    private static ContainerNode createRootContainer() {
         return Builders.containerBuilder().withNodeIdentifier(new NodeIdentifier(foo("root")))
                 .withChild(ImmutableNodes.leafNode(bar("target"), "target value"))
                 .withChild(ImmutableNodes.leafNode(bar("ref"), "target value")).build();

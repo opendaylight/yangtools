@@ -11,26 +11,24 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
+import org.xml.sax.SAXException;
 
 public class Bug5693Test {
 
-    private final String pathToModuleFoo = getClass().getResource("/bugs/bug5693/foo.yin").getPath();
     private Module foo;
 
     /**
      * Use input stream to load Yin module.
      */
     @Before
-    public void initTest() throws FileNotFoundException, ReactorException {
-        foo = TestUtils.loadYinModule(new NamedFileInputStream(new File(pathToModuleFoo), pathToModuleFoo));
-        assertNotNull(foo);
+    public void initTest() throws ReactorException, SAXException, IOException {
+        foo = TestUtils.loadYinModule(YinTextSchemaSource.forResource(getClass(), "/bugs/bug5693/foo.yin"));
     }
 
     /**

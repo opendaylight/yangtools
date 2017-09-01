@@ -80,6 +80,10 @@ public interface SchemaContext extends ContainerSchemaNode {
      */
     Module findModuleByName(String name, Date revision);
 
+    default Optional<Module> findAnyModuleByName(final String name) {
+        return Optional.fromNullable(findModuleByName(name, null));
+    }
+
     /**
      * Returns module instance (from the context) with concrete namespace.
      *

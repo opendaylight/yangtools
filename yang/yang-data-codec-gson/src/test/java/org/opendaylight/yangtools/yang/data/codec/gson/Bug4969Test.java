@@ -13,7 +13,6 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.common.base.Optional;
 import com.google.gson.stream.JsonReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
@@ -29,16 +28,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug4969Test {
 
     @Test
-    public void newParserLeafRefTest() throws SourceException, ReactorException, URISyntaxException, IOException {
-        File sourceDir = new File(Bug4969Test.class.getResource("/bug-4969/yang").toURI());
-        SchemaContext context = YangParserTestUtils.parseYangSources(sourceDir.listFiles());
+    public void newParserLeafRefTest() throws IOException, URISyntaxException {
+        SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/bug-4969/yang");
         assertNotNull(context);
 
         verifyNormalizedNodeResult(context);
@@ -95,9 +91,8 @@ public class Bug4969Test {
     }
 
     @Test
-    public void newParserLeafRefTest2() throws SourceException, ReactorException, URISyntaxException, IOException {
-        File sourceDir = new File(Bug4969Test.class.getResource("/leafref/yang").toURI());
-        SchemaContext context = YangParserTestUtils.parseYangSources(sourceDir.listFiles());
+    public void newParserLeafRefTest2() throws URISyntaxException, IOException {
+        SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/leafref/yang");
         assertNotNull(context);
 
         parseJsonToNormalizedNodes(context);

@@ -65,7 +65,7 @@ public class EnumValueXPathFunctionTest {
 
     @Test
     public void testEnumValueFunction() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource(
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(EnumValueXPathFunctionTest.class,
                 "/yang-xpath-functions-test/enum-value-function/foo.yang");
         assertNotNull(schemaContext);
 
@@ -89,7 +89,7 @@ public class EnumValueXPathFunctionTest {
 
     @Test
     public void testInvalidTypeOfCorrespondingSchemaNode() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource(
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(EnumValueXPathFunctionTest.class,
                 "/yang-xpath-functions-test/enum-value-function/foo-invalid.yang");
         assertNotNull(schemaContext);
 
@@ -113,7 +113,7 @@ public class EnumValueXPathFunctionTest {
 
     @Test
     public void testInvalidNormalizedNodeValueType() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource(
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(EnumValueXPathFunctionTest.class,
                 "/yang-xpath-functions-test/enum-value-function/foo.yang");
         assertNotNull(schemaContext);
 
@@ -137,7 +137,7 @@ public class EnumValueXPathFunctionTest {
 
     @Test
     public void shouldFailOnUnknownEnumNodeValue() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource(
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(EnumValueXPathFunctionTest.class,
                 "/yang-xpath-functions-test/enum-value-function/foo.yang");
         assertNotNull(schemaContext);
 

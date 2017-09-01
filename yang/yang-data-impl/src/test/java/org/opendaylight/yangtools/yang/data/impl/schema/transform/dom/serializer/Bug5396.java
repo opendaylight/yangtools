@@ -56,7 +56,7 @@ public class Bug5396 {
                 .parse("2016-03-22"));
         root = QName.create(fooModuleQName, "root");
         schemaContext = YangParserTestUtils
-                .parseYangSources(new File(getClass().getResource("/bug5396/yang/foo.yang").toURI()));
+                .parseYangFiles(new File(getClass().getResource("/bug5396/yang/foo.yang").toURI()));
     }
 
     @Test
