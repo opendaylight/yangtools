@@ -27,7 +27,8 @@ public class Bug6856Test {
 
     @Test
     public void testImplicitInputAndOutputInRpc() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/bugs/bug6856/foo.yang");
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(Bug6856Test.class,
+            "/bugs/bug6856/foo.yang");
         assertNotNull(schemaContext);
 
         final OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -48,7 +49,8 @@ public class Bug6856Test {
 
     @Test
     public void testExplicitInputAndOutputInRpc() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/bugs/bug6856/bar.yang");
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(Bug6856Test.class,
+            "/bugs/bug6856/bar.yang");
         assertNotNull(schemaContext);
 
         final OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
