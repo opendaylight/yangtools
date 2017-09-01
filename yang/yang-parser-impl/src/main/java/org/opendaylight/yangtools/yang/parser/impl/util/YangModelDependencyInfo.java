@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMapping;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.util.NamedInputStream;
 
 /**
@@ -243,7 +242,7 @@ public abstract class YangModelDependencyInfo {
                 final String revisionDateStr = getRevisionDateString(subStatementContext, sourceName);
                 final String importedModuleName = Utils.stringFromStringContext(subStatementContext.argument(),
                         getReference(sourceName, subStatementContext));
-                final Date revisionDate = (revisionDateStr == null) ? null : QName
+                final Date revisionDate = revisionDateStr == null ? null : QName
                         .parseRevision(revisionDateStr);
                 final Optional<SemVer> importSemVer = Optional.fromNullable(getSemanticVersion(subStatementContext, sourceName));
                 result.add(new ModuleImportImpl(importedModuleName,
@@ -285,7 +284,7 @@ public abstract class YangModelDependencyInfo {
                 final String revisionDateStr = getRevisionDateString(subStatementContext, sourceName);
                 final String IncludeModuleName = Utils.stringFromStringContext(subStatementContext.argument(),
                         getReference(sourceName, subStatementContext));
-                final Date revisionDate = (revisionDateStr == null) ? null : QName
+                final Date revisionDate = revisionDateStr == null ? null : QName
                         .parseRevision(revisionDateStr);
                 result.add(new ModuleImportImpl(IncludeModuleName, revisionDate));
             }

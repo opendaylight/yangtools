@@ -43,8 +43,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YinStatementSourceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,8 +119,7 @@ public final class TestUtils {
         return ctx.getModules().iterator().next();
     }
 
-    public static Module findModule(final Set<Module> modules,
-        final String moduleName) {
+    public static Module findModule(final Set<Module> modules, final String moduleName) {
         Module result = null;
         for (Module module : modules) {
             if (module.getName().equals(moduleName)) {
@@ -133,8 +130,7 @@ public final class TestUtils {
         return result;
     }
 
-    public static ModuleImport findImport(final Set<ModuleImport> imports,
-            final String prefix) {
+    public static ModuleImport findImport(final Set<ModuleImport> imports, final String prefix) {
         ModuleImport result = null;
         for (ModuleImport moduleImport : imports) {
             if (moduleImport.getPrefix().equals(prefix)) {
@@ -145,8 +141,7 @@ public final class TestUtils {
         return result;
     }
 
-    public static TypeDefinition<?> findTypedef(
-            final Set<TypeDefinition<?>> typedefs, final String name) {
+    public static TypeDefinition<?> findTypedef(final Set<TypeDefinition<?>> typedefs, final String name) {
         TypeDefinition<?> result = null;
         for (TypeDefinition<?> td : typedefs) {
             if (td.getQName().getLocalName().equals(name)) {
@@ -157,9 +152,8 @@ public final class TestUtils {
         return result;
     }
 
-    public static SchemaPath createPath(final boolean absolute,
-            final URI namespace, final Date revision, final String prefix,
-            final String... names) {
+    public static SchemaPath createPath(final boolean absolute, final URI namespace, final Date revision,
+            final String prefix, final String... names) {
         List<QName> path = new ArrayList<>();
         for (String name : names) {
             path.add(QName.create(namespace, revision, name));
@@ -187,8 +181,7 @@ public final class TestUtils {
      * @param expected
      *            expected value
      */
-    public static void checkIsAugmenting(final DataSchemaNode node,
-            final boolean expected) {
+    public static void checkIsAugmenting(final DataSchemaNode node, final boolean expected) {
         assertEquals(expected, node.isAugmenting());
         if (node instanceof DataNodeContainer) {
             for (DataSchemaNode child : ((DataNodeContainer) node)
@@ -211,8 +204,7 @@ public final class TestUtils {
      * @param expected
      *            expected value
      */
-    public static void checkIsAddedByUses(final DataSchemaNode node,
-            final boolean expected) {
+    public static void checkIsAddedByUses(final DataSchemaNode node, final boolean expected) {
         assertEquals(expected, node.isAddedByUses());
         if (node instanceof DataNodeContainer) {
             for (DataSchemaNode child : ((DataNodeContainer) node)
@@ -226,8 +218,7 @@ public final class TestUtils {
         }
     }
 
-    public static void checkIsAddedByUses(final GroupingDefinition node,
-            final boolean expected) {
+    public static void checkIsAddedByUses(final GroupingDefinition node, final boolean expected) {
         assertEquals(expected, node.isAddedByUses());
         for (DataSchemaNode child : node.getChildNodes()) {
             checkIsAddedByUses(child, expected);
@@ -274,8 +265,7 @@ public final class TestUtils {
     public static SchemaContext parseYangSources(final String yangSourcesDirectoryPath)
             throws SourceException, ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
 
-        URL resourceDir = StmtTestUtils.class
-                .getResource(yangSourcesDirectoryPath);
+        URL resourceDir = StmtTestUtils.class.getResource(yangSourcesDirectoryPath);
         File testSourcesDir = new File(resourceDir.toURI());
 
         return parseYangSources(testSourcesDir.listFiles());

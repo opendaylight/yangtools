@@ -35,7 +35,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YinStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
