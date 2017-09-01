@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
@@ -17,6 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 /**
@@ -28,7 +31,7 @@ public class Bug3674Test {
     private DataTree tree;
 
     @Before
-    public void setUp() throws ReactorException {
+    public void setUp() throws ReactorException, IOException, YangSyntaxErrorException {
         tree = InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL);
         tree.setSchemaContext(TestModel.createTestContext());
 

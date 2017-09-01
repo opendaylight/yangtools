@@ -70,7 +70,7 @@ public class BitIsSetXPathFunctionTest {
     public void testBitIsSetFunction() throws Exception {
         final Set<String> setOfBits = ImmutableSet.of("UP", "PROMISCUOUS");
 
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource(
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(BitIsSetXPathFunctionTest.class,
                 "/yang-xpath-functions-test/bit-is-set-function/foo.yang");
         assertNotNull(schemaContext);
 
@@ -100,7 +100,7 @@ public class BitIsSetXPathFunctionTest {
     public void testInvalidTypeOfCorrespondingSchemaNode() throws Exception {
         final Set<String> setOfBits = ImmutableSet.of("UP", "PROMISCUOUS");
 
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource(
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(BitIsSetXPathFunctionTest.class,
                 "/yang-xpath-functions-test/bit-is-set-function/foo-invalid.yang");
         assertNotNull(schemaContext);
 
@@ -126,7 +126,7 @@ public class BitIsSetXPathFunctionTest {
     public void testInvalidNormalizedNodeValueType() throws Exception {
         final String invalidNodeValueType = "value of invalid type";
 
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource(
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(BitIsSetXPathFunctionTest.class,
                 "/yang-xpath-functions-test/bit-is-set-function/foo.yang");
         assertNotNull(schemaContext);
 
@@ -153,7 +153,7 @@ public class BitIsSetXPathFunctionTest {
     public void shouldFailOnUnknownBitArgument() throws Exception {
         final Set<String> setOfBits = ImmutableSet.of("UP", "PROMISCUOUS");
 
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource(
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(BitIsSetXPathFunctionTest.class,
                 "/yang-xpath-functions-test/bit-is-set-function/foo.yang");
         assertNotNull(schemaContext);
 

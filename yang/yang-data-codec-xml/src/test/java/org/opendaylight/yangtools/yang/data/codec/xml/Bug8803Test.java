@@ -35,7 +35,7 @@ public class Bug8803Test {
 
     @Test
     public void test() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSources("/bug8803");
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResourceDirectory("/bug8803");
         final SchemaPath topContPath = SchemaPath.create(true, QName.create("foo-ns", "1970-01-01", "top-cont"));
         final SchemaNode dataSchemaNode = SchemaContextUtil.findDataSchemaNode(schemaContext, topContPath);
         assertTrue(dataSchemaNode instanceof ContainerSchemaNode);

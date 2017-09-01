@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.tree;
 
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -17,13 +14,31 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.*;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeSnapshot;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.openjdk.jmh.annotations.*;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.BenchmarkMode;
+import org.openjdk.jmh.annotations.Fork;
+import org.openjdk.jmh.annotations.Level;
+import org.openjdk.jmh.annotations.Measurement;
+import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.OutputTimeUnit;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.Setup;
+import org.openjdk.jmh.annotations.State;
+import org.openjdk.jmh.annotations.TearDown;
+import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
@@ -86,7 +101,7 @@ public class InMemoryDataTreeBenchmark {
     private static final NormalizedNode<?, ?>[] OUTER_LIST_TWO_ITEM_INNER_LIST = initOuterListItems(OUTER_LIST_50K, TWO_ITEM_INNER_LIST);
     private static final NormalizedNode<?, ?>[] OUTER_LIST_TEN_ITEM_INNER_LIST = initOuterListItems(OUTER_LIST_10K, TEN_ITEM_INNER_LIST);
 
-    private static NormalizedNode<?,?>[] initOuterListItems(int outerListItemsCount, MapNode innerList) {
+    private static NormalizedNode<?,?>[] initOuterListItems(final int outerListItemsCount, final MapNode innerList) {
         final NormalizedNode<?,?>[] outerListItems = new NormalizedNode[outerListItemsCount];
 
         for (int i = 0; i < outerListItemsCount; ++i) {
@@ -100,7 +115,7 @@ public class InMemoryDataTreeBenchmark {
     private SchemaContext schemaContext;
     private DataTree datastore;
 
-    public static void main(String... args) throws IOException, RunnerException {
+    public static void main(final String... args) throws IOException, RunnerException {
         Options opt = new OptionsBuilder()
             .include(".*" + InMemoryDataTreeBenchmark.class.getSimpleName() + ".*")
             .forks(1)
@@ -113,7 +128,7 @@ public class InMemoryDataTreeBenchmark {
     public void setup() throws DataValidationFailedException, SourceException, ReactorException {
         schemaContext = BenchmarkModel.createTestContext();
         final InMemoryDataTreeFactory factory = InMemoryDataTreeFactory.getInstance();
-        datastore = factory.create();
+        datastore = factory.create(DataTreeConfiguration.DEFAULT_CONFIGURATION);
         datastore.setSchemaContext(schemaContext);
         final DataTreeSnapshot snapshot = datastore.takeSnapshot();
         initTestNode(snapshot);
@@ -136,7 +151,7 @@ public class InMemoryDataTreeBenchmark {
         datastore.commit(candidate);
     }
 
-    private DataContainerChild<?, ?> provideOuterListNode() {
+    private static DataContainerChild<?, ?> provideOuterListNode() {
         return ImmutableContainerNodeBuilder
             .create()
             .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(BenchmarkModel.TEST_QNAME))

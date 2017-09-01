@@ -43,7 +43,6 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.xml.sax.SAXException;
 
@@ -53,9 +52,9 @@ public class YangModeledAnyXmlSupportTest {
     private static ContainerNode data;
 
     @BeforeClass
-    public static void init() throws IOException, URISyntaxException, ReactorException, SAXException,
-            XMLStreamException, ParserConfigurationException {
-        schemaContext = YangParserTestUtils.parseYangSources("/yang-modeled-anyxml/yang");
+    public static void init() throws XMLStreamException, URISyntaxException, IOException, ParserConfigurationException,
+            SAXException {
+        schemaContext = YangParserTestUtils.parseYangResourceDirectory("/yang-modeled-anyxml/yang");
         final Module bazModule = schemaContext.findModuleByName("baz", null);
         final ContainerSchemaNode bazCont = (ContainerSchemaNode) bazModule.getDataChildByName(
                 QName.create(bazModule.getQNameModule(), "baz"));
