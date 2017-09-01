@@ -42,10 +42,10 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.util.ASTSchemaSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -212,16 +212,17 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
                         res.getResolvedSources(), res.getUnsatisfiedImports());
             }
 
-            final Map<SourceIdentifier, ParserRuleContext> asts = Maps.transformValues(srcs, ASTSchemaSource::getAST);
             final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(
                 statementParserMode, supportedFeatures);
 
-            for (final Entry<SourceIdentifier, ParserRuleContext> e : asts.entrySet()) {
-                final ParserRuleContext parserRuleCtx = e.getValue();
+            for (final Entry<SourceIdentifier, ASTSchemaSource> e : srcs.entrySet()) {
+                final ASTSchemaSource ast = e.getValue();
+                final ParserRuleContext parserRuleCtx = ast.getAST();
                 Preconditions.checkArgument(parserRuleCtx instanceof StatementContext,
                         "Unsupported context class %s for source %s", parserRuleCtx.getClass(), e.getKey());
 
-                reactor.addSource(new YangStatementSourceImpl(e.getKey(), (StatementContext) parserRuleCtx));
+                reactor.addSource(YangStatementStreamSource.create(e.getKey(), (StatementContext) parserRuleCtx,
+                    ast.getSymbolicName().orElse(null)));
             }
 
             final SchemaContext schemaContext;
