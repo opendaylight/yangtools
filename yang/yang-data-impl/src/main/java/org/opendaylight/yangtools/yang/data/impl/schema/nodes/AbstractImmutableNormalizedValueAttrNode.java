@@ -21,7 +21,8 @@ public abstract class AbstractImmutableNormalizedValueAttrNode<K extends PathArg
 
     private final Map<QName, String> attributes;
 
-    protected AbstractImmutableNormalizedValueAttrNode(final K nodeIdentifier, final V value, final Map<QName, String> attributes) {
+    protected AbstractImmutableNormalizedValueAttrNode(final K nodeIdentifier, final V value,
+            final Map<QName, String> attributes) {
         super(nodeIdentifier, value);
         this.attributes = ImmutableMap.copyOf(attributes);
     }

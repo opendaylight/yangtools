@@ -9,6 +9,7 @@
 package org.opendaylight.yangtools.yang.data.impl.codecs;
 
 import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.Int8Codec;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
@@ -25,7 +26,7 @@ public class Int8CodecStringTest {
     public void testSerialize() {
         Int8Codec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(BaseTypes.int8Type(), Int8Codec.class);
 
-        assertEquals("serialize", "10", codec.serialize(Byte.valueOf( (byte) 10 )));
+        assertEquals("serialize", "10", codec.serialize(Byte.valueOf((byte) 10)));
         assertEquals("serialize", "", codec.serialize(null));
     }
 

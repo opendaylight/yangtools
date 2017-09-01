@@ -9,16 +9,15 @@
 package org.opendaylight.yangtools.yang.data.impl;
 
 /**
- * Provides memory consumption and elapsed time between 2 points 
+ * Provides memory consumption and elapsed time between 2 points
  * @author mirehak
  */
 public class MemoryConsumption {
-    
     private long memBegin;
     private long tsBegin;
 
     /**
-     * record memory and timestamp
+     * Record memory and timestamp.
      */
     public void startObserving() {
         Runtime runtime = Runtime.getRuntime();
@@ -27,19 +26,21 @@ public class MemoryConsumption {
         memBegin = getActualMemoryConsumption();
         tsBegin = System.currentTimeMillis();
     }
-    
-    
+
     /**
+     * Return memory usage and elapsed time message.
+     *
      * @return memory usage and time elapsed message
      */
     public String finishObserving() {
         long memEnd = getActualMemoryConsumption();
         long tsEnd = System.currentTimeMillis();
-        return String.format("Used memory: %10d B; Elapsed time: %5d ms", (memEnd - memBegin), (tsEnd - tsBegin));
+        return String.format("Used memory: %10d B; Elapsed time: %5d ms", memEnd - memBegin, tsEnd - tsBegin);
     }
-    
-    
+
     /**
+     * Return used memory.
+     *
      * @return actual memory usage
      */
     public static long getActualMemoryConsumption() {
@@ -48,6 +49,4 @@ public class MemoryConsumption {
         long memory = runtime.totalMemory() - runtime.freeMemory();
         return memory;
     }
-    
-    
 }

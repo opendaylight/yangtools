@@ -18,10 +18,10 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModifiedNodeDoesNotExistException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
@@ -37,7 +37,7 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     protected AbstractNodeContainerModificationStrategy(final Class<? extends NormalizedNode<?, ?>> nodeClass,
             final DataTreeConfiguration treeConfig) {
         this.nodeClass = Preconditions.checkNotNull(nodeClass , "nodeClass");
-        this.verifyChildrenStructure = (treeConfig.getTreeType() == TreeType.CONFIGURATION);
+        this.verifyChildrenStructure = treeConfig.getTreeType() == TreeType.CONFIGURATION;
     }
 
     @SuppressWarnings("rawtypes")
@@ -64,7 +64,7 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
 
     @Override
     protected void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
-        final NormalizedNodeContainer container = (NormalizedNodeContainer) value;
+        final NormalizedNodeContainer<?, ?, ?> container = (NormalizedNodeContainer<?, ?, ?>) value;
         for (final Object child : container.getValue()) {
             checkArgument(child instanceof NormalizedNode);
             final NormalizedNode<?, ?> castedChild = (NormalizedNode<?, ?>) child;
@@ -73,8 +73,8 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
                 childOp.get().recursivelyVerifyStructure(castedChild);
             } else {
                 throw new SchemaValidationFailedException(
-                        String.format("Node %s is not a valid child of %s according to the schema.",
-                                castedChild.getIdentifier(), container.getIdentifier()));
+                    String.format("Node %s is not a valid child of %s according to the schema.",
+                        castedChild.getIdentifier(), container.getIdentifier()));
             }
         }
     }
@@ -186,12 +186,12 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
         final Collection<NormalizedNode<?, ?>> children = ((NormalizedNodeContainer)value).getValue();
 
         switch (modification.getOperation()) {
-        case NONE:
-            // Fresh node, just record a MERGE with a value
+            case NONE:
+                // Fresh node, just record a MERGE with a value
                 recursivelyVerifyStructure(value);
-            modification.updateValue(LogicalOperation.MERGE, value);
-            return;
-        case TOUCH:
+                modification.updateValue(LogicalOperation.MERGE, value);
+                return;
+            case TOUCH:
 
                 mergeChildrenIntoModification(modification, children, version);
                 // We record empty merge value, since real children merges
@@ -202,38 +202,39 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
                 // before.
                 modification.updateValue(LogicalOperation.MERGE, createEmptyValue(value));
                 return;
-        case MERGE:
-            // Merging into an existing node. Merge data children modifications (maybe recursively) and mark as MERGE,
-            // invalidating cached snapshot
-            mergeChildrenIntoModification(modification, children, version);
+            case MERGE:
+                // Merging into an existing node. Merge data children modifications (maybe recursively) and mark
+                // as MERGE, invalidating cached snapshot
+                mergeChildrenIntoModification(modification, children, version);
                 modification.updateOperationType(LogicalOperation.MERGE);
-            return;
-        case DELETE:
-            // Delete performs a data dependency check on existence of the node. Performing a merge on DELETE means we
-            // are really performing a write. One thing that ruins that are any child modifications. If there are any,
-            // we will perform a read() to get the current state of affairs, turn this into into a WRITE and then
-            // append any child entries.
-            if (!modification.getChildren().isEmpty()) {
-                // Version does not matter here as we'll throw it out
-                final Optional<TreeNode> current = apply(modification, modification.getOriginal(), Version.initial());
-                if (current.isPresent()) {
-                    modification.updateValue(LogicalOperation.WRITE, current.get().getData());
-                    mergeChildrenIntoModification(modification, children, version);
-                    return;
+                return;
+            case DELETE:
+                // Delete performs a data dependency check on existence of the node. Performing a merge on DELETE means
+                // we are really performing a write. One thing that ruins that are any child modifications. If there
+                // are any, we will perform a read() to get the current state of affairs, turn this into into a WRITE
+                // and then append any child entries.
+                if (!modification.getChildren().isEmpty()) {
+                    // Version does not matter here as we'll throw it out
+                    final Optional<TreeNode> current = apply(modification, modification.getOriginal(),
+                        Version.initial());
+                    if (current.isPresent()) {
+                        modification.updateValue(LogicalOperation.WRITE, current.get().getData());
+                        mergeChildrenIntoModification(modification, children, version);
+                        return;
+                    }
                 }
-            }
 
-            modification.updateValue(LogicalOperation.WRITE, value);
-            return;
-        case WRITE:
-            // We are augmenting a previous write. We'll just walk value's children, get the corresponding ModifiedNode
-            // and run recursively on it
-            mergeChildrenIntoModification(modification, children, version);
-            modification.updateOperationType(LogicalOperation.WRITE);
-            return;
+                modification.updateValue(LogicalOperation.WRITE, value);
+                return;
+            case WRITE:
+                // We are augmenting a previous write. We'll just walk value's children, get the corresponding
+                // ModifiedNode and run recursively on it
+                mergeChildrenIntoModification(modification, children, version);
+                modification.updateOperationType(LogicalOperation.WRITE);
+                return;
+            default:
+                throw new IllegalArgumentException("Unsupported operation " + modification.getOperation());
         }
-
-        throw new IllegalArgumentException("Unsupported operation " + modification.getOperation());
     }
 
     @Override
@@ -278,7 +279,8 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     protected void checkTouchApplicable(final YangInstanceIdentifier path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         if (!modification.getOriginal().isPresent() && !current.isPresent()) {
-            throw new ModifiedNodeDoesNotExistException(path, String.format("Node %s does not exist. Cannot apply modification to its children.", path));
+            throw new ModifiedNodeDoesNotExistException(path,
+                String.format("Node %s does not exist. Cannot apply modification to its children.", path));
         }
 
         if (!current.isPresent()) {

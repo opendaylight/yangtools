@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.data.impl.codecs;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.getCodec;
+
 import com.google.common.io.BaseEncoding;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.BinaryCodec;
@@ -29,8 +30,8 @@ public class BinaryCodecStringTest {
         BinaryCodec<String> codec = getCodec(BaseTypes.binaryType(), BinaryCodec.class);
 
         assertEquals("serialize", BaseEncoding.base64().encode(new byte[] { 1, 2, 3, 4 }),
-                      codec.serialize( new byte[] { 1, 2, 3, 4 }));
-        assertEquals( "serialize", "", codec.serialize(null));
+                      codec.serialize(new byte[] { 1, 2, 3, 4 }));
+        assertEquals("serialize", "", codec.serialize(null));
     }
 
     @SuppressWarnings("unchecked")

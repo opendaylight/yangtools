@@ -47,11 +47,14 @@ public final class SchemaUtils {
     }
 
     /**
-     * @param qname - schema node to find
-     * @param dataSchemaNode - iterable of schemaNodes to look through
-     * @return - schema node with newest revision or absent if no schema node with matching qname is found
+     * Find the first schema with specified QName
+     *
+     * @param qname schema node to find
+     * @param dataSchemaNode Iterable of schemaNodes to look through
+     * @return schema node with newest revision or absent if no schema node with matching qname is found
      */
-    public static Optional<DataSchemaNode> findFirstSchema(final QName qname, final Iterable<DataSchemaNode> dataSchemaNode) {
+    public static Optional<DataSchemaNode> findFirstSchema(final QName qname,
+            final Iterable<DataSchemaNode> dataSchemaNode) {
         DataSchemaNode sNode = null;
         if (dataSchemaNode != null && qname != null) {
             for (final DataSchemaNode dsn : dataSchemaNode) {
@@ -87,13 +90,15 @@ public final class SchemaUtils {
      * @throws java.lang.IllegalStateException if the child was not found in parent schema node
      */
     public static DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname) {
-        // Try to find child schema node directly, but use a fallback that compares QNames without revisions and auto-expands choices
+        // Try to find child schema node directly, but use a fallback that compares QNames without revisions
+        // and auto-expands choices
         final DataSchemaNode dataChildByName = schema.getDataChildByName(qname);
         return dataChildByName == null ? findSchemaForChild(schema, qname, schema.getChildNodes()) : dataChildByName;
     }
 
     @Nullable
-    public static DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname, final boolean strictMode) {
+    public static DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname,
+            final boolean strictMode) {
         if (strictMode) {
             return findSchemaForChild(schema, qname);
         }
@@ -105,7 +110,8 @@ public final class SchemaUtils {
         return childSchemaOptional.get();
     }
 
-    public static DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname, final Iterable<DataSchemaNode> childNodes) {
+    public static DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname,
+            final Iterable<DataSchemaNode> childNodes) {
         final Optional<DataSchemaNode> childSchema = findFirstSchema(qname, childNodes);
         Preconditions.checkState(childSchema.isPresent(),
                 "Unknown child(ren) node(s) detected, identified by: %s, in: %s", qname, schema);
@@ -114,8 +120,8 @@ public final class SchemaUtils {
 
     public static AugmentationSchema findSchemaForAugment(final AugmentationTarget schema, final Set<QName> qNames) {
         final Optional<AugmentationSchema> schemaForAugment = findAugment(schema, qNames);
-        Preconditions.checkState(schemaForAugment.isPresent(), "Unknown augmentation node detected, identified by: %s, in: %s",
-                qNames, schema);
+        Preconditions.checkState(schemaForAugment.isPresent(),
+            "Unknown augmentation node detected, identified by: %s, in: %s", qNames, schema);
         return schemaForAugment.get();
     }
 
@@ -129,8 +135,8 @@ public final class SchemaUtils {
             }
         }
 
-        Preconditions.checkState(schemaForAugment.isPresent(), "Unknown augmentation node detected, identified by: %s, in: %s",
-                qNames, schema);
+        Preconditions.checkState(schemaForAugment.isPresent(),
+            "Unknown augmentation node detected, identified by: %s, in: %s", qNames, schema);
         return schemaForAugment.get();
     }
 
@@ -149,7 +155,8 @@ public final class SchemaUtils {
 
     public static DataSchemaNode findSchemaForChild(final ChoiceSchemaNode schema, final QName childPartialQName) {
         for (final ChoiceCaseNode choiceCaseNode : schema.getCases()) {
-            final Optional<DataSchemaNode> childSchema = findFirstSchema(childPartialQName, choiceCaseNode.getChildNodes());
+            final Optional<DataSchemaNode> childSchema = findFirstSchema(childPartialQName,
+                choiceCaseNode.getChildNodes());
             if (childSchema.isPresent()) {
                 return childSchema.get();
             }
@@ -170,7 +177,8 @@ public final class SchemaUtils {
         return mapChildElementsFromChoices(schema, schema.getChildNodes());
     }
 
-    private static Map<QName, ChoiceSchemaNode> mapChildElementsFromChoices(final DataNodeContainer schema, final Iterable<DataSchemaNode> childNodes) {
+    private static Map<QName, ChoiceSchemaNode> mapChildElementsFromChoices(final DataNodeContainer schema,
+            final Iterable<DataSchemaNode> childNodes) {
         final Map<QName, ChoiceSchemaNode> mappedChoices = Maps.newLinkedHashMap();
 
         for (final DataSchemaNode childSchema : childNodes) {
@@ -230,7 +238,7 @@ public final class SchemaUtils {
 
             for (final DataSchemaNode child : ((DataNodeContainer) schema).getChildNodes()) {
                 // If is not augmented child, continue
-                if (!(augments.containsKey(child.getQName()))) {
+                if (!augments.containsKey(child.getQName())) {
                     continue;
                 }
 
@@ -256,7 +264,7 @@ public final class SchemaUtils {
         // Choice Node has to map child nodes from all its cases
         if (schema instanceof ChoiceSchemaNode) {
             for (final ChoiceCaseNode choiceCaseNode : ((ChoiceSchemaNode) schema).getCases()) {
-                if (!(augments.containsKey(choiceCaseNode.getQName()))) {
+                if (!augments.containsKey(choiceCaseNode.getQName())) {
                     continue;
                 }
 
@@ -306,8 +314,9 @@ public final class SchemaUtils {
      * @param augmentSchema augment schema
      * @return set of nodes
      */
-    public static Set<DataSchemaNode> getRealSchemasForAugment(final AugmentationTarget targetSchema, final AugmentationSchema augmentSchema) {
-        if (!(targetSchema.getAvailableAugmentations().contains(augmentSchema))) {
+    public static Set<DataSchemaNode> getRealSchemasForAugment(final AugmentationTarget targetSchema,
+            final AugmentationSchema augmentSchema) {
+        if (!targetSchema.getAvailableAugmentations().contains(augmentSchema)) {
             return Collections.emptySet();
         }
 
@@ -359,7 +368,7 @@ public final class SchemaUtils {
                 currentAugmentChildNodes.add(dataSchemaNode.getQName());
             }
 
-            if (childToProcess.getPossibleChildNames().equals(currentAugmentChildNodes)){
+            if (childToProcess.getPossibleChildNames().equals(currentAugmentChildNodes)) {
                 return true;
             }
         }

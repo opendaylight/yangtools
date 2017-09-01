@@ -35,7 +35,7 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener{
     private final List<QNameWithPredicateBuilder> leafRefPathQnameList = new ArrayList<>();
     private final SchemaContext schemaContext;
     private final Module module;
-  //FIXME use for identifier path completion
+    // FIXME: use for identifier path completion
     private final SchemaNode node;
 
     private ParsingState currentParsingState = ParsingState.LEAF_REF_PATH;
@@ -51,15 +51,16 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener{
         LEAF_REF_PATH, PATH_PREDICATE, PREDICATE_PATH_EQUALITY_EXPR, PATH_KEY_EXPR
     }
 
-    public LeafRefPathParserListenerImpl(final SchemaContext schemaContext, final Module currentModule, final SchemaNode currentNode) {
-       this.schemaContext = schemaContext;
-       this.module = currentModule;
-       this.node = currentNode;
+    LeafRefPathParserListenerImpl(final SchemaContext schemaContext, final Module currentModule,
+            final SchemaNode currentNode) {
+        this.schemaContext = schemaContext;
+        this.module = currentModule;
+        this.node = currentNode;
     }
 
     @Override
     public void enterPath_predicate(final Path_predicateContext ctx) {
-        currentParsingState=ParsingState.PATH_PREDICATE;
+        currentParsingState = ParsingState.PATH_PREDICATE;
         currentPredicate = new QNamePredicateBuilder();
     }
 
@@ -67,13 +68,13 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener{
     public void exitPath_predicate(final Path_predicateContext ctx) {
         currentLeafRefPathQName.addQNamePredicate(currentPredicate.build());
         currentPredicate = null;
-        currentParsingState=ParsingState.LEAF_REF_PATH;
+        currentParsingState = ParsingState.LEAF_REF_PATH;
     }
 
 
     @Override
     public void enterRel_path_keyexpr(final Rel_path_keyexprContext ctx) {
-        currentParsingState=ParsingState.PATH_KEY_EXPR;
+        currentParsingState = ParsingState.PATH_KEY_EXPR;
 
         final List<TerminalNode> dots = ctx.DOTS();
         predicatePathKeyQnameList = new ArrayList<>(dots.size());
@@ -88,7 +89,7 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener{
             QNameWithPredicateBuilder::build), false);
         currentPredicate.setPathKeyExpression(pathKeyExpression);
 
-        currentParsingState=ParsingState.PREDICATE_PATH_EQUALITY_EXPR;
+        currentParsingState = ParsingState.PREDICATE_PATH_EQUALITY_EXPR;
     }
 
     @Override
@@ -163,7 +164,8 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener{
 
     private URI getNamespaceForImportPrefix(final String prefix) {
         final ModuleImport moduleImport = getModuleImport(prefix);
-        final Module findedModule = schemaContext.findModuleByName(moduleImport.getModuleName(), moduleImport.getRevision());
+        final Module findedModule = schemaContext.findModuleByName(moduleImport.getModuleName(),
+            moduleImport.getRevision());
 
         return findedModule.getNamespace();
     }

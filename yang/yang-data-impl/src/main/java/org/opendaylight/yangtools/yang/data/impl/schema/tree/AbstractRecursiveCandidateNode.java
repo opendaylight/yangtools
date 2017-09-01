@@ -18,14 +18,16 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNod
 
 abstract class AbstractRecursiveCandidateNode extends AbstractDataTreeCandidateNode {
 
-    protected AbstractRecursiveCandidateNode(final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> data) {
+    protected AbstractRecursiveCandidateNode(
+            final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> data) {
         super(data);
     }
 
     @SuppressWarnings("unchecked")
     static DataTreeCandidateNode deleteNode(final NormalizedNode<?, ?> data) {
         if (data instanceof NormalizedNodeContainer) {
-            return new RecursiveDeleteCandidateNode((NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) data);
+            return new RecursiveDeleteCandidateNode(
+                (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) data);
         }
         return new DeleteLeafCandidateNode(data);
     }
@@ -33,7 +35,8 @@ abstract class AbstractRecursiveCandidateNode extends AbstractDataTreeCandidateN
     @SuppressWarnings("unchecked")
     static DataTreeCandidateNode replaceNode(final NormalizedNode<?, ?> oldData, final NormalizedNode<?, ?> newData) {
         if (isContainer(oldData)) {
-            return new RecursiveReplaceCandidateNode((NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) oldData,
+            return new RecursiveReplaceCandidateNode(
+                (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) oldData,
                 (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) newData);
         }
         return new ReplaceLeafCandidateNode(oldData, newData);
@@ -42,7 +45,8 @@ abstract class AbstractRecursiveCandidateNode extends AbstractDataTreeCandidateN
     @SuppressWarnings("unchecked")
     static DataTreeCandidateNode unmodifiedNode(final NormalizedNode<?, ?> data) {
         if (data instanceof NormalizedNodeContainer) {
-            return new RecursiveUnmodifiedCandidateNode((NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) data);
+            return new RecursiveUnmodifiedCandidateNode(
+                (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) data);
         }
         return new UnmodifiedLeafCandidateNode(data);
     }
@@ -50,7 +54,8 @@ abstract class AbstractRecursiveCandidateNode extends AbstractDataTreeCandidateN
     @SuppressWarnings("unchecked")
     static DataTreeCandidateNode writeNode(final NormalizedNode<?, ?> data) {
         if (data instanceof NormalizedNodeContainer) {
-            return new RecursiveWriteCandidateNode((NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) data);
+            return new RecursiveWriteCandidateNode(
+                (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) data);
         }
         return new WriteLeafCandidateNode(data);
     }
@@ -82,7 +87,8 @@ abstract class AbstractRecursiveCandidateNode extends AbstractDataTreeCandidateN
         return createLeaf(childData);
     }
 
-    protected abstract DataTreeCandidateNode createContainer(NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> childData);
+    abstract DataTreeCandidateNode createContainer(
+            NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> childData);
 
-    protected abstract DataTreeCandidateNode createLeaf(NormalizedNode<?,?> childData);
+    abstract DataTreeCandidateNode createLeaf(NormalizedNode<?,?> childData);
 }

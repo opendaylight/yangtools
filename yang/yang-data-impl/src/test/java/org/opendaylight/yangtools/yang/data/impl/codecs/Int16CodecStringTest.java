@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.data.impl.codecs;
 import static org.junit.Assert.assertEquals;
 import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx;
 import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.getCodec;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.Int16Codec;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;

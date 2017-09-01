@@ -22,7 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
 final class AugmentationModificationStrategy extends AbstractDataNodeContainerModificationStrategy<AugmentationSchema> {
-    AugmentationModificationStrategy(final AugmentationSchema schema, final DataNodeContainer resolved, final DataTreeConfiguration treeConfig) {
+    AugmentationModificationStrategy(final AugmentationSchema schema, final DataNodeContainer resolved,
+            final DataTreeConfiguration treeConfig) {
         super(createAugmentProxy(schema,resolved), AugmentationNode.class, treeConfig);
     }
 
@@ -40,7 +41,8 @@ final class AugmentationModificationStrategy extends AbstractDataNodeContainerMo
                 .withNodeIdentifier(((AugmentationNode) original).getIdentifier()).build();
     }
 
-    private static AugmentationSchema createAugmentProxy(final AugmentationSchema schema, final DataNodeContainer resolved) {
+    private static AugmentationSchema createAugmentProxy(final AugmentationSchema schema,
+            final DataNodeContainer resolved) {
         final Set<DataSchemaNode> realChildSchemas = new HashSet<>();
         for (final DataSchemaNode augChild : schema.getChildNodes()) {
             realChildSchemas.add(resolved.getDataChildByName(augChild.getQName()));

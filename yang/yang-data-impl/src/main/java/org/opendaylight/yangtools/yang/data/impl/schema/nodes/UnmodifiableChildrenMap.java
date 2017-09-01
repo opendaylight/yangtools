@@ -23,7 +23,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
  * Internal equivalent of {@link Collections}' unmodifiable Map. It does not retain
  * keySet/entrySet references, thus lowering the memory overhead.
  */
-final class UnmodifiableChildrenMap implements CloneableMap<PathArgument, DataContainerChild<? extends PathArgument, ?>>, Serializable {
+final class UnmodifiableChildrenMap
+        implements CloneableMap<PathArgument, DataContainerChild<? extends PathArgument, ?>>, Serializable {
     private static final long serialVersionUID = 1L;
     /*
      * Do not wrap maps which are smaller than this and instead copy them into
@@ -44,7 +45,8 @@ final class UnmodifiableChildrenMap implements CloneableMap<PathArgument, DataCo
      * @param map Backing map
      * @return Unmodifiable view
      */
-    static Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> create(final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> map) {
+    static Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> create(
+            final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> map) {
         if (map instanceof UnmodifiableChildrenMap) {
             return map;
         }
@@ -98,7 +100,8 @@ final class UnmodifiableChildrenMap implements CloneableMap<PathArgument, DataCo
     }
 
     @Override
-    public void putAll(@Nonnull final Map<? extends PathArgument, ? extends DataContainerChild<? extends PathArgument, ?>> m) {
+    @SuppressWarnings("checkstyle:parameterName")
+    public void putAll(final Map<? extends PathArgument, ? extends DataContainerChild<? extends PathArgument, ?>> m) {
         throw new UnsupportedOperationException();
     }
 
@@ -134,8 +137,8 @@ final class UnmodifiableChildrenMap implements CloneableMap<PathArgument, DataCo
     }
 
     @Override
-    public boolean equals(final Object o) {
-        return this == o || delegate.equals(o);
+    public boolean equals(final Object obj) {
+        return this == obj || delegate.equals(obj);
     }
 
     @Override
@@ -152,7 +155,8 @@ final class UnmodifiableChildrenMap implements CloneableMap<PathArgument, DataCo
     @SuppressWarnings("unchecked")
     public Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> createMutableClone() {
         if (delegate instanceof HashMap) {
-            return (Map<PathArgument, DataContainerChild<? extends PathArgument, ?>>) ((HashMap<?, ?>) delegate).clone();
+            return (Map<PathArgument, DataContainerChild<? extends PathArgument, ?>>)
+                    ((HashMap<?, ?>) delegate).clone();
         }
 
         return new HashMap<>(delegate);

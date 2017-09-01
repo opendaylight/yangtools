@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 final class RecursiveReplaceCandidateNode extends AbstractDataTreeCandidateNode {
     private final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> oldData;
 
-    public RecursiveReplaceCandidateNode(final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> oldData,
+    RecursiveReplaceCandidateNode(final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> oldData,
             final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> newData) {
         super(newData);
         this.oldData = Preconditions.checkNotNull(oldData);

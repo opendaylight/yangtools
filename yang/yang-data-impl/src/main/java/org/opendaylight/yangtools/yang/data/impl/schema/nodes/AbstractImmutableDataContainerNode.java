@@ -46,6 +46,7 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
     /**
      * DO NOT USE THIS METHOD.
      *
+     * <p>
      * This is an implementation-internal API and no outside users should use it. If you do,
      * you are asking for trouble, as the returned object is not guaranteed to conform to
      * java.util.Map interface.

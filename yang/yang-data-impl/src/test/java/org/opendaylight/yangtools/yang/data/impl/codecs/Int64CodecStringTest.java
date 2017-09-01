@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.data.impl.codecs;
 import static org.junit.Assert.assertEquals;
 import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx;
 import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.getCodec;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.Int64Codec;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
@@ -27,7 +28,7 @@ public class Int64CodecStringTest {
     public void testSerialize() {
         Int64Codec<String> codec = getCodec(BaseTypes.int64Type(), Int64Codec.class);
 
-        assertEquals("serialize", "12345", codec.serialize(Long.valueOf( 12345 )));
+        assertEquals("serialize", "12345", codec.serialize(Long.valueOf(12345)));
         assertEquals("serialize", "", codec.serialize(null));
     }
 

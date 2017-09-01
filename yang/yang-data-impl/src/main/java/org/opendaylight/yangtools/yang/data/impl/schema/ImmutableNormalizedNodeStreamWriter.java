@@ -170,9 +170,9 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @Override
     public void startLeafSet(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
-        final ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = UNKNOWN_SIZE == childSizeHint ?
-                InterningLeafSetNodeBuilder.create(nextSchema) :
-                    InterningLeafSetNodeBuilder.create(nextSchema, childSizeHint);
+        final ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = UNKNOWN_SIZE == childSizeHint
+                ? InterningLeafSetNodeBuilder.create(nextSchema)
+                        : InterningLeafSetNodeBuilder.create(nextSchema, childSizeHint);
         builder.withNodeIdentifier(name);
         enter(builder);
     }
@@ -181,11 +181,13 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     public void leafSetEntryNode(final QName name, final Object value) {
         if (getCurrent() instanceof ImmutableOrderedLeafSetNodeBuilder) {
             @SuppressWarnings("unchecked")
-            ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = ((ImmutableOrderedLeafSetNodeBuilder<Object>) getCurrent());
+            ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder =
+                (ImmutableOrderedLeafSetNodeBuilder<Object>) getCurrent();
             builder.withChildValue(value);
         } else if (getCurrent() instanceof ImmutableLeafSetNodeBuilder) {
             @SuppressWarnings("unchecked")
-            ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = ((ImmutableLeafSetNodeBuilder<Object>) getCurrent());
+            ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder =
+                (ImmutableLeafSetNodeBuilder<Object>) getCurrent();
             builder.withChildValue(value);
         } else {
             throw new IllegalArgumentException("LeafSetEntryNode is not valid for parent " + getCurrent());
@@ -217,8 +219,9 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     public void startContainerNode(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
 
-        final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> builder = UNKNOWN_SIZE == childSizeHint ?
-                ImmutableContainerNodeBuilder.create() : ImmutableContainerNodeBuilder.create(childSizeHint);
+        final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> builder =
+                UNKNOWN_SIZE == childSizeHint ? ImmutableContainerNodeBuilder.create()
+                        : ImmutableContainerNodeBuilder.create(childSizeHint);
         enter(builder.withNodeIdentifier(name));
     }
 
@@ -228,8 +231,10 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
 
         Preconditions.checkArgument(nextSchema instanceof YangModeledAnyXmlSchemaNode,
                 "Schema of this node should be instance of YangModeledAnyXmlSchemaNode");
-        final DataContainerNodeAttrBuilder<NodeIdentifier, YangModeledAnyXmlNode> builder = UNKNOWN_SIZE == childSizeHint ? ImmutableYangModeledAnyXmlNodeBuilder
-                .create((YangModeledAnyXmlSchemaNode) nextSchema) : ImmutableYangModeledAnyXmlNodeBuilder.create(
+        final DataContainerNodeAttrBuilder<NodeIdentifier, YangModeledAnyXmlNode> builder =
+                UNKNOWN_SIZE == childSizeHint
+                ? ImmutableYangModeledAnyXmlNodeBuilder.create((YangModeledAnyXmlSchemaNode) nextSchema)
+                        : ImmutableYangModeledAnyXmlNodeBuilder.create(
                 (YangModeledAnyXmlSchemaNode) nextSchema, childSizeHint);
         enter(builder.withNodeIdentifier(name));
     }
@@ -238,17 +243,19 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     public void startUnkeyedList(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
 
-        final CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> builder = UNKNOWN_SIZE == childSizeHint ?
-                ImmutableUnkeyedListNodeBuilder.create() : ImmutableUnkeyedListNodeBuilder.create(childSizeHint);
+        final CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> builder =
+                UNKNOWN_SIZE == childSizeHint ? ImmutableUnkeyedListNodeBuilder.create()
+                        : ImmutableUnkeyedListNodeBuilder.create(childSizeHint);
         enter(builder.withNodeIdentifier(name));
     }
 
     @Override
     public void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) {
-        Preconditions.checkArgument((getCurrent() instanceof NormalizedNodeResultBuilder)
+        Preconditions.checkArgument(getCurrent() instanceof NormalizedNodeResultBuilder
                 || getCurrent() instanceof ImmutableUnkeyedListNodeBuilder);
-        final DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> builder = UNKNOWN_SIZE == childSizeHint ?
-                ImmutableUnkeyedListEntryNodeBuilder.create() : ImmutableUnkeyedListEntryNodeBuilder.create(childSizeHint);
+        final DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> builder =
+                UNKNOWN_SIZE == childSizeHint ? ImmutableUnkeyedListEntryNodeBuilder.create()
+                        : ImmutableUnkeyedListEntryNodeBuilder.create(childSizeHint);
         enter(builder.withNodeIdentifier(name));
     }
 
@@ -264,11 +271,13 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @Override
     public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint) {
         if (!(getCurrent() instanceof NormalizedNodeResultBuilder)) {
-            Preconditions.checkArgument(getCurrent() instanceof ImmutableMapNodeBuilder || getCurrent() instanceof ImmutableOrderedMapNodeBuilder);
+            Preconditions.checkArgument(getCurrent() instanceof ImmutableMapNodeBuilder
+                || getCurrent() instanceof ImmutableOrderedMapNodeBuilder);
         }
 
-        final DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> builder = UNKNOWN_SIZE == childSizeHint ?
-                ImmutableMapEntryNodeBuilder.create() : ImmutableMapEntryNodeBuilder.create(childSizeHint);
+        final DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> builder =
+                UNKNOWN_SIZE == childSizeHint ? ImmutableMapEntryNodeBuilder.create()
+                        : ImmutableMapEntryNodeBuilder.create(childSizeHint);
         enter(builder.withNodeIdentifier(identifier));
     }
 
@@ -276,8 +285,8 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     public void startOrderedMapNode(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
 
-        final CollectionNodeBuilder<MapEntryNode, OrderedMapNode> builder = UNKNOWN_SIZE == childSizeHint ?
-                ImmutableOrderedMapNodeBuilder.create() : ImmutableOrderedMapNodeBuilder.create(childSizeHint);
+        final CollectionNodeBuilder<MapEntryNode, OrderedMapNode> builder = UNKNOWN_SIZE == childSizeHint
+                ? ImmutableOrderedMapNodeBuilder.create() : ImmutableOrderedMapNodeBuilder.create(childSizeHint);
         enter(builder.withNodeIdentifier(name));
     }
 
@@ -285,8 +294,8 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
 
-        final DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> builder = UNKNOWN_SIZE == childSizeHint ?
-                ImmutableChoiceNodeBuilder.create() : ImmutableChoiceNodeBuilder.create(childSizeHint);
+        final DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> builder = UNKNOWN_SIZE == childSizeHint
+                ? ImmutableChoiceNodeBuilder.create() : ImmutableChoiceNodeBuilder.create(childSizeHint);
         enter(builder.withNodeIdentifier(name));
     }
 
