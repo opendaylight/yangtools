@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.codecs;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+
 import java.math.BigDecimal;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.DecimalCodec;
@@ -34,7 +35,7 @@ public class DecimalCodecStringTest {
         DecimalCodec<String> codec = TypeDefinitionAwareCodecTestHelper.getCodec(getType(), DecimalCodec.class);
 
         assertEquals("serialize", "123.456", codec.serialize(new BigDecimal("123.456")));
-        assertEquals("serialize", "", codec.serialize( null));
+        assertEquals("serialize", "", codec.serialize(null));
     }
 
     @SuppressWarnings("unchecked")

@@ -23,11 +23,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 
-/**
+/*
+ * Schema structure of document is:
  *
- * Schema structure of document is
- *
- * <pre>
  * container root { 
  *      list list-a {
  *              key leaf-a;
@@ -47,8 +45,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableCo
  *              }
  *      }
  * }
- * </pre>
- *
  */
 public class NormalizedNodeUtilsTest {
 
@@ -75,7 +71,7 @@ public class NormalizedNodeUtilsTest {
                 .build();
 
     /**
-     * Returns a test document
+     * Returns a test document.
      *
      * <pre>
      * root
@@ -92,7 +88,7 @@ public class NormalizedNodeUtilsTest {
      *
      * @return A test document
      */
-    public NormalizedNode<?, ?> createDocumentOne() {
+    private static NormalizedNode<?, ?> createDocumentOne() {
         return ImmutableContainerNodeBuilder
                 .create()
                 .withNodeIdentifier(new NodeIdentifier(ROOT_QNAME))
@@ -119,5 +115,4 @@ public class NormalizedNodeUtilsTest {
         Optional<NormalizedNode<?, ?>> listTwoResult = NormalizedNodes.findNode(tree, LIST_B_TWO_PATH);
         assertTrue(listTwoResult.isPresent());
     }
-
 }

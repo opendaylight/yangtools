@@ -60,8 +60,9 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     }
 
     @SuppressWarnings("unchecked")
-    private static NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> getContainer(@Nullable final TreeNode meta) {
-        return (meta == null ? null : (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>)meta.getData());
+    private static NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> getContainer(
+            @Nullable final TreeNode meta) {
+        return meta == null ? null : (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>)meta.getData();
     }
 
     private ChildNode childNode(final ModifiedNode childMod) {
@@ -73,29 +74,29 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     @Nonnull
     public Collection<DataTreeCandidateNode> getChildNodes() {
         switch (mod.getModificationType()) {
-        case APPEARED:
-        case DISAPPEARED:
-        case SUBTREE_MODIFIED:
-            return Collections2.transform(mod.getChildren(), this::childNode);
-        case UNMODIFIED:
-            // Unmodified node, but we still need to resolve potential children. canHaveChildren returns
-            // false if both arguments are null.
-            if (!canHaveChildren(oldMeta, newMeta)) {
-                return ImmutableList.of();
-            }
+            case APPEARED:
+            case DISAPPEARED:
+            case SUBTREE_MODIFIED:
+                return Collections2.transform(mod.getChildren(), this::childNode);
+            case UNMODIFIED:
+                // Unmodified node, but we still need to resolve potential children. canHaveChildren returns
+                // false if both arguments are null.
+                if (!canHaveChildren(oldMeta, newMeta)) {
+                    return ImmutableList.of();
+                }
 
-            return Collections2.transform(getContainer(newMeta != null ? newMeta : oldMeta).getValue(),
-                AbstractRecursiveCandidateNode::unmodifiedNode);
-        case DELETE:
-        case WRITE:
-            // This is unusual, the user is requesting we follow into an otherwise-terminal node.
-            // We need to fudge things based on before/after data to correctly fake the expectations.
-            if (!canHaveChildren(oldMeta, newMeta)) {
-                return ImmutableList.of();
-            }
-            return AbstractDataTreeCandidateNode.deltaChildren(getContainer(oldMeta), getContainer(newMeta));
-        default:
-            throw new IllegalArgumentException("Unhandled modification type " + mod.getModificationType());
+                return Collections2.transform(getContainer(newMeta != null ? newMeta : oldMeta).getValue(),
+                    AbstractRecursiveCandidateNode::unmodifiedNode);
+            case DELETE:
+            case WRITE:
+                // This is unusual, the user is requesting we follow into an otherwise-terminal node.
+                // We need to fudge things based on before/after data to correctly fake the expectations.
+                if (!canHaveChildren(oldMeta, newMeta)) {
+                    return ImmutableList.of();
+                }
+                return AbstractDataTreeCandidateNode.deltaChildren(getContainer(oldMeta), getContainer(newMeta));
+            default:
+                throw new IllegalArgumentException("Unhandled modification type " + mod.getModificationType());
         }
     }
 
@@ -124,29 +125,30 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     @Override
     public final DataTreeCandidateNode getModifiedChild(final PathArgument identifier) {
         switch (mod.getModificationType()) {
-        case APPEARED:
-        case DISAPPEARED:
-        case SUBTREE_MODIFIED:
-            final Optional<ModifiedNode> childMod = mod.getChild(identifier);
-            if (childMod.isPresent()) {
-                return childNode(childMod.get());
-            }
-            return null;
-        case UNMODIFIED:
-            if (!canHaveChildren(oldMeta, newMeta)) {
+            case APPEARED:
+            case DISAPPEARED:
+            case SUBTREE_MODIFIED:
+                final Optional<ModifiedNode> childMod = mod.getChild(identifier);
+                if (childMod.isPresent()) {
+                    return childNode(childMod.get());
+                }
                 return null;
-            }
-            final Optional<NormalizedNode<?, ?>> maybeChild = getContainer(newMeta != null ? newMeta : oldMeta)
-                    .getChild(identifier);
-            return maybeChild.isPresent() ? AbstractRecursiveCandidateNode.unmodifiedNode(maybeChild.get()) : null;
-        case DELETE:
-        case WRITE:
-            if (!canHaveChildren(oldMeta, newMeta)) {
-                return null;
-            }
-            return AbstractDataTreeCandidateNode.deltaChild(getContainer(oldMeta), getContainer(newMeta), identifier);
-        default:
-            throw new IllegalArgumentException("Unhandled modification type " + mod.getModificationType());
+            case UNMODIFIED:
+                if (!canHaveChildren(oldMeta, newMeta)) {
+                    return null;
+                }
+                final Optional<NormalizedNode<?, ?>> maybeChild = getContainer(newMeta != null ? newMeta : oldMeta)
+                        .getChild(identifier);
+                return maybeChild.isPresent() ? AbstractRecursiveCandidateNode.unmodifiedNode(maybeChild.get()) : null;
+            case DELETE:
+            case WRITE:
+                if (!canHaveChildren(oldMeta, newMeta)) {
+                    return null;
+                }
+                return AbstractDataTreeCandidateNode.deltaChild(getContainer(oldMeta), getContainer(newMeta),
+                    identifier);
+            default:
+                throw new IllegalArgumentException("Unhandled modification type " + mod.getModificationType());
         }
     }
 
@@ -164,7 +166,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "{mod = " + this.mod + ", oldMeta = " + this.oldMeta + ", newMeta = " +
-                this.newMeta + "}";
+        return this.getClass().getSimpleName() + "{mod = " + this.mod + ", oldMeta = " + this.oldMeta + ", newMeta = "
+                + this.newMeta + "}";
     }
 }

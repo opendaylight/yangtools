@@ -21,7 +21,8 @@ abstract class AbstractCursorAware {
 
     protected <T extends AbstractCursor<?>> T openCursor(final T cursor) {
         final boolean success = CURSOR_UPDATER.compareAndSet(this, null, cursor);
-        Preconditions.checkState(success, "Modification %s has cursor attached at path %s", this, this.cursor.getRootPath());
+        Preconditions.checkState(success, "Modification %s has cursor attached at path %s", this,
+            this.cursor.getRootPath());
         return cursor;
     }
 

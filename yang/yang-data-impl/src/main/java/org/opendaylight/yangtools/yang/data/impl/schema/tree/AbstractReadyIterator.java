@@ -65,6 +65,7 @@ abstract class AbstractReadyIterator {
     }
 
     abstract AbstractReadyIterator getParent();
+
     abstract void removeFromParent();
 
     private static final class NestedReadyIterator extends AbstractReadyIterator {
@@ -103,5 +104,4 @@ abstract class AbstractReadyIterator {
             // No-op, since root node cannot be removed
         }
     }
-
 }

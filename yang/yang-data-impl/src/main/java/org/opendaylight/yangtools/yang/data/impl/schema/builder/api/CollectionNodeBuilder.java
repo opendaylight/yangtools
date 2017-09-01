@@ -22,5 +22,6 @@ public interface CollectionNodeBuilder<V extends NormalizedNode<?, ?>, R extends
     CollectionNodeBuilder<V, R> withNodeIdentifier(NodeIdentifier nodeIdentifier);
 
     CollectionNodeBuilder<V, R> withChild(V child);
+
     CollectionNodeBuilder<V, R> withoutChild(PathArgument key);
 }

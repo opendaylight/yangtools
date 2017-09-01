@@ -46,7 +46,7 @@ abstract class AbstractImmutableNormalizedNodeBuilder<I extends PathArgument, V,
     }
 
     @Override
-    public NormalizedNodeAttrBuilder<I,V,R> withAttributes(final Map<QName, String> attributes){
+    public NormalizedNodeAttrBuilder<I,V,R> withAttributes(final Map<QName, String> attributes) {
         this.attributes = attributes;
         return this;
     }

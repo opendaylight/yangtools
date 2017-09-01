@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -103,13 +102,15 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
         final Collection<DataContainerChild<?, ?>> children = ((ChoiceNode) normalizedNode).getValue();
         if (!children.isEmpty()) {
             final DataContainerChild<?, ?> firstChild = children.iterator().next();
-            final CaseEnforcer enforcer = caseEnforcers.get(firstChild.getIdentifier());
-            Verify.verifyNotNull(enforcer, "Case enforcer cannot be null. Most probably, child node %s of choice node %s does not belong in current tree type.", firstChild.getIdentifier(), normalizedNode.getIdentifier());
+            final CaseEnforcer enforcer = Verify.verifyNotNull(caseEnforcers.get(firstChild.getIdentifier()),
+                "Case enforcer cannot be null. Most probably, child node %s of choice node %s does not belong "
+                + "in current tree type.", firstChild.getIdentifier(), normalizedNode.getIdentifier());
 
             // Make sure no leaves from other cases are present
             for (final CaseEnforcer other : exclusions.get(enforcer)) {
                 for (final PathArgument id : other.getAllChildIdentifiers()) {
-                    final Optional<NormalizedNode<?, ?>> maybeChild = NormalizedNodes.getDirectChild(normalizedNode, id);
+                    final Optional<NormalizedNode<?, ?>> maybeChild = NormalizedNodes.getDirectChild(normalizedNode,
+                        id);
                     Preconditions.checkArgument(!maybeChild.isPresent(),
                         "Child %s (from case %s) implies non-presence of child %s (from case %s), which is %s",
                         firstChild.getIdentifier(), enforcer, id, other, maybeChild.orNull());

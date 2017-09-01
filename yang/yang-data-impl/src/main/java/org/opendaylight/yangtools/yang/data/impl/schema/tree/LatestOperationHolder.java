@@ -8,50 +8,45 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 /**
- * Holder and factory for upgradable root modifications
+ * Holder and factory for upgradable root modifications.
  *
- * This class is factory for upgradable root modifications and provides an
- * access to set latest backing implementation.
+ * <p>
+ * This class is factory for upgradable root modifications and provides an access to set latest backing implementation.
  */
 final class LatestOperationHolder {
 
     private ModificationApplyOperation current = AlwaysFailOperation.INSTANCE;
 
     /**
-     * Return latest backing implemenation
+     * Return latest backing implementation.
      *
-     * @return
+     * @return latest backing implementation
      */
     ModificationApplyOperation getCurrent() {
         return current;
     }
 
     /**
-     * Sets latest backing implementation of associated
-     * {@link RootModificationApplyOperation}.
-     * <p>
-     * Note: This does not result in upgrading implementation of already
-     * existing {@link RootModificationApplyOperation}. Users, which
-     * obtained instances using {@link #newSnapshot()}, deriving
-     * {@link RootModificationApplyOperation} from this modification must
-     * explicitly invoke
-     * {@link RootModificationApplyOperation#upgradeIfPossible()} on their
-     * instance to be updated to latest backing implementation.
+     * Sets latest backing implementation of associated {@link RootModificationApplyOperation}.
      *
-     * @param newApplyOper
-     *            New backing implementation
+     * <p>
+     * Note: This does not result in upgrading implementation of already existing
+     * {@link RootModificationApplyOperation}. Users, who obtained instances using {@link #newSnapshot()}, deriving
+     * {@link RootModificationApplyOperation} from this modification must explicitly invoke
+     * {@link RootModificationApplyOperation#upgradeIfPossible()} on their instance to be updated to latest backing
+     * implementation.
+     *
+     * @param newApplyOper New backing implementation
      */
     void setCurrent(final ModificationApplyOperation newApplyOper) {
         current = newApplyOper;
     }
 
     /**
+     * Creates new upgradable {@link RootModificationApplyOperation} associated with holder.
      *
-     * Creates new upgradable {@link RootModificationApplyOperation}
-     * associated with holder.
-     *
-     * @return New upgradable {@link RootModificationApplyOperation} with
-     *         {@link #getCurrent()} used as backing implementation.
+     * @return New upgradable {@link RootModificationApplyOperation} with {@link #getCurrent()} used
+     *         as the backing implementation.
      */
     RootModificationApplyOperation newSnapshot() {
         return new UpgradableModificationApplyOperation(this, current);

@@ -22,7 +22,7 @@ class LeafRefPathErrorListener extends BaseErrorListener {
     private final List<LeafRefPathSyntaxErrorException> exceptions = new ArrayList<>(1);
     private final Module module;
 
-    public LeafRefPathErrorListener(final Module module) {
+    LeafRefPathErrorListener(final Module module) {
         this.module = module;
     }
 

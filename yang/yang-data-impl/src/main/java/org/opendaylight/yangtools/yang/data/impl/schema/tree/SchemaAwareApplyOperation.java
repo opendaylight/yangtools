@@ -36,17 +36,18 @@ import org.slf4j.LoggerFactory;
 abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaAwareApplyOperation.class);
 
-    public static ModificationApplyOperation from(final DataSchemaNode schemaNode, final DataTreeConfiguration treeConfig) {
+    public static ModificationApplyOperation from(final DataSchemaNode schemaNode,
+            final DataTreeConfiguration treeConfig) {
         if (treeConfig.getTreeType() == TreeType.CONFIGURATION) {
-            Preconditions.checkArgument(schemaNode.isConfiguration(), "Supplied %s does not belongs to configuration tree.", schemaNode.getPath());
+            Preconditions.checkArgument(schemaNode.isConfiguration(),
+                "Supplied %s does not belongs to configuration tree.", schemaNode.getPath());
         }
         if (schemaNode instanceof ContainerSchemaNode) {
             final ContainerSchemaNode containerSchema = (ContainerSchemaNode) schemaNode;
             if (containerSchema.isPresenceContainer()) {
                 return new PresenceContainerModificationStrategy(containerSchema, treeConfig);
-            } else {
-                return new StructuralContainerModificationStrategy(containerSchema, treeConfig);
             }
+            return new StructuralContainerModificationStrategy(containerSchema, treeConfig);
         } else if (schemaNode instanceof ListSchemaNode) {
             return fromListSchemaNode((ListSchemaNode) schemaNode, treeConfig);
         } else if (schemaNode instanceof ChoiceSchemaNode) {
@@ -60,7 +61,8 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     }
 
     public static SchemaAwareApplyOperation from(final DataNodeContainer resolvedTree,
-            final AugmentationTarget augSchemas, final AugmentationIdentifier identifier, final DataTreeConfiguration treeConfig) {
+            final AugmentationTarget augSchemas, final AugmentationIdentifier identifier,
+            final DataTreeConfiguration treeConfig) {
         for (final AugmentationSchema potential : augSchemas.getAvailableAugmentations()) {
             for (final DataSchemaNode child : potential.getChildNodes()) {
                 if (identifier.getPossibleChildNames().contains(child.getQName())) {
@@ -79,7 +81,8 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         }
     }
 
-    private static SchemaAwareApplyOperation fromListSchemaNode(final ListSchemaNode schemaNode, final DataTreeConfiguration treeConfig) {
+    private static SchemaAwareApplyOperation fromListSchemaNode(final ListSchemaNode schemaNode,
+            final DataTreeConfiguration treeConfig) {
         final List<QName> keyDefinition = schemaNode.getKeyDefinition();
         final SchemaAwareApplyOperation op;
         if (keyDefinition == null || keyDefinition.isEmpty()) {
@@ -92,7 +95,8 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         return MinMaxElementsValidation.from(op, schemaNode);
     }
 
-    private static SchemaAwareApplyOperation fromLeafListSchemaNode(final LeafListSchemaNode schemaNode, final DataTreeConfiguration treeConfig) {
+    private static SchemaAwareApplyOperation fromLeafListSchemaNode(final LeafListSchemaNode schemaNode,
+            final DataTreeConfiguration treeConfig) {
         final SchemaAwareApplyOperation op;
         if (schemaNode.isUserOrdered()) {
             op =  new OrderedLeafSetModificationStrategy(schemaNode, treeConfig);
@@ -102,7 +106,8 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         return MinMaxElementsValidation.from(op, schemaNode);
     }
 
-    protected static void checkNotConflicting(final YangInstanceIdentifier path, final TreeNode original, final TreeNode current) throws ConflictingModificationAppliedException {
+    protected static void checkNotConflicting(final YangInstanceIdentifier path, final TreeNode original,
+            final TreeNode current) throws ConflictingModificationAppliedException {
         checkConflicting(path, original.getVersion().equals(current.getVersion()),
                 "Node was replaced by other transaction.");
         checkConflicting(path, original.getSubtreeVersion().equals(current.getSubtreeVersion()),
@@ -116,24 +121,26 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     }
 
     @Override
-    final void checkApplicable(final YangInstanceIdentifier path,final NodeModification modification, final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
+    final void checkApplicable(final YangInstanceIdentifier path,final NodeModification modification,
+            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         switch (modification.getOperation()) {
-        case DELETE:
-            checkDeleteApplicable(modification, current);
-            break;
-        case TOUCH:
-            checkTouchApplicable(path, modification, current, version);
-            break;
-        case WRITE:
-            checkWriteApplicable(path, modification, current, version);
-            break;
-        case MERGE:
-            checkMergeApplicable(path, modification, current, version);
-            break;
-        case NONE:
-            break;
-        default:
-            throw new UnsupportedOperationException("Suplied modification type "+ modification.getOperation()+ " is not supported.");
+            case DELETE:
+                checkDeleteApplicable(modification, current);
+                break;
+            case TOUCH:
+                checkTouchApplicable(path, modification, current, version);
+                break;
+            case WRITE:
+                checkWriteApplicable(path, modification, current, version);
+                break;
+            case MERGE:
+                checkMergeApplicable(path, modification, current, version);
+                break;
+            case NONE:
+                break;
+            default:
+                throw new UnsupportedOperationException(
+                    "Suplied modification type " + modification.getOperation() + " is not supported.");
         }
     }
 
@@ -161,7 +168,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
      * @param path Path from current node in TreeNode
      * @param modification modification to apply
      * @param current current node in TreeNode for modification to apply
-     * @throws DataValidationFailedException
+     * @throws DataValidationFailedException when a data dependency conflict is detected
      */
     protected void checkWriteApplicable(final YangInstanceIdentifier path, final NodeModification modification,
         final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
@@ -169,7 +176,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         if (original.isPresent() && current.isPresent()) {
             checkNotConflicting(path, original.get(), current.get());
         } else if (original.isPresent()) {
-            throw new ConflictingModificationAppliedException(path,"Node was deleted by other transaction.");
+            throw new ConflictingModificationAppliedException(path, "Node was deleted by other transaction.");
         } else if (current.isPresent()) {
             throw new ConflictingModificationAppliedException(path, "Node was created by other transaction.");
         }
@@ -188,40 +195,42 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     }
 
     @Override
-    final Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> currentMeta, final Version version) {
+    final Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> currentMeta,
+            final Version version) {
         switch (modification.getOperation()) {
-        case DELETE:
-            // Deletion of a non-existing node is a no-op, report it as such
-            modification.resolveModificationType(currentMeta.isPresent() ? ModificationType.DELETE : ModificationType.UNMODIFIED);
-            return modification.setSnapshot(Optional.absent());
-        case TOUCH:
-            Preconditions.checkArgument(currentMeta.isPresent(), "Metadata not available for modification %s",
+            case DELETE:
+                // Deletion of a non-existing node is a no-op, report it as such
+                modification.resolveModificationType(currentMeta.isPresent() ? ModificationType.DELETE
+                        : ModificationType.UNMODIFIED);
+                return modification.setSnapshot(Optional.absent());
+            case TOUCH:
+                Preconditions.checkArgument(currentMeta.isPresent(), "Metadata not available for modification %s",
                     modification);
-            return modification.setSnapshot(Optional.of(applyTouch(modification, currentMeta.get(),
+                return modification.setSnapshot(Optional.of(applyTouch(modification, currentMeta.get(),
                     version)));
-        case MERGE:
-            final TreeNode result;
+            case MERGE:
+                final TreeNode result;
 
-            if (!currentMeta.isPresent()) {
-                // This is a slight optimization: a merge on a non-existing node equals to a write. Written data
-                // structure is usually verified when the transaction is sealed. To preserve correctness, we have
-                // to run that validation here.
+                if (!currentMeta.isPresent()) {
+                    // This is a slight optimization: a merge on a non-existing node equals to a write. Written data
+                    // structure is usually verified when the transaction is sealed. To preserve correctness, we have
+                    // to run that validation here.
+                    modification.resolveModificationType(ModificationType.WRITE);
+                    result = applyWrite(modification, currentMeta, version);
+                    verifyStructure(result.getData(), true);
+                } else {
+                    result = applyMerge(modification, currentMeta.get(), version);
+                }
+
+                return modification.setSnapshot(Optional.of(result));
+            case WRITE:
                 modification.resolveModificationType(ModificationType.WRITE);
-                result = applyWrite(modification, currentMeta, version);
-                verifyStructure(result.getData(), true);
-            } else {
-                result = applyMerge(modification, currentMeta.get(), version);
-            }
-
-            return modification.setSnapshot(Optional.of(result));
-        case WRITE:
-            modification.resolveModificationType(ModificationType.WRITE);
-            return modification.setSnapshot(Optional.of(applyWrite(modification, currentMeta, version)));
-        case NONE:
-            modification.resolveModificationType(ModificationType.UNMODIFIED);
-            return currentMeta;
-        default:
-            throw new IllegalArgumentException("Provided modification type is not supported.");
+                return modification.setSnapshot(Optional.of(applyWrite(modification, currentMeta, version)));
+            case NONE:
+                modification.resolveModificationType(ModificationType.UNMODIFIED);
+                return currentMeta;
+            default:
+                throw new IllegalArgumentException("Provided modification type is not supported.");
         }
     }
 
@@ -260,7 +269,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
      * @param current Current state of data tree
      * @throws ConflictingModificationAppliedException If subtree was changed in conflicting way
      * @throws org.opendaylight.yangtools.yang.data.api.schema.tree.IncorrectDataStructureException If subtree
-     * modification is not applicable (e.g. leaf node).
+     *         modification is not applicable (e.g. leaf node).
      */
     protected abstract void checkTouchApplicable(YangInstanceIdentifier path, NodeModification modification,
             Optional<TreeNode> current, Version version) throws DataValidationFailedException;

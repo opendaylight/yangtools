@@ -22,8 +22,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -41,7 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class OrderedListTest {
-    private Logger LOG = LoggerFactory.getLogger(OrderedListTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OrderedListTest.class);
 
     private TipProducingDataTree inMemoryDataTree;
     private SchemaContext context;
@@ -146,8 +146,8 @@ public class OrderedListTest {
                 .withChild(createChildOrderedListEntry("chkval2", "chlfval2updated"))
                 .withChild(createChildOrderedListEntry("chkval3", "chlfval3")).build();
 
-        YangInstanceIdentifier path2 = YangInstanceIdentifier.of(parentContainer).node(childContainer).node
-                (parentOrderedList).node(createParentOrderedListEntryPath("pkval2")).node(childOrderedList);
+        YangInstanceIdentifier path2 = YangInstanceIdentifier.of(parentContainer).node(childContainer)
+                .node(parentOrderedList).node(createParentOrderedListEntryPath("pkval2")).node(childOrderedList);
         treeModification.merge(path2, childOrderedListNode);
 
         treeModification.ready();
@@ -181,8 +181,8 @@ public class OrderedListTest {
                 new NodeIdentifier(childOrderedList))
                 .withChild(createChildOrderedListEntry("chkval1", "chlfval1new")).build();
 
-        YangInstanceIdentifier path2 = YangInstanceIdentifier.of(parentContainer).node(childContainer).node
-                (parentOrderedList)
+        YangInstanceIdentifier path2 = YangInstanceIdentifier.of(parentContainer).node(childContainer)
+                .node(parentOrderedList)
                 .node(createParentOrderedListEntryPath("pkval4")).node(childOrderedList);
 
         treeModification.merge(path2, childOrderedListNode);
@@ -209,17 +209,18 @@ public class OrderedListTest {
         DataTreeModification treeModification1 = inMemoryDataTree.takeSnapshot().newModification();
         DataTreeModification treeModification2 = inMemoryDataTree.takeSnapshot().newModification();
 
-        OrderedMapNode parentOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(new
-                NodeIdentifier(parentOrderedList)).withChild(createParentOrderedListEntry("pkval1",
-                "plfval1")).build();
+        OrderedMapNode parentOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
+            new NodeIdentifier(parentOrderedList)).withChild(createParentOrderedListEntry("pkval1", "plfval1"))
+                .build();
 
-        OrderedMapNode parentOrderedListNode2 = Builders.orderedMapBuilder().withNodeIdentifier(new
-                NodeIdentifier(parentOrderedList)).withChild(createParentOrderedListEntry("pkval2",
-                "plfval2")).build();
+        OrderedMapNode parentOrderedListNode2 = Builders.orderedMapBuilder().withNodeIdentifier(
+            new NodeIdentifier(parentOrderedList)).withChild(createParentOrderedListEntry("pkval2", "plfval2"))
+                .build();
 
         ContainerNode parentContainerNode = Builders.containerBuilder().withNodeIdentifier(
                 new NodeIdentifier(parentContainer)).withChild(Builders.containerBuilder()
-                .withNodeIdentifier(new NodeIdentifier(childContainer)).withChild(parentOrderedListNode).build()).build();
+                .withNodeIdentifier(new NodeIdentifier(childContainer)).withChild(parentOrderedListNode).build())
+                .build();
 
         ContainerNode parentContainerNode2 = Builders.containerBuilder().withNodeIdentifier(
                 new NodeIdentifier(parentContainer)).withChild(Builders.containerBuilder()
@@ -281,27 +282,27 @@ public class OrderedListTest {
         assertFalse(readNode.isPresent());
     }
 
-    private MapEntryNode createParentOrderedListEntry(String keyValue, String leafValue) {
+    private MapEntryNode createParentOrderedListEntry(final String keyValue, final String leafValue) {
         return Builders.mapEntryBuilder().withNodeIdentifier(new NodeIdentifierWithPredicates(parentOrderedList,
                 parentKeyLeaf, keyValue))
-                .withChild(Builders.leafBuilder().withNodeIdentifier(NodeIdentifier.create(parentOrdinaryLeaf)).withValue
-                        (leafValue).build()).build();
+                .withChild(Builders.leafBuilder().withNodeIdentifier(NodeIdentifier.create(parentOrdinaryLeaf))
+                    .withValue(leafValue).build()).build();
     }
 
-    private MapEntryNode createChildOrderedListEntry(String keyValue, String leafValue) {
+    private MapEntryNode createChildOrderedListEntry(final String keyValue, final String leafValue) {
         return Builders.mapEntryBuilder().withNodeIdentifier(new NodeIdentifierWithPredicates(childOrderedList,
                 childKeyLeaf, keyValue))
-                .withChild(Builders.leafBuilder().withNodeIdentifier(NodeIdentifier.create(childOrdinaryLeaf)).withValue
-                        (leafValue).build()).build();
+                .withChild(Builders.leafBuilder().withNodeIdentifier(NodeIdentifier.create(childOrdinaryLeaf))
+                    .withValue(leafValue).build()).build();
     }
 
-    private NodeIdentifierWithPredicates createParentOrderedListEntryPath(String keyValue) {
+    private NodeIdentifierWithPredicates createParentOrderedListEntryPath(final String keyValue) {
         ImmutableMap.Builder<QName, Object> builder = ImmutableMap.builder();
         ImmutableMap<QName, Object> keys = builder.put(parentKeyLeaf, keyValue).build();
         return new NodeIdentifierWithPredicates(parentOrderedList, keys);
     }
 
-    private NodeIdentifierWithPredicates createChildOrderedListEntryPath(String keyValue) {
+    private NodeIdentifierWithPredicates createChildOrderedListEntryPath(final String keyValue) {
         ImmutableMap.Builder<QName, Object> builder = ImmutableMap.builder();
         ImmutableMap<QName, Object> keys = builder.put(childKeyLeaf, keyValue).build();
         return new NodeIdentifierWithPredicates(childOrderedList, keys);

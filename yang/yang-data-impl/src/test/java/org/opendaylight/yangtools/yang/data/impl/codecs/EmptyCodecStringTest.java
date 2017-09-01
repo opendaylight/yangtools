@@ -9,6 +9,7 @@
 package org.opendaylight.yangtools.yang.data.impl.codecs;
 
 import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.EmptyCodec;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
