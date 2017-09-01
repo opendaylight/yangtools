@@ -55,7 +55,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -118,9 +117,8 @@ public class NormalizedNodesToXmlTest {
     }
 
     @Test
-    public void testNormalizedNodeToXmlSerialization() throws ReactorException, XMLStreamException, IOException,
-            SAXException, URISyntaxException {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSource("/baz.yang");
+    public void testNormalizedNodeToXmlSerialization() throws XMLStreamException, IOException, SAXException {
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/baz.yang");
 
         final Document doc = loadDocument("/baz.xml");
 

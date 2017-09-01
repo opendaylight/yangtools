@@ -93,7 +93,7 @@ public class BuilderTest {
     public void setup() throws FileNotFoundException, ReactorException, URISyntaxException {
         final File leafRefTestYang = new File(getClass().getResource("/builder-test/immutable-ordered-map-node.yang")
                 .toURI());
-        final SchemaContext schema = YangParserTestUtils.parseYangSources(leafRefTestYang);
+        final SchemaContext schema = YangParserTestUtils.parseYangFiles(leafRefTestYang);
         final Module module = schema.getModules().iterator().next();
         final DataSchemaNode root = module.getDataChildByName(ROOT_CONTAINER);
         list = (ListSchemaNode)((ContainerEffectiveStatementImpl) root).getDataChildByName(LIST_MAIN);
