@@ -11,7 +11,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
-import java.io.InputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -25,18 +25,16 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMapping;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
-import org.opendaylight.yangtools.yang.parser.util.NamedInputStream;
 
 /**
  * Helper transfer object which holds basic and dependency information for YANG
  * model.
- *
- *
  *
  * There are two concrete implementations of this interface:
  * <ul>
@@ -46,9 +44,7 @@ import org.opendaylight.yangtools.yang.parser.util.NamedInputStream;
  *
  * @see ModuleDependencyInfo
  * @see SubmoduleDependencyInfo
- *
  */
-
 public abstract class YangModelDependencyInfo {
 
     private final String name;
@@ -210,15 +206,21 @@ public abstract class YangModelDependencyInfo {
      * This parsing does not validate full YANG module, only parses header up to
      * the revisions and imports.
      *
-     * @param yangStream
-     *            Opened Input stream containing text source of YANG model
+     * @param refClass Base search class
+     * @param resourceName resource name, relative to refClass
      * @return {@link YangModelDependencyInfo}
+     * @throws YangSyntaxErrorException If the resource does not pass syntactic analysis
+     * @throws IOException When the resource cannot be read
      * @throws IllegalArgumentException
      *             If input stream is not valid YANG stream
      */
-    public static YangModelDependencyInfo fromInputStream(final InputStream yangStream) {
-        final StatementContext yangAST = new YangStatementSourceImpl(yangStream).getYangAST();
-        return parseAST(yangAST, yangStream instanceof NamedInputStream ? yangStream.toString() : null);
+    public static YangModelDependencyInfo forResource(final Class<?> refClass, final String resourceName)
+            throws IOException, YangSyntaxErrorException {
+        final YangStatementStreamSource source = YangStatementStreamSource.create(
+            YangTextSchemaSource.forResource(refClass, resourceName));
+        final ParserRuleContext ast = source.getYangAST();
+        Preconditions.checkArgument(ast instanceof StatementContext);
+        return parseAST((StatementContext) ast, source.getIdentifier().toYangFilename());
     }
 
     private static YangModelDependencyInfo parseModuleContext(final StatementContext module, final String sourceName) {
@@ -243,7 +245,7 @@ public abstract class YangModelDependencyInfo {
                 final String revisionDateStr = getRevisionDateString(subStatementContext, sourceName);
                 final String importedModuleName = Utils.stringFromStringContext(subStatementContext.argument(),
                         getReference(sourceName, subStatementContext));
-                final Date revisionDate = (revisionDateStr == null) ? null : QName
+                final Date revisionDate = revisionDateStr == null ? null : QName
                         .parseRevision(revisionDateStr);
                 final Optional<SemVer> importSemVer = Optional.fromNullable(getSemanticVersion(subStatementContext, sourceName));
                 result.add(new ModuleImportImpl(importedModuleName,
@@ -285,7 +287,7 @@ public abstract class YangModelDependencyInfo {
                 final String revisionDateStr = getRevisionDateString(subStatementContext, sourceName);
                 final String IncludeModuleName = Utils.stringFromStringContext(subStatementContext.argument(),
                         getReference(sourceName, subStatementContext));
-                final Date revisionDate = (revisionDateStr == null) ? null : QName
+                final Date revisionDate = revisionDateStr == null ? null : QName
                         .parseRevision(revisionDateStr);
                 result.add(new ModuleImportImpl(IncludeModuleName, revisionDate));
             }

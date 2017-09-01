@@ -81,7 +81,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @throws NullPointerException if file is null
      */
     public static YangTextSchemaSource forFile(final File file) {
-        Preconditions.checkArgument(file.isFile(), "Supplied file %s is not a file");
+        Preconditions.checkArgument(file.isFile(), "Supplied file %s is not a file", file);
         return new YangTextFileSchemaSource(identifierFromFilename(file.getName()), file);
     }
 
