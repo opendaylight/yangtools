@@ -23,8 +23,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
@@ -49,7 +49,7 @@ public class Bug5830Test {
     private static InMemoryDataTree initDataTree(final SchemaContext schemaContext)
             throws DataValidationFailedException {
         InMemoryDataTree inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(
-                TreeType.CONFIGURATION);
+                DataTreeConfiguration.DEFAULT_CONFIGURATION);
         inMemoryDataTree.setSchemaContext(schemaContext);
 
         final MapNode taskNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(TASK)).build();
@@ -205,8 +205,8 @@ public class Bug5830Test {
         inMemoryDataTree.commit(prepare);
     }
 
-    private static void testMandatoryLeaf2IsPresent(final SchemaContext schemaContext, final boolean withPresenceContianer)
-            throws DataValidationFailedException {
+    private static void testMandatoryLeaf2IsPresent(final SchemaContext schemaContext,
+            final boolean withPresenceContianer) throws DataValidationFailedException {
         final InMemoryDataTree inMemoryDataTree = initDataTree(schemaContext);
 
         final MapEntryNode taskEntryNode = Builders.mapEntryBuilder()

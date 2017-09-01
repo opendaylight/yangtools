@@ -32,9 +32,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContext;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefDataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefValidatation;
@@ -170,7 +170,7 @@ public class DataTreeCandidateValidatorTest {
     }
 
     private static void initDataTree() {
-        inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL);
+        inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create(DataTreeConfiguration.DEFAULT_OPERATIONAL);
         inMemoryDataTree.setSchemaContext(context);
 
         final DataTreeModification initialDataTreeModification = inMemoryDataTree
@@ -188,7 +188,6 @@ public class DataTreeCandidateValidatorTest {
         final DataTreeCandidate writeContributorsCandidate = inMemoryDataTree
                 .prepare(initialDataTreeModification);
         inMemoryDataTree.commit(writeContributorsCandidate);
-
     }
 
     @Test
@@ -497,12 +496,12 @@ public class DataTreeCandidateValidatorTest {
         return containerBuilder.build();
     }
 
-    private static MapEntryNode createList3Entry(final String kVal,
+    private static MapEntryNode createList3Entry(final String keyVal,
             final String l3Val1, final String l3Val2, final String l3Val3) {
         final DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder = Builders
                 .mapEntryBuilder();
         mapEntryBuilder.withNodeIdentifier(new NodeIdentifierWithPredicates(
-                list3InChoice, k, kVal));
+                list3InChoice, k, keyVal));
 
         final ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafSetBuilder = Builders
                 .leafSetBuilder();
@@ -512,7 +511,7 @@ public class DataTreeCandidateValidatorTest {
         leafSetBuilder.addChild(createLeafSetEntry(l3, l3Val2));
         leafSetBuilder.addChild(createLeafSetEntry(l3, l3Val3));
 
-        mapEntryBuilder.addChild(ImmutableNodes.leafNode(k, kVal));
+        mapEntryBuilder.addChild(ImmutableNodes.leafNode(k, keyVal));
         mapEntryBuilder.addChild(leafSetBuilder.build());
 
         return mapEntryBuilder.build();
@@ -697,18 +696,12 @@ public class DataTreeCandidateValidatorTest {
         final LeafNode<String> odlProjectDescLeafRef = ImmutableNodes.leafNode(
                 odlProjectDesc, odlProjectDescVal);
 
-        final DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> contributorMapEntryBldr = Builders
-                .mapEntryBuilder(contributorListSchemaNode);
-
-        contributorMapEntryBldr.addChild(loginLeaf);
-        contributorMapEntryBldr.addChild(contributorNameLeaf);
-        contributorMapEntryBldr.addChild(odlProjectNameLeafRef);
-        contributorMapEntryBldr.addChild(odlProjectDescLeafRef);
-
-        final MapEntryNode contributorMapEntry = contributorMapEntryBldr
+        return Builders.mapEntryBuilder(contributorListSchemaNode)
+                .addChild(loginLeaf)
+                .addChild(contributorNameLeaf)
+                .addChild(odlProjectNameLeafRef)
+                .addChild(odlProjectDescLeafRef)
                 .build();
-
-        return contributorMapEntry;
     }
 
     private static ContainerNode createOdlContainer(

@@ -26,6 +26,10 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
@@ -39,10 +43,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 
 public class ImmutableNormalizedNodeStreamWriterTest {
 
@@ -83,8 +83,8 @@ public class ImmutableNormalizedNodeStreamWriterTest {
 
     @Before
     public void setup() throws URISyntaxException, ParseException {
-        bazModule = QNameModule.create(new URI("baz-namespace"), SimpleDateFormatUtil.getRevisionFormat().parse
-                ("1970-01-01"));
+        bazModule = QNameModule.create(new URI("baz-namespace"), SimpleDateFormatUtil.getRevisionFormat()
+            .parse("1970-01-01"));
 
         outerContainer = QName.create(bazModule, "outer-container");
 
@@ -154,7 +154,8 @@ public class ImmutableNormalizedNodeStreamWriterTest {
                         .withChild(Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(myLeafInList2))
                                 .withValue("listleafvalue22").build()).build()).build();
 
-        OrderedMapNode myOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(new NodeIdentifier(myOrderedList))
+        OrderedMapNode myOrderedListNode = Builders.orderedMapBuilder().withNodeIdentifier(
+            new NodeIdentifier(myOrderedList))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
                         new NodeIdentifierWithPredicates(myOrderedList, myKeyLeafInOrderedList, "olistkeyvalue1"))
                         .withChild(Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(myLeafInOrderedList1))

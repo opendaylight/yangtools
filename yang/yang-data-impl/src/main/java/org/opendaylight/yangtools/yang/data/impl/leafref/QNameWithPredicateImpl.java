@@ -15,8 +15,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
-final class QNameWithPredicateImpl implements Immutable, Serializable,
-        QNameWithPredicate {
+final class QNameWithPredicateImpl implements Immutable, Serializable, QNameWithPredicate {
 
     private static final long serialVersionUID = 1L;
 
@@ -24,7 +23,7 @@ final class QNameWithPredicateImpl implements Immutable, Serializable,
     private final QNameModule moduleQname;
     private final String localName;
 
-    public QNameWithPredicateImpl(final QNameModule moduleQname, final String localName,
+    QNameWithPredicateImpl(final QNameModule moduleQname, final String localName,
             final List<QNamePredicate> qnamePredicates) {
         this.moduleQname = moduleQname;
         this.localName = localName;
@@ -89,5 +88,4 @@ final class QNameWithPredicateImpl implements Immutable, Serializable,
 
         return sb.toString();
     }
-
 }

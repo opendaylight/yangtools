@@ -20,12 +20,12 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataN
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapEntryNodeBuilder{
+public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapEntryNodeBuilder {
 
     private final ListSchemaNode schema;
     private final DataNodeContainerValidator validator;
 
-    protected ImmutableMapEntryNodeSchemaAwareBuilder(final ListSchemaNode schema) {
+    ImmutableMapEntryNodeSchemaAwareBuilder(final ListSchemaNode schema) {
         this.schema = Preconditions.checkNotNull(schema);
         this.validator = new DataNodeContainerValidator(schema);
     }
@@ -36,7 +36,8 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
     }
 
     @Override
-    public DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> withChild(final DataContainerChild<?, ?> child) {
+    public DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> withChild(
+            final DataContainerChild<?, ?> child) {
         validator.validateChild(child.getIdentifier());
         return super.withChild(child);
     }
@@ -48,7 +49,7 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
     }
 
     /**
-     * Build map entry node identifier from schema, and provided children
+     * Build map entry node identifier from schema and provided children.
      */
     private NodeIdentifierWithPredicates constructNodeIdentifier() {
         Collection<QName> keys = schema.getKeyDefinition();
@@ -68,8 +69,8 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
         return new NodeIdentifierWithPredicates(schema.getQName(), keysToValues);
     }
 
-    public static DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(final ListSchemaNode schema) {
+    public static DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(
+            final ListSchemaNode schema) {
         return new ImmutableMapEntryNodeSchemaAwareBuilder(schema);
     }
-
 }

@@ -68,9 +68,9 @@ public class StringStringCodec extends TypeDefinitionAwareCodec<String, StringTy
         return Objects.toString(data, "");
     }
 
-    void validate(final String s) {
+    void validate(final String str) {
         if (lengths != null) {
-            Preconditions.checkArgument(lengths.contains(s.length()), "String '%s' does not match allowed lengths %s",
+            Preconditions.checkArgument(lengths.contains(str.length()), "String '%s' does not match allowed lengths %s",
                 lengths);
         }
     }

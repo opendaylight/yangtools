@@ -19,10 +19,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 /**
  * Operation responsible for applying {@link ModifiedNode} on tree.
  *
+ * <p>
  * Operation is composite - operation on top level node consists of
  * suboperations on child nodes. This allows to walk operation hierarchy and
  * invoke suboperations independently.
  *
+ * <p>
  * <b>Implementation notes</b>
  * <ul>
  * <li>
@@ -30,16 +32,15 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
  * nodes expose via {@link #getChild(PathArgument)} method.
  * <li>Same suboperations SHOULD be used when invoked via
  * {@link #apply(ModifiedNode, Optional, Version)} if applicable.
+ * </ul>
  *
- *
+ * <p>
  * Hierarchical composite operation which is responsible for applying
  * modification on particular subtree and creating updated subtree
  */
 abstract class ModificationApplyOperation implements StoreTreeNode<ModificationApplyOperation> {
     /**
-     *
-     * Implementation of this operation must be stateless and must not change
-     * state of this object.
+     * Implementation of this operation must be stateless and must not change state of this object.
      *
      * @param modification
      *            NodeModification to be applied
@@ -47,12 +48,12 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
      *            Store Metadata Node on which NodeModification should be
      *            applied
      * @param version New subtree version of parent node
-     * @throws IllegalArgumentException
-     *             If it is not possible to apply Operation on provided Metadata
-     *             node
      * @return new {@link TreeNode} if operation resulted in updating
      *         node, {@link Optional#absent()} if {@link ModifiedNode}
      *         resulted in deletion of this node.
+     * @throws IllegalArgumentException
+     *             If it is not possible to apply Operation on provided Metadata
+     *             node
      */
     abstract Optional<TreeNode> apply(ModifiedNode modification, Optional<TreeNode> storeMeta, Version version);
 
@@ -64,10 +65,10 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
      * @param version
      * @throws DataValidationFailedException if the modification is not applicable
      */
-   abstract void checkApplicable(YangInstanceIdentifier path, NodeModification modification, Optional<TreeNode> current, Version version) throws DataValidationFailedException;
+    abstract void checkApplicable(YangInstanceIdentifier path, NodeModification modification,
+            Optional<TreeNode> current, Version version) throws DataValidationFailedException;
 
     /**
-     *
      * Performs structural verification of NodeModification, such as writen values / types uses
      * right structural elements.
      *
@@ -76,8 +77,7 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
      * @throws IllegalArgumentException If provided NodeModification does not adhere to the
      *         structure.
      */
-    abstract void verifyStructure(NormalizedNode<?, ?> modification, boolean verifyChildren)
-            throws IllegalArgumentException;
+    abstract void verifyStructure(NormalizedNode<?, ?> modification, boolean verifyChildren);
 
     /**
      * Return the tracking policy for this node's children.
@@ -98,10 +98,10 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
     abstract void mergeIntoModifiedNode(ModifiedNode modification, NormalizedNode<?, ?> value, Version version);
 
     /**
-     * Returns a suboperation for specified tree node
+     * Returns a suboperation for specified tree node.
      *
      * @return Reference to suboperation for specified tree node, {@link Optional#absent()}
-     *    if suboperation is not supported for specified tree node.
+     *         if suboperation is not supported for specified tree node.
      */
     @Override
     public abstract Optional<ModificationApplyOperation> getChild(PathArgument child);

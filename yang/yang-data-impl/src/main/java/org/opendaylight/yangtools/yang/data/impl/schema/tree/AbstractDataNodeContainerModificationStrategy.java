@@ -32,25 +32,29 @@ import org.slf4j.LoggerFactory;
  *
  * @param <T> Type of the container node
  */
-abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeContainer> extends AbstractNodeContainerModificationStrategy {
+abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeContainer>
+        extends AbstractNodeContainerModificationStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractDataNodeContainerModificationStrategy.class);
     private final LoadingCache<PathArgument, ModificationApplyOperation> childCache = CacheBuilder.newBuilder()
             .build(new CacheLoader<PathArgument, ModificationApplyOperation>() {
                 @Override
                 public ModificationApplyOperation load(@Nonnull final PathArgument key) {
                     if (key instanceof AugmentationIdentifier && schema instanceof AugmentationTarget) {
-                        return SchemaAwareApplyOperation.from(schema, (AugmentationTarget) schema, (AugmentationIdentifier) key, treeConfig);
+                        return SchemaAwareApplyOperation.from(schema, (AugmentationTarget) schema,
+                            (AugmentationIdentifier) key, treeConfig);
                     }
 
                     final DataSchemaNode child = schema.getDataChildByName(key.getNodeType());
-                    Preconditions.checkArgument(child != null, "Schema %s does not have a node for child %s", schema, key.getNodeType());
+                    Preconditions.checkArgument(child != null, "Schema %s does not have a node for child %s", schema,
+                            key.getNodeType());
                     return SchemaAwareApplyOperation.from(child, treeConfig);
                 }
             });
     private final T schema;
     private final DataTreeConfiguration treeConfig;
 
-    protected AbstractDataNodeContainerModificationStrategy(final T schema, final Class<? extends NormalizedNode<?, ?>> nodeClass, final DataTreeConfiguration treeConfig) {
+    protected AbstractDataNodeContainerModificationStrategy(final T schema,
+            final Class<? extends NormalizedNode<?, ?>> nodeClass, final DataTreeConfiguration treeConfig) {
         super(nodeClass, treeConfig);
         this.schema = Preconditions.checkNotNull(schema,"schema");
         this.treeConfig = Preconditions.checkNotNull(treeConfig,"treeConfig");
@@ -65,7 +69,8 @@ abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeC
         try {
             return Optional.fromNullable(childCache.get(identifier));
         } catch (ExecutionException | UncheckedExecutionException e) {
-            LOG.trace("Child {} not present in container schema {} children {}", identifier, this, schema.getChildNodes(), e.getCause());
+            LOG.trace("Child {} not present in container schema {} children {}", identifier, this,
+                schema.getChildNodes(), e.getCause());
             return Optional.absent();
         }
     }

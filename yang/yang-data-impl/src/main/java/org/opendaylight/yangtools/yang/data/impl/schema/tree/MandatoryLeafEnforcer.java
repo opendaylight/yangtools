@@ -58,7 +58,7 @@ abstract class MandatoryLeafEnforcer implements Immutable {
         enforceOnData(tree.getData());
     }
 
-    abstract void enforceOnData(final NormalizedNode<?, ?> normalizedNode);
+    abstract void enforceOnData(NormalizedNode<?, ?> normalizedNode);
 
     private static void findMandatoryNodes(final Builder<YangInstanceIdentifier> builder,
             final YangInstanceIdentifier id, final DataNodeContainer schema, final TreeType type) {
@@ -72,7 +72,7 @@ abstract class MandatoryLeafEnforcer implements Immutable {
                 } else {
                     final ConstraintDefinition constraints = child.getConstraints();
                     final Integer minElements = constraints.getMinElements();
-                    if (constraints.isMandatory() || (minElements != null && minElements.intValue() > 0)) {
+                    if (constraints.isMandatory() || minElements != null && minElements.intValue() > 0) {
                         final YangInstanceIdentifier childId = id.node(NodeIdentifier.create(child.getQName()));
                         LOG.debug("Adding mandatory child {}", childId);
                         builder.add(childId.toOptimized());

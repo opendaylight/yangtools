@@ -14,10 +14,10 @@ class QNamePredicateBuilder {
     private QName identifier;
     private LeafRefPath pathKeyExpression;
 
-    public QNamePredicateBuilder() {
+    QNamePredicateBuilder() {
     }
 
-    public QNamePredicateBuilder(final QName identifier, final LeafRefPath pathKeyExpression) {
+    QNamePredicateBuilder(final QName identifier, final LeafRefPath pathKeyExpression) {
         this.identifier = identifier;
         this.pathKeyExpression = pathKeyExpression;
     }

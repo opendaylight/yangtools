@@ -26,9 +26,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContext;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefDataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefValidatation;
@@ -110,7 +110,7 @@ public class DataTreeCandidateValidatorTest2 {
         LOG.debug("*************************");
         LOG.debug("Before writeDevices: ");
         LOG.debug("*************************");
-        LOG.debug(inMemoryDataTree.toString());
+        LOG.debug("{}", inMemoryDataTree);
 
         boolean exception = false;
         try {
@@ -129,7 +129,7 @@ public class DataTreeCandidateValidatorTest2 {
         LOG.debug("*************************");
         LOG.debug("After write: ");
         LOG.debug("*************************");
-        LOG.debug(inMemoryDataTree.toString());
+        LOG.debug("{}", inMemoryDataTree);
     }
 
     private static void initQnames() {
@@ -167,7 +167,7 @@ public class DataTreeCandidateValidatorTest2 {
 
     private static void initDataTree() {
 
-        inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL);
+        inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create(DataTreeConfiguration.DEFAULT_OPERATIONAL);
         inMemoryDataTree.setSchemaContext(context);
 
         final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
@@ -188,7 +188,7 @@ public class DataTreeCandidateValidatorTest2 {
 
         inMemoryDataTree.commit(writeChipsCandidate);
 
-        System.out.println(inMemoryDataTree.toString());
+        LOG.debug("{}", inMemoryDataTree);
     }
 
     private static void initLeafRefContext() {
