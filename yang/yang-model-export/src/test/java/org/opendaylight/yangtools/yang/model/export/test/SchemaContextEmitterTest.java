@@ -36,7 +36,8 @@ public class SchemaContextEmitterTest {
     @Test
     public void testSchemaContextEmitter() throws ReactorException, IOException, URISyntaxException,
             XMLStreamException, SAXException {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangSources("/schema-context-emitter-test");
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResources(SchemaContextEmitterTest.class,
+            "/schema-context-emitter-test");
         assertNotNull(schemaContext);
         assertEquals(1, schemaContext.getModules().size());
 

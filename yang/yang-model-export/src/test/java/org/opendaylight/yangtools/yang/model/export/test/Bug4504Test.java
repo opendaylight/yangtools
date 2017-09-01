@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.export.test;
 
 import static org.junit.Assert.assertNotNull;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -20,7 +21,7 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 public class Bug4504Test {
     @Test
     public void test() throws Exception {
-        SchemaContext schema = YangParserTestUtils.parseYangSources("/bugs/bug4504");
+        SchemaContext schema = YangParserTestUtils.parseYangResources(Bug4504Test.class, "/bugs/bug4504");
         assertNotNull(schema);
         final File outDir = new File("target/bug4504-export");
         outDir.mkdirs();

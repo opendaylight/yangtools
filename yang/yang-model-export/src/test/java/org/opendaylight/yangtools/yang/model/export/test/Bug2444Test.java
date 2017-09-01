@@ -32,7 +32,7 @@ import org.xml.sax.SAXException;
 public class Bug2444Test {
     @Test
     public void test() throws Exception {
-        final SchemaContext schema = YangParserTestUtils.parseYangSources("/bugs/bug2444/yang");
+        final SchemaContext schema = YangParserTestUtils.parseYangResources(Bug2444Test.class, "/bugs/bug2444/yang");
         assertNotNull(schema);
 
         final File outDir = new File("target/bug2444-export");

@@ -54,8 +54,7 @@ public class Bug5446Test {
         rootQName = QName.create(fooModuleQName, "root");
         ipAddressQName = QName.create(fooModuleQName, "ip-address");
 
-        schemaContext = YangParserTestUtils.parseYangSources(
-                new File(Bug5446Test.class.getResource("/bug5446/yang/foo.yang").toURI()));
+        schemaContext = YangParserTestUtils.parseYangResources(Bug5446Test.class, "/bug5446/yang/foo.yang");
     }
 
     @Test
