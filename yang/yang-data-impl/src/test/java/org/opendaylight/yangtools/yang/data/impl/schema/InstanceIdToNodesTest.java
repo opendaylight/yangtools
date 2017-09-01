@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import static org.junit.Assert.assertEquals;
-import java.io.File;
-import java.io.FileNotFoundException;
+
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import org.junit.BeforeClass;
@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -53,9 +54,9 @@ public class InstanceIdToNodesTest {
     private final NodeWithValue<?> leafListWithValue = new NodeWithValue<>(
             leafList.getNodeType(), "abcd");
 
-    static SchemaContext createTestContext() throws URISyntaxException, FileNotFoundException, ReactorException {
-        final File resourceFile = new File(InstanceIdToNodesTest.class.getResource("/filter-test.yang").toURI());
-        return YangParserTestUtils.parseYangSources(resourceFile);
+    static SchemaContext createTestContext() throws URISyntaxException, ReactorException, IOException,
+            YangSyntaxErrorException {
+        return YangParserTestUtils.parseYangResources(InstanceIdToNodesTest.class, "/filter-test.yang");
     }
 
     @BeforeClass

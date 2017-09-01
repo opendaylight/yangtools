@@ -13,8 +13,11 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
+import com.google.common.io.Resources;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.Map.Entry;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Delegator;
@@ -91,6 +94,18 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
     public static YinTextSchemaSource delegateForByteSource(final SourceIdentifier identifier,
             final ByteSource delegate) {
         return new DelegatedYinTextSchemaSource(identifier, delegate);
+    }
+
+    public static YinTextSchemaSource forFile(final File file) {
+        Preconditions.checkArgument(file.isFile(), "Supplied file %s is not a file", file);
+        return new YinTextFileSchemaSource(identifierFromFilename(file.getName()), file);
+    }
+
+    public static YinTextSchemaSource forResource(final Class<?> clazz, final String resourceName) {
+        final String fileName = resourceName.substring(resourceName.lastIndexOf('/') + 1);
+        final SourceIdentifier identifier = identifierFromFilename(fileName);
+        final URL url = Resources.getResource(clazz, resourceName);
+        return new ResourceYinTextSchemaSource(identifier, url);
     }
 
     private static final class DelegatedYinTextSchemaSource extends YinTextSchemaSource

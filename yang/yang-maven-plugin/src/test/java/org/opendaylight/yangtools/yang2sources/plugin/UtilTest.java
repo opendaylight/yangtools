@@ -129,9 +129,7 @@ public class UtilTest {
 
     @Test
     public void contextHolderTest() throws Exception {
-        final File testYang1 = new File(getClass().getResource("/test.yang").toURI());
-        final File testYang2 = new File(getClass().getResource("/test2.yang").toURI());
-        final SchemaContext context = YangParserTestUtils.parseYangSources(testYang1, testYang2);
+        final SchemaContext context = YangParserTestUtils.parseYangResources(getClass(), "/test.yang", "/test2.yang");
         final Set<Module> yangModules = new HashSet<>();
         final Util.ContextHolder cxH = new ContextHolder(context, yangModules, yangModules);
         Assert.assertEquals(context, cxH.getContext());

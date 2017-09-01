@@ -48,7 +48,7 @@ public class Bug2964Test {
     @Before
     public void setUp() throws Exception {
         final File leafRefTestYang = new File(getClass().getResource("/leafref-test.yang").toURI());
-        schema = YangParserTestUtils.parseYangSources(leafRefTestYang);
+        schema = YangParserTestUtils.parseYangFiles(leafRefTestYang);
     }
 
     public static Document readXmlToDocument(final String xmlContent) throws SAXException, IOException {
