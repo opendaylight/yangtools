@@ -116,7 +116,7 @@ public class XmlToNormalizedNodesTest {
         mySecondKeyLeaf = QName.create(bazModule, "my-second-key-leaf");
         myLeafInList3 = QName.create(bazModule, "my-leaf-in-list-3");
 
-        schemaContext = YangParserTestUtils.parseYangSources("/");
+        schemaContext = YangParserTestUtils.parseYangResourceDirectory("/");
         parentContainerSchema = (ContainerSchemaNode) SchemaContextUtil.findNodeInSchemaContext(schemaContext,
                 ImmutableList.of(parentContainer));
         outerContainerSchema = (ContainerSchemaNode) SchemaContextUtil.findNodeInSchemaContext(schemaContext,
