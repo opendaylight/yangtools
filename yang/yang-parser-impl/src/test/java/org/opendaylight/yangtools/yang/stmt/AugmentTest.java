@@ -38,6 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
@@ -52,7 +53,7 @@ public class AugmentTest {
     private static QName q1;
     private static QName q2;
 
-    private Set<Module> modules;
+    private SchemaContext context;
 
     @BeforeClass
     public static void init() throws FileNotFoundException, ParseException {
@@ -68,7 +69,7 @@ public class AugmentTest {
 
     @Test
     public void testAugmentParsing() throws Exception {
-        modules = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment").toURI());
+        context = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment").toURI());
         SchemaPath expectedSchemaPath;
         final List<QName> qnames = new ArrayList<>();
         qnames.add(q0);
@@ -76,7 +77,7 @@ public class AugmentTest {
         qnames.add(q2);
 
         // foo.yang
-        final Module module1 = TestUtils.findModule(modules, "foo");
+        final Module module1 = TestUtils.findModule(context, "foo").get();
         Set<AugmentationSchema> augmentations = module1.getAugmentations();
         assertEquals(1, augmentations.size());
         final AugmentationSchema augment = augmentations.iterator().next();
@@ -143,7 +144,7 @@ public class AugmentTest {
         assertFalse(odl.isAugmenting());
 
         // baz.yang
-        final Module module3 = TestUtils.findModule(modules, "baz");
+        final Module module3 = TestUtils.findModule(context, "baz").get();
         augmentations = module3.getAugmentations();
         assertEquals(3, augmentations.size());
         AugmentationSchema augment1 = null;
@@ -180,8 +181,8 @@ public class AugmentTest {
 
     @Test
     public void testAugmentResolving() throws Exception {
-        modules = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment").toURI());
-        final Module module2 = TestUtils.findModule(modules, "bar");
+        context = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment").toURI());
+        final Module module2 = TestUtils.findModule(context, "bar").get();
         final ContainerSchemaNode interfaces = (ContainerSchemaNode) module2.getDataChildByName(QName.create(
                 module2.getQNameModule(), "interfaces"));
         final ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName(QName.create(
@@ -249,8 +250,8 @@ public class AugmentTest {
 
     @Test
     public void testAugmentedChoice() throws Exception {
-        modules = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment").toURI());
-        final Module module2 = TestUtils.findModule(modules, "bar");
+        context = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment").toURI());
+        final Module module2 = TestUtils.findModule(context, "bar").get();
         final ContainerSchemaNode interfaces = (ContainerSchemaNode) module2.getDataChildByName(QName.create(
                 module2.getQNameModule(), "interfaces"));
         final ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName(QName.create(
@@ -358,12 +359,12 @@ public class AugmentTest {
 
     @Test
     public void testAugmentRpc() throws Exception {
-        modules = TestUtils.loadModules(getClass().getResource("/augment-test/rpc").toURI());
+        context = TestUtils.loadModules(getClass().getResource("/augment-test/rpc").toURI());
         final URI NS_BAR = URI.create("urn:opendaylight:bar");
         final URI NS_FOO = URI.create("urn:opendaylight:foo");
         final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2013-10-11");
 
-        final Module bar = TestUtils.findModule(modules, "bar");
+        final Module bar = TestUtils.findModule(context, "bar").get();
         final Set<RpcDefinition> rpcs = bar.getRpcs();
         assertEquals(2, rpcs.size());
 
@@ -442,10 +443,10 @@ public class AugmentTest {
 
     @Test
     public void testAugmentInUsesResolving() throws Exception {
-        modules = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-uses").toURI());
-        assertEquals(1, modules.size());
+        context = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-uses").toURI());
+        assertEquals(1, context.getModules().size());
 
-        final Module test = modules.iterator().next();
+        final Module test = context.getModules().iterator().next();
         final DataNodeContainer links = (DataNodeContainer) test.getDataChildByName(QName.create(test.getQNameModule(),
                 "links"));
         final DataNodeContainer link = (DataNodeContainer) links.getDataChildByName(QName.create(test.getQNameModule(),

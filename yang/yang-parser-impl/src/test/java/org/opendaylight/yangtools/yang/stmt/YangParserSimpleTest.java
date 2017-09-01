@@ -22,6 +22,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
@@ -31,27 +32,31 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 public class YangParserSimpleTest {
-    private final URI snNS = URI.create("urn:opendaylight:simple-nodes");
-    private Date snRev;
+    private static final QNameModule SN =
+            QNameModule.create(URI.create("urn:opendaylight:simple-nodes"), QName.parseRevision("2013-07-30"));
+    private static final QName SN_NODES = QName.create(SN, "nodes");
+    private static final SchemaPath SN_NODES_PATH = SchemaPath.create(true, SN_NODES);
+
     private final String snPref = "sn";
 
-    private Set<Module> modules;
+    private SchemaContext context;
+    private Module testModule;
 
     @Before
     public void init() throws Exception {
-        snRev = SimpleDateFormatUtil.getRevisionFormat().parse("2013-07-30");
-        modules = TestUtils.loadModules(getClass().getResource("/simple-test").toURI());
+        context = TestUtils.loadModules(getClass().getResource("/simple-test").toURI());
+        testModule = TestUtils.findModule(context, "simple-nodes").get();
     }
 
     @Test
     public void testParseAnyXml() {
-        final Module testModule = TestUtils.findModule(modules, "simple-nodes");
         final AnyXmlSchemaNode data = (AnyXmlSchemaNode) testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "data"));
         assertNotNull("'anyxml data not found'", data);
         assertFalse(data.equals(null));
@@ -61,8 +66,7 @@ public class YangParserSimpleTest {
         // test SchemaNode args
         final QName qname = data.getQName();
         assertEquals("data", qname.getLocalName());
-        assertEquals(snNS, qname.getNamespace());
-        assertEquals(snRev, qname.getRevision());
+        assertEquals(SN, qname.getModule());
         assertEquals("anyxml desc", data.getDescription());
         assertEquals("data ref", data.getReference());
         assertEquals(Status.OBSOLETE, data.getStatus());
@@ -104,14 +108,11 @@ public class YangParserSimpleTest {
 
     @Test
     public void testParseContainer() throws ParseException {
-        final Module test = TestUtils.findModule(modules, "simple-nodes");
-
-        final ContainerSchemaNode nodes = (ContainerSchemaNode) test.getDataChildByName(QName.create(test.getQNameModule(), "nodes"));
+        final ContainerSchemaNode nodes = (ContainerSchemaNode) testModule
+                .getDataChildByName(QName.create(testModule.getQNameModule(), "nodes"));
         // test SchemaNode args
-        final QName expectedQName = QName.create(snNS, snRev, "nodes");
-        assertEquals(expectedQName, nodes.getQName());
-        final SchemaPath expectedPath = TestUtils.createPath(true, snNS, snRev, snPref, "nodes");
-        assertEquals(expectedPath, nodes.getPath());
+        assertEquals(SN_NODES, nodes.getQName());
+        assertEquals(SN_NODES_PATH, nodes.getPath());
         assertEquals("nodes collection", nodes.getDescription());
         assertEquals("nodes ref", nodes.getReference());
         assertEquals(Status.CURRENT, nodes.getStatus());
@@ -156,10 +157,9 @@ public class YangParserSimpleTest {
         final Set<TypeDefinition<?>> typedefs = nodes.getTypeDefinitions();
         assertEquals(1, typedefs.size());
         final TypeDefinition<?> nodesType = typedefs.iterator().next();
-        final QName typedefQName = QName.create(snNS, snRev, "nodes-type");
+        final QName typedefQName = QName.create(SN, "nodes-type");
         assertEquals(typedefQName, nodesType.getQName());
-        final SchemaPath nodesTypePath = TestUtils.createPath(true, snNS, snRev, snPref, "nodes", "nodes-type");
-        assertEquals(nodesTypePath, nodesType.getPath());
+        assertEquals(SN_NODES_PATH.createChild(QName.create(SN, "nodes-type")), nodesType.getPath());
         assertNull(nodesType.getDescription());
         assertNull(nodesType.getReference());
         assertEquals(Status.CURRENT, nodesType.getStatus());
@@ -168,19 +168,19 @@ public class YangParserSimpleTest {
         // child nodes
         // total size = 8: defined 6, inserted by uses 2
         assertEquals(8, nodes.getChildNodes().size());
-        final LeafListSchemaNode added = (LeafListSchemaNode)nodes.getDataChildByName(QName.create(test.getQNameModule(), "added"));
+        final LeafListSchemaNode added = (LeafListSchemaNode)nodes.getDataChildByName(QName.create(testModule.getQNameModule(), "added"));
         assertEquals(createPath("nodes", "added"), added.getPath());
         assertEquals(createPath("mytype"), added.getType().getPath());
 
-        final ListSchemaNode links = (ListSchemaNode) nodes.getDataChildByName(QName.create(test.getQNameModule(), "links"));
+        final ListSchemaNode links = (ListSchemaNode) nodes.getDataChildByName(QName.create(testModule.getQNameModule(), "links"));
         assertFalse(links.isUserOrdered());
 
         final Set<GroupingDefinition> groupings = nodes.getGroupings();
         assertEquals(1, groupings.size());
         final GroupingDefinition nodeGroup = groupings.iterator().next();
-        final QName groupQName = QName.create(snNS, snRev, "node-group");
+        final QName groupQName = QName.create(SN, "node-group");
         assertEquals(groupQName, nodeGroup.getQName());
-        final SchemaPath nodeGroupPath = TestUtils.createPath(true, snNS, snRev, snPref, "nodes", "node-group");
+        final SchemaPath nodeGroupPath = SN_NODES_PATH.createChild(groupQName);
         assertEquals(nodeGroupPath, nodeGroup.getPath());
 
         final Set<UsesNode> uses = nodes.getUses();

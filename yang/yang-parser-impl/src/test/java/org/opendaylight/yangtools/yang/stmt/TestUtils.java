@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -21,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
@@ -37,16 +37,19 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangStatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YinStatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YinTextToDomTransformer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YinStatementSourceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 public final class TestUtils {
     private static final Logger LOG = LoggerFactory.getLogger(TestUtils.class);
@@ -54,8 +57,8 @@ public final class TestUtils {
     private TestUtils() {
     }
 
-    public static Set<Module> loadModules(final URI resourceDirectory)
-            throws SourceException, ReactorException, IOException, YangSyntaxErrorException {
+    public static SchemaContext loadModules(final URI resourceDirectory)
+            throws ReactorException, IOException, YangSyntaxErrorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
         File[] files = new File(resourceDirectory).listFiles();
@@ -68,73 +71,44 @@ public final class TestUtils {
             }
         }
 
-        SchemaContext ctx = reactor.buildEffective();
-        return ctx.getModules();
+        return reactor.buildEffective();
     }
 
-    public static Set<Module> loadModules(final List<InputStream> streams)
-        throws SourceException, ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-            .newBuild();
-        for (InputStream inputStream : streams) {
-            reactor.addSource(new YangStatementSourceImpl(inputStream));
+    public static SchemaContext loadModuleResources(final Class<?> refClass, final String... resourceNames)
+            throws IOException, ReactorException, YangSyntaxErrorException {
+        final BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+
+        for (String resourceName : resourceNames) {
+            reactor.addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource(refClass, resourceName)));
         }
 
-        SchemaContext ctx = reactor.buildEffective();
-        return ctx.getModules();
+        return reactor.buildEffective();
     }
 
-    public static Set<Module> loadYinModules(final URI resourceDirectory) throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+    public static SchemaContext loadYinModules(final URI resourceDirectory) throws ReactorException, SAXException,
+            IOException {
+        final BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
 
         for (File file : new File(resourceDirectory).listFiles()) {
-            reactor.addSource(new YinStatementSourceImpl(file.getPath(), true));
+            reactor.addSource(YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(
+                YinTextSchemaSource.forFile(file))));
         }
 
-        SchemaContext ctx = reactor.buildEffective();
-        return ctx.getModules();
+        return reactor.buildEffective();
     }
 
-    public static Set<Module> loadYinModules(final List<InputStream> streams) throws SourceException, ReactorException {
+    public static Module loadYinModule(final YinTextSchemaSource source) throws ReactorException, SAXException, IOException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        for (InputStream inputStream : streams) {
-            reactor.addSource(new YinStatementSourceImpl(inputStream));
-        }
-
-        SchemaContext ctx = reactor.buildEffective();
-        return ctx.getModules();
-    }
-
-    public static Module loadModule(final InputStream stream)
-        throws SourceException, ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-            .newBuild();
-        reactor.addSource(new YangStatementSourceImpl(stream));
+        reactor.addSources(YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(source)));
         SchemaContext ctx = reactor.buildEffective();
         return ctx.getModules().iterator().next();
     }
 
-    public static Module loadYinModule(final InputStream stream) throws SourceException, ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(new YinStatementSourceImpl(stream));
-        SchemaContext ctx = reactor.buildEffective();
-        return ctx.getModules().iterator().next();
+    public static Optional<Module> findModule(final SchemaContext context, final String moduleName) {
+        return context.getModules().stream().filter(module -> moduleName.equals(module.getName())).findAny();
     }
 
-    public static Module findModule(final Set<Module> modules,
-        final String moduleName) {
-        Module result = null;
-        for (Module module : modules) {
-            if (module.getName().equals(moduleName)) {
-                result = module;
-                break;
-            }
-        }
-        return result;
-    }
-
-    public static ModuleImport findImport(final Set<ModuleImport> imports,
-            final String prefix) {
+    public static ModuleImport findImport(final Set<ModuleImport> imports, final String prefix) {
         ModuleImport result = null;
         for (ModuleImport moduleImport : imports) {
             if (moduleImport.getPrefix().equals(prefix)) {
@@ -145,8 +119,7 @@ public final class TestUtils {
         return result;
     }
 
-    public static TypeDefinition<?> findTypedef(
-            final Set<TypeDefinition<?>> typedefs, final String name) {
+    public static TypeDefinition<?> findTypedef(final Set<TypeDefinition<?>> typedefs, final String name) {
         TypeDefinition<?> result = null;
         for (TypeDefinition<?> td : typedefs) {
             if (td.getQName().getLocalName().equals(name)) {
@@ -157,9 +130,8 @@ public final class TestUtils {
         return result;
     }
 
-    public static SchemaPath createPath(final boolean absolute,
-            final URI namespace, final Date revision, final String prefix,
-            final String... names) {
+    public static SchemaPath createPath(final boolean absolute, final URI namespace, final Date revision,
+            final String prefix, final String... names) {
         List<QName> path = new ArrayList<>();
         for (String name : names) {
             path.add(QName.create(namespace, revision, name));
@@ -187,8 +159,7 @@ public final class TestUtils {
      * @param expected
      *            expected value
      */
-    public static void checkIsAugmenting(final DataSchemaNode node,
-            final boolean expected) {
+    public static void checkIsAugmenting(final DataSchemaNode node, final boolean expected) {
         assertEquals(expected, node.isAugmenting());
         if (node instanceof DataNodeContainer) {
             for (DataSchemaNode child : ((DataNodeContainer) node)
@@ -211,8 +182,7 @@ public final class TestUtils {
      * @param expected
      *            expected value
      */
-    public static void checkIsAddedByUses(final DataSchemaNode node,
-            final boolean expected) {
+    public static void checkIsAddedByUses(final DataSchemaNode node, final boolean expected) {
         assertEquals(expected, node.isAddedByUses());
         if (node instanceof DataNodeContainer) {
             for (DataSchemaNode child : ((DataNodeContainer) node)
@@ -226,8 +196,7 @@ public final class TestUtils {
         }
     }
 
-    public static void checkIsAddedByUses(final GroupingDefinition node,
-            final boolean expected) {
+    public static void checkIsAddedByUses(final GroupingDefinition node, final boolean expected) {
         assertEquals(expected, node.isAddedByUses());
         for (DataSchemaNode child : node.getChildNodes()) {
             checkIsAddedByUses(child, expected);
@@ -274,8 +243,7 @@ public final class TestUtils {
     public static SchemaContext parseYangSources(final String yangSourcesDirectoryPath)
             throws SourceException, ReactorException, URISyntaxException, IOException, YangSyntaxErrorException {
 
-        URL resourceDir = StmtTestUtils.class
-                .getResource(yangSourcesDirectoryPath);
+        URL resourceDir = StmtTestUtils.class.getResource(yangSourcesDirectoryPath);
         File testSourcesDir = new File(resourceDir.toURI());
 
         return parseYangSources(testSourcesDir.listFiles());
