@@ -60,7 +60,7 @@ public class OrderedListTest {
     public void setup() throws Exception {
         final File resourceFile = new File(Bug4295Test.class.getResource("/ordered-list-modification-test.yang")
                 .toURI());
-        context = YangParserTestUtils.parseYangSources(resourceFile);
+        context = YangParserTestUtils.parseYangFiles(resourceFile);
         testModule = QNameModule.create(new URI("ordered-list-modification-test"),
                 SimpleDateFormatUtil.getRevisionFormat().parse("1970-01-01"));
         parentContainer = QName.create(testModule, "parent-container");

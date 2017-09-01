@@ -82,7 +82,7 @@ public class YangModeledAnyXMLDeserializationTest {
         myLeaf3 = QName.create(fooModuleQName, "my-leaf-3");
         myLeaf2 = QName.create(fooModuleQName, "my-leaf-2");
         myAnyXMLDataFoo = QName.create(fooModuleQName, "my-anyxml-data");
-        schemaContext = YangParserTestUtils.parseYangSources("/anyxml-support/yang");
+        schemaContext = YangParserTestUtils.parseYangResourceDirectory("/anyxml-support/yang");
     }
 
     @Test

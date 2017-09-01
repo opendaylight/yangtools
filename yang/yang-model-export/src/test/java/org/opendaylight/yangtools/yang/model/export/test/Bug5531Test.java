@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 public class Bug5531Test {
     @Test
     public void test() throws Exception {
-        SchemaContext schema = YangParserTestUtils.parseYangSources("/bugs/bug5531");
+        SchemaContext schema = YangParserTestUtils.parseYangResourceDirectory("/bugs/bug5531");
 
         assertNotNull(schema);
         assertNotNull(schema.getModules());

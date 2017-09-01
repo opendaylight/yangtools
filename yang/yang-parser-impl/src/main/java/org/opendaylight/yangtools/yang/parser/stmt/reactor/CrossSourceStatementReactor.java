@@ -9,36 +9,23 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.io.ByteSource;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class CrossSourceStatementReactor {
-    private static final Logger LOG = LoggerFactory.getLogger(CrossSourceStatementReactor.class);
-
     private final Map<ModelProcessingPhase, StatementSupportBundle> supportedTerminology;
     private final Map<ValidationBundleType, Collection<?>> supportedValidation;
 
@@ -282,39 +269,6 @@ public final class CrossSourceStatementReactor {
 
         public EffectiveSchemaContext buildEffective() throws ReactorException {
             return context.buildEffective();
-        }
-
-        /**
-         * @deprecated Use {@link #addSources(Collection)} and {@link #buildEffective()} instead.
-         */
-        @Deprecated
-        public SchemaContext buildEffective(final Collection<ByteSource> yangByteSources) throws ReactorException,
-                IOException {
-            for (final ByteSource source : yangByteSources) {
-                if (source instanceof YangTextSchemaSource) {
-                    try {
-                        addSource(YangStatementStreamSource.create((YangTextSchemaSource) source));
-                    } catch (YangSyntaxErrorException e) {
-                        throw new IOException("Source " + source + " failed to parse", e);
-                    }
-                } else {
-                    addSource(new YangStatementSourceImpl(source.openStream()));
-                }
-            }
-
-            return buildEffective();
-        }
-
-        /**
-         * @deprecated Use {@link #addSources(Collection)} and {@link #buildEffective()} instead.
-         */
-        @Deprecated
-        public SchemaContext buildEffective(final List<InputStream> yangInputStreams) throws ReactorException {
-            for (final InputStream yangInputStream : yangInputStreams) {
-                addSource(new YangStatementSourceImpl(yangInputStream));
-            }
-
-            return buildEffective();
         }
     }
 }
