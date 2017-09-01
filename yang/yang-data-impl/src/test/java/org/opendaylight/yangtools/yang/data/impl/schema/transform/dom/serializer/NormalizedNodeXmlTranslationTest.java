@@ -13,8 +13,6 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containe
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +25,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.xml.stream.XMLOutputFactory;
@@ -74,7 +71,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser.Dom
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -251,8 +247,8 @@ public class NormalizedNodeXmlTranslationTest {
     }
 
     public NormalizedNodeXmlTranslationTest(final String yangPath, final String xmlPath,
-            final ContainerNode expectedNode) throws ReactorException {
-        schema = parseTestSchema(yangPath);
+            final ContainerNode expectedNode) {
+        schema = YangParserTestUtils.parseYangResources(NormalizedDataBuilderTest.class, yangPath);
         this.xmlPath = xmlPath;
         this.containerNode = (ContainerSchemaNode) NormalizedDataBuilderTest.getSchemaNode(schema, "test", "container");
         this.expectedNode = expectedNode;
@@ -261,19 +257,6 @@ public class NormalizedNodeXmlTranslationTest {
     private final ContainerNode expectedNode;
     private final ContainerSchemaNode containerNode;
     private final String xmlPath;
-
-    SchemaContext parseTestSchema(final String... yangPath) throws ReactorException {
-        return YangParserTestUtils.parseYangStreams(getTestYangs(yangPath));
-    }
-
-    List<InputStream> getTestYangs(final String... yangPaths) {
-        return ImmutableList.copyOf(Collections2.transform(Arrays.asList(yangPaths),
-                input -> {
-                    final InputStream resourceAsStream = NormalizedDataBuilderTest.class.getResourceAsStream(input);
-                    Preconditions.checkNotNull(resourceAsStream, "File %s was null", resourceAsStream);
-                    return resourceAsStream;
-                }));
-    }
 
     @Test
     public void testTranslation() throws Exception {

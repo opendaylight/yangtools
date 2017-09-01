@@ -10,29 +10,32 @@ package org.opendaylight.yangtools.yang.stmt.yin;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
+import org.xml.sax.SAXException;
 
 public class YinFileTypeDefStmtTest {
 
-    private Set<Module> modules;
+    private SchemaContext context;
 
     @Before
-    public void init() throws URISyntaxException, ReactorException {
-        modules = TestUtils.loadYinModules(getClass().getResource("/semantic-statement-parser/yin/modules").toURI());
-        assertEquals(9, modules.size());
+    public void init() throws URISyntaxException, ReactorException, SAXException, IOException {
+        context = TestUtils.loadYinModules(getClass().getResource("/semantic-statement-parser/yin/modules").toURI());
+        assertEquals(9, context.getModules().size());
     }
 
     @Test
-    public void testTypedef() throws URISyntaxException {
-        Module testModule = TestUtils.findModule(modules, "config");
+    public void testTypedef() {
+        Module testModule = TestUtils.findModule(context, "config").get();
         assertNotNull(testModule);
 
         Set<TypeDefinition<?>> typeDefs = testModule.getTypeDefinitions();
