@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeS
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
@@ -46,8 +45,8 @@ public class JsonStreamToNormalizedNodeTest {
     private static SchemaContext schemaContext;
 
     @BeforeClass
-    public static void initialization() throws IOException, URISyntaxException, ReactorException {
-        schemaContext = YangParserTestUtils.parseYangSources("/complexjson/yang");
+    public static void initialization() {
+        schemaContext = YangParserTestUtils.parseYangResourceDirectory("/complexjson/yang");
     }
 
     @Test

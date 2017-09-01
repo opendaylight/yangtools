@@ -13,15 +13,17 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import java.io.InputStream;
+
+import java.io.IOException;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 
 public class YangModelDependencyInfoTest {
 
     @Test
-    public void testModuleWithNoImports() {
-        InputStream stream = getClass().getResourceAsStream("/ietf/ietf-inet-types@2010-09-24.yang");
-        YangModelDependencyInfo info = YangModelDependencyInfo.fromInputStream(stream);
+    public void testModuleWithNoImports() throws IOException, YangSyntaxErrorException {
+        YangModelDependencyInfo info = YangModelDependencyInfo.forResource(getClass(),
+            "/ietf/ietf-inet-types@2010-09-24.yang");
         assertNotNull(info);
         assertEquals("ietf-inet-types", info.getName());
         assertEquals("2010-09-24", info.getFormattedRevision());
@@ -31,9 +33,9 @@ public class YangModelDependencyInfoTest {
     }
 
     @Test
-    public void testModuleWithImports() {
-        InputStream stream = getClass().getResourceAsStream("/parse-methods/dependencies/m2@2013-30-09.yang");
-        YangModelDependencyInfo info = YangModelDependencyInfo.fromInputStream(stream);
+    public void testModuleWithImports() throws IOException, YangSyntaxErrorException {
+        YangModelDependencyInfo info = YangModelDependencyInfo.forResource(getClass(),
+                "/parse-methods/dependencies/m2@2013-30-09.yang");
         assertNotNull(info);
         assertEquals("m2", info.getName());
         assertEquals("2013-30-09", info.getFormattedRevision());
@@ -42,32 +44,30 @@ public class YangModelDependencyInfoTest {
     }
 
     @Test
-    public void testModuleWithoutRevision() {
-        InputStream stream = getClass().getResourceAsStream("/no-revision/module-without-revision.yang");
-        YangModelDependencyInfo info = YangModelDependencyInfo.fromInputStream(stream);
+    public void testModuleWithoutRevision() throws IOException, YangSyntaxErrorException {
+        YangModelDependencyInfo info = YangModelDependencyInfo.forResource(getClass(),
+                "/no-revision/module-without-revision.yang");
         assertNotNull(info);
         assertEquals("module-without-revision", info.getName());
         assertNull(info.getFormattedRevision());
     }
 
     @Test
-    public void testEquals() {
-        InputStream stream1 = getClass().getResourceAsStream("/ietf/ietf-inet-types@2010-09-24.yang");
-        YangModelDependencyInfo info1 = YangModelDependencyInfo.fromInputStream(stream1);
-        InputStream stream2 = getClass().getResourceAsStream("/no-revision/module-without-revision.yang");
-        YangModelDependencyInfo info2 = YangModelDependencyInfo.fromInputStream(stream2);
+    public void testEquals() throws IOException, YangSyntaxErrorException {
+        YangModelDependencyInfo info1 = YangModelDependencyInfo.forResource(getClass(),
+            "/ietf/ietf-inet-types@2010-09-24.yang");
+        YangModelDependencyInfo info2 = YangModelDependencyInfo.forResource(getClass(),
+            "/no-revision/module-without-revision.yang");
 
         assertTrue(info1.equals(info1));
         assertFalse(info1.equals(null));
-        assertFalse(info1.equals(stream1));
         assertFalse(info1.equals(info2));
     }
 
     @Test
-    public void testHashcode() {
-        InputStream stream = getClass().getResourceAsStream("/no-revision/module-without-revision.yang");
-        YangModelDependencyInfo info = YangModelDependencyInfo.fromInputStream(stream);
-
+    public void testHashcode() throws IOException, YangSyntaxErrorException {
+        YangModelDependencyInfo info = YangModelDependencyInfo.forResource(getClass(),
+                "/no-revision/module-without-revision.yang");
         assertNotEquals("hashcode", 31, info.hashCode());
     }
 }

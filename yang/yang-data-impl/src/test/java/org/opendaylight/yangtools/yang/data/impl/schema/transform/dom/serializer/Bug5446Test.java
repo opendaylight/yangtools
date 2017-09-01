@@ -70,7 +70,7 @@ public class Bug5446Test extends XMLTestCase {
         rootQName = QName.create(fooModuleQName, "root");
         ipAddressQName = QName.create(fooModuleQName, "ip-address");
 
-        schemaContext = YangParserTestUtils.parseYangSources(new File(getClass().getResource("/bug5446/yang/foo.yang").toURI()));
+        schemaContext = YangParserTestUtils.parseYangFiles(new File(getClass().getResource("/bug5446/yang/foo.yang").toURI()));
     }
 
     @Test
