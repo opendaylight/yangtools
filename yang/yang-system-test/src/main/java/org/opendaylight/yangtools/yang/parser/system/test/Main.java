@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 /**
  * Main class of Yang parser system test.
  *
+ * <p>
  * yang-system-test [-f features] [-h help] [-p path] [-v verbose] yangFiles...
  *  -f,--features &lt;arg&gt;   features is a string in the form
  *                        [feature(,feature)*] and feature is a string in the form
@@ -72,8 +73,8 @@ public class Main {
                 "features",
                 true,
                 "features is a string in the form [feature(,feature)*] and feature is a string in the form "
-                        + "[($namespace?revision=$revision)$local_name]. This option is used to prune the data model by removing "
-                        + "all nodes that are defined with a \"if-feature\".");
+                        + "[($namespace?revision=$revision)$local_name]. This option is used to prune the data model "
+                        + "by removing all nodes that are defined with a \"if-feature\".");
         feature.setRequired(false);
         options.addOption(feature);
         return options;
@@ -105,6 +106,7 @@ public class Main {
         runSystemTest(yangLibDirs, yangFiles, supportedFeatures, arguments.hasOption("recursive"));
     }
 
+    @SuppressWarnings("checkstyle:illegalCatch")
     private static void runSystemTest(final List<String> yangLibDirs, final List<String> yangFiles,
             final HashSet<QName> supportedFeatures, final boolean recursiveSearch) {
         LOG.log(Level.INFO, "Yang model dirs: {0} ", yangLibDirs);
@@ -161,7 +163,8 @@ public class Main {
         return qnames;
     }
 
-    private static CommandLine parseArguments(final String[] args, final Options options, final HelpFormatter formatter) {
+    private static CommandLine parseArguments(final String[] args, final Options options,
+            final HelpFormatter formatter) {
         final CommandLineParser parser = new BasicParser();
 
         CommandLine cmd = null;
@@ -182,9 +185,10 @@ public class Main {
     }
 
     private static void printMemoryInfo(final String info) {
-        LOG.log(Level.INFO, "Memory INFO [{0}]: free {1}MB, used {2}MB, total {3}MB, max {4}MB", new Object[] { info,
-                Runtime.getRuntime().freeMemory() / MB,
-                (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / MB,
-                Runtime.getRuntime().totalMemory() / MB, Runtime.getRuntime().maxMemory() / MB });
+        LOG.log(Level.INFO, "Memory INFO [{0}]: free {1}MB, used {2}MB, total {3}MB, max {4}MB", new Object[] {
+            info,
+            Runtime.getRuntime().freeMemory() / MB,
+            (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / MB,
+            Runtime.getRuntime().totalMemory() / MB, Runtime.getRuntime().maxMemory() / MB });
     }
 }

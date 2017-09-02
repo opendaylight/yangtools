@@ -97,7 +97,8 @@ class SystemTestUtils {
             throw new FileNotFoundException(String.format("%s no such directory", yangSourcesDirectoryPath));
         }
 
-        return recursiveSearch ? searchYangFiles(testSourcesDir) : Arrays.asList(testSourcesDir.listFiles(YANG_FILE_FILTER));
+        return recursiveSearch ? searchYangFiles(testSourcesDir)
+            : Arrays.asList(testSourcesDir.listFiles(YANG_FILE_FILTER));
     }
 
     private static List<File> searchYangFiles(final File dir) {
