@@ -17,9 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
- * Abstract base class for a single level of {@link JSONNormalizedNodeStreamWriter}
- * recursion. Provides the base API towards the writer, which is then specialized
- * by subclasses.
+ * Abstract base class for a single level of {@link JSONNormalizedNodeStreamWriter} recursion. Provides the base API
+ * towards the writer, which is then specialized by subclasses.
  */
 abstract class JSONStreamWriterContext {
     private final JSONStreamWriterContext parent;
@@ -46,15 +45,15 @@ abstract class JSONStreamWriterContext {
     }
 
     /**
-     * Write a child JSON node identifier, optionally prefixing it with the module name
-     * corresponding to its namespace.
+     * Write a child JSON node identifier, optionally prefixing it with the module name corresponding to its namespace.
      *
      * @param schema Schema context
      * @param writer Output writer
      * @param qname Namespace/name tuple
      * @throws IOException when the writer reports it
      */
-    final void writeChildJsonIdentifier(final SchemaContext schema, final JsonWriter writer, final QName qname) throws IOException {
+    final void writeChildJsonIdentifier(final SchemaContext schema, final JsonWriter writer, final QName qname)
+            throws IOException {
 
         final StringBuilder sb = new StringBuilder();
         // Prepend module name if namespaces do not match
@@ -72,15 +71,15 @@ abstract class JSONStreamWriterContext {
     }
 
     /**
-     * Write our JSON node identifier, optionally prefixing it with the module name
-     * corresponding to its namespace.
+     * Write our JSON node identifier, optionally prefixing it with the module name corresponding to its namespace.
      *
      * @param schema Schema context
      * @param writer Output writer
      * @param qname Namespace/name tuple
      * @throws IOException when the writer reports it
      */
-    protected final void writeMyJsonIdentifier(final SchemaContext schema, final JsonWriter writer, final QName qname) throws IOException {
+    protected final void writeMyJsonIdentifier(final SchemaContext schema, final JsonWriter writer, final QName qname)
+            throws IOException {
         parent.writeChildJsonIdentifier(schema, writer, qname);
     }
 
@@ -96,18 +95,18 @@ abstract class JSONStreamWriterContext {
      *
      * @param schema Schema context
      * @param writer Output writer
-     * @throws IOException
+     * @throws IOException when the writer reports it
      */
-    protected abstract void emitStart(final SchemaContext schema, final JsonWriter writer) throws IOException;
+    protected abstract void emitStart(SchemaContext schema, JsonWriter writer) throws IOException;
 
     /**
      * Emit the end of an element.
      *
      * @param schema Schema context
      * @param writer Output writer
-     * @throws IOException
+     * @throws IOException when writer reports it
      */
-    protected abstract void emitEnd(final JsonWriter writer) throws IOException;
+    protected abstract void emitEnd(JsonWriter writer) throws IOException;
 
     private void emitMyself(final SchemaContext schema, final JsonWriter writer) throws IOException {
         if (!emittedMyself) {

@@ -12,14 +12,14 @@ import java.io.IOException;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-
 /**
  * A recursion level of {@link JSONNormalizedNodeStreamWriter}, which represents
  * a JSON object which has to be prefixed with its identifier -- such as a
  * container.
  */
 final class JSONStreamWriterNamedObjectContext extends JSONStreamWriterObjectContext {
-    protected JSONStreamWriterNamedObjectContext(final JSONStreamWriterContext parent, final PathArgument arg, final boolean mandatory) {
+    protected JSONStreamWriterNamedObjectContext(final JSONStreamWriterContext parent, final PathArgument arg,
+            final boolean mandatory) {
         super(parent, arg, mandatory);
     }
 

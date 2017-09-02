@@ -13,7 +13,7 @@ import com.google.gson.stream.JsonWriter;
 import java.io.Writer;
 
 /**
- * Factory Method class for JsonWriter creation
+ * Factory Method class for JsonWriter creation.
  */
 @Beta
 public final class JsonWriterFactory {

@@ -33,8 +33,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug7246Test {
-    private static String NS = "my-namespace";
-    private static String REV = "1970-01-01";
+    private static final String NS = "my-namespace";
+    private static final String REV = "1970-01-01";
 
     @Test
     public void test() throws Exception {
@@ -55,7 +55,7 @@ public class Bug7246Test {
         assertEquals(expextedJson, serializedJson);
     }
 
-    private QName qN(final String localName) {
+    private static QName qN(final String localName) {
         return QName.create(NS, REV, localName);
     }
 

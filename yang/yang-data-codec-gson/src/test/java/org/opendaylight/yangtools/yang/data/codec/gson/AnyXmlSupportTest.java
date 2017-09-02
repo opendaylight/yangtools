@@ -86,9 +86,9 @@ public class AnyXmlSupportTest {
 
         // serialization
         final Writer writer = new StringWriter();
-        final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.
-                createExclusiveWriter(JSONCodecFactory.getShared(schemaContext), SchemaPath.ROOT, null,
-                        JsonWriterFactory.createJsonWriter(writer, 2));
+        final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
+            JSONCodecFactory.getShared(schemaContext), SchemaPath.ROOT, null,
+            JsonWriterFactory.createJsonWriter(writer, 2));
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
         nodeWriter.write(transformedInput);
         nodeWriter.close();
@@ -128,9 +128,9 @@ public class AnyXmlSupportTest {
 
         // serialization
         final Writer writer = new StringWriter();
-        final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.
-                createExclusiveWriter(JSONCodecFactory.getShared(schemaContext), SchemaPath.ROOT, null,
-                        JsonWriterFactory.createJsonWriter(writer, 2));
+        final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
+            JSONCodecFactory.getShared(schemaContext), SchemaPath.ROOT, null,
+            JsonWriterFactory.createJsonWriter(writer, 2));
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
         nodeWriter.write(transformedInput);
         nodeWriter.close();
@@ -145,8 +145,8 @@ public class AnyXmlSupportTest {
     private static DOMSource getParsedAnyXmlValue(final NormalizedNode<?, ?> transformedInput, final QName anyxmlName) {
         assertTrue(transformedInput instanceof ContainerNode);
         final ContainerNode cont1 = (ContainerNode) transformedInput;
-        final DataContainerChild<? extends PathArgument, ?> child = cont1.getChild(new NodeIdentifier(anyxmlName)).get();
-        assertNotNull(child);
+        final DataContainerChild<? extends PathArgument, ?> child = cont1.getChild(new NodeIdentifier(anyxmlName))
+                .get();
         assertTrue(child instanceof AnyXmlNode);
         final AnyXmlNode anyXmlNode = (AnyXmlNode) child;
         return anyXmlNode.getValue();

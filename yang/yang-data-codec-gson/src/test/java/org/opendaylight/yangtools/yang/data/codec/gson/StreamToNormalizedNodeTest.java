@@ -47,8 +47,6 @@ public class StreamToNormalizedNodeTest {
 
     /**
      * Demonstrates how to log events produced by a {@link JsonReader}.
-     *
-     * @throws IOException
      */
     @Test
     public void ownStreamWriterImplementationDemonstration() throws IOException {
@@ -59,7 +57,7 @@ public class StreamToNormalizedNodeTest {
         final LoggingNormalizedNodeStreamWriter logWriter = new LoggingNormalizedNodeStreamWriter();
 
         // JSON -> StreamWriter parser
-        try (final JsonParserStream jsonHandler = JsonParserStream.create(logWriter, schemaContext)) {
+        try (JsonParserStream jsonHandler = JsonParserStream.create(logWriter, schemaContext)) {
             // Process multiple readers, flush()/close() as needed
             jsonHandler.parse(reader);
         }
@@ -68,8 +66,6 @@ public class StreamToNormalizedNodeTest {
     /**
      * Demonstrates how to create an immutable NormalizedNode tree from a {@link JsonReader} and
      * then writes the data back into string representation.
-     *
-     * @throws IOException
      */
     @Ignore
     @Test
@@ -96,7 +92,8 @@ public class StreamToNormalizedNodeTest {
          * This is the serialization part.
          */
         // We want to write the first child out
-        final DataContainerChild<? extends PathArgument, ?> firstChild = (DataContainerChild<? extends PathArgument, ?>) parsedData;
+        final DataContainerChild<? extends PathArgument, ?> firstChild =
+                (DataContainerChild<? extends PathArgument, ?>) parsedData;
         LOG.debug("Serializing first child: {}", firstChild);
 
         // String holder
@@ -104,9 +101,9 @@ public class StreamToNormalizedNodeTest {
 
         // StreamWriter which outputs JSON strings
         // StreamWriter which outputs JSON strings
-        final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.
-                createExclusiveWriter(JSONCodecFactory.getShared(schemaContext), SchemaPath.ROOT, null,
-                    JsonWriterFactory.createJsonWriter(writer, 2));
+        final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
+            JSONCodecFactory.getShared(schemaContext), SchemaPath.ROOT, null,
+            JsonWriterFactory.createJsonWriter(writer, 2));
 
         // NormalizedNode -> StreamWriter
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
@@ -117,5 +114,4 @@ public class StreamToNormalizedNodeTest {
         // Just to put it somewhere
         LOG.debug("Serialized JSON: {}", writer.toString());
     }
-
 }

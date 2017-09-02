@@ -37,8 +37,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
- *
- * Each test tests whether json input is correctly transformed to normalized node structure
+ * Each test tests whether json input is correctly transformed to normalized node structure.
  */
 public class JsonStreamToNormalizedNodeTest {
 
@@ -85,11 +84,11 @@ public class JsonStreamToNormalizedNodeTest {
     }
 
     /**
-     * Test of translating internal augmentations to normalized nodes structure
+     * Test of translating internal augmentations to normalized nodes structure.
      *
+     * <p>
      * 2 nodes are added via internal augmentation A, 1 node via internal augmentation B and one node is originally
      * member of case.
-     *
      */
     @Test
     public void caseNodeAugmentationInChoiceInContainer() throws IOException, URISyntaxException {
@@ -99,20 +98,18 @@ public class JsonStreamToNormalizedNodeTest {
     }
 
     /**
-     * also test using of namesakes (equal local names with different
-     *
-     * @throws IOException
-     * @throws URISyntaxException
+     * also test using of namesakes (equal local names with different.
      */
     @Test
     public void caseNodeExternalAugmentationInChoiceInContainer() throws IOException, URISyntaxException {
-        final String inputJson = loadTextFile("/complexjson/case-node-external-augmentation-in-choice-in-container.json");
+        final String inputJson =
+                loadTextFile("/complexjson/case-node-external-augmentation-in-choice-in-container.json");
         verifyTransformationToNormalizedNode(inputJson,
                 TestingNormalizedNodeStructuresCreator.caseNodeExternalAugmentationInChoiceInContainer());
     }
 
     /**
-     * augmentation of choice - adding new case
+     * augmentation of choice - adding new case.
      */
     @Test
     public void choiceNodeAugmentationInContainer() throws IOException, URISyntaxException {
@@ -124,14 +121,15 @@ public class JsonStreamToNormalizedNodeTest {
     @Test
     public void unkeyedNodeInContainer() throws IOException, URISyntaxException {
         final String inputJson = loadTextFile("/complexjson/unkeyed-node-in-container.json");
-        verifyTransformationToNormalizedNode(inputJson, TestingNormalizedNodeStructuresCreator.unkeyedNodeInContainer());
+        verifyTransformationToNormalizedNode(inputJson,
+            TestingNormalizedNodeStructuresCreator.unkeyedNodeInContainer());
     }
 
     /**
      * Top level JSON element contains no information about module name.
      *
+     * <p>
      * It should be possible to find out potential module name from available schema context.
-     *
      */
     @Test
     public void missingModuleInfoInTopLevelElement() throws IOException, URISyntaxException {
@@ -140,9 +138,9 @@ public class JsonStreamToNormalizedNodeTest {
     }
 
     /**
-     *
      * Exception expected.
      *
+     * <p>
      * It tests case when several elements with the same name and various namespaces exists and are in JSON specified
      * without module name prefix.
      */
@@ -173,9 +171,9 @@ public class JsonStreamToNormalizedNodeTest {
     }
 
     /**
-     *
      * Exception expected.
      *
+     * <p>
      * Json input contains element which doesn't exist in YANG schema
      */
     @Test
@@ -188,7 +186,6 @@ public class JsonStreamToNormalizedNodeTest {
             assertTrue(e.getMessage().contains("Schema node with name dummy-element wasn't found"));
         }
     }
-
 
     @Test
     public void listItemWithoutArray() throws IOException, URISyntaxException {
@@ -216,7 +213,7 @@ public class JsonStreamToNormalizedNodeTest {
         assertNotNull(transformedInput);
     }
 
-   @Test
+    @Test
     public void multipleChoiceAugmentation() throws IOException, URISyntaxException {
         final String inputJson = loadTextFile("/complexjson/multiple-choice-augmentation-in-container.json");
 
@@ -271,5 +268,4 @@ public class JsonStreamToNormalizedNodeTest {
         assertEquals("Transformation of json input to normalized node wasn't successful.", awaitedStructure,
                 transformedInput);
     }
-
 }

@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.data.util.codec.TypeAwareCodec;
 
 interface JSONCodec<T> extends TypeAwareCodec<T, Object, JsonWriter> {
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      *
      * @throws IOException if the write fails
      */

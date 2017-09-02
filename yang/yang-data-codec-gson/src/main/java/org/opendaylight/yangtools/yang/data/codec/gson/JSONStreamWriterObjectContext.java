@@ -19,7 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  * as when it is in a containing list.
  */
 class JSONStreamWriterObjectContext extends JSONStreamWriterQNameContext {
-    protected JSONStreamWriterObjectContext(final JSONStreamWriterContext parent, final PathArgument arg, final boolean mandatory) {
+    protected JSONStreamWriterObjectContext(final JSONStreamWriterContext parent, final PathArgument arg,
+            final boolean mandatory) {
         super(Preconditions.checkNotNull(parent), arg.getNodeType(), mandatory);
     }
 

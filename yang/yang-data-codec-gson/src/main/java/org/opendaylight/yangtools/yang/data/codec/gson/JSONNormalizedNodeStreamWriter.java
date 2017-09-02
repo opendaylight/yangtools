@@ -35,8 +35,8 @@ import org.w3c.dom.NodeList;
 /**
  * This implementation will create JSON output as output stream.
  *
+ * <p>
  * Values of leaf and leaf-list are NOT translated according to codecs.
- *
  */
 public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
     /**
@@ -58,8 +58,9 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
     private final JsonWriter writer;
     private JSONStreamWriterContext context;
 
-    private JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final SchemaPath path, final JsonWriter JsonWriter, final JSONStreamWriterRootContext rootContext) {
-        this.writer = Preconditions.checkNotNull(JsonWriter);
+    private JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final SchemaPath path,
+            final JsonWriter writer, final JSONStreamWriterRootContext rootContext) {
+        this.writer = Preconditions.checkNotNull(writer);
         this.codecs = Preconditions.checkNotNull(codecFactory);
         this.tracker = SchemaTracker.create(codecFactory.getSchemaContext(), path);
         this.context = Preconditions.checkNotNull(rootContext);
@@ -68,11 +69,14 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
     /**
      * Create a new stream writer, which writes to the specified output stream.
      *
+     * <p>
      * The codec factory can be reused between multiple writers.
      *
+     * <p>
      * Returned writer is exclusive user of JsonWriter, which means it will start
      * top-level JSON element and ends it.
      *
+     * <p>
      * This instance of writer can be used only to emit one top level element,
      * otherwise it will produce incorrect JSON.
      *
@@ -82,15 +86,19 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
      * @param jsonWriter JsonWriter
      * @return A stream writer instance
      */
-    public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory, final SchemaPath path, final URI initialNs, final JsonWriter jsonWriter) {
-        return new JSONNormalizedNodeStreamWriter(codecFactory, path, jsonWriter, new JSONStreamWriterExclusiveRootContext(initialNs));
+    public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory,
+            final SchemaPath path, final URI initialNs, final JsonWriter jsonWriter) {
+        return new JSONNormalizedNodeStreamWriter(codecFactory, path, jsonWriter,
+            new JSONStreamWriterExclusiveRootContext(initialNs));
     }
 
     /**
      * Create a new stream writer, which writes to the specified output stream.
      *
+     * <p>
      * The codec factory can be reused between multiple writers.
      *
+     * <p>
      * Returned writer can be used emit multiple top level element,
      * but does not start / close parent JSON object, which must be done
      * by user providing {@code jsonWriter} instance in order for
@@ -102,8 +110,10 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
      * @param jsonWriter JsonWriter
      * @return A stream writer instance
      */
-    public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory, final SchemaPath path, final URI initialNs, final JsonWriter jsonWriter) {
-        return new JSONNormalizedNodeStreamWriter(codecFactory, path, jsonWriter, new JSONStreamWriterSharedRootContext(initialNs));
+    public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory,
+            final SchemaPath path, final URI initialNs, final JsonWriter jsonWriter) {
+        return new JSONNormalizedNodeStreamWriter(codecFactory, path, jsonWriter,
+            new JSONStreamWriterSharedRootContext(initialNs));
     }
 
     @Override
@@ -221,15 +231,8 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
     }
 
     @SuppressWarnings("unchecked")
-    private void writeValue(final Object value, final JSONCodec<?> codec)
-            throws IOException {
-        try {
-            ((JSONCodec<Object>) codec).writeValue(writer, value);
-        } catch (IOException | RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+    private void writeValue(final Object value, final JSONCodec<?> codec) throws IOException {
+        ((JSONCodec<Object>) codec).writeValue(writer, value);
     }
 
     private void writeAnyXmlValue(final DOMSource anyXmlValue) throws IOException {
@@ -273,7 +276,7 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
                     writer.beginObject();
                     inObject = true;
                     // name
-                } else if (!inArray){
+                } else if (!inArray) {
                     writer.name(childNode.getNodeName());
                 }
             }

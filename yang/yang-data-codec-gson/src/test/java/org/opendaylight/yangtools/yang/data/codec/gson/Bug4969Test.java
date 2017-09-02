@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
 import com.google.common.base.Optional;
 import com.google.gson.stream.JsonReader;
 import java.io.File;
@@ -53,34 +54,34 @@ public class Bug4969Test {
 
         assertTrue(transformedInput instanceof ContainerNode);
         ContainerNode root = (ContainerNode) transformedInput;
-        Optional<DataContainerChild<? extends PathArgument, ?>> ref1 = root.getChild(NodeIdentifier.create((QName
-                .create("foo", "2016-01-22", "ref1"))));
-        Optional<DataContainerChild<? extends PathArgument, ?>> ref2 = root.getChild(NodeIdentifier.create((QName
-                .create("foo", "2016-01-22", "ref2"))));
-        Optional<DataContainerChild<? extends PathArgument, ?>> ref3 = root.getChild(NodeIdentifier.create((QName
-                .create("foo", "2016-01-22", "ref3"))));
-        Optional<DataContainerChild<? extends PathArgument, ?>> ref4 = root.getChild(NodeIdentifier.create((QName
-                .create("foo", "2016-01-22", "ref4"))));
+        final Optional<DataContainerChild<? extends PathArgument, ?>> ref1 = root.getChild(NodeIdentifier.create(
+            QName.create("foo", "2016-01-22", "ref1")));
+        final Optional<DataContainerChild<? extends PathArgument, ?>> ref2 = root.getChild(NodeIdentifier.create(
+            QName.create("foo", "2016-01-22", "ref2")));
+        final Optional<DataContainerChild<? extends PathArgument, ?>> ref3 = root.getChild(NodeIdentifier.create(
+            QName.create("foo", "2016-01-22", "ref3")));
+        final Optional<DataContainerChild<? extends PathArgument, ?>> ref4 = root.getChild(NodeIdentifier.create(
+            QName.create("foo", "2016-01-22", "ref4")));
 
         assertTrue(ref1.isPresent());
         assertTrue(ref2.isPresent());
         assertTrue(ref3.isPresent());
         assertTrue(ref4.isPresent());
 
-        Object value1 = ref1.get().getValue();
-        Object value2 = ref2.get().getValue();
-        Object value3 = ref3.get().getValue();
-        Object value4 = ref4.get().getValue();
+        final Object value1 = ref1.get().getValue();
+        final Object value2 = ref2.get().getValue();
+        final Object value3 = ref3.get().getValue();
+        final Object value4 = ref4.get().getValue();
 
         assertTrue(value1 instanceof Set);
         assertTrue(value2 instanceof Set);
         assertTrue(value3 instanceof Set);
         assertTrue(value4 instanceof Set);
 
-        Set<?> set1 = (Set<?>) value1;
-        Set<?> set2 = (Set<?>) value2;
-        Set<?> set3 = (Set<?>) value3;
-        Set<?> set4 = (Set<?>) value4;
+        final Set<?> set1 = (Set<?>) value1;
+        final Set<?> set2 = (Set<?>) value2;
+        final Set<?> set3 = (Set<?>) value3;
+        final Set<?> set4 = (Set<?>) value4;
 
         assertEquals(1, set1.size());
         assertEquals(2, set2.size());
