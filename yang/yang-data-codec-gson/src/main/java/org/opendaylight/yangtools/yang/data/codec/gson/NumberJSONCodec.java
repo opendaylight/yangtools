@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.data.impl.codec.DataStringCodec;
  *
  * @param <T> Deserialized value type
  */
-final class NumberJSONCodec<T extends Number> extends AbstractJSONCodec<T > {
+final class NumberJSONCodec<T extends Number> extends AbstractJSONCodec<T> {
     NumberJSONCodec(final DataStringCodec<T> codec) {
         super(codec);
     }

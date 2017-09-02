@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
@@ -125,13 +124,9 @@ public class TestingNormalizedNodeStructuresCreator {
     }
 
     private static DataContainerChild<? extends PathArgument, ?> augmentC11AWithLf15_21Node() {
-        DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> choc11_c11AugmentBuilder = Builders
-                .augmentationBuilder();
-        choc11_c11AugmentBuilder.withNodeIdentifier(new AugmentationIdentifier(Sets.newHashSet(QName.create(
-                "ns:complex:json", "2014-08-11", "lf15_21"))));
-
-        choc11_c11AugmentBuilder.withChild(lf15_21Node());
-        return choc11_c11AugmentBuilder.build();
+        return Builders.augmentationBuilder().withNodeIdentifier(
+            new AugmentationIdentifier(Sets.newHashSet(QName.create("ns:complex:json", "2014-08-11", "lf15_21"))))
+                .withChild(lf15_21Node()).build();
     }
 
     private static LeafNode<Object> lf15_21Node() {
@@ -141,14 +136,13 @@ public class TestingNormalizedNodeStructuresCreator {
     }
 
     private static DataContainerChild<? extends PathArgument, ?> augmentC11AWithLf15_11AndLf15_12Node() {
-        DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> choc11_c11AugmentBuilder = Builders
-                .augmentationBuilder();
-        choc11_c11AugmentBuilder.withNodeIdentifier(new AugmentationIdentifier(Sets.newHashSet(
-                QName.create("ns:complex:json", "2014-08-11", "lf15_11"),
-                QName.create("ns:complex:json", "2014-08-11", "lf15_12"))));
-        choc11_c11AugmentBuilder.withChild(lf15_11Node());
-        choc11_c11AugmentBuilder.withChild(lf15_12Node());
-        return choc11_c11AugmentBuilder.build();
+        return Builders.augmentationBuilder()
+                .withNodeIdentifier(new AugmentationIdentifier(Sets.newHashSet(
+                    QName.create("ns:complex:json", "2014-08-11", "lf15_11"),
+                    QName.create("ns:complex:json", "2014-08-11", "lf15_12"))))
+                .withChild(lf15_11Node())
+                .withChild(lf15_12Node())
+                .build();
     }
 
     private static LeafNode<Object> lf15_12Node() {
@@ -176,8 +170,6 @@ public class TestingNormalizedNodeStructuresCreator {
     }
 
     private static DataContainerChild<? extends PathArgument, ?> childLst11() {
-        CollectionNodeBuilder<MapEntryNode, MapNode> lst11 = Builders.mapBuilder().withNodeIdentifier(
-                new NodeIdentifier(QName.create("ns:complex:json", "2014-08-11", "lst11")));
 
         DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> lst11Entry1Builder = Builders
                 .mapEntryBuilder();
@@ -200,8 +192,8 @@ public class TestingNormalizedNodeStructuresCreator {
         lst11Entry1Builder.withChild(Builders.leafBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create("ns:complex:json", "2014-08-11", "lf111")))
                 .withValue("lf111 value").build());
-        lst11.withChild(lst11Entry1Builder.build());
-        return lst11.build();
+        return Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(
+            QName.create("ns:complex:json", "2014-08-11", "lst11"))).withChild(lst11Entry1Builder.build()).build();
     }
 
     private static Object lf112Value() {
@@ -217,13 +209,13 @@ public class TestingNormalizedNodeStructuresCreator {
                 new NodeIdentifier(QName.create("ns:complex:json", "2014-08-11", "lflst11")));
         lflst11.withChild(Builders
                 .leafSetEntryBuilder()
-                .withNodeIdentifier(
-                        new NodeWithValue<>(QName.create("ns:complex:json", "2014-08-11", "lflst11"), "lflst11 value1"))
+                .withNodeIdentifier(new NodeWithValue<>(QName.create("ns:complex:json", "2014-08-11", "lflst11"),
+                        "lflst11 value1"))
                 .withValue("lflst11 value1").build());
         lflst11.withChild(Builders
                 .leafSetEntryBuilder()
-                .withNodeIdentifier(
-                        new NodeWithValue<>(QName.create("ns:complex:json", "2014-08-11", "lflst11"), "lflst11 value2"))
+                .withNodeIdentifier(new NodeWithValue<>(QName.create("ns:complex:json", "2014-08-11", "lflst11"),
+                        "lflst11 value2"))
                 .withValue("lflst11 value2").build());
         return lflst11.build();
     }
@@ -233,13 +225,13 @@ public class TestingNormalizedNodeStructuresCreator {
                 new NodeIdentifier(QName.create("ns:complex:json", "2014-08-11", "lflst11")));
         lflst11.withChild(Builders
                 .leafSetEntryBuilder()
-                .withNodeIdentifier(
-                        new NodeWithValue<>(QName.create("ns:complex:json", "2014-08-11", "lflst11"), "lflst11 value1\nanother line 1"))
+                .withNodeIdentifier(new NodeWithValue<>(QName.create("ns:complex:json", "2014-08-11", "lflst11"),
+                        "lflst11 value1\nanother line 1"))
                 .withValue("lflst11 value1\nanother line 1").build());
         lflst11.withChild(Builders
                 .leafSetEntryBuilder()
-                .withNodeIdentifier(
-                        new NodeWithValue<>(QName.create("ns:complex:json", "2014-08-11", "lflst11"), "lflst11 value2\r\nanother line 2"))
+                .withNodeIdentifier(new NodeWithValue<>(QName.create("ns:complex:json", "2014-08-11", "lflst11"),
+                        "lflst11 value2\r\nanother line 2"))
                 .withValue("lflst11 value2\r\nanother line 2").build());
         return lflst11.build();
     }
@@ -254,6 +246,7 @@ public class TestingNormalizedNodeStructuresCreator {
     public static NormalizedNode<?, ?> leafListNodeInContainer() {
         return cont1Node(childLflst11());
     }
+
     public static NormalizedNode<?, ?> leafListNodeInContainerMultiline() {
         return cont1Node(childLflst11Multiline());
     }
@@ -271,16 +264,15 @@ public class TestingNormalizedNodeStructuresCreator {
     }
 
     /**
-     * choc11 contains lf13, lf15_11 and lf15_12 are added via external augmentation
-     *
-     * @return
+     * choc11 contains lf13, lf15_11 and lf15_12 are added via external augmentation.
      */
     public static NormalizedNode<?, ?> caseNodeAugmentationInChoiceInContainer() {
         return cont1Node(choc11Node(augmentC11AWithLf15_11AndLf15_12Node(), lf13Node(), augmentC11AWithLf15_21Node()));
     }
 
     public static NormalizedNode<?, ?> caseNodeExternalAugmentationInChoiceInContainer() {
-        return cont1Node(choc11Node(lf13Node(), augmentC11AWithLf15_11AndLf15_12Node(), externalAugmentC11AWithLf15_11AndLf15_12Node()));
+        return cont1Node(choc11Node(lf13Node(), augmentC11AWithLf15_11AndLf15_12Node(),
+            externalAugmentC11AWithLf15_11AndLf15_12Node()));
     }
 
     public static NormalizedNode<?, ?> choiceNodeAugmentationInContainer() {

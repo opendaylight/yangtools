@@ -19,10 +19,12 @@ import java.io.EOFException;
 import java.io.Flushable;
 import java.io.IOException;
 import java.net.URI;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 import javax.xml.transform.dom.DOMSource;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
@@ -157,10 +159,8 @@ public final class JsonParserStream implements Closeable, Flushable {
                     traverseAnyXmlValue(in, doc, childElement);
                 }
                 in.endObject();
-            case END_DOCUMENT:
-            case NAME:
-            case END_OBJECT:
-            case END_ARRAY:
+                break;
+            default:
                 break;
         }
     }
@@ -179,76 +179,75 @@ public final class JsonParserStream implements Closeable, Flushable {
 
     public void read(final JsonReader in, AbstractNodeDataWithSchema parent) throws IOException {
         switch (in.peek()) {
-        case STRING:
-        case NUMBER:
-            setValue(parent, in.nextString());
-            break;
-        case BOOLEAN:
-            setValue(parent, Boolean.toString(in.nextBoolean()));
-            break;
-        case NULL:
-            in.nextNull();
-            setValue(parent, null);
-            break;
-        case BEGIN_ARRAY:
-            in.beginArray();
-            while (in.hasNext()) {
-                if (parent instanceof LeafNodeDataWithSchema) {
-                    read(in, parent);
-                } else {
-                    final AbstractNodeDataWithSchema newChild = newArrayEntry(parent);
-                    read(in, newChild);
+            case STRING:
+            case NUMBER:
+                setValue(parent, in.nextString());
+                break;
+            case BOOLEAN:
+                setValue(parent, Boolean.toString(in.nextBoolean()));
+                break;
+            case NULL:
+                in.nextNull();
+                setValue(parent, null);
+                break;
+            case BEGIN_ARRAY:
+                in.beginArray();
+                while (in.hasNext()) {
+                    if (parent instanceof LeafNodeDataWithSchema) {
+                        read(in, parent);
+                    } else {
+                        final AbstractNodeDataWithSchema newChild = newArrayEntry(parent);
+                        read(in, newChild);
+                    }
                 }
-            }
-            in.endArray();
-            return;
-        case BEGIN_OBJECT:
-            final Set<String> namesakes = new HashSet<>();
-            in.beginObject();
-            /*
-             * This allows parsing of incorrectly /as showcased/
-             * in testconf nesting of list items - eg.
-             * lists with one value are sometimes serialized
-             * without wrapping array.
-             *
-             */
-            if (isArray(parent)) {
-                parent = newArrayEntry(parent);
-            }
-            while (in.hasNext()) {
-                final String jsonElementName = in.nextName();
-                DataSchemaNode parentSchema = parent.getSchema();
-                if (parentSchema instanceof YangModeledAnyXmlSchemaNode) {
-                    parentSchema = ((YangModeledAnyXmlSchemaNode) parentSchema).getSchemaOfAnyXmlData();
+                in.endArray();
+                return;
+            case BEGIN_OBJECT:
+                final Set<String> namesakes = new HashSet<>();
+                in.beginObject();
+                /*
+                 * This allows parsing of incorrectly /as showcased/
+                 * in testconf nesting of list items - eg.
+                 * lists with one value are sometimes serialized
+                 * without wrapping array.
+                 *
+                 */
+                if (isArray(parent)) {
+                    parent = newArrayEntry(parent);
                 }
-                final NamespaceAndName namespaceAndName = resolveNamespace(jsonElementName, parentSchema);
-                final String localName = namespaceAndName.getName();
-                addNamespace(namespaceAndName.getUri());
-                if (!namesakes.add(jsonElementName)) {
-                    throw new JsonSyntaxException("Duplicate name " + jsonElementName + " in JSON input.");
-                }
+                while (in.hasNext()) {
+                    final String jsonElementName = in.nextName();
+                    DataSchemaNode parentSchema = parent.getSchema();
+                    if (parentSchema instanceof YangModeledAnyXmlSchemaNode) {
+                        parentSchema = ((YangModeledAnyXmlSchemaNode) parentSchema).getSchemaOfAnyXmlData();
+                    }
+                    final Entry<String, URI> namespaceAndName = resolveNamespace(jsonElementName, parentSchema);
+                    final String localName = namespaceAndName.getKey();
+                    addNamespace(namespaceAndName.getValue());
+                    if (!namesakes.add(jsonElementName)) {
+                        throw new JsonSyntaxException("Duplicate name " + jsonElementName + " in JSON input.");
+                    }
 
-                final Deque<DataSchemaNode> childDataSchemaNodes = ParserStreamUtils.findSchemaNodeByNameAndNamespace(
-                    parentSchema, localName, getCurrentNamespace());
-                Preconditions.checkState(!childDataSchemaNodes.isEmpty(),
-                    "Schema for node with name %s and namespace %s does not exist.", localName, getCurrentNamespace());
+                    final Deque<DataSchemaNode> childDataSchemaNodes =
+                            ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, localName,
+                                getCurrentNamespace());
+                    Preconditions.checkState(!childDataSchemaNodes.isEmpty(),
+                        "Schema for node with name %s and namespace %s does not exist.", localName,
+                        getCurrentNamespace());
 
-                final AbstractNodeDataWithSchema newChild = ((CompositeNodeDataWithSchema) parent)
-                        .addChild(childDataSchemaNodes);
-                if (newChild instanceof AnyXmlNodeDataWithSchema) {
-                    readAnyXmlValue(in, (AnyXmlNodeDataWithSchema) newChild, jsonElementName);
-                } else {
-                    read(in, newChild);
+                    final AbstractNodeDataWithSchema newChild = ((CompositeNodeDataWithSchema) parent)
+                            .addChild(childDataSchemaNodes);
+                    if (newChild instanceof AnyXmlNodeDataWithSchema) {
+                        readAnyXmlValue(in, (AnyXmlNodeDataWithSchema) newChild, jsonElementName);
+                    } else {
+                        read(in, newChild);
+                    }
+                    removeNamespace();
                 }
-                removeNamespace();
-            }
-            in.endObject();
-            return;
-        case END_DOCUMENT:
-        case NAME:
-        case END_OBJECT:
-        case END_ARRAY:
-            break;
+                in.endObject();
+                return;
+            default:
+                break;
         }
     }
 
@@ -263,7 +262,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         } else if (parent instanceof LeafListNodeDataWithSchema) {
             newChild = new LeafListEntryNodeDataWithSchema(parent.getSchema());
         } else {
-            throw new IllegalStateException("Found an unexpected array nested under "+ parent.getSchema().getQName());
+            throw new IllegalStateException("Found an unexpected array nested under " + parent.getSchema().getQName());
         }
         ((CompositeNodeDataWithSchema) parent).addChild(newChild);
         return newChild;
@@ -293,7 +292,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         namespaces.push(namespace);
     }
 
-    private NamespaceAndName resolveNamespace(final String childName, final DataSchemaNode dataSchemaNode) {
+    private Entry<String, URI> resolveNamespace(final String childName, final DataSchemaNode dataSchemaNode) {
         final int lastIndexOfColon = childName.lastIndexOf(':');
         String moduleNamePart = null;
         String nodeNamePart = null;
@@ -316,19 +315,21 @@ public final class JsonParserStream implements Closeable, Flushable {
             } else if (potentialUris.size() == 1) {
                 namespace = potentialUris.iterator().next();
             } else if (potentialUris.size() > 1) {
-                throw new IllegalStateException("Choose suitable module name for element "+nodeNamePart+":"+toModuleNames(potentialUris));
+                throw new IllegalStateException("Choose suitable module name for element " + nodeNamePart + ":"
+                        + toModuleNames(potentialUris));
             } else if (potentialUris.isEmpty()) {
-                throw new IllegalStateException("Schema node with name "+nodeNamePart+" wasn't found under "+dataSchemaNode.getQName()+".");
+                throw new IllegalStateException("Schema node with name " + nodeNamePart + " was not found under "
+                        + dataSchemaNode.getQName() + ".");
             }
         }
 
-        return new NamespaceAndName(nodeNamePart, namespace);
+        return new SimpleImmutableEntry<>(nodeNamePart, namespace);
     }
 
     private String toModuleNames(final Set<URI> potentialUris) {
         final StringBuilder builder = new StringBuilder();
         for (final URI potentialUri : potentialUris) {
-            builder.append("\n");
+            builder.append('\n');
             //FIXME how to get information about revision from JSON input? currently first available is used.
             builder.append(schema.findModuleByNamespace(potentialUri).iterator().next().getName());
         }
@@ -358,24 +359,6 @@ public final class JsonParserStream implements Closeable, Flushable {
 
     private URI getCurrentNamespace() {
         return namespaces.peek();
-    }
-
-    private static class NamespaceAndName {
-        private final URI uri;
-        private final String name;
-
-        public NamespaceAndName(final String name, final URI uri) {
-            this.name = name;
-            this.uri = uri;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public URI getUri() {
-            return uri;
-        }
     }
 
     @Override

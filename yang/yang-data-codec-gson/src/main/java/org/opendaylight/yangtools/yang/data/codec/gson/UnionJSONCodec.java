@@ -77,6 +77,7 @@ abstract class UnionJSONCodec<T> implements JSONCodec<T> {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:illegalCatch")
     public final T parseValue(final Object ctx, final String str) {
         for (JSONCodec<?> codec : codecs) {
             final Object ret;
@@ -94,6 +95,7 @@ abstract class UnionJSONCodec<T> implements JSONCodec<T> {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:illegalCatch")
     public final void writeValue(final JsonWriter ctx, final T value) throws IOException {
         for (JSONCodec<?> codec : codecs) {
             if (!codec.getDataType().isInstance(value)) {

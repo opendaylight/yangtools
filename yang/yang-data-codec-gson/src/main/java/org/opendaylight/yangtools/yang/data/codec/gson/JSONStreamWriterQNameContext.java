@@ -21,7 +21,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 abstract class JSONStreamWriterQNameContext extends JSONStreamWriterContext {
     private final QName qname;
 
-    protected JSONStreamWriterQNameContext(final JSONStreamWriterContext parent, final QName qname, final boolean mandatory) {
+    protected JSONStreamWriterQNameContext(final JSONStreamWriterContext parent, final QName qname,
+            final boolean mandatory) {
         super(parent, mandatory);
         this.qname = Preconditions.checkNotNull(qname);
     }
