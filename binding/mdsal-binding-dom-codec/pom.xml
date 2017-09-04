@@ -96,8 +96,6 @@
                             org.opendaylight.mdsal.binding.dom.codec.*,
                             org.opendaylight.mdsal.binding.dom.codec.gen.impl.*,
                             org.opendaylight.mdsal.binding.dom.codec.impl.*,
-                            org.opendaylight.yangtools.binding.data.codec.gen.impl.*,
-                            org.opendaylight.yangtools.binding.data.codec.impl.*,
                             ;-split-package:=error
                         </Export-Package>
                     </instructions>

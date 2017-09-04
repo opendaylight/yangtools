@@ -15,10 +15,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
- * Thrown when codec was used with data which are not modeled
- * and available in schema used by codec.
+ * Thrown when codec was used with data which are not modeled and available in schema used by codec.
  */
-public class MissingSchemaException extends org.opendaylight.yangtools.binding.data.codec.impl.MissingSchemaException {
+public class MissingSchemaException extends IllegalArgumentException {
 
     private static final long serialVersionUID = 1L;
 

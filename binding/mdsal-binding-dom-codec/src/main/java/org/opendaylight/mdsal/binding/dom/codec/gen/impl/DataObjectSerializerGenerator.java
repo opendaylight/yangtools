@@ -13,21 +13,18 @@ import org.opendaylight.yangtools.yang.binding.DataObjectSerializerImplementatio
 /**
  * Public interface exposed from generator implementation.
  */
-public interface DataObjectSerializerGenerator
-        extends org.opendaylight.yangtools.binding.data.codec.gen.impl.DataObjectSerializerGenerator {
+public interface DataObjectSerializerGenerator {
     /**
      * Get a serializer for a particular type.
      *
      * @param type Type class
      * @return Serializer instance.
      */
-    @Override
     DataObjectSerializerImplementation getSerializer(Class<?> type);
 
     /**
      * Notify the generator that the runtime context has been updated.
      * @param runtime New runtime context
      */
-    @Override
     void onBindingRuntimeContextUpdated(BindingRuntimeContext runtime);
 }

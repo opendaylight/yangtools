@@ -58,15 +58,9 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         BindingNormalizedNodeSerializer {
     private static final Logger LOG = LoggerFactory.getLogger(BindingNormalizedNodeCodecRegistry.class);
 
-    private final org.opendaylight.yangtools.binding.data.codec.gen.impl.DataObjectSerializerGenerator generator;
+    private final DataObjectSerializerGenerator generator;
     private final LoadingCache<Class<? extends DataObject>, DataObjectSerializer> serializers;
     private volatile BindingCodecContext codecContext;
-
-    @Deprecated
-    public BindingNormalizedNodeCodecRegistry(final org.opendaylight.yangtools.binding.data.codec.gen.impl.DataObjectSerializerGenerator generator) {
-        this.generator = Preconditions.checkNotNull(generator);
-        this.serializers = CacheBuilder.newBuilder().weakKeys().build(new GeneratorLoader());
-    }
 
     public BindingNormalizedNodeCodecRegistry(final DataObjectSerializerGenerator generator) {
         this.generator = Preconditions.checkNotNull(generator);
