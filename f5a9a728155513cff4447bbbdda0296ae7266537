@@ -22,6 +22,30 @@
       "revId": "f5a9a728155513cff4447bbbdda0296ae7266537",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_70dcf673",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/type/LengthRestrictedTypeDefinition.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-09-04T09:23:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba1f61a0_ed15bd49",
+      "range": {
+        "startLine": 14,
+        "startChar": 3,
+        "endLine": 14,
+        "endChar": 19
+      },
+      "revId": "f5a9a728155513cff4447bbbdda0296ae7266537",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
