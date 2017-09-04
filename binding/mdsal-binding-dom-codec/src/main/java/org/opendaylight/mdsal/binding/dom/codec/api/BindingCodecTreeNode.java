@@ -22,14 +22,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 /**
  * Subtree codec specific to model subtree between Java Binding and
  * NormalizedNode.
- *
  */
 @Beta
-public interface BindingCodecTreeNode<T extends DataObject> extends BindingNormalizedNodeCodec<T>,
-        org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTreeNode<T> {
+public interface BindingCodecTreeNode<T extends DataObject> extends BindingNormalizedNodeCodec<T> {
 
     /**
-     *
      * Returns binding class of interface which represents API of current
      * schema node.
      *
@@ -38,12 +35,10 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
      *
      * @return interface which defines API of binding representation of data.
      */
-    @Override
     @Nonnull
     Class<T> getBindingClass();
 
     /**
-     *
      * Returns child context as if it was walked by
      * {@link BindingStreamEventWriter}. This means that to enter case, one must
      * issue getChild(ChoiceClass).getChild(CaseClass).
@@ -53,12 +48,10 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
      * @throws IllegalArgumentException
      *             If supplied child class is not valid in specified context.
      */
-    @Override
     @Nonnull
     <E extends DataObject> BindingCodecTreeNode<E> streamChild(@Nonnull Class<E> childClass);
 
     /**
-     *
      * Returns child context as if it was walked by
      * {@link BindingStreamEventWriter}. This means that to enter case, one must
      * issue getChild(ChoiceClass).getChild(CaseClass).
@@ -73,7 +66,6 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
      * @return Context of child or Optional absent is supplied class is not
      *         applicable in context.
      */
-    @Override
     <E extends DataObject> Optional<? extends BindingCodecTreeNode<E>> possibleStreamChild(@Nonnull Class<E> childClass);
 
     /**
@@ -85,7 +77,6 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
      * @throws IllegalArgumentException
      *             If supplied argument does not represent valid child.
      */
-    @Override
     @Nonnull
     BindingCodecTreeNode<?> yangPathArgumentChild(@Nonnull YangInstanceIdentifier.PathArgument child);
 
@@ -102,13 +93,11 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
      * @throws IllegalArgumentException
      *             If supplied argument does not represent valid child.
      */
-    @Override
     @Nonnull
     BindingCodecTreeNode<?> bindingPathArgumentChild(@Nonnull InstanceIdentifier.PathArgument arg,
             @Nullable List<YangInstanceIdentifier.PathArgument> builder);
 
     /**
-     *
      * Returns codec which uses caches serialization / deserialization results
      *
      * Caching may introduce performance penalty to serialization / deserialization
@@ -118,12 +107,10 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
      * @param cacheSpecifier Set of objects, for which cache may be in place
      * @return Codec whihc uses cache for serialization / deserialization.
      */
-    @Override
     @Nonnull
     BindingNormalizedNodeCachingCodec<T> createCachingCodec(@Nonnull
             ImmutableCollection<Class<? extends DataObject>> cacheSpecifier);
 
-    @Override
     @Beta
     void writeAsNormalizedNode(T data, NormalizedNodeStreamWriter writer);
 
@@ -136,7 +123,6 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
      *         representation for current node (e.g. case).
      * @throws IllegalArgumentException If supplied {@code arg} is not valid.
      */
-    @Override
     @Beta
     @Nullable YangInstanceIdentifier.PathArgument serializePathArgument(@Nullable InstanceIdentifier.PathArgument arg);
 
@@ -149,10 +135,8 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
      *        representation for current node (e.g. choice or case).
      * @throws IllegalArgumentException If supplied {@code arg} is not valid.
      */
-    @Override
     @Beta
     @Nullable InstanceIdentifier.PathArgument deserializePathArgument(@Nullable YangInstanceIdentifier.PathArgument arg);
 
-    @Override
     Object getSchema();
 }

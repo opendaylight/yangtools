@@ -13,16 +13,13 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
- *
  * Codec providing serialization and deserializiation between Binding
  * and NormalizedNode representation of data.
- *
  *
  * @param <T> Binding representation of data
  */
 @Beta
-public interface BindingNormalizedNodeCodec<T extends DataObject> extends
-        org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCodec<T> {
+public interface BindingNormalizedNodeCodec<T extends DataObject> {
 
     /**
      * Converts from Normalized Node to Binding representation of data.
@@ -30,7 +27,6 @@ public interface BindingNormalizedNodeCodec<T extends DataObject> extends
      * @param data Normalized Node representation of data
      * @return Binding representation of data
      */
-    @Override
     @Nonnull T deserialize(@Nonnull NormalizedNode<?,?> data);
 
     /**
@@ -39,7 +35,6 @@ public interface BindingNormalizedNodeCodec<T extends DataObject> extends
      * @param data Binding representation of data
      * @return Normalized Node representation of data
      */
-    @Override
     @Nonnull NormalizedNode<?,?> serialize(@Nonnull T data);
 
 }

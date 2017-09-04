@@ -17,17 +17,11 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 
 /**
- *
  * Factory for {@link BindingStreamEventWriter}, which provides stream writers
- * which translates data and delegates calls to
- * {@link NormalizedNodeStreamWriter}.
- *
+ * which translates data and delegates calls to {@link NormalizedNodeStreamWriter}.
  */
-public interface BindingNormalizedNodeWriterFactory extends
-        org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeWriterFactory {
-
+public interface BindingNormalizedNodeWriterFactory {
     /**
-     *
      * Creates a {@link BindingStreamEventWriter} for data tree path which will
      * translate to NormalizedNode model and invoke proper events on supplied
      * {@link NormalizedNodeStreamWriter}.
@@ -49,12 +43,10 @@ public interface BindingNormalizedNodeWriterFactory extends
      *         which will write to supplied {@link NormalizedNodeStreamWriter}.
      * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
      */
-    @Override
-    @Nonnull Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriterAndIdentifier(@Nonnull InstanceIdentifier<?> path,
-            @Nonnull NormalizedNodeStreamWriter domWriter);
+    @Nonnull Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriterAndIdentifier(
+            @Nonnull InstanceIdentifier<?> path, @Nonnull NormalizedNodeStreamWriter domWriter);
 
     /**
-     *
      * Creates a {@link BindingStreamEventWriter} for data tree path which will
      * translate to NormalizedNode model and invoke proper events on supplied
      * {@link NormalizedNodeStreamWriter}.
@@ -71,14 +63,12 @@ public interface BindingNormalizedNodeWriterFactory extends
      *         which will write to supplied {@link NormalizedNodeStreamWriter}.
      * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
      */
-    @Override
     @Nonnull
     BindingStreamEventWriter newWriter(@Nonnull InstanceIdentifier<?> path,
             @Nonnull NormalizedNodeStreamWriter domWriter);
 
     /**
-     *
-     * Creates a {@link BindingStreamEventWriter} for rpc data which will
+     * Creates a {@link BindingStreamEventWriter} for RPC data which will
      * translate to NormalizedNode model and invoke proper events on supplied
      * {@link NormalizedNodeStreamWriter}.
      *
@@ -89,13 +79,11 @@ public interface BindingNormalizedNodeWriterFactory extends
      * @return {@link BindingStreamEventWriter} which will write to supplied
      *         {@link NormalizedNodeStreamWriter}.
      */
-    @Override
     @Nonnull
     BindingStreamEventWriter newRpcWriter(@Nonnull Class<? extends DataContainer> rpcInputOrOutput,
             @Nonnull NormalizedNodeStreamWriter domWriter);
 
     /**
-     *
      * Creates a {@link BindingStreamEventWriter} for notification which will
      * translate to NormalizedNode model and invoke proper events on supplied
      * {@link NormalizedNodeStreamWriter}.
@@ -107,7 +95,6 @@ public interface BindingNormalizedNodeWriterFactory extends
      * @return {@link BindingStreamEventWriter} which will write to supplied
      *         {@link NormalizedNodeStreamWriter}.
      */
-    @Override
     @Nonnull
     BindingStreamEventWriter newNotificationWriter(@Nonnull Class<? extends Notification> notification,
             @Nonnull NormalizedNodeStreamWriter domWriter);

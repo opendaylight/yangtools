@@ -11,11 +11,9 @@ import com.google.common.annotations.Beta;
 import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-public interface BindingCodecTreeFactory extends
-        org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTreeFactory {
+public interface BindingCodecTreeFactory {
 
     /**
-     *
      * Creates Binding Codec Tree for specified Binding runtime context.
      *
      * @param context
@@ -23,11 +21,9 @@ public interface BindingCodecTreeFactory extends
      *            instantiated.
      * @return Binding Codec Tree for specified Binding runtime context.
      */
-    @Override
     BindingCodecTree create(BindingRuntimeContext context);
 
     /**
-     *
      * Creates Binding Codec Tree for specified Binding runtime context.
      *
      * @param context
@@ -39,7 +35,6 @@ public interface BindingCodecTreeFactory extends
      *            deserialization in multi-classloader environment.
      * @return Binding Codec Tree for specified Binding runtime context.
      */
-    @Override
     @Beta
    BindingCodecTree create(SchemaContext context, Class<?>... bindingClasses);
 

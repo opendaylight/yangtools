@@ -19,9 +19,8 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
  * @param <T> Binding representtion of data
  */
 @Beta
-public interface BindingNormalizedNodeCachingCodec<T extends DataObject> extends
-        org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCachingCodec<T>,
-        BindingNormalizedNodeCodec<T>, AutoCloseable {
+public interface BindingNormalizedNodeCachingCodec<T extends DataObject> extends BindingNormalizedNodeCodec<T>,
+        AutoCloseable {
     /**
      * Invoking close will invalidate this codec and any of its child
      * codecs and will invalidate cache.

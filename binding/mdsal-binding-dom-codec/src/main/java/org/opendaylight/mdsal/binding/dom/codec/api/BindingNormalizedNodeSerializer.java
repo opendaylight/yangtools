@@ -23,8 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
  * Serialization service, which provides two-way serialization between Java
  * Binding Data representation and NormalizedNode representation.
  */
-public interface BindingNormalizedNodeSerializer extends
-        org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeSerializer {
+public interface BindingNormalizedNodeSerializer {
 
     /**
      * Translates supplied Binding Instance Identifier into NormalizedNode
@@ -36,7 +35,6 @@ public interface BindingNormalizedNodeSerializer extends
      * @throws IllegalArgumentException
      *             If supplied Instance Identifier is not valid.
      */
-    @Override
     YangInstanceIdentifier toYangInstanceIdentifier(@Nonnull InstanceIdentifier<?> binding);
 
     /**
@@ -48,7 +46,6 @@ public interface BindingNormalizedNodeSerializer extends
      * @return Binding Instance Identifier, or null if the instance identifier
      *         is not representable.
      */
-    @Override
     @Nullable
     InstanceIdentifier<?> fromYangInstanceIdentifier(@Nonnull YangInstanceIdentifier dom);
 
@@ -64,7 +61,6 @@ public interface BindingNormalizedNodeSerializer extends
      * @throws IllegalArgumentException
      *             If supplied Instance Identifier is not valid.
      */
-    @Override
     <T extends DataObject> Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> toNormalizedNode(
             InstanceIdentifier<T> path, T data);
 
@@ -76,7 +72,6 @@ public interface BindingNormalizedNodeSerializer extends
      * @param data NormalizedNode representing data
      * @return DOM Instance Identifier
      */
-    @Override
     @Nullable
     Entry<InstanceIdentifier<?>, DataObject> fromNormalizedNode(@Nonnull YangInstanceIdentifier path,
             NormalizedNode<?, ?> data);
@@ -88,7 +83,6 @@ public interface BindingNormalizedNodeSerializer extends
      * @param data NormalizedNode representing data
      * @return Binding representation of Notification
      */
-    @Override
     @Nullable Notification fromNormalizedNodeNotification(@Nonnull SchemaPath path,@Nonnull ContainerNode data);
 
     /**
@@ -98,7 +92,6 @@ public interface BindingNormalizedNodeSerializer extends
      * @param data NormalizedNode representing data
      * @return Binding representation of RPC data
      */
-    @Override
     @Nullable DataObject fromNormalizedNodeRpcData(@Nonnull SchemaPath path,@Nonnull ContainerNode data);
 
     /**
@@ -107,7 +100,6 @@ public interface BindingNormalizedNodeSerializer extends
      * @param data NormalizedNode representing notification data
      * @return NormalizedNode representation of notification
      */
-    @Override
     @Nonnull ContainerNode toNormalizedNodeNotification(@Nonnull Notification data);
 
     /**
@@ -116,6 +108,5 @@ public interface BindingNormalizedNodeSerializer extends
      * @param data NormalizedNode representing rpc data
      * @return NormalizedNode representation of rpc data
      */
-    @Override
     @Nonnull ContainerNode toNormalizedNodeRpcData(@Nonnull DataContainer data);
 }
