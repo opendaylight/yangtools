@@ -5,29 +5,29 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.data.codec.gen.impl;
+package org.opendaylight.mdsal.binding.dom.codec.gen.impl;
 
 import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerImplementation;
 
 /**
  * Public interface exposed from generator implementation.
- *
- * @deprecated Use {@link org.opendaylight.mdsal.binding.dom.codec.gen.impl.DataObjectSerializerGenerator} instead.
  */
-@Deprecated
-public interface DataObjectSerializerGenerator {
+public interface DataObjectSerializerGenerator
+        extends org.opendaylight.yangtools.binding.data.codec.gen.impl.DataObjectSerializerGenerator {
     /**
      * Get a serializer for a particular type.
      *
      * @param type Type class
      * @return Serializer instance.
      */
+    @Override
     DataObjectSerializerImplementation getSerializer(Class<?> type);
 
     /**
      * Notify the generator that the runtime context has been updated.
      * @param runtime New runtime context
      */
+    @Override
     void onBindingRuntimeContextUpdated(BindingRuntimeContext runtime);
 }

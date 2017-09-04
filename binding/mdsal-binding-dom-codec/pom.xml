@@ -94,6 +94,8 @@
                         <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
                         <Export-Package>
                             org.opendaylight.mdsal.binding.dom.codec.*,
+                            org.opendaylight.mdsal.binding.dom.codec.gen.impl.*,
+                            org.opendaylight.mdsal.binding.dom.codec.impl.*,
                             org.opendaylight.yangtools.binding.data.codec.*,
                             org.opendaylight.yangtools.binding.data.codec.gen.impl.*,
                             org.opendaylight.yangtools.binding.data.codec.impl.*,
