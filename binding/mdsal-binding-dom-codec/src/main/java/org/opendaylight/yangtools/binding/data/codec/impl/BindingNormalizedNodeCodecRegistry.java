@@ -77,7 +77,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
     }
 
     public void onBindingRuntimeContextUpdated(final BindingRuntimeContext context) {
-        codecContext = create(context);
+        codecContext = new BindingCodecContext(context, this);
         generator.onBindingRuntimeContextUpdated(context);
     }
 
@@ -232,12 +232,12 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
     }
 
     @Override
-    public BindingCodecContext create(final BindingRuntimeContext context) {
+    public BindingCodecTree create(final BindingRuntimeContext context) {
         return new BindingCodecContext(context, this);
     }
 
     @Override
-    public BindingCodecContext create(final SchemaContext context, final Class<?>... bindingClasses) {
+    public BindingCodecTree create(final SchemaContext context, final Class<?>... bindingClasses) {
         final ModuleInfoBackedContext strategy = ModuleInfoBackedContext.create();
         for (final Class<?> bindingCls : bindingClasses) {
             try {
