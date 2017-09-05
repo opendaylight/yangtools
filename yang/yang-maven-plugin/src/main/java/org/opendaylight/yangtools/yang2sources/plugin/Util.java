@@ -15,9 +15,11 @@ import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProces
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -26,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
@@ -52,10 +55,32 @@ final class Util {
     private Util() {
     }
 
+    static final String YANG_SUFFIX = "yang";
+
     private static final Logger LOG = LoggerFactory.getLogger(Util.class);
 
+    static Collection<File> listFiles(final File root, final Collection<File> excludedFiles)
+            throws FileNotFoundException {
+        if (!root.exists()) {
+            LOG.warn("{} YANG source directory {} not found. No code will be generated.", LOG_PREFIX, root);
+
+            return Collections.emptyList();
+        }
+        Collection<File> result = new ArrayList<>();
+        Collection<File> yangFiles = FileUtils.listFiles(root, new String[] { YANG_SUFFIX }, true);
+        for (File f : yangFiles) {
+            if (excludedFiles.contains(f)) {
+                LOG.info("{} {} file excluded {}", LOG_PREFIX, Util.YANG_SUFFIX.toUpperCase(), f);
+            } else {
+                result.add(f);
+            }
+        }
+
+        return result;
+    }
+
     static List<File> getClassPath(final MavenProject project) {
-        final List<File> dependencies = new ArrayList<>();
+        List<File> dependencies = new ArrayList<>();
         for (Artifact element : project.getArtifacts()) {
             File asFile = element.getFile();
             if (isJar(asFile) || asFile.isDirectory()) {

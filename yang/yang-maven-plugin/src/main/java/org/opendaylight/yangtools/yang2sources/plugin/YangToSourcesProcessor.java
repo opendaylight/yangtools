@@ -17,21 +17,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
-import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.codehaus.plexus.util.FileUtils;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -141,7 +137,7 @@ class YangToSourcesProcessor {
              * files in current project and optionally any jars/files in the
              * dependencies.
              */
-            final Collection<File> yangFilesInProject = listFiles(yangFilesRootDir, excludedFiles);
+            final Collection<File> yangFilesInProject = Util.listFiles(yangFilesRootDir, excludedFiles);
 
             final Collection<File> allFiles = new ArrayList<>(yangFilesInProject);
             if (inspectDependencies) {
@@ -184,10 +180,10 @@ class YangToSourcesProcessor {
             return Optional.of(reactor);
         } catch (Exception e) {
             // MojoExecutionException is thrown since execution cannot continue
-            LOG.error("{} Unable to parse YANG files from {}", LOG_PREFIX, yangFilesRootDir, e);
+            LOG.error("{} Unable to parse {} files from {}", LOG_PREFIX, Util.YANG_SUFFIX, yangFilesRootDir, e);
             Throwable rootCause = Throwables.getRootCause(e);
-            throw new MojoExecutionException(LOG_PREFIX + " Unable to parse YANG files from " + yangFilesRootDir,
-                rootCause);
+            throw new MojoExecutionException(LOG_PREFIX + " Unable to parse " + Util.YANG_SUFFIX + " files from "
+                    + yangFilesRootDir, rootCause);
         }
     }
 
@@ -208,22 +204,6 @@ class YangToSourcesProcessor {
         }
 
         return reactor.toContext();
-    }
-
-    private static Collection<File> listFiles(final File root, final Collection<File> excludedFiles)
-            throws IOException {
-        if (!root.isDirectory()) {
-            LOG.warn("{} YANG source directory {} not found. No code will be generated.", LOG_PREFIX, root);
-            return ImmutableList.of();
-        }
-
-        return Files.walk(root.toPath()).map(Path::toFile).filter(File::isFile).filter(f -> {
-            if (excludedFiles.contains(f)) {
-                LOG.info("{} YANG file excluded {}", LOG_PREFIX, f);
-                return false;
-            }
-            return true;
-        }).filter(f -> f.getName().endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION)).collect(Collectors.toList());
     }
 
     private static Collection<YangTextSchemaSource> toUniqueSources(final Collection<YangTextSchemaSource> sources)
@@ -306,10 +286,9 @@ class YangToSourcesProcessor {
         LOG.debug("{} Folder: {} marked as resources for generator: {}", LOG_PREFIX, resourceBaseDir,
                 codeGeneratorCfg.getCodeGeneratorClass());
 
-        if (outputDir.exists()) {
-            Files.walk(outputDir.toPath()).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-            LOG.info("{} Succesfully deleted output directory {}", LOG_PREFIX, outputDir);
-        }
+        FileUtils.deleteDirectory(outputDir);
+        LOG.info("{} Succesfully deleted output directory {}", LOG_PREFIX, outputDir);
+
         Collection<File> generated = g.generateSources(context.getContext(), outputDir, context.getYangModules(),
             context::moduleToResourcePath);
 
