@@ -15,6 +15,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.google.common.collect.ImmutableSet;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,10 +27,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
@@ -50,7 +49,6 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
-import org.opendaylight.yangtools.yang2sources.plugin.Util.ContextHolder;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UtilTest {
@@ -139,10 +137,10 @@ public class UtilTest {
         final File testYang1 = new File(getClass().getResource("/test.yang").toURI());
         final File testYang2 = new File(getClass().getResource("/test2.yang").toURI());
         final SchemaContext context = YangParserTestUtils.parseYangSources(testYang1, testYang2);
-        final Map<Module, String> yangModules = new HashMap<>();
-        final Util.ContextHolder cxH = new ContextHolder(context, yangModules.keySet(), yangModules);
+        final Set<Module> yangModules = new HashSet<>();
+        final ContextHolder cxH = new ContextHolder(context, yangModules, ImmutableSet.of());
         assertEquals(context, cxH.getContext());
-        assertEquals(yangModules.keySet(), cxH.getYangModules());
+        assertEquals(yangModules, cxH.getYangModules());
     }
 
     private URL makeMetaInf() throws Exception {
