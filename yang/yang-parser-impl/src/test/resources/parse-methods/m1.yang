@@ -1,4 +1,4 @@
-module m1 {
+odule m1 {
 
     yang-version 1;
     namespace "urn:test.m1";
@@ -6,7 +6,7 @@ module m1 {
 
     import m2 {
         prefix "m2";
-        revision-date 2013-30-09;
+        revision-date 2013-09-30;
     }
     import m3 {
         prefix "m3";
