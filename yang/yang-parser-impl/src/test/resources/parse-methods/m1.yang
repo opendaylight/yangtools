@@ -6,13 +6,13 @@ module m1 {
 
     import m2 {
         prefix "m2";
-        revision-date 2013-30-09;
+        revision-date 2013-09-30;
     }
     import m3 {
         prefix "m3";
     }
 
-     revision 2013-10-16 {
+    revision 2013-10-16 {
     }
 
 }

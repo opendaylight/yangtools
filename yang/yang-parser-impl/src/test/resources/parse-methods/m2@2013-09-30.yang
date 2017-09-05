@@ -11,7 +11,7 @@ module m2 {
         prefix "m5";
     }
 
-     revision 2013-30-09 {
+    revision 2013-09-30 {
     }
 
 }
