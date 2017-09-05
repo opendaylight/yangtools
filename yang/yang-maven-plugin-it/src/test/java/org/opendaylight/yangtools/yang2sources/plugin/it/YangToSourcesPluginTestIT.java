@@ -44,13 +44,13 @@ public class YangToSourcesPluginTestIT {
 
     @Test
     public void testAdditionalConfiguration() throws Exception {
-        Verifier vrf = setUp("test-parent/AdditionalConfig/", false);
+        final Verifier vrf = setUp("test-parent/AdditionalConfig/", false);
         vrf.verifyTextInLog("[DEBUG] yang-to-sources: Additional configuration picked up for : "
                 + "org.opendaylight.yangtools.yang2sources.spi.CodeGeneratorTestImpl: "
                 + "{nm1=abcd=a.b.c.d, nm2=abcd2=a.b.c.d.2}");
         vrf.verifyTextInLog("[DEBUG] yang-to-sources: Additional configuration picked up for : "
                 + "org.opendaylight.yangtools.yang2sources.spi.CodeGeneratorTestImpl: {c1=config}");
-        vrf.verifyTextInLog("[DEBUG] yang-to-sources: YANG files marked as resources:");
+        vrf.verifyTextInLog(File.separator + "files marked as resources: META-INF/yang");
         vrf.verifyTextInLog(Joiner.on(File.separator).join(Arrays.asList("target", "generated-sources", "spi"))
                 + " marked as resources for generator: org.opendaylight.yangtools.yang2sources.spi."
                 + "CodeGeneratorTestImpl");
@@ -145,19 +145,19 @@ public class YangToSourcesPluginTestIT {
         v1.executeGoal("package");
 
         String buildDir = getMavenBuildDirectory(v1);
-        v1.assertFilePresent(buildDir + "/classes/META-INF/yang/types1@2013-02-27.yang");
-        v1.assertFilePresent(buildDir + "/classes/META-INF/yang/types2@2013-02-27.yang");
-        v1.assertFilePresent(buildDir + "/classes/META-INF/yang/types3@2013-02-27.yang");
+        v1.assertFilePresent(buildDir + "/classes/META-INF/yang/testfile1.yang");
+        v1.assertFilePresent(buildDir + "/classes/META-INF/yang/testfile2.yang");
+        v1.assertFilePresent(buildDir + "/classes/META-INF/yang/testfile3.yang");
 
         Verifier v2 = setUp("test-parent/GenerateTest2/", false);
         v2.executeGoal("clean");
         v2.executeGoal("package");
 
         buildDir = getMavenBuildDirectory(v2);
-        v2.assertFilePresent(buildDir + "/classes/META-INF/yang/private@2013-02-27.yang");
-        v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/types1@2013-02-27.yang");
-        v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/types2@2013-02-27.yang");
-        v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/types3@2013-02-27.yang");
+        v2.assertFilePresent(buildDir + "/classes/META-INF/yang/private.yang");
+        v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/testfile1.yang");
+        v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/testfile2.yang");
+        v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/testfile3.yang");
     }
 
     private static String getMavenBuildDirectory(final Verifier verifier) throws IOException {

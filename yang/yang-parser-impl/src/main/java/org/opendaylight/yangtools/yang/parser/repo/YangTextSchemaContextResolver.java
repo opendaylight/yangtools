@@ -253,6 +253,18 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
         return sc;
     }
 
+    @Beta
+    public SchemaContext trySchemaContext() throws SchemaResolutionException {
+        return trySchemaContext(StatementParserMode.DEFAULT_MODE);
+    }
+
+    @Beta
+    public SchemaContext trySchemaContext(final StatementParserMode statementParserMode)
+            throws SchemaResolutionException {
+        final SchemaContextFactory factory = repository.createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
+        return factory.createSchemaContext(ImmutableSet.copyOf(requiredSources), statementParserMode).checkedGet();
+    }
+
     @Override
     public synchronized CheckedFuture<YangTextSchemaSource, SchemaSourceException> getSource(
             final SourceIdentifier sourceIdentifier) {
@@ -274,23 +286,6 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
      */
     public synchronized Set<SourceIdentifier> getAvailableSources() {
         return ImmutableSet.copyOf(texts.keySet());
-    }
-
-    @Beta
-    public synchronized Collection<YangTextSchemaSource> getSourceTexts(final SourceIdentifier sourceIdentifier) {
-        return ImmutableSet.copyOf(texts.get(sourceIdentifier));
-    }
-
-    @Beta
-    public SchemaContext trySchemaContext() throws SchemaResolutionException {
-        return trySchemaContext(StatementParserMode.DEFAULT_MODE);
-    }
-
-    @Beta
-    public SchemaContext trySchemaContext(final StatementParserMode statementParserMode)
-            throws SchemaResolutionException {
-        final SchemaContextFactory factory = repository.createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
-        return factory.createSchemaContext(ImmutableSet.copyOf(requiredSources), statementParserMode).checkedGet();
     }
 
     @Override

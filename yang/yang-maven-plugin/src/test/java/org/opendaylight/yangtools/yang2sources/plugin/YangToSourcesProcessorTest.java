@@ -54,7 +54,7 @@ public class YangToSourcesProcessorTest {
         Mockito.when(mvnProject.getBuild()).thenReturn(build);
         final boolean dependencies = true;
         final YangToSourcesProcessor proc = new YangToSourcesProcessor(file, ImmutableList.of(excludedYang),
-            codeGenerators, mvnProject, dependencies, YangProvider.getInstance());
+            codeGenerators, mvnProject, dependencies, new YangProvider());
         Assert.assertNotNull(proc);
         proc.execute();
     }

@@ -12,6 +12,9 @@ import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProces
 import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.META_INF_YANG_STRING;
 import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.META_INF_YANG_STRING_JAR;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 import java.io.File;
@@ -20,11 +23,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -38,11 +41,8 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -290,16 +290,32 @@ final class Util {
         return yangsFilesFromDependencies;
     }
 
-    static SourceIdentifier moduleToIdentifier(final Module module) {
-        final QNameModule mod = module.getQNameModule();
-        final Date rev = mod.getRevision();
-        final com.google.common.base.Optional<String> optRev;
-        if (SimpleDateFormatUtil.DEFAULT_DATE_REV.equals(rev)) {
-            optRev = com.google.common.base.Optional.absent();
-        } else {
-            optRev = com.google.common.base.Optional.of(mod.getFormattedRevision());
+    static final class ContextHolder {
+        private final SchemaContext context;
+        private final Set<Module> yangModules;
+        private final Map<Module, String> yangFiles;
+
+        ContextHolder(final SchemaContext context, final Set<Module> yangModules, final Map<Module, String> yangFiles) {
+            this.context = Preconditions.checkNotNull(context);
+            this.yangModules = ImmutableSet.copyOf(yangModules);
+            this.yangFiles = ImmutableMap.copyOf(yangFiles);
         }
 
-        return RevisionSourceIdentifier.create(module.getName(), optRev);
+        SchemaContext getContext() {
+            return context;
+        }
+
+        Set<Module> getYangModules() {
+            return yangModules;
+        }
+
+        Optional<String> moduleToResourcePath(final Module mod) {
+            final String fileName = yangFiles.get(mod);
+            if (fileName == null) {
+                return Optional.empty();
+            }
+
+            return Optional.of("/" + YangToSourcesProcessor.META_INF_YANG_STRING_JAR + "/" + fileName);
+        }
     }
 }

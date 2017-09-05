@@ -56,10 +56,11 @@ public class GenerateSourcesTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        yang = new File(getClass().getResource("/yang/mock.yang").toURI()).getParent();
-        outDir = new File("/outputDir");
+        this.yang = new File(getClass().getResource("/yang/mock.yang").toURI()).getParent();
+        this.outDir = new File("/outputDir");
         final YangProvider mock = mock(YangProvider.class);
-        doNothing().when(mock).addYangsToMetaInf(any(MavenProject.class), any(Collection.class));
+        doNothing().when(mock).addYangsToMetaInf(any(MavenProject.class), any(File.class),
+                any(Collection.class));
 
         final YangToSourcesProcessor processor = new YangToSourcesProcessor(new File(this.yang), ImmutableList.of(),
                 ImmutableList.of(new CodeGeneratorArg(GeneratorMock.class.getName(), "outputDir")), this.project, false,
@@ -75,15 +76,16 @@ public class GenerateSourcesTest {
 
     @Test
     public void test() throws Exception {
-        mojo.execute();
-        assertEquals(outDir, GeneratorMock.outputDir);
-        assertEquals(project, GeneratorMock.project);
+        this.mojo.execute();
+        assertEquals(this.outDir, GeneratorMock.outputDir);
+        assertEquals(this.project, GeneratorMock.project);
         assertTrue(GeneratorMock.additionalCfg.isEmpty());
         assertThat(GeneratorMock.resourceBaseDir.toString(), containsString("target" + File.separator
                 + "generated-sources" + File.separator + "spi"));
     }
 
     public static class GeneratorMock implements BasicCodeGenerator, MavenProjectAware {
+
         private static int called = 0;
         private static File outputDir;
         private static Map<String, String> additionalCfg;
