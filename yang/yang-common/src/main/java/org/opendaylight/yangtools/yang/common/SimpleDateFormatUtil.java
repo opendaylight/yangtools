@@ -59,7 +59,9 @@ public final class SimpleDateFormatUtil {
 
         @Override
         protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat(REVISION_SIMPLE_DATE);
+            final SimpleDateFormat fmt = new SimpleDateFormat(REVISION_SIMPLE_DATE);
+            fmt.setLenient(false);
+            return fmt;
         }
 
         @Override
