@@ -7,14 +7,6 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,10 +18,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
@@ -43,51 +33,53 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.ContextHolder;
+import org.opendaylight.yangtools.yang2sources.plugin.Util.YangsInZipsResult;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UtilTest {
 
     @Test
     public void getClassPathTest() {
-        final MavenProject project = mock(MavenProject.class);
-        final File file = mock(File.class);
-        final File file2 = mock(File.class);
-        final Artifact artifact = mock(Artifact.class);
-        final Artifact artifact2 = mock(Artifact.class);
+        final MavenProject project = Mockito.mock(MavenProject.class);
+        final File file = Mockito.mock(File.class);
+        final File file2 = Mockito.mock(File.class);
+        final Artifact artifact = Mockito.mock(Artifact.class);
+        final Artifact artifact2 = Mockito.mock(Artifact.class);
 
         final Set<Artifact> artifacts = new HashSet<>();
         artifacts.add(artifact);
         artifacts.add(artifact2);
 
-        when(project.getArtifacts()).thenReturn(artifacts);
-        when(artifact.getFile()).thenReturn(file);
-        when(file.isFile()).thenReturn(true);
-        when(file.getName()).thenReturn("iamjar.jar");
-        when(artifact2.getFile()).thenReturn(file2);
-        when(file2.isDirectory()).thenReturn(true);
+        Mockito.when(project.getArtifacts()).thenReturn(artifacts);
+        Mockito.when(artifact.getFile()).thenReturn(file);
+        Mockito.when(file.isFile()).thenReturn(true);
+        Mockito.when(file.getName()).thenReturn("iamjar.jar");
+        Mockito.when(artifact2.getFile()).thenReturn(file2);
+        Mockito.when(file2.isDirectory()).thenReturn(true);
 
         final List<File> files = Util.getClassPath(project);
-        assertEquals(2, files.size());
-        assertTrue(files.contains(file) && files.contains(file2));
+        Assert.assertEquals(2, files.size());
+        Assert.assertTrue(files.contains(file) && files.contains(file2));
     }
 
     @Test
     public void checkClasspathTest() throws Exception {
-        final MavenProject project = mock(MavenProject.class);
-        final Plugin plugin = mock(Plugin.class);
-        final RepositorySystem repoSystem = mock(RepositorySystem.class);
-        final ArtifactRepository localRepo = mock(ArtifactRepository.class);
-        final ArtifactResolutionResult artifactResolResult = mock(ArtifactResolutionResult.class);
-        final Artifact artifact = mock(Artifact.class);
-        final Dependency dep = mock(Dependency.class);
+        final MavenProject project = Mockito.mock(MavenProject.class);
+        final Plugin plugin = Mockito.mock(Plugin.class);
+        final RepositorySystem repoSystem = Mockito.mock(RepositorySystem.class);
+        final ArtifactRepository localRepo = Mockito.mock(ArtifactRepository.class);
+        final ArtifactResolutionResult artifactResolResult = Mockito.mock(ArtifactResolutionResult.class);
+        final Artifact artifact = Mockito.mock(Artifact.class);
+        final Dependency dep = Mockito.mock(Dependency.class);
 
         final List<ArtifactRepository> remoteRepos = new ArrayList<>();
         remoteRepos.add(localRepo);
@@ -98,40 +90,41 @@ public class UtilTest {
         final List<Dependency> listDepcy = new ArrayList<>();
         listDepcy.add(dep);
 
-        when(project.getPlugin(anyString())).thenReturn(plugin);
-        when(plugin.getDependencies()).thenReturn(listDepcy);
-        when(artifact.getArtifactId()).thenReturn("artifactId");
-        when(artifact.getGroupId()).thenReturn("groupId");
-        when(artifact.getVersion()).thenReturn("SNAPSHOT");
-        when(repoSystem.createDependencyArtifact(dep)).thenReturn(artifact);
-        when(repoSystem.resolve(any(ArtifactResolutionRequest.class))).thenReturn(artifactResolResult);
-        when(artifactResolResult.getArtifacts()).thenReturn(artifacts);
-        when(project.getDependencyArtifacts()).thenReturn(artifacts);
+        Mockito.when(project.getPlugin(Mockito.anyString())).thenReturn(plugin);
+        Mockito.when(plugin.getDependencies()).thenReturn(listDepcy);
+        Mockito.when(artifact.getArtifactId()).thenReturn("artifactId");
+        Mockito.when(artifact.getGroupId()).thenReturn("groupId");
+        Mockito.when(artifact.getVersion()).thenReturn("SNAPSHOT");
+        Mockito.when(repoSystem.createDependencyArtifact(dep)).thenReturn(artifact);
+        Mockito.when(repoSystem.resolve(Mockito.any(ArtifactResolutionRequest.class))).thenReturn(artifactResolResult);
+        Mockito.when(artifactResolResult.getArtifacts()).thenReturn(artifacts);
+        Mockito.when(project.getDependencyArtifacts()).thenReturn(artifacts);
 
         Util.checkClasspath(project, repoSystem, localRepo, remoteRepos);
-        assertEquals(1, artifacts.size());
-        assertEquals(1, remoteRepos.size());
-        assertEquals(1, listDepcy.size());
+        Assert.assertEquals(1, artifacts.size());
+        Assert.assertEquals(1, remoteRepos.size());
+        Assert.assertEquals(1, listDepcy.size());
     }
 
     @Test
     public void findYangFilesInDependenciesAsStream() throws Exception {
-        final MavenProject project = mock(MavenProject.class);
+        final MavenProject project = Mockito.mock(MavenProject.class);
         prepareProject(project);
 
-        final List<YangTextSchemaSource> yangzip = Util.findYangFilesInDependenciesAsStream(project);
-        assertNotNull(yangzip);
-        assertEquals(2, yangzip.size());
+        final YangsInZipsResult yangzip = Util.findYangFilesInDependenciesAsStream(project);
+        Assert.assertNotNull(yangzip);
+        Assert.assertEquals(2, yangzip.getYangStreams().size());
+        yangzip.close();
     }
 
     @Test
     public void findYangFilesInDependencies() throws Exception {
-        final MavenProject project = mock(MavenProject.class);
+        final MavenProject project = Mockito.mock(MavenProject.class);
         prepareProject(project);
 
         final Collection<File> files = Util.findYangFilesInDependencies(project);
-        assertNotNull(files);
-        assertEquals(2, files.size());
+        Assert.assertNotNull(files);
+        Assert.assertEquals(2, files.size());
     }
 
     @Test
@@ -139,18 +132,18 @@ public class UtilTest {
         final File testYang1 = new File(getClass().getResource("/test.yang").toURI());
         final File testYang2 = new File(getClass().getResource("/test2.yang").toURI());
         final SchemaContext context = YangParserTestUtils.parseYangSources(testYang1, testYang2);
-        final Map<Module, String> yangModules = new HashMap<>();
-        final Util.ContextHolder cxH = new ContextHolder(context, yangModules.keySet(), yangModules);
-        assertEquals(context, cxH.getContext());
-        assertEquals(yangModules.keySet(), cxH.getYangModules());
+        final Set<Module> yangModules = new HashSet<>();
+        final Util.ContextHolder cxH = new ContextHolder(context, yangModules, yangModules);
+        Assert.assertEquals(context, cxH.getContext());
+        Assert.assertEquals(yangModules, cxH.getYangModules());
     }
 
     private URL makeMetaInf() throws Exception {
         final String path = getClass().getResource("/").getPath();
         final String metaInfPath = path + "tests/META-INF/yang";
         final Path createDirectories = Files.createDirectories(Paths.get(metaInfPath));
-        assertNotNull(createDirectories);
-        assertEquals(metaInfPath, createDirectories.toString());
+        Assert.assertNotNull(createDirectories);
+        Assert.assertEquals(metaInfPath, createDirectories.toString());
         Runtime.getRuntime().exec("cp " + path + "/test.yang " + metaInfPath + "/");
         Runtime.getRuntime().exec("cp " + path + "/test2.yang " + metaInfPath + "/");
         return getClass().getResource("/tests");
@@ -161,7 +154,7 @@ public class UtilTest {
         if (url == null) {
             url = makeMetaInf();
         }
-        assertNotNull(url);
+        Assert.assertNotNull(url);
         final File testFile = new File(getClass().getResource("/tests").toURI());
         File testFile2 = new File(getClass().getResource("/").getPath(), "test.jar");
         testFile2.createNewFile();
@@ -173,16 +166,16 @@ public class UtilTest {
         addSourceFileToTargetJar(new File(getClass().getResource("/tests/META-INF").getPath()), target);
         target.close();
 
-        final Artifact artifact = mock(Artifact.class);
-        final Artifact artifact2 = mock(Artifact.class);
+        final Artifact artifact = Mockito.mock(Artifact.class);
+        final Artifact artifact2 = Mockito.mock(Artifact.class);
 
         final Set<Artifact> artifacts = new HashSet<>();
         artifacts.add(artifact);
         artifacts.add(artifact2);
 
-        when(project.getArtifacts()).thenReturn(artifacts);
-        when(artifact.getFile()).thenReturn(testFile);
-        when(artifact2.getFile()).thenReturn(testFile2);
+        Mockito.when(project.getArtifacts()).thenReturn(artifacts);
+        Mockito.when(artifact.getFile()).thenReturn(testFile);
+        Mockito.when(artifact2.getFile()).thenReturn(testFile2);
     }
 
     private void addSourceFileToTargetJar(final File source, final JarOutputStream target) throws IOException {

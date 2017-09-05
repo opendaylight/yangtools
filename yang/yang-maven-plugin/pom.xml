@@ -71,7 +71,7 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>yang-test-util</artifactId>
-            <scope>test</scope>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
