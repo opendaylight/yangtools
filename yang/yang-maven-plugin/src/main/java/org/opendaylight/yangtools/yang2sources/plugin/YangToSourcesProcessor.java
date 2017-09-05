@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
@@ -67,13 +69,13 @@ class YangToSourcesProcessor {
     private YangToSourcesProcessor(final BuildContext buildContext, final File yangFilesRootDir,
             final Collection<File> excludedFiles, final List<CodeGeneratorArg> codeGenerators,
             final MavenProject project, final boolean inspectDependencies, final YangProvider yangProvider) {
-        this.buildContext = Preconditions.checkNotNull(buildContext, "buildContext");
-        this.yangFilesRootDir = Preconditions.checkNotNull(yangFilesRootDir, "yangFilesRootDir");
+        this.buildContext = requireNonNull(buildContext, "buildContext");
+        this.yangFilesRootDir = requireNonNull(yangFilesRootDir, "yangFilesRootDir");
         this.excludedFiles = ImmutableSet.copyOf(excludedFiles);
         this.codeGenerators = ImmutableList.copyOf(codeGenerators);
-        this.project = Preconditions.checkNotNull(project);
+        this.project = requireNonNull(project);
         this.inspectDependencies = inspectDependencies;
-        this.yangProvider = Preconditions.checkNotNull(yangProvider);
+        this.yangProvider = requireNonNull(yangProvider);
     }
 
     @VisibleForTesting
@@ -157,16 +159,7 @@ class YangToSourcesProcessor {
              * Check if any of the listed files changed. If no changes occurred,
              * simply return null, which indicates and of execution.
              */
-            boolean noChange = true;
-            for (final File f : allFiles) {
-                if (buildContext.hasDelta(f)) {
-                    LOG.debug("{} buildContext {} indicates {} changed, forcing regeneration", LOG_PREFIX,
-                            buildContext, f);
-                    noChange = false;
-                }
-            }
-
-            if (noChange) {
+            if (!allFiles.stream().anyMatch(buildContext::hasDelta)) {
                 LOG.info("{} None of {} input files changed", LOG_PREFIX, allFiles.size());
                 return Optional.empty();
             }
@@ -278,12 +271,8 @@ class YangToSourcesProcessor {
         final BasicCodeGenerator g = getInstance(codeGeneratorCfg.getCodeGeneratorClass(), BasicCodeGenerator.class);
         LOG.info("{} Code generator instantiated from {}", LOG_PREFIX, codeGeneratorCfg.getCodeGeneratorClass());
 
-        final File outputDir = codeGeneratorCfg.getOutputBaseDir(project);
-
-        if (outputDir == null) {
-            throw new NullPointerException("outputBaseDir is null. Please provide a valid outputBaseDir value in the "
-                    + "pom.xml");
-        }
+        final File outputDir = requireNonNull(codeGeneratorCfg.getOutputBaseDir(project),
+            "outputBaseDir is null. Please provide a valid outputBaseDir value in pom.xml");
 
         project.addCompileSourceRoot(outputDir.getAbsolutePath());
 
