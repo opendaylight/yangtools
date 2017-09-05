@@ -32,11 +32,11 @@ public class YangModelDependencyInfoTest {
 
     @Test
     public void testModuleWithImports() {
-        InputStream stream = getClass().getResourceAsStream("/parse-methods/dependencies/m2@2013-30-09.yang");
+        InputStream stream = getClass().getResourceAsStream("/parse-methods/dependencies/m2@2013-09-30.yang");
         YangModelDependencyInfo info = YangModelDependencyInfo.fromInputStream(stream);
         assertNotNull(info);
         assertEquals("m2", info.getName());
-        assertEquals("2013-30-09", info.getFormattedRevision());
+        assertEquals("2013-09-30", info.getFormattedRevision());
         assertNotNull(info.getDependencies());
         assertEquals(2, info.getDependencies().size());
     }
