@@ -3,7 +3,7 @@ module bug8449 {
     namespace "bug8449";
     prefix "tst";
 
-    revision "2017-16-05" {
+    revision "2017-05-16" {
     }
 
     typedef name1-ref {
