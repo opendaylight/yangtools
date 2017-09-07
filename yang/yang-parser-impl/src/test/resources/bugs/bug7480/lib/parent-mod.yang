@@ -1,0 +1,10 @@
+module parent-mod {
+    namespace parent-mod-ns;
+    prefix pm;
+
+    include sub-mod;
+
+    revision 2017-09-07;
+
+    container my-parent-container {}
+}
