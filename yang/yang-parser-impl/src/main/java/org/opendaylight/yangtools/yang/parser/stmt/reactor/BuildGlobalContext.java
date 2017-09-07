@@ -445,8 +445,9 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     private static SourceSpecificContext getRequiredLibSource(final ModuleIdentifier requiredModule,
             final TreeBasedTable<String, Date, SourceSpecificContext> libSourcesTable) {
-        return requiredModule.getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP ? getLatestRevision(libSourcesTable
-                .row(requiredModule.getName())) : libSourcesTable.get(requiredModule.getName(),
+        return requiredModule.getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP
+                || requiredModule.getRevision() == SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE ? getLatestRevision(
+                libSourcesTable.row(requiredModule.getName())) : libSourcesTable.get(requiredModule.getName(),
                 requiredModule.getRevision());
     }
 

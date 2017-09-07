@@ -67,6 +67,12 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
+        public void onPreLinkageDeclared(final StmtContext.Mutable<String, BelongsToStatement,
+                EffectiveStatement<String, BelongsToStatement>> belongsToCtx) {
+            belongsToCtx.addRequiredModule(getModuleIdentifier(belongsToCtx));
+        }
+
+        @Override
         public void onLinkageDeclared(
                 final StmtContext.Mutable<String, BelongsToStatement, EffectiveStatement<String, BelongsToStatement>> belongsToCtx) {
             ModelActionBuilder belongsToAction = belongsToCtx.newInferenceAction(ModelProcessingPhase.SOURCE_LINKAGE);

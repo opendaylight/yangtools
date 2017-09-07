@@ -27,7 +27,7 @@ public class Bug7480Test {
         assertNotNull(context);
 
         final Set<Module> modules = context.getModules();
-        assertEquals(7, modules.size());
+        assertEquals(8, modules.size());
 
         assertNotNull(context.findModuleByNamespaceAndRevision(new URI("foo-imp"), SimpleDateFormatUtil
                 .getRevisionFormat().parse("2017-01-23")));
@@ -41,6 +41,11 @@ public class Bug7480Test {
         assertEquals(1, foo.size());
         final Set<Module> subFoos = foo.iterator().next().getSubmodules();
         assertEquals(1, subFoos.size());
+
+        final Module parentMod = context.findModuleByNamespaceAndRevision(new URI("parent-mod-ns"),
+                SimpleDateFormatUtil.getRevisionFormat().parse("2017-09-07"));
+        assertNotNull(parentMod);
+        assertEquals(1, parentMod.getSubmodules().size());
     }
 
     @Test

@@ -1,0 +1,11 @@
+submodule sub-mod {
+    belongs-to parent-mod {
+        prefix pm;
+    }
+
+    container my-container {
+        leaf my-leaf {
+            type string;
+        }
+    }
+}
