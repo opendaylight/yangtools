@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba1f61a0_a8339760",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/leafref/LeafRefContextBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-09-07T15:04:01Z",
+      "side": 1,
+      "message": "returns a list, hence we can skip instantiation of iterator and use List.isEmpty()/List.get(int)",
+      "range": {
+        "startLine": 162,
+        "startChar": 36,
+        "endLine": 162,
+        "endChar": 68
+      },
+      "revId": "f1193617e74d40724cc53df1f5a4f007dc135f2b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
