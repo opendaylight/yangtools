@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -158,10 +159,10 @@ class LeafRefContextBuilder {
     }
 
     public Module getLeafRefContextModule() {
-        final QNameModule qnameModule = currentNodeQName.getModule();
+        final Iterator<QName> it = currentNodePath.getPathFromRoot().iterator();
+        final QNameModule qnameModule = it.hasNext() ? it.next().getModule() : currentNodeQName.getModule();
 
-        return schemaContext.findModuleByNamespaceAndRevision(
-                qnameModule.getNamespace(), qnameModule.getRevision());
+        return schemaContext.findModuleByNamespaceAndRevision(qnameModule.getNamespace(), qnameModule.getRevision());
     }
 
     public void addReferencedByLeafRefCtx(final QName qname, final LeafRefContext leafRef) {
