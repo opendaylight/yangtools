@@ -1,0 +1,9 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    revision 2017-09-06;
+
+    container root {
+    }
+}
