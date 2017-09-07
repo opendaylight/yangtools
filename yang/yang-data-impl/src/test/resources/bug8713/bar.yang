@@ -1,0 +1,19 @@
+module bar {
+    namespace bar;
+    prefix bar;
+
+    import foo { prefix foo; revision-date 2017-09-06; }
+
+    revision 2017-09-06;
+
+    augment "/foo:root" {
+        leaf ref {
+            type leafref {
+                path "../target" ;
+            }
+        }
+        leaf target {
+            type string;
+        }
+    }
+}
