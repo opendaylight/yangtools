@@ -22,6 +22,30 @@
       "revId": "f1193617e74d40724cc53df1f5a4f007dc135f2b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_c9d9adf4",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/leafref/LeafRefContextBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2017-09-08T09:14:19Z",
+      "side": 1,
+      "message": "hmm.. return type of the method is Iterable\u003cQName\u003e, should I really cast it to List ?",
+      "parentUuid": "ba1f61a0_a8339760",
+      "range": {
+        "startLine": 162,
+        "startChar": 36,
+        "endLine": 162,
+        "endChar": 68
+      },
+      "revId": "f1193617e74d40724cc53df1f5a4f007dc135f2b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
