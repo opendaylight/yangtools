@@ -46,6 +46,30 @@
       "revId": "f1193617e74d40724cc53df1f5a4f007dc135f2b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_3b01ac05",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/leafref/LeafRefContextBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 162,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-09-08T10:12:48Z",
+      "side": 1,
+      "message": "I confused SchemaPath with YangInstanceIdentifier, sorry.",
+      "parentUuid": "ba1f61a0_c9d9adf4",
+      "range": {
+        "startLine": 162,
+        "startChar": 36,
+        "endLine": 162,
+        "endChar": 68
+      },
+      "revId": "f1193617e74d40724cc53df1f5a4f007dc135f2b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
