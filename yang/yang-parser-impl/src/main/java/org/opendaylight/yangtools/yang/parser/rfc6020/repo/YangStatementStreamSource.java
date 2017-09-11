@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc6020.repo;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
@@ -164,5 +165,10 @@ public final class YangStatementStreamSource implements Identifiable<SourceIdent
         ParseTreeWalker.DEFAULT.walk(MAKE_IMMUTABLE_LISTENER, result);
 
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).add("identifier", getIdentifier()).toString();
     }
 }
