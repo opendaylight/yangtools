@@ -23,7 +23,9 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
@@ -91,14 +93,6 @@ public class GenerateSourcesTest {
         private static MavenProject project;
 
         @Override
-        public Collection<File> generateSources(final SchemaContext context, final File outputBaseDir,
-                final Set<Module> currentModules) throws IOException {
-            called++;
-            outputDir = outputBaseDir;
-            return Lists.newArrayList();
-        }
-
-        @Override
         public void setAdditionalConfig(final Map<String, String> additionalConfiguration) {
             GeneratorMock.additionalCfg = additionalConfiguration;
         }
@@ -112,6 +106,14 @@ public class GenerateSourcesTest {
         @Override
         public void setMavenProject(final MavenProject project) {
             GeneratorMock.project = project;
+        }
+
+        @Override
+        public Collection<File> generateSources(SchemaContext context, File outputBaseDir, Set<Module> currentModules,
+                Function<Module, Optional<String>> moduleResourcePathResolver) throws IOException {
+            called++;
+            outputDir = outputBaseDir;
+            return Lists.newArrayList();
         }
     }
 
