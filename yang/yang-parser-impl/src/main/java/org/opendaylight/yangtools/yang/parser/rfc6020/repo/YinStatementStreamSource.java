@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc6020.repo;
 import static org.opendaylight.yangtools.yang.parser.rfc6020.repo.StatementSourceReferenceHandler.extractRef;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -211,5 +212,10 @@ public final class YinStatementStreamSource implements Identifiable<SourceIdenti
     public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
             final PrefixToModule prefixes) {
         walkTree(writer, stmtDef);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).add("identifier", getIdentifier()).toString();
     }
 }
