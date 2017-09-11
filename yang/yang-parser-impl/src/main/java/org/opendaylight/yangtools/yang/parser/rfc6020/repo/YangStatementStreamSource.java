@@ -165,4 +165,9 @@ public final class YangStatementStreamSource implements Identifiable<SourceIdent
 
         return result;
     }
+
+    @Override
+    public String toString() {
+        return getIdentifier().toYangFilename();
+    }
 }

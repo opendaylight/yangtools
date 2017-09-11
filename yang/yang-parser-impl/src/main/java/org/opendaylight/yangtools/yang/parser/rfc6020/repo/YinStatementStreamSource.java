@@ -212,4 +212,9 @@ public final class YinStatementStreamSource implements Identifiable<SourceIdenti
             final PrefixToModule prefixes) {
         walkTree(writer, stmtDef);
     }
+
+    @Override
+    public String toString() {
+        return getIdentifier().toYangFilename();
+    }
 }
