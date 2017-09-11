@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.common;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.TimeZone;
 
 public final class SimpleDateFormatUtil {
 
@@ -39,8 +40,16 @@ public final class SimpleDateFormatUtil {
      */
     public static final Date DEFAULT_BELONGS_TO_DATE;
 
+    private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
+
+    private static SimpleDateFormat createFormat() {
+        SimpleDateFormat ret = new SimpleDateFormat(REVISION_SIMPLE_DATE);
+        ret.setTimeZone(UTC);
+        return ret;
+    }
+
     static {
-        final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(REVISION_SIMPLE_DATE);
+        final SimpleDateFormat simpleDateFormat = createFormat();
 
         try {
             DEFAULT_DATE_REV = simpleDateFormat.parse(DEFAULT_DATE);
@@ -59,7 +68,7 @@ public final class SimpleDateFormatUtil {
 
         @Override
         protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat(REVISION_SIMPLE_DATE);
+            return createFormat();
         }
 
         @Override
