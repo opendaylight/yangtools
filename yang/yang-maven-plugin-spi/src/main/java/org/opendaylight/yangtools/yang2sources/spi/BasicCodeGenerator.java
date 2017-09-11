@@ -32,34 +32,12 @@ public interface BasicCodeGenerator {
      *            user
      * @param currentModules
      *            YANG modules parsed from yangFilesRootDir
-     * @return collection of files that were generated from schema context
-     * @throws IOException
-     *
-     * @deprecated Implement {@link #generateSources(SchemaContext, File, Set, Function)} instead.
-     */
-    @Deprecated
-    Collection<File> generateSources(SchemaContext context, File outputBaseDir, Set<Module> currentModules)
-            throws IOException;
-
-    /**
-     * Generate sources from provided {@link SchemaContext}.
-     *
-     * @param context
-     *            parsed from YANG files
-     * @param outputBaseDir
-     *            expected output directory for generated sources configured by
-     *            user
-     * @param currentModules
-     *            YANG modules parsed from yangFilesRootDir
      * @param moduleResourcePathResolver
      *            Function converting a local module to the packaged resource path
      * @return collection of files that were generated from schema context
      */
-    default Collection<File> generateSources(final SchemaContext context, final File outputBaseDir,
-            final Set<Module> currentModules,
-            final Function<Module, Optional<String>> moduleResourcePathResolver) throws IOException {
-        return generateSources(context, outputBaseDir, currentModules);
-    }
+    Collection<File> generateSources(SchemaContext context, File outputBaseDir, Set<Module> currentModules,
+            Function<Module, Optional<String>> moduleResourcePathResolver) throws IOException;
 
     /**
      * Provided map contains all configuration that was set in pom for code

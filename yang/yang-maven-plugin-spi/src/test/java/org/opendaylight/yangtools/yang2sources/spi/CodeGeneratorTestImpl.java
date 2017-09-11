@@ -8,9 +8,12 @@
 package org.opendaylight.yangtools.yang2sources.spi;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -22,11 +25,11 @@ public class CodeGeneratorTestImpl implements BasicCodeGenerator, MavenProjectAw
     private static final Logger LOG = LoggerFactory.getLogger(CodeGeneratorTestImpl.class);
 
     @Override
-    public Collection<File> generateSources(final SchemaContext context,
-            final File outputBaseDir, final Set<Module> currentModuleBuilders) {
+    public Collection<File> generateSources(SchemaContext context, File outputBaseDir, Set<Module> currentModules,
+            Function<Module, Optional<String>> moduleResourcePathResolver) throws IOException {
         LOG.debug("{} generateSources:context: {}", getClass().getCanonicalName(), context);
         LOG.debug("{} generateSources:outputBaseDir: {}", getClass().getCanonicalName(), outputBaseDir);
-        LOG.debug("{} generateSources:currentModuleBuilders: {}", getClass().getCanonicalName(), currentModuleBuilders);
+        LOG.debug("{} generateSources:currentModules: {}", getClass().getCanonicalName(), currentModules);
         return null;
     }
 
