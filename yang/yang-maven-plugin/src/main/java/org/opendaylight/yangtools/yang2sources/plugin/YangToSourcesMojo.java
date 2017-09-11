@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -41,7 +42,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * <li>For each {@link BasicCodeGenerator} from {@link #codeGenerators}:
  * <ol>
  * <li>Instantiate using default constructor</li>
- * <li>Call {@link BasicCodeGenerator#generateSources(SchemaContext, File, Set)}</li>
+ * <li>Call {@link BasicCodeGenerator#generateSources(SchemaContext, File, Set, Function)}</li>
  * </ol></li>
  * </ol>
  */
