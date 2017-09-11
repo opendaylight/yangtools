@@ -37,6 +37,7 @@ abstract class BaseTemplate {
     private static final CharMatcher TAB_MATCHER = CharMatcher.is('\t')
     private static final Pattern SPACES_PATTERN = Pattern.compile(" +")
     private static final Splitter NL_SPLITTER = Splitter.on(NL_MATCHER)
+    private static final Pattern TAIL_COMMENT_PATTERN = Pattern.compile("*/", Pattern.LITERAL);
 
     new(GeneratedType _type) {
         if (_type === null) {
@@ -224,10 +225,7 @@ abstract class BaseTemplate {
             return description;
         }
 
-        var ret = description.replace("*/", "&#42;&#47;");
-        ret = AMP_MATCHER.replaceFrom(ret, "&amp;");
-
-        return ret;
+        return AMP_MATCHER.replaceFrom(TAIL_COMMENT_PATTERN.matcher(description).replaceAll("&#42;&#47;"), "&amp;");
     }
 
     def protected String formatDataForJavaDoc(GeneratedType type, String additionalComment) {
