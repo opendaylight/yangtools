@@ -11,9 +11,7 @@ import java.net.URI;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 /**
- *
- * Pre-linkage global mapping of module names to namespaces
- *
+ * Pre-linkage global mapping of module names to namespaces.
  */
 public interface ModuleNameToNamespace extends IdentifierNamespace<String, URI> {
 

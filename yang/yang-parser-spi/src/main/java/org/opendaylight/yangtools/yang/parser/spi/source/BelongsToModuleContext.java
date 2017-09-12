@@ -11,7 +11,8 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImportedNamespaceContext;
 
 /**
-* namespace key class for storing belongs-to statements in Yang model storage
-*/
+ * namespace key class for storing belongs-to statements in Yang model storage.
+ */
 public interface BelongsToModuleContext extends ImportedNamespaceContext<ModuleIdentifier> {
+
 }

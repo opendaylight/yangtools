@@ -17,6 +17,7 @@ public final class CopyHistory implements Immutable {
     private static final CopyType[] VALUES = CopyType.values();
 
     private static final CopyHistory[][] CACHE = new CopyHistory[VALUES.length][];
+
     static {
         /*
          * Cache size is dependent on number of items in CopyType, it costs N * 2^N objects.

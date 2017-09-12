@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 
 /**
  * namespace class similar to {@link org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace} for storing modules
- * into Yang model storage but keyed by plain name
+ * into Yang model storage but keyed by plain name.
  */
 public interface ModuleNamespaceForBelongsTo extends
         StatementNamespace<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> {

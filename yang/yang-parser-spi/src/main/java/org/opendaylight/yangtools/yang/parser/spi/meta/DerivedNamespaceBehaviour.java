@@ -11,10 +11,11 @@ import com.google.common.base.Preconditions;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
-public abstract class DerivedNamespaceBehaviour<K, V, DK, N extends IdentifierNamespace<K, V>, DN extends IdentifierNamespace<DK, ?>>
-        extends NamespaceBehaviour<K, V, N> {
+@SuppressWarnings("checkstyle:classTypeParameterName")
+public abstract class DerivedNamespaceBehaviour<K, V, DK, N extends IdentifierNamespace<K, V>,
+       DN extends IdentifierNamespace<DK, ?>> extends NamespaceBehaviour<K, V, N> {
 
-    private Class<DN> derivedFrom;
+    private final Class<DN> derivedFrom;
 
     protected DerivedNamespaceBehaviour(Class<N> identifier, Class<DN> derivedFrom) {
         super(identifier);

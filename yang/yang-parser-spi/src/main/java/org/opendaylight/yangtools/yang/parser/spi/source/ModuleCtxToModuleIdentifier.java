@@ -12,10 +12,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
- *
- * Global mapping of modules to module identifier
- *
+ * Global mapping of modules to module identifier.
  */
-public interface ModuleCtxToModuleIdentifier extends IdentifierNamespace<StmtContext<?,?,?>, ModuleIdentifier> {
+public interface ModuleCtxToModuleIdentifier extends IdentifierNamespace<StmtContext<?, ?, ?>, ModuleIdentifier> {
 
 }

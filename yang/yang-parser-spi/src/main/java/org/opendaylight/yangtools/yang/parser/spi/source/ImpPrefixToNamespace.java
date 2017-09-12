@@ -11,9 +11,7 @@ import java.net.URI;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 /**
- *
- * Pre-linkage source-specific mapping of prefixes to module namespaces
- *
+ * Pre-linkage source-specific mapping of prefixes to module namespaces.
  */
 public interface ImpPrefixToNamespace extends IdentifierNamespace<String, URI> {
 

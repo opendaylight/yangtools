@@ -8,16 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import org.opendaylight.yangtools.yang.common.QNameModule;
-
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 /**
- *
- * Source-specific mapping of prefixes to namespaces
- *
+ * Source-specific mapping of prefixes to namespaces.
  */
 public interface ModuleIdentifierToModuleQName extends IdentifierNamespace<ModuleIdentifier, QNameModule> {
-
 
 }

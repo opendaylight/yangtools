@@ -12,13 +12,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 /**
- *
- * Identity namespace
- *
- * All identity names defined in a module and its submodules share the same
- * identity identifier namespace.
- *
+ * Identity namespace. All identity names defined in a module and its submodules share the same identity identifier
+ * namespace.
  */
+// FIXME: describe scoping and value
 public interface DerivedIdentitiesNamespace extends IdentifierNamespace<QName, List<StmtContext<?, ?, ?>>> {
 
 }

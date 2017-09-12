@@ -12,7 +12,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 
 /**
- * pre-linkage namespace class for storing modules into Yang model storage keyed by module names
+ * Intermediate-stage namespace equivalent to ModuleNamespace except it is keyed by module names. This namespace is
+ * used to resolve inter-module references before actual linkage occurs.
  */
 public interface PreLinkageModuleNamespace extends
         StatementNamespace<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> {

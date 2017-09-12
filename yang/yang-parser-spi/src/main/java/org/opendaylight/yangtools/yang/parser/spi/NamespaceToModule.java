@@ -7,12 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi;
 
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
-
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 
-public interface NamespaceToModule extends StatementNamespace<QNameModule, ModuleStatement, EffectiveStatement<String, ModuleStatement>> {
+/**
+ * A derived namespace allowing lookup of modules based on their {@link QNameModule}.
+ */
+public interface NamespaceToModule
+    extends StatementNamespace<QNameModule, ModuleStatement, EffectiveStatement<String, ModuleStatement>> {
 
 }

@@ -36,12 +36,11 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
         extends StatementDefinition, StatementFactory<A, D, E> {
 
     /**
-     * Returns public statement definition, which will be present in built
-     * statements.
+     * Returns public statement definition, which will be present in built statements.
      *
-     * Public statement definition may be used to provide different
-     * implementation of statement definition, which will not retain any build
-     * specific data or context.
+     * <p>
+     * Public statement definition may be used to provide different implementation of statement definition,
+     * which will not retain any build specific data or context.
      *
      * @return public statement definition, which will be present in built
      *         statements.
@@ -88,24 +87,22 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     void onStatementAdded(StmtContext.Mutable<A, D, E> stmt);
 
     /**
-     * Returns implicit parent statement support for supplied statement
-     * definition, if it is defined. This allows implementations of this
-     * interface add implicit parent to the build context hierarchy before a
-     * substatement is created.
+     * Returns implicit parent statement support for supplied statement definition, if it is defined. This allows
+     * implementations of this interface add implicit parent to the build context hierarchy before a substatement
+     * is created.
      *
      * @param stmtDef
      *            statement definition of substatement
      * @return optional of implicit parent statement support
      */
-    Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final StatementDefinition stmtDef);
+    Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(StatementDefinition stmtDef);
 
     /**
-     * Invoked when statement is closed during
-     * {@link ModelProcessingPhase#SOURCE_PRE_LINKAGE} phase, only substatements
+     * Invoked when statement is closed during {@link ModelProcessingPhase#SOURCE_PRE_LINKAGE} phase, only substatements
      * from this and previous phase are available.
      *
-     * Implementation may use method to perform actions on this event or
-     * register modification action using
+     * <p>
+     * Implementation may use method to perform actions on this event or register modification action using
      * {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
      *
      * @param stmt
@@ -114,12 +111,11 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     void onPreLinkageDeclared(StmtContext.Mutable<A, D, E> stmt);
 
     /**
-     * Invoked when statement is closed during
-     * {@link ModelProcessingPhase#SOURCE_LINKAGE} phase, only substatements
+     * Invoked when statement is closed during {@link ModelProcessingPhase#SOURCE_LINKAGE} phase, only substatements
      * from this and previous phase are available.
      *
-     * Implementation may use method to perform actions on this event or
-     * register modification action using
+     * <p>
+     * Implementation may use method to perform actions on this event or register modification action using
      * {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
      *
      * @param stmt
@@ -130,12 +126,11 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     void onLinkageDeclared(StmtContext.Mutable<A, D, E> stmt);
 
     /**
-     * Invoked when statement is closed during
-     * {@link ModelProcessingPhase#STATEMENT_DEFINITION} phase, only
-     * substatements from this phase are available.
+     * Invoked when statement is closed during {@link ModelProcessingPhase#STATEMENT_DEFINITION} phase,
+     * only substatements from this phase are available.
      *
-     * Implementation may use method to perform actions on this event or
-     * register modification action using
+     * <p>
+     * Implementation may use method to perform actions on this event or register modification action using
      * {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
      *
      * @param stmt
@@ -147,17 +142,12 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     void onStatementDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt);
 
     /**
-     * Invoked when statement is closed during
-     * {@link ModelProcessingPhase#FULL_DECLARATION} phase.
+     * Invoked when statement is closed during {@link ModelProcessingPhase#FULL_DECLARATION} phase,
+     * only substatements from this phase are available.
      *
-     * Invoked when statement is closed during
-     * {@link ModelProcessingPhase#FULL_DECLARATION} phase, only substatements
-     * from this phase are available.
-     *
-     * Implementation may use method to perform actions on this event or
-     * register modification action using
+     * <p>
+     * Implementation may use method to perform actions on this event or register modification action using
      * {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
-     *
      *
      * @param stmt
      *            Context of added statement. Argument and statement parent is
@@ -173,9 +163,8 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     boolean hasArgumentSpecificSupports();
 
     /**
-     * If this support has argument specific supports, the method returns
-     * support specific for given argument (e.g. type statement support need to
-     * be specialized based on its argument), otherwise returns null.
+     * If this support has argument specific supports, the method returns support specific for given argument
+     * (e.g. type statement support need to be specialized based on its argument), otherwise returns null.
      *
      * @param argument
      *            argument of statement
@@ -185,7 +174,7 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     StatementSupport<?, ?, ?> getSupportSpecificForArgument(String argument);
 
     /**
-     * Given a raw string representation of an argument, try to use a shared representation
+     * Given a raw string representation of an argument, try to use a shared representation.
      *
      * @param rawArgument
      *            Argument string
@@ -196,8 +185,7 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     }
 
     /**
-     * Returns unknown statement form of a regular yang statement supplied as
-     * parameter to the method.
+     * Returns unknown statement form of a regular YANG statement supplied as a parameter to the method.
      *
      * @param yangStmtDef
      *            statement definition of a regular yang statement
@@ -209,10 +197,9 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     }
 
     /**
-     * Returns true if this statement support and all its substatements ignore
-     * if-feature statements (e.g. yang-data extension defined in
-     * https://tools.ietf.org/html/rfc8040#section-8). Default implementation
-     * returns false.
+     * Returns true if this statement support and all its substatements ignore if-feature statements (e.g. yang-data
+     * extension defined in <a href="https://tools.ietf.org/html/rfc8040#section-8">RFC 8040</a>). Default
+     * implementation returns false.
      *
      * @return true if this statement support ignores if-feature statements,
      *         otherwise false.
@@ -223,10 +210,9 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     }
 
     /**
-     * Returns true if this statement support and all its substatements ignore
-     * config statements (e.g. yang-data extension defined in
-     * https://tools.ietf.org/html/rfc8040#section-8). Default implementation
-     * returns false.
+     * Returns true if this statement support and all its substatements ignore config statements (e.g. yang-data
+     * extension defined in <a href="https://tools.ietf.org/html/rfc8040#section-8">RFC 8040</a>). Default
+     * implementation returns false.
      *
      * @return true if this statement support ignores config statements,
      *         otherwise false.

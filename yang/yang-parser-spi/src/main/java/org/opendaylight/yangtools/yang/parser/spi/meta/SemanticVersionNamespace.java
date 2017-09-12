@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 /**
- * namespace class for storing semantic version of yang modules
+ * Namespace class for storing semantic version of yang modules.
  */
 @Beta
 public interface SemanticVersionNamespace extends IdentifierNamespace<StmtContext<?, ?, ?>, SemVer> {

@@ -15,11 +15,11 @@ import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 /**
- * Definition / implementation of specific Identifier Namespace behaviour.
+ * Definition / implementation of specific Identifier Namespace behaviour. A namespace behaviour is built on top
+ * of a tree of {@link NamespaceStorageNode} which represents local context of one of types defined
+ * n {@link StorageNodeType}.
  *
- * Namespace behaviour is build on top of tree of {@link NamespaceStorageNode} which represents local context of one of
- * types defined in {@link StorageNodeType}.
- *
+ * <p>
  * For common behaviour models please use static factories {@link #global(Class)}, {@link #sourceLocal(Class)} and
  * {@link #treeScoped(Class)}.
  *
@@ -42,6 +42,8 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
 
     public interface NamespaceStorageNode {
         /**
+         * Return local namespace behaviour type.
+         *
          * @return local namespace behaviour type {@link NamespaceBehaviour}
          */
         StorageNodeType getStorageNodeType();
@@ -87,18 +89,14 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
     }
 
     /**
-     *
-     * Creates global namespace behaviour for supplied namespace type.
-     *
-     * Global behaviour stores and loads all values from root {@link NamespaceStorageNode} with type of
-     * {@link StorageNodeType#GLOBAL}.
+     * Creates a global namespace behaviour for supplied namespace type. Global behaviour stores and loads all values
+     * from root {@link NamespaceStorageNode} with type of {@link StorageNodeType#GLOBAL}.
      *
      * @param identifier
      *            Namespace identifier.
      * @param <K> type parameter
      * @param <V> type parameter
      * @param <N> type parameter
-     *
      * @return global namespace behaviour for supplied namespace type.
      */
     public static @Nonnull <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> global(
@@ -107,18 +105,15 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
     }
 
     /**
-     *
-     * Creates source-local namespace behaviour for supplied namespace type.
-     *
-     * Source-local namespace behaviour stores and loads all values from closest {@link NamespaceStorageNode} ancestor
-     * with type of {@link StorageNodeType#SOURCE_LOCAL_SPECIAL}.
+     * Creates source-local namespace behaviour for supplied namespace type. Source-local namespace behaviour stores
+     * and loads all values from closest {@link NamespaceStorageNode} ancestor with type
+     * of {@link StorageNodeType#SOURCE_LOCAL_SPECIAL}.
      *
      * @param identifier
      *            Namespace identifier.
      * @param <K> type parameter
      * @param <V> type parameter
      * @param <N> type parameter
-     *
      * @return source-local namespace behaviour for supplied namespace type.
      */
     public static <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> sourceLocal(
@@ -128,49 +123,44 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
 
     public static <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> statementLocal(
            final Class<N> identifier) {
-       return new StorageSpecific<>(identifier, StorageNodeType.STATEMENT_LOCAL);
-   }
+        return new StorageSpecific<>(identifier, StorageNodeType.STATEMENT_LOCAL);
+    }
 
     /**
-     *
-     * Creates tree-scoped namespace behaviour for supplied namespace type.
-     *
-     * Tree-scoped namespace behaviour search for value in all storage nodes up to the root and stores values in
-     * supplied node.
+     * Creates tree-scoped namespace behaviour for supplied namespace type. Tree-scoped namespace behaviour searches
+     * for value in all storage nodes up to the root and stores values in supplied node.
      *
      * @param identifier
-     *            Namespace identifier.     *
+     *            Namespace identifier.
      * @param <K> type parameter
      * @param <V> type parameter
      * @param <N> type parameter
-     *
      * @return tree-scoped namespace behaviour for supplied namespace type.
      */
-    public static <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> treeScoped(final Class<N> identifier) {
+    public static <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> treeScoped(
+            final Class<N> identifier) {
         return new TreeScoped<>(identifier);
     }
 
     /**
-     * returns value from model namespace storage according to key param class
+     * Returns a value from model namespace storage according to key param class.
      *
      * @param storage namespace storage
      * @param key type parameter
-     *
      * @return value from model namespace storage according to key param class
      */
     public abstract V getFrom(NamespaceStorageNode storage, K key);
 
     /**
-     * returns all values of a keys of param class from model namespace storage
+     * Returns all values of a keys of param class from model namespace storage.
      *
      * @param storage namespace storage
-     *
      * @return all values of keys of param class from model namespace storage
      */
     public abstract Map<K, V> getAllFrom(NamespaceStorageNode storage);
 
     /**
-     * adds key and value to corresponding namespace storage according to param class
+     * Adds a key/value to corresponding namespace storage according to param class.
      *
      * @param storage namespace storage
      * @param key type parameter
@@ -195,11 +185,10 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
         storage.putToLocalStorage(getIdentifier(), key, value);
     }
 
-    static class StorageSpecific<K, V, N extends IdentifierNamespace<K, V>> extends NamespaceBehaviour<K, V, N> {
-
+    static final class StorageSpecific<K, V, N extends IdentifierNamespace<K, V>> extends NamespaceBehaviour<K, V, N> {
         StorageNodeType storageType;
 
-        public StorageSpecific(final Class<N> identifier, final StorageNodeType type) {
+        StorageSpecific(final Class<N> identifier, final StorageNodeType type) {
             super(identifier);
             storageType = Preconditions.checkNotNull(type);
         }
@@ -225,12 +214,11 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
             NamespaceStorageNode current = findClosestTowardsRoot(storage, storageType);
             addToStorage(current, key, value);
         }
-
     }
 
-    static class TreeScoped<K, V, N extends IdentifierNamespace<K, V>> extends NamespaceBehaviour<K, V, N> {
+    static final class TreeScoped<K, V, N extends IdentifierNamespace<K, V>> extends NamespaceBehaviour<K, V, N> {
 
-        public TreeScoped(final Class<N> identifier) {
+        TreeScoped(final Class<N> identifier) {
             super(identifier);
         }
 
@@ -267,7 +255,8 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
 
     }
 
-    protected static NamespaceStorageNode findClosestTowardsRoot(final NamespaceStorageNode storage, final StorageNodeType type) {
+    protected static NamespaceStorageNode findClosestTowardsRoot(final NamespaceStorageNode storage,
+            final StorageNodeType type) {
         NamespaceStorageNode current = storage;
         while (current != null && current.getStorageNodeType() != type) {
             current = current.getParentNamespaceStorage();
