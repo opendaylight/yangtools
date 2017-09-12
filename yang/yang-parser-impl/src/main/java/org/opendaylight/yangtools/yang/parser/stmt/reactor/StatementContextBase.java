@@ -44,6 +44,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
@@ -402,16 +403,22 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         Preconditions.checkState(inProgressPhase != ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Declared statement cannot be added in effective phase at: %s", getStatementSourceReference());
 
-        final Optional<StatementContextBase<?, ?, ?>> implicitStatement = definition.beforeSubStatementCreated(this,
-            offset, def, ref, argument);
-        if (implicitStatement.isPresent()) {
-            return implicitStatement.get().createSubstatement(offset, def, ref, argument);
+        final Optional<StatementSupport<?, ?, ?>> implicitParent = definition.getImplicitParentFor(def.getPublicView());
+        if (implicitParent.isPresent()) {
+            return createImplicitParent(offset, implicitParent.get(), ref, argument).createSubstatement(offset, def,
+                    ref, argument);
         }
 
         final StatementContextBase<CA, CD, CE> ret = new SubstatementContext<>(this, def, ref, argument);
         substatements = substatements.put(offset, ret);
         def.onStatementAdded(ret);
         return ret;
+    }
+
+    private StatementContextBase<?, ?, ?> createImplicitParent(final int offset,
+            final StatementSupport<?, ?, ?> implicitParent, final StatementSourceReference ref, final String argument) {
+        final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(implicitParent);
+        return createSubstatement(offset, def, ImplicitSubstatement.of(ref), argument);
     }
 
     /**

@@ -14,6 +14,7 @@ import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
@@ -31,10 +32,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementDefinitionContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ChoiceEffectiveStatementImpl;
 
 public class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
@@ -75,12 +72,9 @@ public class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public Optional<StatementContextBase<?, ?, ?>> beforeSubStatementCreated(
-                final StmtContext.Mutable<?, ?, ?> stmt, final int offset,
-                final StatementDefinitionContext<?, ?, ?> def, final StatementSourceReference ref, final String argument) {
-
-            if (YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(def.getPublicView())) {
-                return Optional.of(createImplicitCase(stmt, offset, ref, argument));
+        public Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final StatementDefinition stmtDef) {
+            if (YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(stmtDef)) {
+                return Optional.of(implictCase());
             }
             return Optional.empty();
         }
@@ -109,13 +103,6 @@ public class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
 
         protected StatementSupport<?, ?, ?> implictCase() {
             return IMPLICIT_CASE;
-        }
-
-        private StatementContextBase<?, ?, ?> createImplicitCase(final StmtContext.Mutable<?, ?, ?> stmt,
-                final int offset, final StatementSourceReference ref, final String argument) {
-            final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(implictCase());
-            return ((StatementContextBase<?, ?, ?>) stmt).createSubstatement(offset, def, ImplicitSubstatement.of(ref),
-                    argument);
         }
     }
 
