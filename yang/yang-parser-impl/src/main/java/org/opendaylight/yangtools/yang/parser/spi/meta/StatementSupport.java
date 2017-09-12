@@ -205,8 +205,7 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      * @return Optional of unknown statement form of a regular yang statement or
      *         Optional.empty() if it is not supported by this statement support
      */
-    default Optional<StatementDefinitionContext<?, ?, ?>> getUnknownStatementDefinitionOf(
-            final StatementDefinitionContext<?, ?, ?> yangStmtDef) {
+    default Optional<StatementSupport<?, ?, ?>> getUnknownStatementDefinitionOf(final StatementDefinition yangStmtDef) {
         return Optional.empty();
     }
 

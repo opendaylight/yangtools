@@ -150,7 +150,10 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
             return ret;
         }
 
-        ret = support.getUnknownStatementDefinitionOf(yangStmtDef).orElse(null);
+        final Optional<StatementSupport<?, ?, ?>> unknownStatementSupport = support
+                .getUnknownStatementDefinitionOf(yangStmtDef.getPublicView());
+        ret = unknownStatementSupport.isPresent() ? new StatementDefinitionContext<>(unknownStatementSupport.get())
+                : null;
 
         if (ret != null) {
             unknownStmtDefsOfYangStmts.put(yangStmtDef, ret);
