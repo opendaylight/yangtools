@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba1f61a0_ef0aa777",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/StatementDefinitionContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-09-12T18:10:38Z",
+      "side": 1,
+      "message": "map(StatementDefinitionContext::new).orElse(null);",
+      "range": {
+        "startLine": 155,
+        "startChar": 38,
+        "endLine": 156,
+        "endChar": 22
+      },
+      "revId": "33baad996a5b8bf5cd50396e95ef550b450e1e10",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
