@@ -1,0 +1,8 @@
+module parent-module {
+    namespace pm-ns;
+    prefix pm;
+
+    include child-module;
+
+    container parent-mod-cont {}
+}
