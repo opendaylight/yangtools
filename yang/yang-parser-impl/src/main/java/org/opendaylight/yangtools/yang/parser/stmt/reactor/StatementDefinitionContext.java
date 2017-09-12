@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
     private final StatementSupport<A, D, E> support;
@@ -57,9 +56,8 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
         return support.getPublicView();
     }
 
-    public Optional<StatementContextBase<?, ?, ?>> beforeSubStatementCreated(final Mutable<?, ?, ?> stmt, final int offset, final StatementDefinitionContext<?, ?, ?> def, final StatementSourceReference ref,
-            final String argument) {
-        return support.beforeSubStatementCreated(stmt, offset, def, ref, argument);
+    public Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final StatementDefinition stmtDef) {
+        return support.getImplicitParentFor(stmtDef);
     }
 
     public boolean onStatementAdded(final Mutable<A, D, E> stmt) {

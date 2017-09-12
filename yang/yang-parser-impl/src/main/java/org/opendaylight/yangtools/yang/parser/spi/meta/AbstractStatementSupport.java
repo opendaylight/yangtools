@@ -15,9 +15,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementDefinitionContext;
 
 /**
  * Class providing necessary support for processing a YANG statement.
@@ -71,10 +68,8 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     }
 
     @Override
-    public Optional<StatementContextBase<?, ?, ?>> beforeSubStatementCreated(final StmtContext.Mutable<?, ?, ?> stmt,
-            final int offset, final StatementDefinitionContext<?, ?, ?> def, final StatementSourceReference ref,
-            final String argument) {
-        // NOOP for most implementations and also no implicit statements
+    public Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final StatementDefinition stmtDef) {
+        // NOOP for most implementations and also no implicit parent
         return Optional.empty();
     }
 

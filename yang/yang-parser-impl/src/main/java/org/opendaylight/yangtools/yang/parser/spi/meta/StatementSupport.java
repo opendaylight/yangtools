@@ -15,10 +15,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementDefinitionContext;
 
 /**
@@ -92,27 +89,16 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     void onStatementAdded(StmtContext.Mutable<A, D, E> stmt);
 
     /**
-     * Invoked before a substatement with specified offset, definition,
-     * reference and argument is created and added to parent statement. This
-     * allows implementations of this interface perform any modifications to the
-     * build context hierarchy before a substatement is created. One such use is
-     * creating an implicit statement.
+     * Returns implicit parent statement support for supplied statement
+     * definition, if it is defined. This allows implementations of this
+     * interface add implicit parent to the build context hierarchy before a
+     * substatement is created.
      *
-     * @param stmt
-     *            Context of parent statement where a new substatement should be
-     *            created. No substatements are available.
-     * @param offset
-     *            substatement offset
-     * @param def
-     *            definition context
-     * @param ref
-     *            source reference
-     * @param argument
-     *            substatement argument
-     * @return optional of an implicit substatement
+     * @param stmtDef
+     *            statement definition of substatement
+     * @return optional of implicit parent statement support
      */
-    Optional<StatementContextBase<?, ?, ?>> beforeSubStatementCreated(final Mutable<?, ?, ?> stmt, final int offset,
-            final StatementDefinitionContext<?, ?, ?> def, final StatementSourceReference ref, final String argument);
+    Optional<StatementSupport<?,?,?>> getImplicitParentFor(final StatementDefinition stmtDef);
 
     /**
      * Invoked when statement is closed during
