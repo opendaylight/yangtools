@@ -38,6 +38,7 @@
         <module>yang-model-immutable</module>
         <module>yang-model-util</module>
         <module>yang-parser-api</module>
+        <module>yang-parser-spi</module>
         <module>yang-parser-impl</module>
         <module>yang-data-jaxen</module>
         <module>yang-system-test</module>
