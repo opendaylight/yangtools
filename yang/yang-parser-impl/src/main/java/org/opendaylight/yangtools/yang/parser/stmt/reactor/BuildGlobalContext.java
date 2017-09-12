@@ -427,6 +427,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         final Set<SourceSpecificContext> requiredLibs = new HashSet<>();
         for (final SourceSpecificContext source : sources) {
             collectRequiredSourcesFromLib(libSourcesTable, requiredLibs, source);
+            removeConflictingLibSources(source, requiredLibs);
         }
         return requiredLibs;
     }
@@ -453,6 +454,22 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     private static SourceSpecificContext getLatestRevision(final SortedMap<Date, SourceSpecificContext> sourceMap) {
         return sourceMap != null && !sourceMap.isEmpty() ? sourceMap.get(sourceMap.lastKey()) : null;
+    }
+
+    // removes required library sources which would cause namespace/name conflict with one of the main sources
+    // later in the parsing process. this can happen if we add a parent module or a submodule as a main source
+    // and the same parent module or submodule is added as one of the library sources.
+    // such situation may occur when using the yang-system-test artifact - if a parent module/submodule is specified
+    // as its argument and the same dir is specified as one of the library dirs through -p option).
+    private static void removeConflictingLibSources(final SourceSpecificContext source,
+            final Set<SourceSpecificContext> requiredLibs) {
+        final Iterator<SourceSpecificContext> requiredLibsIter = requiredLibs.iterator();
+        while (requiredLibsIter.hasNext()) {
+            final SourceSpecificContext currentReqSource = requiredLibsIter.next();
+            if (source.getRootIdentifier().equals(currentReqSource.getRootIdentifier())) {
+                requiredLibsIter.remove();
+            }
+        }
     }
 
     private void endPhase(final ModelProcessingPhase phase) {

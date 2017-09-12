@@ -1,0 +1,7 @@
+submodule child-module {
+    belongs-to parent-module {
+        prefix pm;
+    }
+
+    container child-mod-cont {}
+}
