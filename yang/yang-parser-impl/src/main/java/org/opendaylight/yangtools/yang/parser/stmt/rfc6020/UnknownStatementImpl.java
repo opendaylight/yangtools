@@ -16,9 +16,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementDefinitionContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
 public class UnknownStatementImpl extends AbstractDeclaredStatement<String> implements UnrecognizedStatement {
@@ -56,15 +56,14 @@ public class UnknownStatementImpl extends AbstractDeclaredStatement<String> impl
         }
 
         @Override
-        public Optional<StatementDefinitionContext<?, ?, ?>> getUnknownStatementDefinitionOf(
-                final StatementDefinitionContext<?, ?, ?> yangStmtDef) {
+        public Optional<StatementSupport<?, ?, ?>> getUnknownStatementDefinitionOf(
+                final StatementDefinition yangStmtDef) {
             final QName baseQName = getStatementName();
-            return Optional.of(new StatementDefinitionContext<>(
-                    new ModelDefinedStatementSupport(new ModelDefinedStatementDefinition(
-                            QName.create(baseQName, yangStmtDef.getStatementName().getLocalName()),
-                            yangStmtDef.hasArgument()
-                                    ? QName.create(baseQName, yangStmtDef.getArgumentName().getLocalName()) : null,
-                            yangStmtDef.isArgumentYinElement()))));
+            final QName argumentName = yangStmtDef.getArgumentName();
+            return Optional.of(new ModelDefinedStatementSupport(new ModelDefinedStatementDefinition(
+                    QName.create(baseQName, yangStmtDef.getStatementName().getLocalName()),
+                    argumentName != null ? QName.create(baseQName, argumentName.getLocalName()) : null,
+                    yangStmtDef.isArgumentYinElement())));
         }
     }
 

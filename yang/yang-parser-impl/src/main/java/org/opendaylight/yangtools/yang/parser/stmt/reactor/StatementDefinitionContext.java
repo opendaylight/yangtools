@@ -141,17 +141,18 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
 
     StatementDefinitionContext<?, ?, ?> getAsUnknownStatementDefinition(
             final StatementDefinitionContext<?, ?, ?> yangStmtDef) {
-        if (unknownStmtDefsOfYangStmts == null) {
+        if (unknownStmtDefsOfYangStmts != null) {
+            final StatementDefinitionContext<?, ?, ?> existing = unknownStmtDefsOfYangStmts.get(yangStmtDef);
+            if (existing != null) {
+                return existing;
+            }
+        } else {
             unknownStmtDefsOfYangStmts = new HashMap<>();
         }
 
-        StatementDefinitionContext<?, ?, ?> ret = unknownStmtDefsOfYangStmts.get(yangStmtDef);
-        if (ret != null) {
-            return ret;
-        }
-
-        ret = support.getUnknownStatementDefinitionOf(yangStmtDef).orElse(null);
-
+        @SuppressWarnings("unchecked")
+        final StatementDefinitionContext<?, ?, ?> ret = support.getUnknownStatementDefinitionOf(
+            yangStmtDef.getPublicView()).map(StatementDefinitionContext::new).orElse(null);
         if (ret != null) {
             unknownStmtDefsOfYangStmts.put(yangStmtDef, ret);
         }
