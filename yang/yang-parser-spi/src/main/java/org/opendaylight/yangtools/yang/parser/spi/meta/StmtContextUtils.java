@@ -85,6 +85,22 @@ public final class StmtContextUtils {
         return null;
     }
 
+    @SafeVarargs
+    public static StmtContext<?, ?, ?> findFirstDeclaredSubstatement(final StmtContext<?, ?, ?> stmtContext,
+            int startIndex, final Class<? extends DeclaredStatement<?>>... types) {
+        if (startIndex >= types.length) {
+            return null;
+        }
+
+        for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.declaredSubstatements()) {
+            if (producesDeclared(subStmtContext, types[startIndex])) {
+                return startIndex + 1 == types.length ? subStmtContext : findFirstDeclaredSubstatement(subStmtContext,
+                        ++startIndex, types);
+            }
+        }
+        return null;
+    }
+
     @SuppressWarnings("unchecked")
     public static <A, D extends DeclaredStatement<A>> Collection<StmtContext<A, D, ?>> findAllDeclaredSubstatements(
             final StmtContext<?, ?, ?> stmtContext, final Class<D> declaredType) {
@@ -145,22 +161,6 @@ public final class StmtContextUtils {
         final StmtContext<A, ?, ?> effectiveSubstatement = findFirstEffectiveSubstatement(stmtContext, declaredType);
         return effectiveSubstatement != null ? effectiveSubstatement : findFirstDeclaredSubstatement(stmtContext,
                 declaredType);
-    }
-
-    @SafeVarargs
-    public static StmtContext<?, ?, ?> findFirstDeclaredSubstatement(final StmtContext<?, ?, ?> stmtContext,
-            int startIndex, final Class<? extends DeclaredStatement<?>>... types) {
-        if (startIndex >= types.length) {
-            return null;
-        }
-
-        for (final StmtContext<?, ?, ?> subStmtContext : stmtContext.declaredSubstatements()) {
-            if (producesDeclared(subStmtContext, types[startIndex])) {
-                return startIndex + 1 == types.length ? subStmtContext : findFirstDeclaredSubstatement(subStmtContext,
-                        ++startIndex, types);
-            }
-        }
-        return null;
     }
 
     public static <D extends DeclaredStatement<?>> StmtContext<?, ?, ?> findFirstDeclaredSubstatementOnSublevel(
@@ -305,16 +305,16 @@ public final class StmtContextUtils {
             return false;
         }
         switch ((YangStmtMapping) stmtCtx.getPublicDefinition()) {
-        case LEAF:
-        case CHOICE:
-        case ANYXML:
-            return Boolean.TRUE.equals(firstSubstatementAttributeOf(stmtCtx, MandatoryStatement.class));
-        case LIST:
-        case LEAF_LIST:
-            final Integer minElements = firstSubstatementAttributeOf(stmtCtx, MinElementsStatement.class);
-            return minElements != null && minElements > 0;
-        default:
-            return false;
+            case LEAF:
+            case CHOICE:
+            case ANYXML:
+                return Boolean.TRUE.equals(firstSubstatementAttributeOf(stmtCtx, MandatoryStatement.class));
+            case LIST:
+            case LEAF_LIST:
+                final Integer minElements = firstSubstatementAttributeOf(stmtCtx, MinElementsStatement.class);
+                return minElements != null && minElements > 0;
+            default:
+                return false;
         }
     }
 
@@ -337,14 +337,13 @@ public final class StmtContextUtils {
     }
 
     /**
-     * Checks whether at least one ancestor of a StatementContext matches one
-     * from collection of statement definitions.
+     * Checks whether at least one ancestor of a StatementContext matches one from a collection of statement
+     * definitions.
      *
      * @param ctx
      *            StatementContext to be checked
      * @param ancestorTypes
      *            collection of statement definitions
-     *
      * @return true if at least one ancestor of a StatementContext matches one
      *         from collection of statement definitions, otherwise false.
      */
@@ -363,16 +362,16 @@ public final class StmtContextUtils {
     }
 
     /**
-     * Checks whether all of StmtContext's ancestors of specified type have a child of specified type
+     * Checks whether all of StmtContext's ancestors of specified type have a child of specified type.
      *
      * @param ctx StmtContext to be checked
      * @param ancestorType type of ancestor to search for
      * @param ancestorChildType type of child to search for in the specified ancestor type
-     *
      * @return true if all of StmtContext's ancestors of specified type have a child of specified type, otherwise false
      */
-    public static <A, D extends DeclaredStatement<A>> boolean hasAncestorOfTypeWithChildOfType(final StmtContext<?, ?, ?> ctx,
-            final StatementDefinition ancestorType, final StatementDefinition ancestorChildType) {
+    public static <A, D extends DeclaredStatement<A>> boolean hasAncestorOfTypeWithChildOfType(
+            final StmtContext<?, ?, ?> ctx, final StatementDefinition ancestorType,
+            final StatementDefinition ancestorChildType) {
         Preconditions.checkNotNull(ctx);
         Preconditions.checkNotNull(ancestorType);
         Preconditions.checkNotNull(ancestorChildType);
@@ -396,15 +395,13 @@ public final class StmtContextUtils {
     }
 
     /**
-     * Checks whether the parent of StmtContext is of specified type
+     * Checks whether the parent of StmtContext is of specified type.
      *
      * @param ctx
      *            StmtContext to be checked
      * @param parentType
      *            type of parent to check
-     *
-     * @return true if the parent of StmtContext is of specified type, otherwise
-     *         false
+     * @return true if the parent of StmtContext is of specified type, otherwise false
      */
     public static boolean hasParentOfType(final StmtContext<?, ?, ?> ctx, final StatementDefinition parentType) {
         Preconditions.checkNotNull(ctx);
@@ -418,6 +415,7 @@ public final class StmtContextUtils {
      * The context can either be a leaf which is defined directly in the substatements of a keyed list or a uses
      * statement defined in a keyed list (a uses statement may add leaves into the list).
      *
+     * <p>
      * If one of the list keys contains an if-feature or a when statement in YANG 1.1 model, an exception is thrown.
      *
      * @param ctx statement context to be validated
@@ -479,41 +477,40 @@ public final class StmtContextUtils {
         }
 
         String prefix;
-        QNameModule qNameModule = null;
+        QNameModule qnameModule = null;
         String localName = null;
 
         final String[] namesParts = value.split(":");
         switch (namesParts.length) {
-        case 1:
-            localName = namesParts[0];
-            qNameModule = StmtContextUtils.getRootModuleQName(ctx);
-            break;
-        default:
-            prefix = namesParts[0];
-            localName = namesParts[1];
-            qNameModule = StmtContextUtils.getModuleQNameByPrefix(ctx, prefix);
-            // in case of unknown statement argument, we're not going to parse it
-            if (qNameModule == null && isUnknownStatement(ctx)) {
-                localName = value;
-                qNameModule = StmtContextUtils.getRootModuleQName(ctx);
-            }
-            if (qNameModule == null
-                    && ctx.getCopyHistory().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
-                ctx = ctx.getOriginalCtx().orElse(null);
-                qNameModule = StmtContextUtils.getModuleQNameByPrefix(ctx, prefix);
-            }
-            break;
+            case 1:
+                localName = namesParts[0];
+                qnameModule = StmtContextUtils.getRootModuleQName(ctx);
+                break;
+            default:
+                prefix = namesParts[0];
+                localName = namesParts[1];
+                qnameModule = StmtContextUtils.getModuleQNameByPrefix(ctx, prefix);
+                // in case of unknown statement argument, we're not going to parse it
+                if (qnameModule == null && isUnknownStatement(ctx)) {
+                    localName = value;
+                    qnameModule = StmtContextUtils.getRootModuleQName(ctx);
+                }
+                if (qnameModule == null && ctx.getCopyHistory().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
+                    ctx = ctx.getOriginalCtx().orElse(null);
+                    qnameModule = StmtContextUtils.getModuleQNameByPrefix(ctx, prefix);
+                }
+                break;
         }
 
-        qNameModule = InferenceException.throwIfNull(qNameModule, ctx.getStatementSourceReference(),
+        qnameModule = InferenceException.throwIfNull(qnameModule, ctx.getStatementSourceReference(),
             "Cannot resolve QNameModule for '%s'", value);
 
         final QNameModule resultQNameModule;
-        if (qNameModule.getRevision() == null) {
-            resultQNameModule = QNameModule.create(qNameModule.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV)
+        if (qnameModule.getRevision() == null) {
+            resultQNameModule = QNameModule.create(qnameModule.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV)
                 .intern();
         } else {
-            resultQNameModule = qNameModule;
+            resultQNameModule = qnameModule;
         }
 
         return ctx.getFromNamespace(QNameCacheNamespace.class, QName.create(resultQNameModule, localName));
@@ -525,35 +522,35 @@ public final class StmtContextUtils {
         }
 
         final StmtContext<?, ?, ?> rootCtx = ctx.getRoot();
-        final QNameModule qNameModule;
+        final QNameModule qnameModule;
 
         if (producesDeclared(rootCtx, ModuleStatement.class)) {
-            qNameModule = rootCtx.getFromNamespace(ModuleCtxToModuleQName.class, rootCtx);
+            qnameModule = rootCtx.getFromNamespace(ModuleCtxToModuleQName.class, rootCtx);
         } else if (producesDeclared(rootCtx, SubmoduleStatement.class)) {
             final String belongsToModuleName = firstAttributeOf(rootCtx.declaredSubstatements(),
                 BelongsToStatement.class);
-            qNameModule = rootCtx.getFromNamespace(ModuleNameToModuleQName.class, belongsToModuleName);
+            qnameModule = rootCtx.getFromNamespace(ModuleNameToModuleQName.class, belongsToModuleName);
         } else {
-            qNameModule = null;
+            qnameModule = null;
         }
 
-        Preconditions.checkArgument(qNameModule != null, "Failed to look up root QNameModule for %s", ctx);
-        if (qNameModule.getRevision() != null) {
-            return qNameModule;
+        Preconditions.checkArgument(qnameModule != null, "Failed to look up root QNameModule for %s", ctx);
+        if (qnameModule.getRevision() != null) {
+            return qnameModule;
         }
 
-        return QNameModule.create(qNameModule.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV).intern();
+        return QNameModule.create(qnameModule.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV).intern();
     }
 
     public static QNameModule getModuleQNameByPrefix(final StmtContext<?, ?, ?> ctx, final String prefix) {
         final ModuleIdentifier modId = ctx.getRoot().getFromNamespace(ImpPrefixToModuleIdentifier.class, prefix);
-        final QNameModule qNameModule = ctx.getFromNamespace(ModuleIdentifierToModuleQName.class, modId);
+        final QNameModule qnameModule = ctx.getFromNamespace(ModuleIdentifierToModuleQName.class, modId);
 
-        if (qNameModule == null && producesDeclared(ctx.getRoot(), SubmoduleStatement.class)) {
+        if (qnameModule == null && producesDeclared(ctx.getRoot(), SubmoduleStatement.class)) {
             final String moduleName = ctx.getRoot().getFromNamespace(BelongsToPrefixToModuleName.class, prefix);
             return ctx.getFromNamespace(ModuleNameToModuleQName.class, moduleName);
         }
-        return qNameModule;
+        return qnameModule;
     }
 
     public static SourceIdentifier createSourceIdentifier(final StmtContext<?, ?, ?> root) {
@@ -574,12 +571,12 @@ public final class StmtContextUtils {
     public static Date getLatestRevision(final Iterable<? extends StmtContext<?, ?, ?>> subStmts) {
         Date revision = null;
         for (final StmtContext<?, ?, ?> subStmt : subStmts) {
-            if (subStmt.getPublicDefinition().getDeclaredRepresentationClass().isAssignableFrom(RevisionStatement
-                    .class)) {
+            if (subStmt.getPublicDefinition().getDeclaredRepresentationClass().isAssignableFrom(
+                    RevisionStatement.class)) {
                 if (revision == null && subStmt.getStatementArgument() != null) {
                     revision = (Date) subStmt.getStatementArgument();
-                } else if (subStmt.getStatementArgument() != null && ((Date) subStmt.getStatementArgument()).compareTo
-                        (revision) > 0) {
+                } else if (subStmt.getStatementArgument() != null
+                        && ((Date) subStmt.getStatementArgument()).compareTo(revision) > 0) {
                     revision = (Date) subStmt.getStatementArgument();
                 }
             }

@@ -12,12 +12,13 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 /**
- * Thrown when there was Missing element in yang file
+ * Thrown when there was Missing element in yang file.
  */
 public class MissingSubstatementException extends SourceException {
     private static final long serialVersionUID = 1L;
 
-    public MissingSubstatementException(@Nonnull final String message, @Nonnull final StatementSourceReference source) {
+    public MissingSubstatementException(@Nonnull final String message,
+            @Nonnull final StatementSourceReference source) {
         super(message, source);
     }
 

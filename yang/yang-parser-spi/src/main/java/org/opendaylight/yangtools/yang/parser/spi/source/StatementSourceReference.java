@@ -10,32 +10,27 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 
 /**
+ * Reference of statement source. Statement source reference serves to provide information, why a statement was defined
+ * and introduced in model.
  *
- * Reference of statement source
- *
- * Statement source reference serves to provide information, why
- * statement was defined and introduced in model.
- *
- * Reasons for introduction of statement could be various, but
- * most obvious one is explicit declaration in model source text
- * such as {@link DeclarationInTextSource}.
- *
+ * <p>
+ * Reasons for introduction of statement could be various, but most obvious one is explicit declaration in model source
+ * text such as {@link DeclarationInTextSource}.
  */
 public interface StatementSourceReference {
-
     /**
-     *
-     * Returns source type
+     * Returns source type.
      *
      * @return {@link StatementSource#DECLARATION} if statement was explicitly
-     * declared in YANG model source, {@link StatementSource#CONTEXT} if statement
-     * was inferred.
+     *         declared in YANG model source, {@link StatementSource#CONTEXT} if statement
+     *         was inferred.
      */
     StatementSource getStatementSource();
 
     /**
      * Returns human readable representation of statement source.
      *
+     * <p>
      * Implementations of this interface should override {@link #toString()},
      * since it may be used in error reporting to provide context
      * information for model designer to debug errors in its mode.
@@ -44,5 +39,4 @@ public interface StatementSourceReference {
      */
     @Override
     String toString();
-
 }

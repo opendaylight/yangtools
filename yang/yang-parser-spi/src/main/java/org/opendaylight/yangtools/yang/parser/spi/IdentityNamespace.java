@@ -13,11 +13,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 
 /**
- *
- * Identity namespace
- *
- * All identity names defined in a module and its submodules share the same identity identifier namespace.
- *
+ * Identity namespace. All identity names defined in a module and its submodules share the same identity identifier
+ * namespace.
  */
 public interface IdentityNamespace extends
         StatementNamespace<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> {

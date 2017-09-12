@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * namespace key class for storing augment nodes which are going to be augmented as
- * shortHand case nodes into choice node
+ * shortHand case nodes into choice node.
  */
 public interface AugmentToChoiceNamespace extends IdentifierNamespace<StmtContext<?, ?, ?>, Boolean> {
 

@@ -15,12 +15,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 /**
- *
- * Source-specific mapping of prefixes to namespaces
- *
+ * Source-specific mapping of prefixes to namespaces.
  */
-public interface AnyxmlSchemaLocationNamespace
-        extends
-        IdentifierNamespace<StatementDefinition, Mutable<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>, EffectiveStatement<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>>>> {
+public interface AnyxmlSchemaLocationNamespace extends IdentifierNamespace<StatementDefinition,
+    Mutable<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>,
+        EffectiveStatement<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>>>> {
 
 }

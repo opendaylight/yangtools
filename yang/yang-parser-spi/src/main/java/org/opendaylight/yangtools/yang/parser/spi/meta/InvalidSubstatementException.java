@@ -12,18 +12,19 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 /**
- * Thrown when there was Invalid element in yang file
+ * Thrown when there was invalid element in YANG file.
  */
 public class InvalidSubstatementException extends SourceException {
     private static final long serialVersionUID = 1L;
 
+    public InvalidSubstatementException(@Nonnull final String message,
+            @Nonnull final StatementSourceReference source) {
+        super(message, source);
+    }
+
     public InvalidSubstatementException(@Nonnull final String message, @Nonnull final StatementSourceReference source,
             final Throwable cause) {
         super(message, source, cause);
-    }
-
-    public InvalidSubstatementException(@Nonnull final String message, @Nonnull final StatementSourceReference source) {
-        super(message, source);
     }
 
     public InvalidSubstatementException(@Nonnull final StatementSourceReference source, @Nonnull final String format,

@@ -10,10 +10,7 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import com.google.common.base.Preconditions;
 
 /**
- *
- * Thrown when identifier namespace is not available (supported)
- * in specific model processing phase.
- *
+ * Thrown when identifier namespace is not available (supported) in a specific model processing phase.
  */
 public class NamespaceNotAvailableException extends RuntimeException {
 

@@ -5,18 +5,16 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 /**
- *
- * Source-specific mapping of belongsTo prefixes to module identifiers.
- * This mapping allows source-specific context to correctly populate prefixes map for
- * actual parsing phase and eventually, resolve QName for any valid declared statement.
- *
+ * Source-specific mapping of belongsTo prefixes to module identifiers. This mapping allows source-specific context
+ * to correctly populate prefixes map for actual parsing phase and eventually, resolve QName for any valid declared
+ * statement.
  */
 public interface BelongsToPrefixToModuleIdentifier extends IdentifierNamespace<String, ModuleIdentifier> {
+
 }

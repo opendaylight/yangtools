@@ -9,23 +9,21 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import org.opendaylight.yangtools.yang.common.YangVersion;
 
-
 /**
- *
  * Statement stream source, which is used for inference of effective model.
  *
  * <p>
  * Statement stream source is required to emit its statements using supplied
  * {@link StatementWriter}.
- * </p>
+ *
  * <p>
  * Since YANG allows language extensions defined in sources (which defines how
  * source is serialized), instances of extensions present anywhere and forward
  * references, each source needs to be processed in three steps, where each step
  * uses different set of supported statements.
+ *
  * <p>
  * Steps (in order of invocation) are:
- *
  * <ol>
  * <li>{@link #writePreLinkage(StatementWriter, QNameToStatementDefinition)} -
  * Source MUST emit only statements related in pre-linkage, which are present in
@@ -50,30 +48,26 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
  * - Source MUST emit all statements present in source. This step is used to
  * build full declared statement model of source.</li>
  * </ol>
- *
  */
 public interface StatementStreamSource {
 
     /**
-    *
-    * Emits only pre-linkage-related statements to supplied {@code writer}.
-    *
-    * @param writer
-    *            {@link StatementWriter} which should be used to emit
-    *            statements.
-    * @param stmtDef
-    *            Map of available statement definitions. Only these statements
-    *            may be written to statement writer, source MUST ignore and MUST NOT
-    *            emit any other statements.
-    *
-    * @throws SourceException
-    *             If source was is not valid, or provided statement writer
-    *             failed to write statements.
-    */
-    void writePreLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef) throws SourceException;
+     * Emits only pre-linkage-related statements to supplied {@code writer}.
+     *
+     * @param writer
+     *            {@link StatementWriter} which should be used to emit
+     *            statements.
+     * @param stmtDef
+     *            Map of available statement definitions. Only these statements
+     *            may be written to statement writer, source MUST ignore and MUST NOT
+     *            emit any other statements.
+     * @throws SourceException
+     *             If source was is not valid, or provided statement writer
+     *             failed to write statements.
+     */
+    void writePreLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef);
 
     /**
-     *
      * Emits only linkage-related statements to supplied {@code writer}.
      *
      * @param writer
@@ -85,18 +79,15 @@ public interface StatementStreamSource {
      *            emit any other statements.
      * @param preLinkagePrefixes
      *            Pre-linkage map of source-specific prefixes to namespaces
-     *
      * @throws SourceException
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
-    void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef, PrefixToModule preLinkagePrefixes) throws SourceException;
+    void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef, PrefixToModule preLinkagePrefixes);
 
     /**
-     *
-     * Emits only linkage-related statements to supplied {@code writer} based on
-     * specified yang version. Default implementation does not make any
-     * differences between versions.
+     * Emits only linkage-related statements to supplied {@code writer} based on specified YANG version.
+     * Default implementation does not make any differences between versions.
      *
      * @param writer
      *            {@link StatementWriter} which should be used to emit
@@ -109,7 +100,6 @@ public interface StatementStreamSource {
      *            Pre-linkage map of source-specific prefixes to namespaces
      * @param yangVersion
      *            yang version.
-     *
      * @throws SourceException
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
@@ -120,30 +110,26 @@ public interface StatementStreamSource {
     }
 
     /**
-     *
-     * Emits only linkage and language extension statements to supplied
-     * {@code writer}.
+     * Emits only linkage and language extension statements to supplied {@code writer}.
      *
      * @param writer
-     *            {@link StatementWriter} which should be used to emit
-     *            statements.
+     *            {@link StatementWriter} which should be used to emit statements.
      * @param stmtDef
      *            Map of available statement definitions. Only these statements
      *            may be written to statement writer, source MUST ignore and MUST NOT
      *            emit any other statements.
      * @param prefixes
      *            Map of source-specific prefixes to namespaces
-     *
      * @throws SourceException
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
-    void writeLinkageAndStatementDefinitions(StatementWriter writer, QNameToStatementDefinition stmtDef, PrefixToModule prefixes) throws SourceException;
+    void writeLinkageAndStatementDefinitions(StatementWriter writer, QNameToStatementDefinition stmtDef,
+            PrefixToModule prefixes);
 
     /**
-     *
      * Emits only linkage and language extension statements to supplied
-     * {@code writer} based on specified yang version. Default implementation
+     * {@code writer} based on specified YANG version. Default implementation
      * does not make any differences between versions.
      *
      * @param writer
@@ -156,7 +142,7 @@ public interface StatementStreamSource {
      * @param prefixes
      *            Map of source-specific prefixes to namespaces
      * @param yangVersion
-     *            yang version.
+     *            YANG version.
      *
      * @throws SourceException
      *             If source was is not valid, or provided statement writer
@@ -168,9 +154,7 @@ public interface StatementStreamSource {
     }
 
     /**
-     *
-     * Emits every statements present in this statement source to supplied
-     * {@code writer}.
+     * Emits every statements present in this statement source to supplied {@code writer}.
      *
      * @param writer
      *            {@link StatementWriter} which should be used to emit
@@ -183,10 +167,9 @@ public interface StatementStreamSource {
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
-    void writeFull(StatementWriter writer,QNameToStatementDefinition stmtDef, PrefixToModule prefixes) throws SourceException;
+    void writeFull(StatementWriter writer,QNameToStatementDefinition stmtDef, PrefixToModule prefixes);
 
     /**
-     *
      * Emits every statements present in this statement source to supplied
      * {@code writer} based on specified yang version. Default implementation
      * does not make any differences between versions.

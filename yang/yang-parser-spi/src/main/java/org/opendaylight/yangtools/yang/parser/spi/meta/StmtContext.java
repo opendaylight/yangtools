@@ -46,6 +46,8 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     StmtContext<?, ?, ?> getParentContext();
 
     /**
+     * Return the statement argument in literal format.
+     *
      * @return raw statement argument string
      */
     @Nullable
@@ -109,7 +111,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     D buildDeclared();
 
     /**
-     * Builds {@link EffectiveStatement} for statement context
+     * Builds {@link EffectiveStatement} for statement context.
      */
     E buildEffective();
 
@@ -195,7 +197,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         @Nonnull ModelActionBuilder newInferenceAction(@Nonnull ModelProcessingPhase phase);
 
         /**
-         * adds statement to namespace map with the key
+         * Adds s statement to namespace map with a key.
          *
          * @param namespace
          *            {@link StatementNamespace} child that determines namespace to be added to

@@ -15,12 +15,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
- *
  * Map of fully qualified statement name to statement definition.
- *
  */
 public interface QNameToStatementDefinition extends IdentifierNamespace<QName, StatementDefinition> {
-
     /**
      * Returns StatementDefinition with specified QName.
      *
@@ -41,5 +38,5 @@ public interface QNameToStatementDefinition extends IdentifierNamespace<QName, S
      * @return StatementDefinition
      */
     @Nullable
-    StatementDefinition getByNamespaceAndLocalName(@Nonnull final URI namespace, @Nonnull final String localName);
+    StatementDefinition getByNamespaceAndLocalName(@Nonnull URI namespace, @Nonnull String localName);
 }

@@ -16,36 +16,30 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
-
 /**
- * Builder for effective model inference action.
- *
- * Model inference action is core principle of transforming
+ * Builder for effective model inference action. Model inference action is core principle of transforming
  * declared model into effective model.
  *
- * Since YANG allows forward references, some inference actions
- * need to be taken at a later point, where reference is actually
- * resolved. Referenced objects are not retrieved directly
- * but are represented as {@link Prerequisite} (prerequisite) for
- * inference action to be taken.
+ * <p>
+ * Since YANG allows forward references, some inference actions need to be taken at a later point, where reference is
+ * actually resolved. Referenced objects are not retrieved directly but are represented as {@link Prerequisite}
+ * (prerequisite) for inference action to be taken.
  *
- * Some existing YANG statements are more complex and also object,
- * for which effective model may be inferred is also represented
- * as {@link Prerequisite} which once, when reference is available
- * will contain target context, which may be used for inference
- * action.
+ * <p>
+ * Some existing YANG statements are more complex and also object, for which effective model may be inferred is also
+ * represented as a {@link Prerequisite} which, when reference is available, will contain target context, which may be
+ * used for inference action.
  *
  * <h2>Implementing inference action</h2>
- *
- * Effective inference action could always be splitted into two
- * separate tasks:
+ * Effective inference action could always be splitted into two separate tasks:
  * <ol>
  * <li>Declaration of inference action and its prerequisites</li>
  * <li>Execution of inference action</li>
  * </ol>
+ *
+ * <p>
  * In order to declare inference action following steps needs
  * to be taken:
- *
  * <ol>
  * <li>Use {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)} to obtain
  * {@link ModelActionBuilder}.
@@ -57,7 +51,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  * to register inference action.
  * </ol>
  *
- * Action will be executed when:
+ * <p>
+ * An action will be executed when:
  * <ul>
  * <li> {@link InferenceAction#apply(InferenceContext)} - all prerequisites (and declared forward references) are met,
  * action could dereference them and start applying changes.
@@ -67,19 +62,17 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  * </li>
  * </ul>
  *
+ * <p>
  * TODO: Insert real word example
  *
  * <h2>Design notes</h2>
- * {@link java.util.concurrent.Future} seems as viable and more standard
- * alternative to {@link Prerequisite}, but futures also carries
- * promise that resolution of it is carried in other
- * thread, which will actually put additional constraints on
- * semantic parser.
+ * {@link java.util.concurrent.Future} seems as viable and more standard alternative to {@link Prerequisite}, but
+ * Futures also carries promise that resolution of it is carried in other thread, which will actually put additional
+ * constraints on semantic parser.
  *
- * Also listening on multiple futures is costly, so we opted
- * out of future and designed API, which later may introduce
+ * <p>
+ * Also listening on multiple futures is costly, so we opted out of future and designed API, which later may introduce
  * futures.
- *
  */
 public interface ModelActionBuilder {
     interface InferenceContext {
@@ -103,11 +96,8 @@ public interface ModelActionBuilder {
     interface InferenceAction {
 
         /**
-         * Invoked once all prerequisites were met and forward references
-         * were resolved and inference action should be applied.
-         *
-         * Implementors may do necessary changes to mutable objects
-         * which were declared.
+         * Invoked once all prerequisites were met and forward references were resolved and inference action should be
+         * applied. Implementors may perform necessary changes to mutable objects which were declared.
          *
          * @throws InferenceException If inference action can not be processed.
          *      Note that this exception be used for user to debug YANG sources,
@@ -116,19 +106,21 @@ public interface ModelActionBuilder {
         void apply(InferenceContext ctx) throws InferenceException;
 
         /**
-         * Invoked once one of prerequisites was not met,
-         * even after all other satisfiable inference actions were processed.
+         * Invoked once one of prerequisites was not met, even after all other satisfiable inference actions were
+         * processed.
          *
-         * Implementors MUST throw {@link InferenceException} if semantic processing
-         * of model should be stopped and failed.
+         * <p>
+         * Implementors MUST throw {@link InferenceException} if semantic processing of model should be stopped
+         * and failed.
          *
-         * List of failed prerequisites should be used to select right message / error
-         * type to debug problem in YANG sources.
+         * <p>
+         * List of failed prerequisites should be used to select right message / error type to debug problem in YANG
+         * sources.
          *
          * @param failed collection of prerequisites which were not met
-         * @throws InferenceException If inference action can not be processed.
-         *      Note that this exception be used for user to debug YANG sources,
-         *      so should provide helpful context to fix issue in sources.
+         * @throws InferenceException If inference action can not be processed. Note that this exception be used
+         *                            by user to debug YANG sources, hence it should provide helpful context to fix
+         *                            the issue in sources.
          */
         void prerequisiteFailed(Collection<? extends Prerequisite<?>> failed) throws InferenceException;
     }
@@ -143,6 +135,15 @@ public interface ModelActionBuilder {
     @Nonnull <D extends DeclaredStatement<?>> Prerequisite<D> requiresDeclared(StmtContext<?, ? extends D, ?> context);
 
     /**
+     * Create a requirement on specified statement to be declared.
+     *
+     * @deprecated Undocumented method. Use at your own risk.
+     */
+    @Deprecated
+    @Nonnull <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>>
+        Prerequisite<D> requiresDeclared(StmtContext<?, ?, ?> context, Class<N> namespace, K key);
+
+    /**
      * Action requires that the specified context completes specified phase.
      *
      * @param context Statement context which needs to complete the transition.
@@ -152,7 +153,7 @@ public interface ModelActionBuilder {
     @Nonnull <A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         Prerequisite<StmtContext<A, D, E>> requiresCtx(StmtContext<A, D, E> context, ModelProcessingPhase phase);
 
-    @Nonnull <K, N extends StatementNamespace<K, ?, ? >> Prerequisite<StmtContext<?,?,?>> requiresCtx(
+    @Nonnull <K, N extends StatementNamespace<K, ?, ?>> Prerequisite<StmtContext<?, ?, ?>> requiresCtx(
         StmtContext<?, ?, ?> context, Class<N> namespace, K key, ModelProcessingPhase phase);
 
     default @Nonnull <T extends Mutable<?, ?, ?>> Prerequisite<T> mutatesEffectiveCtx(final T stmt) {
@@ -168,13 +169,8 @@ public interface ModelActionBuilder {
     void apply(InferenceAction action) throws InferenceException;
 
     /**
-     * @deprecated Undocumented method. Use at your own risk.
-     */
-    @Deprecated
-    @Nonnull <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>>
-        Prerequisite<D> requiresDeclared(StmtContext<?, ?, ?> context, Class<N> namespace, K key);
-
-    /**
+     * Create a requirement on specified statement context to be declared.
+     *
      * @deprecated Undocumented method. Use at your own risk.
      */
     @Deprecated
@@ -182,6 +178,8 @@ public interface ModelActionBuilder {
         Prerequisite<StmtContext<?, D, ?>> requiresDeclaredCtx(StmtContext<?, ?, ?> context, Class<N> namespace, K key);
 
     /**
+     * Create a requirement on specified statement to become effective.
+     *
      * @deprecated Undocumented method. Use at your own risk.
      */
     @Deprecated
@@ -189,6 +187,8 @@ public interface ModelActionBuilder {
             StmtContext<?, ?, ? extends E> stmt);
 
     /**
+     * Create a requirement on specified statement to become effective.
+     *
      * @deprecated Undocumented method. Use at your own risk.
      */
     @Deprecated
@@ -196,6 +196,8 @@ public interface ModelActionBuilder {
         Prerequisite<E> requiresEffective(StmtContext<?, ?, ?> context, Class<N> namespace, K key);
 
     /**
+     * Create a requirement on specified statement context to become effective.
+     *
      * @deprecated Undocumented method. Use at your own risk.
      */
     @Deprecated
@@ -204,6 +206,8 @@ public interface ModelActionBuilder {
             K key);
 
     /**
+     * Mark the fact that this action is mutating a namespace.
+     *
      * @deprecated Undocumented method. Use at your own risk.
      */
     @Deprecated

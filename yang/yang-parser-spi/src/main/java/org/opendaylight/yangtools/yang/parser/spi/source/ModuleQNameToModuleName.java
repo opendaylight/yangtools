@@ -11,11 +11,8 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 /**
- *
- * Source-specific mapping of prefixes to namespaces
- *
+ * Source-specific mapping of prefixes to namespaces.
  */
-public interface ModuleQNameToModuleName extends IdentifierNamespace<QNameModule,String> {
-
+public interface ModuleQNameToModuleName extends IdentifierNamespace<QNameModule, String> {
 
 }

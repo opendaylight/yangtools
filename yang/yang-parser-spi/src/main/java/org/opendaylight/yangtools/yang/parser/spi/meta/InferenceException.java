@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 /**
- * Thrown when there was inference error
+ * Thrown when there is an inference error.
  */
 public class InferenceException extends SourceException {
     private static final long serialVersionUID = 1L;

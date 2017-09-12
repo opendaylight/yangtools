@@ -12,9 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
- *
- * Global mapping of modules to QNameModules
- *
+ * Global mapping of modules to QNameModules.
  */
 public interface ModuleCtxToModuleQName extends IdentifierNamespace<StmtContext<?,?,?>, QNameModule> {
 
