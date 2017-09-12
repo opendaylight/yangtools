@@ -10,17 +10,17 @@ package org.opendaylight.yangtools.yang.parser.spi;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace.TreeScoped;
 
 /**
- * Grouping namespace
+ * Grouping namespace. * All grouping names defined within a parent node or at the top level of the module
+ * or its submodules share the same grouping identifier namespace. This namespace is scoped to all
+ * descendant nodes of the parent node or module.
  *
- * All grouping names defined within a parent node or at the top level of the
- * module or its submodules share the same grouping identifier namespace. This
- * namespace is scoped to all descendant nodes of the parent node or module.
- * This means that any descendant node may use that grouping, and it MUST NOT
- * define a grouping with the same name.
+ * <p>
+ * This means that any descendant node may use that grouping, and it MUST NOT define a grouping with the same name.
  */
-public interface GroupingNamespace extends StatementNamespace.TreeScoped<QName, GroupingStatement,EffectiveStatement<QName,GroupingStatement>> {
+public interface GroupingNamespace
+    extends TreeScoped<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> {
 
 }

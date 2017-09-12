@@ -17,10 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 /**
- * Class providing necessary support for processing a YANG statement.
- *
- * This class is intended to be subclassed by developers, who want to
- * introduce support of statement to parser.
+ * Class providing necessary support for processing a YANG statement. This class is intended to be subclassed
+ * by developers who want to add semantic support for a statement to a parser reactor.
  *
  * @param <A>
  *            Argument type
@@ -79,11 +77,10 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      *
-     * Subclasses of this class may override this method to perform actions on
-     * this event or register modification action using
-     * {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
+     * Subclasses of this class may override this method to perform actions on this event or register a modification
+     * action using {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
      */
     @Override
     public void onPreLinkageDeclared(final StmtContext.Mutable<A, D, E> stmt) {
@@ -91,11 +88,11 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      *
-     * Subclasses of this class may override this method to perform actions on
-     * this event or register modification action using
-     * {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
+     * <p>
+     * Subclasses of this class may override this method to perform actions on this event or register a modification
+     * action using {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
      */
     @Override
     public void onLinkageDeclared(final StmtContext.Mutable<A, D, E> stmt) {
@@ -103,11 +100,11 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      *
-     * Subclasses of this class may override this method to perform actions on
-     * this event or register modification action using
-     * {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
+     * <p>
+     * Subclasses of this class may override this method to perform actions on this event or register a modification
+     * action using {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
      */
     @Override
     public void onStatementDefinitionDeclared(final StmtContext.Mutable<A, D, E> stmt) {
@@ -115,11 +112,11 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritDoc}.
      *
-     * Subclasses of this class may override this method to perform actions on
-     * this event or register modification action using
-     * {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
+     * <p>
+     * Subclasses of this class may override this method to perform actions on this event or register a modification
+     * action using {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
      */
     @Override
     public void onFullDefinitionDeclared(final StmtContext.Mutable<A, D, E> stmt) {
@@ -149,7 +146,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     }
 
     /**
-     * Returns corresponding substatement validator of a statement support
+     * Returns corresponding substatement validator of a statement support.
      *
      * @return substatement validator or null, if substatement validator is not
      *         defined

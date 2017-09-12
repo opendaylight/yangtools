@@ -17,5 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
  * used only in case the semantic versioning is enabled, otherwise it is empty.
  */
 @Beta
-public interface SemanticVersionModuleNamespace extends IdentifierNamespace<String, NavigableMap<SemVer, StmtContext<?, ?, ?>>> {
+public interface SemanticVersionModuleNamespace
+    extends IdentifierNamespace<String, NavigableMap<SemVer, StmtContext<?, ?, ?>>> {
+
 }

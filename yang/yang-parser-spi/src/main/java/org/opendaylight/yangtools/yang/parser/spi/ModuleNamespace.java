@@ -13,7 +13,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 
 /**
- * namespace class for storing modules into Yang model storage keyed by {@link ModuleIdentifier}
+ * Module namespace. All modules known to the reactor are populated to this namespace. Each module is identified
+ * by a {@link ModuleIdentifier}.
  */
 public interface ModuleNamespace extends
         StatementNamespace<ModuleIdentifier, ModuleStatement, EffectiveStatement<String, ModuleStatement>> {

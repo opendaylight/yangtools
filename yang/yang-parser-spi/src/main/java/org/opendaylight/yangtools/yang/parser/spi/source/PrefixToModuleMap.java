@@ -13,12 +13,13 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
+@NotThreadSafe
 public class PrefixToModuleMap implements PrefixToModule {
-
-    private Map<String, QNameModule> prefixToModuleMap = new HashMap<>();
-    private Map<URI, QNameModule> namespaceToModuleMap = new HashMap<>();
+    private final Map<String, QNameModule> prefixToModuleMap = new HashMap<>();
+    private final Map<URI, QNameModule> namespaceToModuleMap = new HashMap<>();
     private final boolean preLinkageMap;
 
     public PrefixToModuleMap() {
@@ -29,9 +30,9 @@ public class PrefixToModuleMap implements PrefixToModule {
         this.preLinkageMap = preLinkageMap;
     }
 
-    public void put(String prefix, QNameModule qNameModule) {
-        prefixToModuleMap.put(prefix, qNameModule);
-        namespaceToModuleMap.put(qNameModule.getNamespace(), qNameModule);
+    public void put(String prefix, QNameModule module) {
+        prefixToModuleMap.put(prefix, module);
+        namespaceToModuleMap.put(module.getNamespace(), module);
     }
 
     @Nullable

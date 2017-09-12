@@ -45,7 +45,7 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
     }
 
     /**
-     * Returns statement definitions common for all versions
+     * Returns statement definitions common for all versions.
      *
      * @return map of common statement definitions
      */
@@ -54,8 +54,8 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
     }
 
     /**
-     * Returns statement definitions specific for requested version. Result of
-     * this method doesn't include common statement definitions.
+     * Returns statement definitions specific for requested version. Result of this method does nit include common
+     * statement definitions.
      *
      * @param version
      *            requested version
@@ -67,8 +67,8 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
     }
 
     /**
-     * Returns all version specific statement definitions. Result of this method
-     * doesn't include common statement definitions.
+     * Returns all version specific statement definitions. Result of this method does not include common statement
+     * definitions.
      *
      * @return table of all version specific statement definitions, it doesn't
      *         include common statement definitions.
@@ -101,10 +101,7 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
         if (potential != null) {
             Preconditions.checkState(namespace.equals(potential.getIdentifier()));
 
-            /*
-             * Safe cast, previous checkState checks equivalence of key from
-             * which type argument are derived
-             */
+            // Safe cast, previous checkState checks equivalence of key from which type argument are derived
             return (NamespaceBehaviour<K, V, N>) potential;
         }
         if (parent != null) {

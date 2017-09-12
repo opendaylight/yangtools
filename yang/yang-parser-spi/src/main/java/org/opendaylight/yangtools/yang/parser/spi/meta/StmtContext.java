@@ -46,6 +46,8 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     StmtContext<?, ?, ?> getParentContext();
 
     /**
+     * Return the statement argument in literal format.
+     *
      * @return raw statement argument string
      */
     @Nullable

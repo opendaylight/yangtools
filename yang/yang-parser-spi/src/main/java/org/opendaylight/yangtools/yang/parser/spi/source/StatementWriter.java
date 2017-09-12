@@ -13,25 +13,20 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 
 public interface StatementWriter {
-
     /**
-     *
      * Starts statement with supplied name and location in source.
-     *
      *
      * <p>
      * Each started statement must also be closed by
      * {@link #endStatement(StatementSourceReference)} in order for stream to be
      * correct.
-     * </p>
+     *
      * <p>
      * If statement has substatements, in order to start substatement, call to
-     * {@link #startStatement(int, QName, String, StatementSourceReference)} needs to be done
-     * for substatement.
+     * {@link #startStatement(int, QName, String, StatementSourceReference)} needs to be done for substatement.
      *
      * @param childId
      *            Child identifier, unique among siblings
-     *
      * @param name
      *            Fully qualified name of statement.
      * @param argument
@@ -42,7 +37,7 @@ public interface StatementWriter {
      * @throws SourceException
      *             if statement is not valid according to current context.
      */
-    void startStatement(final int childId, @Nonnull QName name, @Nullable String argument,
+    void startStatement(int childId, @Nonnull QName name, @Nullable String argument,
             @Nonnull StatementSourceReference ref);
 
     /**
@@ -55,9 +50,10 @@ public interface StatementWriter {
      *             if closed statement is not valid in current context, or there
      *             is no such statement
      */
-    void endStatement(@Nonnull StatementSourceReference ref) throws SourceException;
+    void endStatement(@Nonnull StatementSourceReference ref);
 
     /**
+     * Return current model processing phase.
      *
      * @return current processing phase
      */

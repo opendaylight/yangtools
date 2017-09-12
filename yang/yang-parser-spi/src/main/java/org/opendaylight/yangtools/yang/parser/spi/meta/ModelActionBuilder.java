@@ -16,36 +16,30 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
-
 /**
- * Builder for effective model inference action.
- *
- * Model inference action is core principle of transforming
+ * Builder for effective model inference action. Model inference action is core principle of transforming
  * declared model into effective model.
  *
- * Since YANG allows forward references, some inference actions
- * need to be taken at a later point, where reference is actually
- * resolved. Referenced objects are not retrieved directly
- * but are represented as {@link Prerequisite} (prerequisite) for
- * inference action to be taken.
+ * <p>
+ * Since YANG allows forward references, some inference actions need to be taken at a later point, where reference is
+ * actually resolved. Referenced objects are not retrieved directly but are represented as {@link Prerequisite}
+ * (prerequisite) for inference action to be taken.
  *
- * Some existing YANG statements are more complex and also object,
- * for which effective model may be inferred is also represented
- * as {@link Prerequisite} which once, when reference is available
- * will contain target context, which may be used for inference
- * action.
+ * <p>
+ * Some existing YANG statements are more complex and also object, for which effective model may be inferred is also
+ * represented as a {@link Prerequisite} which, when reference is available, will contain target context, which may be
+ * used for inference action.
  *
  * <h2>Implementing inference action</h2>
- *
- * Effective inference action could always be splitted into two
- * separate tasks:
+ * Effective inference action could always be splitted into two separate tasks:
  * <ol>
  * <li>Declaration of inference action and its prerequisites</li>
  * <li>Execution of inference action</li>
  * </ol>
+ *
+ * <p>
  * In order to declare inference action following steps needs
  * to be taken:
- *
  * <ol>
  * <li>Use {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)} to obtain
  * {@link ModelActionBuilder}.
@@ -57,7 +51,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  * to register inference action.
  * </ol>
  *
- * Action will be executed when:
+ * <p>
+ * An action will be executed when:
  * <ul>
  * <li> {@link InferenceAction#apply(InferenceContext)} - all prerequisites (and declared forward references) are met,
  * action could dereference them and start applying changes.
@@ -70,16 +65,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  * TODO: Insert real word example
  *
  * <h2>Design notes</h2>
- * {@link java.util.concurrent.Future} seems as viable and more standard
- * alternative to {@link Prerequisite}, but futures also carries
- * promise that resolution of it is carried in other
- * thread, which will actually put additional constraints on
- * semantic parser.
+ * {@link java.util.concurrent.Future} seems as viable and more standard alternative to {@link Prerequisite}, but
+ * Futures also carries promise that resolution of it is carried in other thread, which will actually put additional
+ * constraints on semantic parser.
  *
- * Also listening on multiple futures is costly, so we opted
- * out of future and designed API, which later may introduce
+ * Also listening on multiple futures is costly, so we opted out of future and designed API, which later may introduce
  * futures.
- *
  */
 public interface ModelActionBuilder {
     interface InferenceContext {
