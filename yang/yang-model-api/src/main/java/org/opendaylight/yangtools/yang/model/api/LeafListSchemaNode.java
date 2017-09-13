@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.collect.ImmutableList;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+
 import java.util.Collection;
 import javax.annotation.Nonnull;
 
@@ -36,4 +38,12 @@ public interface LeafListSchemaNode extends TypedSchemaNode {
     @Nonnull default Collection<String> getDefaults() {
         return ImmutableList.of();
     }
+
+    /**
+     * Returns the module where default value is declared. Useful when resolving
+     * default value of identityref in original module context.
+     *
+     * @return module where <code>default</code> substatement is declared
+     */
+    QNameModule getDefaultValueModule();
 }

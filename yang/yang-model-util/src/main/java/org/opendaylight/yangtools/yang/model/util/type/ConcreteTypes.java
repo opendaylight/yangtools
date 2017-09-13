@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Verify;
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -145,8 +147,15 @@ public final class ConcreteTypes {
             @Nonnull
             @Override
             public IdentityrefTypeDefinition buildType() {
-                return new DerivedIdentityrefType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
-                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedIdentityrefType(getBaseType(), getPath(), getDefaultValue(), getDefaultValueModule(),
+                        getDescription(), getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+            }
+
+            @Override
+            public final IdentityrefTypeDefinition build() {
+                return Objects.equals(getDefaultValueModule(), baseType.getDefaultValueModule()) ?
+                        super.build() :
+                        Verify.verifyNotNull(buildType());
             }
         };
     }
