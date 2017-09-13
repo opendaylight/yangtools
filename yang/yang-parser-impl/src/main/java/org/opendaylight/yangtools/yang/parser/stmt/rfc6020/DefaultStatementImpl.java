@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import javax.annotation.Nonnull;
+
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
@@ -15,6 +17,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DefaultEffectiveStatementImpl;
 
 public class DefaultStatementImpl extends AbstractDeclaredStatement<String> implements
@@ -22,10 +25,12 @@ public class DefaultStatementImpl extends AbstractDeclaredStatement<String> impl
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .DEFAULT)
             .build();
+    private final QNameModule module;
 
     protected DefaultStatementImpl(
             final StmtContext<String, DefaultStatement, ?> context) {
         super(context);
+        module = context.getRoot().getFromNamespace(ModuleCtxToModuleQName.class, context.getRoot());
     }
 
     public static class Definition
@@ -61,5 +66,10 @@ public class DefaultStatementImpl extends AbstractDeclaredStatement<String> impl
     @Override
     public String getValue() {
         return rawArgument();
+    }
+
+    @Nonnull @Override
+    public QNameModule getModule() {
+        return module;
     }
 }

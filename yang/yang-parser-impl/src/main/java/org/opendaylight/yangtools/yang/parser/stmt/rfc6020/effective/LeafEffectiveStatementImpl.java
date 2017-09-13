@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import com.google.common.base.Optional;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -27,6 +28,7 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
     private final LeafSchemaNode original;
     private final TypeDefinition<?> type;
     private final String defaultStr;
+    private final QNameModule defaultValueModule;
     private final String unitsStr;
 
     public LeafEffectiveStatementImpl(
@@ -39,13 +41,16 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
                 "Leaf is missing a 'type' statement");
 
         String dflt = null;
+        QNameModule dfltMod = null;
         String units = null;
         final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
             ctx.getSchemaPath().get());
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof DefaultEffectiveStatementImpl) {
                 dflt = ((DefaultEffectiveStatementImpl)stmt).argument();
+                dfltMod = ((DefaultEffectiveStatementImpl)stmt).getModule();
                 builder.setDefaultValue(stmt.argument());
+                builder.setDefaultValueModule(dfltMod);
             } else if (stmt instanceof DescriptionEffectiveStatementImpl) {
                 builder.setDescription(((DescriptionEffectiveStatementImpl)stmt).argument());
             } else if (stmt instanceof ReferenceEffectiveStatementImpl) {
@@ -64,6 +69,7 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
                 dflt);
 
         defaultStr = dflt;
+        defaultValueModule = dfltMod;
         unitsStr = units;
         type = builder.build();
     }
@@ -81,6 +87,11 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
     @Override
     public String getDefault() {
         return defaultStr;
+    }
+
+    @Override
+    public QNameModule getDefaultValueModule() {
+        return defaultValueModule;
     }
 
     @Override

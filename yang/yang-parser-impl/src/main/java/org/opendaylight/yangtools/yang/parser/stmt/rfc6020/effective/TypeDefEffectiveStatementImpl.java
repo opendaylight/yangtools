@@ -48,6 +48,7 @@ public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchema
             if (stmt instanceof DefaultEffectiveStatementImpl) {
                 defaultValue = ((DefaultEffectiveStatementImpl) stmt).argument();
                 builder.setDefaultValue(defaultValue);
+                builder.setDefaultValueModule(((DefaultEffectiveStatementImpl)stmt).getModule());
             } else if (stmt instanceof DescriptionEffectiveStatementImpl) {
                 builder.setDescription(((DescriptionEffectiveStatementImpl)stmt).argument());
             } else if (stmt instanceof ReferenceEffectiveStatementImpl) {

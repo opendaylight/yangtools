@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import org.opendaylight.yangtools.yang.common.QNameModule;
+
 /**
  * Interface describing YANG <code>leaf</code> statement. The interface contains
  * the methods for getting the following data (substatements of
@@ -29,6 +31,14 @@ public interface LeafSchemaNode extends TypedSchemaNode {
      *         statement
      */
     String getDefault();
+
+    /**
+     * Returns the module where default value is declared. Useful when resolving
+     * default value of identityref in original module context.
+     *
+     * @return module where <code>default</code> substatement is declared
+     */
+    QNameModule getDefaultValueModule();
 
     /**
      * Returns the units in which are the values of the <code>leaf</code>
