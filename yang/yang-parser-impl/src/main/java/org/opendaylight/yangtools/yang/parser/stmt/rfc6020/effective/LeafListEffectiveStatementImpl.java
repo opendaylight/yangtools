@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -33,6 +34,7 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
     private final LeafListSchemaNode original;
     private final boolean userOrdered;
     private final Set<String> defaultValues;
+    private final QNameModule defaultValueModule;
 
     public LeafListEffectiveStatementImpl(
             final StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
@@ -46,6 +48,7 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
         final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
             ctx.getSchemaPath().get());
         final ImmutableSet.Builder<String> defaultValuesBuilder = ImmutableSet.builder();
+        QNameModule dfltMod = null;
         boolean isUserOrdered = false;
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof OrderedByEffectiveStatementImpl) {
@@ -54,6 +57,7 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
 
             if (stmt instanceof DefaultEffectiveStatementImpl) {
                 defaultValuesBuilder.add(((DefaultEffectiveStatementImpl) stmt).argument());
+                dfltMod = ((DefaultEffectiveStatementImpl)stmt).getModule();
             } else if (stmt instanceof DescriptionEffectiveStatementImpl) {
                 builder.setDescription(((DescriptionEffectiveStatementImpl)stmt).argument());
             } else if (stmt instanceof ReferenceEffectiveStatementImpl) {
@@ -66,6 +70,7 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
         }
 
         defaultValues = defaultValuesBuilder.build();
+        defaultValueModule = dfltMod;
         SourceException.throwIf(
                 TypeUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeStmt, defaultValues),
                 ctx.getStatementSourceReference(),
@@ -79,6 +84,11 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
     @Override
     public Collection<String> getDefaults() {
         return defaultValues;
+    }
+
+    @Override
+    public QNameModule getDefaultValueModule() {
+        return defaultValueModule;
     }
 
     @Override
