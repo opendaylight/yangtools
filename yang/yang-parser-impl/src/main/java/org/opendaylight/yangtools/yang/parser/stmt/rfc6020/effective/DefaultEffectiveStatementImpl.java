@@ -7,11 +7,23 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 
 public final class DefaultEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, DefaultStatement> {
+    private final QNameModule module;
     public DefaultEffectiveStatementImpl(final StmtContext<String, DefaultStatement, ?> ctx) {
         super(ctx);
+        StmtContext<?, ?, ?> original = ctx;
+        while (original.getOriginalCtx().isPresent()) {
+            original = original.getOriginalCtx().get();
+        }
+        module = original.getRoot().getFromNamespace(ModuleCtxToModuleQName.class, original.getRoot());
+    }
+
+    public QNameModule getModule() {
+        return module;
     }
 }
