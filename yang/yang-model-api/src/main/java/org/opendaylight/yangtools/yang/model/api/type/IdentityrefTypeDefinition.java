@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.Set;
 import javax.annotation.Nonnull;
+
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -35,4 +37,11 @@ public interface IdentityrefTypeDefinition extends TypeDefinition<IdentityrefTyp
      *         just one identity (in YANG 1.0 models)
      */
     @Nonnull Set<IdentitySchemaNode> getIdentities();
+
+    /**
+     * Returns the module where the default value is defined.
+     *
+     * @return module where the default value (if any) of this type is defined.
+     */
+    QNameModule getDefaultValueModule();
 }

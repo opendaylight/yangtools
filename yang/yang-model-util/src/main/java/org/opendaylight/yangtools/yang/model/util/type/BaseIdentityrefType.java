@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import com.google.common.base.Preconditions;
 import java.util.List;
 import java.util.Set;
+
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -36,6 +38,11 @@ final class BaseIdentityrefType extends AbstractBaseType<IdentityrefTypeDefiniti
     @Override
     public Set<IdentitySchemaNode> getIdentities() {
         return identities;
+    }
+
+    @Override
+    public QNameModule getDefaultValueModule() {
+        return null;
     }
 
     @Override

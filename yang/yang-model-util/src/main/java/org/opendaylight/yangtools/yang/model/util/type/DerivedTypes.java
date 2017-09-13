@@ -241,8 +241,8 @@ public final class DerivedTypes {
         return new DerivedTypeBuilder<IdentityrefTypeDefinition>(baseType, path) {
             @Override
             public IdentityrefTypeDefinition build() {
-                return new DerivedIdentityrefType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
-                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+                return new DerivedIdentityrefType(getBaseType(), getPath(), getDefaultValue(), getDefaultValueModule(),
+                        getDescription(), getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
     }

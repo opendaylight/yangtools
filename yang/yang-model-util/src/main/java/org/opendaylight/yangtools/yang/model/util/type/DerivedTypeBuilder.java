@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
+
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -23,6 +25,7 @@ import org.slf4j.LoggerFactory;
 public abstract class DerivedTypeBuilder<T extends TypeDefinition<T>> extends TypeBuilder<T> {
     private static final Logger LOG = LoggerFactory.getLogger(DecimalTypeBuilder.class);
     private Object defaultValue;
+    private QNameModule defaultValueModule;
     private String description;
     private String reference;
     private Status status = Status.CURRENT;
@@ -44,6 +47,10 @@ public abstract class DerivedTypeBuilder<T extends TypeDefinition<T>> extends Ty
 
     public void setDefaultValue(@Nonnull final Object defaultValue) {
         this.defaultValue = Preconditions.checkNotNull(defaultValue);
+    }
+
+    public void setDefaultValueModule(@Nonnull final QNameModule defaultValueModule) {
+        this.defaultValueModule = Preconditions.checkNotNull(defaultValueModule);
     }
 
     public final void setDescription(@Nonnull final String description) {
@@ -69,6 +76,10 @@ public abstract class DerivedTypeBuilder<T extends TypeDefinition<T>> extends Ty
 
     final Object getDefaultValue() {
         return defaultValue;
+    }
+
+    final QNameModule getDefaultValueModule() {
+        return defaultValueModule;
     }
 
     final String getDescription() {
