@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.repo;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -251,18 +250,6 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
         } while (version == v);
 
         return sc;
-    }
-
-    @Beta
-    public SchemaContext trySchemaContext() throws SchemaResolutionException {
-        return trySchemaContext(StatementParserMode.DEFAULT_MODE);
-    }
-
-    @Beta
-    public SchemaContext trySchemaContext(final StatementParserMode statementParserMode)
-            throws SchemaResolutionException {
-        final SchemaContextFactory factory = repository.createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
-        return factory.createSchemaContext(ImmutableSet.copyOf(requiredSources), statementParserMode).checkedGet();
     }
 
     @Override
