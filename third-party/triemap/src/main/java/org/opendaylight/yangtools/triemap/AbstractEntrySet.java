@@ -19,6 +19,8 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.AbstractSet;
 import java.util.Map.Entry;
+import java.util.Spliterator;
+import java.util.Spliterators;
 
 /**
  * Abstract base class for implementing {@link TrieMap} entry sets.
@@ -59,5 +61,13 @@ abstract class AbstractEntrySet<K, V> extends AbstractSet<Entry<K, V>> {
     @Override
     public final int size() {
         return map.size();
+    }
+
+    @Override
+    public final Spliterator<Entry<K, V>> spliterator() {
+        // TODO: this is backed by an Iterator, we should be able to do better
+        return Spliterators.spliterator(map.immutableIterator(), Long.MAX_VALUE,
+            // XXX: Distinct as far as associated Equivalence allows
+            Spliterator.DISTINCT | Spliterator.IMMUTABLE | Spliterator.NONNULL);
     }
 }
