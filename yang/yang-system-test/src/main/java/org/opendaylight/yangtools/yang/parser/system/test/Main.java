@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.system.test;
 
+import ch.qos.logback.classic.Level;
 import com.google.common.base.Stopwatch;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -22,9 +21,10 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.log4j.BasicConfigurator;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Main class of Yang parser system test.
@@ -44,7 +44,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  *
  */
 public class Main {
-    private static final Logger LOG = Logger.getLogger(Main.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(Main.class);
     private static final int MB = 1024 * 1024;
 
     private static Options createOptions() {
@@ -81,9 +81,6 @@ public class Main {
     }
 
     public static void main(final String[] args) {
-
-        BasicConfigurator.configure();
-
         final HelpFormatter formatter = new HelpFormatter();
         final Options options = createOptions();
         final CommandLine arguments = parseArguments(args, options, formatter);
@@ -94,9 +91,9 @@ public class Main {
         }
 
         if (arguments.hasOption("verbose")) {
-            LOG.setLevel(Level.CONFIG);
+            setLoggingLevel(Level.DEBUG);
         } else {
-            LOG.setLevel(Level.SEVERE);
+            setLoggingLevel(Level.ERROR);
         }
 
         final List<String> yangLibDirs = initYangDirsPath(arguments);
@@ -106,12 +103,18 @@ public class Main {
         runSystemTest(yangLibDirs, yangFiles, supportedFeatures, arguments.hasOption("recursive"));
     }
 
+    private static void setLoggingLevel(final Level level) {
+        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(
+                ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+        root.setLevel(level);
+    }
+
     @SuppressWarnings("checkstyle:illegalCatch")
     private static void runSystemTest(final List<String> yangLibDirs, final List<String> yangFiles,
             final HashSet<QName> supportedFeatures, final boolean recursiveSearch) {
-        LOG.log(Level.INFO, "Yang model dirs: {0} ", yangLibDirs);
-        LOG.log(Level.INFO, "Yang model files: {0} ", yangFiles);
-        LOG.log(Level.INFO, "Supported features: {0} ", supportedFeatures);
+        LOG.info("Yang model dirs: {} ", yangLibDirs);
+        LOG.info("Yang model files: {} ", yangFiles);
+        LOG.info("Supported features: {} ", supportedFeatures);
 
         SchemaContext context = null;
 
@@ -121,14 +124,14 @@ public class Main {
         try {
             context = SystemTestUtils.parseYangSources(yangLibDirs, yangFiles, supportedFeatures, recursiveSearch);
         } catch (final Exception e) {
-            LOG.log(Level.SEVERE, "Failed to create SchemaContext.", e);
+            LOG.error("Failed to create SchemaContext.", e);
             System.exit(1);
         }
 
         stopWatch.stop();
-        LOG.log(Level.INFO, "Elapsed time: {0}", stopWatch);
+        LOG.info("Elapsed time: {}", stopWatch);
         printMemoryInfo("end");
-        LOG.log(Level.INFO, "SchemaContext resolved Successfully. {0}", context);
+        LOG.info("SchemaContext resolved Successfully. {}", context);
         Runtime.getRuntime().gc();
         printMemoryInfo("after gc");
     }
@@ -171,7 +174,7 @@ public class Main {
         try {
             cmd = parser.parse(options, args);
         } catch (final ParseException e) {
-            LOG.log(Level.SEVERE, "Failed to parse command line options.", e);
+            LOG.error("Failed to parse command line options.", e);
             printHelp(options, formatter);
 
             System.exit(1);
@@ -185,10 +188,9 @@ public class Main {
     }
 
     private static void printMemoryInfo(final String info) {
-        LOG.log(Level.INFO, "Memory INFO [{0}]: free {1}MB, used {2}MB, total {3}MB, max {4}MB", new Object[] {
-            info,
+        LOG.info("Memory INFO [{}]: free {}MB, used {}MB, total {}MB, max {}MB", info,
             Runtime.getRuntime().freeMemory() / MB,
             (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / MB,
-            Runtime.getRuntime().totalMemory() / MB, Runtime.getRuntime().maxMemory() / MB });
+            Runtime.getRuntime().totalMemory() / MB, Runtime.getRuntime().maxMemory() / MB);
     }
 }
