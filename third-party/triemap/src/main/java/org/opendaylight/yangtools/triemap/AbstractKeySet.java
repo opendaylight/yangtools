@@ -17,8 +17,12 @@ package org.opendaylight.yangtools.triemap;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.Iterators;
 import java.util.AbstractSet;
 import java.util.Collection;
+import java.util.Map.Entry;
+import java.util.Spliterator;
+import java.util.Spliterators;
 
 /**
  * Abstract base class for key set views of a TrieMap.
@@ -64,5 +68,12 @@ abstract class AbstractKeySet<K> extends AbstractSet<K> {
     @Override
     public final int size() {
         return map.size();
+    }
+
+    @Override
+    public final Spliterator<K> spliterator() {
+        return Spliterators.spliterator(Iterators.transform(map().immutableIterator(), Entry::getKey), Long.MAX_VALUE,
+            // XXX: Distinct as far as associated Equivalence allows
+            Spliterator.DISTINCT | Spliterator.IMMUTABLE | Spliterator.NONNULL);
     }
 }
