@@ -11,7 +11,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import java.io.Serializable;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * A single version according to <a href="http://semver.org/">Semantic Versioning</a>.
@@ -44,7 +44,7 @@ public final class SemVer implements Comparable<SemVer>, Serializable {
         return new SemVer(major, minor, patch);
     }
 
-    public static SemVer valueOf(@Nonnull final String str) {
+    public static SemVer valueOf(@NonNull final String str) {
         final int minorIdx = str.indexOf('.');
         if (minorIdx == -1) {
             return create(Integer.parseInt(str));
@@ -90,7 +90,7 @@ public final class SemVer implements Comparable<SemVer>, Serializable {
     }
 
     @Override
-    public int compareTo(@Nonnull final SemVer other) {
+    public int compareTo(final SemVer other) {
         int cmp = Integer.compare(major, other.major);
         if (cmp == 0) {
             cmp = Integer.compare(minor, other.minor);

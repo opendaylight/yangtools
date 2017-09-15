@@ -8,12 +8,12 @@
 package org.opendaylight.yangtools.concepts;
 
 import java.util.EventListener;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 public abstract class AbstractListenerRegistration<T extends EventListener> extends AbstractObjectRegistration<T>
         implements ListenerRegistration<T> {
 
-    protected AbstractListenerRegistration(final @Nonnull T listener) {
+    protected AbstractListenerRegistration(final @NonNull T listener) {
         super(listener);
     }
 }

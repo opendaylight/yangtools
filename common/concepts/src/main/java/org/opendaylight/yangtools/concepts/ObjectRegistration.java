@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Class representing a registration of an object. Such a registration is
@@ -22,7 +22,7 @@ public interface ObjectRegistration<T> extends Registration {
      *
      * @return Registered object.
      */
-    @Nonnull T getInstance();
+    @NonNull T getInstance();
 
     /**
      * Unregisters the object. This operation is required not to invoke

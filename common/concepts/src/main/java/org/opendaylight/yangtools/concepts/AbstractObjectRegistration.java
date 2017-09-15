@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.concepts;
 
 import com.google.common.base.Preconditions;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Utility registration handle. It is a convenience for register-style method
@@ -17,9 +17,9 @@ import javax.annotation.Nonnull;
  * installed.
  */
 public abstract class AbstractObjectRegistration<T> extends AbstractRegistration implements ObjectRegistration<T> {
-    private final T instance;
+    private final @NonNull T instance;
 
-    protected AbstractObjectRegistration(final @Nonnull T instance) {
+    protected AbstractObjectRegistration(final @NonNull T instance) {
         this.instance = Preconditions.checkNotNull(instance);
     }
 
