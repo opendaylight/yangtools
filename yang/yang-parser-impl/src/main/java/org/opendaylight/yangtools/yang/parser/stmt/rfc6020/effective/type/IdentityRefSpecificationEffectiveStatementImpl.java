@@ -29,8 +29,8 @@ public final class IdentityRefSpecificationEffectiveStatementImpl extends
 
     private final IdentityrefTypeDefinition typeDefinition;
 
-    public IdentityRefSpecificationEffectiveStatementImpl(
-            final StmtContext<String, IdentityRefSpecification, EffectiveStatement<String, IdentityRefSpecification>> ctx) {
+    public IdentityRefSpecificationEffectiveStatementImpl(final StmtContext<String, IdentityRefSpecification,
+            EffectiveStatement<String, IdentityRefSpecification>> ctx) {
         super(ctx);
 
         final IdentityrefTypeBuilder builder = BaseTypes.identityrefTypeBuilder(ctx.getSchemaPath().get());

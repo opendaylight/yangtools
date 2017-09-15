@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PositionEff
 
 public class BitEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, BitStatement> {
 
-    private final QName qName;
+    private final QName qname;
     private final SchemaPath schemaPath;
     private final Long declaredPosition;
     private final List<UnknownSchemaNode> unknownSchemaNodes;
@@ -32,7 +32,7 @@ public class BitEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
     public BitEffectiveStatementImpl(final StmtContext<QName, BitStatement, ?> ctx) {
         super(ctx);
 
-        qName = ctx.getStatementArgument();
+        qname = ctx.getStatementArgument();
         schemaPath = ctx.getSchemaPath().get();
 
         final List<UnknownSchemaNode> unknownSchemaNodesInit = new ArrayList<>();
@@ -55,11 +55,11 @@ public class BitEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
     }
 
     public String getName() {
-        return qName.getLocalName();
+        return qname.getLocalName();
     }
 
     public QName getQName() {
-        return qName;
+        return qname;
     }
 
     public SchemaPath getPath() {
@@ -76,7 +76,7 @@ public class BitEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + qName.hashCode();
+        result = prime * result + qname.hashCode();
         result = prime * result + schemaPath.hashCode();
         result = prime * result + Objects.hashCode(declaredPosition);
         result = prime * result + Objects.hashCode(unknownSchemaNodes);
@@ -95,12 +95,12 @@ public class BitEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
             return false;
         }
         final BitsTypeDefinition.Bit other = (BitsTypeDefinition.Bit) obj;
-        return Objects.equals(qName, other.getQName()) && Objects.equals(schemaPath, other.getPath());
+        return Objects.equals(qname, other.getQName()) && Objects.equals(schemaPath, other.getPath());
     }
 
     @Override
     public String toString() {
-        return BitEffectiveStatementImpl.class.getSimpleName() + "[name=" + qName.getLocalName() + ", position="
+        return BitEffectiveStatementImpl.class.getSimpleName() + "[name=" + qname.getLocalName() + ", position="
                 + declaredPosition + "]";
     }
 }

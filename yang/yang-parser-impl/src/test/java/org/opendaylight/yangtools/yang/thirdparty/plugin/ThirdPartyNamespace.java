@@ -11,9 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
- *
- * ThirdPartyNamespace
- *
+ * ThirdPartyNamespace.
  */
 public interface ThirdPartyNamespace extends IdentifierNamespace<StmtContext<?, ?, ?>, String> {
 

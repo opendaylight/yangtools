@@ -28,7 +28,7 @@ abstract class AbstractConstraintEffectiveStatement<A, D extends DeclaredStateme
     private final ModifierKind modifier;
     private final A constraints;
 
-    public AbstractConstraintEffectiveStatement(final StmtContext<A, D, ?> ctx) {
+    AbstractConstraintEffectiveStatement(final StmtContext<A, D, ?> ctx) {
         super(ctx);
         String descriptionInit = null;
         String referenceInit = null;

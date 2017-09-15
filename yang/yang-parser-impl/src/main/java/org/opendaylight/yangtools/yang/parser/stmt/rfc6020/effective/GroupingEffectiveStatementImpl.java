@@ -12,8 +12,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.List;
 import java.util.Objects;
-import javax.annotation.Nonnull;
 import java.util.Set;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -40,7 +40,6 @@ public class GroupingEffectiveStatementImpl extends
 
         qname = ctx.getStatementArgument();
         path = ctx.getSchemaPath().get();
-
         addedByUses = ctx.getCopyHistory().contains(CopyType.ADDED_BY_USES);
 
         final ImmutableSet.Builder<ActionDefinition> actionsBuilder = ImmutableSet.builder();

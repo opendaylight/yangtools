@@ -25,8 +25,8 @@ public class LengthConstraintEffectiveImpl implements LengthConstraint {
 
     public LengthConstraintEffectiveImpl(final Number min, final Number max, final Optional<String> description,
             final Optional<String> reference) {
-        this(min, max, description.orNull(), reference.orNull(), "length-out-of-specified-bounds", "The argument is out of bounds <"
-                + min + ", " + max + ">");
+        this(min, max, description.orNull(), reference.orNull(), "length-out-of-specified-bounds",
+            "The argument is out of bounds <" + min + ", " + max + ">");
     }
 
     public LengthConstraintEffectiveImpl(final Number min, final Number max, final String description,
@@ -119,19 +119,13 @@ public class LengthConstraintEffectiveImpl implements LengthConstraint {
 
     @Override
     public String toString() {
-        return LengthConstraintEffectiveImpl.class.getSimpleName() +
-                " [min=" +
-                min +
-                ", max=" +
-                max +
-                ", description=" +
-                description +
-                ", errorAppTag=" +
-                errorAppTag +
-                ", reference=" +
-                reference +
-                ", errorMessage=" +
-                errorMessage +
-                "]";
+        return LengthConstraintEffectiveImpl.class.getSimpleName()
+                + " [min=" + min
+                + ", max=" + max
+                + ", description=" + description
+                + ", errorAppTag=" + errorAppTag
+                + ", reference=" + reference
+                + ", errorMessage=" + errorMessage
+                + "]";
     }
 }

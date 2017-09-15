@@ -55,16 +55,16 @@ public class MustAndWhenStmtTest {
 
         final Iterator<MustDefinition> mustsIterator = musts.iterator();
         MustDefinition mustStmt = mustsIterator.next();
-        assertThat(mustStmt.getXpath().toString(), anyOf(is("ifType != 'ethernet' or (ifType = 'ethernet' and " +
-                "ifMTU = 1500)"), is("ifType != 'atm' or (ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)")));
-        assertThat(mustStmt.getErrorMessage(), anyOf(is("An ethernet MTU must be 1500"), is("An atm MTU must be 64 " +
-                ".. 17966")));
+        assertThat(mustStmt.getXpath().toString(), anyOf(is("ifType != 'ethernet' or (ifType = 'ethernet' and "
+                + "ifMTU = 1500)"), is("ifType != 'atm' or (ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)")));
+        assertThat(mustStmt.getErrorMessage(), anyOf(is("An ethernet MTU must be 1500"), is("An atm MTU must be 64 "
+                + ".. 17966")));
         assertThat(mustStmt.getErrorAppTag(), anyOf(is("An ethernet error"), is("An atm error")));
         mustStmt = mustsIterator.next();
-        assertThat(mustStmt.getXpath().toString(), anyOf(is("ifType != 'ethernet' or (ifType = 'ethernet' and " +
-                "ifMTU = 1500)"), is("ifType != 'atm' or (ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)")));
-        assertThat(mustStmt.getErrorMessage(), anyOf(is("An ethernet MTU must be 1500"), is("An atm MTU must be 64 " +
-                ".. 17966")));
+        assertThat(mustStmt.getXpath().toString(), anyOf(is("ifType != 'ethernet' or (ifType = 'ethernet' and "
+                + "ifMTU = 1500)"), is("ifType != 'atm' or (ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)")));
+        assertThat(mustStmt.getErrorMessage(), anyOf(is("An ethernet MTU must be 1500"), is("An atm MTU must be 64 "
+                + ".. 17966")));
         assertThat(mustStmt.getErrorAppTag(), anyOf(is("An ethernet error"), is("An atm error")));
     }
 
@@ -79,7 +79,8 @@ public class MustAndWhenStmtTest {
         final Module testModule = result.findModuleByName("when-test", null);
         assertNotNull(testModule);
 
-        final ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "test-container"));
+        final ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(
+            QName.create(testModule.getQNameModule(), "test-container"));
         assertNotNull(container);
         assertEquals("conditional-leaf = 'autumn-leaf'", container.getConstraints().getWhenCondition().toString());
     }

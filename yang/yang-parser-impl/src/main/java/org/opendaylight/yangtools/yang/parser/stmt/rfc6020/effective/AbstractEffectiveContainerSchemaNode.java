@@ -17,7 +17,7 @@ abstract class AbstractEffectiveContainerSchemaNode<D extends DeclaredStatement<
 
     private final boolean presence;
 
-    public AbstractEffectiveContainerSchemaNode(StmtContext<QName, D, ?> ctx) {
+    AbstractEffectiveContainerSchemaNode(final StmtContext<QName, D, ?> ctx) {
         super(ctx);
         this.presence = firstEffective(PresenceEffectiveStatementImpl.class) != null;
     }

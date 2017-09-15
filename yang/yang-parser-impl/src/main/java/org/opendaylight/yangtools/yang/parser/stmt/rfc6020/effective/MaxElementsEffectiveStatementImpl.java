@@ -10,7 +10,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class MaxElementsEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, MaxElementsStatement> {
+public final class MaxElementsEffectiveStatementImpl
+        extends DeclaredEffectiveStatementBase<String, MaxElementsStatement> {
     public MaxElementsEffectiveStatementImpl(final StmtContext<String, MaxElementsStatement, ?> ctx) {
         super(ctx);
     }

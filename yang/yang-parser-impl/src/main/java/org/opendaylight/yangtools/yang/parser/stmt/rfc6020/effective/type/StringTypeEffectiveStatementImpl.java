@@ -26,8 +26,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffe
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class StringTypeEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, TypeStatement> implements
-        TypeEffectiveStatement<TypeStatement> {
+public final class StringTypeEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, TypeStatement>
+        implements TypeEffectiveStatement<TypeStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(StringTypeEffectiveStatementImpl.class);
     private final StringTypeDefinition typeDefinition;
 

@@ -20,18 +20,18 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEff
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RequireInstanceEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
-public final class InstanceIdentifierSpecificationEffectiveStatementImpl extends
-        DeclaredEffectiveStatementBase<String, InstanceIdentifierSpecification> implements
-        TypeEffectiveStatement<InstanceIdentifierSpecification> {
+public final class InstanceIdentifierSpecificationEffectiveStatementImpl
+        extends DeclaredEffectiveStatementBase<String, InstanceIdentifierSpecification>
+        implements TypeEffectiveStatement<InstanceIdentifierSpecification> {
 
     private final InstanceIdentifierTypeDefinition typeDefinition;
 
-    public InstanceIdentifierSpecificationEffectiveStatementImpl(
-            final StmtContext<String, InstanceIdentifierSpecification, EffectiveStatement<String, InstanceIdentifierSpecification>> ctx) {
+    public InstanceIdentifierSpecificationEffectiveStatementImpl(final StmtContext<String,
+            InstanceIdentifierSpecification, EffectiveStatement<String, InstanceIdentifierSpecification>> ctx) {
         super(ctx);
 
-        final InstanceIdentifierTypeBuilder builder =
-                RestrictedTypes.newInstanceIdentifierBuilder(BaseTypes.instanceIdentifierType(), ctx.getSchemaPath().get());
+        final InstanceIdentifierTypeBuilder builder = RestrictedTypes.newInstanceIdentifierBuilder(
+            BaseTypes.instanceIdentifierType(), ctx.getSchemaPath().get());
 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof RequireInstanceEffectiveStatementImpl) {

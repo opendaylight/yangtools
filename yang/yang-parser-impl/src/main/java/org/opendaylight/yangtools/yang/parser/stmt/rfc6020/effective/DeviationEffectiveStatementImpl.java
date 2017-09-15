@@ -21,7 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class DeviationEffectiveStatementImpl extends DeclaredEffectiveStatementBase<SchemaNodeIdentifier, DeviationStatement>
+public class DeviationEffectiveStatementImpl
+        extends DeclaredEffectiveStatementBase<SchemaNodeIdentifier, DeviationStatement>
         implements Deviation, Immutable {
     private final SchemaPath targetPath;
     private final String description;
@@ -36,10 +37,10 @@ public class DeviationEffectiveStatementImpl extends DeclaredEffectiveStatementB
         this.deviateDefinitions = ImmutableList.copyOf(allSubstatementsOfType(DeviateDefinition.class));
 
         DescriptionEffectiveStatementImpl descriptionStmt = firstEffective(DescriptionEffectiveStatementImpl.class);
-        this.description = (descriptionStmt == null) ? null : descriptionStmt.argument();
+        this.description = descriptionStmt == null ? null : descriptionStmt.argument();
 
         ReferenceEffectiveStatementImpl referenceStmt = firstEffective(ReferenceEffectiveStatementImpl.class);
-        this.reference = (referenceStmt == null) ? null : referenceStmt.argument();
+        this.reference = referenceStmt == null ? null : referenceStmt.argument();
 
         List<UnknownSchemaNode> unknownSchemaNodesInit = new ArrayList<>();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
@@ -115,11 +116,11 @@ public class DeviationEffectiveStatementImpl extends DeclaredEffectiveStatementB
 
     @Override
     public String toString() {
-        return DeviationEffectiveStatementImpl.class.getSimpleName() + "[" +
-                "targetPath=" + targetPath +
-                ", deviates=" + deviateDefinitions +
-                ", description=" + description +
-                ", reference=" + reference +
-                "]";
+        return DeviationEffectiveStatementImpl.class.getSimpleName() + "["
+                + "targetPath=" + targetPath
+                + ", deviates=" + deviateDefinitions
+                + ", description=" + description
+                + ", reference=" + reference
+                + "]";
     }
 }

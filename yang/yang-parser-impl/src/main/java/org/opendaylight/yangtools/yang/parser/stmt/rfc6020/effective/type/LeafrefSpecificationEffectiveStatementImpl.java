@@ -20,12 +20,13 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PathEffecti
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RequireInstanceEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
-public final class LeafrefSpecificationEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, LeafrefSpecification>
+public final class LeafrefSpecificationEffectiveStatementImpl
+        extends DeclaredEffectiveStatementBase<String, LeafrefSpecification>
         implements TypeEffectiveStatement<LeafrefSpecification> {
-
     private final LeafrefTypeDefinition typeDefinition;
 
-    public LeafrefSpecificationEffectiveStatementImpl(final StmtContext<String, LeafrefSpecification, EffectiveStatement<String, LeafrefSpecification>> ctx) {
+    public LeafrefSpecificationEffectiveStatementImpl(final StmtContext<String, LeafrefSpecification,
+            EffectiveStatement<String, LeafrefSpecification>> ctx) {
         super(ctx);
 
         final LeafrefTypeBuilder builder = BaseTypes.leafrefTypeBuilder(ctx.getSchemaPath().get());
@@ -33,7 +34,7 @@ public final class LeafrefSpecificationEffectiveStatementImpl extends DeclaredEf
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof PathEffectiveStatementImpl) {
                 builder.setPathStatement(((PathEffectiveStatementImpl) stmt).argument());
-            } else if(stmt instanceof RequireInstanceEffectiveStatementImpl) {
+            } else if (stmt instanceof RequireInstanceEffectiveStatementImpl) {
                 builder.setRequireInstance(((RequireInstanceEffectiveStatementImpl)stmt).argument());
             } else if (stmt instanceof UnknownEffectiveStatementImpl) {
                 builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl)stmt);

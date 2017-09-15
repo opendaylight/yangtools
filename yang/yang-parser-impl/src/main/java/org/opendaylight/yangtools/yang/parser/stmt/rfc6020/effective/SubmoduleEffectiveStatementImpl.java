@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
+
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
@@ -19,25 +20,25 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName
 
 public final class SubmoduleEffectiveStatementImpl extends AbstractEffectiveModule<SubmoduleStatement> {
 
-    private final QNameModule qNameModule;
+    private final QNameModule qnameModule;
 
     public SubmoduleEffectiveStatementImpl(
             final StmtContext<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> ctx) {
         super(ctx);
 
-        String belongsToModuleName = firstAttributeOf(ctx.declaredSubstatements(), BelongsToStatement.class);
+        final String belongsToModuleName = firstAttributeOf(ctx.declaredSubstatements(), BelongsToStatement.class);
         final QNameModule belongsToModuleQName = ctx.getFromNamespace(ModuleNameToModuleQName.class,
                 belongsToModuleName);
-        RevisionEffectiveStatementImpl submoduleRevision = firstEffective(RevisionEffectiveStatementImpl.class);
-
-        this.qNameModule = (submoduleRevision == null ?
-                QNameModule.create(belongsToModuleQName.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV) :
-                    QNameModule.create(belongsToModuleQName.getNamespace(), submoduleRevision.argument())).intern();
+        final RevisionEffectiveStatementImpl submoduleRevision = firstEffective(RevisionEffectiveStatementImpl.class);
+        this.qnameModule = (submoduleRevision == null
+                ? QNameModule.create(belongsToModuleQName.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV)
+                        : QNameModule.create(belongsToModuleQName.getNamespace(), submoduleRevision.argument()))
+                .intern();
     }
 
     @Override
     public QNameModule getQNameModule() {
-        return qNameModule;
+        return qnameModule;
     }
 
     @Override
@@ -46,7 +47,7 @@ public final class SubmoduleEffectiveStatementImpl extends AbstractEffectiveModu
         int result = 1;
         result = prime * result + Objects.hashCode(getName());
         result = prime * result + Objects.hashCode(getYangVersion());
-        result = prime * result + Objects.hashCode(qNameModule);
+        result = prime * result + Objects.hashCode(qnameModule);
         return result;
     }
 
@@ -65,7 +66,7 @@ public final class SubmoduleEffectiveStatementImpl extends AbstractEffectiveModu
         if (!Objects.equals(getName(), other.getName())) {
             return false;
         }
-        if (!qNameModule.equals(other.qNameModule)) {
+        if (!qnameModule.equals(other.qnameModule)) {
             return false;
         }
         if (!Objects.equals(getYangVersion(), other.getYangVersion())) {

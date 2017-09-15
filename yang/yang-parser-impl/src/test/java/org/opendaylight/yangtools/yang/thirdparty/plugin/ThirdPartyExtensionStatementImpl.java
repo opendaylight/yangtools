@@ -12,8 +12,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public class ThirdPartyExtensionStatementImpl extends AbstractDeclaredStatement<String> implements
         UnknownStatement<String> {
@@ -22,9 +22,8 @@ public class ThirdPartyExtensionStatementImpl extends AbstractDeclaredStatement<
         super(context);
     }
 
-    public static class ThirdPartyExtensionSupport
-            extends
-            AbstractStatementSupport<String, UnknownStatement<String>, EffectiveStatement<String, UnknownStatement<String>>> {
+    public static class ThirdPartyExtensionSupport extends AbstractStatementSupport<String, UnknownStatement<String>,
+            EffectiveStatement<String, UnknownStatement<String>>> {
 
         public ThirdPartyExtensionSupport() {
             super(ThirdPartyExtensionsMapping.THIRD_PARTY_EXTENSION);
@@ -36,8 +35,8 @@ public class ThirdPartyExtensionStatementImpl extends AbstractDeclaredStatement<
         }
 
         @Override
-        public void onFullDefinitionDeclared(
-                final Mutable<String, UnknownStatement<String>, EffectiveStatement<String, UnknownStatement<String>>> stmt) {
+        public void onFullDefinitionDeclared(final Mutable<String, UnknownStatement<String>,
+                EffectiveStatement<String, UnknownStatement<String>>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             stmt.addToNs(ThirdPartyNamespace.class, stmt, "Third-party namespace test.");
         }
@@ -48,8 +47,8 @@ public class ThirdPartyExtensionStatementImpl extends AbstractDeclaredStatement<
         }
 
         @Override
-        public EffectiveStatement<String, UnknownStatement<String>> createEffective(
-                final StmtContext<String, UnknownStatement<String>, EffectiveStatement<String, UnknownStatement<String>>> ctx) {
+        public EffectiveStatement<String, UnknownStatement<String>> createEffective(final StmtContext<String,
+                UnknownStatement<String>, EffectiveStatement<String, UnknownStatement<String>>> ctx) {
             return new ThirdPartyExtensionEffectiveStatementImpl(ctx);
         }
 

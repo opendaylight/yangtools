@@ -21,8 +21,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEff
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RequireInstanceEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
-public final class InstanceIdentifierTypeEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, TypeStatement>
-        implements TypeEffectiveStatement<TypeStatement> {
+public final class InstanceIdentifierTypeEffectiveStatementImpl
+        extends DeclaredEffectiveStatementBase<String, TypeStatement> implements TypeEffectiveStatement<TypeStatement> {
     private final InstanceIdentifierTypeDefinition typeDefinition;
 
     public InstanceIdentifierTypeEffectiveStatementImpl(

@@ -45,7 +45,8 @@ public class ThirdPartyExtensionPluginTest {
         final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.get(0);
         assertTrue(unknownSchemaNode instanceof ThirdPartyExtensionEffectiveStatementImpl);
 
-        final ThirdPartyExtensionEffectiveStatementImpl thirdPartyExtensionStmt = (ThirdPartyExtensionEffectiveStatementImpl) unknownSchemaNode;
+        final ThirdPartyExtensionEffectiveStatementImpl thirdPartyExtensionStmt =
+                (ThirdPartyExtensionEffectiveStatementImpl) unknownSchemaNode;
         assertEquals("Third-party namespace test.", thirdPartyExtensionStmt.getValueFromNamespace());
         assertEquals("plugin test", thirdPartyExtensionStmt.argument());
     }

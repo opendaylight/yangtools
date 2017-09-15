@@ -54,7 +54,7 @@ public class YangTypes2StmtTest {
     @Test
     public void readAndParseYangFileTest() throws SourceException, ReactorException {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, TYPEFILE1, TYPEFILE2, TYPEFILE3, TYPEFILE4);
+        reactor.addSources(TYPEFILE1, TYPEFILE2, TYPEFILE3, TYPEFILE4);
         SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
@@ -100,11 +100,5 @@ public class YangTypes2StmtTest {
         final LeafSchemaNode lfBoolNode = (LeafSchemaNode) result.getDataChildByName(lfBool);
         assertNotNull(lfBoolNode);
         assertEquals(BaseTypes.booleanType().getClass(), lfBoolNode.getType().getClass());
-    }
-
-    private static  void addSources(final CrossSourceStatementReactor.BuildAction reactor, final StatementStreamSource... sources) {
-        for (StatementStreamSource source : sources) {
-            reactor.addSource(source);
-        }
     }
 }

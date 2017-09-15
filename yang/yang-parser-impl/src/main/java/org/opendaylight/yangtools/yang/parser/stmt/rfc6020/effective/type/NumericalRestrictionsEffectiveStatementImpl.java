@@ -11,7 +11,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.NumericalRes
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 
-public class NumericalRestrictionsEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, NumericalRestrictions> {
+public class NumericalRestrictionsEffectiveStatementImpl
+        extends DeclaredEffectiveStatementBase<String, NumericalRestrictions> {
 
     public NumericalRestrictionsEffectiveStatementImpl(final StmtContext<String, NumericalRestrictions, ?> ctx) {
         super(ctx);

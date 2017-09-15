@@ -10,7 +10,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class DescriptionEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, DescriptionStatement> {
+public final class DescriptionEffectiveStatementImpl
+        extends DeclaredEffectiveStatementBase<String, DescriptionStatement> {
     public DescriptionEffectiveStatementImpl(final StmtContext<String, DescriptionStatement, ?> ctx) {
         super(ctx);
     }
