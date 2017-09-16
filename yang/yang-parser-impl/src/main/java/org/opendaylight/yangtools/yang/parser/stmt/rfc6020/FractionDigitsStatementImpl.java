@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Range;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -39,19 +38,16 @@ public class FractionDigitsStatementImpl extends AbstractDeclaredStatement<Integ
 
         @Override
         public Integer parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-
-            int fractionDigits;
-
+            final Integer fractionDigits;
             try {
-                fractionDigits = Integer.parseInt(value);
+                fractionDigits = Integer.valueOf(value);
             } catch (NumberFormatException e) {
-                throw new SourceException(String.format("%s is not valid fraction-digits integer argument",
-                        value), ctx.getStatementSourceReference(), e);
+                throw new SourceException(ctx.getStatementSourceReference(), e,
+                    "%s is not valid fraction-digits integer argument", value);
             }
 
-            Preconditions.checkArgument(FRAC_DIGITS_ALLOWED.contains(fractionDigits),
+            SourceException.throwIf(!FRAC_DIGITS_ALLOWED.contains(fractionDigits), ctx.getStatementSourceReference(),
                 "fraction-digits argument should be integer within %s", FRAC_DIGITS_ALLOWED);
-
             return fractionDigits;
         }
 
@@ -62,7 +58,8 @@ public class FractionDigitsStatementImpl extends AbstractDeclaredStatement<Integ
 
         @Override
         public EffectiveStatement<Integer, FractionDigitsStatement> createEffective(
-                final StmtContext<Integer, FractionDigitsStatement, EffectiveStatement<Integer, FractionDigitsStatement>> ctx) {
+                final StmtContext<Integer, FractionDigitsStatement,
+                EffectiveStatement<Integer, FractionDigitsStatement>> ctx) {
             return new FractionDigitsEffectiveStatementImpl(ctx);
         }
 
