@@ -21,7 +21,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeviationEffectiveStatementImpl;
 
-public class DeviationStatementImpl extends AbstractDeclaredStatement<SchemaNodeIdentifier> implements DeviationStatement {
+public class DeviationStatementImpl extends AbstractDeclaredStatement<SchemaNodeIdentifier>
+        implements DeviationStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .DEVIATION)
             .addOptional(YangStmtMapping.DESCRIPTION)
@@ -33,7 +34,8 @@ public class DeviationStatementImpl extends AbstractDeclaredStatement<SchemaNode
         super(context);
     }
 
-    public static class Definition extends AbstractStatementSupport<SchemaNodeIdentifier,DeviationStatement,EffectiveStatement<SchemaNodeIdentifier,DeviationStatement>> {
+    public static class Definition extends AbstractStatementSupport<SchemaNodeIdentifier, DeviationStatement,
+            EffectiveStatement<SchemaNodeIdentifier, DeviationStatement>> {
 
         public Definition() {
             super(YangStmtMapping.DEVIATION);
@@ -51,7 +53,8 @@ public class DeviationStatementImpl extends AbstractDeclaredStatement<SchemaNode
 
         @Override
         public EffectiveStatement<SchemaNodeIdentifier, DeviationStatement> createEffective(
-                final StmtContext<SchemaNodeIdentifier, DeviationStatement, EffectiveStatement<SchemaNodeIdentifier, DeviationStatement>> ctx) {
+                final StmtContext<SchemaNodeIdentifier, DeviationStatement,
+                EffectiveStatement<SchemaNodeIdentifier, DeviationStatement>> ctx) {
             return new DeviationEffectiveStatementImpl(ctx);
         }
 
@@ -74,7 +77,8 @@ public class DeviationStatementImpl extends AbstractDeclaredStatement<SchemaNode
         }
     }
 
-    @Nonnull @Override
+    @Nonnull
+    @Override
     public SchemaNodeIdentifier getTargetNode() {
         return argument();
     }

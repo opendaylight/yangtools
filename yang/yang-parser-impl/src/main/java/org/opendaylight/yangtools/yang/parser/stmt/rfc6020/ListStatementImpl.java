@@ -39,8 +39,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ListEffectiveStatementImpl;
 
-public class ListStatementImpl extends AbstractDeclaredStatement<QName>
-        implements ListStatement {
+public class ListStatementImpl extends AbstractDeclaredStatement<QName> implements ListStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .LIST)
             .addAny(YangStmtMapping.ANYXML)
@@ -71,8 +70,7 @@ public class ListStatementImpl extends AbstractDeclaredStatement<QName>
     }
 
     public static class Definition
-            extends
-            AbstractQNameStatementSupport<ListStatement, EffectiveStatement<QName, ListStatement>> {
+            extends AbstractQNameStatementSupport<ListStatement, EffectiveStatement<QName, ListStatement>> {
 
         public Definition() {
             super(YangStmtMapping.LIST);
@@ -84,7 +82,8 @@ public class ListStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public void onStatementAdded(final Mutable<QName, ListStatement, EffectiveStatement<QName, ListStatement>> stmt) {
+        public void onStatementAdded(
+                final Mutable<QName, ListStatement, EffectiveStatement<QName, ListStatement>> stmt) {
             stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
         }
 

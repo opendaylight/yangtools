@@ -16,24 +16,26 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 final class SimpleNamespaceContext<K, V, N extends IdentifierNamespace<K, V>>
         extends NamespaceBehaviourWithListeners<K, V, N> {
 
-    // FIXME: Change this to Multimap, once issue with modules
-    // is resolved.
-    private final List<NamespaceBehaviourWithListeners.ValueAddedListener<K>> listeners = new ArrayList<>();
-    public SimpleNamespaceContext(NamespaceBehaviour<K, V, N> delegate) {
+    // FIXME: Change this to Multimap, once issue with modules is resolved.
+    private final List<ValueAddedListener<K>> listeners = new ArrayList<>();
+
+    SimpleNamespaceContext(final NamespaceBehaviour<K, V, N> delegate) {
         super(delegate);
     }
 
-    protected boolean isRequestedValue(NamespaceBehaviourWithListeners.ValueAddedListener<K> listener, NamespaceStorageNode storage, V value) {
+    @Override
+    protected boolean isRequestedValue(final ValueAddedListener<K> listener, final NamespaceStorageNode storage,
+            final V value) {
         NamespaceStorageNode listenerCtx = listener.getCtxNode();
         return value == getFrom(listenerCtx, listener.getKey());
     }
 
     @Override
-    protected void addListener(K key, NamespaceBehaviourWithListeners.ValueAddedListener<K> listener) {
+    protected void addListener(final K key, final ValueAddedListener<K> listener) {
         listeners.add(listener);
     }
 
-    private Iterator<NamespaceBehaviourWithListeners.ValueAddedListener<K>> getMutableListeners(K key) {
+    private Iterator<ValueAddedListener<K>> getMutableListeners(final K key) {
         return listeners.iterator();
     }
 

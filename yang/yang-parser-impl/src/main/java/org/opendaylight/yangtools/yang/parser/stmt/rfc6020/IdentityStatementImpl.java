@@ -26,8 +26,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IdentityEffectiveStatementImpl;
 
-public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
-        implements IdentityStatement {
+public class IdentityStatementImpl extends AbstractDeclaredStatement<QName> implements IdentityStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .IDENTITY)
             .addOptional(YangStmtMapping.BASE)
@@ -36,8 +35,7 @@ public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
             .addOptional(YangStmtMapping.STATUS)
             .build();
 
-    protected IdentityStatementImpl(
-            final StmtContext<QName, IdentityStatement, ?> context) {
+    protected IdentityStatementImpl(final StmtContext<QName, IdentityStatement, ?> context) {
         super(context);
     }
 
@@ -54,8 +52,7 @@ public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public IdentityStatement createDeclared(
-                final StmtContext<QName, IdentityStatement, ?> ctx) {
+        public IdentityStatement createDeclared(final StmtContext<QName, IdentityStatement, ?> ctx) {
             return new IdentityStatementImpl(ctx);
         }
 
@@ -66,7 +63,8 @@ public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public void onStatementDefinitionDeclared(final StmtContext.Mutable<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> stmt) {
+        public void onStatementDefinitionDeclared(final StmtContext.Mutable<QName, IdentityStatement,
+                EffectiveStatement<QName, IdentityStatement>> stmt) {
             stmt.addToNs(IdentityNamespace.class, stmt.getStatementArgument(), stmt);
         }
 
@@ -113,5 +111,4 @@ public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
     public QName getName() {
         return argument();
     }
-
 }

@@ -47,7 +47,8 @@ public class NumericalRestrictionsImpl extends AbstractDeclaredStatement<String>
 
         @Override
         public EffectiveStatement<String, NumericalRestrictions> createEffective(
-                final StmtContext<String, NumericalRestrictions, EffectiveStatement<String, NumericalRestrictions>> ctx) {
+                final StmtContext<String, NumericalRestrictions,
+                EffectiveStatement<String, NumericalRestrictions>> ctx) {
             return new NumericalRestrictionsEffectiveStatementImpl(ctx);
         }
 
@@ -68,5 +69,4 @@ public class NumericalRestrictionsImpl extends AbstractDeclaredStatement<String>
     public RangeStatement getRange() {
         return firstDeclared(RangeStatement.class);
     }
-
 }

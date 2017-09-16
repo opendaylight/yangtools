@@ -26,7 +26,8 @@ public class ReferenceStatementImpl extends AbstractDeclaredStatement<String> im
         super(context);
     }
 
-    public static class Definition extends AbstractStatementSupport<String,ReferenceStatement,EffectiveStatement<String,ReferenceStatement>> {
+    public static class Definition extends AbstractStatementSupport<String, ReferenceStatement,
+            EffectiveStatement<String, ReferenceStatement>> {
 
         public Definition() {
             super(YangStmtMapping.REFERENCE);
@@ -54,7 +55,8 @@ public class ReferenceStatementImpl extends AbstractDeclaredStatement<String> im
         }
     }
 
-    @Nonnull @Override
+    @Nonnull
+    @Override
     public String getText() {
         return rawArgument();
     }

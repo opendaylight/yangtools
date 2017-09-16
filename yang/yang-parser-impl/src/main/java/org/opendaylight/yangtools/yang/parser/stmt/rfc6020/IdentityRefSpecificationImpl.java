@@ -24,7 +24,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.IdentityRefSpecificationEffectiveStatementImpl;
 
-public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<String> implements IdentityRefSpecification {
+public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<String>
+        implements IdentityRefSpecification {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .TYPE)
             .addMandatory(YangStmtMapping.BASE)

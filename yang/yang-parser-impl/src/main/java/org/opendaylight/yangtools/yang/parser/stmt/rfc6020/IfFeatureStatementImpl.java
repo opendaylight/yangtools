@@ -38,14 +38,12 @@ public class IfFeatureStatementImpl extends AbstractDeclaredStatement<Predicate<
             .IF_FEATURE)
             .build();
 
-    protected IfFeatureStatementImpl(
-            final StmtContext<Predicate<Set<QName>>, IfFeatureStatement, ?> context) {
+    protected IfFeatureStatementImpl(final StmtContext<Predicate<Set<QName>>, IfFeatureStatement, ?> context) {
         super(context);
     }
 
-    public static class Definition
-            extends
-            AbstractStatementSupport<Predicate<Set<QName>>, IfFeatureStatement, EffectiveStatement<Predicate<Set<QName>>, IfFeatureStatement>> {
+    public static class Definition extends AbstractStatementSupport<Predicate<Set<QName>>, IfFeatureStatement,
+            EffectiveStatement<Predicate<Set<QName>>, IfFeatureStatement>> {
 
         public Definition() {
             super(YangStmtMapping.IF_FEATURE);
@@ -53,23 +51,23 @@ public class IfFeatureStatementImpl extends AbstractDeclaredStatement<Predicate<
 
         @Override
         public Predicate<Set<QName>> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-            if(YangVersion.VERSION_1_1.equals(ctx.getRootVersion())) {
+            if (YangVersion.VERSION_1_1.equals(ctx.getRootVersion())) {
                 return parseIfFeatureExpression(ctx, value);
-            } else {
-                final QName qName = StmtContextUtils.qnameFromArgument(ctx, value);
-                return setQNames -> setQNames.contains(qName);
             }
+
+            final QName qname = StmtContextUtils.qnameFromArgument(ctx, value);
+            return setQNames -> setQNames.contains(qname);
         }
 
         @Override
-        public IfFeatureStatement createDeclared(
-                final StmtContext<Predicate<Set<QName>>, IfFeatureStatement, ?> ctx) {
+        public IfFeatureStatement createDeclared(final StmtContext<Predicate<Set<QName>>, IfFeatureStatement, ?> ctx) {
             return new IfFeatureStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<Predicate<Set<QName>>, IfFeatureStatement> createEffective(
-                final StmtContext<Predicate<Set<QName>>, IfFeatureStatement, EffectiveStatement<Predicate<Set<QName>>, IfFeatureStatement>> ctx) {
+                final StmtContext<Predicate<Set<QName>>, IfFeatureStatement,
+                EffectiveStatement<Predicate<Set<QName>>, IfFeatureStatement>> ctx) {
             return new IfFeatureEffectiveStatementImpl(ctx);
         }
 
@@ -78,7 +76,8 @@ public class IfFeatureStatementImpl extends AbstractDeclaredStatement<Predicate<
             return SUBSTATEMENT_VALIDATOR;
         }
 
-        private static Predicate<Set<QName>> parseIfFeatureExpression(final StmtContext<?, ?, ?> ctx, final String value) {
+        private static Predicate<Set<QName>> parseIfFeatureExpression(final StmtContext<?, ?, ?> ctx,
+                final String value) {
             final IfFeatureExpressionLexer lexer = new IfFeatureExpressionLexer(CharStreams.fromString(value));
             final CommonTokenStream tokens = new CommonTokenStream(lexer);
             final IfFeatureExpressionParser parser = new IfFeatureExpressionParser(tokens);
@@ -86,29 +85,30 @@ public class IfFeatureStatementImpl extends AbstractDeclaredStatement<Predicate<
             return new IfFeaturePredicateVisitor(ctx).visit(parser.if_feature_expr());
         }
 
-        private static class IfFeaturePredicateVisitor extends IfFeatureExpressionParserBaseVisitor<Predicate<Set<QName>>> {
+        private static class IfFeaturePredicateVisitor
+                extends IfFeatureExpressionParserBaseVisitor<Predicate<Set<QName>>> {
             private final StmtContext<?, ?, ?> stmtCtx;
 
-            public IfFeaturePredicateVisitor(final StmtContext<?, ?, ?> ctx) {
+            IfFeaturePredicateVisitor(final StmtContext<?, ?, ?> ctx) {
                 this.stmtCtx = Preconditions.checkNotNull(ctx);
             }
 
             @Override
             public Predicate<Set<QName>> visitIf_feature_expr(final If_feature_exprContext ctx) {
-                if (ctx.if_feature_expr() != null) {
-                    return visitIf_feature_term(ctx.if_feature_term()).or(visitIf_feature_expr(ctx.if_feature_expr()));
-                } else {
+                if (ctx.if_feature_expr() == null) {
                     return visitIf_feature_term(ctx.if_feature_term());
                 }
+
+                return visitIf_feature_term(ctx.if_feature_term()).or(visitIf_feature_expr(ctx.if_feature_expr()));
             }
 
             @Override
             public Predicate<Set<QName>> visitIf_feature_term(final If_feature_termContext ctx) {
-                if (ctx.if_feature_term() != null) {
-                    return visitIf_feature_factor(ctx.if_feature_factor()).and(visitIf_feature_term(ctx.if_feature_term()));
-                } else {
+                if (ctx.if_feature_term() == null) {
                     return visitIf_feature_factor(ctx.if_feature_factor());
                 }
+
+                return visitIf_feature_factor(ctx.if_feature_factor()).and(visitIf_feature_term(ctx.if_feature_term()));
             }
 
             @Override

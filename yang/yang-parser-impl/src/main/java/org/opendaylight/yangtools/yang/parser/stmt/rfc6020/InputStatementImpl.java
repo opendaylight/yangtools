@@ -57,7 +57,8 @@ public class InputStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public void onStatementAdded(final Mutable<QName, InputStatement, EffectiveStatement<QName, InputStatement>> stmt) {
+        public void onStatementAdded(final Mutable<QName, InputStatement,
+                EffectiveStatement<QName, InputStatement>> stmt) {
             stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
         }
 

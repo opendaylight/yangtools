@@ -35,8 +35,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.LeafListEffectiveStatementImpl;
 
-public class LeafListStatementImpl extends AbstractDeclaredStatement<QName>
-        implements LeafListStatement {
+public class LeafListStatementImpl extends AbstractDeclaredStatement<QName> implements LeafListStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .LEAF_LIST)
             .addOptional(YangStmtMapping.CONFIG)
@@ -53,8 +52,7 @@ public class LeafListStatementImpl extends AbstractDeclaredStatement<QName>
             .addOptional(YangStmtMapping.WHEN)
             .build();
 
-    protected LeafListStatementImpl(
-            final StmtContext<QName, LeafListStatement, ?> context) {
+    protected LeafListStatementImpl(final StmtContext<QName, LeafListStatement, ?> context) {
         super(context);
     }
 
@@ -72,14 +70,12 @@ public class LeafListStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value)
-                {
+        public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return StmtContextUtils.qnameFromArgument(ctx, value);
         }
 
         @Override
-        public LeafListStatement createDeclared(
-                final StmtContext<QName, LeafListStatement, ?> ctx) {
+        public LeafListStatement createDeclared(final StmtContext<QName, LeafListStatement, ?> ctx) {
             return new LeafListStatementImpl(ctx);
         }
 

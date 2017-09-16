@@ -27,8 +27,8 @@ public class UnknownStatementImpl extends AbstractDeclaredStatement<String> impl
         super(context);
     }
 
-    public static class Definition extends
-            AbstractStatementSupport<String, UnknownStatement<String>, EffectiveStatement<String, UnknownStatement<String>>> {
+    public static class Definition extends AbstractStatementSupport<String, UnknownStatement<String>,
+            EffectiveStatement<String, UnknownStatement<String>>> {
 
         public Definition(final StatementDefinition publicDefinition) {
             super(publicDefinition);
@@ -46,7 +46,8 @@ public class UnknownStatementImpl extends AbstractDeclaredStatement<String> impl
 
         @Override
         public EffectiveStatement<String, UnknownStatement<String>> createEffective(
-                final StmtContext<String, UnknownStatement<String>, EffectiveStatement<String, UnknownStatement<String>>> ctx) {
+                final StmtContext<String, UnknownStatement<String>,
+                EffectiveStatement<String, UnknownStatement<String>>> ctx) {
             return new UnknownEffectiveStatementImpl(ctx);
         }
 

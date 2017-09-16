@@ -243,8 +243,8 @@ public final class YangInferencePipeline {
             .addSupport(global(StmtOrderingNamespace.class))
             .build();
 
-    public static final Map<ModelProcessingPhase, StatementSupportBundle> RFC6020_BUNDLES = ImmutableMap
-            .<ModelProcessingPhase, StatementSupportBundle> builder()
+    public static final Map<ModelProcessingPhase, StatementSupportBundle> RFC6020_BUNDLES =
+            ImmutableMap.<ModelProcessingPhase, StatementSupportBundle>builder()
             .put(ModelProcessingPhase.INIT, INIT_BUNDLE)
             .put(ModelProcessingPhase.SOURCE_PRE_LINKAGE, PRE_LINKAGE_BUNDLE)
             .put(ModelProcessingPhase.SOURCE_LINKAGE, LINKAGE_BUNDLE)
@@ -253,25 +253,23 @@ public final class YangInferencePipeline {
             .put(ModelProcessingPhase.EFFECTIVE_MODEL, FULL_DECL_BUNDLE)
             .build();
 
-    public static final Map<ValidationBundleType, Collection<StatementDefinition>> RFC6020_VALIDATION_BUNDLE = ImmutableMap
-            .<ValidationBundleType, Collection<StatementDefinition>> builder()
-            .put(ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS, YangValidationBundles.SUPPORTED_REFINE_SUBSTATEMENTS)
+    public static final Map<ValidationBundleType, Collection<StatementDefinition>> RFC6020_VALIDATION_BUNDLE =
+            ImmutableMap.<ValidationBundleType, Collection<StatementDefinition>>builder()
+            .put(ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS,
+                YangValidationBundles.SUPPORTED_REFINE_SUBSTATEMENTS)
             .put(ValidationBundleType.SUPPORTED_AUGMENT_TARGETS, YangValidationBundles.SUPPORTED_AUGMENT_TARGETS)
             .put(ValidationBundleType.SUPPORTED_CASE_SHORTHANDS, YangValidationBundles.SUPPORTED_CASE_SHORTHANDS)
             .put(ValidationBundleType.SUPPORTED_DATA_NODES, YangValidationBundles.SUPPORTED_DATA_NODES)
             .build();
 
-    public static final CrossSourceStatementReactor RFC6020_REACTOR = CrossSourceStatementReactor
-            .builder()
+    public static final CrossSourceStatementReactor RFC6020_REACTOR = CrossSourceStatementReactor.builder()
             .setBundle(ModelProcessingPhase.INIT, INIT_BUNDLE)
             .setBundle(ModelProcessingPhase.SOURCE_PRE_LINKAGE, PRE_LINKAGE_BUNDLE)
             .setBundle(ModelProcessingPhase.SOURCE_LINKAGE, LINKAGE_BUNDLE)
-            .setBundle(ModelProcessingPhase.STATEMENT_DEFINITION,
-                    STMT_DEF_BUNDLE)
+            .setBundle(ModelProcessingPhase.STATEMENT_DEFINITION, STMT_DEF_BUNDLE)
             .setBundle(ModelProcessingPhase.FULL_DECLARATION, FULL_DECL_BUNDLE)
             .setBundle(ModelProcessingPhase.EFFECTIVE_MODEL, FULL_DECL_BUNDLE)
-            .setValidationBundle(
-                    ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS,
+            .setValidationBundle(ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS,
                     YangValidationBundles.SUPPORTED_REFINE_SUBSTATEMENTS)
             .setValidationBundle(ValidationBundleType.SUPPORTED_AUGMENT_TARGETS,
                     YangValidationBundles.SUPPORTED_AUGMENT_TARGETS)

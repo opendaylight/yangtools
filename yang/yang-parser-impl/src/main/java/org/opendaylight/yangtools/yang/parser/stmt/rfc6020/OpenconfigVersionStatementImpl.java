@@ -15,12 +15,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.OpenconfigVersionEffectiveStatementImpl;
 
 @Beta
-public final class OpenconfigVersionStatementImpl extends AbstractDeclaredStatement<SemVer> implements
-        UnknownStatement<SemVer> {
+public final class OpenconfigVersionStatementImpl extends AbstractDeclaredStatement<SemVer>
+        implements UnknownStatement<SemVer> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
             SupportedExtensionsMapping.OPENCONFIG_VERSION).build();
 
@@ -29,9 +30,8 @@ public final class OpenconfigVersionStatementImpl extends AbstractDeclaredStatem
         super(context);
     }
 
-    public static class OpenconfigVersionSupport
-            extends
-            AbstractStatementSupport<SemVer, UnknownStatement<SemVer>, EffectiveStatement<SemVer, UnknownStatement<SemVer>>> {
+    public static class OpenconfigVersionSupport extends AbstractStatementSupport<SemVer, UnknownStatement<SemVer>,
+            EffectiveStatement<SemVer, UnknownStatement<SemVer>>> {
 
         public OpenconfigVersionSupport() {
             super(SupportedExtensionsMapping.OPENCONFIG_VERSION);
@@ -43,19 +43,20 @@ public final class OpenconfigVersionStatementImpl extends AbstractDeclaredStatem
         }
 
         @Override
-        public void onLinkageDeclared(final StmtContext.Mutable<SemVer,UnknownStatement<SemVer>,EffectiveStatement<SemVer,UnknownStatement<SemVer>>> stmt) {
+        public void onLinkageDeclared(final Mutable<SemVer, UnknownStatement<SemVer>,
+                EffectiveStatement<SemVer, UnknownStatement<SemVer>>> stmt) {
             stmt.addToNs(SemanticVersionNamespace.class, stmt.getParentContext(), stmt.getStatementArgument());
         }
 
         @Override
-        public UnknownStatement<SemVer> createDeclared(
-                final StmtContext<SemVer, UnknownStatement<SemVer>, ?> ctx) {
+        public UnknownStatement<SemVer> createDeclared(final StmtContext<SemVer, UnknownStatement<SemVer>, ?> ctx) {
             return new OpenconfigVersionStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<SemVer, UnknownStatement<SemVer>> createEffective(
-                final StmtContext<SemVer, UnknownStatement<SemVer>, EffectiveStatement<SemVer, UnknownStatement<SemVer>>> ctx) {
+                final StmtContext<SemVer, UnknownStatement<SemVer>,
+                EffectiveStatement<SemVer, UnknownStatement<SemVer>>> ctx) {
             return new OpenconfigVersionEffectiveStatementImpl(ctx);
         }
 

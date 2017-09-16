@@ -48,7 +48,7 @@ public enum SupportedExtensionsMapping implements StatementDefinition {
         this.yinElement = yinElement;
     }
 
-    private SupportedExtensionsMapping(final String namespace, final Class<? extends DeclaredStatement<?>> declared,
+    SupportedExtensionsMapping(final String namespace, final Class<? extends DeclaredStatement<?>> declared,
             final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr, final String argumentStr,
             final boolean yinElement) {
         type = Preconditions.checkNotNull(declared);

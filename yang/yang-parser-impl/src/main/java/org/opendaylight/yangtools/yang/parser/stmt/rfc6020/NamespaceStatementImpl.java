@@ -23,7 +23,8 @@ public class NamespaceStatementImpl extends AbstractDeclaredStatement<URI> imple
             .NAMESPACE)
             .build();
 
-    public static class Definition extends AbstractStatementSupport<URI,NamespaceStatement,EffectiveStatement<URI,NamespaceStatement>> {
+    public static class Definition extends AbstractStatementSupport<URI, NamespaceStatement,
+            EffectiveStatement<URI, NamespaceStatement>> {
 
         public Definition() {
             super(org.opendaylight.yangtools.yang.model.api.YangStmtMapping.NAMESPACE);
@@ -40,7 +41,8 @@ public class NamespaceStatementImpl extends AbstractDeclaredStatement<URI> imple
         }
 
         @Override
-        public EffectiveStatement<URI,NamespaceStatement> createEffective(final StmtContext<URI, NamespaceStatement,EffectiveStatement<URI,NamespaceStatement>> ctx) {
+        public EffectiveStatement<URI,NamespaceStatement> createEffective(
+                final StmtContext<URI, NamespaceStatement, EffectiveStatement<URI, NamespaceStatement>> ctx) {
             return new NamespaceEffectiveStatementImpl(ctx);
         }
 

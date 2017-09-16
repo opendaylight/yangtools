@@ -16,25 +16,26 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 final class VirtualNamespaceContext<K, V, N extends IdentifierNamespace<K, V>, DK>
         extends NamespaceBehaviourWithListeners<K, V, N> {
 
-    private final Multimap<DK, NamespaceBehaviourWithListeners.ValueAddedListener<K>> listeners = HashMultimap.create();
+    private final Multimap<DK, ValueAddedListener<K>> listeners = HashMultimap.create();
     private final DerivedNamespaceBehaviour<K, V, DK, N, ?> derivedDelegate;
 
-    public VirtualNamespaceContext(DerivedNamespaceBehaviour<K, V, DK, N, ?> delegate) {
+    VirtualNamespaceContext(final DerivedNamespaceBehaviour<K, V, DK, N, ?> delegate) {
         super(delegate);
         this.derivedDelegate = delegate;
     }
 
-    protected boolean isRequestedValue(NamespaceBehaviourWithListeners.ValueAddedListener<K> listener, NamespaceStorageNode storage, V value) {
+    @Override
+    protected boolean isRequestedValue(final ValueAddedListener<K> listener, final NamespaceStorageNode storage,
+            final V value) {
         return value == getFrom(listener.getCtxNode(), listener.getKey());
     }
 
     @Override
-    protected void addListener(K key, NamespaceBehaviourWithListeners.ValueAddedListener<K> listener) {
+    protected void addListener(final K key, final ValueAddedListener<K> listener) {
         listeners.put(derivedDelegate.getSignificantKey(key), listener);
     }
 
-
-    void addedToSourceNamespace(NamespaceBehaviour.NamespaceStorageNode storage, DK key, V value) {
+    void addedToSourceNamespace(final NamespaceBehaviour.NamespaceStorageNode storage, final DK key, final V value) {
         notifyListeners(storage, listeners.get(key).iterator(), value);
     }
 

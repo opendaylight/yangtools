@@ -23,13 +23,11 @@ public class ErrorMessageStatementImpl extends
             .ERROR_MESSAGE)
             .build();
 
-    protected ErrorMessageStatementImpl(
-            final StmtContext<String, ErrorMessageStatement, ?> context) {
+    protected ErrorMessageStatementImpl(final StmtContext<String, ErrorMessageStatement, ?> context) {
         super(context);
     }
 
-    public static class Definition
-            extends
+    public static class Definition extends
             AbstractStatementSupport<String, ErrorMessageStatement, EffectiveStatement<String, ErrorMessageStatement>> {
 
         public Definition() {
@@ -42,14 +40,14 @@ public class ErrorMessageStatementImpl extends
         }
 
         @Override
-        public ErrorMessageStatement createDeclared(
-                final StmtContext<String, ErrorMessageStatement, ?> ctx) {
+        public ErrorMessageStatement createDeclared(final StmtContext<String, ErrorMessageStatement, ?> ctx) {
             return new ErrorMessageStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<String, ErrorMessageStatement> createEffective(
-                final StmtContext<String, ErrorMessageStatement, EffectiveStatement<String, ErrorMessageStatement>> ctx) {
+                final StmtContext<String, ErrorMessageStatement,
+                EffectiveStatement<String, ErrorMessageStatement>> ctx) {
             return new ErrorMessageEffectiveStatementImpl(ctx);
         }
 

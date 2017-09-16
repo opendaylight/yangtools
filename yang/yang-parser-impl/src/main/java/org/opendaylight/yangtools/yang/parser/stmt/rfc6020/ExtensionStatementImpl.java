@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ExtensionEffectiveStatementImpl;
@@ -55,13 +56,14 @@ public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> imp
         }
 
         @Override
-        public EffectiveStatement<QName,ExtensionStatement> createEffective(
-                final StmtContext<QName,ExtensionStatement ,EffectiveStatement<QName,ExtensionStatement>> ctx) {
+        public EffectiveStatement<QName, ExtensionStatement> createEffective(
+                final StmtContext<QName, ExtensionStatement, EffectiveStatement<QName,ExtensionStatement>> ctx) {
             return ExtensionEffectiveStatementImpl.create(ctx);
         }
 
         @Override
-        public void onStatementDefinitionDeclared(final StmtContext.Mutable<QName, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> stmt) {
+        public void onStatementDefinitionDeclared(
+                final Mutable<QName, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> stmt) {
             super.onStatementDefinitionDeclared(stmt);
 
             QName stmtName = stmt.getStatementArgument();
@@ -107,5 +109,4 @@ public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> imp
     public ArgumentStatement getArgument() {
         return firstDeclared(ArgumentStatement.class);
     }
-
 }
