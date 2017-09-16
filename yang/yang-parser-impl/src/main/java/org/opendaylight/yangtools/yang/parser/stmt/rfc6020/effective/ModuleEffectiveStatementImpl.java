@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 
 public final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleStatement> {
-    private final QNameModule qNameModule;
+    private final QNameModule qnameModule;
 
     public ModuleEffectiveStatementImpl(
             final StmtContext<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> ctx) {
@@ -24,15 +24,15 @@ public final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<
 
         final QNameModule module = ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx);
         if (module.getRevision() == null) {
-            qNameModule = QNameModule.create(module.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV).intern();
+            qnameModule = QNameModule.create(module.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV).intern();
         } else {
-            qNameModule = module;
+            qnameModule = module;
         }
     }
 
     @Override
     public QNameModule getQNameModule() {
-        return qNameModule;
+        return qnameModule;
     }
 
     @Override
@@ -41,7 +41,7 @@ public final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<
         int result = 1;
         result = prime * result + Objects.hashCode(getName());
         result = prime * result + Objects.hashCode(getYangVersion());
-        result = prime * result + Objects.hashCode(qNameModule);
+        result = prime * result + Objects.hashCode(qnameModule);
         return result;
     }
 
@@ -57,7 +57,7 @@ public final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<
         if (!Objects.equals(getName(), other.getName())) {
             return false;
         }
-        if (!qNameModule.equals(other.qNameModule)) {
+        if (!qnameModule.equals(other.qnameModule)) {
             return false;
         }
         if (!Objects.equals(getYangVersion(), other.getYangVersion())) {

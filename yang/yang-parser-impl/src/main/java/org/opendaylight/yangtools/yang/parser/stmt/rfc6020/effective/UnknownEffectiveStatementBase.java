@@ -38,8 +38,8 @@ public abstract class UnknownEffectiveStatementBase<A> extends AbstractEffective
     protected UnknownEffectiveStatementBase(final StmtContext<A, UnknownStatement<A>, ?> ctx) {
         super(ctx);
 
-        final StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> extensionInit = ctx
-                .getFromNamespace(ExtensionNamespace.class, ctx.getPublicDefinition().getStatementName());
+        final StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> extensionInit =
+                ctx.getFromNamespace(ExtensionNamespace.class, ctx.getPublicDefinition().getStatementName());
 
         if (extensionInit == null) {
             extension = null;
@@ -61,7 +61,7 @@ public abstract class UnknownEffectiveStatementBase<A> extends AbstractEffective
             this.addedByUses = copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES);
         }
 
-        nodeParameter = (ctx.rawStatementArgument() == null) ? "" : ctx.rawStatementArgument();
+        nodeParameter = ctx.rawStatementArgument() == null ? "" : ctx.rawStatementArgument();
 
         // TODO init other fields (see Bug1412Test)
         final Builder<UnknownSchemaNode> builder = ImmutableList.builder();
@@ -107,8 +107,6 @@ public abstract class UnknownEffectiveStatementBase<A> extends AbstractEffective
     @Override
     public String toString() {
         final QName type = getNodeType();
-
-        return String.valueOf(type.getNamespace()) +
-                ":" + type.getLocalName() + " " + nodeParameter;
+        return String.valueOf(type.getNamespace()) + ":" + type.getLocalName() + " " + nodeParameter;
     }
 }

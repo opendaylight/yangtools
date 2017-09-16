@@ -20,29 +20,29 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 /**
  * A {@link NamespaceContext} implementation based on the set of imports and local module namespace.
- *
- * TODO: this is a useful utility, so should probably move to yang.parser.spi.meta.
  */
+// TODO: this is a useful utility, so should probably move to yang.parser.spi.meta.
 final class StmtNamespaceContext implements NamespaceContext {
     private final StmtContext<?, ?, ?> ctx;
-    private final BiMap<String, String> URIToPrefixMap;
+    private final BiMap<String, String> uriToPrefix;
+
     private String localNamespaceURI;
 
     private StmtNamespaceContext(final StmtContext<?, ?, ?> ctx) {
         this(ctx, ImmutableBiMap.of());
     }
 
-    private StmtNamespaceContext(final StmtContext<?, ?, ?> ctx, final BiMap<String, String> URIToPrefixMap) {
+    private StmtNamespaceContext(final StmtContext<?, ?, ?> ctx, final BiMap<String, String> uriToPrefix) {
         this.ctx = Preconditions.checkNotNull(ctx);
-        this.URIToPrefixMap = ImmutableBiMap.copyOf(Preconditions.checkNotNull(URIToPrefixMap));
+        this.uriToPrefix = ImmutableBiMap.copyOf(Preconditions.checkNotNull(uriToPrefix));
     }
 
     public static NamespaceContext create(final StmtContext<?, ?, ?> ctx) {
         return new StmtNamespaceContext(ctx);
     }
 
-    public static NamespaceContext create(final StmtContext<?, ?, ?> ctx, final BiMap<String, String> URIToPrefixMap) {
-        return new StmtNamespaceContext(ctx, URIToPrefixMap);
+    public static NamespaceContext create(final StmtContext<?, ?, ?> ctx, final BiMap<String, String> uriToPrefix) {
+        return new StmtNamespaceContext(ctx, uriToPrefix);
     }
 
     private String localNamespaceURI() {
@@ -59,7 +59,7 @@ final class StmtNamespaceContext implements NamespaceContext {
         // API-mandated by NamespaceContext
         Preconditions.checkArgument(prefix != null);
 
-        final String uri = URIToPrefixMap.inverse().get(prefix);
+        final String uri = uriToPrefix.inverse().get(prefix);
         if (uri != null) {
             return uri;
         }
@@ -77,7 +77,7 @@ final class StmtNamespaceContext implements NamespaceContext {
         // API-mandated by NamespaceContext
         Preconditions.checkArgument(namespaceURI != null);
 
-        final String prefix = URIToPrefixMap.get(namespaceURI);
+        final String prefix = uriToPrefix.get(namespaceURI);
         if (prefix != null) {
             return prefix;
         }
@@ -93,6 +93,6 @@ final class StmtNamespaceContext implements NamespaceContext {
         // Ensures underlying map remains constant
         return Iterators.unmodifiableIterator(Iterators.concat(
                 ctx.getAllFromNamespace(URIStringToImpPrefix.class).values().iterator(),
-                URIToPrefixMap.values().iterator()));
+                uriToPrefix.values().iterator()));
     }
 }

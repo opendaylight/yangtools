@@ -41,7 +41,7 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
         final Collection<? extends StmtContext<?, ?, ?>> supportedDeclaredSubStmts = Collections2.filter(
                 ctx.declaredSubstatements(), StmtContext::isSupportedByFeatures);
         for (final StmtContext<?, ?, ?> declaredSubstatement : supportedDeclaredSubStmts) {
-            if (declaredSubstatement.getPublicDefinition().equals(YangStmtMapping.USES)) {
+            if (YangStmtMapping.USES == declaredSubstatement.getPublicDefinition()) {
                 substatementsInit.add(declaredSubstatement);
                 substatementsInit.addAll(declaredSubstatement.getEffectOfStatement());
                 ((StatementContextBase<?, ?, ?>) ctx).removeStatementsFromEffectiveSubstatements(declaredSubstatement
@@ -69,7 +69,8 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
     }
 
     @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> V get(@Nonnull final Class<N> namespace, @Nonnull final K identifier) {
+    public final <K, V, N extends IdentifierNamespace<K, V>> V get(@Nonnull final Class<N> namespace,
+            @Nonnull final K identifier) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 

@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 
 final class BuiltinTypeStatement implements TypeStatement {
     private static final Map<String, BuiltinTypeStatement> BUILTINS;
+
     static {
         final Builder<String, BuiltinTypeStatement> builder = ImmutableMap.builder();
         putBuiltin(builder, TypeUtils.BINARY);
@@ -51,8 +52,8 @@ final class BuiltinTypeStatement implements TypeStatement {
     }
 
     static TypeStatement maybeReplace(final TypeStatementImpl orig) {
-        if (orig.declaredSubstatements().isEmpty() && orig.getStatementSource() == StatementSource.DECLARATION &&
-                orig.statementDefinition() == YangStmtMapping.TYPE) {
+        if (orig.declaredSubstatements().isEmpty() && orig.getStatementSource() == StatementSource.DECLARATION
+                && orig.statementDefinition() == YangStmtMapping.TYPE) {
             final BuiltinTypeStatement builtin = BUILTINS.get(orig.argument());
             if (builtin != null) {
                 return builtin;

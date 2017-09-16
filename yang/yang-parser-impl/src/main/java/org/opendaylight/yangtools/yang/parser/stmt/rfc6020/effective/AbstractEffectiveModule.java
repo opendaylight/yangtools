@@ -79,7 +79,9 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
     private final Set<TypeDefinition<?>> typeDefinitions;
     private final Set<DataSchemaNode> publicChildNodes;
     private final SemVer semanticVersion;
-    private Set<StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>> submoduleContextsToBuild;
+
+    private Set<StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>>
+        submoduleContextsToBuild;
     private Set<Module> submodules;
     private boolean sealed;
 
@@ -101,18 +103,20 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
                 "Unable to resolve prefix for module or submodule %s.", ctx.getStatementArgument());
         this.prefix = prefixStmt.argument();
 
-        final YangVersionEffectiveStatementImpl yangVersionStmt = firstEffective(YangVersionEffectiveStatementImpl.class);
-        this.yangVersion = (yangVersionStmt == null) ? YangVersion.VERSION_1 : yangVersionStmt.argument();
+        final YangVersionEffectiveStatementImpl yangVersionStmt =
+                firstEffective(YangVersionEffectiveStatementImpl.class);
+        this.yangVersion = yangVersionStmt == null ? YangVersion.VERSION_1 : yangVersionStmt.argument();
 
         final OpenconfigVersionEffectiveStatementImpl semanticVersionStmt =
                 firstEffective(OpenconfigVersionEffectiveStatementImpl.class);
-        this.semanticVersion = (semanticVersionStmt == null) ? DEFAULT_SEMANTIC_VERSION : semanticVersionStmt.argument();
+        this.semanticVersion = semanticVersionStmt == null ? DEFAULT_SEMANTIC_VERSION : semanticVersionStmt.argument();
 
-        final OrganizationEffectiveStatementImpl organizationStmt = firstEffective(OrganizationEffectiveStatementImpl.class);
-        this.organization = (organizationStmt == null) ? null : organizationStmt.argument();
+        final OrganizationEffectiveStatementImpl organizationStmt =
+                firstEffective(OrganizationEffectiveStatementImpl.class);
+        this.organization = organizationStmt == null ? null : organizationStmt.argument();
 
         final ContactEffectiveStatementImpl contactStmt = firstEffective(ContactEffectiveStatementImpl.class);
-        this.contact = (contactStmt == null) ? null : contactStmt.argument();
+        this.contact = contactStmt == null ? null : contactStmt.argument();
 
         if (ctx.getStatementSourceReference() instanceof DeclarationInTextSource) {
             this.sourcePath = ((DeclarationInTextSource) ctx.getStatementSourceReference()).getSourceName();
@@ -140,7 +144,8 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
             final List<EffectiveStatement<?, ?>> substatementsOfSubmodulesInit = new ArrayList<>();
             for (final ModuleIdentifier submoduleIdentifier : includedSubmodules) {
                 @SuppressWarnings("unchecked")
-                final Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> submoduleCtx = (Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>) ctx
+                final Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> submoduleCtx =
+                        (Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>) ctx
                         .getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);
                 final SubmoduleEffectiveStatementImpl submodule = (SubmoduleEffectiveStatementImpl) submoduleCtx
                         .buildEffective();
@@ -159,10 +164,11 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
              * collect only submodule contexts here and then build them during
              * sealing of this statement.
              */
-            final Set<StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>> submoduleContextsInit = new HashSet<>();
+            final Set<StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>>
+                submoduleContextsInit = new HashSet<>();
             for (final ModuleIdentifier submoduleIdentifier : includedSubmodulesMap.values()) {
-                final StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> submoduleCtx = ctx
-                        .getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);
+                final StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> submoduleCtx =
+                        ctx.getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);
                 submoduleContextsInit.add(submoduleCtx);
             }
 
@@ -332,8 +338,8 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
 
     @Override
     public Set<Module> getSubmodules() {
-        Preconditions.checkState(sealed, "Attempt to get base submodules from unsealed submodule effective statement %s",
-                getQNameModule());
+        Preconditions.checkState(sealed,
+            "Attempt to get base submodules from unsealed submodule effective statement %s", getQNameModule());
         return submodules;
     }
 
@@ -412,20 +418,20 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "[" +
-                "name=" + name +
-                ", namespace=" + getNamespace() +
-                ", revision=" + getQNameModule().getFormattedRevision() +
-                ", prefix=" + prefix +
-                ", yangVersion=" + yangVersion +
-                "]";
+        return this.getClass().getSimpleName() + "["
+                + "name=" + name
+                + ", namespace=" + getNamespace()
+                + ", revision=" + getQNameModule().getFormattedRevision()
+                + ", prefix=" + prefix
+                + ", yangVersion=" + yangVersion
+                + "]";
     }
 
     @Override
     public void seal() {
         if (!sealed) {
             submodules = ImmutableSet.copyOf(Iterables.transform(submoduleContextsToBuild,
-                    ctx -> (Module) ctx.buildEffective()));
+                ctx -> (Module) ctx.buildEffective()));
             submoduleContextsToBuild = ImmutableSet.of();
             sealed = true;
         }

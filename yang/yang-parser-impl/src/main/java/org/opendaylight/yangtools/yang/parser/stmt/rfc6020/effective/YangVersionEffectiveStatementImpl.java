@@ -11,7 +11,8 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class YangVersionEffectiveStatementImpl extends DeclaredEffectiveStatementBase<YangVersion, YangVersionStatement> {
+public final class YangVersionEffectiveStatementImpl
+        extends DeclaredEffectiveStatementBase<YangVersion, YangVersionStatement> {
     public YangVersionEffectiveStatementImpl(final StmtContext<YangVersion, YangVersionStatement, ?> ctx) {
         super(ctx);
     }

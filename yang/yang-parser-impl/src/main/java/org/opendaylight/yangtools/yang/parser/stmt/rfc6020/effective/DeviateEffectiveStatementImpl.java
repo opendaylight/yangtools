@@ -49,9 +49,11 @@ public final class DeviateEffectiveStatementImpl
         this.deviatedDefault = defaultStmt == null ? null : defaultStmt.argument();
         final MandatoryEffectiveStatement mandatoryStmt = firstEffective(MandatoryEffectiveStatement.class);
         this.deviatedMandatory = OptionalBoolean.ofNullable(mandatoryStmt == null ? null : mandatoryStmt.argument());
-        final MaxElementsEffectiveStatementImpl maxElementsStmt = firstEffective(MaxElementsEffectiveStatementImpl.class);
+        final MaxElementsEffectiveStatementImpl maxElementsStmt =
+                firstEffective(MaxElementsEffectiveStatementImpl.class);
         this.deviatedMaxElements = maxElementsStmt == null ? null : Integer.valueOf(maxElementsStmt.argument());
-        final MinElementsEffectiveStatementImpl minElementsStmt = firstEffective(MinElementsEffectiveStatementImpl.class);
+        final MinElementsEffectiveStatementImpl minElementsStmt =
+                firstEffective(MinElementsEffectiveStatementImpl.class);
         this.deviatedMinElements = minElementsStmt == null ? null : minElementsStmt.argument();
         final TypeEffectiveStatement<TypeStatement> typeStmt = firstEffective(TypeEffectiveStatement.class);
         this.deviatedType = typeStmt == null ? null : typeStmt.getTypeDefinition();
@@ -124,16 +126,16 @@ public final class DeviateEffectiveStatementImpl
             return false;
         }
         DeviateEffectiveStatementImpl other = (DeviateEffectiveStatementImpl) obj;
-        return Objects.equals(deviateType, other.deviateType) &&
-                deviatedConfig == other.deviatedConfig &&
-                Objects.equals(deviatedDefault, other.deviatedDefault) &&
-                deviatedMandatory == other.deviatedMandatory &&
-                Objects.equals(deviatedMaxElements, other.deviatedMaxElements) &&
-                Objects.equals(deviatedMinElements, other.deviatedMinElements) &&
-                Objects.equals(deviatedMustDefinitions, other.deviatedMustDefinitions) &&
-                Objects.equals(deviatedType, other.deviatedType) &&
-                Objects.equals(deviatedUniqueConstraints, other.deviatedUniqueConstraints) &&
-                Objects.equals(deviatedUnits, other.deviatedUnits);
+        return Objects.equals(deviateType, other.deviateType)
+                && deviatedConfig == other.deviatedConfig
+                && Objects.equals(deviatedDefault, other.deviatedDefault)
+                && deviatedMandatory == other.deviatedMandatory
+                && Objects.equals(deviatedMaxElements, other.deviatedMaxElements)
+                && Objects.equals(deviatedMinElements, other.deviatedMinElements)
+                && Objects.equals(deviatedMustDefinitions, other.deviatedMustDefinitions)
+                && Objects.equals(deviatedType, other.deviatedType)
+                && Objects.equals(deviatedUniqueConstraints, other.deviatedUniqueConstraints)
+                && Objects.equals(deviatedUnits, other.deviatedUnits);
     }
 
     @Override

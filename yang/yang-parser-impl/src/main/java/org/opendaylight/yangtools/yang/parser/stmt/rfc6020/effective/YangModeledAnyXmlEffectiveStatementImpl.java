@@ -17,13 +17,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class YangModeledAnyXmlEffectiveStatementImpl extends AnyXmlEffectiveStatementImpl implements
-        YangModeledAnyXmlSchemaNode {
+public final class YangModeledAnyXmlEffectiveStatementImpl extends AnyXmlEffectiveStatementImpl
+        implements YangModeledAnyXmlSchemaNode {
 
     private final ContainerSchemaNode schemaOfAnyXmlData;
 
-    public YangModeledAnyXmlEffectiveStatementImpl(
-            final StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx, final ContainerSchemaNode contentSchema) {
+    public YangModeledAnyXmlEffectiveStatementImpl(final StmtContext<QName, AnyxmlStatement,
+            EffectiveStatement<QName, AnyxmlStatement>> ctx, final ContainerSchemaNode contentSchema) {
         super(ctx);
         schemaOfAnyXmlData = Preconditions.checkNotNull(contentSchema);
     }
@@ -61,9 +61,9 @@ public final class YangModeledAnyXmlEffectiveStatementImpl extends AnyXmlEffecti
 
     @Override
     public String toString() {
-        return YangModeledAnyXmlEffectiveStatementImpl.class.getSimpleName() + "[" +
-                "qname=" + getQName() +
-                ", path=" + getPath() +
-                "]";
+        return YangModeledAnyXmlEffectiveStatementImpl.class.getSimpleName() + "["
+               + "qname=" + getQName()
+               + ", path=" + getPath()
+               + "]";
     }
 }

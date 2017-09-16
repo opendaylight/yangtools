@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
-import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -22,7 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -30,12 +28,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangValidationBundles
 
 public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<ChoiceStatement> implements
         ChoiceSchemaNode, DerivableSchemaNode {
-    /**
-     * Comparator based on alphabetical order of local name of SchemaNode's
-     * qname.
-     */
-    private static final Comparator<SchemaNode> SCHEMA_NODE_COMP = (o1, o2) -> o1.getQName().compareTo(o2.getQName());
-
     private final ChoiceSchemaNode original;
     private final String defaultCase;
 
@@ -52,7 +44,7 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
 
         // initSubstatementCollectionsAndFields
         final Set<AugmentationSchema> augmentationsInit = new LinkedHashSet<>();
-        final SortedSet<ChoiceCaseNode> casesInit = new TreeSet<>(SCHEMA_NODE_COMP);
+        final SortedSet<ChoiceCaseNode> casesInit = new TreeSet<>((o1, o2) -> o1.getQName().compareTo(o2.getQName()));
 
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof AugmentationSchema) {
@@ -166,8 +158,8 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
 
     @Override
     public String toString() {
-        return ChoiceEffectiveStatementImpl.class.getSimpleName() + "[" +
-                "qname=" + getQName() +
-                "]";
+        return ChoiceEffectiveStatementImpl.class.getSimpleName() + "["
+                + "qname=" + getQName()
+                + "]";
     }
 }

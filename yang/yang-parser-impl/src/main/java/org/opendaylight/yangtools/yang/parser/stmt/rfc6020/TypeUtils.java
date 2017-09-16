@@ -12,7 +12,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.math.BigDecimal;
@@ -44,7 +43,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Length
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeConstraintEffectiveImpl;
 
 /**
-* util class for manipulating YANG base and extended types implementation
+* Utility class for manipulating YANG base and extended types implementation.
 */
 public final class TypeUtils {
 
@@ -68,33 +67,27 @@ public final class TypeUtils {
     public static final String UINT64 = "uint64";
     public static final String UNION = "union";
 
-    private static final Map<String, String> BUILT_IN_TYPES;
-
-    static {
-        final Builder<String, String> b = ImmutableMap.builder();
-
-        b.put(BINARY, BINARY);
-        b.put(BITS, BITS);
-        b.put(BOOLEAN, BOOLEAN);
-        b.put(DECIMAL64, DECIMAL64);
-        b.put(EMPTY, EMPTY);
-        b.put(ENUMERATION, ENUMERATION);
-        b.put(IDENTITY_REF,IDENTITY_REF);
-        b.put(INSTANCE_IDENTIFIER, INSTANCE_IDENTIFIER);
-        b.put(INT8, INT8);
-        b.put(INT16, INT16);
-        b.put(INT32, INT32);
-        b.put(INT64, INT64);
-        b.put(LEAF_REF, LEAF_REF);
-        b.put(STRING, STRING);
-        b.put(UINT8, UINT8);
-        b.put(UINT16, UINT16);
-        b.put(UINT32, UINT32);
-        b.put(UINT64, UINT64);
-        b.put(UNION, UNION);
-
-        BUILT_IN_TYPES = b.build();
-    }
+    private static final Map<String, String> BUILT_IN_TYPES = ImmutableMap.<String, String>builder()
+        .put(BINARY, BINARY)
+        .put(BITS, BITS)
+        .put(BOOLEAN, BOOLEAN)
+        .put(DECIMAL64, DECIMAL64)
+        .put(EMPTY, EMPTY)
+        .put(ENUMERATION, ENUMERATION)
+        .put(IDENTITY_REF,IDENTITY_REF)
+        .put(INSTANCE_IDENTIFIER, INSTANCE_IDENTIFIER)
+        .put(INT8, INT8)
+        .put(INT16, INT16)
+        .put(INT32, INT32)
+        .put(INT64, INT64)
+        .put(LEAF_REF, LEAF_REF)
+        .put(STRING, STRING)
+        .put(UINT8, UINT8)
+        .put(UINT16, UINT16)
+        .put(UINT32, UINT32)
+        .put(UINT64, UINT64)
+        .put(UNION, UNION)
+        .build();
 
     private static final Set<String> TYPE_BODY_STMTS = ImmutableSet.of(
         DECIMAL64, ENUMERATION, LEAF_REF, IDENTITY_REF, BITS, UNION);

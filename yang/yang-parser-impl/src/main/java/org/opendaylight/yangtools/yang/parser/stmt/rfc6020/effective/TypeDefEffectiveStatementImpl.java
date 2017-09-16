@@ -32,7 +32,9 @@ import org.slf4j.LoggerFactory;
 public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchemaNode<TypedefStatement> implements
         TypedefEffectiveStatement {
     private static final Logger LOG = LoggerFactory.getLogger(TypeDefEffectiveStatementImpl.class);
+
     private final TypeDefinition<?> typeDefinition;
+
     private TypeEffectiveStatement<TypeStatement> typeStatement;
 
     public TypeDefEffectiveStatementImpl(final StmtContext<QName, TypedefStatement, ?> ctx) {
@@ -101,7 +103,8 @@ public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchema
         }
 
         @Override
-        public <K, V, N extends IdentifierNamespace<K, V>> V get(@Nonnull final Class<N> namespace, @Nonnull final K identifier) {
+        public <K, V, N extends IdentifierNamespace<K, V>> V get(@Nonnull final Class<N> namespace,
+                @Nonnull final K identifier) {
             return TypeDefEffectiveStatementImpl.this.get(namespace, identifier);
         }
 
