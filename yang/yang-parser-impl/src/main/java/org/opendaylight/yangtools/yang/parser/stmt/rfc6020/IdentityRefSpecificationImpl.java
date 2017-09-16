@@ -7,37 +7,36 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import com.google.common.base.Preconditions;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.IdentityRefSpecification;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.IdentityRefSpecificationEffectiveStatementImpl;
 
-public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<String> implements TypeStatement.IdentityRefSpecification {
+public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<String>
+        implements IdentityRefSpecification {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .TYPE)
             .addMandatory(YangStmtMapping.BASE)
             .build();
 
-    protected IdentityRefSpecificationImpl(
-            final StmtContext<String, TypeStatement.IdentityRefSpecification, ?> context) {
+    protected IdentityRefSpecificationImpl(final StmtContext<String, IdentityRefSpecification, ?> context) {
         super(context);
     }
 
-    public static class Definition
-            extends
-            AbstractStatementSupport<String, TypeStatement.IdentityRefSpecification, EffectiveStatement<String, TypeStatement.IdentityRefSpecification>> {
+    public static class Definition extends AbstractStatementSupport<String, IdentityRefSpecification,
+            EffectiveStatement<String, IdentityRefSpecification>> {
 
         public Definition() {
             super(YangStmtMapping.TYPE);
@@ -49,33 +48,30 @@ public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<Stri
         }
 
         @Override
-        public TypeStatement.IdentityRefSpecification createDeclared(
-                final StmtContext<String, TypeStatement.IdentityRefSpecification, ?> ctx) {
+        public IdentityRefSpecification createDeclared(final StmtContext<String, IdentityRefSpecification, ?> ctx) {
             return new IdentityRefSpecificationImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<String, TypeStatement.IdentityRefSpecification> createEffective(
-                final StmtContext<String, TypeStatement.IdentityRefSpecification, EffectiveStatement<String, TypeStatement
-                        .IdentityRefSpecification>> ctx) {
+        public EffectiveStatement<String, IdentityRefSpecification> createEffective(
+                final StmtContext<String, IdentityRefSpecification,
+                EffectiveStatement<String, IdentityRefSpecification>> ctx) {
             return new IdentityRefSpecificationEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(final StmtContext.Mutable<String, IdentityRefSpecification,
+        public void onFullDefinitionDeclared(final Mutable<String, IdentityRefSpecification,
                 EffectiveStatement<String, IdentityRefSpecification>> stmt) {
             super.onFullDefinitionDeclared(stmt);
 
             final Collection<StmtContext<QName, BaseStatement, ?>> baseStatements =
                     StmtContextUtils.<QName, BaseStatement>findAllDeclaredSubstatements(stmt, BaseStatement.class);
-
             for (StmtContext<QName, BaseStatement, ?> baseStmt : baseStatements) {
                 final QName baseIdentity = baseStmt.getStatementArgument();
-                final StmtContext<?, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> stmtCtx =
-                        stmt.getFromNamespace(IdentityNamespace.class, baseIdentity);
-                Preconditions.checkArgument(stmtCtx != null, "Referenced base identity '%s' doesn't exist " +
-                        "in given scope (module, imported modules, submodules), source: '%s'",
-                        baseIdentity.getLocalName(), stmt.getStatementSourceReference());
+                final StmtContext<?, ?, ?> stmtCtx = stmt.getFromNamespace(IdentityNamespace.class, baseIdentity);
+                InferenceException.throwIfNull(stmtCtx, stmt.getStatementSourceReference(),
+                    "Referenced base identity '%s' doesn't exist in given scope (module, imported modules, submodules)",
+                        baseIdentity.getLocalName());
             }
         }
 
@@ -102,5 +98,4 @@ public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<Stri
     public Collection<? extends BaseStatement> getBases() {
         return allDeclared(BaseStatement.class);
     }
-
 }
