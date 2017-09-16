@@ -25,10 +25,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
-public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafListStatement> implements
-        LeafListSchemaNode, DerivableSchemaNode {
+public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafListStatement>
+        implements LeafListSchemaNode, DerivableSchemaNode {
 
     private static final String ORDER_BY_USER_KEYWORD = "user";
+
     private final TypeDefinition<?> type;
     private final LeafListSchemaNode original;
     private final boolean userOrdered;
@@ -122,8 +123,6 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
 
     @Override
     public String toString() {
-        return LeafListEffectiveStatementImpl.class.getSimpleName() + "[" +
-                getQName() +
-                "]";
+        return LeafListEffectiveStatementImpl.class.getSimpleName() + "[" + getQName() + "]";
     }
 }

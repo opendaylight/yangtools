@@ -55,7 +55,8 @@ abstract class EmptyConfigEffectiveStatement implements ConfigEffectiveStatement
     }
 
     @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> V get(@Nonnull final Class<N> namespace, @Nonnull final K identifier) {
+    public final <K, V, N extends IdentifierNamespace<K, V>> V get(@Nonnull final Class<N> namespace,
+            @Nonnull final K identifier) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 

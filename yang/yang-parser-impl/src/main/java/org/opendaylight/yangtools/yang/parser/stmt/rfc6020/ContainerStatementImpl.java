@@ -84,8 +84,9 @@ public class ContainerStatementImpl extends AbstractDeclaredStatement<QName> imp
         }
 
         @Override
-        public EffectiveStatement<QName,ContainerStatement> createEffective(final StmtContext<QName,ContainerStatement,EffectiveStatement<QName,ContainerStatement>> ctx) {
-           return new ContainerEffectiveStatementImpl(ctx);
+        public EffectiveStatement<QName,ContainerStatement> createEffective(final StmtContext<QName, ContainerStatement,
+                EffectiveStatement<QName,ContainerStatement>> ctx) {
+            return new ContainerEffectiveStatementImpl(ctx);
         }
 
         @Override

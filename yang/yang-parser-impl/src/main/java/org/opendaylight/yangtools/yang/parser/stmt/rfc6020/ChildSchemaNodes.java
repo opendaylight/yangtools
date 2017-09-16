@@ -19,9 +19,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * Statement local namespace, which holds direct schema node descendants.
- *
- * @param <D>
- * @param <E>
  */
 public class ChildSchemaNodes<D extends DeclaredStatement<QName>, E extends EffectiveStatement<QName, D>>
     extends NamespaceBehaviour<QName, StmtContext<?, D, E>, ChildSchemaNodes<D, E>>

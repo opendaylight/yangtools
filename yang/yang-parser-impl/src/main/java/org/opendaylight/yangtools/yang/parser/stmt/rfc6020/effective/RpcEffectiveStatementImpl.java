@@ -27,7 +27,8 @@ public class RpcEffectiveStatementImpl extends AbstractEffectiveSchemaNode<RpcSt
     private final Set<TypeDefinition<?>> typeDefinitions;
     private final Set<GroupingDefinition> groupings;
 
-    public RpcEffectiveStatementImpl(final StmtContext<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> ctx) {
+    public RpcEffectiveStatementImpl(final StmtContext<QName, RpcStatement,
+            EffectiveStatement<QName, RpcStatement>> ctx) {
         super(ctx);
         this.input = firstEffective(InputEffectiveStatementImpl.class);
         this.output = firstEffective(OutputEffectiveStatementImpl.class);
@@ -100,15 +101,11 @@ public class RpcEffectiveStatementImpl extends AbstractEffectiveSchemaNode<RpcSt
 
     @Override
     public String toString() {
-        return RpcEffectiveStatementImpl.class.getSimpleName() + "[" +
-                "qname=" +
-                getQName() +
-                ", path=" +
-                getPath() +
-                ", input=" +
-                input +
-                ", output=" +
-                output +
-                "]";
+        return RpcEffectiveStatementImpl.class.getSimpleName() + "["
+                + "qname=" + getQName()
+                + ", path=" +  getPath()
+                + ", input=" + input
+                + ", output=" + output
+                + "]";
     }
 }

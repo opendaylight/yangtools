@@ -50,6 +50,7 @@ public final class Utils {
     private static final CharMatcher RIGHT_PARENTHESIS_MATCHER = CharMatcher.is(')');
     private static final CharMatcher AMPERSAND_MATCHER = CharMatcher.is('&');
     private static final CharMatcher QUESTION_MARK_MATCHER = CharMatcher.is('?');
+    private static final CharMatcher ANYQUOTE_MATCHER = CharMatcher.anyOf("'\"");
     private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings().trimResults();
     private static final Splitter SPACE_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
     private static final Splitter COLON_SPLITTER = Splitter.on(":").omitEmptyStrings().trimResults();
@@ -78,8 +79,8 @@ public final class Utils {
         XPATH_FACTORY.remove();
     }
 
-    public static Collection<SchemaNodeIdentifier.Relative> transformKeysStringToKeyNodes(final StmtContext<?, ?, ?> ctx,
-            final String value) {
+    public static Collection<SchemaNodeIdentifier.Relative> transformKeysStringToKeyNodes(
+            final StmtContext<?, ?, ?> ctx, final String value) {
         final List<String> keyTokens = SPACE_SPLITTER.splitToList(value);
 
         // to detect if key contains duplicates
@@ -234,13 +235,8 @@ public final class Utils {
     private static void checkUnquotedString(final String str, final YangVersion yangVersion,
             final StatementSourceReference ref) {
         if (yangVersion == YangVersion.VERSION_1_1) {
-            for (int i = 0; i < str.length(); i++) {
-                switch (str.charAt(i)) {
-                case '"':
-                case '\'':
-                    throw new SourceException(ref, "Yang 1.1: unquoted string (%s) contains illegal characters", str);
-                }
-            }
+            SourceException.throwIf(ANYQUOTE_MATCHER.matchesAnyOf(str), ref,
+                "YANG 1.1: unquoted string (%s) contains illegal characters", str);
         }
     }
 
@@ -250,17 +246,16 @@ public final class Utils {
             for (int i = 0; i < str.length() - 1; i++) {
                 if (str.charAt(i) == '\\') {
                     switch (str.charAt(i + 1)) {
-                    case 'n':
-                    case 't':
-                    case '\\':
-                    case '\"':
-                        i++;
-                        break;
-                    default:
-                        throw new SourceException(ref,
-                                "Yang 1.1: illegal double quoted string (%s). In double quoted string the backslash must be followed "
-                                        + "by one of the following character [n,t,\",\\], but was '%s'.", str,
-                                str.charAt(i + 1));
+                        case 'n':
+                        case 't':
+                        case '\\':
+                        case '\"':
+                            i++;
+                            break;
+                        default:
+                            throw new SourceException(ref, "YANG 1.1: illegal double quoted string (%s). In double "
+                                    + "quoted string the backslash must be followed by one of the following character "
+                                    + "[n,t,\",\\], but was '%s'.", str, str.charAt(i + 1));
                     }
                 }
             }
@@ -270,7 +265,8 @@ public final class Utils {
     @Nullable
     public static StatementContextBase<?, ?, ?> findNode(final StmtContext<?, ?, ?> rootStmtCtx,
             final SchemaNodeIdentifier node) {
-        return (StatementContextBase<?, ?, ?>) rootStmtCtx.getFromNamespace(SchemaNodeIdentifierBuildNamespace.class, node);
+        return (StatementContextBase<?, ?, ?>) rootStmtCtx.getFromNamespace(SchemaNodeIdentifierBuildNamespace.class,
+            node);
     }
 
     static @Nonnull Boolean parseBoolean(final StmtContext<?, ?, ?> ctx, final String input) {
@@ -296,8 +292,7 @@ public final class Utils {
     }
 
     /**
-     * Replaces illegal characters of QName by the name of the character (e.g.
-     * '?' is replaced by "QuestionMark" etc.).
+     * Replaces illegal characters of QName by the name of the character (e.g. '?' is replaced by "QuestionMark" etc.).
      *
      * @param string
      *            input String

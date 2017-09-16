@@ -28,13 +28,13 @@ public class UniqueStatementImpl extends AbstractDeclaredStatement<Collection<Sc
             .UNIQUE)
             .build();
 
-    protected UniqueStatementImpl(final StmtContext<Collection<SchemaNodeIdentifier.Relative>, UniqueStatement, ?> context) {
+    protected UniqueStatementImpl(
+            final StmtContext<Collection<SchemaNodeIdentifier.Relative>, UniqueStatement, ?> context) {
         super(context);
     }
 
     public static class Definition
-            extends
-            AbstractStatementSupport<Collection<SchemaNodeIdentifier.Relative>, UniqueStatement,
+            extends AbstractStatementSupport<Collection<SchemaNodeIdentifier.Relative>, UniqueStatement,
                     EffectiveStatement<Collection<SchemaNodeIdentifier.Relative>, UniqueStatement>> {
 
         public Definition() {
@@ -42,7 +42,8 @@ public class UniqueStatementImpl extends AbstractDeclaredStatement<Collection<Sc
         }
 
         @Override
-        public Collection<SchemaNodeIdentifier.Relative> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        public Collection<SchemaNodeIdentifier.Relative> parseArgumentValue(final StmtContext<?, ?, ?> ctx,
+                final String value) {
             final Collection<Relative> uniqueConstraints = Utils.parseUniqueConstraintArgument(ctx, value);
             SourceException.throwIf(uniqueConstraints.isEmpty(), ctx.getStatementSourceReference(),
                     "Invalid argument value '%s' of unique statement. The value must contains at least "
@@ -56,9 +57,9 @@ public class UniqueStatementImpl extends AbstractDeclaredStatement<Collection<Sc
         }
 
         @Override
-        public EffectiveStatement<Collection<Relative>, UniqueStatement> createEffective
-                (final StmtContext<Collection<Relative>, UniqueStatement, EffectiveStatement<Collection<Relative>,
-                        UniqueStatement>> ctx) {
+        public EffectiveStatement<Collection<Relative>, UniqueStatement> createEffective(
+                final StmtContext<Collection<Relative>, UniqueStatement,
+                EffectiveStatement<Collection<Relative>, UniqueStatement>> ctx) {
             return new UniqueEffectiveStatementImpl(ctx);
         }
 

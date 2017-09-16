@@ -34,10 +34,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public abstract class AbstractRootStatement<T extends DeclaredStatement<String>> extends AbstractDeclaredStatement<String>
-        implements LinkageGroup, MetaGroup, RevisionGroup, BodyGroup {
+public abstract class AbstractRootStatement<T extends DeclaredStatement<String>>
+        extends AbstractDeclaredStatement<String> implements LinkageGroup, MetaGroup, RevisionGroup, BodyGroup {
 
-    protected AbstractRootStatement(StmtContext<String, T,?> context) {
+    protected AbstractRootStatement(final StmtContext<String, T,?> context) {
         super(context);
     }
 

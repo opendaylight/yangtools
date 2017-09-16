@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
@@ -23,7 +22,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 public class SchemaNodeIdentifierBuildNamespace extends
-        DerivedNamespaceBehaviour<SchemaNodeIdentifier, StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>, QName, SchemaNodeIdentifierBuildNamespace, ChildSchemaNodes<?, ?>>
+        DerivedNamespaceBehaviour<SchemaNodeIdentifier, StmtContext.Mutable<?, ?,
+                EffectiveStatement<?, ?>>, QName, SchemaNodeIdentifierBuildNamespace, ChildSchemaNodes<?, ?>>
         implements IdentifierNamespace<SchemaNodeIdentifier, StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>> {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -39,8 +39,8 @@ public class SchemaNodeIdentifierBuildNamespace extends
 
     @SuppressWarnings("unchecked")
     @Override
-    public StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> getFrom(final NamespaceStorageNode storage, final SchemaNodeIdentifier key) {
-
+    public StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> getFrom(final NamespaceStorageNode storage,
+            final SchemaNodeIdentifier key) {
         final NamespaceStorageNode lookupStartStorage;
         if (key.isAbsolute() || storage.getStorageNodeType() == StorageNodeType.ROOT_STATEMENT_LOCAL) {
             lookupStartStorage = NamespaceBehaviour.findClosestTowardsRoot(storage, StorageNodeType.GLOBAL);
@@ -75,8 +75,8 @@ public class SchemaNodeIdentifierBuildNamespace extends
     @SuppressWarnings({"unchecked", "rawtypes"})
     private static Mutable<?, ?, EffectiveStatement<?, ?>> tryToFindUnknownStatement(final String localName,
             final Mutable<?, ?, EffectiveStatement<?, ?>> current) {
-        final Collection<StmtContext<?, ?, ?>> unknownSubstatements = (Collection)StmtContextUtils.findAllSubstatements(current,
-                UnknownStatement.class);
+        final Collection<StmtContext<?, ?, ?>> unknownSubstatements = (Collection)StmtContextUtils.findAllSubstatements(
+            current, UnknownStatement.class);
         for (final StmtContext<?, ?, ?> unknownSubstatement : unknownSubstatements) {
             if (localName.equals(unknownSubstatement.rawStatementArgument())) {
                 return (Mutable<?, ?, EffectiveStatement<?, ?>>) unknownSubstatement;
@@ -89,5 +89,4 @@ public class SchemaNodeIdentifierBuildNamespace extends
     public QName getSignificantKey(final SchemaNodeIdentifier key) {
         return key.getLastComponent();
     }
-
 }

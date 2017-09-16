@@ -68,7 +68,8 @@ public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implem
         }
 
         @Override
-        public void onStatementAdded(final Mutable<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> stmt) {
+        public void onStatementAdded(final Mutable<QName, AnyxmlStatement,
+                EffectiveStatement<QName, AnyxmlStatement>> stmt) {
             stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
         }
 
@@ -80,8 +81,9 @@ public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implem
         @Override
         public EffectiveStatement<QName, AnyxmlStatement> createEffective(
                 final StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx) {
-            final Map<StatementDefinition, Mutable<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>, EffectiveStatement<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>>>> schemaLocations = ctx
-                    .getAllFromCurrentStmtCtxNamespace(AnyxmlSchemaLocationNamespace.class);
+            final Map<StatementDefinition, Mutable<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>,
+                EffectiveStatement<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>>>> schemaLocations =
+                ctx.getAllFromCurrentStmtCtxNamespace(AnyxmlSchemaLocationNamespace.class);
             if (schemaLocations != null && !schemaLocations.isEmpty()) {
                 final SchemaNodeIdentifier anyXmlSchemaNodeIdentifier = schemaLocations.values().iterator().next()
                         .getStatementArgument();
@@ -159,5 +161,4 @@ public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implem
     public MandatoryStatement getMandatory() {
         return firstDeclared(MandatoryStatement.class);
     }
-
 }

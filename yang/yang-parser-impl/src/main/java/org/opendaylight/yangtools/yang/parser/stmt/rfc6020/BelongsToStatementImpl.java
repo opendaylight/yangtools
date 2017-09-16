@@ -23,8 +23,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
@@ -73,13 +75,13 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public void onLinkageDeclared(
-                final StmtContext.Mutable<String, BelongsToStatement, EffectiveStatement<String, BelongsToStatement>> belongsToCtx) {
+        public void onLinkageDeclared(final Mutable<String, BelongsToStatement,
+                EffectiveStatement<String, BelongsToStatement>> belongsToCtx) {
             ModelActionBuilder belongsToAction = belongsToCtx.newInferenceAction(ModelProcessingPhase.SOURCE_LINKAGE);
 
             final ModuleIdentifier belongsToModuleIdentifier = getModuleIdentifier(belongsToCtx);
-            final ModelActionBuilder.Prerequisite<StmtContext<?, ?, ?>> belongsToPrereq = belongsToAction.requiresCtx(
-                belongsToCtx, ModuleNamespaceForBelongsTo.class, belongsToModuleIdentifier.getName(),
+            final Prerequisite<StmtContext<?, ?, ?>> belongsToPrereq = belongsToAction.requiresCtx(belongsToCtx,
+                ModuleNamespaceForBelongsTo.class, belongsToModuleIdentifier.getName(),
                 ModelProcessingPhase.SOURCE_LINKAGE);
 
             belongsToAction.apply(new InferenceAction() {
@@ -103,10 +105,9 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
             });
         }
 
-        private static ModuleIdentifier getModuleIdentifier(
-                final StmtContext.Mutable<String, BelongsToStatement, EffectiveStatement<String, BelongsToStatement>> belongsToCtx) {
-            String moduleName = belongsToCtx.getStatementArgument();
-            return ModuleIdentifierImpl.create(moduleName, Optional.empty(),
+        private static ModuleIdentifier getModuleIdentifier(final Mutable<String, BelongsToStatement,
+                EffectiveStatement<String, BelongsToStatement>> belongsToCtx) {
+            return ModuleIdentifierImpl.create(belongsToCtx.getStatementArgument(), Optional.empty(),
                 Optional.of(SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE));
         }
 
@@ -127,5 +128,4 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
     public PrefixStatement getPrefix() {
         return firstDeclared(PrefixStatement.class);
     }
-
 }

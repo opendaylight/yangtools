@@ -45,8 +45,7 @@ public class CaseStatementImpl extends AbstractDeclaredStatement<QName> implemen
             .addOptional(YangStmtMapping.WHEN)
             .build();
 
-    protected CaseStatementImpl(
-            final StmtContext<QName, CaseStatement, ?> context) {
+    protected CaseStatementImpl(final StmtContext<QName, CaseStatement, ?> context) {
         super(context);
     }
 
@@ -62,7 +61,8 @@ public class CaseStatementImpl extends AbstractDeclaredStatement<QName> implemen
         }
 
         @Override
-        public void onStatementAdded(final Mutable<QName, CaseStatement, EffectiveStatement<QName, CaseStatement>> stmt) {
+        public void onStatementAdded(
+                final Mutable<QName, CaseStatement, EffectiveStatement<QName, CaseStatement>> stmt) {
             stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
         }
 
@@ -82,7 +82,8 @@ public class CaseStatementImpl extends AbstractDeclaredStatement<QName> implemen
         }
     }
 
-    @Nonnull @Override
+    @Nonnull
+    @Override
     public QName getName() {
         return argument();
     }
@@ -92,7 +93,8 @@ public class CaseStatementImpl extends AbstractDeclaredStatement<QName> implemen
         return firstDeclared(WhenStatement.class);
     }
 
-    @Nonnull @Override
+    @Nonnull
+    @Override
     public Collection<? extends IfFeatureStatement> getIfFeatures() {
         return allDeclared(IfFeatureStatement.class);
     }
@@ -103,17 +105,20 @@ public class CaseStatementImpl extends AbstractDeclaredStatement<QName> implemen
         return allDeclared(DataDefinitionStatement.class);
     }
 
-    @Nullable @Override
+    @Nullable
+    @Override
     public StatusStatement getStatus() {
         return firstDeclared(StatusStatement.class);
     }
 
-    @Nullable @Override
+    @Nullable
+    @Override
     public DescriptionStatement getDescription() {
         return firstDeclared(DescriptionStatement.class);
     }
 
-    @Nullable @Override
+    @Nullable
+    @Override
     public ReferenceStatement getReference() {
         return firstDeclared(ReferenceStatement.class);
     }

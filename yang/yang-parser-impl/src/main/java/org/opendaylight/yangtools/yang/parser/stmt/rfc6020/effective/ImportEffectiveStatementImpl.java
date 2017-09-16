@@ -22,8 +22,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToSemVerModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, ImportStatement> implements
-        ModuleImport {
+public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, ImportStatement>
+        implements ModuleImport {
 
     private final String moduleName;
     private final Date revision;
@@ -45,21 +45,23 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
         }
 
         if (!ctx.isEnabledSemanticVersioning()) {
-            final RevisionDateEffectiveStatementImpl revisionDateStmt = firstEffective(RevisionDateEffectiveStatementImpl.class);
-            this.revision = (revisionDateStmt == null) ? getImportedRevision(ctx) : revisionDateStmt
-                    .argument();
+            final RevisionDateEffectiveStatementImpl revisionDateStmt = firstEffective(
+                RevisionDateEffectiveStatementImpl.class);
+            this.revision = revisionDateStmt == null ? getImportedRevision(ctx) : revisionDateStmt.argument();
             this.semVer = Module.DEFAULT_SEMANTIC_VERSION;
         } else {
-            final ModuleIdentifier importedModuleIdentifier = ctx.getFromNamespace(ImpPrefixToSemVerModuleIdentifier.class, prefix);
+            final ModuleIdentifier importedModuleIdentifier = ctx.getFromNamespace(
+                ImpPrefixToSemVerModuleIdentifier.class, prefix);
             revision = importedModuleIdentifier.getRevision();
             semVer = importedModuleIdentifier.getSemanticVersion();
         }
 
-        final DescriptionEffectiveStatementImpl descriptionStmt = firstEffective(DescriptionEffectiveStatementImpl.class);
-        this.description = (descriptionStmt != null) ? descriptionStmt.argument() : null;
+        final DescriptionEffectiveStatementImpl descriptionStmt = firstEffective(
+            DescriptionEffectiveStatementImpl.class);
+        this.description = descriptionStmt != null ? descriptionStmt.argument() : null;
 
         final ReferenceEffectiveStatementImpl referenceStmt = firstEffective(ReferenceEffectiveStatementImpl.class);
-        this.reference = (referenceStmt != null) ? referenceStmt.argument() : null;
+        this.reference = referenceStmt != null ? referenceStmt.argument() : null;
     }
 
     private Date getImportedRevision(final StmtContext<String, ImportStatement, ?> ctx) {
