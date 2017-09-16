@@ -59,6 +59,10 @@ public final class Utils {
     private static final String YANG_XPATH_FUNCTIONS_STRING =
             "(re-match|deref|derived-from(-or-self)?|enum-value|bit-is-set)(\\()";
     private static final Pattern YANG_XPATH_FUNCTIONS_PATTERN = Pattern.compile(YANG_XPATH_FUNCTIONS_STRING);
+    private static final Pattern ESCAPED_DQUOT = Pattern.compile("\\\"", Pattern.LITERAL);
+    private static final Pattern ESCAPED_BACKSLASH = Pattern.compile("\\\\", Pattern.LITERAL);
+    private static final Pattern ESCAPED_LF = Pattern.compile("\\n", Pattern.LITERAL);
+    private static final Pattern ESCAPED_TAB = Pattern.compile("\\t", Pattern.LITERAL);
 
     private static final ThreadLocal<XPathFactory> XPATH_FACTORY = new ThreadLocal<XPathFactory>() {
         @Override
@@ -216,8 +220,13 @@ public final class Utils {
                  * in the inner string and trim the result.
                  */
                 checkDoubleQuotedString(innerStr, yangVersion, ref);
-                sb.append(innerStr.replace("\\\"", "\"").replace("\\\\", "\\").replace("\\n", "\n")
-                        .replace("\\t", "\t"));
+                sb.append(ESCAPED_TAB.matcher(
+                    ESCAPED_LF.matcher(
+                        ESCAPED_BACKSLASH.matcher(
+                            ESCAPED_DQUOT.matcher(innerStr).replaceAll("\\\""))
+                        .replaceAll("\\\\"))
+                    .replaceAll("\\\n"))
+                    .replaceAll("\\\t"));
             } else if (firstChar == '\'' && lastChar == '\'') {
                 /*
                  * According to RFC6020 a single quote character cannot occur in
