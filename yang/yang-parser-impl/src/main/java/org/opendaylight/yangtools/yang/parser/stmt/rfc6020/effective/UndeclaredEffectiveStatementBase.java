@@ -14,7 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public abstract class UndeclaredEffectiveStatementBase<A, D extends DeclaredStatement<A>> extends EffectiveStatementBase<A, D> {
+public abstract class UndeclaredEffectiveStatementBase<A, D extends DeclaredStatement<A>>
+        extends EffectiveStatementBase<A, D> {
 
     private final StatementSource statementSource;
     private final StatementDefinition statementDefinition;

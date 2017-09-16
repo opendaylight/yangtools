@@ -37,12 +37,12 @@ public final class RevisionEffectiveStatementImpl extends DeclaredEffectiveState
     }
 
     @Override
-    public final String getDescription() {
+    public String getDescription() {
         return this.description;
     }
 
     @Override
-    public final String getReference() {
+    public String getReference() {
         return this.reference;
     }
 }

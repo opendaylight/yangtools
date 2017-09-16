@@ -16,8 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class AnyXmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<AnyxmlStatement> implements
-        AnyXmlSchemaNode, DerivableSchemaNode {
+public class AnyXmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<AnyxmlStatement>
+        implements AnyXmlSchemaNode, DerivableSchemaNode {
 
     private final AnyXmlSchemaNode original;
 
@@ -59,9 +59,9 @@ public class AnyXmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNod
 
     @Override
     public String toString() {
-        return AnyXmlEffectiveStatementImpl.class.getSimpleName() + "[" +
-                "qname=" + getQName() +
-                ", path=" + getPath() +
-                "]";
+        return AnyXmlEffectiveStatementImpl.class.getSimpleName() + "["
+                + "qname=" + getQName()
+                + ", path=" + getPath()
+                + "]";
     }
 }

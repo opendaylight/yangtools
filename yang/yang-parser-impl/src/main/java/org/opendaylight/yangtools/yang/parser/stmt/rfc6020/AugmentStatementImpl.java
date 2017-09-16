@@ -72,8 +72,8 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
         super(context);
     }
 
-    public static class Definition extends
-            AbstractStatementSupport<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> {
+    public static class Definition extends AbstractStatementSupport<SchemaNodeIdentifier, AugmentStatement,
+            EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> {
 
         public Definition() {
             super(YangStmtMapping.AUGMENT);
@@ -97,13 +97,14 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
 
         @Override
         public EffectiveStatement<SchemaNodeIdentifier, AugmentStatement> createEffective(
-                final StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> ctx) {
+                final StmtContext<SchemaNodeIdentifier, AugmentStatement,
+                EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> ctx) {
             return new AugmentEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(
-                final Mutable<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> augmentNode) {
+        public void onFullDefinitionDeclared(final Mutable<SchemaNodeIdentifier, AugmentStatement,
+                EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> augmentNode) {
             if (!augmentNode.isSupportedByFeatures()) {
                 return;
             }
@@ -116,12 +117,14 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
 
             final ModelActionBuilder augmentAction = augmentNode.newInferenceAction(
                 ModelProcessingPhase.EFFECTIVE_MODEL);
-            final ModelActionBuilder.Prerequisite<StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>>> sourceCtxPrereq =
+            final Prerequisite<StmtContext<SchemaNodeIdentifier, AugmentStatement,
+                EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>>> sourceCtxPrereq =
                     augmentAction.requiresCtx(augmentNode, ModelProcessingPhase.EFFECTIVE_MODEL);
             final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target =
-                    augmentAction.mutatesEffectiveCtx(getSearchRoot(augmentNode), SchemaNodeIdentifierBuildNamespace.class, augmentNode.getStatementArgument());
-            augmentAction.apply(new ModelActionBuilder.InferenceAction() {
+                    augmentAction.mutatesEffectiveCtx(getSearchRoot(augmentNode),
+                        SchemaNodeIdentifierBuildNamespace.class, augmentNode.getStatementArgument());
 
+            augmentAction.apply(new ModelActionBuilder.InferenceAction() {
                 @Override
                 public void apply(final ModelActionBuilder.InferenceContext ctx) {
                     final StatementContextBase<?, ?, ?> augmentTargetCtx =
@@ -343,8 +346,8 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
             return false;
         }
 
-        private static final Set<YangStmtMapping> NOCOPY_DEF_SET = ImmutableSet.of(YangStmtMapping.USES, YangStmtMapping.WHEN,
-                YangStmtMapping.DESCRIPTION, YangStmtMapping.REFERENCE, YangStmtMapping.STATUS);
+        private static final Set<YangStmtMapping> NOCOPY_DEF_SET = ImmutableSet.of(YangStmtMapping.USES,
+            YangStmtMapping.WHEN, YangStmtMapping.DESCRIPTION, YangStmtMapping.REFERENCE, YangStmtMapping.STATUS);
 
         public static boolean needToCopyByAugment(final StmtContext<?, ?, ?> stmtContext) {
             return !NOCOPY_DEF_SET.contains(stmtContext.getPublicDefinition());

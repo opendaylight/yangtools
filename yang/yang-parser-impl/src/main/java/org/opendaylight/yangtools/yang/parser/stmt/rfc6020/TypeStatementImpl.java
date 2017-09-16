@@ -85,18 +85,18 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
     }
 
     public static class Definition
-            extends
-            AbstractStatementSupport<String, TypeStatement, EffectiveStatement<String, TypeStatement>> {
+            extends AbstractStatementSupport<String, TypeStatement, EffectiveStatement<String, TypeStatement>> {
 
-        private static final Map<String, StatementSupport<?, ?, ?>> ARGUMENT_SPECIFIC_SUPPORTS = ImmutableMap
-                .<String, StatementSupport<?, ?, ?>> builder()
+        private static final Map<String, StatementSupport<?, ?, ?>> ARGUMENT_SPECIFIC_SUPPORTS =
+                ImmutableMap.<String, StatementSupport<?, ?, ?>>builder()
                 .put(TypeUtils.DECIMAL64, new Decimal64SpecificationImpl.Definition())
                 .put(TypeUtils.UNION, new UnionSpecificationImpl.Definition())
                 .put(TypeUtils.ENUMERATION, new EnumSpecificationImpl.Definition())
                 .put(TypeUtils.LEAF_REF, new LeafrefSpecificationImpl.Definition())
                 .put(TypeUtils.BITS, new BitsSpecificationImpl.Definition())
                 .put(TypeUtils.IDENTITY_REF, new IdentityRefSpecificationImpl.Definition())
-                .put(TypeUtils.INSTANCE_IDENTIFIER, new InstanceIdentifierSpecificationImpl.Definition()).build();
+                .put(TypeUtils.INSTANCE_IDENTIFIER, new InstanceIdentifierSpecificationImpl.Definition())
+                .build();
 
         public Definition() {
             super(YangStmtMapping.TYPE);
@@ -131,42 +131,42 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
                 case TypeUtils.INSTANCE_IDENTIFIER:
                     typeStmt = BuiltinEffectiveStatement.INSTANCE_IDENTIFIER;
                     break;
-            case TypeUtils.INT8:
-                typeStmt = BuiltinEffectiveStatement.INT8;
-                break;
-            case TypeUtils.INT16:
-                typeStmt = BuiltinEffectiveStatement.INT16;
-                break;
-            case TypeUtils.INT32:
-                typeStmt = BuiltinEffectiveStatement.INT32;
-                break;
-            case TypeUtils.INT64:
-                typeStmt = BuiltinEffectiveStatement.INT64;
-                break;
-            case TypeUtils.STRING:
-                typeStmt = BuiltinEffectiveStatement.STRING;
-                break;
-            case TypeUtils.UINT8:
-                typeStmt = BuiltinEffectiveStatement.UINT8;
-                break;
-            case TypeUtils.UINT16:
-                typeStmt = BuiltinEffectiveStatement.UINT16;
-                break;
-            case TypeUtils.UINT32:
-                typeStmt = BuiltinEffectiveStatement.UINT32;
-                break;
-            case TypeUtils.UINT64:
-                typeStmt = BuiltinEffectiveStatement.UINT64;
-                break;
-            default:
-                final QName qname = StmtContextUtils.qnameFromArgument(ctx, ctx.getStatementArgument());
-                final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> typedef =
-                        ctx.getFromNamespace(TypeNamespace.class, qname);
-                SourceException.throwIfNull(typedef, ctx.getStatementSourceReference(), "Type '%s' not found", qname);
+                case TypeUtils.INT8:
+                    typeStmt = BuiltinEffectiveStatement.INT8;
+                    break;
+                case TypeUtils.INT16:
+                    typeStmt = BuiltinEffectiveStatement.INT16;
+                    break;
+                case TypeUtils.INT32:
+                    typeStmt = BuiltinEffectiveStatement.INT32;
+                    break;
+                case TypeUtils.INT64:
+                    typeStmt = BuiltinEffectiveStatement.INT64;
+                    break;
+                case TypeUtils.STRING:
+                    typeStmt = BuiltinEffectiveStatement.STRING;
+                    break;
+                case TypeUtils.UINT8:
+                    typeStmt = BuiltinEffectiveStatement.UINT8;
+                    break;
+                case TypeUtils.UINT16:
+                    typeStmt = BuiltinEffectiveStatement.UINT16;
+                    break;
+                case TypeUtils.UINT32:
+                    typeStmt = BuiltinEffectiveStatement.UINT32;
+                    break;
+                case TypeUtils.UINT64:
+                    typeStmt = BuiltinEffectiveStatement.UINT64;
+                    break;
+                default:
+                    final QName qname = StmtContextUtils.qnameFromArgument(ctx, ctx.getStatementArgument());
+                    final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> typedef =
+                            SourceException.throwIfNull(ctx.getFromNamespace(TypeNamespace.class, qname),
+                                ctx.getStatementSourceReference(), "Type '%s' not found", qname);
 
-                final TypedefEffectiveStatement effectiveTypedef = typedef.buildEffective();
-                Verify.verify(effectiveTypedef instanceof TypeDefEffectiveStatementImpl);
-                typeStmt = ((TypeDefEffectiveStatementImpl) effectiveTypedef).asTypeEffectiveStatement();
+                    final TypedefEffectiveStatement effectiveTypedef = typedef.buildEffective();
+                    Verify.verify(effectiveTypedef instanceof TypeDefEffectiveStatementImpl);
+                    typeStmt = ((TypeDefEffectiveStatementImpl) effectiveTypedef).asTypeEffectiveStatement();
             }
 
             if (ctx.declaredSubstatements().isEmpty() && ctx.effectiveSubstatements().isEmpty()) {
@@ -190,7 +190,8 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
             } else if (baseType instanceof IdentityrefTypeDefinition) {
                 return new IdentityrefTypeEffectiveStatementImpl(ctx, (IdentityrefTypeDefinition) baseType);
             } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
-                return new InstanceIdentifierTypeEffectiveStatementImpl(ctx, (InstanceIdentifierTypeDefinition) baseType);
+                return new InstanceIdentifierTypeEffectiveStatementImpl(ctx,
+                    (InstanceIdentifierTypeDefinition) baseType);
             } else if (baseType instanceof IntegerTypeDefinition) {
                 return new IntegerTypeEffectiveStatementImpl(ctx, (IntegerTypeDefinition) baseType);
             } else if (baseType instanceof LeafrefTypeDefinition) {

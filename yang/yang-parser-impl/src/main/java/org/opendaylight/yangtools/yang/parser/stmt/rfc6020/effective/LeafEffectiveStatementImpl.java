@@ -29,7 +29,8 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
     private final String defaultStr;
     private final String unitsStr;
 
-    public LeafEffectiveStatementImpl(final StmtContext<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
+    public LeafEffectiveStatementImpl(
+            final StmtContext<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
         super(ctx);
         this.original = (LeafSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
 
@@ -110,9 +111,9 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
 
     @Override
     public String toString() {
-        return LeafEffectiveStatementImpl.class.getSimpleName() + "[" +
-                "qname=" + getQName() +
-                ", path=" + getPath() +
-                "]";
+        return LeafEffectiveStatementImpl.class.getSimpleName() + "["
+                + "qname=" + getQName()
+                + ", path=" + getPath()
+                + "]";
     }
 }

@@ -45,10 +45,6 @@ abstract class EmptyMandatoryStatement implements MandatoryStatement {
         }
     };
 
-    private EmptyMandatoryStatement() {
-        // Invisible on purpose
-    }
-
     abstract EffectiveStatement<Boolean, MandatoryStatement> toEffective();
 
     @Nonnull
@@ -95,12 +91,11 @@ abstract class EmptyMandatoryStatement implements MandatoryStatement {
         }
 
         final MandatoryStatement other = (MandatoryStatement) obj;
-
-        return  argument().equals(other.argument()) &&
-                rawArgument().equals(other.rawArgument()) &&
-                getValue().equals(other.getValue()) &&
-                statementDefinition().equals(other.statementDefinition()) &&
-                getStatementSource().equals(other.getStatementSource()) &&
-                declaredSubstatements().equals(other.declaredSubstatements());
+        return argument().equals(other.argument())
+                && rawArgument().equals(other.rawArgument())
+                && getValue().equals(other.getValue())
+                && statementDefinition().equals(other.statementDefinition())
+                && getStatementSource().equals(other.getStatementSource())
+                && declaredSubstatements().equals(other.declaredSubstatements());
     }
 }

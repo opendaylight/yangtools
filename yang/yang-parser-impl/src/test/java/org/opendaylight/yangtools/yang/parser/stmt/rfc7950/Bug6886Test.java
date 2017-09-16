@@ -25,7 +25,7 @@ public class Bug6886Test {
             fail("Test should fail due to invalid yang");
         } catch (final SomeModifiersUnresolvedException e) {
             assertTrue(e.getCause().getMessage()
-                    .startsWith("Yang 1.1: unquoted string (illegalchars\"test1) contains illegal characters"));
+                    .startsWith("YANG 1.1: unquoted string (illegalchars\"test1) contains illegal characters"));
         }
     }
 
@@ -36,7 +36,7 @@ public class Bug6886Test {
             fail("Test should fail due to invalid yang");
         } catch (final SomeModifiersUnresolvedException e) {
             assertTrue(e.getCause().getMessage()
-                    .startsWith("Yang 1.1: unquoted string (illegalchars'test2) contains illegal characters"));
+                    .startsWith("YANG 1.1: unquoted string (illegalchars'test2) contains illegal characters"));
         }
     }
 
@@ -46,9 +46,9 @@ public class Bug6886Test {
             StmtTestUtils.parseYangSource("/rfc7950/bug6886/yang11/foo3.yang");
             fail("Test should fail due to invalid yang");
         } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e.getCause().getMessage().startsWith("Yang 1.1: illegal double quoted string "
-                    + "(i\\\\\\\\l\\nl\\te\\\"\\galcharstest1). In double quoted string the backslash must be followed by "
-                    + "one of the following character [n,t,\",\\], but was 'g'."));
+            assertTrue(e.getCause().getMessage().startsWith("YANG 1.1: illegal double quoted string "
+                    + "(i\\\\\\\\l\\nl\\te\\\"\\galcharstest1). In double quoted string the backslash must be followed "
+                    + "by one of the following character [n,t,\",\\], but was 'g'."));
         }
     }
 

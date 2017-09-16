@@ -34,7 +34,8 @@ import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, UsesStatement> implements UsesNode {
+public final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, UsesStatement>
+        implements UsesNode {
     private final SchemaPath groupingPath;
     private final boolean addedByUses;
     private final Map<SchemaPath, SchemaNode> refines;
@@ -47,8 +48,8 @@ public final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumente
         super(ctx);
 
         // initGroupingPath
-        final StmtContext<?, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> grpCtx = ctx.getFromNamespace(
-                GroupingNamespace.class, ctx.getStatementArgument());
+        final StmtContext<?, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> grpCtx =
+                ctx.getFromNamespace(GroupingNamespace.class, ctx.getStatementArgument());
         this.groupingPath = grpCtx.getSchemaPath().get();
 
         // initCopyType
@@ -147,8 +148,6 @@ public final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumente
 
     @Override
     public String toString() {
-        return UsesEffectiveStatementImpl.class.getSimpleName() + "[groupingPath=" +
-                groupingPath +
-                "]";
+        return UsesEffectiveStatementImpl.class.getSimpleName() + "[groupingPath=" + groupingPath + "]";
     }
 }

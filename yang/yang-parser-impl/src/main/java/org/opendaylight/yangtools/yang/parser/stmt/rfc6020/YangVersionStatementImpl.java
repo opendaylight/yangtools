@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.YangVersionEffectiveStatementImpl;
@@ -47,14 +48,14 @@ public class YangVersionStatementImpl extends AbstractDeclaredStatement<YangVers
         }
 
         @Override
-        public void onPreLinkageDeclared(
-                final StmtContext.Mutable<YangVersion, YangVersionStatement, EffectiveStatement<YangVersion, YangVersionStatement>> stmt) {
+        public void onPreLinkageDeclared(final Mutable<YangVersion, YangVersionStatement,
+                EffectiveStatement<YangVersion, YangVersionStatement>> stmt) {
             stmt.setRootVersion(stmt.getStatementArgument());
         }
 
         @Override
-        public EffectiveStatement<YangVersion, YangVersionStatement> createEffective
-                (final StmtContext<YangVersion, YangVersionStatement, EffectiveStatement<YangVersion, YangVersionStatement>> ctx) {
+        public EffectiveStatement<YangVersion, YangVersionStatement> createEffective(final StmtContext<YangVersion,
+                YangVersionStatement, EffectiveStatement<YangVersion, YangVersionStatement>> ctx) {
             return new YangVersionEffectiveStatementImpl(ctx);
         }
 

@@ -100,7 +100,7 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
     }
 
     /**
-     * Create a new ExtensionEffectiveStatement, dealing with potential recursion
+     * Create a new ExtensionEffectiveStatement, dealing with potential recursion.
      *
      * @param ctx Statement context
      * @return A potentially under-initialized instance
@@ -193,24 +193,24 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
 
         TOSTRING_DETECTOR.push(this);
         try {
-            return ExtensionEffectiveStatementImpl.class.getSimpleName() + "[" +
-                    "argument=" + argument +
-                    ", qname=" + qname +
-                    ", schemaPath=" + schemaPath +
-                    ", extensionSchemaNodes=" + unknownNodes +
-                    ", yin=" + yin +
-                    "]";
+            return ExtensionEffectiveStatementImpl.class.getSimpleName() + "["
+                    + "argument=" + argument
+                    + ", qname=" + qname
+                    + ", schemaPath=" + schemaPath
+                    + ", extensionSchemaNodes=" + unknownNodes
+                    + ", yin=" + yin
+                    + "]";
         } finally {
             TOSTRING_DETECTOR.pop();
         }
     }
 
     private String recursedToString() {
-        return ExtensionEffectiveStatementImpl.class.getSimpleName() + "[" +
-                "argument=" + argument +
-                ", qname=" + qname +
-                ", schemaPath=" + schemaPath +
-                ", yin=" + yin +
-                " <RECURSIVE> ]";
+        return ExtensionEffectiveStatementImpl.class.getSimpleName() + "["
+                + "argument=" + argument
+                + ", qname=" + qname
+                + ", schemaPath=" + schemaPath
+                + ", yin=" + yin
+                + " <RECURSIVE> ]";
     }
 }

@@ -14,8 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.AnyxmlSchemaLocationNamespace;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AnyxmlSchemaLocationEffectiveStatementImpl;
 
@@ -31,8 +31,8 @@ public final class AnyxmlSchemaLocationStatementImpl extends AbstractDeclaredSta
     }
 
     public static class AnyxmlSchemaLocationSupport
-            extends
-            AbstractStatementSupport<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>, EffectiveStatement<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>>> {
+            extends AbstractStatementSupport<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>,
+                EffectiveStatement<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>>> {
 
         public AnyxmlSchemaLocationSupport() {
             super(SupportedExtensionsMapping.ANYXML_SCHEMA_LOCATION);
@@ -44,8 +44,8 @@ public final class AnyxmlSchemaLocationStatementImpl extends AbstractDeclaredSta
         }
 
         @Override
-        public void onFullDefinitionDeclared(
-                final Mutable<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>, EffectiveStatement<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>>> stmt) {
+        public void onFullDefinitionDeclared(final Mutable<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>,
+                EffectiveStatement<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             stmt.getParentContext().addToNs(AnyxmlSchemaLocationNamespace.class,
                     SupportedExtensionsMapping.ANYXML_SCHEMA_LOCATION, stmt);
@@ -59,7 +59,8 @@ public final class AnyxmlSchemaLocationStatementImpl extends AbstractDeclaredSta
 
         @Override
         public EffectiveStatement<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>> createEffective(
-                final StmtContext<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>, EffectiveStatement<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>>> ctx) {
+                final StmtContext<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>,
+                EffectiveStatement<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>>> ctx) {
             return new AnyxmlSchemaLocationEffectiveStatementImpl(ctx);
         }
 

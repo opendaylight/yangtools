@@ -21,8 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class ContainerEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<ContainerStatement> implements
-        DerivableSchemaNode {
+public final class ContainerEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<ContainerStatement>
+        implements DerivableSchemaNode {
     private final Set<ActionDefinition> actions;
     private final Set<NotificationDefinition> notifications;
     private final ContainerSchemaNode original;

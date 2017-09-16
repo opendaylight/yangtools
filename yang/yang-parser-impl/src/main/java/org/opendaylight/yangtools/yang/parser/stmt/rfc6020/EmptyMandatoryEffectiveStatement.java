@@ -33,10 +33,6 @@ abstract class EmptyMandatoryEffectiveStatement implements MandatoryEffectiveSta
         }
     };
 
-    private EmptyMandatoryEffectiveStatement() {
-        // Hidden
-    }
-
     @Nonnull
     @Override
     public final StatementDefinition statementDefinition() {
@@ -55,7 +51,8 @@ abstract class EmptyMandatoryEffectiveStatement implements MandatoryEffectiveSta
     }
 
     @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> V get(@Nonnull final Class<N> namespace, @Nonnull final K identifier) {
+    public final <K, V, N extends IdentifierNamespace<K, V>> V get(@Nonnull final Class<N> namespace,
+            @Nonnull final K identifier) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 

@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ContactEffectiveStatementImpl;
 
-public class ContactStatementImpl extends AbstractDeclaredStatement<String> implements ContactStatement{
+public class ContactStatementImpl extends AbstractDeclaredStatement<String> implements ContactStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .CONTACT)
             .build();
@@ -55,7 +55,8 @@ public class ContactStatementImpl extends AbstractDeclaredStatement<String> impl
         }
     }
 
-    @Nonnull @Override
+    @Nonnull
+    @Override
     public String getText() {
         return rawArgument();
     }

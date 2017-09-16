@@ -32,8 +32,8 @@ public class WhenStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
         super(context);
     }
 
-    public static class Definition extends
-            AbstractStatementSupport<RevisionAwareXPath, WhenStatement, EffectiveStatement<RevisionAwareXPath, WhenStatement>> {
+    public static class Definition extends AbstractStatementSupport<RevisionAwareXPath, WhenStatement,
+            EffectiveStatement<RevisionAwareXPath, WhenStatement>> {
 
         public Definition() {
             super(YangStmtMapping.WHEN);
@@ -51,7 +51,8 @@ public class WhenStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
 
         @Override
         public EffectiveStatement<RevisionAwareXPath, WhenStatement> createEffective(
-                final StmtContext<RevisionAwareXPath, WhenStatement, EffectiveStatement<RevisionAwareXPath, WhenStatement>> ctx) {
+                final StmtContext<RevisionAwareXPath, WhenStatement,
+                EffectiveStatement<RevisionAwareXPath, WhenStatement>> ctx) {
             return new WhenEffectiveStatementImpl(ctx);
         }
 

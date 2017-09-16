@@ -43,10 +43,6 @@ abstract class EmptyConfigStatement implements ConfigStatement {
         }
     };
 
-    private EmptyConfigStatement() {
-        // Invisible on purpose
-    }
-
     abstract EffectiveStatement<Boolean, ConfigStatement> toEffective();
 
     @Nonnull
@@ -79,8 +75,8 @@ abstract class EmptyConfigStatement implements ConfigStatement {
 
     @Override
     public final int hashCode() {
-        return Objects.hash(statementDefinition(), getStatementSource(), argument(),
-            rawArgument(), declaredSubstatements(), getValue());
+        return Objects.hash(statementDefinition(), getStatementSource(), argument(), rawArgument(),
+            declaredSubstatements(), getValue());
     }
 
     @Override
@@ -94,10 +90,10 @@ abstract class EmptyConfigStatement implements ConfigStatement {
 
         final ConfigStatement other = (ConfigStatement) obj;
 
-        return  getValue() == other.getValue() && argument().equals(other.argument()) &&
-                rawArgument().equals(other.rawArgument()) &&
-                statementDefinition().equals(other.statementDefinition()) &&
-                getStatementSource().equals(other.getStatementSource()) &&
-                declaredSubstatements().equals(other.declaredSubstatements());
+        return getValue() == other.getValue() && argument().equals(other.argument())
+                && rawArgument().equals(other.rawArgument())
+                && statementDefinition().equals(other.statementDefinition())
+                && getStatementSource().equals(other.getStatementSource())
+                && declaredSubstatements().equals(other.declaredSubstatements());
     }
 }
