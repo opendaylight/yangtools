@@ -65,7 +65,8 @@ public class LeafStatementImpl extends AbstractDeclaredStatement<QName> implemen
         }
 
         @Override
-        public void onStatementAdded(final Mutable<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> stmt) {
+        public void onStatementAdded(final Mutable<QName, LeafStatement,
+                EffectiveStatement<QName, LeafStatement>> stmt) {
             stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
         }
 
@@ -87,33 +88,38 @@ public class LeafStatementImpl extends AbstractDeclaredStatement<QName> implemen
 
         @Override
         public void onFullDefinitionDeclared(
-                final StmtContext.Mutable<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
+                final Mutable<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
             super.onFullDefinitionDeclared(ctx);
             StmtContextUtils.validateIfFeatureAndWhenOnListKeys(ctx);
         }
     }
 
-    @Nullable @Override
+    @Nullable
+    @Override
     public Collection<? extends MustStatement> getMusts() {
         return allDeclared(MustStatement.class);
     }
 
-    @Nullable @Override
+    @Nullable
+    @Override
     public DefaultStatement getDefault() {
         return firstDeclared(DefaultStatement.class);
     }
 
-    @Nullable @Override
+    @Nullable
+    @Override
     public ConfigStatement getConfig() {
         return firstDeclared(ConfigStatement.class);
     }
 
-    @Nullable @Override
+    @Nullable
+    @Override
     public MandatoryStatement getMandatory() {
         return firstDeclared(MandatoryStatement.class);
     }
 
-    @Nonnull @Override
+    @Nonnull
+    @Override
     public QName getName() {
         return argument();
     }
@@ -123,32 +129,38 @@ public class LeafStatementImpl extends AbstractDeclaredStatement<QName> implemen
         return firstDeclared(WhenStatement.class);
     }
 
-    @Nonnull @Override
+    @Nonnull
+    @Override
     public Collection<? extends IfFeatureStatement> getIfFeatures() {
         return allDeclared(IfFeatureStatement.class);
     }
 
-    @Nullable @Override
+    @Nullable
+    @Override
     public DescriptionStatement getDescription() {
         return firstDeclared(DescriptionStatement.class);
     }
 
-    @Nullable @Override
+    @Nullable
+    @Override
     public ReferenceStatement getReference() {
         return firstDeclared(ReferenceStatement.class);
     }
 
-    @Nonnull @Override
+    @Nonnull
+    @Override
     public TypeStatement getType() {
         return firstDeclared(TypeStatement.class);
     }
 
-    @Nullable @Override
+    @Nullable
+    @Override
     public UnitsStatement getUnits() {
         return firstDeclared(UnitsStatement.class);
     }
 
-    @Nullable @Override
+    @Nullable
+    @Override
     public StatusStatement getStatus() {
         return firstDeclared(StatusStatement.class);
     }

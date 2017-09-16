@@ -49,7 +49,8 @@ public class MinElementsStatementImpl extends
 
         @Override
         public EffectiveStatement<Integer, MinElementsStatement> createEffective(
-                final StmtContext<Integer, MinElementsStatement, EffectiveStatement<Integer, MinElementsStatement>> ctx) {
+                final StmtContext<Integer, MinElementsStatement,
+                EffectiveStatement<Integer, MinElementsStatement>> ctx) {
             return new MinElementsEffectiveStatementImpl(ctx);
         }
 
@@ -64,5 +65,4 @@ public class MinElementsStatementImpl extends
     public Integer getValue() {
         return argument();
     }
-
 }

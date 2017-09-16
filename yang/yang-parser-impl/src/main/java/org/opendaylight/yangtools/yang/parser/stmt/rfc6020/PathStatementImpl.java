@@ -27,8 +27,8 @@ public class PathStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
         super(context);
     }
 
-    public static class Definition extends
-            AbstractStatementSupport<RevisionAwareXPath, PathStatement, EffectiveStatement<RevisionAwareXPath, PathStatement>> {
+    public static class Definition extends AbstractStatementSupport<RevisionAwareXPath, PathStatement,
+            EffectiveStatement<RevisionAwareXPath, PathStatement>> {
 
         public Definition() {
             super(YangStmtMapping.PATH);
@@ -46,7 +46,8 @@ public class PathStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
 
         @Override
         public EffectiveStatement<RevisionAwareXPath, PathStatement> createEffective(
-                final StmtContext<RevisionAwareXPath, PathStatement, EffectiveStatement<RevisionAwareXPath, PathStatement>> ctx) {
+                final StmtContext<RevisionAwareXPath, PathStatement,
+                EffectiveStatement<RevisionAwareXPath, PathStatement>> ctx) {
             return new PathEffectiveStatementImpl(ctx);
         }
 

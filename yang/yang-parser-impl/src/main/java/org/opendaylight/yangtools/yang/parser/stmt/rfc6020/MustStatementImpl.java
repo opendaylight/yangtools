@@ -36,8 +36,8 @@ public class MustStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
         super(context);
     }
 
-    public static class Definition extends
-            AbstractStatementSupport<RevisionAwareXPath, MustStatement, EffectiveStatement<RevisionAwareXPath, MustStatement>> {
+    public static class Definition extends AbstractStatementSupport<RevisionAwareXPath, MustStatement,
+            EffectiveStatement<RevisionAwareXPath, MustStatement>> {
 
         public Definition() {
             super(YangStmtMapping.MUST);
@@ -55,7 +55,8 @@ public class MustStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
 
         @Override
         public EffectiveStatement<RevisionAwareXPath, MustStatement> createEffective(
-                final StmtContext<RevisionAwareXPath, MustStatement, EffectiveStatement<RevisionAwareXPath, MustStatement>> ctx) {
+                final StmtContext<RevisionAwareXPath, MustStatement,
+                EffectiveStatement<RevisionAwareXPath, MustStatement>> ctx) {
             return new MustEffectiveStatementImpl(ctx);
         }
 

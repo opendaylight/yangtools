@@ -56,7 +56,8 @@ public class OutputStatementImpl extends AbstractDeclaredStatement<QName> implem
         }
 
         @Override
-        public void onStatementAdded(final Mutable<QName, OutputStatement, EffectiveStatement<QName, OutputStatement>> stmt) {
+        public void onStatementAdded(final Mutable<QName, OutputStatement,
+                EffectiveStatement<QName, OutputStatement>> stmt) {
             stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
         }
 
@@ -101,4 +102,3 @@ public class OutputStatementImpl extends AbstractDeclaredStatement<QName> implem
         return allDeclared(MustStatement.class);
     }
 }
-

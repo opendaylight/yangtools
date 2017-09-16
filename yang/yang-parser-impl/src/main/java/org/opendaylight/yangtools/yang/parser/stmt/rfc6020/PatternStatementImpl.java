@@ -44,9 +44,8 @@ public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConst
         super(context);
     }
 
-    public static class Definition
-            extends
-            AbstractStatementSupport<PatternConstraint, PatternStatement, EffectiveStatement<PatternConstraint, PatternStatement>> {
+    public static class Definition extends AbstractStatementSupport<PatternConstraint, PatternStatement,
+            EffectiveStatement<PatternConstraint, PatternStatement>> {
 
         public Definition() {
             super(YangStmtMapping.PATTERN);
@@ -73,7 +72,8 @@ public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConst
 
         @Override
         public EffectiveStatement<PatternConstraint, PatternStatement> createEffective(
-                final StmtContext<PatternConstraint, PatternStatement, EffectiveStatement<PatternConstraint, PatternStatement>> ctx) {
+                final StmtContext<PatternConstraint, PatternStatement,
+                EffectiveStatement<PatternConstraint, PatternStatement>> ctx) {
             return new PatternEffectiveStatementImpl(ctx);
         }
 

@@ -21,9 +21,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
-public class SchemaNodeIdentifierBuildNamespace extends
-        DerivedNamespaceBehaviour<SchemaNodeIdentifier, StmtContext.Mutable<?, ?,
-                EffectiveStatement<?, ?>>, QName, SchemaNodeIdentifierBuildNamespace, ChildSchemaNodes<?, ?>>
+public class SchemaNodeIdentifierBuildNamespace extends DerivedNamespaceBehaviour<SchemaNodeIdentifier, Mutable<?, ?,
+        EffectiveStatement<?, ?>>, QName, SchemaNodeIdentifierBuildNamespace, ChildSchemaNodes<?, ?>>
         implements IdentifierNamespace<SchemaNodeIdentifier, StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>> {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -39,7 +38,7 @@ public class SchemaNodeIdentifierBuildNamespace extends
 
     @SuppressWarnings("unchecked")
     @Override
-    public StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> getFrom(final NamespaceStorageNode storage,
+    public Mutable<?, ?, EffectiveStatement<?, ?>> getFrom(final NamespaceStorageNode storage,
             final SchemaNodeIdentifier key) {
         final NamespaceStorageNode lookupStartStorage;
         if (key.isAbsolute() || storage.getStorageNodeType() == StorageNodeType.ROOT_STATEMENT_LOCAL) {
@@ -50,15 +49,16 @@ public class SchemaNodeIdentifierBuildNamespace extends
         final Iterator<QName> iterator = key.getPathFromRoot().iterator();
         if (!iterator.hasNext()) {
             if (lookupStartStorage instanceof StmtContext<?, ?, ?>) {
-                return (StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>) lookupStartStorage;
+                return (Mutable<?, ?, EffectiveStatement<?, ?>>) lookupStartStorage;
             }
             return null;
         }
         QName nextPath = iterator.next();
-        StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> current = lookupStartStorage
-                .getFromLocalStorage(ChildSchemaNodes.class, nextPath);
+        Mutable<?, ?, EffectiveStatement<?, ?>> current = lookupStartStorage.getFromLocalStorage(ChildSchemaNodes.class,
+            nextPath);
         if (current == null && lookupStartStorage instanceof StmtContext<?, ?, ?>) {
-            return tryToFindUnknownStatement(nextPath.getLocalName(), (Mutable<?, ?, EffectiveStatement<?, ?>>) lookupStartStorage);
+            return tryToFindUnknownStatement(nextPath.getLocalName(),
+                (Mutable<?, ?, EffectiveStatement<?, ?>>) lookupStartStorage);
         }
         while (current != null && iterator.hasNext()) {
             nextPath = iterator.next();

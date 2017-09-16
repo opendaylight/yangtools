@@ -89,6 +89,7 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
     public static class Definition extends AbstractStatementSupport<DeviateKind, DeviateStatement,
             EffectiveStatement<DeviateKind, DeviateStatement>> {
         private static final Map<String, DeviateKind> KEYWORD_TO_DEVIATE_MAP;
+
         static {
             final Builder<String, DeviateKind> keywordToDeviateMapBuilder = ImmutableMap.builder();
             for (final DeviateKind deviate : DeviateKind.values()) {
@@ -216,9 +217,10 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
                         && YangStmtMapping.LEAF.equals(targetCtx.getPublicDefinition())) {
                     for (final StmtContext<?, ?, ?> targetCtxSubstatement : targetCtx.allSubstatements()) {
                         InferenceException.throwIf(stmtToBeAdded.equals(targetCtxSubstatement.getPublicDefinition()),
-                            stmtCtxToBeAdded.getStatementSourceReference(), "Deviation cannot add substatement %s "
-                        + "to target node %s because it is already defined in target and can appear only once.",
-                        stmtToBeAdded.getStatementName(), targetCtx.getStatementArgument());
+                            stmtCtxToBeAdded.getStatementSourceReference(),
+                            "Deviation cannot add substatement %s to target node %s because it is already defined "
+                            + "in target and can appear only once.",
+                            stmtToBeAdded.getStatementName(), targetCtx.getStatementArgument());
                     }
                 }
             }
@@ -240,8 +242,8 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
 
             if (YangStmtMapping.DEFAULT.equals(stmtToBeReplaced)
                     && YangStmtMapping.LEAF_LIST.equals(targetCtx.getPublicDefinition())) {
-                LOG.error("Deviation cannot replace substatement {} in target leaf-list {} because a leaf-list can " +
-                        "have multiple default statements. At line: {}", stmtToBeReplaced.getStatementName(),
+                LOG.error("Deviation cannot replace substatement {} in target leaf-list {} because a leaf-list can "
+                        + "have multiple default statements. At line: {}", stmtToBeReplaced.getStatementName(),
                         targetCtx.getStatementArgument(), stmtCtxToBeReplaced.getStatementSourceReference());
                 return;
             }
@@ -262,8 +264,8 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
                 }
             }
 
-            throw new InferenceException(stmtCtxToBeReplaced.getStatementSourceReference(), "Deviation cannot " +
-                    "replace substatement %s in target node %s because it does not exist in target node.",
+            throw new InferenceException(stmtCtxToBeReplaced.getStatementSourceReference(), "Deviation cannot replace "
+                    + "substatement %s in target node %s because it does not exist in target node.",
                     stmtToBeReplaced.getStatementName(), targetCtx.getStatementArgument());
         }
 
@@ -296,8 +298,8 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
                 }
             }
 
-            LOG.error("Deviation cannot delete substatement {} with argument '{}' in target node {} because it does " +
-                    "not exist in the target node. At line: {}", stmtToBeDeleted.getStatementName(), stmtArgument,
+            LOG.error("Deviation cannot delete substatement {} with argument '{}' in target node {} because it does "
+                    + "not exist in the target node. At line: {}", stmtToBeDeleted.getStatementName(), stmtArgument,
                     targetCtx.getStatementArgument(), stmtCtxToBeDeleted.getStatementSourceReference());
         }
 
@@ -352,7 +354,8 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
         }
     }
 
-    @Nonnull @Override
+    @Nonnull
+    @Override
     public DeviateKind getValue() {
         return argument();
     }

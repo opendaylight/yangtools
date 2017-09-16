@@ -33,8 +33,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Infere
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IncludeEffectiveStatementImpl;
@@ -72,7 +72,7 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
 
         @Override
         public void onPreLinkageDeclared(
-                final StmtContext.Mutable<String, IncludeStatement, EffectiveStatement<String, IncludeStatement>> stmt) {
+                final Mutable<String, IncludeStatement, EffectiveStatement<String, IncludeStatement>> stmt) {
             stmt.addRequiredModule(getIncludeSubmoduleIdentifier(stmt));
         }
 
@@ -105,8 +105,8 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
             });
         }
 
-        private static ModuleIdentifier getIncludeSubmoduleIdentifier(final StmtContext<String, IncludeStatement, ?> stmt) {
-
+        private static ModuleIdentifier getIncludeSubmoduleIdentifier(
+                final StmtContext<String, IncludeStatement, ?> stmt) {
             final String subModuleName = stmt.getStatementArgument();
 
             Date revisionDate = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);

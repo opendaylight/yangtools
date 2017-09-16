@@ -42,8 +42,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToSemVerModuleIdentifier;
@@ -83,7 +83,8 @@ public class ImportStatementDefinition extends
     }
 
     @Override
-    public void onPreLinkageDeclared(final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt) {
+    public void onPreLinkageDeclared(final Mutable<String, ImportStatement,
+            EffectiveStatement<String, ImportStatement>> stmt) {
         /*
          * Add ModuleIdentifier of a module which is required by this module.
          * Based on this information, required modules are searched from library
@@ -157,8 +158,9 @@ public class ImportStatementDefinition extends
                     StmtContext<?, ?, ?> importedModule = null;
                     ModuleIdentifier importedModuleIdentifier = null;
                     if (impIdentifier.getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP) {
-                        final Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> recentModuleEntry = findRecentModule(
-                                impIdentifier, stmt.getAllFromNamespace(ModuleNamespace.class));
+                        final Entry<ModuleIdentifier, StmtContext<?, ModuleStatement,
+                                EffectiveStatement<String, ModuleStatement>>> recentModuleEntry = findRecentModule(
+                                    impIdentifier, stmt.getAllFromNamespace(ModuleNamespace.class));
                         if (recentModuleEntry != null) {
                             importedModuleIdentifier = recentModuleEntry.getKey();
                             importedModule = recentModuleEntry.getValue();
@@ -170,11 +172,13 @@ public class ImportStatementDefinition extends
                         importedModuleIdentifier = impIdentifier;
                     }
 
-                    linkageTarget.resolve(ctx).addToNs(ImportedModuleContext.class, importedModuleIdentifier, importedModule);
+                    linkageTarget.resolve(ctx).addToNs(ImportedModuleContext.class, importedModuleIdentifier,
+                        importedModule);
                     final String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
                     stmt.addToNs(ImpPrefixToModuleIdentifier.class, impPrefix, importedModuleIdentifier);
 
-                    final URI modNs = firstAttributeOf(importedModule.declaredSubstatements(), NamespaceStatement.class);
+                    final URI modNs = firstAttributeOf(importedModule.declaredSubstatements(),
+                        NamespaceStatement.class);
                     stmt.addToNs(URIStringToImpPrefix.class, modNs.toString(), impPrefix);
                 }
 
@@ -186,18 +190,19 @@ public class ImportStatementDefinition extends
                     }
                 }
             });
-
         }
 
-        private static Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> findRecentModule(
-                final ModuleIdentifier impIdentifier,
-                final Map<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> allModules) {
+        private static Entry<ModuleIdentifier, StmtContext<?, ModuleStatement,
+                EffectiveStatement<String, ModuleStatement>>> findRecentModule(final ModuleIdentifier impIdentifier,
+                final Map<ModuleIdentifier, StmtContext<?, ModuleStatement,
+                        EffectiveStatement<String, ModuleStatement>>> allModules) {
 
             ModuleIdentifier recentModuleIdentifier = impIdentifier;
-            Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> recentModuleEntry = null;
+            Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>>
+                recentModuleEntry = null;
 
-            for (final Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> moduleEntry : allModules
-                    .entrySet()) {
+            for (final Entry<ModuleIdentifier, StmtContext<?, ModuleStatement,
+                    EffectiveStatement<String, ModuleStatement>>> moduleEntry : allModules.entrySet()) {
                 final ModuleIdentifier id = moduleEntry.getKey();
 
                 if (id.getName().equals(impIdentifier.getName())
@@ -210,7 +215,8 @@ public class ImportStatementDefinition extends
             return recentModuleEntry;
         }
 
-        private static ModuleIdentifier getImportedModuleIdentifier(final StmtContext<String, ImportStatement, ?> stmt) {
+        private static ModuleIdentifier getImportedModuleIdentifier(
+                final StmtContext<String, ImportStatement, ?> stmt) {
             Date revision = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
             if (revision == null) {
                 revision = SimpleDateFormatUtil.DEFAULT_DATE_IMP;
@@ -237,28 +243,28 @@ public class ImportStatementDefinition extends
             importAction.apply(new InferenceAction() {
                 @Override
                 public void apply(final InferenceContext ctx) {
-                    final Entry<SemVer, StmtContext<?, ?, ?>> importedModuleEntry= findRecentCompatibleModuleEntry(
+                    final Entry<SemVer, StmtContext<?, ?, ?>> importedModuleEntry = findRecentCompatibleModuleEntry(
                             impIdentifier.getName(), stmt);
-
-                    StmtContext<?, ?, ?> importedModule = null;
-                    ModuleIdentifier importedModuleIdentifier = null;
-                    ModuleIdentifier semVerModuleIdentifier = null;
-                    if (importedModuleEntry != null) {
-                        importedModule = importedModuleEntry.getValue();
-                        importedModuleIdentifier = importedModule.getFromNamespace(ModuleCtxToModuleIdentifier.class, importedModule);
-                        semVerModuleIdentifier = createSemVerModuleIdentifier(importedModuleIdentifier, importedModuleEntry.getKey());
-                    } else {
+                    if (importedModuleEntry == null) {
                         throw new InferenceException(stmt.getStatementSourceReference(),
-                                "Unable to find module compatible with requested import [%s(%s)].", impIdentifier
-                                        .getName(), getRequestedImportVersion(stmt));
+                            "Unable to find module compatible with requested import [%s(%s)].",
+                            impIdentifier.getName(), getRequestedImportVersion(stmt));
                     }
 
-                    linkageTarget.resolve(ctx).addToNs(ImportedModuleContext.class, importedModuleIdentifier, importedModule);
+                    final StmtContext<?, ?, ?> importedModule = importedModuleEntry.getValue();
+                    final ModuleIdentifier importedModuleIdentifier = importedModule.getFromNamespace(
+                        ModuleCtxToModuleIdentifier.class, importedModule);
+                    final ModuleIdentifier semVerModuleIdentifier = createSemVerModuleIdentifier(
+                        importedModuleIdentifier, importedModuleEntry.getKey());
+
+                    linkageTarget.resolve(ctx).addToNs(ImportedModuleContext.class, importedModuleIdentifier,
+                        importedModule);
                     final String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
                     stmt.addToNs(ImpPrefixToModuleIdentifier.class, impPrefix, importedModuleIdentifier);
                     stmt.addToNs(ImpPrefixToSemVerModuleIdentifier.class, impPrefix, semVerModuleIdentifier);
 
-                    final URI modNs = firstAttributeOf(importedModule.declaredSubstatements(), NamespaceStatement.class);
+                    final URI modNs = firstAttributeOf(importedModule.declaredSubstatements(),
+                        NamespaceStatement.class);
                     stmt.addToNs(URIStringToImpPrefix.class, modNs.toString(), impPrefix);
                 }
 
@@ -266,8 +272,8 @@ public class ImportStatementDefinition extends
                 public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
                     if (failed.contains(imported)) {
                         throw new InferenceException(stmt.getStatementSourceReference(),
-                                "Unable to find module compatible with requested import [%s(%s)].", impIdentifier
-                                        .getName(), getRequestedImportVersion(stmt));
+                                "Unable to find module compatible with requested import [%s(%s)].",
+                                impIdentifier.getName(), getRequestedImportVersion(stmt));
                     }
                 }
             });
@@ -299,7 +305,8 @@ public class ImportStatementDefinition extends
             return null;
         }
 
-        private static ModuleIdentifier getImportedModuleIdentifier(final StmtContext<String, ImportStatement, ?> impStmt) {
+        private static ModuleIdentifier getImportedModuleIdentifier(
+                final StmtContext<String, ImportStatement, ?> impStmt) {
             return ModuleIdentifierImpl.create(impStmt.getStatementArgument(), Optional.empty(),
                     Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_IMP));
         }

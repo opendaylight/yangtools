@@ -28,7 +28,8 @@ public class DefaultStatementImpl extends AbstractDeclaredStatement<String> impl
         super(context);
     }
 
-    public static class Definition extends AbstractStatementSupport<String,DefaultStatement,EffectiveStatement<String,DefaultStatement>> {
+    public static class Definition
+            extends AbstractStatementSupport<String, DefaultStatement, EffectiveStatement<String, DefaultStatement>> {
 
         public Definition() {
             super(YangStmtMapping.DEFAULT);
@@ -56,7 +57,8 @@ public class DefaultStatementImpl extends AbstractDeclaredStatement<String> impl
         }
     }
 
-    @Nonnull @Override
+    @Nonnull
+    @Override
     public String getValue() {
         return rawArgument();
     }

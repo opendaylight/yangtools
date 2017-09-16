@@ -100,8 +100,10 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
 
                 @Override
                 public void apply(final InferenceContext ctx) {
-                    final StatementContextBase<?, ?, ?> targetNodeStmtCtx = (StatementContextBase<?, ?, ?>) targetNodePre.resolve(ctx);
-                    final StatementContextBase<?, ?, ?> sourceGrpStmtCtx = (StatementContextBase<?, ?, ?>) sourceGroupingPre.resolve(ctx);
+                    final StatementContextBase<?, ?, ?> targetNodeStmtCtx =
+                            (StatementContextBase<?, ?, ?>) targetNodePre.resolve(ctx);
+                    final StatementContextBase<?, ?, ?> sourceGrpStmtCtx =
+                            (StatementContextBase<?, ?, ?>) sourceGroupingPre.resolve(ctx);
 
                     try {
                         copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
@@ -185,6 +187,8 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
     }
 
     /**
+     * Copy statements from a grouping to a target node.
+     *
      * @param sourceGrpStmtCtx
      *            source grouping statement context
      * @param targetCtx
@@ -196,7 +200,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
      */
     static void copyFromSourceToTarget(final Mutable<?, ?, ?> sourceGrpStmtCtx,
             final StatementContextBase<?, ?, ?> targetCtx,
-            final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode) {
+            final Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode) {
         final Collection<? extends Mutable<?, ?, ?>> declared = sourceGrpStmtCtx.mutableDeclaredSubstatements();
         final Collection<? extends Mutable<?, ?, ?>> effective = sourceGrpStmtCtx.mutableEffectiveSubstatements();
         final Collection<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
@@ -374,5 +378,4 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
 
         return null;
     }
-
 }

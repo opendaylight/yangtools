@@ -18,21 +18,19 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.InstanceIdentifierSpecificationEffectiveStatementImpl;
 
-public class InstanceIdentifierSpecificationImpl extends
-        AbstractDeclaredStatement<String> implements InstanceIdentifierSpecification {
+public class InstanceIdentifierSpecificationImpl extends AbstractDeclaredStatement<String>
+        implements InstanceIdentifierSpecification {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .TYPE)
             .addOptional(YangStmtMapping.REQUIRE_INSTANCE)
             .build();
 
-    protected InstanceIdentifierSpecificationImpl(
-            final StmtContext<String, InstanceIdentifierSpecification, ?> ctx) {
+    protected InstanceIdentifierSpecificationImpl(final StmtContext<String, InstanceIdentifierSpecification, ?> ctx) {
         super(ctx);
     }
 
-    public static class Definition
-            extends
-            AbstractStatementSupport<String, InstanceIdentifierSpecification, EffectiveStatement<String, InstanceIdentifierSpecification>> {
+    public static class Definition extends AbstractStatementSupport<String, InstanceIdentifierSpecification,
+            EffectiveStatement<String, InstanceIdentifierSpecification>> {
 
         public Definition() {
             super(YangStmtMapping.TYPE);
@@ -51,7 +49,8 @@ public class InstanceIdentifierSpecificationImpl extends
 
         @Override
         public EffectiveStatement<String, InstanceIdentifierSpecification> createEffective(
-                final StmtContext<String, InstanceIdentifierSpecification, EffectiveStatement<String, InstanceIdentifierSpecification>> ctx) {
+                final StmtContext<String, InstanceIdentifierSpecification,
+                EffectiveStatement<String, InstanceIdentifierSpecification>> ctx) {
             return new InstanceIdentifierSpecificationEffectiveStatementImpl(ctx);
         }
 
@@ -71,5 +70,4 @@ public class InstanceIdentifierSpecificationImpl extends
     public RequireInstanceStatement getRequireInstance() {
         return firstDeclared(RequireInstanceStatement.class);
     }
-
 }

@@ -22,12 +22,12 @@ public class DescriptionStatementImpl extends AbstractDeclaredStatement<String> 
             .DESCRIPTION)
             .build();
 
-    protected DescriptionStatementImpl(
-            final StmtContext<String, DescriptionStatement, ?> context) {
+    protected DescriptionStatementImpl(final StmtContext<String, DescriptionStatement, ?> context) {
         super(context);
     }
 
-    public static class Definition extends AbstractStatementSupport<String,DescriptionStatement,EffectiveStatement<String,DescriptionStatement>> {
+    public static class Definition extends AbstractStatementSupport<String, DescriptionStatement,
+            EffectiveStatement<String, DescriptionStatement>> {
 
         public Definition() {
             super(YangStmtMapping.DESCRIPTION);
@@ -44,7 +44,8 @@ public class DescriptionStatementImpl extends AbstractDeclaredStatement<String> 
         }
 
         @Override
-        public EffectiveStatement<String, DescriptionStatement> createEffective(final StmtContext<String, DescriptionStatement, EffectiveStatement<String, DescriptionStatement>> ctx) {
+        public EffectiveStatement<String, DescriptionStatement> createEffective(
+                final StmtContext<String, DescriptionStatement, EffectiveStatement<String, DescriptionStatement>> ctx) {
             return new DescriptionEffectiveStatementImpl(ctx);
         }
 
@@ -54,7 +55,8 @@ public class DescriptionStatementImpl extends AbstractDeclaredStatement<String> 
         }
     }
 
-    @Nonnull @Override
+    @Nonnull
+    @Override
     public String getText() {
         return rawArgument();
     }

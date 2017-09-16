@@ -34,8 +34,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementDefinitionContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RpcEffectiveStatementImpl;
 
-public class RpcStatementImpl extends AbstractDeclaredStatement<QName>
-        implements RpcStatement {
+public class RpcStatementImpl extends AbstractDeclaredStatement<QName> implements RpcStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .RPC)
             .addOptional(YangStmtMapping.DESCRIPTION)
@@ -85,7 +84,8 @@ public class RpcStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public void onFullDefinitionDeclared(final Mutable<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> stmt) {
+        public void onFullDefinitionDeclared(
+                final Mutable<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
 
             if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, InputStatement.class) == null) {

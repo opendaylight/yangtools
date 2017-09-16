@@ -30,8 +30,8 @@ public class Decimal64SpecificationImpl extends AbstractDeclaredStatement<String
         super(context);
     }
 
-    public static class Definition extends
-            AbstractStatementSupport<String, Decimal64Specification, EffectiveStatement<String, Decimal64Specification>> {
+    public static class Definition extends AbstractStatementSupport<String, Decimal64Specification,
+            EffectiveStatement<String, Decimal64Specification>> {
 
         public Definition() {
             super(YangStmtMapping.TYPE);
@@ -48,8 +48,8 @@ public class Decimal64SpecificationImpl extends AbstractDeclaredStatement<String
         }
 
         @Override
-        public EffectiveStatement<String, Decimal64Specification> createEffective(
-                final StmtContext<String, Decimal64Specification, EffectiveStatement<String, Decimal64Specification>> ctx) {
+        public EffectiveStatement<String, Decimal64Specification> createEffective(final StmtContext<String,
+                Decimal64Specification, EffectiveStatement<String, Decimal64Specification>> ctx) {
             return new Decimal64SpecificationEffectiveStatementImpl(ctx);
         }
 
@@ -75,5 +75,4 @@ public class Decimal64SpecificationImpl extends AbstractDeclaredStatement<String
     public RangeStatement getRange() {
         return firstDeclared(RangeStatement.class);
     }
-
 }

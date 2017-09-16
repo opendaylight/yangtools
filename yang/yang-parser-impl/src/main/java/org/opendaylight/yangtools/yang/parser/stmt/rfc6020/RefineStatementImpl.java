@@ -42,8 +42,8 @@ public class RefineStatementImpl extends AbstractDeclaredStatement<SchemaNodeIde
         super(context);
     }
 
-    public static class Definition extends
-            AbstractStatementSupport<SchemaNodeIdentifier, RefineStatement, EffectiveStatement<SchemaNodeIdentifier, RefineStatement>> {
+    public static class Definition extends AbstractStatementSupport<SchemaNodeIdentifier, RefineStatement,
+            EffectiveStatement<SchemaNodeIdentifier, RefineStatement>> {
 
         public Definition() {
             super(YangStmtMapping.REFINE);
@@ -61,7 +61,8 @@ public class RefineStatementImpl extends AbstractDeclaredStatement<SchemaNodeIde
 
         @Override
         public EffectiveStatement<SchemaNodeIdentifier, RefineStatement> createEffective(
-                final StmtContext<SchemaNodeIdentifier, RefineStatement, EffectiveStatement<SchemaNodeIdentifier, RefineStatement>> ctx) {
+                final StmtContext<SchemaNodeIdentifier, RefineStatement,
+                EffectiveStatement<SchemaNodeIdentifier, RefineStatement>> ctx) {
             return new RefineEffectiveStatementImpl(ctx);
         }
 

@@ -65,7 +65,8 @@ public class YangVersionStatementImpl extends AbstractDeclaredStatement<YangVers
         }
     }
 
-    @Nonnull @Override
+    @Nonnull
+    @Override
     public YangVersion getValue() {
         return argument();
     }

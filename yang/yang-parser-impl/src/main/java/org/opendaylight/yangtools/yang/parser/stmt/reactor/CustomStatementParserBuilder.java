@@ -49,7 +49,7 @@ public class CustomStatementParserBuilder {
      *            bundle of supported verions
      */
     public CustomStatementParserBuilder(final Set<YangVersion> supportedVersions) {
-        reactorSupportBundles = ImmutableMap.<ModelProcessingPhase, StatementSupportBundle.Builder> builder()
+        reactorSupportBundles = ImmutableMap.<ModelProcessingPhase, StatementSupportBundle.Builder>builder()
                 .put(ModelProcessingPhase.INIT, StatementSupportBundle.builder(supportedVersions))
                 .put(ModelProcessingPhase.SOURCE_PRE_LINKAGE, StatementSupportBundle.builder(supportedVersions))
                 .put(ModelProcessingPhase.SOURCE_LINKAGE, StatementSupportBundle.builder(supportedVersions))

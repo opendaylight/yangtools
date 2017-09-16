@@ -102,7 +102,8 @@ public class ModuleStatementSupport extends
     }
 
     @Override
-    public void onPreLinkageDeclared(final Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt) {
+    public void onPreLinkageDeclared(final Mutable<String, ModuleStatement,
+            EffectiveStatement<String, ModuleStatement>> stmt) {
         final String moduleName = stmt.getStatementArgument();
 
         final URI moduleNs = firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class);
@@ -131,7 +132,8 @@ public class ModuleStatementSupport extends
     }
 
     @Override
-    public void onLinkageDeclared(final Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt) {
+    public void onLinkageDeclared(final Mutable<String, ModuleStatement,
+            EffectiveStatement<String, ModuleStatement>> stmt) {
 
         final Optional<URI> moduleNs = Optional.ofNullable(firstAttributeOf(stmt.declaredSubstatements(),
                 NamespaceStatement.class));
@@ -145,7 +147,6 @@ public class ModuleStatementSupport extends
         }
 
         final QNameModule qNameModule = QNameModule.create(moduleNs.get(), revisionDate.orElse(null)).intern();
-
         final StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>> possibleDuplicateModule =
                 stmt.getFromNamespace(NamespaceToModule.class, qNameModule);
         if (possibleDuplicateModule != null && possibleDuplicateModule != stmt) {
@@ -186,7 +187,7 @@ public class ModuleStatementSupport extends
             modulesMap = new TreeMap<>();
         }
         SemVer moduleSemVer = stmt.getFromNamespace(SemanticVersionNamespace.class, stmt);
-        if(moduleSemVer == null) {
+        if (moduleSemVer == null) {
             moduleSemVer = Module.DEFAULT_SEMANTIC_VERSION;
         }
         modulesMap.put(moduleSemVer, stmt);

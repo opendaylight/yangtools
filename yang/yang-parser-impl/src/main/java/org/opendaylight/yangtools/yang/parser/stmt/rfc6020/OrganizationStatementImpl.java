@@ -48,7 +48,8 @@ public class OrganizationStatementImpl extends AbstractDeclaredStatement<String>
 
         @Override
         public EffectiveStatement<String, OrganizationStatement> createEffective(
-                final StmtContext<String, OrganizationStatement, EffectiveStatement<String, OrganizationStatement>> ctx) {
+                final StmtContext<String, OrganizationStatement,
+                EffectiveStatement<String, OrganizationStatement>> ctx) {
             return new OrganizationEffectiveStatementImpl(ctx);
         }
 
@@ -63,5 +64,4 @@ public class OrganizationStatementImpl extends AbstractDeclaredStatement<String>
     public String getText() {
         return argument();
     }
-
 }

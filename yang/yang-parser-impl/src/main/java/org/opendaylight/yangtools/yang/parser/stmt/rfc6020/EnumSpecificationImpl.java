@@ -12,26 +12,25 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.EnumSpecification;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EnumSpecificationEffectiveStatementImpl;
 
-public class EnumSpecificationImpl extends AbstractDeclaredStatement<String> implements TypeStatement.EnumSpecification {
+public class EnumSpecificationImpl extends AbstractDeclaredStatement<String> implements EnumSpecification {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
             .TYPE)
             .addMultiple(YangStmtMapping.ENUM)
             .build();
 
-    protected EnumSpecificationImpl(final StmtContext<String, TypeStatement.EnumSpecification, ?> context) {
+    protected EnumSpecificationImpl(final StmtContext<String, EnumSpecification, ?> context) {
         super(context);
     }
 
     public static class Definition
-            extends
-            AbstractStatementSupport<String, TypeStatement.EnumSpecification, EffectiveStatement<String, TypeStatement.EnumSpecification>> {
+            extends AbstractStatementSupport<String, EnumSpecification, EffectiveStatement<String, EnumSpecification>> {
 
         public Definition() {
             super(YangStmtMapping.TYPE);
@@ -43,14 +42,13 @@ public class EnumSpecificationImpl extends AbstractDeclaredStatement<String> imp
         }
 
         @Override
-        public TypeStatement.EnumSpecification createDeclared(
-                final StmtContext<String, TypeStatement.EnumSpecification, ?> ctx) {
+        public EnumSpecification createDeclared(final StmtContext<String, EnumSpecification, ?> ctx) {
             return new EnumSpecificationImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<String, TypeStatement.EnumSpecification> createEffective(
-                final StmtContext<String, TypeStatement.EnumSpecification, EffectiveStatement<String, TypeStatement.EnumSpecification>> ctx) {
+        public EffectiveStatement<String, EnumSpecification> createEffective(
+                final StmtContext<String, EnumSpecification, EffectiveStatement<String, EnumSpecification>> ctx) {
             return new EnumSpecificationEffectiveStatementImpl(ctx);
         }
 
@@ -71,5 +69,4 @@ public class EnumSpecificationImpl extends AbstractDeclaredStatement<String> imp
     public Collection<? extends EnumStatement> getEnums() {
         return allDeclared(EnumStatement.class);
     }
-
 }
