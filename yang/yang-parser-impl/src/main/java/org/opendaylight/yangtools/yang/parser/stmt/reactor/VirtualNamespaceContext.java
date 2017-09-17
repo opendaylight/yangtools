@@ -13,13 +13,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 
-final class VirtualNamespaceContext<K, V, N extends IdentifierNamespace<K, V>, DK>
+final class VirtualNamespaceContext<K, V, N extends IdentifierNamespace<K, V>, D>
         extends NamespaceBehaviourWithListeners<K, V, N> {
 
-    private final Multimap<DK, ValueAddedListener<K>> listeners = HashMultimap.create();
-    private final DerivedNamespaceBehaviour<K, V, DK, N, ?> derivedDelegate;
+    private final Multimap<D, ValueAddedListener<K>> listeners = HashMultimap.create();
+    private final DerivedNamespaceBehaviour<K, V, D, N, ?> derivedDelegate;
 
-    VirtualNamespaceContext(final DerivedNamespaceBehaviour<K, V, DK, N, ?> delegate) {
+    VirtualNamespaceContext(final DerivedNamespaceBehaviour<K, V, D, N, ?> delegate) {
         super(delegate);
         this.derivedDelegate = delegate;
     }
@@ -35,7 +35,7 @@ final class VirtualNamespaceContext<K, V, N extends IdentifierNamespace<K, V>, D
         listeners.put(derivedDelegate.getSignificantKey(key), listener);
     }
 
-    void addedToSourceNamespace(final NamespaceBehaviour.NamespaceStorageNode storage, final DK key, final V value) {
+    void addedToSourceNamespace(final NamespaceBehaviour.NamespaceStorageNode storage, final D key, final V value) {
         notifyListeners(storage, listeners.get(key).iterator(), value);
     }
 

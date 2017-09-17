@@ -31,18 +31,19 @@ import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6874Test {
 
-    private static final StatementStreamSource ROOT_MODULE = sourceForResource
-            ("/rfc7950/include-import-stmt-test/valid-11/root-module.yang");
-    private static final StatementStreamSource CHILD_MODULE = sourceForResource
-            ("/rfc7950/include-import-stmt-test/valid-11/child-module.yang");
-    private static final StatementStreamSource CHILD_MODULE_1 = sourceForResource
-            ("/rfc7950/include-import-stmt-test/valid-11/child-module-1.yang");
-    private static final StatementStreamSource IMPORTED_MODULE = sourceForResource
-            ("/rfc7950/include-import-stmt-test/valid-11/imported-module.yang");
+    private static final StatementStreamSource ROOT_MODULE = sourceForResource(
+        "/rfc7950/include-import-stmt-test/valid-11/root-module.yang");
+    private static final StatementStreamSource CHILD_MODULE = sourceForResource(
+        "/rfc7950/include-import-stmt-test/valid-11/child-module.yang");
+    private static final StatementStreamSource CHILD_MODULE_1 = sourceForResource(
+        "/rfc7950/include-import-stmt-test/valid-11/child-module-1.yang");
+    private static final StatementStreamSource IMPORTED_MODULE = sourceForResource(
+        "/rfc7950/include-import-stmt-test/valid-11/imported-module.yang");
 
     @Test
     public void valid11Test() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/rfc7950/include-import-stmt-test/valid-11");
+        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(
+            "/rfc7950/include-import-stmt-test/valid-11");
         assertNotNull(schemaContext);
 
         // Test for valid include statement
@@ -85,10 +86,10 @@ public class Bug6874Test {
         reactor.addSources(ROOT_MODULE, CHILD_MODULE, CHILD_MODULE_1, IMPORTED_MODULE);
 
         reactor.build().getRootStatements().forEach(declaredStmt -> {
-            if(declaredStmt instanceof ModuleStatementImpl) {
+            if (declaredStmt instanceof ModuleStatementImpl) {
                 declaredStmt.declaredSubstatements().forEach(subStmt -> {
-                    if (subStmt instanceof IncludeStatementImpl &&
-                            subStmt.rawArgument().equals("child-module")) {
+                    if (subStmt instanceof IncludeStatementImpl
+                            && subStmt.rawArgument().equals("child-module")) {
                         subStmt.declaredSubstatements().forEach(Bug6874Test::verifyDescAndRef);
                     }
                 });
@@ -97,7 +98,7 @@ public class Bug6874Test {
     }
 
     @SuppressWarnings("rawtypes")
-    private static void verifyDescAndRef (final DeclaredStatement stmt) {
+    private static void verifyDescAndRef(final DeclaredStatement stmt) {
         if (stmt instanceof DescriptionStatementImpl) {
             assertEquals("Yang 1.1: Allow description and reference in include and import.",
                 ((DescriptionStatementImpl) stmt).argument());

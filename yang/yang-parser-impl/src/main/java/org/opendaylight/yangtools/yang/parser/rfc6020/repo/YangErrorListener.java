@@ -22,6 +22,7 @@ public final class YangErrorListener extends BaseErrorListener {
     private final List<YangSyntaxErrorException> exceptions = new ArrayList<>();
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public void syntaxError(final Recognizer<?, ?> recognizer, final Object offendingSymbol, final int line,
             final int charPositionInLine, final String msg, final RecognitionException e) {
         LOG.debug("Syntax error at {}:{}: {}", line, charPositionInLine, msg, e);
@@ -30,6 +31,7 @@ public final class YangErrorListener extends BaseErrorListener {
         exceptions.add(new YangSyntaxErrorException(module, line, charPositionInLine, msg, e));
     }
 
+    @SuppressWarnings("checkstyle:illegalCatch")
     private static String getModuleName(final Recognizer<?, ?> recognizer) {
         if (!(recognizer instanceof Parser)) {
             return null;

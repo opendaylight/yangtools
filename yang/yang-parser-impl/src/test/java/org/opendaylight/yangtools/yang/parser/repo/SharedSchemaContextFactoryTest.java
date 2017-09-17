@@ -55,7 +55,8 @@ public class SharedSchemaContextFactoryTest {
 
     @Test
     public void testCreateSchemaContextWithDuplicateRequiredSources() throws Exception {
-        final SharedSchemaContextFactory sharedSchemaContextFactory = new SharedSchemaContextFactory(repository, filter);
+        final SharedSchemaContextFactory sharedSchemaContextFactory = new SharedSchemaContextFactory(repository,
+            filter);
         final ListenableFuture<SchemaContext> schemaContext =
                 sharedSchemaContextFactory.createSchemaContext(Arrays.asList(s1, s1, s2));
         assertNotNull(schemaContext.get());
@@ -79,7 +80,8 @@ public class SharedSchemaContextFactoryTest {
         repository.registerSchemaSource(provider, PotentialSchemaSource.create(
                 sIdWithoutRevision, ASTSchemaSource.class, PotentialSchemaSource.Costs.IMMEDIATE.getValue()));
 
-        final SharedSchemaContextFactory sharedSchemaContextFactory = new SharedSchemaContextFactory(repository, filter);
+        final SharedSchemaContextFactory sharedSchemaContextFactory = new SharedSchemaContextFactory(repository,
+            filter);
         final ListenableFuture<SchemaContext> schemaContext =
                 sharedSchemaContextFactory.createSchemaContext(Arrays.asList(sIdWithoutRevision, provider.getId()));
         assertNotNull(schemaContext.get());

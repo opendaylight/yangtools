@@ -62,13 +62,13 @@ public class EffectiveModulesAndSubmodulesTest {
         Module imported = null;
         for (final Module module : modules) {
             switch (module.getName()) {
-            case "root-module":
-                root = module;
-                break;
-            case "imported-module":
-                imported = module;
-                break;
-            default:
+                case "root-module":
+                    root = module;
+                    break;
+                case "imported-module":
+                    imported = module;
+                    break;
+                default:
             }
             StmtTestUtils.printReferences(module, false, "");
             StmtTestUtils.printChilds(module.getChildNodes(), "      ");
@@ -100,13 +100,13 @@ public class EffectiveModulesAndSubmodulesTest {
         Module sub2 = null;
         for (final Module rootSubmodule : rootSubmodules) {
             switch (rootSubmodule.getName()) {
-            case "submodule-1":
-                sub1 = rootSubmodule;
-                break;
-            case "submodule-2":
-                sub2 = rootSubmodule;
-                break;
-            default:
+                case "submodule-1":
+                    sub1 = rootSubmodule;
+                    break;
+                case "submodule-2":
+                    sub2 = rootSubmodule;
+                    break;
+                default:
             }
         }
 
@@ -139,10 +139,10 @@ public class EffectiveModulesAndSubmodulesTest {
         Module sub1Submodule = null;
         for (final Module submodule : sub1Submodules) {
             switch (submodule.getName()) {
-            case "submodule-to-submodule-1":
-                sub1Submodule = submodule;
-                break;
-            default:
+                case "submodule-to-submodule-1":
+                    sub1Submodule = submodule;
+                    break;
+                default:
             }
         }
 
@@ -152,8 +152,7 @@ public class EffectiveModulesAndSubmodulesTest {
                 SimpleDateFormatUtil.DEFAULT_DATE_REV),
                 sub1Submodule.getQNameModule());
 
-        final Collection<DataSchemaNode> sub1SubmoduleChildNodes = sub1Submodule
-                .getChildNodes();
+        final Collection<DataSchemaNode> sub1SubmoduleChildNodes = sub1Submodule.getChildNodes();
         assertNotNull(sub1SubmoduleChildNodes);
         assertEquals(1, sub1SubmoduleChildNodes.size());
 
@@ -164,7 +163,6 @@ public class EffectiveModulesAndSubmodulesTest {
         findModulesSubTest(result, root, imported);
 
         getDataChildByNameSubTest(result, root);
-
     }
 
     private static void getDataChildByNameSubTest(final SchemaContext result, final Module root) {
@@ -217,5 +215,4 @@ public class EffectiveModulesAndSubmodulesTest {
 
         assertFalse(root.equals(imported));
     }
-
 }

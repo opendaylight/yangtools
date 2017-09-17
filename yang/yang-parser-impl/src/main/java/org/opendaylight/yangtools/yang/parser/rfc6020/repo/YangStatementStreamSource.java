@@ -78,7 +78,7 @@ public final class YangStatementStreamSource implements Identifiable<SourceIdent
     public static YangStatementStreamSource create(final YangTextSchemaSource source) throws IOException,
             YangSyntaxErrorException {
         final StatementContext context;
-        try (final InputStream stream = source.openStream()) {
+        try (InputStream stream = source.openStream()) {
             context = parseYangSource(stream);
         }
 
@@ -146,11 +146,7 @@ public final class YangStatementStreamSource implements Identifiable<SourceIdent
         return context;
     }
 
-    /**
-     * @deprecated Provided for migration purposes only. Do not use.
-     */
-    @Deprecated
-    public static StatementContext parseYangSource(final InputStream stream) throws IOException,
+    private static StatementContext parseYangSource(final InputStream stream) throws IOException,
             YangSyntaxErrorException {
         final YangStatementLexer lexer = new YangStatementLexer(CharStreams.fromStream(stream));
         final CommonTokenStream tokens = new CommonTokenStream(lexer);

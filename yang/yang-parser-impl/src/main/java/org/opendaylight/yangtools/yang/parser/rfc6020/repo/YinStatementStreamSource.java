@@ -55,7 +55,7 @@ public final class YinStatementStreamSource implements Identifiable<SourceIdenti
             public URI load(@Nonnull final String key) throws URISyntaxException {
                 return new URI(key);
             }
-    });
+        });
     private final SourceIdentifier identifier;
     private final Node root;
 

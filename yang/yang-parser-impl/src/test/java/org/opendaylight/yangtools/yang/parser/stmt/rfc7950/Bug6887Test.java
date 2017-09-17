@@ -91,8 +91,8 @@ public class Bug6887Test {
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof SourceException);
-            assertTrue(cause.getMessage().startsWith("Enum 'purple' is not a subset of its base enumeration type" +
-                    " (foo?revision=2017-02-02)my-derived-enumeration-type."));
+            assertTrue(cause.getMessage().startsWith("Enum 'purple' is not a subset of its base enumeration type "
+                    + "(foo?revision=2017-02-02)my-derived-enumeration-type."));
         }
     }
 
@@ -104,8 +104,8 @@ public class Bug6887Test {
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof InvalidEnumDefinitionException);
-            assertTrue(cause.getMessage().startsWith("Enum 'magenta' is not a subset of its base enumeration type" +
-                    " (foo?revision=2017-02-02)my-base-enumeration-type."));
+            assertTrue(cause.getMessage().startsWith("Enum 'magenta' is not a subset of its base enumeration type "
+                    + "(foo?revision=2017-02-02)my-base-enumeration-type."));
         }
     }
 
@@ -117,9 +117,9 @@ public class Bug6887Test {
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof InvalidEnumDefinitionException);
-            assertTrue(cause.getMessage().startsWith("Value of enum 'red' must be the same as the value of " +
-                    "corresponding enum in the base enumeration type (foo?revision=2017-02-02)" +
-                    "my-derived-enumeration-type."));
+            assertTrue(cause.getMessage().startsWith("Value of enum 'red' must be the same as the value of "
+                    + "corresponding enum in the base enumeration type (foo?revision=2017-02-02)"
+                    + "my-derived-enumeration-type."));
         }
     }
 
@@ -131,9 +131,9 @@ public class Bug6887Test {
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof InvalidEnumDefinitionException);
-            assertTrue(cause.getMessage().startsWith("Value of enum 'black' must be the same as the value of " +
-                    "corresponding enum in the base enumeration type (foo?revision=2017-02-02)" +
-                    "my-base-enumeration-type."));
+            assertTrue(cause.getMessage().startsWith("Value of enum 'black' must be the same as the value of "
+                    + "corresponding enum in the base enumeration type (foo?revision=2017-02-02)"
+                    + "my-base-enumeration-type."));
         }
     }
 
@@ -151,7 +151,8 @@ public class Bug6887Test {
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof SourceException);
-            assertTrue(cause.getMessage().startsWith("Restricted enumeration type is allowed only in YANG 1.1 version."));
+            assertTrue(cause.getMessage().startsWith(
+                "Restricted enumeration type is allowed only in YANG 1.1 version."));
         }
     }
 
@@ -163,7 +164,8 @@ public class Bug6887Test {
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof SourceException);
-            assertTrue(cause.getMessage().startsWith("Restricted enumeration type is allowed only in YANG 1.1 version."));
+            assertTrue(cause.getMessage().startsWith(
+                "Restricted enumeration type is allowed only in YANG 1.1 version."));
         }
     }
 
@@ -205,7 +207,7 @@ public class Bug6887Test {
         bitsType = bitsType.getBaseType();
         bits = bitsType.getBits();
         assertEquals(4, bits.size());
-        Bit bitA = createBit(createSchemaPath(true, bar.getQNameModule(), ImmutableList.of("my-base-bits-type",
+        final Bit bitA = createBit(createSchemaPath(true, bar.getQNameModule(), ImmutableList.of("my-base-bits-type",
                 "bits", "bit-a")), 1);
         bitB = createBit(createSchemaPath(true, bar.getQNameModule(), ImmutableList.of("my-base-bits-type",
                 "bits", "bit-b")), 2);
@@ -239,8 +241,8 @@ public class Bug6887Test {
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof SourceException);
-            assertTrue(cause.getMessage().startsWith("Bit 'bit-w' is not a subset of its base bits type" +
-                    " (bar?revision=2017-02-02)my-derived-bits-type."));
+            assertTrue(cause.getMessage().startsWith("Bit 'bit-w' is not a subset of its base bits type "
+                    + "(bar?revision=2017-02-02)my-derived-bits-type."));
         }
     }
 
@@ -252,8 +254,8 @@ public class Bug6887Test {
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof InvalidBitDefinitionException);
-            assertTrue(cause.getMessage().startsWith("Bit 'bit-x' is not a subset of its base bits type" +
-                    " (bar?revision=2017-02-02)my-base-bits-type."));
+            assertTrue(cause.getMessage().startsWith("Bit 'bit-x' is not a subset of its base bits type "
+                    + "(bar?revision=2017-02-02)my-base-bits-type."));
         }
     }
 
@@ -265,8 +267,8 @@ public class Bug6887Test {
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof InvalidBitDefinitionException);
-            assertTrue(cause.getMessage().startsWith("Position of bit 'bit-c' must be the same as the position of " +
-                    "corresponding bit in the base bits type (bar?revision=2017-02-02)my-derived-bits-type."));
+            assertTrue(cause.getMessage().startsWith("Position of bit 'bit-c' must be the same as the position of "
+                    + "corresponding bit in the base bits type (bar?revision=2017-02-02)my-derived-bits-type."));
         }
     }
 
@@ -278,8 +280,8 @@ public class Bug6887Test {
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof InvalidBitDefinitionException);
-            assertTrue(cause.getMessage().startsWith("Position of bit 'bit-d' must be the same as the position of " +
-                    "corresponding bit in the base bits type (bar?revision=2017-02-02)my-base-bits-type."));
+            assertTrue(cause.getMessage().startsWith("Position of bit 'bit-d' must be the same as the position of "
+                    + "corresponding bit in the base bits type (bar?revision=2017-02-02)my-base-bits-type."));
         }
     }
 
@@ -333,10 +335,9 @@ public class Bug6887Test {
         }
     }
 
-    private static SchemaPath createSchemaPath(final boolean absolute, final QNameModule qNameModule,
+    private static SchemaPath createSchemaPath(final boolean absolute, final QNameModule qnameModule,
             final Iterable<String> localNames) {
-        final Iterable<QName> qNames = Iterables.transform(localNames,
-                localName -> QName.create(qNameModule, localName));
-        return SchemaPath.create(qNames, true);
+        return SchemaPath.create(Iterables.transform(localNames,
+            localName -> QName.create(qnameModule, localName)), true);
     }
 }

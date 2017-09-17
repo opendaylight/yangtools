@@ -83,7 +83,7 @@ public class Bug6869Test {
 
     private static SchemaNode findNode(final SchemaContext context, final Iterable<String> localNamesPath) {
         final Iterable<QName> qNames = Iterables.transform(localNamesPath,
-                localName -> QName.create(FOO_NS, FOO_REV, localName));
+            localName -> QName.create(FOO_NS, FOO_REV, localName));
         return SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(qNames, true));
     }
 

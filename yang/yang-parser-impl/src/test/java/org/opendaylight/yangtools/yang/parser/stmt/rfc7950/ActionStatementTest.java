@@ -90,8 +90,8 @@ public class ActionStatementTest {
             StmtTestUtils.parseYangSource("/rfc7950/action-stmt/foo-invalid.yang");
             fail("Test should fail due to invalid Yang 1.1");
         } catch (final ReactorException e) {
-            assertTrue(e.getCause().getMessage().startsWith("Action (foo-namespace?revision=2016-12-13)" +
-                    "action-in-grouping is defined within a notification, rpc or another action"));
+            assertTrue(e.getCause().getMessage().startsWith("Action (foo-namespace?revision=2016-12-13)"
+                    + "action-in-grouping is defined within a notification, rpc or another action"));
         }
     }
 
@@ -102,8 +102,8 @@ public class ActionStatementTest {
             fail("Test should fail due to invalid Yang 1.1");
         } catch (final ReactorException e) {
             assertTrue(e.getCause().getMessage().startsWith(
-                    "Action (bar-namespace?revision=2016-12-13)my-action is defined within a list" +
-                            " that has no key statement"));
+                    "Action (bar-namespace?revision=2016-12-13)my-action is defined within a list"
+                            + " that has no key statement"));
         }
     }
 
@@ -114,8 +114,8 @@ public class ActionStatementTest {
             fail("Test should fail due to invalid Yang 1.1");
         } catch (final ReactorException e) {
             assertTrue(e.getCause().getMessage().startsWith(
-                    "Action (baz-namespace?revision=2016-12-13)action-in-grouping is defined within a " +
-                            "case statement"));
+                    "Action (baz-namespace?revision=2016-12-13)action-in-grouping is defined within a "
+                            + "case statement"));
         }
     }
 

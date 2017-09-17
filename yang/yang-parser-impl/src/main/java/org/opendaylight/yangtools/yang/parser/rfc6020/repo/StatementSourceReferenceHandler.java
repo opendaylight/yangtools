@@ -73,6 +73,7 @@ final class StatementSourceReferenceHandler extends DefaultHandler {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:parameterName")
     public void endElement(final String uri, final String localName, final String qName) {
         addTextIfNeeded();
         final Element closedEl = stack.pop();

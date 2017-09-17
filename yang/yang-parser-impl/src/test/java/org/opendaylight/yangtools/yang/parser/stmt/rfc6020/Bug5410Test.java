@@ -77,14 +77,18 @@ public class Bug5410Test {
         final PatternConstraint pattern = getPatternConstraintOf(context, "leaf-with-pattern");
 
         final String rawRegex = pattern.getRawRegularExpression();
-        final String expectedYangRegex = "$0$.*|$1$[a-zA-Z0-9./]{1,8}$[a-zA-Z0-9./]{22}|$5$(rounds=\\d+$)?[a-zA-Z0-9./]{1,16}$[a-zA-Z0-9./]{43}|$6$(rounds=\\d+$)?[a-zA-Z0-9./]{1,16}$[a-zA-Z0-9./]{86}";
+        final String expectedYangRegex = "$0$.*|$1$[a-zA-Z0-9./]{1,8}$[a-zA-Z0-9./]{22}|$5$(rounds=\\d+$)?"
+                + "[a-zA-Z0-9./]{1,16}$[a-zA-Z0-9./]{43}|$6$(rounds=\\d+$)?[a-zA-Z0-9./]{1,16}$[a-zA-Z0-9./]{86}";
         assertEquals(expectedYangRegex, rawRegex);
 
         final String javaRegexFromYang = pattern.getRegularExpression();
-        final String expectedJavaRegex = "^\\$0\\$.*|\\$1\\$[a-zA-Z0-9./]{1,8}\\$[a-zA-Z0-9./]{22}|\\$5\\$(rounds=\\d+\\$)?[a-zA-Z0-9./]{1,16}\\$[a-zA-Z0-9./]{43}|\\$6\\$(rounds=\\d+\\$)?[a-zA-Z0-9./]{1,16}\\$[a-zA-Z0-9./]{86}$";
+        final String expectedJavaRegex = "^\\$0\\$.*|\\$1\\$[a-zA-Z0-9./]{1,8}\\$[a-zA-Z0-9./]{22}|\\$5\\$"
+                + "(rounds=\\d+\\$)?[a-zA-Z0-9./]{1,16}\\$[a-zA-Z0-9./]{43}|\\$6\\$(rounds=\\d+\\$)?"
+                + "[a-zA-Z0-9./]{1,16}\\$[a-zA-Z0-9./]{86}$";
         assertEquals(expectedJavaRegex, javaRegexFromYang);
 
-        final String value = "$6$AnrKGc0V$B/0/A.pWg4HrrA6YiEJOtFGibQ9Fmm5.4rI/00gEz3QeB7joSxBU3YtbHDm6NSkS1dKTQy3BWhwKKDS8nB5S//";
+        final String value = "$6$AnrKGc0V$B/0/A.pWg4HrrA6YiEJOtFGibQ9Fmm5.4rI/"
+                + "00gEz3QeB7joSxBU3YtbHDm6NSkS1dKTQy3BWhwKKDS8nB5S//";
         testPattern(javaRegexFromYang, ImmutableList.of(value), ImmutableList.of());
     }
 
@@ -199,16 +203,16 @@ public class Bug5410Test {
         }
     }
 
-    private static String javaRegexFromXSD(final String xsdRegex) {
-        return RegexUtils.getJavaRegexFromXSD(xsdRegex);
+    private static void testPattern(final String xsdRegex, final String unanchoredJavaRegex) {
+        testPattern(xsdRegex, '^' + unanchoredJavaRegex + '$', ImmutableList.of(), ImmutableList.of());
     }
 
     private static boolean testMatch(final String javaRegex, final String value) {
         return value.matches(javaRegex);
     }
 
-    private static void testPattern(final String xsdRegex, final String unanchoredJavaRegex) {
-        testPattern(xsdRegex, '^' + unanchoredJavaRegex + '$', ImmutableList.of(), ImmutableList.of());
+    private static String javaRegexFromXSD(final String xsdRegex) {
+        return RegexUtils.getJavaRegexFromXSD(xsdRegex);
     }
 
     private static PatternConstraint getPatternConstraintOf(final SchemaContext context, final String leafName) {
@@ -225,7 +229,9 @@ public class Bug5410Test {
         return QName.create(FOO_NS, FOO_REV, localName);
     }
 
-    private static void testInvalidPattern(final String xsdRegex, final String expectedMessage) throws UnsupportedEncodingException {
+    @SuppressWarnings("checkstyle:regexpSinglelineJava")
+    private static void testInvalidPattern(final String xsdRegex, final String expectedMessage)
+            throws UnsupportedEncodingException {
         final PrintStream stdout = System.out;
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         System.setOut(new PrintStream(output, true, "UTF-8"));

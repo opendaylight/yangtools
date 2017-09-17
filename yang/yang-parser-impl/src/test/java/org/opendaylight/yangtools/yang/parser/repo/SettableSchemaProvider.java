@@ -26,17 +26,22 @@ class SettableSchemaProvider<T extends SchemaSourceRepresentation> implements Sc
     private final T schemaSourceRepresentation;
     private final PotentialSchemaSource<T> potentialSchemaSource;
 
-    SettableSchemaProvider(final T schemaSourceRepresentation, final SourceIdentifier sourceIdentifier, final Class<T> representation, final int cost) {
+    SettableSchemaProvider(final T schemaSourceRepresentation, final SourceIdentifier sourceIdentifier,
+            final Class<T> representation, final int cost) {
         this.schemaSourceRepresentation = schemaSourceRepresentation;
         this.potentialSchemaSource = PotentialSchemaSource.create(sourceIdentifier, representation, cost);
     }
 
-    public static <T extends SchemaSourceRepresentation> SettableSchemaProvider<T> createRemote(final T schemaSourceRepresentation, final Class<T> representation) {
-        return new SettableSchemaProvider<>(schemaSourceRepresentation, schemaSourceRepresentation.getIdentifier(), representation, PotentialSchemaSource.Costs.REMOTE_IO.getValue());
+    public static <T extends SchemaSourceRepresentation> SettableSchemaProvider<T> createRemote(
+            final T schemaSourceRepresentation, final Class<T> representation) {
+        return new SettableSchemaProvider<>(schemaSourceRepresentation, schemaSourceRepresentation.getIdentifier(),
+                representation, PotentialSchemaSource.Costs.REMOTE_IO.getValue());
     }
 
-    public static <T extends SchemaSourceRepresentation> SettableSchemaProvider<T> createImmediate(final T schemaSourceRepresentation, final Class<T> representation) {
-        return new SettableSchemaProvider<>(schemaSourceRepresentation, schemaSourceRepresentation.getIdentifier(), representation, PotentialSchemaSource.Costs.IMMEDIATE.getValue());
+    public static <T extends SchemaSourceRepresentation> SettableSchemaProvider<T> createImmediate(
+            final T schemaSourceRepresentation, final Class<T> representation) {
+        return new SettableSchemaProvider<>(schemaSourceRepresentation, schemaSourceRepresentation.getIdentifier(),
+                representation, PotentialSchemaSource.Costs.IMMEDIATE.getValue());
     }
 
     @Override
@@ -61,6 +66,7 @@ class SettableSchemaProvider<T extends SchemaSourceRepresentation> implements Sc
     public void setResult() {
         future.set(schemaSourceRepresentation);
     }
+
     public void setException(final Throwable ex) {
         future.setException(ex);
     }

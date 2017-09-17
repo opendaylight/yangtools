@@ -39,12 +39,12 @@ public final class YinTextToDomTransformer extends SchemaSourceTransformer<YinTe
         return new YinTextToDomTransformer(provider, consumer);
     }
 
-    public static YinDomSchemaSource transformSource(final YinTextSchemaSource source) throws SAXException, IOException {
+    public static YinDomSchemaSource transformSource(final YinTextSchemaSource source) throws SAXException,
+            IOException {
         final Document doc = UntrustedXML.newDocumentBuilder().newDocument();
         final SAXParser parser = UntrustedXML.newSAXParser();
         final DefaultHandler handler = new StatementSourceReferenceHandler(doc, null);
         parser.parse(source.openStream(), handler);
         return YinDomSchemaSource.create(source.getIdentifier(), new DOMSource(doc));
     }
-
 }
