@@ -89,12 +89,9 @@ public class Bug6897Test {
             StmtTestUtils.parseYangSource("/rfc7950/notifications-in-data-nodes/foo-invalid.yang");
             fail("Test should fail due to invalid Yang 1.1");
         } catch (final SomeModifiersUnresolvedException e) {
-            assertTrue(e
-                    .getCause()
-                    .getMessage()
-                    .startsWith(
-                            "Notification (foo?revision=1970-01-01)grp-notification is defined within"
-                                    + " an rpc, action, or another notification"));
+            assertTrue(e.getCause().getMessage().startsWith(
+                "Notification (foo?revision=1970-01-01)grp-notification is defined within an rpc, action, or another "
+                        + "notification"));
         }
     }
 
@@ -105,8 +102,8 @@ public class Bug6897Test {
             fail("Test should fail due to invalid Yang 1.1");
         } catch (final SomeModifiersUnresolvedException e) {
             assertTrue(e.getCause().getMessage().startsWith(
-                            "Notification (bar-namespace?revision=2016-12-08)my-notification is defined within a list" +
-                                    " that has no key statement"));
+                "Notification (bar-namespace?revision=2016-12-08)my-notification is defined within a list "
+                        + "that has no key statement"));
         }
     }
 
@@ -117,8 +114,8 @@ public class Bug6897Test {
             fail("Test should fail due to invalid Yang 1.1");
         } catch (final SomeModifiersUnresolvedException e) {
             assertTrue(e.getCause().getMessage().startsWith(
-                    "Notification (baz-namespace?revision=2016-12-08)notification-in-grouping is defined within a " +
-                            "case statement"));
+                "Notification (baz-namespace?revision=2016-12-08)notification-in-grouping is defined within a case "
+                        + "statement"));
         }
     }
 }

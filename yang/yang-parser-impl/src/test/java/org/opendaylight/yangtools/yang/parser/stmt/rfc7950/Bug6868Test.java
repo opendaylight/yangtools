@@ -49,7 +49,8 @@ public class Bug6868Test {
                 ImmutableSet.of("my-container-1", "my-container-2", "my-container-3", "foo"));
         assertSchemaContextFor(ImmutableSet.of("foo", "bar", "baz", "imp:bar"),
                 ImmutableSet.of("my-container-1", "my-container-2", "my-container-3", "foo", "imp-bar"));
-        assertSchemaContextFor(ImmutableSet.of("foo", "baz", "imp:bar"), ImmutableSet.of("foo", "imp-bar", "imp-bar-2"));
+        assertSchemaContextFor(ImmutableSet.of("foo", "baz", "imp:bar"),
+            ImmutableSet.of("foo", "imp-bar", "imp-bar-2"));
     }
 
     private static void assertSchemaContextFor(final Set<String> supportedFeatures,

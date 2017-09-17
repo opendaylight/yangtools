@@ -405,6 +405,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @param argument statement argument
      * @return A new substatement
      */
+    @SuppressWarnings("checkstyle:methodTypeParameterName")
     public final <CA, CD extends DeclaredStatement<CA>, CE extends EffectiveStatement<CA, CD>>
             StatementContextBase<CA, CD, CE> createSubstatement(final int offset,
                     final StatementDefinitionContext<CA, CD, CE> def, final StatementSourceReference ref,
