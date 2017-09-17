@@ -24,7 +24,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ContainerEf
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementBase;
 
 /**
- * Effective statement representation of 'yang-data' extension defined in https://tools.ietf.org/html/rfc8040#section-8
+ * Effective statement representation of 'yang-data' extension defined in
+ * <a href="https://tools.ietf.org/html/rfc8040#section-8">RFC 8040</a>.
  */
 @Beta
 public final class YangDataEffectiveStatement extends UnknownEffectiveStatementBase<String>

@@ -32,11 +32,10 @@ import org.slf4j.LoggerFactory;
  * corresponding dependency information, the {@link #create(Map)} method creates a
  * a view of how consistent the dependencies are. In particular, this detects whether
  * any imports are unsatisfied.
- *
- * FIXME: improve this class to track and expose how wildcard imports were resolved.
- *        That information will allow us to track "damage" to dependency resolution
- *        as new models are added to a schema context.
  */
+// FIXME: improve this class to track and expose how wildcard imports were resolved.
+//        That information will allow us to track "damage" to dependency resolution
+//        as new models are added to a schema context.
 abstract class DependencyResolver {
     private static final Logger LOG = LoggerFactory.getLogger(DependencyResolver.class);
     private final Collection<SourceIdentifier> resolvedSources;
@@ -110,12 +109,10 @@ abstract class DependencyResolver {
         this.unsatisfiedImports = ImmutableMultimap.copyOf(imports);
     }
 
-    abstract protected boolean isKnown(final Collection<SourceIdentifier> haystack, final ModuleImport mi);
+    protected abstract boolean isKnown(Collection<SourceIdentifier> haystack, ModuleImport mi);
 
     /**
      * Collection of sources which have been resolved.
-     *
-     * @return
      */
     Collection<SourceIdentifier> getResolvedSources() {
         return resolvedSources;
@@ -123,8 +120,6 @@ abstract class DependencyResolver {
 
     /**
      * Collection of sources which have not been resolved due to missing dependencies.
-     *
-     * @return
      */
     Collection<SourceIdentifier> getUnresolvedSources() {
         return unresolvedSources;
@@ -135,18 +130,19 @@ abstract class DependencyResolver {
      * is the source identifier of module which was issuing an import, the values
      * are imports which were unsatisfied.
      *
+     * <p>
      * Note that this map contains only imports which are missing from the reactor,
      * not transitive failures.
      *
+     * <p>
      * Examples:
-     *
+     * <ul><li>
      * If A imports B, B imports C, and both A and B are in the reactor, only B->C
      * will be reported.
-     *
+     * </li><li>
      * If A imports B and C, B imports C, and both A and B are in the reactor,
      * A->C and B->C will be reported.
-     *
-     * @return
+     * </li></ul>
      */
     Multimap<SourceIdentifier, ModuleImport> getUnsatisfiedImports() {
         return unsatisfiedImports;
@@ -155,7 +151,7 @@ abstract class DependencyResolver {
     private static class BelongsToDependency implements ModuleImport {
         private final String parent;
 
-        public BelongsToDependency(final String parent) {
+        BelongsToDependency(final String parent) {
             this.parent = parent;
         }
 

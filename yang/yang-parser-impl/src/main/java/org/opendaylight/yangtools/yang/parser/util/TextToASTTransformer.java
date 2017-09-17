@@ -33,6 +33,8 @@ import org.slf4j.LoggerFactory;
 public final class TextToASTTransformer extends SchemaSourceTransformer<YangTextSchemaSource, ASTSchemaSource> {
 
     /**
+     * A text-to-AST Transformation.
+     *
      * @deprecated Use {@link TextToASTTransformer#transformText(YangTextSchemaSource)} instead.
      */
     @Deprecated
@@ -57,6 +59,8 @@ public final class TextToASTTransformer extends SchemaSourceTransformer<YangText
     }
 
     /**
+     * Singleton instance of {@link TextToASTTransformation}.
+     *
      * @deprecated Use {@link TextToASTTransformer#transformText(YangTextSchemaSource)} instead.
      */
     @Deprecated

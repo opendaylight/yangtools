@@ -19,10 +19,10 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
  */
 @Beta
 public final class TypeStatementRfc7950Support extends TypeStatementImpl.Definition {
-    private static final Map<String, StatementSupport<?, ?, ?>> ARGUMENT_SPECIFIC_SUPPORTS = ImmutableMap
-            .<String, StatementSupport<?, ?, ?>> builder()
-            .put(TypeUtils.LEAF_REF, new LeafrefSpecificationRfc7950Support())
-            .put(TypeUtils.IDENTITY_REF, new IdentityrefSpecificationRfc7950Support()).build();
+    private static final Map<String, StatementSupport<?, ?, ?>> ARGUMENT_SPECIFIC_SUPPORTS =
+            ImmutableMap.<String, StatementSupport<?, ?, ?>>of(
+                TypeUtils.LEAF_REF, new LeafrefSpecificationRfc7950Support(),
+                TypeUtils.IDENTITY_REF, new IdentityrefSpecificationRfc7950Support());
 
     @Override
     public boolean hasArgumentSpecificSupports() {

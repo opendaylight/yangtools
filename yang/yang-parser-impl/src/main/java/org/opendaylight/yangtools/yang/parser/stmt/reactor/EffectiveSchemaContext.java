@@ -46,11 +46,13 @@ public final class EffectiveSchemaContext extends SimpleSchemaContext {
     }
 
     /**
+     * Resolve SchemaContext for a set of modules.
+     *
      * @deprecated Use {@link SimpleSchemaContext#forModules(Set)} instead.
      */
     @Deprecated
     public static SchemaContext resolveSchemaContext(final Set<Module> modules) {
-       return SimpleSchemaContext.forModules(modules);
+        return SimpleSchemaContext.forModules(modules);
     }
 
     @VisibleForTesting

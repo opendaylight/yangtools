@@ -83,8 +83,8 @@ public class ActionStatementImpl extends AbstractDeclaredStatement<QName> implem
         public EffectiveStatement<QName, ActionStatement> createEffective(
                 final StmtContext<QName, ActionStatement, EffectiveStatement<QName, ActionStatement>> ctx) {
             SourceException.throwIf(StmtContextUtils.hasAncestorOfType(ctx, ILLEGAL_PARENTS),
-                    ctx.getStatementSourceReference(), "Action %s is defined within a notification, rpc or another action",
-                    ctx.getStatementArgument());
+                    ctx.getStatementSourceReference(),
+                    "Action %s is defined within a notification, rpc or another action", ctx.getStatementArgument());
             SourceException.throwIf(!StmtContextUtils.hasAncestorOfTypeWithChildOfType(ctx, YangStmtMapping.LIST,
                     YangStmtMapping.KEY), ctx.getStatementSourceReference(),
                     "Action %s is defined within a list that has no key statement", ctx.getStatementArgument());

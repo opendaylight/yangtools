@@ -21,7 +21,7 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespa
         private final NamespaceStorageNode ctxNode;
         private final K key;
 
-        public ValueAddedListener(final NamespaceStorageNode contextNode, final K key) {
+        ValueAddedListener(final NamespaceStorageNode contextNode, final K key) {
             this.ctxNode = contextNode;
             this.key = key;
         }
@@ -44,7 +44,6 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespa
     protected final NamespaceBehaviour<K, V, N> delegate;
     private final List<VirtualNamespaceContext<?, V, ?, K>> derivedNamespaces = new ArrayList<>();
 
-
     protected NamespaceBehaviourWithListeners(final NamespaceBehaviour<K, V, N> delegate) {
         super(delegate.getIdentifier());
         this.delegate = delegate;
@@ -55,10 +54,10 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespa
     protected abstract boolean isRequestedValue(ValueAddedListener<K> listener, NamespaceStorageNode storage, V value);
 
     @Override
-    public abstract void addTo(final NamespaceStorageNode storage, final K key, final V value);
+    public abstract void addTo(NamespaceStorageNode storage, K key, V value);
 
-    protected void notifyListeners(final NamespaceStorageNode storage, final Iterator<ValueAddedListener<K>> keyListeners,
-            final V value) {
+    protected void notifyListeners(final NamespaceStorageNode storage,
+            final Iterator<ValueAddedListener<K>> keyListeners, final V value) {
         List<ValueAddedListener<K>> toNotify = new ArrayList<>();
         while (keyListeners.hasNext()) {
             ValueAddedListener<K> listener = keyListeners.next();

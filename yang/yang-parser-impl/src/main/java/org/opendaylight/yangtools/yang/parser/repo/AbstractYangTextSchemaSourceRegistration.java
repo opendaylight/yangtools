@@ -10,7 +10,8 @@ package org.opendaylight.yangtools.yang.parser.repo;
 import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 
-public abstract class AbstractYangTextSchemaSourceRegistration extends AbstractObjectRegistration<YangTextSchemaSource> implements YangTextSchemaSourceRegistration {
+public abstract class AbstractYangTextSchemaSourceRegistration extends AbstractObjectRegistration<YangTextSchemaSource>
+        implements YangTextSchemaSourceRegistration {
     protected AbstractYangTextSchemaSourceRegistration(final YangTextSchemaSource instance) {
         super(instance);
     }

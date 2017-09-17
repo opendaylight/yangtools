@@ -67,8 +67,9 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(SourceSpecificContext.class);
+
     private final Multimap<ModelProcessingPhase, ModifierImpl> modifiers = HashMultimap.create();
-    private final QNameToStatementDefinitionMap qNameToStmtDefMap = new QNameToStatementDefinitionMap();
+    private final QNameToStatementDefinitionMap qnameToStmtDefMap = new QNameToStatementDefinitionMap();
     private final PrefixToModuleMap prefixToModuleMap = new PrefixToModuleMap();
     private final BuildGlobalContext currentContext;
     private final StatementStreamSource source;
@@ -88,7 +89,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         this.source = Preconditions.checkNotNull(source);
     }
 
-    boolean isEnabledSemanticVersioning(){
+    boolean isEnabledSemanticVersioning() {
         return currentContext.isEnabledSemanticVersioning();
     }
 
@@ -113,7 +114,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         if (def == null) {
             def = currentContext.getModelDefinedStatementDefinition(name);
             if (def == null) {
-                final StatementSupport<?, ?, ?> extension = qNameToStmtDefMap.get(name);
+                final StatementSupport<?, ?, ?> extension = qnameToStmtDefMap.get(name);
                 if (extension != null) {
                     def = new StatementDefinitionContext<>(extension);
                     currentContext.putModelDefinedStatementDefinition(name, def);
@@ -158,14 +159,15 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             root = new RootStatementContext<>(this, def, ref, argument);
         } else if (!RootStatementContext.DEFAULT_VERSION.equals(root.getRootVersion())
                 && inProgressPhase == ModelProcessingPhase.SOURCE_LINKAGE) {
-            root = new RootStatementContext<>(this, def, ref, argument, root.getRootVersion(), root.getRootIdentifier());
+            root = new RootStatementContext<>(this, def, ref, argument, root.getRootVersion(),
+                    root.getRootIdentifier());
         } else {
             final QName rootStatement = root.definition().getStatementName();
             final String rootArgument = root.rawStatementArgument();
 
             Preconditions.checkState(Objects.equals(def.getStatementName(), rootStatement)
-                && Objects.equals(argument, rootArgument),
-                "Root statement was already defined as '%s %s'.", rootStatement, rootArgument);
+                && Objects.equals(argument, rootArgument), "Root statement was already defined as '%s %s'.",
+                rootStatement, rootArgument);
         }
         return root;
     }
@@ -199,8 +201,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
         final Collection<ModifierImpl> previousModifiers = modifiers.get(previousPhase);
         Preconditions.checkState(previousModifiers.isEmpty(),
-            "Previous phase %s has unresolved modifiers %s in source %s",
-            previousPhase, previousModifiers, source);
+            "Previous phase %s has unresolved modifiers %s in source %s", previousPhase, previousModifiers, source);
 
         inProgressPhase = phase;
         LOG.debug("Source {} started phase {}", source, phase);
@@ -364,13 +365,16 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 source.writePreLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef());
                 break;
             case SOURCE_LINKAGE:
-                source.writeLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef(), preLinkagePrefixes(), getRootVersion());
+                source.writeLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef(), preLinkagePrefixes(),
+                    getRootVersion());
                 break;
             case STATEMENT_DEFINITION:
-                source.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes(), getRootVersion());
+                source.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase), stmtDef(),
+                    prefixes(), getRootVersion());
                 break;
             case FULL_DECLARATION:
-                source.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes(), getRootVersion());
+                source.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes(),
+                    getRootVersion());
                 break;
             default:
                 break;
@@ -390,10 +394,10 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     private PrefixToModule prefixes() {
-        final Map<String, ModuleIdentifier> allPrefixes = getRoot().getAllFromNamespace(ImpPrefixToModuleIdentifier
-                .class);
-        final Map<String, ModuleIdentifier> belongsToPrefixes = getRoot().getAllFromNamespace
-                (BelongsToPrefixToModuleIdentifier.class);
+        final Map<String, ModuleIdentifier> allPrefixes = getRoot().getAllFromNamespace(
+            ImpPrefixToModuleIdentifier.class);
+        final Map<String, ModuleIdentifier> belongsToPrefixes = getRoot().getAllFromNamespace(
+            BelongsToPrefixToModuleIdentifier.class);
         if (belongsToPrefixes != null) {
             allPrefixes.putAll(belongsToPrefixes);
         }
@@ -407,12 +411,12 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     private QNameToStatementDefinition stmtDef() {
         // regular YANG statements and extension supports added
         final StatementSupportBundle supportsForPhase = currentContext.getSupportsForPhase(inProgressPhase);
-        qNameToStmtDefMap.putAll(supportsForPhase.getCommonDefinitions());
-        qNameToStmtDefMap.putAll(supportsForPhase.getDefinitionsSpecificForVersion(getRootVersion()));
+        qnameToStmtDefMap.putAll(supportsForPhase.getCommonDefinitions());
+        qnameToStmtDefMap.putAll(supportsForPhase.getDefinitionsSpecificForVersion(getRootVersion()));
 
         // No further actions needed
         if (inProgressPhase != ModelProcessingPhase.FULL_DECLARATION) {
-            return qNameToStmtDefMap;
+            return qnameToStmtDefMap;
         }
 
         // We need to any and all extension statements which have been declared in the context
@@ -420,7 +424,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 StatementDefinitionNamespace.class);
         if (extensions != null) {
             extensions.forEach((qname, support) -> {
-                final StatementSupport<?, ?, ?> existing = qNameToStmtDefMap.putIfAbsent(qname, support);
+                final StatementSupport<?, ?, ?> existing = qnameToStmtDefMap.putIfAbsent(qname, support);
                 if (existing != null) {
                     LOG.debug("Source {} already defines statement {} as {}", source, qname, existing);
                 } else {
@@ -429,7 +433,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             });
         }
 
-        return qNameToStmtDefMap;
+        return qnameToStmtDefMap;
     }
 
     public Set<YangVersion> getSupportedVersions() {

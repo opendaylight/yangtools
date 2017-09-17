@@ -46,10 +46,11 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     private final A argument;
 
     /**
-     * config statements are not all that common which means we are performing a recursive search towards the root
+     * Config statements are not all that common which means we are performing a recursive search towards the root
      * every time {@link #isConfiguration()} is invoked. This is quite expensive because it causes a linear search
      * for the (usually non-existent) config statement.
      *
+     * <p>
      * This field maintains a resolution cache, so once we have returned a result, we will keep on returning the same
      * result without performing any lookups.
      */

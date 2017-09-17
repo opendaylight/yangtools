@@ -53,15 +53,16 @@ public final class NotificationStatementRfc7950Support extends NotificationState
     @Override
     public EffectiveStatement<QName, NotificationStatement> createEffective(
             final StmtContext<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> ctx) {
-        SourceException
-                .throwIf(StmtContextUtils.hasAncestorOfType(ctx, ILLEGAL_PARENTS), ctx.getStatementSourceReference(),
-                        "Notification %s is defined within an rpc, action, or another notification",
-                        ctx.getStatementArgument());
+        SourceException.throwIf(StmtContextUtils.hasAncestorOfType(ctx, ILLEGAL_PARENTS),
+            ctx.getStatementSourceReference(),
+            "Notification %s is defined within an rpc, action, or another notification",
+            ctx.getStatementArgument());
         SourceException.throwIf(!StmtContextUtils.hasAncestorOfTypeWithChildOfType(ctx, YangStmtMapping.LIST,
-                YangStmtMapping.KEY), ctx.getStatementSourceReference(),
-                "Notification %s is defined within a list that has no key statement", ctx.getStatementArgument());
-        SourceException.throwIf(StmtContextUtils.hasParentOfType(ctx, YangStmtMapping.CASE), ctx.getStatementSourceReference(),
-                "Notification %s is defined within a case statement", ctx.getStatementArgument());
+            YangStmtMapping.KEY), ctx.getStatementSourceReference(),
+            "Notification %s is defined within a list that has no key statement", ctx.getStatementArgument());
+        SourceException.throwIf(StmtContextUtils.hasParentOfType(ctx, YangStmtMapping.CASE),
+            ctx.getStatementSourceReference(), "Notification %s is defined within a case statement",
+            ctx.getStatementArgument());
         return new NotificationEffectiveStatementImpl(ctx);
     }
 

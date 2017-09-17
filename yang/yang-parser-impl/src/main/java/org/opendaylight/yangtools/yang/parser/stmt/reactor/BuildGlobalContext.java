@@ -46,6 +46,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -65,11 +66,11 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceSpecificContext
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBehaviour.Registry {
+class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     private static final Logger LOG = LoggerFactory.getLogger(BuildGlobalContext.class);
 
-    private static final List<ModelProcessingPhase> PHASE_EXECUTION_ORDER = ImmutableList
-            .<ModelProcessingPhase> builder().add(ModelProcessingPhase.SOURCE_PRE_LINKAGE)
+    private static final List<ModelProcessingPhase> PHASE_EXECUTION_ORDER =
+            ImmutableList.<ModelProcessingPhase>builder().add(ModelProcessingPhase.SOURCE_PRE_LINKAGE)
             .add(ModelProcessingPhase.SOURCE_LINKAGE).add(ModelProcessingPhase.STATEMENT_DEFINITION)
             .add(ModelProcessingPhase.FULL_DECLARATION).add(ModelProcessingPhase.EFFECTIVE_MODEL).build();
 
@@ -378,8 +379,9 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
                     switch (sourceProgress) {
                         case FINISHED:
                             currentSource.remove();
-                            // Fallback to progress, since we were able to make
-                            // progress in computation
+                            // we were able to make progress in computation
+                            progressing = true;
+                            break;
                         case PROGRESS:
                             progressing = true;
                             break;

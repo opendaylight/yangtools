@@ -57,7 +57,9 @@ final class StatementSourceReferenceHandler extends DefaultHandler {
     }
 
     @Override
-    public void startElement(final String uri, final String localName, final String qName, final Attributes attributes) {
+    @SuppressWarnings("checkstyle:parameterName")
+    public void startElement(final String uri, final String localName, final String qName,
+            final Attributes attributes) {
         addTextIfNeeded();
         final Element el = doc.createElementNS(uri, qName);
         for (int i = 0, len = attributes.getLength(); i < len; i++) {

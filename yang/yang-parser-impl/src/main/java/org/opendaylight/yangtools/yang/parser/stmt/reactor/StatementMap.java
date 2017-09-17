@@ -91,7 +91,7 @@ abstract class StatementMap {
         @Override
         int size() {
             return countElements(elements);
-       }
+        }
     }
 
     static int countElements(final Object[] elements) {

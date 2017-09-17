@@ -43,7 +43,7 @@ public class ConstraintDefinitionsTest {
         final SchemaContext schemaContext = reactor.buildEffective(Arrays.asList(source));
         assertNotNull(schemaContext);
 
-        final Module testModule = schemaContext.findModuleByName( "foo",
+        final Module testModule = schemaContext.findModuleByName("foo",
             SimpleDateFormatUtil.getRevisionFormat().parse("2016-09-20"));
         assertNotNull(testModule);
 
@@ -117,7 +117,7 @@ public class ConstraintDefinitionsTest {
         assertFalse(ConstraintDefinitions.equals(constraints3, constraints4));
 
         final String constraintsString = ConstraintDefinitions.toString(constraints4);
-        assertEquals("EffectiveConstraintDefinitionImpl{whenCondition=foo = 'bar', mustConstraints=[bar != 'foo'], " +
-                "mandatory=true, minElements=50, maxElements=100}", constraintsString);
+        assertEquals("EffectiveConstraintDefinitionImpl{whenCondition=foo = 'bar', mustConstraints=[bar != 'foo'], "
+                + "mandatory=true, minElements=50, maxElements=100}", constraintsString);
     }
 }

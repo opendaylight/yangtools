@@ -28,7 +28,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.InputEffect
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.OutputEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.TypeDefEffectiveStatementImpl;
 
-public class ActionEffectiveStatementImpl extends AbstractEffectiveSchemaNode<ActionStatement> implements ActionDefinition {
+public class ActionEffectiveStatementImpl extends AbstractEffectiveSchemaNode<ActionStatement>
+        implements ActionDefinition {
     private final ContainerSchemaNode input;
     private final ContainerSchemaNode output;
     private final Set<TypeDefinition<?>> typeDefinitions;

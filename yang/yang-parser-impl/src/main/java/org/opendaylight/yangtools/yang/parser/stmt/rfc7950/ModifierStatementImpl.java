@@ -32,9 +32,8 @@ public final class ModifierStatementImpl extends AbstractDeclaredStatement<Modif
         super(context);
     }
 
-    public static class Definition
-            extends
-            AbstractStatementSupport<ModifierKind, ModifierStatement, EffectiveStatement<ModifierKind, ModifierStatement>> {
+    public static class Definition extends AbstractStatementSupport<ModifierKind, ModifierStatement,
+            EffectiveStatement<ModifierKind, ModifierStatement>> {
 
         public Definition() {
             super(YangStmtMapping.MODIFIER);
@@ -53,7 +52,8 @@ public final class ModifierStatementImpl extends AbstractDeclaredStatement<Modif
 
         @Override
         public EffectiveStatement<ModifierKind, ModifierStatement> createEffective(
-                final StmtContext<ModifierKind, ModifierStatement, EffectiveStatement<ModifierKind, ModifierStatement>> ctx) {
+                final StmtContext<ModifierKind, ModifierStatement,
+                EffectiveStatement<ModifierKind, ModifierStatement>> ctx) {
             return new ModifierEffectiveStatementImpl(ctx);
         }
 

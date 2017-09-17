@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 @Deprecated
 public final class ModuleDependencySort {
     /**
-     * It is not desirable to instance this class
+     * It is not desirable to instance this class.
      */
     private ModuleDependencySort() {
     }

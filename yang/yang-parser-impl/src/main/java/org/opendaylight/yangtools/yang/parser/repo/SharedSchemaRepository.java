@@ -12,7 +12,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -23,11 +22,10 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.util.AbstractSchemaRepository;
 
 /**
- * A {@link SchemaRepository} which allows sharing of {@link SchemaContext} as
- * long as their specification is the same.
+ * A {@link SchemaRepository} which allows sharing of {@link SchemaContext} as long as their specification is the same.
  *
- * Note: for current implementation, "same" means the same filter and the same
- * set of {@link SourceIdentifier}s.
+ * <p>
+ * Note: for current implementation, "same" means the same filter and the same set of {@link SourceIdentifier}s.
  */
 @Beta
 public final class SharedSchemaRepository extends AbstractSchemaRepository implements Identifiable<String> {

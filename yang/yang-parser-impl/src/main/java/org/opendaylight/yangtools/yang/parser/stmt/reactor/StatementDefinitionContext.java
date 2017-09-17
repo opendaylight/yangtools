@@ -65,23 +65,22 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
         return false;
     }
 
-
     public void onDeclarationFinished(final Mutable<A, D, E> statement, final ModelProcessingPhase phase) {
         switch (phase) {
-        case SOURCE_PRE_LINKAGE:
-            support.onPreLinkageDeclared(statement);
-            break;
-        case SOURCE_LINKAGE:
-            support.onLinkageDeclared(statement);
-            break;
-        case STATEMENT_DEFINITION:
-            support.onStatementDefinitionDeclared(statement);
-            break;
-        case FULL_DECLARATION:
-            support.onFullDefinitionDeclared(statement);
-            break;
-        default:
-            break;
+            case SOURCE_PRE_LINKAGE:
+                support.onPreLinkageDeclared(statement);
+                break;
+            case SOURCE_LINKAGE:
+                support.onLinkageDeclared(statement);
+                break;
+            case STATEMENT_DEFINITION:
+                support.onStatementDefinitionDeclared(statement);
+                break;
+            case FULL_DECLARATION:
+                support.onFullDefinitionDeclared(statement);
+                break;
+            default:
+                break;
         }
     }
 

@@ -43,6 +43,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -54,29 +55,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends NamespaceStorageSupport implements StmtContext.Mutable<A, D, E> {
+        extends NamespaceStorageSupport implements Mutable<A, D, E> {
     /**
-     * event listener when an item is added to model namespace.
+     * Event listener when an item is added to model namespace.
      */
     interface OnNamespaceItemAdded extends EventListener {
         /**
-         * @throws SourceException
+         * Invoked whenever a new item is added to a namespace.
          */
         void namespaceItemAdded(StatementContextBase<?, ?, ?> context, Class<?> namespace, Object key, Object value);
     }
 
     /**
-     * event listener when a parsing {@link ModelProcessingPhase} is completed.
+     * Event listener when a parsing {@link ModelProcessingPhase} is completed.
      */
     interface OnPhaseFinished extends EventListener {
         /**
-         * @throws SourceException
+         * Invoked whenever a processing phase has finished.
          */
         boolean phaseFinished(StatementContextBase<?, ?, ?> context, ModelProcessingPhase phase);
     }
 
     /**
-     * interface for all mutations within an {@link ModelActionBuilder.InferenceAction}.
+     * Interface for all mutations within an {@link ModelActionBuilder.InferenceAction}.
      */
     interface ContextMutation {
 
@@ -226,6 +227,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     public abstract StatementContextBase<?, ?, ?> getParentContext();
 
     /**
+     * Returns the model root for this statement.
+     *
      * @return root context of statement
      */
     @Nonnull
@@ -233,6 +236,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     public abstract RootStatementContext<?, ?, ?> getRoot();
 
     /**
+     * Returns the origin of the statement.
+     *
      * @return origin of statement
      */
     @Nonnull
@@ -242,6 +247,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     /**
+     * Returns a reference to statement source.
+     *
      * @return reference of statement source
      */
     @Nonnull
@@ -282,7 +289,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return Collections.unmodifiableCollection(effective);
     }
 
-    public void removeStatementsFromEffectiveSubstatements(final Collection<? extends StmtContext<?, ?, ?>> substatements) {
+    public void removeStatementsFromEffectiveSubstatements(
+            final Collection<? extends StmtContext<?, ?, ?>> substatements) {
         if (!effective.isEmpty()) {
             effective.removeAll(substatements);
             shrinkEffective();
@@ -312,11 +320,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     /**
-     * Removes a statement context from the effective substatements
-     * based on its statement definition (i.e statement keyword) and raw (in String form) statement argument.
-     * The statement context is removed only if both statement definition and statement argument match with
-     * one of the effective substatements' statement definition and argument.
+     * Removes a statement context from the effective substatements based on its statement definition (i.e statement
+     * keyword) and raw (in String form) statement argument. The statement context is removed only if both statement
+     * definition and statement argument match with one of the effective substatements' statement definition
+     * and argument.
      *
+     * <p>
      * If the statementArg parameter is null, the statement context is removed based only on its statement definition.
      *
      * @param statementDef statement definition of the statement context to remove
@@ -344,7 +353,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     /**
-     * adds effective statement to collection of substatements
+     * Adds an effective statement to collection of substatements.
      *
      * @param substatement substatement
      * @throws IllegalStateException
@@ -358,7 +367,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     /**
-     * adds effective statement to collection of substatements
+     * Adds an effective statement to collection of substatements.
      *
      * @param substatements substatements
      * @throws IllegalStateException
@@ -396,9 +405,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @param argument statement argument
      * @return A new substatement
      */
-    public final <CA, CD extends DeclaredStatement<CA>, CE extends EffectiveStatement<CA, CD>> StatementContextBase<CA, CD, CE> createSubstatement(
-            final int offset, final StatementDefinitionContext<CA, CD, CE> def, final StatementSourceReference ref,
-            final String argument) {
+    public final <CA, CD extends DeclaredStatement<CA>, CE extends EffectiveStatement<CA, CD>>
+            StatementContextBase<CA, CD, CE> createSubstatement(final int offset,
+                    final StatementDefinitionContext<CA, CD, CE> def, final StatementSourceReference ref,
+                    final String argument) {
         final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
         Preconditions.checkState(inProgressPhase != ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Declared statement cannot be added in effective phase at: %s", getStatementSourceReference());
@@ -531,15 +541,14 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     /**
      * Ends declared section of current node.
-     *
-     * @param ref
-     * @throws SourceException
      */
     void endDeclared(final StatementSourceReference ref, final ModelProcessingPhase phase) {
         definition().onDeclarationFinished(this, phase);
     }
 
     /**
+     * Return the context in which this statement was defined.
+     *
      * @return statement definition
      */
     protected final StatementDefinitionContext<A, D, E> definition() {
@@ -598,12 +607,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     /**
-     * adds {@link OnPhaseFinished} listener for a {@link ModelProcessingPhase} end
-     *
-     * @throws SourceException
+     * Adds {@link OnPhaseFinished} listener for a {@link ModelProcessingPhase} end.
      */
     void addPhaseCompletedListener(final ModelProcessingPhase phase, final OnPhaseFinished listener) {
-
         Preconditions.checkNotNull(phase, "Statement context processing phase cannot be null at: %s",
                 getStatementSourceReference());
         Preconditions.checkNotNull(listener, "Statement context phase listener cannot be null at: %s",
@@ -625,7 +631,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     /**
-     * adds {@link ContextMutation} to {@link ModelProcessingPhase}
+     * Adds a {@link ContextMutation} to a {@link ModelProcessingPhase}.
      *
      * @throws IllegalStateException
      *             when the mutation was registered after phase was completed
@@ -633,10 +639,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     void addMutation(final ModelProcessingPhase phase, final ContextMutation mutation) {
         ModelProcessingPhase finishedPhase = completedPhase;
         while (finishedPhase != null) {
-            if (phase.equals(finishedPhase)) {
-                throw new IllegalStateException("Mutation registered after phase was completed at: "  +
-                        getStatementSourceReference());
-            }
+            Preconditions.checkState(!phase.equals(finishedPhase),
+                "Mutation registered after phase was completed at: %s", getStatementSourceReference());
             finishedPhase = finishedPhase.getPreviousPhase();
         }
 

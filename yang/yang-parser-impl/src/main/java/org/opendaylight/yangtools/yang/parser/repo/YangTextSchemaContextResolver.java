@@ -86,10 +86,10 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
      * Register a {@link YangTextSchemaSource}.
      *
      * @param source YANG text source
+     * @return a YangTextSchemaSourceRegistration
      * @throws YangSyntaxErrorException When the YANG file is syntactically invalid
      * @throws IOException when the URL is not readable
      * @throws SchemaSourceException When parsing encounters general error
-     * @return a YangTextSchemaSourceRegistration
      */
     public YangTextSchemaSourceRegistration registerSource(@Nonnull final YangTextSchemaSource source)
             throws SchemaSourceException, IOException, YangSyntaxErrorException {
@@ -155,10 +155,10 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
      * Register a URL containing a YANG text.
      *
      * @param url YANG text source URL
+     * @return a YangTextSchemaSourceRegistration for this URL
      * @throws YangSyntaxErrorException When the YANG file is syntactically invalid
      * @throws IOException when the URL is not readable
      * @throws SchemaSourceException When parsing encounters general error
-     * @return a YangTextSchemaSourceRegistration for this URL
      */
     public YangTextSchemaSourceRegistration registerSource(@Nonnull final URL url) throws SchemaSourceException,
             IOException, YangSyntaxErrorException {
@@ -191,6 +191,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
 
     /**
      * Try to parse all currently available yang files and build new schema context.
+     *
      * @return new schema context iif there is at least 1 yang file registered and
      *         new schema context was successfully built.
      */
@@ -199,8 +200,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     }
 
     /**
-     * Try to parse all currently available yang files and build new schema context
-     * in dependence on specified parsing mode.
+     * Try to parse all currently available yang files and build new schema context depending on specified parsing mode.
      *
      * @param statementParserMode mode of statement parser
      * @return new schema context iif there is at least 1 yang file registered and
@@ -209,7 +209,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     public Optional<SchemaContext> getSchemaContext(final StatementParserMode statementParserMode) {
         final SchemaContextFactory factory = repository.createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
         Optional<SchemaContext> sc;
-        Object v;
+        Object ver;
         do {
             // Spin get stable context version
             Object cv;
@@ -224,9 +224,9 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             // Version has been updated
             Collection<SourceIdentifier> sources;
             do {
-                v = version;
+                ver = version;
                 sources = ImmutableSet.copyOf(requiredSources);
-            } while (v != version);
+            } while (ver != version);
 
             while (true) {
                 final CheckedFuture<SchemaContext, SchemaResolutionException> f = factory.createSchemaContext(sources,
@@ -245,10 +245,10 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             synchronized (this) {
                 if (contextVersion == cv) {
                     currentSchemaContext.set(sc);
-                    contextVersion = v;
+                    contextVersion = ver;
                 }
             }
-        } while (version == v);
+        } while (version == ver);
 
         return sc;
     }

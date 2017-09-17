@@ -17,7 +17,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMapping;
 
 /**
- * Declared statement representation of 'yang-data' extension defined in https://tools.ietf.org/html/rfc8040#section-8
+ * Declared statement representation of 'yang-data' extension defined in
+ * <a href="https://tools.ietf.org/html/rfc8040#section-8">RFC 8040</a>.
  */
 @Beta
 public final class YangDataStatement extends AbstractDeclaredStatement<String> implements UnknownStatement<String> {

@@ -64,7 +64,8 @@ public final class AnydataStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public void onStatementAdded(final Mutable<QName, AnydataStatement, EffectiveStatement<QName, AnydataStatement>> stmt) {
+        public void onStatementAdded(final Mutable<QName, AnydataStatement,
+                EffectiveStatement<QName, AnydataStatement>> stmt) {
             stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
         }
 
@@ -129,5 +130,4 @@ public final class AnydataStatementImpl extends AbstractDeclaredStatement<QName>
     public MandatoryStatement getMandatory() {
         return firstDeclared(MandatoryStatement.class);
     }
-
 }

@@ -33,12 +33,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class CrossSourceStatementReactor {
-    private static final Logger LOG = LoggerFactory.getLogger(CrossSourceStatementReactor.class);
-
     private final Map<ModelProcessingPhase, StatementSupportBundle> supportedTerminology;
     private final Map<ValidationBundleType, Collection<?>> supportedValidation;
 
@@ -124,8 +120,8 @@ public final class CrossSourceStatementReactor {
      * @return A new {@link BuildAction}.
      * @throws NullPointerException if statementParserMode is null
      *
-     * @deprecated Use {@link #newBuild(StatementParserMode)} and then call setSupportedFeatures()
-     * on the created BuildAction instead.
+     * @deprecated Use {@link #newBuild(StatementParserMode)} and then call setSupportedFeatures() on the created
+     *             BuildAction instead.
      */
     @Deprecated
     public BuildAction newBuild(final StatementParserMode statementParserMode,
@@ -148,8 +144,8 @@ public final class CrossSourceStatementReactor {
      * @return A new {@link BuildAction}.
      * @throws NullPointerException if statementParserMode is null
      *
-     * @deprecated Use {@link #newBuild(StatementParserMode)} and then call setSupportedFeatures()
-     * on the created BuildAction instead.
+     * @deprecated Use {@link #newBuild(StatementParserMode)} and then call setSupportedFeatures() on the created
+     *             BuildAction instead.
      */
     @Deprecated
     public BuildAction newBuild(final StatementParserMode statementParserMode,
@@ -195,8 +191,7 @@ public final class CrossSourceStatementReactor {
         }
 
         /**
-         * Add main source. All main sources are present in resulting
-         * SchemaContext.
+         * Add main source. All main sources are present in resulting SchemaContext.
          *
          * @param source
          *            which should be added into main sources
@@ -206,8 +201,7 @@ public final class CrossSourceStatementReactor {
         }
 
         /**
-         * Add main sources. All main sources are present in resulting
-         * SchemaContext.
+         * Add main sources. All main sources are present in resulting SchemaContext.
          *
          * @param sources
          *            which should be added into main sources
@@ -223,10 +217,10 @@ public final class CrossSourceStatementReactor {
         }
 
         /**
-         * Add library sources. Only library sources required by main sources
-         * are present in resulting SchemaContext. Any other library sources are
-         * ignored and this also applies to error reporting.
+         * Add library sources. Only library sources required by main sources are present in resulting SchemaContext.
+         * Any other library sources are ignored and this also applies to error reporting.
          *
+         * <p>
          * Library sources are not supported in semantic version mode currently.
          *
          * @param libSources
@@ -273,8 +267,7 @@ public final class CrossSourceStatementReactor {
         }
 
         /**
-         * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException
-         * @throws ReactorException
+         * Build the effective model context.
          */
         public EffectiveModelContext build() throws ReactorException {
             return context.build();
@@ -285,6 +278,8 @@ public final class CrossSourceStatementReactor {
         }
 
         /**
+         * Add specified sources and assemble the resulting SchemaContext.
+         *
          * @deprecated Use {@link #addSources(Collection)} and {@link #buildEffective()} instead.
          */
         @Deprecated
@@ -306,6 +301,8 @@ public final class CrossSourceStatementReactor {
         }
 
         /**
+         * Add specified sources and assemble the resulting SchemaContext.
+         *
          * @deprecated Use {@link #addSources(Collection)} and {@link #buildEffective()} instead.
          */
         @Deprecated

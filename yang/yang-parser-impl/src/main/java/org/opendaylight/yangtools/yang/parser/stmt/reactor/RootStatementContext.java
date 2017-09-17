@@ -68,19 +68,15 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
         this.setRootIdentifier(identifier);
     }
 
-    /**
-     * @return null as root cannot have parent
-     */
     @Override
     public StatementContextBase<?, ?, ?> getParentContext() {
+        // null as root cannot have parent
         return null;
     }
 
-    /**
-     * @return namespace storage of source context
-     */
     @Override
     public NamespaceStorageNode getParentNamespaceStorage() {
+        // namespace storage of source context
         return sourceContext;
     }
 
@@ -93,12 +89,11 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     public StorageNodeType getStorageNodeType() {
         return StorageNodeType.ROOT_STATEMENT_LOCAL;
     }
-    /**
-     * @return this as its own root
-     */
+
     @Nonnull
     @Override
     public RootStatementContext<?, ?, ?> getRoot() {
+        // this as its own root
         return this;
     }
 

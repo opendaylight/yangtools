@@ -24,14 +24,13 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
 
 /**
- * Abstract Syntax Tree representation of a schema source. This representation
- * is internal to the YANG parser implementation, as it relies on ANTLR types.
+ * Abstract Syntax Tree representation of a schema source. This representation is internal to the YANG parser
+ * implementation, as it relies on ANTLR types.
  *
- * Instances of this representation are used for caching purposes, as they
- * are a natural intermediate step in YANG text processing pipeline: the text
- * has been successfully parsed, so we know it is syntactically correct. It also
- * passes basic semantic validation and we were able to extract dependency
- * information.
+ * <p>
+ * Instances of this representation are used for caching purposes, as they are a natural intermediate step in YANG text
+ * processing pipeline: the text has been successfully parsed, so we know it is syntactically correct. It also passes
+ * basic semantic validation and we were able to extract dependency information.
  */
 @Beta
 public final class ASTSchemaSource implements SchemaSourceRepresentation {
@@ -78,20 +77,6 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
         final SourceIdentifier id = getSourceId(depInfo);
         final SemVerSourceIdentifier semVerId = getSemVerSourceId(depInfo);
         return new ASTSchemaSource(id, semVerId, tree, depInfo, null);
-    }
-
-    private static SourceIdentifier getSourceId(final YangModelDependencyInfo depInfo) {
-        final String name = depInfo.getName();
-        return depInfo.getFormattedRevision() == null ? RevisionSourceIdentifier.create(name)
-                : RevisionSourceIdentifier.create(name, depInfo.getFormattedRevision());
-    }
-
-    private static SemVerSourceIdentifier getSemVerSourceId(final YangModelDependencyInfo depInfo) {
-        return depInfo.getFormattedRevision() == null
-                ? SemVerSourceIdentifier.create(depInfo.getName(),
-                    depInfo.getSemanticVersion().or(DEFAULT_SEMANTIC_VERSION))
-                        : SemVerSourceIdentifier.create(depInfo.getName(), depInfo.getFormattedRevision(),
-                            depInfo.getSemanticVersion().or(DEFAULT_SEMANTIC_VERSION));
     }
 
     /**
@@ -201,12 +186,25 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
     /**
      * Return the dependency information as extracted from the AST.
      *
-     * FIXME: this method should be extracted into a public interface in the
-     *        model.api.repo class, relying solely on model.api types.
-     *
      * @return Dependency information.
      */
+    // FIXME: this method should be extracted into a public interface in the model.api.repo class, relying solely
+    //        on model.api types.
     @Nonnull public YangModelDependencyInfo getDependencyInformation() {
         return depInfo;
+    }
+
+    private static SourceIdentifier getSourceId(final YangModelDependencyInfo depInfo) {
+        final String name = depInfo.getName();
+        return depInfo.getFormattedRevision() == null ? RevisionSourceIdentifier.create(name)
+                : RevisionSourceIdentifier.create(name, depInfo.getFormattedRevision());
+    }
+
+    private static SemVerSourceIdentifier getSemVerSourceId(final YangModelDependencyInfo depInfo) {
+        return depInfo.getFormattedRevision() == null
+                ? SemVerSourceIdentifier.create(depInfo.getName(),
+                    depInfo.getSemanticVersion().or(DEFAULT_SEMANTIC_VERSION))
+                        : SemVerSourceIdentifier.create(depInfo.getName(), depInfo.getFormattedRevision(),
+                            depInfo.getSemanticVersion().or(DEFAULT_SEMANTIC_VERSION));
     }
 }

@@ -65,7 +65,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
 
     // FIXME SchemaRepository should be the type for repository parameter instead of SharedSchemaRepository
     //       (final implementation)
-    public SharedSchemaContextFactory(final SharedSchemaRepository repository, final SchemaSourceFilter filter) {
+    SharedSchemaContextFactory(final SharedSchemaRepository repository, final SchemaSourceFilter filter) {
         this.repository = Preconditions.checkNotNull(repository);
         this.filter = Preconditions.checkNotNull(filter);
     }
@@ -77,10 +77,6 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         return createSchemaContext(requiredSources,
                 statementParserMode == StatementParserMode.SEMVER_MODE ? this.semVerCache : this.cache,
                 new AssembleSources(Optional.ofNullable(supportedFeatures), statementParserMode));
-    }
-
-    private ListenableFuture<ASTSchemaSource> requestSource(final SourceIdentifier identifier) {
-        return repository.getSchemaSource(identifier, ASTSchemaSource.class);
     }
 
     private CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(
@@ -118,15 +114,21 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
             }
 
             @Override
-            public void onFailure(@Nonnull final Throwable t) {
-                LOG.debug("Failed to assemble sources", t);
+            public void onFailure(@Nonnull final Throwable cause) {
+                LOG.debug("Failed to assemble sources", cause);
             }
         }, MoreExecutors.directExecutor());
 
         return Futures.makeChecked(cf, MAPPER);
     }
 
+    private ListenableFuture<ASTSchemaSource> requestSource(final SourceIdentifier identifier) {
+        return repository.getSchemaSource(identifier, ASTSchemaSource.class);
+    }
+
     /**
+     * Return a set of de-duplicated inputs.
+     *
      * @return set (preserving ordering) from the input collection
      */
     private static List<SourceIdentifier> deDuplicateSources(final Collection<SourceIdentifier> requiredSources) {
@@ -145,7 +147,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
             List<ASTSchemaSource>> {
         private final List<SourceIdentifier> sourceIdentifiers;
 
-        public SourceIdMismatchDetector(final List<SourceIdentifier> sourceIdentifiers) {
+        SourceIdMismatchDetector(final List<SourceIdentifier> sourceIdentifiers) {
             this.sourceIdentifiers = Preconditions.checkNotNull(sourceIdentifiers);
         }
 
@@ -186,11 +188,11 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
             this.supportedFeatures = supportedFeatures;
             this.statementParserMode = Preconditions.checkNotNull(statementParserMode);
             switch (statementParserMode) {
-            case SEMVER_MODE:
-                this.getIdentifier = ASTSchemaSource::getSemVerIdentifier;
-                break;
-            default:
-                this.getIdentifier = ASTSchemaSource::getIdentifier;
+                case SEMVER_MODE:
+                    this.getIdentifier = ASTSchemaSource::getSemVerIdentifier;
+                    break;
+                default:
+                    this.getIdentifier = ASTSchemaSource::getIdentifier;
             }
         }
 
