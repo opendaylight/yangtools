@@ -48,8 +48,8 @@ public class Bug6876Test {
         assertNull(findNode(context, ImmutableList.of(bar("augment-target"), foo("mandatory-leaf"))));
     }
 
-    private static SchemaNode findNode(final SchemaContext context, final Iterable<QName> qNames) {
-        return SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(qNames, true));
+    private static SchemaNode findNode(final SchemaContext context, final Iterable<QName> qnames) {
+        return SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(qnames, true));
     }
 
     private static QName foo(final String localName) {

@@ -256,6 +256,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
         throw new SomeModifiersUnresolvedException(currentPhase, sourceId, cause);
     }
 
+    @SuppressWarnings("checkstyle:illegalCatch")
     private EffectiveSchemaContext transformEffective() throws ReactorException {
         Preconditions.checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         final List<DeclaredStatement<?>> rootStatements = new ArrayList<>(sources.size());
@@ -300,6 +301,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
         loadPhaseStatementsFor(libSources);
     }
 
+    @SuppressWarnings("checkstyle:illegalCatch")
     private void loadPhaseStatementsFor(final Set<SourceSpecificContext> sources) throws ReactorException {
         for (final SourceSpecificContext source : sources) {
             try {
@@ -333,16 +335,16 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
             if (suppressed.length > 0) {
                 LOG.error("{} additional errors reported:", suppressed.length);
 
-                int i = 1;
+                int count = 1;
                 for (final Throwable t : suppressed) {
                     // FIXME: this should be configured in the appender, really
                     if (LOG.isDebugEnabled()) {
-                        LOG.error("Error {}: {}", i, t.getMessage(), t);
+                        LOG.error("Error {}: {}", count, t.getMessage(), t);
                     } else {
-                        LOG.error("Error {}: {}", i, t.getMessage());
+                        LOG.error("Error {}: {}", count, t.getMessage());
                     }
 
-                    i++;
+                    count++;
                 }
             }
 
@@ -357,6 +359,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
         return buildFailure;
     }
 
+    @SuppressWarnings("checkstyle:illegalCatch")
     private void completePhaseActions() throws ReactorException {
         Preconditions.checkState(currentPhase != null);
         final List<SourceSpecificContext> sourcesToProgress = Lists.newArrayList(sources);

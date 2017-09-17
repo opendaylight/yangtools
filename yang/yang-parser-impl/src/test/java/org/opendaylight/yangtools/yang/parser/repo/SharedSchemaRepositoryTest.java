@@ -135,8 +135,8 @@ public class SharedSchemaRepositoryTest {
             "/ietf/network-topology@2013-10-21.yang");
         remoteTopologyYang.register(sharedSchemaRepository);
         remoteTopologyYang.setResult();
-        final SettableSchemaProvider<ASTSchemaSource> remoteModuleNoRevYang = getImmediateYangSourceProviderFromResource(
-            "/no-revision/module-without-revision.yang");
+        final SettableSchemaProvider<ASTSchemaSource> remoteModuleNoRevYang =
+                getImmediateYangSourceProviderFromResource("/no-revision/module-without-revision.yang");
         remoteModuleNoRevYang.register(sharedSchemaRepository);
 
         final SchemaContextFactory fact = sharedSchemaRepository.createSchemaContextFactory(ALWAYS_ACCEPT);
@@ -288,8 +288,8 @@ public class SharedSchemaRepositoryTest {
                 public InputStream openStream() throws IOException {
                     return new ByteArrayInputStream("running".getBytes(StandardCharsets.UTF_8));
                 }
-        }), PotentialSchemaSource.create(runningId, YangTextSchemaSource.class,
-            PotentialSchemaSource.Costs.REMOTE_IO.getValue()));
+            }), PotentialSchemaSource.create(runningId, YangTextSchemaSource.class,
+                PotentialSchemaSource.Costs.REMOTE_IO.getValue()));
 
         final TextToASTTransformer transformer = TextToASTTransformer.create(sharedSchemaRepository,
             sharedSchemaRepository);
@@ -305,7 +305,7 @@ public class SharedSchemaRepositoryTest {
             }
 
             @Override
-            public void onFailure(@Nonnull final Throwable t) {
+            public void onFailure(@Nonnull final Throwable cause) {
                 // Creation of schema context fails, since we do not provide regular sources, but we just want
                 // to check cache
                 final List<File> cachedSchemas = Arrays.asList(storageDir.listFiles());
