@@ -169,6 +169,9 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
                             break;
                         case DELETE:
                             performDeviateDelete(sourceNodeStmtCtx, targetNodeStmtCtx);
+                            break;
+                        default:
+                            throw new IllegalStateException("Unsupported deviate " + deviateKind);
                     }
                 }
 
