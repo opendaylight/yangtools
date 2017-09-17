@@ -177,6 +177,7 @@ public final class Utils {
         return identifier;
     }
 
+    @SuppressWarnings("checkstyle:illegalCatch")
     static SchemaNodeIdentifier nodeIdentifierFromPath(final StmtContext<?, ?, ?> ctx, final String path) {
         // FIXME: is the path trimming really necessary??
         final List<QName> qNames = new ArrayList<>();

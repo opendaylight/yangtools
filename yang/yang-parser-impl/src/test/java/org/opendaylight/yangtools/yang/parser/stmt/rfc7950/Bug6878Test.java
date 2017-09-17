@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 public class Bug6878Test {
 
     @Test
+    @SuppressWarnings("checkstyle:regexpSinglelineJava")
     public void testParsingXPathWithYang11Functions() throws Exception {
         final PrintStream stdout = System.out;
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -37,6 +38,7 @@ public class Bug6878Test {
     }
 
     @Test
+    @SuppressWarnings("checkstyle:regexpSinglelineJava")
     public void shouldLogInvalidYang10XPath() throws Exception {
         final PrintStream stdout = System.out;
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -52,6 +54,7 @@ public class Bug6878Test {
     }
 
     @Test
+    @SuppressWarnings("checkstyle:regexpSinglelineJava")
     public void shouldLogInvalidYang10XPath2() throws Exception {
         final PrintStream stdout = System.out;
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
