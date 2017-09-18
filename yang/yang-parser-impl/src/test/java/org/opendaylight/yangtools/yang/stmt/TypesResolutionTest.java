@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import com.google.common.collect.Iterables;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -201,13 +202,13 @@ public class TypesResolutionTest {
             }
         }
         assertNotNull(cryptoAlg);
-        IdentitySchemaNode baseIdentity = cryptoAlg.getBaseIdentity();
+        IdentitySchemaNode baseIdentity = Iterables.getOnlyElement(cryptoAlg.getBaseIdentities());
         assertEquals("crypto-base", baseIdentity.getQName().getLocalName());
         assertTrue(cryptoAlg.getDerivedIdentities().isEmpty());
-        assertNull(baseIdentity.getBaseIdentity());
+        assertTrue(baseIdentity.getBaseIdentities().isEmpty());
 
         assertNotNull(cryptoBase);
-        assertNull(cryptoBase.getBaseIdentity());
+        assertTrue(cryptoBase.getBaseIdentities().isEmpty());
         assertEquals(3, cryptoBase.getDerivedIdentities().size());
 
         assertNotNull(cryptoId);
