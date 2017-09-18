@@ -11,8 +11,8 @@ import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -49,10 +49,10 @@ public class YinFileIdentityStmtTest {
         IdentitySchemaNode id = idIterator.next();
 
         assertThat(id.getQName().getLocalName(), anyOf(is("module-type"), is("service-type")));
-        assertNull(id.getBaseIdentity());
+        assertTrue(id.getBaseIdentities().isEmpty());
 
         id = idIterator.next();
         assertThat(id.getQName().getLocalName(), anyOf(is("module-type"), is("service-type")));
-        assertNull(id.getBaseIdentity());
+        assertTrue(id.getBaseIdentities().isEmpty());
     }
 }
