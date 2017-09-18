@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import com.google.common.collect.Iterables;
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -327,7 +328,7 @@ public class YangParserWithContextTest {
         assertEquals(SimpleDateFormatUtil.getRevisionFormat().parse("2013-06-18"), idQName.getRevision());
         assertEquals("pt", idQName.getLocalName());
 
-        final IdentitySchemaNode baseIdentity = identity.getBaseIdentity();
+        final IdentitySchemaNode baseIdentity = Iterables.getOnlyElement(identity.getBaseIdentities());
         final QName idBaseQName = baseIdentity.getQName();
         assertEquals(URI.create("urn:custom.types.demo"), idBaseQName.getNamespace());
         assertEquals(SimpleDateFormatUtil.getRevisionFormat().parse("2012-04-16"), idBaseQName.getRevision());

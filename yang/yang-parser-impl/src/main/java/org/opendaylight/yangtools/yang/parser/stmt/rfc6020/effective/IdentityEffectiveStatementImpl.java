@@ -27,7 +27,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 public final class IdentityEffectiveStatementImpl extends AbstractEffectiveSchemaNode<IdentityStatement> implements
         IdentitySchemaNode, MutableStatement {
     private final Set<IdentitySchemaNode> derivedIdentities;
-    private IdentitySchemaNode baseIdentity;
     private Set<IdentitySchemaNode> baseIdentities;
     private boolean sealed;
 
@@ -57,15 +56,7 @@ public final class IdentityEffectiveStatementImpl extends AbstractEffectiveSchem
 
     private void addBaseIdentity(final IdentityEffectiveStatementImpl baseIdentity) {
         Preconditions.checkState(!sealed, "Attempt to modify sealed identity effective statement %s", getQName());
-        this.baseIdentity = baseIdentity;
         this.baseIdentities.add(baseIdentity);
-    }
-
-    @Override
-    public IdentitySchemaNode getBaseIdentity() {
-        Preconditions.checkState(sealed, "Attempt to get base identity from unsealed identity effective statement %s",
-                getQName());
-        return baseIdentity;
     }
 
     @Nonnull
