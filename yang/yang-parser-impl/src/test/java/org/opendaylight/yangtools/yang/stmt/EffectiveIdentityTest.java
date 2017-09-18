@@ -11,10 +11,10 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import com.google.common.collect.Iterables;
 import java.net.URISyntaxException;
 import java.util.Set;
 import org.junit.Test;
@@ -45,7 +45,7 @@ public class EffectiveIdentityTest {
                 .newBuild();
         reactor.addSources(CYCLIC_IDENTITY_TEST);
         try {
-            SchemaContext result = reactor.buildEffective();
+            reactor.buildEffective();
         } catch (SomeModifiersUnresolvedException e) {
             StmtTestUtils.log(e, "      ");
             throw e;
@@ -101,7 +101,7 @@ public class EffectiveIdentityTest {
         assertNotNull(child2);
         assertNotNull(child12);
 
-        assertNull(root.getBaseIdentity());
+        assertTrue(root.getBaseIdentities().isEmpty());
 
         Set<IdentitySchemaNode> rootDerivedIdentities = root
                 .getDerivedIdentities();
@@ -112,8 +112,8 @@ public class EffectiveIdentityTest {
         assertFalse(rootDerivedIdentities.contains(child12));
         assertFalse(child1.equals(child2));
 
-        assertTrue(root == child1.getBaseIdentity());
-        assertTrue(root == child2.getBaseIdentity());
+        assertTrue(root == Iterables.getOnlyElement(child1.getBaseIdentities()));
+        assertTrue(root == Iterables.getOnlyElement(child2.getBaseIdentities()));
 
         assertTrue(child2.getDerivedIdentities().isEmpty());
 
@@ -123,8 +123,7 @@ public class EffectiveIdentityTest {
         assertTrue(child1DerivedIdentities.contains(child12));
         assertFalse(child1DerivedIdentities.contains(child1));
 
-        assertTrue(child1 == child12.getBaseIdentity());
+        assertTrue(child1 == Iterables.getOnlyElement(child12.getBaseIdentities()));
         assertTrue(child12 == child1DerivedIdentities.iterator().next());
     }
-
 }
