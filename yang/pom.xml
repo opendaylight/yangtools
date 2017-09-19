@@ -41,7 +41,7 @@
         <module>yang-parser-spi</module>
         <module>yang-parser-impl</module>
         <module>yang-data-jaxen</module>
-        <module>yang-system-test</module>
+        <module>odl-yang-validator</module>
         <module>yang-test-util</module>
     </modules>
 
