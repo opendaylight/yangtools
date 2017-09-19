@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.system.test;
+package org.opendaylight.yangtools.yang.validator;
 
 import ch.qos.logback.classic.Level;
 import com.google.common.base.Stopwatch;
