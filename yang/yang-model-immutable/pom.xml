@@ -19,7 +19,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yang-model-immutable</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>1.2.0</version>
     <packaging>bundle</packaging>
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
@@ -29,7 +29,7 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yangtools-artifacts</artifactId>
-                <version>1.2.0-SNAPSHOT</version>
+                <version>1.2.0</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
