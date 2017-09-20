@@ -45,7 +45,7 @@ final class INode<K, V> extends BasicNode {
 
     private MainNode<K, V> GCAS_READ(final TrieMap<?, ?> ct) {
         MainNode<K, V> m = /* READ */ mainnode;
-        MainNode<K, V> prevval = /* READ */ m.READ_PREV();
+        MainNode<K, V> prevval = /* READ */ m.readPrev();
         if (prevval == null) {
             return m;
         }
@@ -57,7 +57,7 @@ final class INode<K, V> extends BasicNode {
         MainNode<K, V> m = oldmain;
         while (m != null) {
             // complete the GCAS
-            final MainNode<K, V> prev = /* READ */ m.READ_PREV();
+            final MainNode<K, V> prev = /* READ */ m.readPrev();
             final INode<?, ?> ctr = ct.readRoot(true);
             if (prev == null) {
                 return m;
@@ -66,8 +66,8 @@ final class INode<K, V> extends BasicNode {
             if (prev instanceof FailedNode) {
                 // try to commit to previous value
                 FailedNode<K, V> fn = (FailedNode<K, V>) prev;
-                if (MAINNODE_UPDATER.compareAndSet(this, m, fn.READ_PREV())) {
-                    return fn.READ_PREV();
+                if (MAINNODE_UPDATER.compareAndSet(this, m, fn.readPrev())) {
+                    return fn.readPrev();
                 }
 
                 // Tail recursion: return GCAS_Complete(/* READ */ mainnode, ct);
@@ -85,7 +85,7 @@ final class INode<K, V> extends BasicNode {
             // or both
             if (ctr.gen == gen && !ct.isReadOnly()) {
                 // try to commit
-                if (m.CAS_PREV(prev, null)) {
+                if (m.casPrev(prev, null)) {
                     return m;
                 }
 
@@ -94,7 +94,7 @@ final class INode<K, V> extends BasicNode {
             }
 
             // try to abort
-            m.CAS_PREV(prev, new FailedNode<>(prev));
+            m.casPrev(prev, new FailedNode<>(prev));
 
             // Tail recursion: return GCAS_Complete(/* READ */ mainnode, ct);
             m = /* READ */ mainnode;
@@ -104,10 +104,10 @@ final class INode<K, V> extends BasicNode {
     }
 
     private boolean GCAS(final MainNode<K, V> old, final MainNode<K, V> n, final TrieMap<?, ?> ct) {
-        n.WRITE_PREV(old);
+        n.writePrev(old);
         if (MAINNODE_UPDATER.compareAndSet(this, old, n)) {
             GCAS_Complete(n, ct);
-            return /* READ */ n.READ_PREV() == null;
+            return /* READ */ n.readPrev() == null;
         }
 
         return false;
