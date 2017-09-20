@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.validator;
 
-import ch.qos.logback.classic.Level;
 import com.google.common.base.Stopwatch;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,6 +26,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.FileAppender;
 
 /**
  * Main class of Yang parser system test.
@@ -41,10 +46,12 @@ import org.slf4j.LoggerFactory;
  *                        to search for yang modules.
  *  -r, --recursive       recursive search of directories specified by -p option
  *  -v,--verbose          shows details about the results of test running.
- *
+ *  -o, --output          path to output file for logs
  */
 public class Main {
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
+    private static final ch.qos.logback.classic.Logger root =
+            (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
     private static final int MB = 1024 * 1024;
 
     private static Options createOptions() {
@@ -68,6 +75,10 @@ public class Main {
         verbose.setRequired(false);
         options.addOption(verbose);
 
+        final Option output = new Option("o", "output", true, "path to output file for logs.");
+        output.setRequired(false);
+        options.addOption(output);
+
         final Option feature = new Option(
                 "f",
                 "features",
@@ -80,7 +91,7 @@ public class Main {
         return options;
     }
 
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws IOException {
         final HelpFormatter formatter = new HelpFormatter();
         final Options options = createOptions();
         final CommandLine arguments = parseArguments(args, options, formatter);
@@ -88,6 +99,10 @@ public class Main {
         if (arguments.hasOption("help")) {
             printHelp(options, formatter);
             return;
+        }
+
+        if (arguments.hasOption("output")) {
+            setOutput(arguments.getOptionValues("output"));
         }
 
         if (arguments.hasOption("verbose")) {
@@ -101,11 +116,42 @@ public class Main {
         final HashSet<QName> supportedFeatures = initSupportedFeatures(arguments);
 
         runSystemTest(yangLibDirs, yangFiles, supportedFeatures, arguments.hasOption("recursive"));
+
+        root.getLoggerContext().reset();
+    }
+
+    private static void setOutput(final String... paths) throws IOException {
+        root.getLoggerContext().reset();
+
+        final PatternLayoutEncoder encoder = new PatternLayoutEncoder();
+        encoder.setPattern("%date %level [%thread] [%file:%line] %msg%n");
+        encoder.setContext(root.getLoggerContext());
+        encoder.start();
+
+        for (final String path : paths) {
+            deleteFileIfExists(path);
+
+            // create FileAppender
+            final FileAppender<ILoggingEvent> logfileOut = new FileAppender<ILoggingEvent>();
+            logfileOut.setAppend(true);
+            logfileOut.setFile(path);
+            logfileOut.setContext(root.getLoggerContext());
+            logfileOut.setEncoder(encoder);
+            logfileOut.start();
+
+            // attach the rolling file appender to the root logger
+            root.addAppender(logfileOut);
+        }
+    }
+
+    private static void deleteFileIfExists(final String path) {
+        final File file = new File(path);
+        if (file.exists()) {
+            file.delete();
+        }
     }
 
     private static void setLoggingLevel(final Level level) {
-        ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(
-                ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
         root.setLevel(level);
     }
 
@@ -184,7 +230,8 @@ public class Main {
     }
 
     private static void printHelp(final Options options, final HelpFormatter formatter) {
-        formatter.printHelp("yang-system-test [-f features] [-h help] [-p path] [-v verbose] yangFiles...", options);
+        formatter.printHelp("yang-system-test [-f features] [-h help] [-p path] [-o output] [-v verbose] yangFiles...",
+                options);
     }
 
     private static void printMemoryInfo(final String info) {
