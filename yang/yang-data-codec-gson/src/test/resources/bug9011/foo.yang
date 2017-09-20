@@ -1,0 +1,23 @@
+module foo {
+    namespace "foo";
+    prefix "foo";
+
+    revision "2015-01-05";
+
+    container simple-container {
+    }
+
+    augment "/foo:simple-container" {
+        leaf simple-augment-leaf {
+            type string;
+        }
+    }
+
+    augment "/foo:simple-container" {
+        container complex-augment-container {
+        }
+        leaf leaf-under-aug {
+            type string;
+        }
+    }
+}
