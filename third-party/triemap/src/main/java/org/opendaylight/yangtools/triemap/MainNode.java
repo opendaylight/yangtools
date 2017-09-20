@@ -48,15 +48,15 @@ abstract class MainNode<K, V> extends BasicNode {
      */
     abstract int size(ImmutableTrieMap<?, ?> ct);
 
-    final boolean CAS_PREV(final MainNode<K, V> oldval, final MainNode<K, V> nval) {
+    final boolean casPrev(final MainNode<K, V> oldval, final MainNode<K, V> nval) {
         return PREV_UPDATER.compareAndSet(this, oldval, nval);
     }
 
-    final void WRITE_PREV(final MainNode<K, V> nval) {
+    final void writePrev(final MainNode<K, V> nval) {
         prev = nval;
     }
 
-    final MainNode<K, V> READ_PREV() {
+    final MainNode<K, V> readPrev() {
         return prev;
     }
 }
